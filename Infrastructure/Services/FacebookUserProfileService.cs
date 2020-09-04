@@ -61,7 +61,8 @@ namespace Infrastructure.Services
                     Name = x.Name,
                     PSId = x.PSID,
                     DateCreated = x.DateCreated.Value,
-                    PartnerId = x.PartnerId,
+                    PartnerId = x.PartnerId
+                   
                 }).FirstOrDefaultAsync();
             var res = _mapper.Map<FacebookUserProfileBasic>(fbprofile);
             return res;

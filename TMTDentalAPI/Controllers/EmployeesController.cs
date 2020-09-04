@@ -37,12 +37,10 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var category = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.Category).Include(x => x.StructureType).FirstOrDefaultAsync();
-            if (category == null)
-            {
+            var res = await _mapper.ProjectTo<EmployeeDisplay>(_employeeService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (res == null)
                 return NotFound();
-            }
-            return Ok(_mapper.Map<EmployeeDisplay>(category));
+            return Ok(res);
         }
 
         [HttpPost]
@@ -99,6 +97,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Autocomplete(EmployeePaged val)
         {
             var result = await _employeeService.GetAutocompleteAsync(val);
+            return Ok(result);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SearchRead(EmployeePaged val)
+        {
+            var result = await _employeeService.GetPagedResultAsync(val);
             return Ok(result);
         }
     }

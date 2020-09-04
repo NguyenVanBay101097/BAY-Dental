@@ -1,3 +1,4 @@
+import { EmployeeBasic, EmployeeDisplay } from 'src/app/employees/employee';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
@@ -9,7 +10,7 @@ export class HrPayslipPaging {
     offset: number;
     limit: number;
     totalItems: number;
-    items: HrPayslipDisplay[];
+    items: HrPayslipBasic[];
 }
 
 export class HrPayslipLinePaging {
@@ -17,6 +18,18 @@ export class HrPayslipLinePaging {
     limit: number;
     totalItems: number;
     items: HrPayslipLineDisplay[];
+}
+
+export class HrPayslipBasic{
+    id: string;
+    number: string;
+    employeeName: string;
+    state: string;
+    dateFrom: string;
+    dateTo: string;
+    payslipRunName: string;
+    name: string;
+    totalAmount: number;
 }
 
 export class HrPayslipPaged {
@@ -27,6 +40,8 @@ export class HrPayslipPaged {
     state: string;
     dateFrom: any;
     dateTo: any;
+    employeeId: any;
+    payslipRunId: string;
 }
 
 export class HrPayslipSave {
@@ -47,6 +62,7 @@ export class HrPayslipDisplay {
     name: string;
     number: string;
     employeeId: string;
+    employee: EmployeeDisplay;
     dateFrom: string;
     dateTo: string;
     state: string;
@@ -80,6 +96,8 @@ export class HrPayslipWorkedDaySave {
     amount: number;
 }
 
+
+
 @Injectable()
 export class HrPayslipService {
     apiUrl = 'api/HrPayslips';
@@ -105,35 +123,31 @@ export class HrPayslipService {
         return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    ComputeLinePost(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ComputePayslip', val);
+    computeSheet(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ComputeSheet', val);
     }
 
-    ComputeLinePut(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/ComputePayslipLineUpdate/' + id, null);
+    actionCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
     }
 
-    getPayslipLinePaged(val: any): Observable<HrPayslipLinePaging> {
-        return this.http.get<HrPayslipLinePaging>(this.baseApi + 'api/HrPayslipLines', { params: val });
+    actionDone(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
-    CancelCompute(id: string) {
-        return this.http.put(this.baseApi + this.apiUrl + '/CancelCompute/' + id, null);
-    }
-
-    ConfirmCompute(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiUrl + '/ConfirmCompute/', ids);
-    }
-
-    GetWorkedDayInfoByEmployee(val: any) {
+    onChangeEmployee(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/OnChangeEmployee', val);
     }
 
-    GetWorkedDayInfoByPayslipId(val: any) {
-        return this.http.get(this.baseApi + 'api/HrPayslipWorkedDays', { params: val });
+    defaultget(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
-    getPayslipLines(val) {
-        return this.http.get(this.baseApi + 'api/HrPayslipLines/GetAllBySlipId', {params : val});
+    getWorkedDaysLines(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/WorkedDaysLines');
+    }
+
+    getLines(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Lines');
     }
 }

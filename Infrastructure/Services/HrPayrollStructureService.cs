@@ -14,7 +14,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-   public class HrPayrollStructureService : BaseService<HrPayrollStructure>, IHrPayrollStructureService
+    public class HrPayrollStructureService : BaseService<HrPayrollStructure>, IHrPayrollStructureService
     {
 
         private readonly IMapper _mapper;
@@ -27,35 +27,43 @@ namespace Infrastructure.Services
         public async Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId)
         {
             var res = await SearchQuery(x => x.TypeId == typeId).FirstOrDefaultAsync();
-            return _mapper.Map<HrPayrollStructureBase>(res) ;
+            return _mapper.Map<HrPayrollStructureBase>(res);
         }
 
-        public async Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id)
+        public async Task<HrPayrollStructureDisplay> GetHrPayrollStructureDisplay(Guid Id)
         {
-            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.Rules).Include(x=>x.Type).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<HrPayrollStructureDisplay>(SearchQuery(x => x.Id == Id)).FirstOrDefaultAsync();
+            var ruleObj = GetService<IHrSalaryRuleService>();
+            res.Rules = await _mapper.ProjectTo<HrSalaryRuleDisplay>(ruleObj.SearchQuery(x => x.StructId == Id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             return res;
         }
 
-        public async Task<PagedResult2<HrPayrollStructureDisplay>> GetPaged(HrPayrollStructurePaged val)
+        public async Task<PagedResult2<HrPayrollStructureBasic>> GetPaged(HrPayrollStructurePaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Filter))
             {
                 query = query.Where(x => x.Name.Contains(val.Filter));
             }
-            if (val.structureTypeId.HasValue)
+            if (val.StructureTypeId.HasValue)
             {
 
-                query = query.Where(x => x.TypeId == val.structureTypeId);
+                query = query.Where(x => x.TypeId == val.StructureTypeId);
             }
-            query = query.Include(x => x.Rules).Include("Rules.Company").Include(x=>x.Type);
+            query = query.Include(x => x.Rules).Include("Rules.Company").Include(x => x.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = await _mapper.ProjectTo<HrPayrollStructureBasic>(query.Skip(val.Offset).Take(val.Limit).OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
-            return new PagedResult2<HrPayrollStructureDisplay>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<HrPayrollStructureBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<HrPayrollStructureDisplay>>(items)
+                Items = items
             };
+        }
+
+        public async Task<IEnumerable<HrSalaryRuleDisplay>> GetRules(Guid structureId)
+        {
+            var res = await GetService<IHrSalaryRuleService>().SearchQuery(x => x.StructId == structureId).ToListAsync();
+            return _mapper.Map<IEnumerable<HrSalaryRuleDisplay>>(res);
         }
 
         public async Task Remove(Guid Id)
@@ -70,31 +78,10 @@ namespace Infrastructure.Services
             await DeleteAsync(HrPayrollStructure);
         }
 
-        public async Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure)
+        public async Task<HrPayrollStructureBasic> ExistRegular(Guid typeId, Guid currentId)
         {
-            var rulesToRemove = new List<HrSalaryRule>();
-            foreach (var rule in structure.Rules)
-            {
-                if (!val.Rules.Any(x => x.Id == rule.Id))
-                    rulesToRemove.Add(rule);
-            }
-
-            await GetService<IHrSalaryRuleService>().Remove(rulesToRemove.Select(x=>x.Id).ToList());
-            structure.Rules = structure.Rules.AsList().Except(rulesToRemove).ToList();
-
-            foreach (var rule in val.Rules)
-            {
-                if (rule.Id == Guid.Empty || !rule.Id.HasValue)
-                {
-                    var r = _mapper.Map<HrSalaryRule>(rule);
-                    r.CompanyId = CompanyId;
-                    structure.Rules.Add(r);
-                }
-                else
-                {
-                    _mapper.Map(rule, structure.Rules.SingleOrDefault(c => c.Id == rule.Id));
-                }
-            }
+            return await _mapper.ProjectTo<HrPayrollStructureBasic>(SearchQuery(x => x.TypeId == typeId && x.RegularPay == true && x.Id != currentId)).FirstOrDefaultAsync();
         }
+
     }
 }

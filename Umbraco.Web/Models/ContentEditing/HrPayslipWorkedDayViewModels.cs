@@ -30,6 +30,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid WorkEntryTypeId { get; set; }
 
         public decimal? Amount { get; set; }
+
+        public string Name { get; set; }
     }
 
     public class HrPayslipWorkedDayDisplay
@@ -58,5 +60,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? NumberOfHours { get; set; }
 
         public decimal? Amount { get; set; }
+        public Guid? WorkEntryTypeId { get; set; }
     }
 }

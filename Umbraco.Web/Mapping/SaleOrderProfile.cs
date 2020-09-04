@@ -14,7 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<SaleOrder, SaleOrderBasic>().ReverseMap();
 
-            CreateMap<SaleOrder, SaleOrderDisplay>();
+            CreateMap<SaleOrder, SaleOrderDisplay>()
+                .ForMember(x => x.OrderLines, x => x.Ignore());
             CreateMap<SaleOrderDisplay, SaleOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.InvoiceStatus, x => x.Ignore())

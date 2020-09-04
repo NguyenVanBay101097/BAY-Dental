@@ -13,7 +13,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
-        public ICollection<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; } = new List<ResourceCalendarAttendance>();
+        public ICollection<ResourceCalendarAttendance> Attendances { get; set; } = new List<ResourceCalendarAttendance>();
         /// <summary>
         /// Số giờ trung bình trên 1 ngày
         /// </summary>

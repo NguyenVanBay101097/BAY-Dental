@@ -6,6 +6,10 @@ import {
 } from "../zalo-oa-config.service";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { NotificationService } from "@progress/kendo-angular-notification";
+import { FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { map } from 'rxjs/operators';
+import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
 
 @Component({
   selector: "app-zalo-oa-config-establish",
@@ -16,41 +20,52 @@ import { NotificationService } from "@progress/kendo-angular-notification";
   },
 })
 export class ZaloOaConfigEstablishComponent implements OnInit {
-  config: ZaloOAConfigBasic;
-  formGroup: FormGroup;
-  private mywindow;
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
+  loading = false;
 
   constructor(
-    private fb: FormBuilder,
     private zaloOAConfigService: ZaloOAConfigService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private facebookPageService: FacebookPageService
   ) {}
 
   ngOnInit() {
-    this.formGroup = this.fb.group({
-      autoSendBirthdayMessage: false,
-      birthdayMessageContent: null,
-    });
-
-    this.loadConfig();
+    this.loadDataFromApi();
   }
 
-  get autoSendBirthdayMessage() {
-    return this.formGroup.get("autoSendBirthdayMessage").value;
+  loadDataFromApi() {
+    this.loading = true;
+
+    var val = new FacebookPagePaged();
+    val.offset = this.skip;
+    val.limit = this.limit;
+    val.type = 'zalo';
+
+    this.facebookPageService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
   }
 
-  loadConfig() {
-    this.zaloOAConfigService.get().subscribe((result) => {
-      this.config = result;
-      if (this.config) {
-        this.formGroup.patchValue(this.config);
-      }
-    });
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   connectZalo() {
     var url =
-      "https://oauth.zaloapp.com/v3/oa/permission?app_id=833510070534844532&redirect_uri=https://zalo.kiotapi.com";
+      "https://oauth.zaloapp.com/v3/oa/permission?app_id=210286079830365439&redirect_uri=https://fba.tpos.vn/zalo/login-callback";
+     
     this.popupWindow(url, url, window, 650, 500);
     window.addEventListener("message", (event) => {
       var data = JSON.parse(event.data);
@@ -65,13 +80,9 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
-      });
-    });
-  }
 
-  deleteConfig() {
-    this.zaloOAConfigService.remove().subscribe(() => {
-      this.loadConfig();
+        this.loadDataFromApi();
+      });
     });
   }
 
@@ -90,20 +101,5 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
         ", left=" +
         x
     );
-  }
-
-  onSave() {
-    if (this.config) {
-      var val = this.formGroup.value;
-      this.zaloOAConfigService.update(this.config.id, val).subscribe(() => {
-        this.notificationService.show({
-          content: "Lưu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
-      });
-    }
   }
 }

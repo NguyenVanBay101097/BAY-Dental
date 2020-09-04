@@ -47,6 +47,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Doctor, x => x.Ignore())
                 .ForMember(x => x.Assistant, x => x.Ignore())
                 .ForMember(x => x.Appointment, x => x.Ignore());
+
+            CreateMap<DotKhamSave, DotKham>();
         }
     }
 }

@@ -145,6 +145,15 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
-       
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RefreshSocialChannel(FacebookPageSimple val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _facebookPageService.RefreshSocial(val);
+            return Ok();
+        }
+
     }
 }

@@ -34,5 +34,12 @@ namespace Infrastructure.Services
         Task<IEnumerable<LaboOrderBasic>> GetLaboOrderBasics(Guid id);
 
         Task<IEnumerable<ToothBasic>> GetTeeth(Guid id);
+
+        void _ComputeLinePaymentRels(IEnumerable<SaleOrderLine> lines);
+        Task _RemovePartnerCommissions(IEnumerable<Guid> ids);
+
+        Task RecomputeCommissions(IEnumerable<SaleOrderLine> self);
+
+        Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -25,5 +26,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> SaleOrderIds { get; set; } = new List<Guid>();
 
         public IEnumerable<Guid> ServiceCardOrderIds { get; set; } = new List<Guid>();
+
+        public IEnumerable<SaleOrderLinePaymentRelSave> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRelSave>();
     }
+
+   
 }

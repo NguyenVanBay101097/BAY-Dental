@@ -27,7 +27,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   timeIn: any;
   today: Date = new Date();
   timeOut: any;
-  title: string;
+  title: string="";
   employee: EmployeeBasic;
   filterdWorks: WorkEntryType[] = [];
   chamCong: ChamCongBasic = new ChamCongBasic();

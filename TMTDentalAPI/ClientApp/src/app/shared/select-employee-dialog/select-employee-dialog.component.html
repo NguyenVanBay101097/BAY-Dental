@@ -1,0 +1,66 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_cp_controller">
+        <div class="o_control_panel">
+            <ol class="breadcrumb">
+                <!-- <li class="active">Nhân viên</li> -->
+            </ol>
+            <div class="o_cp_searchview">
+                <div class="o_cp_searchview_group">
+                    <div class="o_searchview">
+                        <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                            (ngModelChange)="this.searchUpdate.next($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="o_cp_left">
+                <div class="o_cp_buttons">
+                    <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="c"
+                        (click)="createEmployee()">Thêm</button> -->
+                </div>
+                <div class="o_cp_sidebar">
+                </div>
+            </div>
+            <div class="o_cp_right">
+                <div class="btn-group o_search_options">
+                    <div>
+                        <div class="custom-control custom-checkbox  custom-control-inline">
+                            <input class="custom-control-input" type="checkbox" id="inlineCheckbox1" [(ngModel)]="isDoctor"
+                                (change)="getEmployeesList()">
+                            <label class="custom-control-label" for="inlineCheckbox1">Bác sĩ</label>
+                        </div>
+                        <!-- <div class="custom-control custom-checkbox  custom-control-inline">
+                            <input class="custom-control-input" type="checkbox" id="inlineCheckbox2"
+                                [(ngModel)]="isAssistant" (change)="getEmployeesList()">
+                            <label class="custom-control-label" for="inlineCheckbox2">Phụ tá</label>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="o_content">
+        <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading" [selectable]="true"
+            (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'"
+            (selectedKeysChange)="selectedKeysChange($event)">
+            <kendo-grid-checkbox-column showSelectAll="true">              
+            </kendo-grid-checkbox-column>
+            <kendo-grid-column field="ref" title="Mã"></kendo-grid-column>
+            <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
+            <kendo-grid-column field="phone" title="Số điện thoại"></kendo-grid-column>       
+        </kendo-grid>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary o_form_button_cancel" (click)="onselectedEmployees($event)"
+    accesskey="q">Xác nhận</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

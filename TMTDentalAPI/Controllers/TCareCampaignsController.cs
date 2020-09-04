@@ -60,8 +60,11 @@ namespace TMTDentalAPI.Controllers
             {
                 return BadRequest();
             }
+
             campain.Name = val.Name;
             campain.GraphXml = val.GraphXml;
+            campain.SheduleStart = val.SheduleStart;
+
             await _campaignService.UpdateAsync(campain);
             return NoContent();
         }
@@ -87,6 +90,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionStopCampaign(IEnumerable<Guid> ids)
         {
             await _campaignService.ActionStopCampaign(ids);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionSetSheduleStartCampaign(TCareCampaignSetSheduleStart val)
+        {
+            await _campaignService.SetSheduleStart(val);
             return NoContent();
         }
     }

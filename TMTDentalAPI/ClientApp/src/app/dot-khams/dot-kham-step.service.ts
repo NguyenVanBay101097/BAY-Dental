@@ -11,6 +11,7 @@ export class DotKhamStepPaged {
     dateFrom: string;
     userId: string;
     partnerId: string;
+    doctorId: string;
 }
 
 export class DotKhamStepReport {

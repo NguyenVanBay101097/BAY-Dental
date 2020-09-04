@@ -56,6 +56,18 @@ namespace ApplicationCore.Entities
         /// Là phụ tá
         /// </summary>
         public bool IsAssistant { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public Commission Commission { get; set; }
+
+        /// <summary>
+        /// kết nối người dùng
+        /// </summary>
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
         public ICollection<ChamCong> ChamCongs { get; set; } = new List<ChamCong>();
 
         public Guid? StructureTypeId { get; set; }
@@ -70,5 +82,11 @@ namespace ApplicationCore.Entities
         /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
         /// </summary>
         public decimal? HourlyWage { get; set; }
+
+        /// <summary>
+        ///  ngày bắt đầu đi làm của nhân viên
+        /// </summary>
+
+        public DateTime? StartWorkDate { get; set; }
     }
 }

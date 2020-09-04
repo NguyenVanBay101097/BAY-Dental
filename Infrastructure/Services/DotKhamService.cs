@@ -93,9 +93,14 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("dot.kham");
             }
 
+            if (entity.SaleOrderId.HasValue)
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                var order = await saleObj.GetByIdAsync(entity.SaleOrderId.Value);
+                entity.PartnerId = order.PartnerId;
+            }
 
             await base.CreateAsync(entity);
-            //await ActionConfirm(entity.Id);
             return entity;
         }
 
@@ -147,21 +152,7 @@ namespace Infrastructure.Services
         {
             var res = new DotKhamDisplay();
             res.CompanyId = CompanyId;
-            var userManager = GetService<UserManager<ApplicationUser>>();
-            var user = await userManager.FindByIdAsync(UserId);
-            res.UserId = user.Id;
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
-
-            if (val.SaleOrderId.HasValue)
-            {
-                var saleObj = GetService<ISaleOrderService>();
-                var saleOrder = await saleObj.SearchQuery(x => x.Id == val.SaleOrderId).FirstOrDefaultAsync();
-                res.SaleOrderId = saleOrder.Id;
-                res.PartnerId = saleOrder.PartnerId;
-                var partnerObj = GetService<IPartnerService>();
-                var partner = partnerObj.SearchQuery(x => x.Id == saleOrder.PartnerId).FirstOrDefault();
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
-            }
+            res.SaleOrderId = val.SaleOrderId;
             return res;
         }
 

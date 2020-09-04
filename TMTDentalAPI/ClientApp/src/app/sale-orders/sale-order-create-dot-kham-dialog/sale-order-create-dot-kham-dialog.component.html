@@ -18,8 +18,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredUsers" [textField]="'name'" [filterable]="true"
-                                        #userCbx formControlName="user" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredDoctors" [textField]="'name'" [filterable]="true"
+                                        #doctorCbx formControlName="doctor" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -30,8 +30,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="assistantUser" [filterable]="true"
-                                        [data]="assistantUserSimpleFilter" #assistantUserCbx [valueField]="'id'"
+                                    <kendo-combobox formControlName="assistant" [filterable]="true"
+                                        [data]="filteredAssistants" #assistantCbx [valueField]="'id'"
                                         [textField]="'name'">
                                     </kendo-combobox>
                                 </td>

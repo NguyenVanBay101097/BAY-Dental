@@ -10,11 +10,11 @@ namespace Infrastructure.Services
 {
     public interface IHrPayrollStructureService:IBaseService<HrPayrollStructure>
     {
-        Task<PagedResult2<HrPayrollStructureDisplay>> GetPaged(HrPayrollStructurePaged val);
-        Task<HrPayrollStructure> GetHrPayrollStructureDisplay(Guid Id);
+        Task<PagedResult2<HrPayrollStructureBasic>> GetPaged(HrPayrollStructurePaged val);
+        Task<HrPayrollStructureDisplay> GetHrPayrollStructureDisplay(Guid Id);
         Task Remove(Guid Id);
-
-        Task SaveRules(HrPayrollStructureSave val, HrPayrollStructure structure);
         Task<HrPayrollStructureBase> GetFirstOrDefault(Guid typeId);
+        Task<IEnumerable< HrSalaryRuleDisplay>> GetRules(Guid structureId);
+        Task<HrPayrollStructureBasic> ExistRegular(Guid typeId, Guid currentId);
     }
 }

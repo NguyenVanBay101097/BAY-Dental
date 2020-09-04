@@ -4,7 +4,7 @@ import { ZaloOaConfigEstablishComponent } from './zalo-oa-config-establish/zalo-
 
 const routes: Routes = [
   {
-    path: 'zalo-config',
+    path: '',
     component: ZaloOaConfigEstablishComponent
   }
 ];

@@ -88,29 +88,6 @@ export class EmployeeListComponent implements OnInit {
     this.getEmployeesList();
   }
 
-  // openWindow(id) {
-  //   const windowRef: WindowRef = this.windowService.open(
-  //     {
-  //       title: id ? 'Cập nhật nhân viên' : 'Tạo nhân viên',
-  //       content: EmployeeCreateUpdateComponent,
-  //       minWidth: 250,
-  //     });
-  //   this.windowOpened = true;
-  //   const instance = windowRef.content.instance;
-  //   if (id) {
-  //     instance.empId = id;
-  //   }
-
-  //   windowRef.result.subscribe(
-  //     (result) => {
-  //       this.windowOpened = false;
-  //       if (!(result instanceof WindowCloseResult)) {
-  //         this.getEmployeesList();
-  //       }
-  //     }
-  //   )
-  // }
-
   onAdvanceSearchChange(filter) {
     this.isDoctor = filter.isDoctor;
     this.isAssistant = filter.isAssistant;
@@ -123,7 +100,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.isDoctor = true;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   createAssistant() {
@@ -140,7 +117,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm nhân viên';
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   editEmployee(item: EmployeeBasic) {
@@ -149,7 +126,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.empId = item.id;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    });
+    }, () => {});
   }
 
   openModal(id, isDoctor, isAssistant) {

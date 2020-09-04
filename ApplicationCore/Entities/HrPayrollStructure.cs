@@ -9,6 +9,13 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class HrPayrollStructure: BaseEntity
     {
+        public HrPayrollStructure()
+        {
+            Active = true;
+            UseWorkedDayLines = true;
+            SchedulePay = "monthly";
+        }
+
         public string Name { get; set; }
 
         public bool Active { get; set; }

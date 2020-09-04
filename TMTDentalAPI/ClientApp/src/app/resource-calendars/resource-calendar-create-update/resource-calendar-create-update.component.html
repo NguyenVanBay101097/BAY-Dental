@@ -5,7 +5,7 @@
                 <a routerLink="/resource-calendars">Lịch làm việc</a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{temp_name}}</span>
+                <span *ngIf="id">{{resourceCalendar.name}}</span>
                 <span *ngIf="!id">Mới</span>
             </li>
         </ol>
@@ -14,7 +14,8 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c" *ngIf="id">
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                        *ngIf="id">
                         Thêm mới
                     </button>
                 </div>
@@ -23,21 +24,20 @@
     </div>
 </div>
 
-<div class="o_content">  
+<div class="o_content">
     <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet"> 
+            <div class="o_form_sheet">
                 <div class="oe_title mt-2 mb-3">
                     <label class="o_form_label oe_edit_only">Tên </label>
                     <h1 class="mb-1">
-                        <input class="form-control" formControlName="name" 
-                            name="name" required #nameInput>
+                        <input class="form-control" formControlName="name" name="name" required #nameInput>
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
                         <div *ngIf="f.name.errors.required">Nhập tên</div>
-                      </div>
-                </div>            
-                <div class="o_group mb-0">                               
+                    </div>
+                </div>
+                <div class="o_group mb-0">
                     <table class="o_group o_inner_group o_group_col_4">
                         <tbody>
                             <tr>
@@ -57,13 +57,13 @@
                 </div>
                 <div class="o_notebook">
                     <ngb-tabset>
-                        <ngb-tab title="giờ làm việc">
-                            <ng-template ngbTabContent>                              
+                        <ngb-tab title="Giờ làm việc">
+                            <ng-template ngbTabContent>
                                 <div class="d-flex">
-                                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm giờ làm
-                                    việc</button>                    
+                                    <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
+                                        (click)="onCreate()">Thêm giờ làm việc</button>
                                 </div>
-                                <table class="table mt-2">
+                                <table class="table table-sm mt-2">
                                     <thead>
                                         <tr>
                                             <th scope="col">Tên</th>
@@ -74,14 +74,14 @@
                                             <th scope="col">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody formArrayName="resourceCalendarAttendances" >
-                                        <ng-container *ngFor="let item of resourceCalendarAttendances.controls; let i = index;">
+                                    <tbody formArrayName="attendances">
+                                        <ng-container
+                                            *ngFor="let item of attendances.controls; let i = index;">
                                             <tr [formGroupName]="i">
                                                 <td>
-                                                    <input class="form-control" formControlName="name" 
-                                                    name="name" >                                                 
+                                                    <input class="form-control" formControlName="name" name="name">
                                                 </td>
-                                                <td>                                           
+                                                <td>
                                                     <select class="form-control" formControlName="dayOfWeek" required>
                                                         <option value="">Chọn thứ</option>
                                                         <option value="1">Thứ 2</option>
@@ -91,35 +91,33 @@
                                                         <option value="5">Thứ 6</option>
                                                         <option value="6">Thứ 7</option>
                                                         <option value="0">Chủ nhật</option>
-                                                    </select>                                                          
-                                                  
+                                                    </select>
+
                                                 </td>
                                                 <td>
                                                     <select class="form-control" formControlName="dayPeriod" required>
                                                         <option value="">Chọn buổi</option>
                                                         <option value="morning">Sáng</option>
-                                                        <option value="afternoon">Chiều</option>                                                              
-                                                    </select>     
+                                                        <option value="afternoon">Chiều</option>
+                                                    </select>
                                                 </td>
                                                 <td>
-                                                    <kendo-timepicker formControlName="hourFrom"  required >
+                                                    <kendo-timepicker formControlName="hourFrom" required>
                                                     </kendo-timepicker>
-                                                   
                                                 </td>
                                                 <td>
-                                                    <kendo-timepicker formControlName="hourTo" required > 
+                                                    <kendo-timepicker formControlName="hourTo" required>
                                                     </kendo-timepicker>
-                                                                    
                                                 </td>
-                                              
                                                 <td>
-                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                                        (click)="deleteLine(i)">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>
                                             </tr>
                                         </ng-container>
-                                    </tbody>                                  
+                                    </tbody>
                                 </table>
 
                             </ng-template>

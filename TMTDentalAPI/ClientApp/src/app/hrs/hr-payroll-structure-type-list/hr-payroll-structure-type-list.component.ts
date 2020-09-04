@@ -16,7 +16,7 @@ export class HrPayrollStructureTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = 'Loại cấu trúc lương';
+  title = 'Loại mẫu lương';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();

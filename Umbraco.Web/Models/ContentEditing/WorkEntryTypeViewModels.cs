@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Code { get; set; }
 
         public int? Sequence { get; set; }
+        public string RoundDays { get; set; } = "NO";
+        public string RoundDaysType { get; set; }
 
     }
 
@@ -47,7 +49,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Color { get; set; }
 
         public string Code { get; set; }
-
+        public string RoundDays { get; set; }
+        public string RoundDaysType { get; set; }
         public int? Sequence { get; set; }
     }
 }

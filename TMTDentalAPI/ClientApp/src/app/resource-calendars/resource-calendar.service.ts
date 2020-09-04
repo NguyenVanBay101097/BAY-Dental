@@ -129,4 +129,8 @@ export class ResourceCalendarService {
   setSequence(vals) {
     return this.http.post(this.base_api + this.apiUrlAttendance + '/SetSequence', vals);
   }
+
+  defaultGet() {
+    return this.http.get(this.base_api + this.apiUrl + '/DefaultGet');
+  }
 }

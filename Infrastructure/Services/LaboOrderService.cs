@@ -141,6 +141,7 @@ namespace Infrastructure.Services
             var query = lineObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await query.Select(x => new LaboOrderStatisticsBasic { 
+                Id = x.Id,
                 PartnerDisplayName = x.Partner.DisplayName,
                 ProductName = x.Product.Name,
                 OrderName = x.Order.Name,

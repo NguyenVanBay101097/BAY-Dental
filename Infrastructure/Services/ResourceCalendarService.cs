@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Mapping;
+using Umbraco.Web.Models;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -24,9 +26,11 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<ResourceCalendar> GetDisplayAsync(Guid id)
+        public async Task<ResourceCalendarDisplay> GetDisplayAsync(Guid id)
         {
-            var res = await SearchQuery(x => x.Id == id).Include(x=>x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<ResourceCalendarDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var attendanceObj = GetService<IResourceCalendarAttendanceService>();
+            res.Attendances = await _mapper.ProjectTo<ResourceCalendarAttendanceDisplay>(attendanceObj.SearchQuery(x => x.CalendarId == id, orderBy: x => x.OrderBy(s => s.DayOfWeek).ThenBy(s => s.HourFrom))).ToListAsync();
             return res;
         }
 
@@ -47,9 +51,9 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AttendanceInterval>> _AttendanceIntervals(Guid id, DateTime start_dt, DateTime end_dt)
         {
-            var self = await SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Attendances).FirstOrDefaultAsync();
             var result = new List<AttendanceInterval>();
-            foreach (var attendance in self.ResourceCalendarAttendances)
+            foreach (var attendance in self.Attendances)
             {
                 var start = start_dt.Date;
                 var until = end_dt.Date;
@@ -96,12 +100,12 @@ namespace Infrastructure.Services
             double soGioCong = 0;
             foreach (var interval in intervals)
             {
-                soGioCong += (interval.Stop - interval.Start).TotalSeconds/ 3600;
+                soGioCong += (interval.Stop - interval.Start).TotalSeconds / 3600;
             }
             //tra ve so ngay cong = so gio / hourPerdays va so gio sum
             var calendar = await GetByIdAsync(id);
             double soNgayCong = soGioCong / (double)calendar.HoursPerDay.Value;
-            
+
             res.SoGioCong = soGioCong;
             res.SoNgayCong = soNgayCong;
             return res;
@@ -110,7 +114,6 @@ namespace Infrastructure.Services
         public async Task<ResourceCalendar> CreateResourceCalendar(ResourceCalendarSave val)
         {
             var resourceCalendar = _mapper.Map<ResourceCalendar>(val);
-            resourceCalendar.CompanyId = CompanyId;
 
             SaveAttendances(val, resourceCalendar);
 
@@ -119,7 +122,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val)
         {
-            var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.Attendances).FirstOrDefaultAsync();
             if (resourceCalendar == null)
                 throw new Exception("Lịch làm việc không tồn tại");
 
@@ -133,33 +136,53 @@ namespace Infrastructure.Services
         {
             //remove line
             var lineToRemoves = new List<ResourceCalendarAttendance>();
-            foreach (var existLine in resourceCalendar.ResourceCalendarAttendances)
+            foreach (var existLine in resourceCalendar.Attendances)
             {
-                if (!val.ResourceCalendarAttendances.Any(x => x.Id == existLine.Id))
+                if (!val.Attendances.Any(x => x.Id == existLine.Id))
                     lineToRemoves.Add(existLine);
             }
 
             foreach (var line in lineToRemoves)
             {
-                resourceCalendar.ResourceCalendarAttendances.Remove(line);
+                resourceCalendar.Attendances.Remove(line);
             }
 
-            int sequence = 0;
-            foreach (var line in val.ResourceCalendarAttendances)
-                line.Sequence = sequence++;
-
-            foreach (var line in val.ResourceCalendarAttendances)
+            foreach (var line in val.Attendances)
             {
                 if (line.Id == Guid.Empty)
                 {
-                    resourceCalendar.ResourceCalendarAttendances.Add(_mapper.Map<ResourceCalendarAttendance>(line));
+                    resourceCalendar.Attendances.Add(_mapper.Map<ResourceCalendarAttendance>(line));
                 }
                 else
                 {
-                    _mapper.Map(line, resourceCalendar.ResourceCalendarAttendances.SingleOrDefault(c => c.Id == line.Id));
+                    _mapper.Map(line, resourceCalendar.Attendances.SingleOrDefault(c => c.Id == line.Id));
                 }
             }
 
+        }
+
+        public ResourceCalendarDisplay DefaultGet()
+        {
+            var res = new ResourceCalendarDisplay();
+            res.CompanyId = CompanyId;
+            res.HoursPerDay = 8;
+
+            var attendances = new List<ResourceCalendarAttendanceDisplay>()
+            {
+             new ResourceCalendarAttendanceDisplay("Sáng thứ 2","1",8,12,"morning"),
+             new ResourceCalendarAttendanceDisplay("Chiều thứ 2","1",13,17,"afternoon"),
+             new ResourceCalendarAttendanceDisplay("Sáng thứ 3","2",8,12,"morning"),
+             new ResourceCalendarAttendanceDisplay("Chiều thứ 3","2",13,17,"afternoon"),
+             new ResourceCalendarAttendanceDisplay("Sáng thứ 4","3",8,12,"morning"),
+             new ResourceCalendarAttendanceDisplay("Chiều thứ 4","3",13,17,"afternoon"),
+             new ResourceCalendarAttendanceDisplay("Sáng thứ 5","4",8,12,"morning"),
+             new ResourceCalendarAttendanceDisplay("Chiều thứ 5","4",13,17,"afternoon"),
+             new ResourceCalendarAttendanceDisplay("Sáng thứ 6","5",8,12,"morning"),
+             new ResourceCalendarAttendanceDisplay("Chiều thứ 6","5",13,17,"afternoon"),
+            };
+
+            res.Attendances = attendances;
+            return res;
         }
     }
 
@@ -177,4 +200,5 @@ namespace Infrastructure.Services
         public double SoNgayCong { get; set; }
         public double SoGioCong { get; set; }
     }
+
 }

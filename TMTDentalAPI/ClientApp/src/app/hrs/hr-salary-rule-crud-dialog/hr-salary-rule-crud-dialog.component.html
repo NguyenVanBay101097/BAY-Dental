@@ -29,7 +29,7 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr *ngIf="this.form.get('amountSelect').value == 'fixamount'">
+                            <tr *ngIf="this.form.get('amountSelect').value == 'fix'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
@@ -56,6 +56,9 @@
                                         <option *ngFor="let item of listamountCodeCompute" [value]="item.value">
                                             {{item.text}}</option>
                                     </select>
+                                    <div style="color: #908080; text-align: center;">
+                                        {{getCodeDescription()}}
+                                    </div>
                                 </td>
                             </tr>
                             <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
@@ -75,10 +78,11 @@
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Vị trí</label>
+                                    <label class="o_form_label">Thứ tự</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="number" min="0" class="form-control" formControlName="sequence">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="sequence">
+                                    </kendo-numerictextbox>
                                 </td>
                             </tr>
                         </tbody>

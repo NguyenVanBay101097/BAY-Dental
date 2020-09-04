@@ -1,0 +1,29 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <!-- <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column> -->
+    <kendo-grid-column field="name" title="Tên chiến dịch">
+    </kendo-grid-column>
+    <kendo-grid-column field="messageTotal" class="text-right" title="đã gửi">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.messageTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="deliveryTotal" class="text-right" title="đã nhận">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.deliveryTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="readTotal" class="text-right" title="đã đọc">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.readTotal | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="readTotal" class="text-right" title="trạng thái">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+           <div [class]="dataItem.active == false ? 'text-secondary' : 'text-success'">{{dataItem.active == false ? 'tạm dừng' : 'đang chạy'}}</div> 
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

@@ -19,7 +19,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<ResourceCalendarSave, ResourceCalendar>()
                .ForMember(x => x.Id, x => x.Ignore())
-               .ForMember(x => x.ResourceCalendarAttendances, x => x.Ignore());
+               .ForMember(x => x.Attendances, x => x.Ignore());
         }
     }
 }

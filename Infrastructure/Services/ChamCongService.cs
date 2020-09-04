@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
@@ -115,38 +116,6 @@ namespace Infrastructure.Services
         //        Items = resItems
         //    };
         //}
-
-        public async Task<IEnumerable<EmployeeDisplay>> CountNgayCong(IEnumerable<EmployeeDisplay> lst)
-        {
-            var setupObj = GetService<ISetupChamcongService>();
-            var setup = await setupObj.GetByCompanyId();
-            //skipp if setup null
-            if (setup == null)
-            {
-                return lst;
-            }
-            var diffTime = Math.Round(setup.DifferenceTime / 60, 2);
-            var fromOne = setup.OneStandardWorkHour - diffTime;
-            var fromHalf = setup.HalfStandardWorkHour - diffTime;
-            double Tongcong = 0;
-            foreach (var emp in lst)
-            {
-                Tongcong = 0;
-                foreach (var chamcong in emp.ChamCongs)
-                {
-                    if (chamcong.HourWorked >= fromOne || (chamcong.WorkEntryType != null && chamcong.WorkEntryType.IsHasTimeKeeping))
-                    {
-                        Tongcong += 1;
-                    }
-                    else if (chamcong.HourWorked >= fromHalf)
-                    {
-                        Tongcong += 0.5;
-                    }
-                }
-                emp.SoNgayCong = Tongcong;
-            }
-            return lst;
-        }
 
         public async Task<string> GetStatus(ChamCong val)
         {
@@ -379,7 +348,7 @@ namespace Infrastructure.Services
 
             var listChamCongs = await query.Include(x => x.WorkEntryType).ToListAsync();
             if (structureType != null)
-                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.ResourceCalendarAttendances.ToList() : new List<ResourceCalendarAttendance>();
+                listResourceCalendarAtts = structureType.DefaultResourceCalendar != null ? structureType.DefaultResourceCalendar.Attendances.ToList() : new List<ResourceCalendarAttendance>();
 
             var SoNgayLamTrongThang = SoNgayLam(from, to, listResourceCalendarAtts);
             var re_listResourceCalendarAtts = listResourceCalendarAtts.GroupBy(x => x.DayOfWeek).ToList();
@@ -442,7 +411,21 @@ namespace Infrastructure.Services
                 gioCong += actualHours;
             }
 
-            var soNgayCong = Math.Round(gioCong / (double)hoursPerDay, 2);
+            var soNgayCong = gioCong / (double)hoursPerDay;
+
+            var workEntryType = cc.WorkEntryType;
+            if (workEntryType.RoundDays == "FULL")
+                soNgayCong = FloatUtils.FloatRound(soNgayCong, precisionDigits: 0, roundingMethod: workEntryType.RoundDaysType);
+            else if (workEntryType.RoundDays == "HALF")
+            {
+                var temp = soNgayCong / 5;
+                soNgayCong = FloatUtils.FloatRound(temp, precisionDigits: 1, roundingMethod: workEntryType.RoundDaysType) * 5;
+            }
+            else
+            {
+                soNgayCong = Math.Round(soNgayCong,2);
+            }
+
 
             return new ChamCongTinhCong
             {

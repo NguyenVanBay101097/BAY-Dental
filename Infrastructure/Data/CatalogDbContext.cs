@@ -174,6 +174,11 @@ namespace Infrastructure.Data
         public DbSet<FacebookScheduleAppointmentConfig> FacebookScheduleAppointmentConfigs { get; set; }
         public DbSet<PartnerImage> PartnerImages { get; set; }
 
+        public DbSet<Commission> Commissions { get; set; }
+        public DbSet<CommissionProductRule> CommissionProductRules { get; set; }
+        public DbSet<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; }
+        public DbSet<SaleOrderLinePartnerCommission> SaleOrderLinePartnerCommissions { get; set; }
+        public DbSet<CommissionSettlement> CommissionSettlements { get; set; }
 
 
         //nguyen thang
@@ -183,6 +188,7 @@ namespace Infrastructure.Data
 
         public DbSet<LoaiThuChi> LoaiThuChis { get; set; }
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
+        public DbSet<TCareScenario> TCareScenarios { get; set; }
 
         public DbSet<ChamCong> ChamCongs { get; set; }
         public DbSet<SetupChamcong> setupChamcongs { get; set; }
@@ -199,6 +205,9 @@ namespace Infrastructure.Data
         public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
         public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
 
+        public DbSet<PartnerTitle> PartnerTitles { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -208,6 +217,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PartnerSourceConfiguration());
             builder.ApplyConfiguration(new PartnerCategoryConfiguration());
             builder.ApplyConfiguration(new PartnerPartnerCategoryRelConfiguration());
+            builder.ApplyConfiguration(new PartnerTitleConfiguration());
             builder.ApplyConfiguration(new UoMConfiguration());
             builder.ApplyConfiguration(new UoMCategoryConfiguration());
             builder.ApplyConfiguration(new SaleOrderConfiguration());
@@ -343,6 +353,11 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportAccountAccountTypeRelConfiguration());
             builder.ApplyConfiguration(new AccountFinancialReportConfiguration());
+            builder.ApplyConfiguration(new CommissionConfiguration());
+            builder.ApplyConfiguration(new CommissionProductRuleConfiguration());
+            builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
+            builder.ApplyConfiguration(new CommissionSettlementConfiguration());
+            builder.ApplyConfiguration(new TCareScenarioConfiguration());
             builder.ApplyConfiguration(new ChamCongConfiguration());
             builder.ApplyConfiguration(new HrPayrollStructureConfiguration());
             builder.ApplyConfiguration(new HrSalaryRuleConfiguration());
@@ -399,10 +414,9 @@ namespace Infrastructure.Data
             if (_tenant != null)
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-                builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
-                if (_tenant.Hostname == "localhost")
-                    builder["Database"] = $"TMTDentalCatalogDb";
+                if (_tenant.Hostname != "localhost")
+                    builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
                 optionsBuilder.UseSqlServer(builder.ConnectionString);
             }

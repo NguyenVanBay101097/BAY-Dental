@@ -21,6 +21,7 @@ base.model_ir_model_data,IRModelData,IR Model Data,1
 base.model_ir_rule,IRRule,IR Rule,1
 base.model_ir_sequence,IRSequence,IR Sequence,1
 base.model_res_partner,Partner,Đối tác,0
+base.model_res_partner_title,PartnerTitle,Danh xưng,0
 base.model_res_partner_category,PartnerCategory,Nhóm đối tác,0
 base.model_res_partner_source,PartnerSource,Nguồn khách hàng,0
 base.model_res_partner_image,PartnerImage,Hình ảnh khách hàng,0
@@ -57,6 +58,9 @@ service_card.model_service_card_sale_order_service_card_card_rel,SaleOrderServic
 base.model_sample_prescription,SamplePrescription,Đơn thuốc mẫu,0
 account.model_phieu_thu_chi,PhieuThuChi,Phiếu thu chi,0
 account.model_loai_thu_chi,LoaiThuChi,Loại thu chi,0
+sale.model_commission,Commission,Bảng hoa hồng,0
+sale.model_commission_settlement,CommissionSettlement,Commission Settlement,1
+hr.model_employee,Employee,Nhân viên,0
 
 
 

@@ -21,6 +21,7 @@ import { MomentModule } from 'ngx-moment';
 import 'moment/locale/vi';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
+import { FacebookModule } from 'ngx-facebook';
 
 
 
@@ -33,7 +34,7 @@ registerLocaleData(localeVi, "vi");
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     CommonModule,
@@ -55,6 +56,7 @@ registerLocaleData(localeVi, "vi");
         m: 59,
       },
     }),
+    FacebookModule.forRoot()
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor

@@ -31,6 +31,7 @@ namespace Infrastructure.Services
             var ruleObj = GetService<IHrSalaryRuleService>();
             var employeeObj = GetService<IEmployeeService>();
             var seqObj = GetService<IIRSequenceService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
 
             var payslips = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines)
                 .Include(x => x.WorkedDaysLines).ToListAsync();
@@ -58,9 +59,18 @@ namespace Infrastructure.Services
                             {
                                 //Lương chính = sum amount worked day lines
                                 case "luong_chinh":
-                                    line.Amount = payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0;
+                                    if (!employee.Wage.HasValue) throw new Exception("Chưa thiết lập lương cho nhân viên " + employee.Name);
+                                    line.Amount = Math.Round(payslip.WorkedDaysLines.Sum(x => x.Amount) ?? 0);
                                     break;
                                 case "hoa_hong":
+                                    var hoa_hong = await commissionSettlementObj.SearchQuery(x => x.EmployeeId == payslip.EmployeeId &&
+                                    x.Payment.PaymentDate >= payslip.DateFrom && x.Payment.PaymentDate <= payslip.DateTo).SumAsync(x => x.Amount);
+                                    line.Amount = Math.Round(hoa_hong.Value);
+                                    break;
+                                case "luong_thang13":
+                                    if (!employee.StartWorkDate.HasValue) { line.Amount = 0; break; }
+                                    var sothang = (payslip.DateTo.Year - employee.StartWorkDate.Value.Year) + payslip.DateTo.Month - employee.StartWorkDate.Value.Month;
+                                    line.Amount = sothang > 12 ? employee.Wage : Math.Round((decimal)(sothang * employee.Wage) / 12);
                                     break;
                                 default:
                                     throw new Exception("Not support");
@@ -114,6 +124,14 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateTo <= dateTo);
             }
 
+            if (val.EmployeeId.HasValue)
+            {
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+            }
+
+            if (val.PayslipRunId.HasValue)
+                query = query.Where(x => x.PayslipRunId == val.PayslipRunId.Value);
+
             query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await _mapper.ProjectTo<HrPayslipBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
@@ -136,19 +154,30 @@ namespace Infrastructure.Services
             var ccObj = GetService<IChamCongService>();
             var calendarObj = GetService<IResourceCalendarService>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var structObj = GetService<IHrPayrollStructureService>();
 
             var employee = await empObj.SearchQuery(x => x.Id == employeeId).Include(x => x.StructureType)
                 .FirstOrDefaultAsync();
 
+            if (employee.StructureType == null)
+                return res;
+
+            var structureType = employee.StructureType;
+            res.StructureType = _mapper.Map<HrPayrollStructureTypeSimple>(structureType);
+            res.StructureTypeId = structureType.Id;
+
+            res.Struct = await _mapper.ProjectTo<HrPayrollStructureBasic>(structObj.SearchQuery(x=>x.TypeId == structureType.Id && x.RegularPay == true)).FirstOrDefaultAsync();
+
             res.Name = $"Phiếu lương tháng {dateFrom.Value.ToString("M yyyy", new CultureInfo("vi-VN")).ToLower()} {employee.Name}";
 
-            var calendarId = employee.StructureType.DefaultResourceCalendarId;
+            var calendarId = structureType.DefaultResourceCalendarId;
 
             //list chu kỳ làm việc
             var attendanceIntervals = await calendarObj._AttendanceIntervals(calendarId.Value, dateFrom.Value, dateTo.Value);
 
             //tìm những chấm công theo nhân viên từ ngày đến ngày của tháng
-            var listChamcongs = await ccObj.SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Value.Date && x.TimeIn.Value.Date <= dateTo.Value.Date).ToListAsync();
+            var listChamcongs = await ccObj.SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Value.Date && x.TimeIn.Value.Date <= dateTo.Value.Date)
+                .Include(x=>x.WorkEntryType).ToListAsync();
 
             //gom lại theo từng work entry type
             var work_entry_type_dict = new Dictionary<Guid, ChamCongTinhCong>();
@@ -167,7 +196,6 @@ namespace Infrastructure.Services
             }
             // input cho tính tiền từng workedday line
             var socongchuan = await calendarObj.TinhSoCongChuan(calendarId.Value, dateFrom.Value, dateTo.Value, attendanceIntervals);
-            var structureType = employee.StructureType;
             var soTien1Cong = (employee.Wage.HasValue ? employee.Wage : 0) / (decimal)socongchuan.SoNgayCong;
 
             //tạo ra output
@@ -175,7 +203,6 @@ namespace Infrastructure.Services
             var work_entry_types = await workEntryTypeObj.SearchQuery(x => work_entry_type_ids.Contains(x.Id)).ToListAsync();
             var work_entry_type_dict_2 = work_entry_types.ToDictionary(x => x.Id, x => x);
 
-            var result = new HrPayslipOnChangeEmployeeResult();
             foreach (var item in work_entry_type_dict)
             {
                 var work_entry_type = work_entry_type_dict_2[item.Key];
@@ -189,17 +216,71 @@ namespace Infrastructure.Services
                     amount = (decimal)item.Value.SoGioCong * employee.HourlyWage.Value;
                 }
 
-                result.WorkedDayLines.Add(new HrPayslipWorkedDayDisplay
+                res.WorkedDayLines.Add(new HrPayslipWorkedDayDisplay
                 {
                     NumberOfDays = (decimal)item.Value.SoNgayCong,
                     NumberOfHours = (decimal)item.Value.SoGioCong,
                     WorkEntryTypeId = item.Key,
                     Name = work_entry_type.Name,
-                    Amount = amount
+                    Amount = Math.Round(amount)
                 });
             }
 
-            return result;
+            return res;
+        }
+
+        public async Task<HrPayslip> CreatePayslip(HrPayslipSave val)
+        {
+            var payslip = _mapper.Map<HrPayslip>(val);
+            payslip.CompanyId = CompanyId;
+            SaveWorkedDayLines(val, payslip);
+
+            return await CreateAsync(payslip);
+        }
+
+        public async Task UpdatePayslip(Guid id, HrPayslipSave val)
+        {
+            var payslip = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            if (payslip == null)
+                throw new Exception("payslip Not Found");
+
+            payslip = _mapper.Map(val, payslip);
+            SaveWorkedDayLines(val, payslip);
+
+            await UpdateAsync(payslip);
+        }
+
+        private void SaveWorkedDayLines(HrPayslipSave val, HrPayslip payslip)
+        {
+            var toRemove = new List<HrPayslipWorkedDays>();
+            foreach (var wd in payslip.WorkedDaysLines)
+            {
+                if (!val.WorkedDaysLines.Any(x => x.Id == wd.Id))
+                    toRemove.Add(wd);
+            }
+
+            foreach (var item in toRemove)
+                payslip.WorkedDaysLines.Remove(item);
+
+            var sequence = 0;
+            foreach (var wd in val.WorkedDaysLines)
+            {
+                if (wd.Id == Guid.Empty)
+                {
+                    var r = _mapper.Map<HrPayslipWorkedDays>(wd);
+                    r.Sequence = sequence++;
+                    payslip.WorkedDaysLines.Add(r);
+                }
+                else
+                {
+                    var line = payslip.WorkedDaysLines.FirstOrDefault(c => c.Id == wd.Id);
+                    if (line != null)
+                    {
+                        _mapper.Map(wd, line);
+                        line.Sequence = sequence++;
+                    }
+                }
+            }
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
@@ -213,7 +294,8 @@ namespace Infrastructure.Services
 
             foreach (var payslip in hrPayslips)
             {
-                if (payslip.State != "process")
+                if (payslip.State == "done") continue;
+                if (payslip.State != "verify")
                     throw new Exception("Chỉ những phiếu lương chờ xác nhận được vào sổ.");
 
                 var move = await _PreparePayslipMovesAsync(payslip);
@@ -373,6 +455,22 @@ namespace Infrastructure.Services
             foreach (var payslip in self)
                 payslip.TotalAmount = payslip.Lines.Sum(x => x.Amount);
         }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.AccountMove).ToListAsync();
+            var moveObj = GetService<IAccountMoveService>();
+            var move_ids = self.Where(x => x.AccountMove != null && x.AccountMove.State == "posted").Select(x => x.AccountMove.Id);
+            await moveObj.ButtonCancel(move_ids);
+            await moveObj.Unlink(move_ids);
+
+            //if (self.Any(x => x.State == "done"))
+            //    throw new Exception("Không thể hủy phiếu lương đã hoàn thành");
+
+            foreach (var payslip in self)
+                payslip.State = "draft";
+            await UpdateAsync(self);
+        }
     }
 
     public class HrPayslipOnChangeEmployeeResult
@@ -380,6 +478,11 @@ namespace Infrastructure.Services
         public List<HrPayslipWorkedDayDisplay> WorkedDayLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
 
         public string Name { get; set; }
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureTypeSimple StructureType { get; set; }
+
+        public HrPayrollStructureBasic Struct { get; set; }
     }
 
     public class HrPayslipDefaultGetResult

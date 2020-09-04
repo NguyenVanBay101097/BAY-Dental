@@ -86,17 +86,25 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Là phụ tá
         /// </summary>
         public bool? IsAssistant { get; set; }
-        public IEnumerable<ChamCongDisplay> ChamCongs { get; set; } = new List<ChamCongDisplay>();
-        public double SoNgayCong { get; set; }
+
+        /// <summary>
+        /// kết nối hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public CommissionBasic Commission { get; set; }
+
+        /// <summary>
+        /// kết nối người dùng
+        /// </summary>
+        public string UserId { get; set; }
+        public ApplicationUserSimple User { get; set; }
+
         public Guid? StructureTypeId { get; set; }
         public HrPayrollStructureTypeDisplay StructureType { get; set; }
 
-
-        public HrPayrollStructureBase Struct { get; set; }
         public decimal? Wage { get; set; }
         public decimal? HourlyWage { get; set; }
-
-
+        public DateTime? StartWorkDate { get; set; }
     }
 
     public class EmployeePaged
@@ -114,5 +122,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         //public bool? IsOther { get; set; }
         public string Position { get; set; }
+
+        public IEnumerable<Guid> Ids { get; set; }
     }
 }

@@ -7,6 +7,9 @@ namespace Umbraco.Web.Models.ContentEditing
     public class TCareCampaignSave
     {
         public string Name { get; set; }
+
         public string GraphXml { get; set; }
+
+        public DateTime? SheduleStart { get; set; }
     }
 }

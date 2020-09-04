@@ -9,6 +9,7 @@ export class EmployeePaged {
     position: string;
     isDoctor: boolean;
     isAssistant: boolean;
+    ids: string[];
 }
 
 export class EmployeeBasic {
@@ -25,13 +26,14 @@ export class EmployeeBasic {
 export class EmployeeDisplay extends EmployeeBasic {
     address: string;
     identityCard: string;
-    birthDay: string;
+    birthDay: any;
     isDoctor: boolean;
     isAssistant: boolean;
     structureTypeId: string;
     structureType: HrPayrollStructureTypeSimple;
     wage: number;
     hourlyWage: number;
+    startWorkDate: any;
 }
 
 export class PagedResult2<T>{

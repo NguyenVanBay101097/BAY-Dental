@@ -254,6 +254,16 @@ namespace TMTDentalAPI
             services.AddScoped<IAccountFinancialReportService, AccountFinancialReportService>();
             services.AddScoped<IReportJournalService, ReportJournalService>();
             services.AddScoped<IAccountReportGeneralLedgerService, AccountReportGeneralLedgerService>();
+            services.AddScoped<ICommissionService, CommissionService>();
+            services.AddScoped<ICommissionProductRuleService, CommissionProductRuleService>();
+            services.AddScoped<ISaleOrderLinePartnerCommissionService, SaleOrderLinePartnerCommissionService>();
+            services.AddScoped<ISaleOrderLinePaymentRelService, SaleOrderLinePaymentRelService>();
+            services.AddScoped<ICommissionReportService, CommissionReportService>();
+            services.AddScoped<ICommissionSettlementService, CommissionSettlementService>();
+            services.AddScoped<IPartnerTitleService, PartnerTitleService>();
+            services.AddScoped<ITCareScenarioService, TCareScenarioService>();
+            services.AddScoped<IFacebookWebhookJobService, FacebookWebhookJobService>();
+            services.AddScoped<ITCareReportService, TCareReportService>();
             services.AddScoped<IChamCongService, ChamCongService>();
             services.AddScoped<ISetupChamcongService, SetupChamcongService>();
             services.AddScoped<IWorkEntryTypeService, WorkEntryTypeService>();
@@ -265,6 +275,7 @@ namespace TMTDentalAPI
             services.AddScoped<IHrPayslipService, HrPayslipService>();
             services.AddScoped<IHrPayslipLineService, HrPayslipLineService>();
             services.AddScoped<IHrPayslipWorkedDayService, HrPayslipWorkedDayService>();
+            services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -282,6 +293,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PartnerProfile());
                 mc.AddProfile(new PartnerCategoryProfile());
                 mc.AddProfile(new PartnerSourceProfile());
+                mc.AddProfile(new PartnerTitleProfile());
                 mc.AddProfile(new ProvinceProfile());
                 mc.AddProfile(new DistrictProfile());
                 mc.AddProfile(new WardProfile());
@@ -366,6 +378,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LoaiThuChiProfile());
                 mc.AddProfile(new PhieuThuChiProfile());
                 mc.AddProfile(new AccountFinancialReportProfile());
+                mc.AddProfile(new CommissionProfile());
+                mc.AddProfile(new CommissionProductRuleProfile());
+                mc.AddProfile(new SaleOrderLinePaymentRelProfile());
+                mc.AddProfile(new TCareScenarioProfile());
                 mc.AddProfile(new ChamCongProfile());
                 mc.AddProfile(new SetupChamcongProfile());
                 mc.AddProfile(new WorkEntryTypeProfile());
@@ -377,6 +393,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrPayslipProfile());
                 mc.AddProfile(new HrPayslipLineProfile());
                 mc.AddProfile(new HrPayslipWorkedDayProfile());
+                mc.AddProfile(new HrPayslipRunProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -412,10 +429,12 @@ namespace TMTDentalAPI
                 }));
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer(option =>
-            {
-                option.FilterProvider = new ServerFilterProvider();
-            });
+            //services.AddHangfireServer(option =>
+            //{
+            //    option.FilterProvider = new ServerFilterProvider();
+            //});
+
+            services.AddHangfireServer();
 
             GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
             GlobalJobFilters.Filters.Add(new ServerTenantFilter());
@@ -522,7 +541,9 @@ namespace TMTDentalAPI
 
             app.UseAuthorization();
 
-            app.UseHangfireServer();
+            //app.UseHangfireServer();
+
+            app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints =>
             {

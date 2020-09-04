@@ -22,17 +22,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class HrPayslipLineSave
     {
-        public Guid? Id { get; set; }
-        public string Name { get; set; }
-        public string Code { get; set; }
-        public decimal? Quantity { get; set; }
+        public Guid Id { get; set; }
         public decimal? Amount { get; set; }
-        public decimal? Total { get; set; }
-        public Guid SlipId { get; set; }
-        public Guid SalaryRuleId { get; set; }
-        public decimal? Rate { get; set; }
-        public Guid? CategoryId { get; set; }
-        public int? Sequence { get; set; }
     }
 
     public class HrPayslipLineDisplay

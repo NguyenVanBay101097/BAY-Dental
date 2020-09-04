@@ -109,6 +109,7 @@ namespace Infrastructure.Services
                 .Include(x => x.PartnerHistoryRels)
                 .Include(x => x.Source)
                 .Include(x => x.ReferralUser)
+                .Include(x => x.Title)
                 .Include("PartnerPartnerCategoryRels.Category")
                 .Include("PartnerHistoryRels.History")
                 .FirstOrDefaultAsync();
@@ -418,6 +419,17 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
+                Name = x.Name
+            }).ToListAsync();
+            return partners;
+        }
+
+        public async Task<IEnumerable<PartnerSimpleContact>> SearchPartnersConnectSocial(PartnerPaged val)
+        {
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleContact
+            {
+                Id = x.Id,
+                Phone = x.Phone,
                 Name = x.Name
             }).ToListAsync();
             return partners;

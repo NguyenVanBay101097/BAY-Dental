@@ -19,6 +19,7 @@ namespace Infrastructure.Services
         Task<Partner> GetPartnerForDisplayAsync(Guid id);
         Task<IEnumerable<PartnerSimple>> SearchAutocomplete(string filter = "", bool? customer = null);
         Task<IEnumerable<PartnerSimple>> SearchPartnersCbx(PartnerPaged val);
+        Task<IEnumerable<PartnerSimpleContact>> SearchPartnersConnectSocial(PartnerPaged val);
         string GetFormatAddress(Partner partner);
         string GetGenderDisplay(Partner partner);
         Task<string> UploadImage(IFormFile file);

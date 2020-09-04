@@ -44,11 +44,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var model = await _resourceCalendarService.GetDisplayAsync(id);
-            if (model == null)
-                return BadRequest();
-
-            var res = _mapper.Map<ResourceCalendarDisplay>(model);
+            var res = await _resourceCalendarService.GetDisplayAsync(id);
             return Ok(res);
         }
 
@@ -70,7 +66,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, ResourceCalendarSave val)
         {
-            var model = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).FirstOrDefaultAsync();
+            var model = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).FirstOrDefaultAsync();
             if (val == null || model == null)
                 return BadRequest();
           
@@ -84,7 +80,7 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.ResourceCalendarAttendances).ToListAsync();
+            var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).ToListAsync();
             if (resourceCalendar == null)
                 return BadRequest();
 
@@ -93,6 +89,11 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-
+        [HttpGet("[action]")]
+        public IActionResult DefaultGet()
+        {
+            var res = _resourceCalendarService.DefaultGet();
+            return Ok(res);
+        }
     }
 }

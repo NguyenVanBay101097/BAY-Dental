@@ -10,9 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -51,6 +53,7 @@ namespace Infrastructure.Services
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,
+                TCareScenarioId = val.TCareScenarioId,
                 State = "draft"
             };
             return await CreateAsync(campaign);
@@ -60,22 +63,25 @@ namespace Infrastructure.Services
         {
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
-            var campaign = await SearchQuery(x => x.Id == val.Id && states.Contains(x.State)).FirstOrDefaultAsync();
-            var runAt = val.SheduleStart.Value;
+            var campaign = await SearchQuery(x => x.Id == val.Id && x.Active == false).FirstOrDefaultAsync();
+         
+            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+            var sequence = resultingMessage.Root.Sequence;
+            var rule = resultingMessage.Root.Rule;
+            if (sequence == null || rule == null)
+                 throw new Exception("điều kiện hoặc nội dung trống");
+          
+
+            var runAt = campaign.SheduleStart.HasValue ? campaign.SheduleStart.Value : DateTime.Today;
             campaign.State = "running";
+            campaign.Active = true;
             campaign.SheduleStart = runAt;
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            if (campaign.RecurringJobId == null)
-            {
-                //đặt tên lưu lại trong hangfire
-                campaign.RecurringJobId = $"{tenant}-{campaign.Name}-RecurringJob";
-
-            }
-            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(_tenant != null ? _tenant.Hostname : "localhost", campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
-
-
-
-
+            var jobId = $"{tenant}-tcare-campaign-{campaign.Id}";
+            campaign.RecurringJobId = jobId;
+            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(tenant, campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
             await UpdateAsync(campaign);
         }
 
@@ -83,30 +89,26 @@ namespace Infrastructure.Services
         {
             var states = new string[] { "running" };
             var campaigns = await SearchQuery(x => ids.Contains(x.Id) && states.Contains(x.State)).ToListAsync();
-            List<RecurringJobDto> list;
             foreach (var campaign in campaigns)
             {
                 campaign.State = "stopped";
-                campaign.SheduleStart = null;
-                using (var connection = JobStorage.Current.GetConnection())
-                {
-                    //truy vấn danh sách RecurringJob
-                    list = connection.GetRecurringJobs();
-                }
-                var job = list?.FirstOrDefault(j => j.Id == campaign.RecurringJobId);  // jobId is the recurring job ID, whatever that is
-                if (job != null && !string.IsNullOrEmpty(job.LastJobId))
-                {
-                    BackgroundJob.Delete(job.LastJobId);
-                    RecurringJob.RemoveIfExists(job.LastJobId);
-                }
-                RecurringJob.RemoveIfExists(job.Id = campaign.RecurringJobId);
-
+                campaign.Active = false;
+                if (!string.IsNullOrEmpty(campaign.RecurringJobId))
+                    RecurringJob.RemoveIfExists(campaign.RecurringJobId);
                 campaign.RecurringJobId = null;
-
             }
 
-
             await UpdateAsync(campaigns);
+        }
+
+        public async Task SetSheduleStart(TCareCampaignSetSheduleStart val)
+        {
+            var campaign = await GetByIdAsync(val.Id);
+            if (campaign != null)
+            {
+                campaign.SheduleStart = val.SheduleStart.HasValue ? val.SheduleStart.Value : DateTime.Today;
+                await UpdateAsync(campaign);
+            }
         }
     }
 }

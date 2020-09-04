@@ -30,7 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
-        //public EmployeeSimpleContact Doctor { get; set; }
         public string DoctorName { get; set; }
 
         /// <summary>
@@ -67,12 +66,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày hẹn
         /// </summary>
         public DateTime? Date { get; set; }
-
-        /// <summary>
-        ///  Bác sĩ
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
 
 
         /// <summary>
@@ -154,6 +147,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public string UserId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
     }
 
     public class AppointmentDefaultGet

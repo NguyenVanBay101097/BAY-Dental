@@ -39,6 +39,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => positionList.Contains(x.Category.Type));
             }
 
+            if (val.Ids != null)
+                query = query.Where(x => val.Ids.Contains(x.Id));
+
             if (val.IsDoctor.HasValue)
                 query = query.Where(x => x.IsDoctor == val.IsDoctor);
 
@@ -49,11 +52,25 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public override ISpecification<Employee> RuleDomainGet(IRRule rule)
+        {
+            //ra đc list company id ma nguoi dung dc phép
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.employee_comp_rule":
+                    return new InitialSpecification<Employee>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
+
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category)
+            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -81,9 +98,8 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
-        public async Task<Employee> CreateAsync(Employee entity)
+        public override async Task<Employee> CreateAsync(Employee entity)
         {
-            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
             if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
             {
                 var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
@@ -96,6 +112,11 @@ namespace Infrastructure.Services
             }
 
             return await base.CreateAsync(entity);
+        }
+
+        public async Task<Employee> GetByUserIdAsync(string userId)
+        {
+            return await SearchQuery(x => x.UserId == userId).FirstOrDefaultAsync();
         }
 
         //private async Task InsertDoctorSequence()
@@ -153,31 +174,6 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
-        }
-
-        public override ISpecification<Employee> RuleDomainGet(IRRule rule)
-        {
-            var companyId = CompanyId;
-            switch (rule.Code)
-            {
-                case "base.employee_comp_rule":
-                    return new InitialSpecification<Employee>(x => x.CompanyId == companyId);
-                default:
-                    return null;
-            }
-        }
-
-        public async Task<EmployeeDisplay> GetById(Guid Id)
-        {
-            var emp = await SearchQuery(x => x.Id == Id).Include(x => x.Category).Include("StructureType.DefaultStruct").FirstOrDefaultAsync();
-            var res = _mapper.Map<EmployeeDisplay>(emp);
-
-            if (emp.StructureTypeId.HasValue && emp.StructureType.DefaultStructId == null)
-            {
-                var structObj = GetService<IHrPayrollStructureService>();
-                res.Struct = await structObj.GetFirstOrDefault(emp.StructureTypeId.Value);
-            }
-            return _mapper.Map<EmployeeDisplay>(res);
         }
     }
 }

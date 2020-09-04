@@ -1,8 +1,9 @@
 import { WorkEntryTypeSave } from './../work-entry-type.service';
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { WorkEntryType, WorkEntryTypeService } from '../work-entry-type.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-work-entry-type-create-update-dialog',
@@ -14,38 +15,40 @@ export class WorkEntryTypeCreateUpdateDialogComponent implements OnInit {
   @Input() public id: string;
   title: string;
   oldColor: string;
-  
+
 
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private workEntryTypeService: WorkEntryTypeService
+    private workEntryTypeService: WorkEntryTypeService,
+    private notificationService: NotificationService
   ) { }
 
   public itemColors: string[] = ['#DB003B', '#DB022B', '#EB4F0D', '#FA8F0E', '#F45375', '#D23C88', '#BA0A80', '#911C7E', '#FEC121', '#CDCF00', '#06A2A8', '#52BDD3']
 
   ngOnInit() {
-
     this.formGroup = this.fb.group({
-      name: '',
+      name: ['', Validators.required],
       isHasTimeKeeping: false,
-      code: null,
-      sequence: null
-    })
+      code: ['', Validators.required],
+      sequence: 25,
+      roundDays: ['NO', Validators.required],
+      roundDaysType: null
+    });
 
-   if (this.id) {
+    if (this.id) {
       setTimeout(() => {
-       this.loadData();
-        });
+        this.loadData();
+      });
     }
   }
 
   loadData() {
     this.workEntryTypeService.get(this.id).subscribe(
-      result => {       
+      result => {
         this.formGroup.patchValue(result);
       }
-    )
+    );
   }
 
   chooseColor(color) {
@@ -62,18 +65,33 @@ export class WorkEntryTypeCreateUpdateDialogComponent implements OnInit {
       this.workEntryTypeService.update(this.id, val).subscribe(
         () => {
           this.activeModal.close(true);
+          this.notificationService.show({
+            content: 'Lưu thành công!',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
         }
-      )
+      );
     } else {
       this.workEntryTypeService.create(val).subscribe(
         () => {
           this.activeModal.close(true);
         }
-      )
+      );
     }
   }
 
- 
+  get roundDays() {return this.formGroup.get('roundDays'); }
+  get roundDaysType() {return this.formGroup.get('roundDaysType'); }
 
+  onChangeRounding() {
+    this.roundDaysType.setValidators(null);
 
+    if (this.roundDays.value !== 'NO') {
+      this.roundDaysType.setValidators([Validators.required]);
+      this.roundDaysType.updateValueAndValidity();
+    }
+  }
 }
