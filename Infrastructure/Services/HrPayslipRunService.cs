@@ -164,7 +164,9 @@ namespace Infrastructure.Services
             foreach (var run in payslipruns)
             {
                 await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
-                run.Slips.Clear();
+                //xóa các phiếu lương
+                await payslipObj.DeleteAsync(run.Slips);
+
                 run.State = "draft";
             }
 

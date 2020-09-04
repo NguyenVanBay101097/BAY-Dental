@@ -110,7 +110,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   onSave() {
     if (!this.myForm.valid) {
       return;
-    }
+    }   
 
     var val = this.myForm.value;
     val.dateStart = this.intlService.formatDate(val.dateStartObj, 'yyyy-MM-ddTHH:mm');
