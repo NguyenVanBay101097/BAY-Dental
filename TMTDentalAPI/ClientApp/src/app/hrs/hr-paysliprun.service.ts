@@ -20,8 +20,8 @@ export class HrPayslipRunDisplay{
   dateStart: string;
   dateEnd: string;
   state: string;
+  companyId: string;
   payslipCount: number;
-  slips: HrPayslipDisplay[];
 }
 
 export class HrPayslipRunPaged {
