@@ -256,6 +256,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.UserId))
                 query = query.Where(x => x.UserId == val.UserId);
 
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.DoctorId == val.EmployeeId);
+
             if (!string.IsNullOrEmpty(val.State))
             {
                 var stateList = val.State.Split(",");
