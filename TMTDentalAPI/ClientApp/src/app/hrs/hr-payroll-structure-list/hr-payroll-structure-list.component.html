@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox (selectionChange)="onchangeType($event)"  class="kendo-combobox-sm" placeholder="Lọc theo loại..." #typeCbx [data]="typeList" [textField]="'name'" [valueField]="'id'" [filterable]="true">
+            <kendo-combobox (selectionChange)="onchangeType($event)" [popupSettings]="{width:'auto'}"  class="kendo-combobox-sm" placeholder="Lọc theo loại..." #typeCbx [data]="typeList" [textField]="'name'" [valueField]="'id'" [filterable]="true">
             </kendo-combobox>
         </div>
     </div>
@@ -29,6 +29,13 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên">
+        </kendo-grid-column>
+        <kendo-grid-column field="typeName" title="Loại mẫu lương">
+        </kendo-grid-column>
+        <kendo-grid-column field="regularPay" title="Thông dụng">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <input type="checkbox" disabled [checked]="dataItem.regularPay">
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
