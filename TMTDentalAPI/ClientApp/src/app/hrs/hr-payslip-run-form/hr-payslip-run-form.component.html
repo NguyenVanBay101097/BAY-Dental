@@ -28,12 +28,17 @@
                     <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
                         *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
                         Lưu nháp
-                    </button>
-                    <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionDone()">
+                </button> 
+                <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-primary btn-sm"
+                        (click)="actionDone()">
                         Xác nhận
-                    </button>
-                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" (click)="createNew()">
+                </button> 
+                <button *ngIf="['done'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-danger btn-sm"
+                    (click)="actionCancel()">
+                    Hủy đợt lương
+                </button>               
+                <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
+                        (click)="createNew()">
                         Thêm mới
                     </button>
                 </div>
@@ -63,7 +68,7 @@
                             class="form-control" required formControlName="name" />
                         <span *ngIf="['confirm','done'].indexOf(paysliprun.state) !== -1">{{paysliprun.name}}</span>
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty )" class="text-danger">
                         <div *ngIf="f.name.errors.required">Nhập tên</div>
                     </div>
                 </div>

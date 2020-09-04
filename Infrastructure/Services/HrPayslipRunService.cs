@@ -26,7 +26,7 @@ namespace Infrastructure.Services
         }
 
         public async Task<PagedResult2<HrPayslipRunBasic>> GetPagedResultAsync(HrPayslipRunPaged val)
-        {
+        {   
             ISpecification<HrPayslipRun> spec = new InitialSpecification<HrPayslipRun>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<HrPayslipRun>(x => x.Name.Contains(val.Search)));
@@ -153,6 +153,25 @@ namespace Infrastructure.Services
 
             await UpdateAsync(payslipruns);
         }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var payslipObj = GetService<IHrPayslipService>();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "done").Include(x => x.Slips).ToListAsync();
+            if (payslipruns == null)
+                throw new Exception("Đợt lương không tồn tại");
+
+            foreach (var run in payslipruns)
+            {
+                await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
+                run.Slips.Clear();
+                run.State = "draft";
+            }
+
+            await UpdateAsync(payslipruns);
+        }
+
+
     }
 
     public class PaySlipRunConfirmViewModel

@@ -87,6 +87,10 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/ActionDone', ids);
   }
 
+  actionCancel(ids : string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
+  }
+
   update(id, val: HrPayslipRunSave) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
