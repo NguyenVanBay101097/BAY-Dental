@@ -59,36 +59,7 @@
     <table class="table table-bordered table-content">
         <thead>
             <tr>
-                <th *ngIf="flag" colspan="32" scope="col">
-                    <div class="float-right">
-                        <span class="mr-4 text-success">
-                            <i class="fas fa-circle mt-2 mr-1 "></i>
-                            <span class="pr-3"></span>
-                            Hoàn thành
-                        </span>
-                        <span class="mr-4 text-primary">
-                            <i class="fas fa-circle mt-2 mr-1"></i>
-                            <span class="pr-3"></span>
-                            Vào/ra
-                        </span>
-                        <span class="mr-4 text-warning">
-                            <i class="fas fa-circle mt-2 mr-1 "></i>
-                            <span class="pr-3"></span>
-                            Chưa chấm
-                        </span>
-                    </div>
-                </th>
-                <!-- <th *ngIf="!flag" colspan="31" scope="col">
-                    <button class="btn btn-primary btn-sm" (click)="previousWeekFilter()">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    Tháng {{filterMonth | date:'MM - yyyy'}}
-                    <button class="btn btn-primary btn-sm" (click)="nextWeekFilter()"><i
-                            class="fas fa-chevron-right"></i></button>
-                </th> -->
-            </tr>
-            <tr>
-                <th class="align-self-center" scope="col">Tên Nhân viên</th>
+                <th class="align-self-center" scope="col">Tên nhân viên</th>
                 <th scope="col" *ngFor="let date of dateList">
                     <div class="o_kanban_header">
                         <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
@@ -116,8 +87,8 @@
                             <ng-template #popContent>
                                 <b>Nhân viên: {{empl.name}}</b> <br>
                                 <b>Loại: </b> {{cc.workEntryType ? cc.workEntryType.name: ''}} <br>
-                                <b>Giờ vào: </b> {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): 'Chưa chấm'}} <br>
-                                <b>Giờ ra: </b>{{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): 'Chưa chấm'}} <br>
+                                <b>Giờ vào: </b> {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): ''}} <br>
+                                <b>Giờ ra: </b>{{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): ''}} <br>
                             </ng-template>
                             <ng-template #popTitle>
                                 {{cc.workEntryType? cc.workEntryType.name:'Chấm công'}} <b>{{empl.name}} </b> <br>
@@ -136,10 +107,9 @@
                             </div>
                         </div>
                         <div (click)="clickTimeSheetCreate($event,date.date,empl)" class="oe_kanban_timekepping">
-                            <div class="oe_kanban_timeSheet_create"
-                                (click)="clickTimeSheetCreate($event,date.date,empl)">
+                            <a class="oe_kanban_timeSheet_create" title="Thêm chấm công" (click)="clickTimeSheetCreate($event,date.date,empl)">
                                 <i class="fas fa-plus text-primary"></i>
-                            </div>
+                            </a>
                         </div>
                         <div class="oe_kanban_timeSheet" *ngIf="!date.chamCongs">
                             <div class="oe_kanban_timeSheet"></div>

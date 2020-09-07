@@ -119,4 +119,7 @@ export class TimeKeepingService {
     return this.http.get<ChamCongPagging>(this.base_api + this.apiUrl, { params: val })
   }
 
+  defaultGet(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/DefaultGet', val)
+  }
 }

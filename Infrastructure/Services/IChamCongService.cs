@@ -21,8 +21,6 @@ namespace Infrastructure.Services
         Task<ChamCong> GetLastChamCong(employeePaged val);
         Task CheckChamCong(IEnumerable<ChamCong> vals);
         Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val);
-        //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
-
-
+        Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val);
     }
 }

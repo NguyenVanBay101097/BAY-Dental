@@ -242,13 +242,13 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
-    });
+    }, () => {});
   }
 
   clickTimeSheetCreate(evt, date, employee) {
     evt.stopPropagation();
     const modalRef = this.modalService.open(TimeKeepingSetupDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm 1 chấm công';
+    modalRef.componentInstance.title = 'Thêm chấm công';
     modalRef.componentInstance.employee = employee;
     modalRef.componentInstance.dateTime = date;
     modalRef.result.then(result => {
@@ -264,7 +264,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
-    });
+    }, () => {});
   }
 
   setupWordEntryType() {
@@ -302,7 +302,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   importFileExcell() {
-    const modalRef = this.modalService.open(TimeKeepingImportFileComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(TimeKeepingImportFileComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.result.then(res => {
       this.loadEmployee();
     })
