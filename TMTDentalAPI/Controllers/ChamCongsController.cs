@@ -48,12 +48,11 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-
-            var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).Include(x => x.Employee).FirstOrDefaultAsync();
+            var chamcong = await _mapper.ProjectTo<ChamCongDisplay>(_chamCongService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (chamcong == null)
                 return NotFound();
-            var res = _mapper.Map<ChamCongDisplay>(chamcong);
-            return Ok(res);
+
+            return Ok(chamcong);
         }
 
         [AllowAnonymous]
@@ -80,171 +79,48 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ChamCongSave chamCongSave)
+        public async Task<IActionResult> Create(ChamCongSave val)
         {
-            var chamcong = _mapper.Map<ChamCong>(chamCongSave);
-            chamcong.Status = await _chamCongService.GetStatus(chamcong);
-            chamcong.CompanyId = CompanyId;
+            var chamcong = _mapper.Map<ChamCong>(val);
             await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.CreateAsync(chamcong);
             _unitOfWork.Commit();
-            return Ok(_mapper.Map<ChamCongDisplay>(chamcong));
+
+            var display = _mapper.Map<ChamCongDisplay>(chamcong);
+            return Ok(display);
         }
 
-       
-        //[HttpPost("CreateList")]
-        //public async Task<IActionResult> CreateList(IEnumerable<ChamCongSave> chamCongSaves)
-        //{
-        //    await _chamCongService.CreateListChamcongs(_mapper.Map<IEnumerable<ChamCong>>(chamCongSaves));
-        //    return Ok();
-        //}
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, ChamCongSave chamCongSave)
+        public async Task<IActionResult> Update(Guid id, ChamCongSave val)
         {
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (chamcong == null)
-            {
                 return NotFound();
-            }
-            chamcong = _mapper.Map(chamCongSave, chamcong);
-            chamcong.Status = await _chamCongService.GetStatus(chamcong);
-            chamcong.CompanyId = CompanyId;
+
+            chamcong = _mapper.Map(val, chamcong);
             await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.UpdateAsync(chamcong);
             _unitOfWork.Commit();
-            return Ok();
+
+            return NoContent();
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (chamcong == null)
-            {
                 return NotFound();
-            }
+
             await _chamCongService.DeleteAsync(chamcong);
             return NoContent();
         }
 
-        
-        [HttpPost("action")]
-        public async Task<IActionResult> ExportTemplateExcell(PartnerPaged val)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGet(ChamCongDefaultGetPost val)
         {
-            var stream = new MemoryStream();
-            var data = new List<ImportFileExcellChamCongModel>() {
-               new ImportFileExcellChamCongModel{
-                   MaNV = "NV00001",
-                   Time = DateTime.Parse("8/4/2020 8:00"),
-                   Date = DateTime.Parse("8/4/2020"),
-                   Type = "check-in",
-                   CodeWorkEntryType ="tkp"
-                },
-               new ImportFileExcellChamCongModel{
-                   MaNV = "NV00001",
-                   Time = DateTime.Parse("8/4/2020 17:30"),
-                   Date = DateTime.Parse("8/4/2020"),
-                   Type = "check-out",
-                   CodeWorkEntryType ="tkp"
-                }
-            };
-            byte[] fileContent;
-            using (var package = new ExcelPackage(stream))
-            {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-
-                worksheet.Cells[1, 1].Value = "Mã NV";
-                worksheet.Cells[1, 2].Value = "Ngày";
-                worksheet.Cells[1, 3].Value = "Thời gian";
-                worksheet.Cells[1, 4].Value = "Vào/Ra";
-                worksheet.Cells[1, 5].Value = "Mã loại chấm công";
-
-                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
-
-                var row = 2;
-                foreach (var item in data)
-                {
-                    worksheet.Cells[row, 1].Value = item.MaNV;
-                    worksheet.Cells[row, 2].Value = item.Date;
-                    worksheet.Cells[row, 2].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 3].Value = item.Time;
-                    worksheet.Cells[row, 3].Style.Numberformat.Format = "HH:mm";
-                    worksheet.Cells[row, 4].Value = item.Type;
-                    worksheet.Cells[row, 4].Value = item.CodeWorkEntryType;
-                    row++;
-                }
-
-                worksheet.Column(4).Style.Numberformat.Format = "@";
-                worksheet.Column(5).Style.Numberformat.Format = "@";
-
-                package.Save();
-
-                fileContent = stream.ToArray();
-            }
-
-            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            stream.Position = 0;
-
-            return new FileContentResult(fileContent, mimeType);
+            var res = await _chamCongService.DefaultGet(val);
+            return Ok(res);
         }
-
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> ExportExcelFile(employeePaged val)
-        //{
-        //    var stream = new MemoryStream();
-        //    var data = await _chamCongService.GetByEmployeePaged(val);
-        //    byte[] fileContent;
-        //    int dateStart = val.From.HasValue ? val.From.Value.Day : 1;
-        //    int dateEnd = val.To.HasValue ? val.To.Value.Day : 1;
-        //    using (var package = new ExcelPackage(stream))
-        //    {
-
-
-        //        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-
-
-        //        worksheet.Cells[2, 1].Value = "Tên nhân viên";
-        //        worksheet.Cells[2, 2].Value = "Chức vụ";
-
-        //        for (int i = dateStart + 2; i <= dateEnd + 2; i++)
-        //        {
-        //            worksheet.Cells[2, i].Value = i - 2;
-        //        }
-
-        //        worksheet.Cells["A1:K1"].Style.Font.Bold = true;
-
-        //        var row = 3;
-        //        foreach (var item in data.Items)
-        //        {
-        //            worksheet.Cells[row, 1].Value = item.Name + $" ({item.Ref})";
-        //            worksheet.Cells[row, 2].Value = item.IsDoctor.Value == true ? "Bác sĩ" : (item.IsAssistant.Value == true ? "Y tá" : "Chưa có chức vụ");
-        //            for (int i = dateStart; i <= dateEnd; i++)
-        //            {
-        //                foreach (var cc in item.ChamCongs)
-        //                {
-
-        //                    if ((cc.TimeIn.HasValue ? cc.TimeIn.Value.Day : (cc.TimeOut.HasValue ? cc.TimeOut.Value.Day : 0)) == i)
-        //                    {
-        //                        worksheet.Cells[row, i + 2].Value = "vào: " + (cc.TimeIn.HasValue ? cc.TimeIn.Value.ToString("HH:mm") : "chưa chấm") + "\r\n" + " ra: " + (cc.TimeOut.HasValue ? cc.TimeOut.Value.ToString("HH:mm") : "chưa chấm");
-        //                    }
-        //                }
-        //            }
-
-        //            row++;
-        //        }
-
-        //        worksheet.Column(4).Style.Numberformat.Format = "@";
-        //        worksheet.Column(5).Style.Numberformat.Format = "@";
-
-        //        package.Save();
-
-        //        fileContent = stream.ToArray();
-        //    }
-
-        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        //    stream.Position = 0;
-
-        //    return new FileContentResult(fileContent, mimeType);
-        //}
     }
 }

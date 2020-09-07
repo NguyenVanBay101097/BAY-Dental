@@ -11,6 +11,7 @@ import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -45,36 +46,47 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      timeIn: [null, Validators.required],
-      timeOut: null,
-      workEntryTypeId: [null, Validators.required]
-    })
-
-
-    if (this.id) {
-      this.loadFormApi();
-    }
-    // if (this.today.getDate() > this.dateTime.getDate()) {
-    //   this.formGroup.disable();
-    // }
-    this.loadWorkEntryType();
-    this.workCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.workCbx.loading = true)),
-      switchMap(value => this.searchWorkEntryType(value))
-    ).subscribe(result => {
-      this.filterdWorks = result.items;
-      this.workCbx.loading = false;
+      timeInObj: [null, Validators.required],
+      timeOutObj: null,
+      workEntryTypeId: [null, Validators.required],
+      companyId: null,
+      employeeId: null
     });
 
+    setTimeout(() => {
+      if (this.id) {
+        this.loadFormApi();
+      } else {
+        this.loadDefault();
+      }
+  
+      this.loadWorkEntryType();
+
+      this.workCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.workCbx.loading = true)),
+        switchMap(value => this.searchWorkEntryType(value))
+      ).subscribe(result => {
+        this.filterdWorks = result.items;
+        this.workCbx.loading = false;
+      });
+    });
+  }
+
+  loadDefault() {
+    var val = { employeeId: this.employee.id };
+    this.timeKeepingServive.defaultGet(val).subscribe((result: any) => {
+      this.formGroup.patchValue(result);
+      if (result.workEntryType) {
+        this.filterdWorks = _.unionBy(this.filterdWorks, [result.workEntryType], 'id');
+      }
+    });
   }
 
   loadWorkEntryType() {
     this.searchWorkEntryType().subscribe(
       result => {
-        this.filterdWorks = result.items;
-        if (this.filterdWorks && this.filterdWorks.length > 0 && !this.chamCong.workEntryTypeId)
-          this.formGroup.get('workEntryTypeId').patchValue(this.filterdWorks[0].id);
+        this.filterdWorks = _.unionBy(this.filterdWorks, result.items, 'id');
       }
     )
   }
@@ -91,67 +103,12 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     this.timeKeepingServive.get(this.id).subscribe(
       result => {
         this.chamCong = result;
-        this.formGroup.get('workEntryTypeId').patchValue(this.chamCong.workEntryTypeId);
-        if (this.chamCong && this.chamCong.timeIn) {
-          this.formGroup.get('timeIn').setValue(new Date(this.chamCong.timeIn));
-          this.timeIn = new Date(this.chamCong.timeIn);
-        }
-        if (this.chamCong && this.chamCong.timeOut) {
-          this.formGroup.get('timeOut').setValue(new Date(this.chamCong.timeOut));
-          this.timeOut = new Date(this.chamCong.timeOut);
-        }
+        this.formGroup.patchValue(result);
+        this.formGroup.get('timeInObj').setValue(result.timeIn ? new Date(result.timeIn) : null);
+        this.formGroup.get('timeOutObj').setValue(result.timeOut ? new Date(result.timeOut) : null);
+        this.dateTime = new Date(this.intl.formatDate(new Date(result.timeIn), "yyyy-MM-dd"));
       }
     )
-  }
-
-  checkTimeIn() {
-    var val = {
-      employeeId: this.employee.id,
-      date: this.intl.formatDate(this.dateTime, "yyyy-MM-dd"),
-    }
-    return this.timeKeepingServive.getLastChamCong(val);
-  }
-
-  changeTimeIn(time: Date) {
-    if (time) {
-      this.timeIn = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
-      // if (this.timeOut && this.timeIn > this.timeOut) {
-      //   alert("Thời gian vào không được lớn hơn thời gian ra. Vui lòng nhập lại thời gian vào");
-      //   this.error = true;
-      //   return;
-      // }
-      // this.checkTimeIn().subscribe(
-      //   result => {
-      //     if (result.timeOut && this.timeIn < new Date(result.timeOut)) {
-      //       this.error = true;
-      //       alert(`Giờ vào của chấm công tiếp theo phải lơn hơn giờ ra của chấm công cũ (${this.intl.formatDate(new Date(result.timeOut), "HH:mm")}) trong ngày ${this.intl.formatDate(this.dateTime, "dd-MM-yyyy")}`);
-      //     } else if (!result.timeOut) {
-      //       this.error = true;
-      //       alert("Bạn phải hoàn thành chấm công trước đó trước khi tạo 1 chấm công mới. Vui lòng hoàn thành và thao tác lại !")
-      //     } else {
-      //       this.error = false;
-      //     }
-      //   }
-      // );
-    }
-    else {
-      this.timeIn = null;
-    }
-  }
-
-  changeTimeOut(time: Date) {
-    if (time) {
-      this.timeOut = new Date(this.dateTime.getFullYear(), this.dateTime.getMonth(), this.dateTime.getDate(), time.getHours(), time.getMinutes());
-      // if (this.timeIn > this.timeOut) {
-      //   this.error = true;
-      //   alert("Thời gian ra không được nhỏ hơn thời gian vào. Vui lòng nhập lại thời gian ra");
-      // } else {
-      //   this.error = false;
-      // }
-    }
-    else {
-      this.timeOut = null;
-    }
   }
 
   delete(item) {
@@ -168,16 +125,17 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   }
 
   onSave() {
-    if (!this.employee)
+    if (this.formGroup.invalid) {
       return false;
-    if (this.formGroup.invalid)
-      return false;
-    var val = new ChamCongSave();
-    val.timeIn = this.timeIn ? this.intl.formatDate(this.timeIn, "yyyy-MM-ddTHH:mm") : '';
-    val.timeOut = this.timeOut ? this.intl.formatDate(this.timeOut, "yyyy-MM-ddTHH:mm") : '';
-    val.employeeId = this.employee.id;
-    val.date = this.intl.formatDate(this.dateTime, "yyyy-MM-dd");
-    val.workEntryTypeId = this.formGroup.get('workEntryTypeId').value;
+    }
+    debugger;
+    var val = Object.assign({}, this.formGroup.value);
+    var timeIn = new Date(`${this.intl.formatDate(this.dateTime, "yyyy-MM-dd")} ${this.intl.formatDate(val.timeInObj, "HH:mm:ss")}`);
+    var timeOut = val.timeOutObj ? new Date(`${this.intl.formatDate(this.dateTime, "yyyy-MM-dd")} ${this.intl.formatDate(val.timeOutObj, "HH:mm")}`) : null;
+
+    val.timeIn = this.intl.formatDate(timeIn, "yyyy-MM-ddTHH:mm");
+    val.timeOut = timeOut ? this.intl.formatDate(timeOut, "yyyy-MM-ddTHH:mm") : null;
+
     if (this.id) {
       this.timeKeepingServive.update(this.id, val).subscribe(
         x => {
@@ -196,15 +154,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         }
       )
     }
-    // else if (this.today.getDate() == this.dateTime.getDate()) {
-    //   this.timeKeepingServive.create(val).subscribe(
-    //     result => {
-    //       this.activeModal.close();
-    //     }
-    //   )
-    // } else {
-    //   this.activeModal.close();
-    // }
   }
 
 }

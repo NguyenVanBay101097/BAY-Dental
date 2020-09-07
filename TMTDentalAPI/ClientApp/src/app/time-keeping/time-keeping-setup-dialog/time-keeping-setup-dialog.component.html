@@ -1,7 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" ngbAutofocus data-dismiss="modal" aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup" kendo-validator="validator">
@@ -12,28 +12,10 @@
                         <tbody>
                             <tr *ngIf="employee">
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nhân Viên</label>
+                                    <label class="o_form_label">Nhân viên</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" *ngIf="employee">
                                     {{employee.name}}
-                                </td>
-                            </tr>
-                            <tr *ngIf="id">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Số giờ</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    {{chamCong.timeIn && chamCong.timeOut ? chamCong.hourWorked : 0 }}
-                                </td>
-                            </tr>
-                            <tr *ngIf="id">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Trạng Thái</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="chamCong.timeIn && chamCong.status != 'done'">Chấm vào</span>
-                                    <span *ngIf="chamCong.timeOut && chamCong.status != 'done'">Chấm ra</span>
-                                    <span *ngIf="chamCong.status == 'done'">Hoàn thành</span>
                                 </td>
                             </tr>
                             <tr>
@@ -65,19 +47,17 @@
                                     <label class="o_form_label ">Giờ vào</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-timepicker (valueChange)="changeTimeIn($event)" formControlName="timeIn">
+                                    <kendo-timepicker formControlName="timeInObj">
                                     </kendo-timepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label ">Giờ ra</label>
+                                    <label class="o_form_label">Giờ ra</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-timepicker #timeOutRef (valueChange)="changeTimeOut($event)"
-                                        formControlName="timeOut">
-                                    </kendo-timepicker><br>
-                                    <!-- <span class="text-danger" *ngIf="error">Thời gian ra không được nhỏ hơn thời gian vào. Vui lòng nhập lại thời gian ra</span> -->
+                                    <kendo-timepicker formControlName="timeOutObj">
+                                    </kendo-timepicker>
                                 </td>
                             </tr>
                         </tbody>
@@ -88,7 +68,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="formGroup.invalid || error"
+    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="formGroup.invalid"
         (click)="onSave()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
     <button *ngIf="id" type="button" class="btn btn-danger ml-2" accesskey="x" (click)="delete(chamCong)">Xóa</button>

@@ -594,33 +594,40 @@ namespace Infrastructure.Services
             var empObj = GetService<IEmployeeService>();
             foreach (var val in vals)
             {
-                var emp = await empObj.GetByIdAsync(val.EmployeeId);
                 // Thời gian vào không được trống
-                var message = $"Không thể tạo chấm công cho nhân viên {emp.Name}";
                 if (!val.TimeIn.HasValue)
-                    throw new Exception($"{message} vì thời gian vào không được bỏ trống.");
+                    throw new Exception("Thời gian vào không được bỏ trống.");
 
                 // Thời giân vào không được lớn hơn thời gian ra 
-                if (val.TimeOut.HasValue && val.TimeIn > val.TimeOut)
-                    throw new Exception($"{message} vì thời gian vào ({val.TimeIn.Value:HH:mm} ) phải nhỏ hơn thời gian ra ({val.TimeOut.Value:HH:mm}) trong ngày {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                if (val.TimeOut.HasValue && val.TimeOut < val.TimeIn)
+                    throw new Exception("Thời gian ra không được nhỏ hơn thời gian vào");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
                 var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
                 if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                    throw new Exception($"{message}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
-
-                if (val.TimeOut.HasValue)
                 {
-                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                    if (cc_sau != null && cc_sau != cc_truoc)
-                        throw new Exception($"{message}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
+                    var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
                 }
-                else
+
+                if (!val.TimeOut.HasValue)
                 {
                     // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
                     var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
                     if (cc != null)
-                        throw new Exception($"{message}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                    {
+                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                    }
+                }
+                else
+                {
+                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                    if (cc_sau != null && cc_sau != cc_truoc)
+                    {
+                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
+                    }
                 }
             }
         }
@@ -647,8 +654,6 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
-            _ComputeStatusChamCong(entities);
-            _ComputeSoGioMotCong(entities);
             await base.CreateAsync(entities);
             await CheckChamCong(entities);
             return entities;
@@ -656,10 +661,31 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
-            _ComputeStatusChamCong(entities);
-            _ComputeSoGioMotCong(entities);
             await base.UpdateAsync(entities);
             await CheckChamCong(entities);
+        }
+
+        public async Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val)
+        {
+            var res = new ChamCongDefaultGetResult();
+            if (val.EmployeeId.HasValue)
+            {
+                var employeeObj = GetService<IEmployeeService>();
+                var employee = await employeeObj.GetByIdAsync(val.EmployeeId);
+                res.EmployeeId = employee.Id;
+                res.Employee = _mapper.Map<EmployeeBasic>(employee);
+                res.CompanyId = employee.CompanyId ?? CompanyId;
+            }
+
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+            if (workEntryType != null)
+            {
+                res.WorkEntryTypeId = workEntryType.Id;
+                res.WorkEntryType = _mapper.Map<WorkEntryTypeBasic>(workEntryType);
+            }
+
+            return res;
         }
     }
 }
