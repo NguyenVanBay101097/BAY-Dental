@@ -10,15 +10,13 @@ export class TimeKeepingDateFilterComponent implements OnInit {
 
   @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
   @Output() searchChange = new EventEmitter<any>();
-  @Input() currentMonth: Date;
-
   dateFrom: any;
   dateTo: any;
   monthOptionSelect: any;
   currentDate = new Date();
   lastDate: any;
+  nextDate: any;
   otherDate: any;
-
   optionMonths: any;
 
   constructor() { }
@@ -27,27 +25,28 @@ export class TimeKeepingDateFilterComponent implements OnInit {
     this.lastDate = new Date();
     this.lastDate.setDate(1);
     this.lastDate.setMonth(this.lastDate.getMonth() - 1);
+    
+    this.nextDate = new Date();
+    this.nextDate.setDate(1);
+    this.nextDate.setMonth(this.nextDate.getMonth() + 1);
 
     this.optionMonths = [
+      { text: 'Tháng sau', value: this.nextDate },
       { text: 'Tháng này', value: this.currentDate },
-      { text: 'Tháng trước', value: this.lastDate },
+      { text: 'Tháng trước', value: this.lastDate }
     ];
   }
 
   onSelectMonth(e) {
-
     if (e.value === '') {
       this.dateFrom = '';
       this.dateTo = '';
     } else {
-
       this.monthOptionSelect = e;
       this.dateFrom = new Date(e.value.getFullYear(), e.value.getMonth(), 1);
       this.dateTo = new Date(e.value.getFullYear(), e.value.getMonth() + 1, 0);
-
       this.otherDate = null;
     }
-
     this.onChangeData();
   }
 

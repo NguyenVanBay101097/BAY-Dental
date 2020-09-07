@@ -34,7 +34,7 @@ registerLocaleData(localeVi, "vi");
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     CommonModule,
