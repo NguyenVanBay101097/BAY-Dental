@@ -48,11 +48,24 @@ export class TimeSheetEmployee {
   empId: string;
 }
 
-export class TimeKeepingSave {
-
+export class ImportResponse {
+  success: boolean;
+  errors: string[];
+  message: string;
 }
 
+export class ChamCongPaged {
+  from: string;
+  to: string;
+  limit: number;
+  offset: number;
+}
 
+export class ChamCongPagging {
+  totalItems: number;
+  limit: number;
+  items: ChamCongBasic[]
+}
 
 @Injectable({
   providedIn: 'root'
@@ -61,17 +74,12 @@ export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/ChamCongs";
-  apiUrlWorkingEntryType = "api/WorkEntryTypes";
   create(val): Observable<ChamCongSave> {
     return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
   }
 
   update(id, val) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
-  }
-
-  getAllByEmpId(val): Observable<ChamCongBasic[]> {
-    return this.http.get<ChamCongBasic[]>(this.base_api + this.apiUrl, { params: val });
   }
 
   GetsetupTimeKeeping() {
@@ -87,8 +95,8 @@ export class TimeKeepingService {
       { responseType: "blob" });
   }
 
-  actionImport(val) {
-    return this.http.post(this.base_api + this.apiUrl + '/ActionImport', val);
+  actionImport(val): Observable<ImportResponse> {
+    return this.http.post<ImportResponse>(this.base_api + this.apiUrl + '/ExcelImportCreate', val);
   }
 
   CreateSetupChamcong(val) {
@@ -99,5 +107,19 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 
-  
+  getLastChamCong(val): Observable<ChamCongBasic> {
+    return this.http.get<ChamCongBasic>(this.base_api + this.apiUrl + '/GetLastChamCong', { params: val });
+  }
+
+  deleteChamCong(id) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  getPaged(val): Observable<ChamCongPagging> {
+    return this.http.get<ChamCongPagging>(this.base_api + this.apiUrl, { params: val })
+  }
+
+  defaultGet(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/DefaultGet', val)
+  }
 }

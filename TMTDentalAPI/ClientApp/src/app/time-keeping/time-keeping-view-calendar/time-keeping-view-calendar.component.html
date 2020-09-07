@@ -4,95 +4,62 @@
             <li class="active">{{title}}</li>
         </ol>
         <div class="o_cp_searchview">
-            <input type="text" class="o_searchview_input form-control btn-sm" placeholder="Tìm kiếm theo tên nhân viên"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <!-- <button class="btn btn-primary mr-2 btn-sm" (click)="changeWeekMonth('weeks')"
-                        accesskey="c">Tuần</button> -->
-                    <!-- <button class="btn btn-primary btn-sm" (click)="changeWeekMonth('months')"
-                        accesskey="c">Tháng</button> -->
+                    <button (click)="importFileExcell()" class="btn btn-outline-primary mr-3 btn-sm">
+                        Import<i class="fas fa-file-import ml-1"></i>
+                    </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
+                <div class="float-left">
+                    <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
+                    </app-time-keeping-date-filter>
+                </div>
             </div>
         </div>
         <div class="o_cp_right">
+            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" [data]="listEmployeies"
+                [textField]="'name'" [filterable]="true" #empCbx (selectionChange)="empChange($event)"
+                [valueField]="'id'">
+            </kendo-combobox>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
+    <!-- <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
         <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle><i
                 class="fas fa-cog"></i></button>
         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button (click)="setupTimeKeeping()" ngbDropdownItem>Cầu hình chấm công</button>
             <button (click)="setupWordEntryType()" ngbDropdownItem>Loại đầu vào công việc</button>
         </div>
-    </div>
-    <div class="float-right pb-2">
+    </div> -->
+    <!-- <div class="float-right pb-2">
         <div class="d-inline-flex">
-            <button (click)="importFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">
+            <button (click)="importFileExcell()" class="btn btn-outline-primary mr-3 btn-sm">
                 Import<i class="fas fa-file-import ml-1"></i>
             </button>
         </div>
-    </div>
+    </div> -->
     <!-- <div class="float-right pb-2">
         <div class="d-inline-flex">
             <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i
                     class="fas fa-file-export"></i></button>
         </div>
     </div> -->
-    <div class="float-right pb-2 mr-3">
+    <!-- <div class="float-right pb-2 mr-3">
         <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" (searchChange)="buttonFilterMonth($event)"
             [title]="'Thời gian'" [dateTo]="monthEnd"></app-tai-date-range-filter-dropdown>
-    </div>
+    </div> -->
     <table class="table table-bordered table-content">
         <thead>
             <tr>
-                <th *ngIf="flag" colspan="32" scope="col">
-                    <div class="float-left">
-                        <button class="btn btn-secondary btn-sm" (click)="previousMonthFilter(filterMonth)">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <span class="title_month">Tháng {{filterMonth | date:'MM - yyyy'}}</span>
-                        <button class="btn btn-secondary btn-sm" (click)="nextMonthFilter(filterMonth)">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="float-right">
-                        <span class="mr-4 text-success">
-                            <i class="fas fa-circle mt-2 mr-1 "></i>
-                            <span class="pr-3"></span>
-                            Hoàn thành
-                        </span>
-                        <span class="mr-4 text-primary">
-                            <i class="fas fa-circle mt-2 mr-1"></i>
-                            <span class="pr-3"></span>
-                            Vào/ra
-                        </span>
-                        <span class="mr-4 text-warning">
-                            <i class="fas fa-circle mt-2 mr-1 "></i>
-                            <span class="pr-3"></span>
-                            Chưa chấm
-                        </span>
-                    </div>
-                </th>
-                <!-- <th *ngIf="!flag" colspan="31" scope="col">
-                    <button class="btn btn-primary btn-sm" (click)="previousWeekFilter()">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    Tháng {{filterMonth | date:'MM - yyyy'}}
-                    <button class="btn btn-primary btn-sm" (click)="nextWeekFilter()"><i
-                            class="fas fa-chevron-right"></i></button>
-                </th> -->
-            </tr>
-            <tr>
-                <th class="align-self-center" scope="col">Tên Nhân viên</th>
+                <th class="align-self-center" scope="col">Tên nhân viên</th>
                 <th scope="col" *ngFor="let date of dateList">
                     <div class="o_kanban_header">
                         <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
@@ -114,30 +81,35 @@
                 <th scope="row" style="min-width: 200px;">{{empl.name}}</th>
                 <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                     <div class="oe_kanban_content">
-                        <div class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
+                        <div [ngClass]="{'mb-1': date.chamCongs && date.chamCongs.length > 1}"
+                            class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
                             (click)="clickTimeSheet($event, cc.id, date.date, empl)">
-                            <div class="oe_kanban_timeSheet"
-                                ngbPopover="Tên: {{empl.name}} | Loại: {{cc.workEntryType ? cc.workEntryType.name: ''}} | Giờ vào : {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): 'Chưa chấm'}} | Giờ ra : {{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): 'Chưa chấm'}}"
-                                popoverTitle="Chấm công {{empl.name}}"
-                                [ngStyle]="{'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'}">
-                                <span
-                                    title="{{cc.workEntryType ? cc.workEntryType.name: ''}}">{{cc.workEntryType ? cc.workEntryType.name: ''}}
+                            <ng-template #popContent>
+                                <b>Nhân viên: {{empl.name}}</b> <br>
+                                <b>Loại: </b> {{cc.workEntryType ? cc.workEntryType.name: ''}} <br>
+                                <b>Giờ vào: </b> {{cc.timeIn ? (cc.timeIn | date: 'HH:mm'): ''}} <br>
+                                <b>Giờ ra: </b>{{cc.timeOut ? (cc.timeOut | date: 'HH:mm'): ''}} <br>
+                            </ng-template>
+                            <ng-template #popTitle>
+                                {{cc.workEntryType? cc.workEntryType.name:'Chấm công'}} <b>{{empl.name}} </b> <br>
+                                {{cc.timeIn | date:'EEEE, dd/MM/yyyy'}}
+                            </ng-template>
+
+
+                            <div class="oe_kanban_timeSheet" [ngbPopover]="popContent" [popoverTitle]="popTitle"
+                                container="body" [ngStyle]=" {'background-color': cc.workEntryType ? cc.workEntryType.color: '#dee2e6'
+                                }">
+                                <span>{{cc.workEntryType ? cc.workEntryType.name: ''}}
                                 </span>
                                 <span class="time_sheet_type">
-                                    <i title="Hoàn thành chấm công" *ngIf="cc.status == 'done'"
-                                        class="text-success fas fa-circle"></i>
-                                    <i title="Chấm vào/Chấm ra" *ngIf="cc.status == 'process'"
-                                        class="text-primary fas fa-circle"></i>
-                                    <i title="Chưa chấm công" *ngIf="cc.status == 'intitial'"
-                                        class="text-warning fas fa-circle"></i>
+                                    <i title="Chưa check-out" *ngIf="!cc.timeOut" class="text-danger fas fa-circle"></i>
                                 </span>
                             </div>
                         </div>
                         <div (click)="clickTimeSheetCreate($event,date.date,empl)" class="oe_kanban_timekepping">
-                            <div class="oe_kanban_timeSheet_create"
-                                (click)="clickTimeSheetCreate($event,date.date,empl)">
+                            <a class="oe_kanban_timeSheet_create" title="Thêm chấm công" (click)="clickTimeSheetCreate($event,date.date,empl)">
                                 <i class="fas fa-plus text-primary"></i>
-                            </div>
+                            </a>
                         </div>
                         <div class="oe_kanban_timeSheet" *ngIf="!date.chamCongs">
                             <div class="oe_kanban_timeSheet"></div>

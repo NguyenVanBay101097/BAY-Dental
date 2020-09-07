@@ -21,15 +21,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? Date { get; set; }
 
-        /// <summary>
-        /// Thời gian vào 
-        /// </summary>
-        public DateTime TimeIn { get; set; }
 
         /// <summary>
-        /// Thời gian ra
+        /// Thời gian vào/ra
         /// </summary>
-        public DateTime TimeOut { get; set; }
+        public DateTime Time { get; set; }
 
         /// <summary>
         /// Kiều châm công: 
@@ -41,5 +37,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// 6: ot-out - tăng ca ra
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// code : tkp
+        /// </summary>
+        public string CodeWorkEntryType { get; set; }
+
+        public int Stt { get; set; }
     }
 }

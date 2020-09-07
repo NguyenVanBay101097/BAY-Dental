@@ -4,20 +4,25 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
 using NPOI.HSSF.Record.PivotTable;
 using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
+using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -31,6 +36,27 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val)
+        {
+            var query = SearchQuery(x => true);
+            if (val.From.HasValue)
+                query = query.Where(x => x.TimeIn >= val.From);
+            if (val.To.HasValue)
+                query = query.Where(x => x.TimeIn <= val.To);
+
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Take(val.Limit).Skip(val.Offset);
+
+            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.Include(x => x.WorkEntryType).ToListAsync());
+
+            return new PagedResult2<ChamCongDisplay>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public async Task CreateListChamcongs(IEnumerable<ChamCong> val)
         {
             var companyId = this.CompanyId;
@@ -40,147 +66,6 @@ namespace Infrastructure.Services
             }
             await this.CreateAsync(val);
         }
-
-        public async Task ImportExcel(IFormFile file, Ex_ImportExcelDirect dir)
-        {
-            //if (file == null) throw new Exception("File is null");
-            //var list = new List<ImportFileExcellChamCongModel>();
-
-            //using (var stream = new MemoryStream())
-            //{
-            //    file.CopyTo(stream);
-            //    var fileData = stream.ToArray();
-            //    using (ExcelPackage package = new ExcelPackage(stream))
-            //    {
-            //        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-            //        list = await HandleExcelRowsByCustomerOrSupplierAsync(worksheet, dir);
-            //    }
-            //}
-
-            //if (dir.IsCreateNew)
-            //{
-            //    var chamCongs = list.Select(x => new ChamCong { 
-            //    x.
-            //    });
-            //    await CreateAsync(_mapper.Map<ChamCong>)
-
-            //}
-        }
-
-        //public async Task<List<PartnerImportExcel>> HandleExcelRowsByCustomerOrSupplierAsync(ExcelWorksheet worksheet, Ex_ImportExcelDirect dir)
-        //{
-        //    var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-        //    var list = new List<PartnerImportExcel>();
-        //    if (dir.IsCustomer)
-        //    {
-        //        var adList = new List<string>();
-        //        for (var i = 2; i <= worksheet.Dimension.Rows; i++)
-        //        {
-        //            var add = Convert.ToString(worksheet.Cells[i, 6].Value);
-        //            if (!string.IsNullOrEmpty(add))
-        //                adList.Add(add.ToLower());
-        //        }
-        //        var dict = await CheckAddressAsync(strs: adList.Distinct().ToList());
-        //        var genderDict = new Dictionary<string, string>()
-        //        {
-        //            { "nam","male" },
-        //            { "nữ","female" }
-        //        };
-
-        //        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-        //        {
-        //            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-        //            if (string.IsNullOrWhiteSpace(name))
-        //                throw new Exception("Tên Khách hàng là bắt buộc");
-
-        //            var custRef = Convert.ToString(worksheet.Cells[row, 2].Value);
-        //            if (!dir.IsCreateNew)
-        //            {
-
-        //                if (string.IsNullOrWhiteSpace(custRef))
-        //                    throw new Exception("Mã Khách hàng là bắt buộc");
-        //            }
-        //            else
-        //            {
-
-        //            }
-
-
-        //            var gender = Convert.ToString(worksheet.Cells[row, 3].Value).ToLower();
-        //            var dob = Convert.ToString(worksheet.Cells[row, 4].Value);
-        //            var ar = new string[3];
-        //            var address = Convert.ToString(worksheet.Cells[row, 6].Value);
-        //            if (dob.IndexOf("-") > -1)
-        //                ar = dob.Split("-");
-        //            else if (dob.IndexOf(".") > -1)
-        //                ar = dob.Split(".");
-        //            else if (dob.IndexOf("/") > -1)
-        //                ar = dob.Split("/");
-
-        //            var item = new PartnerImportExcel
-        //            {
-        //                Name = name,
-        //                NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
-        //                Ref = !string.IsNullOrEmpty(custRef) ? custRef : await sequenceService.NextByCode("customer"),
-        //                Gender = genderDict.ContainsKey(gender) ? genderDict[gender] : "Other",
-        //                Phone = Convert.ToString(worksheet.Cells[row, 5].Value),
-        //                MedicalHistory = Convert.ToString(worksheet.Cells[row, 7].Value),
-        //                JobTitle = Convert.ToString(worksheet.Cells[row, 8].Value),
-        //                Email = Convert.ToString(worksheet.Cells[row, 9].Value),
-        //                BirthDay = !string.IsNullOrWhiteSpace(ar[0]) ? ar[0] : null,
-        //                BirthMonth = !string.IsNullOrWhiteSpace(ar[1]) ? ar[1] : null,
-        //                BirthYear = !string.IsNullOrWhiteSpace(ar[2]) ? ar[2] : null,
-        //                Comment = Convert.ToString(worksheet.Cells[row, 10].Value),
-        //                Customer = true,
-        //                Supplier = false
-        //            };
-        //            if (dict.ContainsKey(address.ToLower()))
-        //            {
-        //                item.Street = dict[address.ToLower()].ShortAddress;
-        //                item.CityName = dict[address.ToLower()].CityName.Replace("TP", "Thành phố");
-        //                item.CityCode = dict[address.ToLower()].CityCode;
-        //                item.DistrictName = dict[address.ToLower()].DistrictName;
-        //                item.DistrictCode = dict[address.ToLower()].DistrictCode;
-        //                item.WardName = dict[address.ToLower()].WardName;
-        //                item.WardCode = dict[address.ToLower()].WardCode;
-        //            }
-        //            list.Add(item);
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
-        //        {
-        //            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-        //            if (string.IsNullOrWhiteSpace(name))
-        //                throw new Exception("Tên NCC là bắt buộc");
-
-        //            var suppRef = Convert.ToString(worksheet.Cells[row, 2].Value);
-        //            if (!dir.IsCreateNew)
-        //                if (string.IsNullOrWhiteSpace(suppRef)) throw new Exception("Mã NCC là bắt buộc");
-
-        //            var item = new PartnerImportExcel
-        //            {
-        //                Name = name,
-        //                NameNoSign = StringUtils.RemoveSignVietnameseV2(name),
-        //                Ref = !string.IsNullOrEmpty(suppRef) ? suppRef : await sequenceService.NextByCode("supplier"),
-        //                Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
-        //                Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
-        //                Street = Convert.ToString(worksheet.Cells[row, 5].Value),
-        //                Email = Convert.ToString(worksheet.Cells[row, 6].Value),
-        //                Comment = Convert.ToString(worksheet.Cells[row, 7].Value),
-        //                Customer = false,
-        //                Supplier = true
-        //            };
-
-        //            list.Add(item);
-
-        //        }
-        //    }
-
-        //    return list;
-        //}
 
         //public async Task<PagedResult2<EmployeeDisplay>> GetByEmployeePaged(employeePaged val)
         //{
@@ -254,13 +139,15 @@ namespace Infrastructure.Services
             return "process";
         }
 
-        public async Task<ChamCongDisplay> GetByEmployeeId(Guid id, DateTime date)
+        public async Task<ChamCong> GetLastChamCong(employeePaged val)
         {
-            var chamcong = await SearchQuery(x => x.EmployeeId == id
-            && (x.TimeIn.Value.Date.Equals(date.Date) || x.TimeOut.Value.Date.Equals(date.Date))).Include(x => x.Employee)
-                .Include(x => x.WorkEntryType)
-                .FirstOrDefaultAsync();
-            return _mapper.Map<ChamCongDisplay>(chamcong);
+            var query = SearchQuery(x => x.EmployeeId == val.EmployeeId && x.Date == val.Date);
+            if (query.Any())
+                return await query.OrderBy(x => x.DateCreated).LastAsync();
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<decimal> GetStandardWorkHour()
@@ -315,33 +202,6 @@ namespace Infrastructure.Services
 
         //    return null;
         //}
-
-        public async Task<IEnumerable<ChamCongDisplay>> GetAll(employeePaged val)
-        {
-            var query = SearchQuery();
-            if (val.From.HasValue)
-            {
-                query = query.Where(y => y.Date.Value.Date >= val.From.Value.Date);
-            }
-
-            if (val.To.HasValue)
-            {
-                query = query.Where(y => y.Date.Value.Date <= val.To.Value.Date);
-            }
-
-            if (!string.IsNullOrEmpty(val.Status))
-            {
-                query = query.Where(x => x.Status.Equals(val.Status));
-            }
-
-            if (val.EmployeeId.HasValue)
-            {
-                query = query.Where(x => x.EmployeeId == val.EmployeeId);
-            }
-
-            var res = await query.Include(x => x.WorkEntryType).ToListAsync();
-            return _mapper.Map<IEnumerable<ChamCongDisplay>>(res);
-        }
 
         public int SoCongChuan(List<IGrouping<string, ResourceCalendarAttendance>> list, DateTime start, DateTime end)
         {
@@ -574,5 +434,258 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<ChamCongImportResponse> ImportExcel(PartnerImportExcelViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ImportFileExcellChamCongModel>();
+            var listCC = new List<ChamCong>();
+            var empObj = GetService<IEmployeeService>();
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var errors = new List<string>();
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (var package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        string maNv = "";
+                        string curDateString = "";
+                        string code = "";
+                        string time = "";
+                        string type = "";
+                        string de_time = Convert.ToString(worksheet.Cells[row, 3].Value);
+                        var errs = new List<string>();
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 1].Value)))
+                            maNv = Convert.ToString(worksheet.Cells[row, 1].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Mã nhân viên không được để trống");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 2].Value)))
+                        {
+                            curDateString = Convert.ToString(worksheet.Cells[row, 2].Value);
+                        }
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Ngày chấm công không được để trống");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 5].Value)))
+                            code = Convert.ToString(worksheet.Cells[row, 5].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Mã loại chấm công không được để trống");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 4].Value)))
+                            type = Convert.ToString(worksheet.Cells[row, 4].Value);
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Vào/ra không được để trống");
+                            continue;
+                        }
+
+                        if (!string.IsNullOrEmpty(Convert.ToString(worksheet.Cells[row, 3].Value)))
+                            time = $"{DateTime.Parse(curDateString):MM/dd/yyyy} { DateTime.Parse(de_time).ToShortTimeString()}";
+                        else
+                        {
+                            errors.Add($"Dòng {row}: Thời gian không được trống");
+                            continue;
+                        }
+
+
+                        try
+                        {
+                            data.Add(new ImportFileExcellChamCongModel
+                            {
+                                MaNV = maNv,
+                                Date = DateTime.Parse(curDateString),
+                                Time = DateTime.Parse(time),
+                                Type = type,
+                                CodeWorkEntryType = code,
+                            });
+                        }
+                        catch (Exception e)
+                        {
+                            errors.Add($"Dòng {row}: {e.Message}");
+                            continue;
+                        }
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+                    }
+                }
+            }
+            if (errors.Any())
+                return new ChamCongImportResponse { Success = false, Errors = errors };
+
+            var employee_refs = data.Select(x => x.MaNV).Distinct().ToList();
+            var word_entry_type_codes = data.Select(x => x.CodeWorkEntryType).Distinct().ToList();
+            var emps = await empObj.SearchQuery(x => employee_refs.Contains(x.Ref)).ToListAsync();
+            var works = await workEntryTypeObj.SearchQuery(x => word_entry_type_codes.Contains(x.Code)).ToListAsync();
+
+            IDictionary<string, Employee> emp_dict = new Dictionary<string, Employee>();
+            emp_dict = emps.ToDictionary(t => t.Ref, v => v);
+
+            IDictionary<string, WorkEntryType> work_entry_type_dict = new Dictionary<string, WorkEntryType>();
+            work_entry_type_dict = works.ToDictionary(t => t.Code, v => v);
+
+            var errors_2 = new List<string>();
+
+            foreach (var cc in data)
+            {
+                try
+                {
+                    if (!emp_dict.ContainsKey(cc.MaNV))
+                        throw new Exception($"Không tìm thấy nhân viên mới mã {cc.MaNV}");
+
+                    if (!work_entry_type_dict.ContainsKey(cc.CodeWorkEntryType))
+                        throw new Exception($"Không loại công việc với mã {cc.CodeWorkEntryType}");
+                    var employee = emp_dict[cc.MaNV];
+                    if (cc.Type == "check-in")
+                    {
+                        var chamcong = new ChamCong();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = emp_dict[cc.MaNV].Id;
+                        chamcong.WorkEntryTypeId = work_entry_type_dict[cc.CodeWorkEntryType].Id;
+                        chamcong.Date = cc.Date;
+                        chamcong.TimeIn = cc.Time;
+                        await CreateAsync(chamcong);
+                    }
+                    else if (cc.Type == "check-out")
+                    {
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).FirstOrDefaultAsync();
+                        if (ccIn != null)
+                        {
+                            ccIn.TimeOut = cc.Time;
+                            await UpdateAsync(ccIn);
+                        }
+                        else
+                        {
+                            throw new Exception($"Không thể check-out cho nhân viên {employee.Name}, không tìm thấy chấm công nào chưa check-out.");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    errors_2.Add(e.Message);
+                }
+            }
+
+            if (errors_2.Any())
+                return new ChamCongImportResponse { Success = false, Errors = errors_2 };
+
+            return new ChamCongImportResponse { Success = true };
+        }
+
+        public async Task CheckChamCong(IEnumerable<ChamCong> vals)
+        {
+            var empObj = GetService<IEmployeeService>();
+            foreach (var val in vals)
+            {
+                // Thời gian vào không được trống
+                if (!val.TimeIn.HasValue)
+                    throw new Exception("Thời gian vào không được bỏ trống.");
+
+                // Thời giân vào không được lớn hơn thời gian ra 
+                if (val.TimeOut.HasValue && val.TimeOut < val.TimeIn)
+                    throw new Exception("Thời gian ra không được nhỏ hơn thời gian vào");
+
+                // Khoảng thời gian của các chấm công không được trùng lên nhau
+                var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
+                {
+                    var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                }
+
+                if (!val.TimeOut.HasValue)
+                {
+                    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
+                    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
+                    if (cc != null)
+                    {
+                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                    }
+                }
+                else
+                {
+                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                    if (cc_sau != null && cc_sau != cc_truoc)
+                    {
+                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
+                    }
+                }
+            }
+        }
+
+        public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)
+        {
+            foreach (var val in vals)
+            {
+                if (val.TimeOut.HasValue)
+                    val.Status = "done";
+                else
+                    val.Status = "process";
+            }
+        }
+
+        public void _ComputeSoGioMotCong(IEnumerable<ChamCong> vals)
+        {
+            foreach (var val in vals)
+            {
+                if (val.TimeIn.HasValue && val.TimeOut.HasValue)
+                    val.HourWorked = Math.Round((decimal)(val.TimeOut.Value - val.TimeIn.Value).TotalHours, 2);
+            }
+        }
+
+        public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
+        {
+            await base.CreateAsync(entities);
+            await CheckChamCong(entities);
+            return entities;
+        }
+
+        public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
+        {
+            await base.UpdateAsync(entities);
+            await CheckChamCong(entities);
+        }
+
+        public async Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val)
+        {
+            var res = new ChamCongDefaultGetResult();
+            if (val.EmployeeId.HasValue)
+            {
+                var employeeObj = GetService<IEmployeeService>();
+                var employee = await employeeObj.GetByIdAsync(val.EmployeeId);
+                res.EmployeeId = employee.Id;
+                res.Employee = _mapper.Map<EmployeeBasic>(employee);
+                res.CompanyId = employee.CompanyId ?? CompanyId;
+            }
+
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+            if (workEntryType != null)
+            {
+                res.WorkEntryTypeId = workEntryType.Id;
+                res.WorkEntryType = _mapper.Map<WorkEntryTypeBasic>(workEntryType);
+            }
+
+            return res;
+        }
     }
 }

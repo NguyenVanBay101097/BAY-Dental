@@ -10,19 +10,16 @@ namespace ApplicationCore.Entities
     public class ChamCong : BaseEntity
     {
         public Guid EmployeeId { get; set; }
+
         /// <summary>
         /// nhân viên
         /// </summary>
         public Employee Employee { get; set; }
+
         /// <summary>
         /// thời gian checkin
         /// </summary>
         public DateTime? TimeIn { get; set; }
-
-        /// <summary>
-        /// Id của máy chấm công
-        /// </summary>
-        //public string IdMayChamCong { get; set; }
 
         /// <summary>
         /// Thời gian hiển thị trên kanban
