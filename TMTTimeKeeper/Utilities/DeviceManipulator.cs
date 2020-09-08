@@ -71,6 +71,9 @@ namespace TMTTimeKeeper.Utilities
                 objInfo.MachineNumber = machineNumber;
                 objInfo.IndRegID = int.Parse(dwEnrollNumber1);
                 objInfo.DateTimeRecord = inputDate;
+                // custom
+                objInfo.MyTimeOnlyRecord = DateTime.Parse(inputDate).ToString("hh:mm:ss tt");
+                objInfo.dwInOutMode = dwInOutMode;
 
                 lstEnrollData.Add(objInfo);
             }
