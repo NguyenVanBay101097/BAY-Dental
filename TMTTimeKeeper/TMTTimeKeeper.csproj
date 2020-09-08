@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\AccountLogin.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="zkemkeeper.dll">
       <Guid>fe9ded34-e159-408e-8490-b720a5e632c7</Guid>
       <VersionMajor>1</VersionMajor>
@@ -19,11 +23,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Data\AccountLogin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

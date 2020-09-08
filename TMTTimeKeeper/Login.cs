@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,11 +12,14 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.APIInfo;
+using TMTTimeKeeper.Models;
 
 namespace TMTTimeKeeper
 {
     public partial class Login : Form
     {
+
+
         public Login()
         {
             InitializeComponent();
@@ -140,6 +145,8 @@ namespace TMTTimeKeeper
                 rememberMe = chkRememberMe.Checked
             };
 
+
+
             var response = await client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
             if (response.IsSuccessStatusCode)
@@ -153,29 +160,44 @@ namespace TMTTimeKeeper
 
                 if (loginResponse.succeeded)
                 {
-                    // Demo Get employees
-                    var token = loginResponse.token;
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    ///save account login
 
-                    EmployeePaged employeePaged = new EmployeePaged
-                    {
-                        offset = 0,
-                        limit = 20,
-                        search = null,
-                        //isDoctor = true,
-                        //isAssistant = true
-                    };
+                    var account = new AccountLogin();
+                    account.Name = loginResponse.user.name;
+                    account.UserName = loginResponse.user.userName;
+                    account.CompanyId = loginResponse.user.companyId;
+                    account.CompanyName = tbxMain.Text;
+                    account.Email = loginResponse.user.email;
+                    account.AccessToken = loginResponse.token;
+                    account.RefeshToken = loginResponse.refreshToken;
 
-                    var url = "api/Employees?";
-                    var result = new List<string>();
-                    foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(employeePaged))
-                    {
-                        result.Add(property.Name + "=" + property.GetValue(employeePaged));
-                    }
 
-                    url = url + string.Join("&", result);
+                    AddAccount(account);
 
-                    var pro = await client.GetAsync(url);
+                    // Add Get employees
+
+                    //var token = loginResponse.token;
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                    //EmployeePaged employeePaged = new EmployeePaged
+                    //{
+                    //    offset = 0,
+                    //    limit = 20,
+                    //    search = null,
+                    //    //isDoctor = true,
+                    //    //isAssistant = true
+                    //};
+
+                    //var url = "api/Employees?";
+                    //var result = new List<string>();
+                    //foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(employeePaged))
+                    //{
+                    //    result.Add(property.Name + "=" + property.GetValue(employeePaged));
+                    //}
+
+                    //url = url + string.Join("&", result);
+
+                    //var pro = await client.GetAsync(url);
                     // End Demo Get employees
 
                     DialogResult = DialogResult.OK;
@@ -215,5 +237,17 @@ namespace TMTTimeKeeper
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
+        /// <summary>
+        /// luu tai khoan dang nhap
+        /// </summary>
+        /// <param name="account"></param>
+        public void AddAccount(AccountLogin account)
+        {
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            File.WriteAllText(path, JsonConvert.SerializeObject(account));
+        }
+     
     }
 }
