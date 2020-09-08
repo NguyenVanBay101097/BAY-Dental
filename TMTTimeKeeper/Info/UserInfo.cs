@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TMTTimeKeeper.Info
 {
-    internal class UserInfo
+    public class UserInfo
     {
 
         public int MachineNumber { get; set; }
