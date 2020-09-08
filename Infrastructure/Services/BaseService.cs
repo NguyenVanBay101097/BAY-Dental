@@ -68,7 +68,7 @@ namespace Infrastructure.Services
 
         public async Task<int> CountAsync(ISpecification<TEntity> spec)
         {
-            CheckAccessRights(typeof(TEntity).Name, "Read");
+            //CheckAccessRights(typeof(TEntity).Name, "Read");
             spec = _ApplyIRRules(spec, "Read");
             var query = _repository.SearchQuery(domain: spec.AsExpression());
             return await query.CountAsync();
@@ -117,7 +117,7 @@ namespace Infrastructure.Services
 
         public IQueryable<TEntity> SearchQuery(Expression<Func<TEntity, bool>> domain = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int offSet = 0, int limit = int.MaxValue)
         {
-            CheckAccessRights(typeof(TEntity).Name, "Read");
+            //CheckAccessRights(typeof(TEntity).Name, "Read");
             ISpecification<TEntity> spec = new InitialSpecification<TEntity>(x => true);
             if (domain != null)
                 spec = new InitialSpecification<TEntity>(domain);
@@ -152,7 +152,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            CheckAccessRights(typeof(TEntity).Name, "Create");
+            //CheckAccessRights(typeof(TEntity).Name, "Create");
             //CheckAccessRules(entities, "Create");
 
             await _repository.InsertAsync(entities);
@@ -179,7 +179,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            CheckAccessRights(typeof(TEntity).Name, "Write");
+            //CheckAccessRights(typeof(TEntity).Name, "Write");
             //CheckAccessRules(entities, "Write");
 
             await _repository.UpdateAsync(entities);
@@ -187,7 +187,7 @@ namespace Infrastructure.Services
 
         public virtual async Task DeleteAsync(IEnumerable<TEntity> entities)
         {
-            CheckAccessRights(typeof(TEntity).Name, "Unlink");
+            //CheckAccessRights(typeof(TEntity).Name, "Unlink");
             //CheckAccessRules(entities, "Unlink");
 
             await _repository.DeleteAsync(entities);

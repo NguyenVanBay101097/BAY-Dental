@@ -4,7 +4,7 @@ import { RoleListComponent } from './role-list/role-list.component';
 
 const routes: Routes = [
   {
-    path: 'roles',
+    path: '',
     component: RoleListComponent
   },
 ];

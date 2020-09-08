@@ -17,4 +17,8 @@ export class WebService {
     removeSampleData() {
         return this.http.get(this.baseApi + this.apiUrl + '/DeleteSampleData');
     }
+
+    getFeatures() {
+        return this.http.get(this.baseApi + this.apiUrl + '/Features');
+    }
 }

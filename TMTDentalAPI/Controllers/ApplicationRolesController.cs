@@ -74,11 +74,8 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ApplicationRoleDisplay val)
+        public async Task<IActionResult> Create(ApplicationRoleSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
            
@@ -96,31 +93,29 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            foreach (var user in val.Users)
-            {
-                var usr = await _userManager.FindByIdAsync(user.Id);
-                var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
-                if (!result2.Succeeded)
-                {
-                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-                }
-            }
+            //foreach (var user in val.Users)
+            //{
+            //    var usr = await _userManager.FindByIdAsync(user.Id);
+            //    var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
+            //    if (!result2.Succeeded)
+            //    {
+            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+            //    }
+            //}
 
             _unitOfWork.Commit();
 
-            val.Id = role.Id;
-            return CreatedAtAction(nameof(Get), new { id = role.Id }, val);
+            var basic = _mapper.Map<ApplicationRoleBasic>(role);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, ApplicationRoleDisplay val)
+        public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
             if (role == null)
                 return NotFound();
+
             await _unitOfWork.BeginTransactionAsync();
 
             role = _mapper.Map(val, role);
@@ -139,28 +134,28 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            var users = await _userManager.GetUsersInRoleAsync(role.Name);
-            var toRemove = users.Where(x => !val.Users.Any(s => s.Id == x.Id)).ToList();
-            foreach(var u in toRemove)
-            {
-                var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
-                if (!result2.Succeeded)
-                {
-                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-                }
-            }
+            //var users = await _userManager.GetUsersInRoleAsync(role.Name);
+            //var toRemove = users.Where(x => !val.Users.Any(s => s.Id == x.Id)).ToList();
+            //foreach(var u in toRemove)
+            //{
+            //    var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
+            //    if (!result2.Succeeded)
+            //    {
+            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+            //    }
+            //}
 
-            var toAdd = val.Users.Where(x => !users.Any(s => s.Id == x.Id)).ToList();
+            //var toAdd = val.Users.Where(x => !users.Any(s => s.Id == x.Id)).ToList();
 
-            foreach (var user in toAdd)
-            {
-                var usr = await _userManager.FindByIdAsync(user.Id);
-                var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
-                if (!result2.Succeeded)
-                {
-                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-                }
-            }
+            //foreach (var user in toAdd)
+            //{
+            //    var usr = await _userManager.FindByIdAsync(user.Id);
+            //    var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
+            //    if (!result2.Succeeded)
+            //    {
+            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+            //    }
+            //}
 
             _unitOfWork.Commit();
 

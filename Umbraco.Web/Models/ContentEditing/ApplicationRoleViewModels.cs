@@ -17,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Search { get; set; }
     }
+
     public class ApplicationRoleBasic
     {
         public string Id { get; set; }
@@ -33,5 +34,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<string> Functions { get; set; } = new List<string>();
 
         public IEnumerable<ApplicationUserSimple> Users { get; set; } = new List<ApplicationUserSimple>();
+    }
+
+    public class ApplicationRoleSave
+    {
+        public string Name { get; set; }
+
+        public IEnumerable<string> Functions { get; set; } = new List<string>();
     }
 }

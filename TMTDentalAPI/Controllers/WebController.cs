@@ -14,9 +14,11 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TMTDentalAPI.ViewModels;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         private readonly ICompanyService _companyService;
         private readonly CatalogDbContext _dbContext;
         private readonly IResGroupService _groupService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public WebController(
             IIrAttachmentService attachmentService,
@@ -47,7 +50,7 @@ namespace TMTDentalAPI.Controllers
             IUserService userService,
             ICompanyService companyService,
              CatalogDbContext dbContext,
-             IResGroupService groupService)
+             IResGroupService groupService, IWebHostEnvironment webHostEnvironment)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
@@ -59,6 +62,7 @@ namespace TMTDentalAPI.Controllers
             _companyService = companyService;
             _dbContext = dbContext;
             _groupService = groupService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet("[action]")]
@@ -190,6 +194,19 @@ namespace TMTDentalAPI.Controllers
                 await file.CopyToAsync(memoryStream);
                 var result = await _HandleUploadAsync(Convert.ToBase64String(memoryStream.ToArray()), file.FileName);
                 return Ok(result);
+            }
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Features()
+        {
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\features.json");
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var features = JsonConvert.DeserializeObject<List<ApplicationConfig_FeatureViewModel>>(fileContent);
+
+                return Ok(features);
             }
         }
     }

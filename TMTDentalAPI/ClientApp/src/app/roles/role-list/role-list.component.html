@@ -1,37 +1,36 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Quyền truy cập</li>
-    </ol>
-    <div class="o_cp_searchview">
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm</button>
+<div class="row">
+    <div class="col-4">
+        <div class="wrapper-sm">
+            <a class="pull-right btn btn-sm btn-info m-t-n-xs" (click)="createRole()">Thêm</a>
+            <div class="h4">Danh sách</div>
+        </div>
+        <div class="vbox">
+            <div class="list-group">
+                <a class="list-group-item" *ngFor="let role of roles" (click)="selectRole(role)">{{role.name}}</a>
             </div>
         </div>
-        <div class="o_cp_sidebar">
+    </div>
+    <div class="col-8">
+        <div class="wrapper-sm">
+            <div *ngIf="displayRole">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" placeholder="Tên nhóm" [(ngModel)]="displayRole.name">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-sm btn-success" (click)="onSave()">
+                            <i class="fa fa-save"></i> Lưu
+                        </button>
+                    </span>
+                </div>
+                <div class="example-config">
+                    Checked keys: {{functions.join(",")}}
+                </div>
+                <div>
+                    <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings"
+                        [nodes]="features" textField="text" [children]="fetchChildren" [hasChildren]="hasChildren"
+                        [(checkedKeys)]="checkedKeys" (checkedChange)="handleChecking($event)">
+                    </kendo-treeview>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="o_cp_right">
-    </div>
 </div>
-
-<div kendoDialogContainer></div>
-
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-    (pageChange)="pageChange($event)">
-    <kendo-grid-column field="name" title="Tên quyền">
-    </kendo-grid-column>
-    <kendo-grid-column field="id">
-        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-            Thao tác
-        </ng-template>
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
-                <span class="fa fa-edit"></span> Sửa</button>
-            <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
-                <span class="fa fa-trash"></span> Xóa</button>
-        </ng-template>
-    </kendo-grid-column>
-</kendo-grid>

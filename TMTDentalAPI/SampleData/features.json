@@ -3,12 +3,12 @@
     "Id": "App.Catalog",
     "Name": "Catalog",
     "Text": "Danh mục",
-    "Items": [
+    "Objects": [
       {
         "Id": "App.Catalog.Partner.Customer",
         "Name": "Partner.Customer",
         "Text": "Khách hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Partner.Customer.Read",
             "Name": "Read",
@@ -31,6 +31,14 @@
             ]
           },
           {
+            "Id": "App.Catalog.Partner.Customer.Delete",
+            "Name": "Delete",
+            "Text": "Xóa",
+            "Requireds": [
+              "App.Catalog.Partner.Customer.Read"
+            ]
+          },
+          {
             "Id": "App.Catalog.Partner.Customer.Transfer",
             "Name": "Transfer",
             "Text": "Chuyển đổi khách hàng",
@@ -42,11 +50,15 @@
             ]
           },
           {
-            "Id": "App.Catalog.Partner.Customer.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
+            "Id": "App.Catalog.Partner.Customer.TransferMulti",
+            "Name": "Transfer",
+            "Text": "Chuyển đổi khách hàng (hàng loạt)",
             "Requireds": [
-              "App.Catalog.Partner.Customer.Read"
+              "App.Catalog.Partner.Customer.Update",
+              "App.Catalog.Partner.Customer.Delete",
+              "App.Sale.Fast.Order.Update",
+              "App.Sale.Pos.Order.Update",
+              "App.SaleOnline.Order.Update"
             ]
           }
         ]
@@ -55,7 +67,7 @@
         "Id": "App.Catalog.Partner.Supplier",
         "Name": "Partner.Supplier",
         "Text": "Nhà cung cấp",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Partner.Supplier.Read",
             "Name": "Read",
@@ -88,10 +100,82 @@
         ]
       },
       {
+        "Id": "App.Catalog.RevenueBegan",
+        "Name": "RevenueBegan",
+        "Text": "DS đầu kỳ KH/NCC",
+        "Functions": [
+          {
+            "Id": "App.Catalog.RevenueBegan.Read",
+            "Name": "Read",
+            "Text": "Đọc"
+          },
+          {
+            "Id": "App.Catalog.RevenueBegan.Insert",
+            "Name": "Insert",
+            "Text": "Thêm mới",
+            "Requireds": [
+              "App.Catalog.RevenueBegan.Read"
+            ]
+          },
+          {
+            "Id": "App.Catalog.RevenueBegan.Update",
+            "Name": "Update",
+            "Text": "Cập nhật",
+            "Requireds": [
+              "App.Catalog.RevenueBegan.Read"
+            ]
+          },
+          {
+            "Id": "App.Catalog.RevenueBegan.Delete",
+            "Name": "Delete",
+            "Text": "Xóa",
+            "Requireds": [
+              "App.Catalog.RevenueBegan.Read"
+            ]
+          }
+        ]
+      },
+      {
+        "Id": "App.Catalog.RevenueCategory",
+        "Name": "RevenueCategory",
+        "Text": "Cấu hình doanh số nhóm khách hàng",
+        "Functions": [
+          {
+            "Id": "App.Catalog.RevenueCategory.Read",
+            "Name": "Read",
+            "Text": "Đọc"
+          },
+          {
+            "Id": "App.Catalog.RevenueCategory.Insert",
+            "Name": "Insert",
+            "Text": "Thêm mới",
+            "Requireds": [
+              "App.Catalog.RevenueCategory.Read"
+            ]
+          },
+          {
+            "Id": "App.Catalog.RevenueCategory.Update",
+            "Name": "Update",
+            "Text": "Cập nhật",
+            "Requireds": [
+              "App.Catalog.RevenueCategory.Read"
+            ]
+          },
+          {
+            "Id": "App.Catalog.RevenueCategory.Delete",
+            "Name": "Delete",
+            "Text": "Xóa",
+            "Requireds": [
+              "App.Catalog.RevenueCategory.Read"
+            ]
+          }
+        ]
+      },
+      {
         "Id": "App.Catalog.DeliveryCarrier",
         "Name": "DeliveryCarrier",
         "Text": "Đối tác giao hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.DeliveryCarrier.Read",
             "Name": "Read",
@@ -127,7 +211,7 @@
         "Id": "App.Catalog.ProductTemplate",
         "Name": "ProductTemplate",
         "Text": "Sản phẩm",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.ProductTemplate.Read",
             "Name": "Read",
@@ -156,6 +240,14 @@
             "Requireds": [
               "App.Catalog.ProductTemplate.Read"
             ]
+          },
+          {
+            "Id": "App.Catalog.ProductTemplate.ChangeQty",
+            "Name": "ChangeQty",
+            "Text": "Cập nhật số lượng thực tế",
+            "Requireds": [
+              "App.Catalog.ProductTemplate.Read"
+            ]
           }
         ]
       },
@@ -163,7 +255,7 @@
         "Id": "App.Catalog.Product",
         "Name": "Product",
         "Text": "Biến thể sản phẩm",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Product.Read",
             "Name": "Read",
@@ -205,7 +297,7 @@
         "Id": "App.Catalog.Product_PriceList",
         "Name": "Product_PriceList",
         "Text": "Bảng giá",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Product_PriceList.Read",
             "Name": "Read",
@@ -251,7 +343,7 @@
         "Id": "App.Catalog.PromotionProgram",
         "Name": "Catalog.PromotionProgram",
         "Text": "Chương trình khuyến mãi",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.PromotionProgram.Read",
             "Name": "Read",
@@ -293,7 +385,7 @@
         "Id": "App.Catalog.LoaiThuChi",
         "Name": "Catalog.LoaiThuChi",
         "Text": "Loại thu & chi",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.LoaiThuChi.Read",
             "Name": "Read",
@@ -329,7 +421,7 @@
         "Id": "App.Catalog.Warehouse",
         "Name": "Warehouse",
         "Text": "Kho hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Warehouse.Read",
             "Name": "Read",
@@ -365,7 +457,7 @@
         "Id": "App.Catalog.Others",
         "Name": "Others",
         "Text": "Danh mục khác",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Catalog.Others.Read",
             "Name": "Read",
@@ -408,12 +500,12 @@
         "Id": "App.Sale.Pos",
         "Name": "Pos",
         "Text": "Điểm bán hàng",
-        "Items": [
+        "Objects": [
           {
             "Id": "App.Sale.Pos.Order",
             "Name": "Pos.Order",
             "Text": "Hóa đơn",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Pos.Order.Read",
                 "Name": "Read",
@@ -466,7 +558,7 @@
             "Id": "App.Sale.Pos.Configs",
             "Name": "Pos.Kanban",
             "Text": "Danh sách điểm bán hàng",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Pos.Configs.Read",
                 "Name": "Read",
@@ -502,7 +594,7 @@
             "Id": "App.Sale.Pos.Session",
             "Name": "Pos.Session",
             "Text": "Phiên bán hàng",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Pos.Session.Read",
                 "Name": "Read",
@@ -538,7 +630,7 @@
             "Id": "App.Sale.Pos.PriceStaff",
             "Name": "Pos.PriceStaff",
             "Text": "Sửa giá, thu ngân",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Pos.PriceStaff.Price",
                 "Name": "Price",
@@ -557,12 +649,12 @@
         "Id": "App.Sale.Fast",
         "Name": "Fast",
         "Text": "Bán hàng nhanh",
-        "Items": [
+        "Objects": [
           {
             "Id": "App.Sale.Fast.Order",
             "Name": "Sale.Order",
             "Text": "Hóa đơn",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Fast.Order.Read",
                 "Name": "Read",
@@ -631,7 +723,7 @@
             "Id": "App.Sale.Fast.Refund",
             "Name": "Sale.Refund",
             "Text": "Trả hàng",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Fast.Refund.Read",
                 "Name": "Read",
@@ -673,7 +765,7 @@
             "Id": "App.Sale.Fast.DeliveryOrder",
             "Name": "Sale.DeliveryOrder",
             "Text": "Hóa đơn giao hàng",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Sale.Fast.DeliveryOrder.Read",
                 "Name": "Read",
@@ -722,7 +814,7 @@
         "Id": "App.Sale.Quotation",
         "Name": "Sale.Quotation",
         "Text": "Báo giá",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Sale.Quotation.Read",
             "Name": "Read",
@@ -764,7 +856,7 @@
         "Id": "App.Sale.Order",
         "Name": "Order",
         "Text": "Đơn đặt hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Sale.Order.Read",
             "Name": "Read",
@@ -813,12 +905,12 @@
         "Id": "App.Purchase.Fast",
         "Name": "Fast",
         "Text": "Mua hàng nhanh",
-        "Items": [
+        "Objects": [
           {
             "Id": "App.Purchase.Fast.Order",
             "Name": "Purchase.Order",
             "Text": "Hóa đơn",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Purchase.Fast.Order.Read",
                 "Name": "Read",
@@ -868,7 +960,7 @@
             "Id": "App.Purchase.Fast.Refund",
             "Name": "Purchase.Refund",
             "Text": "Trả hàng",
-            "Items": [
+            "Functions": [
               {
                 "Id": "App.Purchase.Fast.Refund.Read",
                 "Name": "Read",
@@ -918,12 +1010,12 @@
       "Facebook",
       "FacebookPlus"
     ],
-    "Items": [
+    "Objects": [
       {
         "Id": "App.SaleOnline.LiveCampaign",
         "Name": "LiveCampaign",
         "Text": "Chiến dịch live",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.SaleOnline.LiveCampaign.Read",
             "Name": "Read",
@@ -971,7 +1063,7 @@
         "Id": "App.SaleOnline.Order",
         "Name": "SaleOnline.Order",
         "Text": "Đơn hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.SaleOnline.Order.Read",
             "Name": "Read",
@@ -1041,7 +1133,7 @@
         "Id": "App.SaleOnline.Facebook",
         "Name": "SaleOnline.Facebook",
         "Text": "Facebook",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.SaleOnline.Facebook.Feed",
             "Name": "Feed",
@@ -1088,12 +1180,12 @@
     "Packages": [
       "FacebookPlus"
     ],
-    "Items": [
+    "Objects": [
       {
         "Id": "App.MarketingOnline.PartnerGroup",
         "Name": "MarketingOnline.PartnerGroup",
         "Text": "Nhóm đối tượng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.MarketingOnline.PartnerGroup.Read",
             "Name": "Read",
@@ -1131,7 +1223,7 @@
         "Id": "App.MarketingOnline.Facebook",
         "Name": "MarketingOnline.Facebook",
         "Text": "Facebook",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.MarketingOnline.Facebook.Feed",
             "Name": "Feed",
@@ -1145,12 +1237,12 @@
     "Id": "App.Accounting",
     "Name": "Accounting",
     "Text": "Kế toán",
-    "Items": [
+    "Objects": [
       {
         "Id": "App.Accounting.PaymentCustomer",
         "Name": "Accounting.PaymentCustomer",
         "Text": "Thanh toán bán hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.PaymentCustomer.Read",
             "Name": "Read",
@@ -1194,7 +1286,7 @@
         "Id": "App.Accounting.PaymentSupplier",
         "Name": "Accounting.PaymentSupplier",
         "Text": "Thanh toán mua hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.PaymentSupplier.Read",
             "Name": "Read",
@@ -1238,7 +1330,7 @@
         "Id": "App.Accounting.Inventory",
         "Name": "Accounting.Inventory",
         "Text": "Điều chỉnh công nợ",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.Inventory.Read",
             "Name": "Read",
@@ -1278,7 +1370,7 @@
         "Id": "App.Accounting.Deposit",
         "Name": "Accounting.Deposit",
         "Text": "Ký quỹ",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.Deposit.Read",
             "Name": "Read",
@@ -1318,7 +1410,7 @@
         "Id": "App.Accounting.PhieuThu",
         "Name": "Accounting.PhieuThu",
         "Text": "Phiếu thu",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.PhieuThu.Read",
             "Name": "Read",
@@ -1331,7 +1423,6 @@
             "Requireds": [
               "App.Catalog.LoaiThuChi.Read",
               "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
               "App.Accounting.PhieuThu.Read"
             ]
           },
@@ -1342,7 +1433,6 @@
             "Requireds": [
               "App.Catalog.LoaiThuChi.Read",
               "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
               "App.Accounting.PhieuThu.Read"
             ]
           },
@@ -1360,7 +1450,7 @@
         "Id": "App.Accounting.PhieuChi",
         "Name": "Accounting.PhieuChi",
         "Text": "Phiếu chi",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Accounting.PhieuChi.Read",
             "Name": "Read",
@@ -1372,7 +1462,6 @@
             "Text": "Thêm mới",
             "Requireds": [
               "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
               "App.Catalog.Partner.Supplier.Read",
               "App.Accounting.PhieuChi.Read"
             ]
@@ -1383,7 +1472,6 @@
             "Text": "Cập nhật",
             "Requireds": [
               "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
               "App.Catalog.Partner.Supplier.Read",
               "App.Accounting.PhieuChi.Read"
             ]
@@ -1404,12 +1492,12 @@
     "Id": "App.Stock",
     "Name": "Stock",
     "Text": "Kho",
-    "Items": [
+    "Objects": [
       {
         "Id": "App.Stock.Location",
         "Name": "Stock.Location",
         "Text": "Địa điểm",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Stock.Location.Read",
             "Name": "Read",
@@ -1445,7 +1533,7 @@
         "Id": "App.Stock.Inventory",
         "Name": "Stock.Inventory",
         "Text": "Điều chỉnh tồn kho",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Stock.Inventory.Read",
             "Name": "Read",
@@ -1481,7 +1569,7 @@
         "Id": "App.Stock.Move",
         "Name": "Stock.Move",
         "Text": "Dịch chuyển kho",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Stock.Move.Read",
             "Name": "Read",
@@ -1493,7 +1581,7 @@
         "Id": "App.Stock.PickingType",
         "Name": "Stock.PickingType",
         "Text": "Tất cả hoạt động",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Stock.PickingType.Read",
             "Name": "Read",
@@ -1507,12 +1595,12 @@
     "Id": "App.Reports",
     "Name": "Reports",
     "Text": "Báo cáo",
-    "Items": [
+    "Objects": [
       {
         "Id": "App.Reports.InventoryValuation",
         "Name": "Reports.InventoryValuation",
         "Text": "Giá trị tồn kho",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.InventoryValuation.Read",
             "Name": "Read",
@@ -1529,7 +1617,7 @@
         "Id": "App.Reports.NXT",
         "Name": "Reports.NXT",
         "Text": "Nhập - Xuất - Tồn",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.NXT.Read",
             "Name": "Read",
@@ -1546,7 +1634,7 @@
         "Id": "App.Reports.Imported",
         "Name": "Reports.Imported",
         "Text": "Thống kê nhập kho",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Imported.Read",
             "Name": "Read",
@@ -1563,7 +1651,7 @@
         "Id": "App.Reports.Exported",
         "Name": "Reports.Exported",
         "Text": "Thống kê xuất kho",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Exported.Read",
             "Name": "Read",
@@ -1580,7 +1668,7 @@
         "Id": "App.Reports.Order",
         "Name": "Reports.Order",
         "Text": "Thống kê hóa đơn",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Order.Read",
             "Name": "Read",
@@ -1597,7 +1685,7 @@
         "Id": "App.Reports.Revenue",
         "Name": "Reports.Revenue",
         "Text": "Thống kê doanh thu",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Revenue.Read",
             "Name": "Read",
@@ -1619,7 +1707,7 @@
         "Id": "App.Reports.BusinessResult",
         "Name": "Reports.BusinessResult",
         "Text": "Kết quả kinh doanh",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.BusinessResult.Read",
             "Name": "Read",
@@ -1641,7 +1729,7 @@
         "Id": "App.Reports.Quotation",
         "Name": "Reports.Quotation",
         "Text": "Thống kê báo giá",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Quotation.Read",
             "Name": "Read",
@@ -1658,7 +1746,7 @@
         "Id": "App.Reports.Delivery",
         "Name": "Reports.Delivery",
         "Text": "Thống kê giao hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Delivery.Read",
             "Name": "Read",
@@ -1675,7 +1763,7 @@
         "Id": "App.Reports.Purchase",
         "Name": "Reports.Purchase",
         "Text": "Thống kê mua hàng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Purchase.Read",
             "Name": "Read",
@@ -1692,7 +1780,7 @@
         "Id": "App.Reports.Dept_Customer",
         "Name": "Reports.Dept_Customer",
         "Text": "Công nợ KH",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Dept_Customer.Read",
             "Name": "Read",
@@ -1709,7 +1797,7 @@
         "Id": "App.Reports.Dept_Supplier",
         "Name": "Reports.Dept_Supplier",
         "Text": "Công nợ NCC",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.Dept_Supplier.Read",
             "Name": "Read",
@@ -1726,7 +1814,7 @@
         "Id": "App.Reports.AccountCashPrintJournal",
         "Name": "Reports.AccountCashPrintJournal",
         "Text": "Báo cáo sổ tiền mặt",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Reports.AccountCashPrintJournal.Read",
             "Name": "Read",
@@ -1745,12 +1833,12 @@
     "Id": "App.Configs",
     "Name": "Configs",
     "Text": "Cấu hình",
-    "Items": [
+    "Objects": [
       {
         "Id": "App.Configs.Company",
         "Name": "Company",
         "Text": "Công ty",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Configs.Company.Read",
             "Name": "Read",
@@ -1786,7 +1874,7 @@
         "Id": "App.Configs.User",
         "Name": "User",
         "Text": "Người dùng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Configs.User.Read",
             "Name": "Read",
@@ -1822,7 +1910,7 @@
         "Id": "App.Configs.Role",
         "Name": "User",
         "Text": "Nhóm người dùng",
-        "Items": [
+        "Functions": [
           {
             "Id": "App.Configs.Role.Read",
             "Name": "Read",
@@ -1867,7 +1955,12 @@
         "Id": "App.Configs.Others",
         "Name": "Configs.Others",
         "Text": "Khác",
-        "Items": [
+        "Functions": [
+          {
+            "Id": "App.Configs.Others.General",
+            "Name": "Sale",
+            "Text": "Cấu hình chung"
+          },
           {
             "Id": "App.Configs.Others.Sale",
             "Name": "Sale",
