@@ -346,5 +346,10 @@ namespace TMTTimeKeeper
                 ShowStatusBar("Cổng liên kết TCP is Empty", false);
             }
         }
+
+        private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
