@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TMTTimeKeeper.Info;
 using zkemkeeper;
 
 namespace TMTTimeKeeper.Utilities
@@ -86,10 +87,7 @@ namespace TMTTimeKeeper.Utilities
         /// </summary>
         /// 
         private void _IZKEMEvents_OnEnrollFingerEventHandler(int EnrollNumber, int FingerIndex, int ActionResult, int TemplateLength) { }
-        private void _IZKEMEvents_OnFingerEventHandler()
-        {
-
-        }
+        private void _IZKEMEvents_OnFingerEventHandler() { }
 
         private void _IZKEMEvents_OnVerifyEventHandler(int UserID) { }
 
@@ -109,6 +107,20 @@ namespace TMTTimeKeeper.Utilities
         /// <param name="WorkCode"></param>
         private void _IZKEMEvents_OnAttTransactionExEventHandler(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
+
+            string sdwEnrollNumber = string.Empty, sName = string.Empty, sPassword = string.Empty, sTmpData = string.Empty;
+            int iPrivilege = 0, iTmpLength = 0, iFlag = 0, idwFingerIndex, machineNumber = 1;
+            bool bEnabled = false;
+            var userInfo = new UserInfo();
+            if (objCZKEM.SSR_GetUserInfo(machineNumber, EnrollNumber, out sName, out sPassword, out iPrivilege, out bEnabled))
+            {
+                userInfo.Name = sName;
+                userInfo.EnrollNumber = EnrollNumber;
+                userInfo.Password = sPassword;
+                userInfo.MachineNumber = machineNumber;
+                userInfo.Privelage = iPrivilege;
+                userInfo.Enabled = bEnabled;
+            }
         }
 
         private void _IZKEMEvents_OnFingerFeatureEventHandler(int Score) { }

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Timekeeper));
             this.tbxDeviceIP = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -67,7 +66,7 @@
             this.tbxDeviceIP.Name = "tbxDeviceIP";
             this.tbxDeviceIP.Size = new System.Drawing.Size(99, 22);
             this.tbxDeviceIP.TabIndex = 0;
-            this.tbxDeviceIP.Text = "172.18.12.222";
+            this.tbxDeviceIP.Text = "192.168.1.201";
             // 
             // label1
             // 
@@ -125,7 +124,7 @@
             // lblStatus
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblStatus.Location = new System.Drawing.Point(0, 483);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblStatus.Name = "lblStatus";
@@ -207,7 +206,7 @@
             // lblHeader
             // 
             this.lblHeader.AutoSize = true;
-            this.lblHeader.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHeader.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblHeader.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(116)))), ((int)(((byte)(116)))), ((int)(((byte)(116)))));
             this.lblHeader.Location = new System.Drawing.Point(12, 9);
             this.lblHeader.Name = "lblHeader";
@@ -281,8 +280,8 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.dgvRecords);
             this.panel1.Controls.Add(this.flowLayoutPanel1);
@@ -332,7 +331,7 @@
             // 
             // lblDeviceInfo
             // 
-            this.lblDeviceInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.lblDeviceInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDeviceInfo.Location = new System.Drawing.Point(11, 45);
             this.lblDeviceInfo.Name = "lblDeviceInfo";
@@ -340,7 +339,7 @@
             this.lblDeviceInfo.TabIndex = 892;
             this.lblDeviceInfo.Text = "Device Info : --";
             // 
-            // Master
+            // Timekeeper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -349,10 +348,9 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.lblStatus);
-            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MinimumSize = new System.Drawing.Size(615, 425);
-            this.Name = "Master";
+            this.Name = "Timekeeper";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Biometric Device Demo";
             this.pnlHeader.ResumeLayout(false);

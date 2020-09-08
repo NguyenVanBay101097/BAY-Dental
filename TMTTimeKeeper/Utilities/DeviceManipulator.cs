@@ -62,9 +62,8 @@ namespace TMTTimeKeeper.Utilities
 
             objZkeeper.ReadAllGLogData(machineNumber);
 
+
             while (objZkeeper.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber1, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
-
-
             {
                 string inputDate = new DateTime(dwYear, dwMonth, dwDay, dwHour, dwMinute, dwSecond).ToString();
 
@@ -82,7 +81,7 @@ namespace TMTTimeKeeper.Utilities
         public ICollection<UserIDInfo> GetAllUserID(ZkemClient objZkeeper, int machineNumber)
         {
             int dwEnrollNumber = 0;
-            int dwEMachineNumber = 0;
+            int dwEMachineNumber = 1;
             int dwBackUpNumber = 0;
             int dwMachinePrivelage = 0;
             int dwEnabled = 0;
