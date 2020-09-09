@@ -129,6 +129,7 @@ namespace TMTTimeKeeper
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             LoginInfo loginInfo = new LoginInfo
             {
                 userName = tbxUsername.Text,
@@ -192,6 +193,7 @@ namespace TMTTimeKeeper
                     // End Demo Get employees
 
                     DialogResult = DialogResult.OK;
+                    this.Cursor = Cursors.Default;
                     Close();
                 }
                 else
