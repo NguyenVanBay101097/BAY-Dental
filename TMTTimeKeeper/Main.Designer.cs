@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblLogout = new System.Windows.Forms.Label();
+            this.lblAccountName = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -39,6 +41,8 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.panel1.Controls.Add(this.lblLogout);
+            this.panel1.Controls.Add(this.lblAccountName);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
@@ -47,6 +51,33 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 50);
             this.panel1.TabIndex = 0;
+            // 
+            // lblLogout
+            // 
+            this.lblLogout.BackColor = System.Drawing.Color.Transparent;
+            this.lblLogout.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblLogout.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblLogout.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblLogout.Location = new System.Drawing.Point(621, 20);
+            this.lblLogout.Name = "lblLogout";
+            this.lblLogout.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblLogout.Size = new System.Drawing.Size(169, 20);
+            this.lblLogout.TabIndex = 1;
+            this.lblLogout.Text = "Đăng xuất";
+            this.lblLogout.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblLogout.Click += new System.EventHandler(this.lblLogout_Click);
+            // 
+            // lblAccountName
+            // 
+            this.lblAccountName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblAccountName.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblAccountName.Location = new System.Drawing.Point(621, 2);
+            this.lblAccountName.Name = "lblAccountName";
+            this.lblAccountName.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblAccountName.Size = new System.Drawing.Size(169, 23);
+            this.lblAccountName.TabIndex = 1;
+            this.lblAccountName.Text = "lblAccountName";
+            this.lblAccountName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // button3
             // 
@@ -101,7 +132,7 @@
             this.content.Size = new System.Drawing.Size(800, 400);
             this.content.TabIndex = 1;
             // 
-            // Form1
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -109,7 +140,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.content);
             this.Controls.Add(this.panel1);
-            this.Name = "Form1";
+            this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TMTDentalFPS";
             this.Load += new System.EventHandler(this.Main_Load);
@@ -125,5 +156,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Panel content;
+        private System.Windows.Forms.Label lblAccountName;
+        private System.Windows.Forms.Label lblLogout;
     }
 }

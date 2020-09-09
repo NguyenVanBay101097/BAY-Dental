@@ -1,13 +1,20 @@
 ﻿using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Forms;
+using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Info;
+using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -17,6 +24,8 @@ namespace TMTTimeKeeper
         DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
+        Main main = new Main();
+        static HttpClient client = new HttpClient();
         public Page2()
         {
             InitializeComponent();
@@ -147,6 +156,82 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[6].HeaderText = "Mật Khẩu";
             dataGridView1.Columns[7].HeaderText = "Trạng thái";
             dataGridView1.Columns[8].HeaderText = "iFlag";
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            var account = main.getAccount();
+            if (account == null)
+                ShowStatusBar("lỗi đăng nhập !!", true);
+
+            //var timeKeeper = main.getTimeKepper();
+            //if (timeKeeper == null)
+            //    ShowStatusBar("chưa kết nối máy chấm công !!", true);
+
+            // Update port # in the following line.
+            client.BaseAddress = new Uri("https://localhost:44377/");
+            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
+
+            EmployeePaged employeePaged = new EmployeePaged
+            {
+                offset = 0,
+                limit = 100,
+                search = null
+            };
+
+            var response = await client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
+            var rs = response.Content.ReadAsStringAsync().Result;
+            var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
+            var empTimes = main.getEmployee();
+            var emps = res.Items.Where(x => empTimes.Any(s => s.Id == x.Id)).ToList();
+
+            ///Set User
+            foreach(var emp in emps)
+            {
+                int MachineNumber = 1;
+                string EnrollNumber = null;
+                string Name = emp.Name;
+                string Password = "123456";
+                int Privilege = 1;
+                bool Enabled = true;
+
+                bool result = objZkeeper.SSR_SetUserInfo(MachineNumber, EnrollNumber, Name, Password, Privilege, Enabled);
+
+                if (result == true)
+                {              
+                    //Add json
+                    var employee = new Employee();
+                    employee.Id = emp.Id;
+                    employee.IdKP = Int32.Parse(EnrollNumber);
+                    employee.Name = Name;
+                    employee.MachineNumber = MachineNumber;
+                    employee.Password = Password;
+                    employee.Privelage = Privilege;
+                    employee.Enabled = Enabled;
+
+                    AddEmployee(employee);
+                    MessageBox.Show("Result Stored in the Device");
+
+                }
+                else
+                {
+                    MessageBox.Show("Result Not Stored in the Device");
+                }
+            }
+            
+
+
+        }
+
+        public void AddEmployee(Employee val)
+        {
+            string fileName = "Employees.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            File.AppendAllText(path, JsonConvert.SerializeObject(val));
         }
     }
 }

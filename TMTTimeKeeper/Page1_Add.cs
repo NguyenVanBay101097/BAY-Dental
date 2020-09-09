@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -274,6 +277,18 @@ namespace TMTTimeKeeper
                         this.userInputInfo["Machine Name"] = tbxMachineName.Text.Trim();
                         this.userInputInfo["Company Name"] = tbxCompanyName.Text.Trim();
                         this.userInputInfo["Machine Model"] = tbxCompanyName.Text.Trim();
+
+                        //save may cham cong
+                        var timekeeper = new TimeKeeper();
+                        timekeeper.Id = int.Parse(((Page1)MyParentForm).machineID);
+                        timekeeper.CompanyName = tbxCompanyName.Text;
+                        timekeeper.Name = tbxMachineName.Text;
+                        timekeeper.Seri = tbxMachineSeri.Text;
+                        timekeeper.AddressIP = tbxIP.Text;
+                        timekeeper.ConnectTCP = tbxPort.Text;
+
+                        AddTimekeeper(timekeeper);
+
                         this.DialogResult = DialogResult.OK;
                         this.Close();
                     }
@@ -345,6 +360,19 @@ namespace TMTTimeKeeper
             {
                 ShowStatusBar("Cổng liên kết TCP is Empty", false);
             }
+        }
+
+        //add may cham cong 
+        public void AddTimekeeper(TimeKeeper val)
+        {
+            string fileName = "TimeKeeper.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            File.WriteAllText(path, JsonConvert.SerializeObject(val));
+        }
+
+        private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

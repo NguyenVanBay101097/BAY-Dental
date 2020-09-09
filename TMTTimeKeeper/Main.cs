@@ -1,19 +1,32 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Forms;
+using TMTTimeKeeper.Models;
 
 namespace TMTTimeKeeper
 {
     public partial class Main : Form
     {
         private Button stateNav = null;
+        private AccountLogin account = null;
         public Main()
         {
             InitializeComponent();
+
+            // Update port # in the following line.
+            HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -27,17 +40,27 @@ namespace TMTTimeKeeper
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Visible = false;
-            Login loginForm = new Login();
-            var result = loginForm.ShowDialog();
+            account = getAccount();
+            if (account == null)
+            {
+                Visible = false;
+                Login loginForm = new Login();
+                var result = loginForm.ShowDialog();
 
-            if (result == DialogResult.OK)
-            {
-                Visible = true;
+                if (result == DialogResult.OK)
+                {
+                    account = getAccount();
+                    lblAccountName.Text = account.Name;
+                    Visible = true;
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    Close();
+                }
             }
-            else if (result == DialogResult.Cancel)
+            else
             {
-                Close();
+                lblAccountName.Text = account.Name;
             }
         }
 
@@ -79,7 +102,56 @@ namespace TMTTimeKeeper
             button.ForeColor = SystemColors.ControlText;
             stateNav = button;
         }
+
+        public AccountLogin getAccount()
+        {
+            var account = new AccountLogin();
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
+            }
+            return account;
+        }
+
+        public TimeKeeper getTimeKepper()
+        {
+            var timeKeeper = new TimeKeeper();
+            string fileName = "TimeKeeper.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                timeKeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
+            }
+            return timeKeeper;
+        }
+
+        public List<Employee> getEmployee()
+        {
+            var employees = new List<Employee>();
+            string fileName = "Employees.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                employees = JsonConvert.DeserializeObject<List<Employee>>(sr.ReadToEnd());
+            }
+            return employees;
+        }
+
+        private void lblLogout_Click(object sender, EventArgs e)
+        {
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            File.WriteAllText(path, String.Empty);
+            Form1_Shown(sender, e);
+        }
     }
+}
+
+public static class HttpClientConfig
+{
+    public static HttpClient client = new HttpClient();
 }
 
 public static class DataConnect
