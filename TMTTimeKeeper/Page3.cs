@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Info;
+using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -14,6 +15,7 @@ namespace TMTTimeKeeper
     public partial class Page3 : Form
     {
         DeviceManipulator manipulator = new DeviceManipulator();
+        DeviceManipulatorService manipulatorService = new DeviceManipulatorService();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         public Page3()
@@ -40,7 +42,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulator.GetLogData(objZkeeper, int.Parse(DataConnect.machineID));
+                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetLogDataByDate(objZkeeper, int.Parse(DataConnect.machineID), timeIn: DateTime.Parse(dateTimeIn.Value.ToString()), timeOut: DateTime.Parse(dateTimeOut.Value.ToString()));
 
                     if (lstMachineInfo != null && lstMachineInfo.Count > 0)
                     {
@@ -144,6 +146,11 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[3].HeaderText = "Ngày";
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

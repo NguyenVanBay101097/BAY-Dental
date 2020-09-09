@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Text;
 using TMTTimeKeeper.Info;
+using TMTTimeKeeper.IService;
+using TMTTimeKeeper.Utilities;
 using zkemkeeper;
 
-namespace TMTTimeKeeper.Utilities
+namespace TMTTimeKeeper.Services
 {
-    public class ZkemClient : IZKEM
+    public class ZkemClientService : IZkemClientService
     {
+        public ZkemClientService()
+        {
+        }
+
         Action<object, string> RaiseDeviceEvent;
 
-        public ZkemClient(Action<object, string> RaiseDeviceEvent)
+        public ZkemClientService(Action<object, string> RaiseDeviceEvent)
         {
             this.RaiseDeviceEvent = RaiseDeviceEvent;
         }
@@ -1423,6 +1429,8 @@ namespace TMTTimeKeeper.Utilities
 
 
         #endregion
+
+
 
     }
 }
