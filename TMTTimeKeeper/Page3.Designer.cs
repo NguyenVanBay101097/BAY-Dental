@@ -32,10 +32,7 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button1 = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.dateTimeIn = new System.Windows.Forms.DateTimePicker();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.dateTimeOut = new System.Windows.Forms.DateTimePicker();
+            this.btn_Sync = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,15 +70,16 @@
             // button1
             // 
             this.button1.BackColor = System.Drawing.Color.MediumSeaGreen;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button1.Location = new System.Drawing.Point(676, 15);
+            this.button1.Location = new System.Drawing.Point(700, 15);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(106, 35);
+            this.button1.Size = new System.Drawing.Size(82, 35);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Tải dữ liệu";
+            this.button1.Text = "Làm mới";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -95,42 +93,18 @@
             this.lblStatus.TabIndex = 6;
             this.lblStatus.Text = "label2";
             // 
-            // dateTimeIn
+            // btn_Sync
             // 
-            this.dateTimeIn.Location = new System.Drawing.Point(266, 22);
-            this.dateTimeIn.Name = "dateTimeIn";
-            this.dateTimeIn.Size = new System.Drawing.Size(107, 23);
-            this.dateTimeIn.TabIndex = 7;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(201, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 17);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Từ ngày";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(391, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 17);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Đến ngày";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            // 
-            // dateTimeOut
-            // 
-            this.dateTimeOut.Location = new System.Drawing.Point(464, 22);
-            this.dateTimeOut.Name = "dateTimeOut";
-            this.dateTimeOut.Size = new System.Drawing.Size(107, 23);
-            this.dateTimeOut.TabIndex = 7;
+            this.btn_Sync.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.btn_Sync.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_Sync.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.btn_Sync.Location = new System.Drawing.Point(592, 14);
+            this.btn_Sync.Name = "btn_Sync";
+            this.btn_Sync.Size = new System.Drawing.Size(88, 38);
+            this.btn_Sync.TabIndex = 8;
+            this.btn_Sync.Text = "Đồng bộ";
+            this.btn_Sync.UseVisualStyleBackColor = false;
+            this.btn_Sync.Click += new System.EventHandler(this.btn_sync_Click);
             // 
             // Page3
             // 
@@ -138,10 +112,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.dateTimeOut);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateTimeIn);
+            this.Controls.Add(this.btn_Sync);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridView1);
@@ -162,9 +133,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.DateTimePicker dateTimeIn;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DateTimePicker dateTimeOut;
+        private System.Windows.Forms.Button btn_Sync;
+        private System.Windows.Forms.Button button2;
     }
 }

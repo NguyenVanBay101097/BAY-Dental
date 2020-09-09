@@ -1,9 +1,1 @@
-{
-  "Name": "abc",
-  "UserName": "abc",
-  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIwMmY5NjVhYi1lMmQwLTRiNTgtYTUzMS0zNDMzMzViZWFjZTgiLCJ1bmlxdWVfbmFtZSI6ImFiYyIsImNvbXBhbnlfaWQiOiJjMWQ0MTQ2Mi00OTdmLTQ4YzMtNmIwYS0wOGQ3YmZmNzhkMTQiLCJ1c2VyX3Jvb3QiOiJGYWxzZSIsIm5iZiI6MTU5OTU1NDg3MSwiZXhwIjoxNjAwMTU5NjcxLCJpYXQiOjE1OTk1NTQ4NzF9.mz1QwoUBMC0rr8jwydHWMkr2nudaxiEKUJwDCYYRLVo",
-  "RefeshToken": "g/mnY2Qccyj/Vs96QHyDRvNt/tl7gcMAH4ffSx1C7q0=",
-  "Email": null,
-  "CompanyId": "c1d41462-497f-48c3-6b0a-08d7bff78d14",
-  "CompanyName": null
-}
+{"Name":"Nguyễn Văn Thắng","UserName":"foxjudo95","AccessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZTk1YzgyNi05MjQ4LTRkN2EtODAwMC04MDdmZjZkNTkzMGMiLCJ1bmlxdWVfbmFtZSI6ImZveGp1ZG85NSIsImNvbXBhbnlfaWQiOiIyOTg3ZmRmMS04ZWUzLTRhODctMDQ4MS0wOGQ4MzQzMDY5OWEiLCJ1c2VyX3Jvb3QiOiJUcnVlIiwibmJmIjoxNTk5NjIzNDc1LCJleHAiOjE2MDAyMjgyNzUsImlhdCI6MTU5OTYyMzQ3NX0.4Ijap4hZq0eGwNzjZ45raprvO6zpAJ5Nfe_c1CSoLoM","RefeshToken":"EYnZyy+kuAnhpS1v5W7gmwN3ebm4J45VNHVtdI8RMSU=","Email":"nguyenthangdhv95@gmail.com","CompanyId":"2987fdf1-8ee3-4a87-0481-08d83430699a","CompanyName":""}

@@ -1,10 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
+using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Enums;
 using TMTTimeKeeper.Info;
 using TMTTimeKeeper.IService;
+using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper.Services
@@ -79,6 +87,8 @@ namespace TMTTimeKeeper.Services
 
                 lstEnrollData.Add(objInfo);
             }
+
+
             var res = new List<MachineInfo>();
             if (timeIn.HasValue)
                 res = lstEnrollData.Where(x => x.DateOnlyRecord >= timeIn.Value).ToList();
@@ -86,7 +96,6 @@ namespace TMTTimeKeeper.Services
                 res = res.Where(x => x.DateOnlyRecord <= timeOut.Value).ToList();
 
             return res;
-
         }
 
         public ICollection<MachineInfo> GetAllLogData(ZkemClient objZkeeper, int machineNumber)
@@ -101,6 +110,17 @@ namespace TMTTimeKeeper.Services
             int dwMinute = 0;
             int dwSecond = 0;
             int dwWorkCode = 0;
+            LastUpdateLogData log = new LastUpdateLogData();
+            //Lấy lastUpdate
+            string fileName = "DatalogEnroll.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string json = File.ReadAllText(path);
+
+            if (!string.IsNullOrEmpty(json))
+            {
+                log = JsonConvert.DeserializeObject<LastUpdateLogData>(json);
+            }
+
 
             ICollection<MachineInfo> lstEnrollData = new List<MachineInfo>();
 
@@ -122,7 +142,101 @@ namespace TMTTimeKeeper.Services
                 lstEnrollData.Add(objInfo);
             }
 
+            if (log.LastUpdate.HasValue)
+            {
+                lstEnrollData = lstEnrollData.Where(x => x.DateOnlyRecord >= log.LastUpdate.Value).ToList();
+                SaveLogDataToJson(lstEnrollData);
+            }
+            else
+            {
+                SaveLogDataToJson(lstEnrollData);
+            }
+
             return lstEnrollData;
+        }
+
+        public Response SaveLogDataToJson(ICollection<MachineInfo> listLog)
+        {
+            if (listLog == null || listLog.Count() <= 0)
+            {
+                return new Response() { Success = false, Errors = new List<string>() { "List bị null" } };
+            }
+            try
+            {
+                string fileName = "DatalogEnroll.json";
+                string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+                File.WriteAllText(path, JsonConvert.SerializeObject(listLog));
+            }
+            catch (Exception e)
+            {
+
+                return new Response() { Success = false, Errors = new List<string>() { e.Message } };
+            }
+
+            return new Response() { Success = true, Message = "Đồng bộ thành công" };
+        }
+
+        public async Task<Response> SyncLogData()
+        {
+            List<MachineInfo> listLogs = new List<MachineInfo>();
+            AccountLogin acc = new AccountLogin();
+            string logEnroll = "DatalogEnroll.json";
+            string pathLogEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", logEnroll);
+            string account = "AccountLogin.json";
+            string pathAccountLogin = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", account);
+
+            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
+            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
+
+            var jsonAccount = File.ReadAllText(pathAccountLogin);
+            acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
+
+            if (acc != null)
+            {
+                HttpClient client = new HttpClient();
+                var token = acc.AccessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var url = "api/ChamCongs?";
+
+                try
+                {
+                    foreach (var item in listLogs)
+                    {
+                        var emp = GetEmp(item.IndRegID);
+                        ChamCongSave val = new ChamCongSave();
+                        val.CompanyId = new Guid(acc.CompanyId);
+                        val.EmployeeId = emp.Id;
+                        val.WorkEntryTypeId = emp.WorkEntryTypeId;
+                        if (item.dwInOutMode == 0)
+                        {
+                            val.TimeIn = DateTime.Parse(item.DateTimeRecord);
+                            continue;
+                        }
+                        if (item.dwInOutMode == 1)
+                        {
+                            val.TimeOut = DateTime.Parse(item.DateTimeRecord);
+                            await client.PostAsJsonAsync(url, val);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+
+                    return new Response() { Success = false, Errors = new List<string>() { e.Message } };
+                }
+            }
+
+            return new Response() { Success = true };
+        }
+
+        public Employee GetEmp(int idKp)
+        {
+            Employee emp = new Employee();
+            var fileEmp = "Employees.json";
+            var empPath = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileEmp);
+            var empJson = File.ReadAllText(fileEmp);
+            emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            return emp;
         }
 
         public ICollection<UserIDInfo> GetAllUserID(ZkemClient objZkeeper, int machineNumber)
@@ -303,5 +417,7 @@ namespace TMTTimeKeeper.Services
 
             return sb.ToString();
         }
+
+
     }
 }

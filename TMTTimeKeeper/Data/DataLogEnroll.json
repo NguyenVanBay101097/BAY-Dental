@@ -1,0 +1,1002 @@
+[
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "8/31/2020 11:58:09 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:58:09 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "8/31/2020 11:58:12 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:58:12 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "8/31/2020 11:58:14 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:58:14 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "8/31/2020 11:58:16 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:58:16 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "8/31/2020 11:59:52 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:59:52 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "8/31/2020 11:59:54 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:59:54 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "8/31/2020 11:59:58 AM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "11:59:58 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "8/31/2020 4:34:04 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:34:04 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "8/31/2020 4:34:05 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:34:05 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "8/31/2020 4:34:07 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:34:07 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "8/31/2020 4:44:58 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:44:58 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "8/31/2020 4:45:14 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:45:14 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "8/31/2020 4:50:02 PM",
+    "DateOnlyRecord": "2020-08-31T00:00:00",
+    "MyTimeOnlyRecord": "04:50:02 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "9/1/2020 9:03:31 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "09:03:31 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/1/2020 9:03:32 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "09:03:32 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "9/1/2020 9:03:44 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "09:03:44 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "9/1/2020 9:03:47 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "09:03:47 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "9/1/2020 10:46:49 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "10:46:49 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/1/2020 10:46:57 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "10:46:57 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "9/1/2020 10:47:03 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "10:47:03 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "9/1/2020 10:47:05 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "10:47:05 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/1/2020 11:10:42 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "11:10:42 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "9/1/2020 11:10:43 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "11:10:43 AM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "9/1/2020 11:11:33 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "11:11:33 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "9/1/2020 11:11:34 AM",
+    "DateOnlyRecord": "2020-09-01T00:00:00",
+    "MyTimeOnlyRecord": "11:11:34 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 2:50:32 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:50:32 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "9/3/2020 2:50:33 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:50:33 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 4,
+    "DateTimeRecord": "9/3/2020 2:50:35 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:50:35 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "9/3/2020 2:50:37 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:50:37 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 2:54:27 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:54:27 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 2:56:52 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:56:52 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 2:58:32 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:58:32 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 2:59:42 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "02:59:42 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/3/2020 5:58:42 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "05:58:42 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 2,
+    "DateTimeRecord": "9/3/2020 5:58:50 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "05:58:50 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 3,
+    "DateTimeRecord": "9/3/2020 5:59:00 PM",
+    "DateOnlyRecord": "2020-09-03T00:00:00",
+    "MyTimeOnlyRecord": "05:59:00 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 8:55:14 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "08:55:14 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 8:57:48 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "08:57:48 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 10:46:21 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "10:46:21 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 10:46:46 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "10:46:46 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 10:47:41 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "10:47:41 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:06:42 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:06:42 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:08:12 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:08:12 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:09:22 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:09:22 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:11:10 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:11:10 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:20:10 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:20:10 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:24:52 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:24:52 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 11:29:07 AM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "11:29:07 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:02:53 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:02:53 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:05:54 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:05:54 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:09:59 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:09:59 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:40:50 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:40:50 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:44:04 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:44:04 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 12:44:06 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:44:06 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:45:27 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:45:27 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:47:11 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:47:11 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:48:17 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:48:17 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 12:58:45 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:58:45 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 12:59:24 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "12:59:24 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:04:50 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:04:50 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:32:39 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:32:39 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 1:32:48 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:32:48 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:35:08 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:35:08 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 1:35:18 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:35:18 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 1:36:26 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:36:26 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 1:36:30 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:36:30 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:40:02 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:40:02 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:41:02 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:41:02 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 1:41:06 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:41:06 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 1:41:09 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:41:09 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:43:01 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:43:01 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:44:38 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:44:38 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 1:44:40 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:44:40 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:45:50 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:45:50 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 1:53:57 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "01:53:57 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:11:07 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:11:07 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:11:52 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:11:52 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:13:14 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:13:14 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:28:34 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:28:34 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:29:44 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:29:44 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:31:37 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:31:37 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:32:41 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:32:41 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:33:01 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:33:01 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 2:33:05 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:33:05 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:33:46 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:33:46 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:34:49 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:34:49 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:37:48 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:37:48 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:37:53 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:37:53 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 2:38:30 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:38:30 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:39:05 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:39:05 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:39:50 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:39:50 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 2:40:27 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:40:27 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:40:34 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:40:34 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 2:41:24 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:41:24 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 2:41:55 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:41:55 PM",
+    "dwInOutMode": 1
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:42:20 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:42:20 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:45:13 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:45:13 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:47:57 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:47:57 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 2:49:58 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "02:49:58 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 3:48:18 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "03:48:18 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 3:56:58 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "03:56:58 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 4:49:50 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "04:49:50 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/7/2020 4:49:54 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "04:49:54 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 4:50:20 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "04:50:20 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 5:42:23 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "05:42:23 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 5:42:34 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "05:42:34 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 5:51:02 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "05:51:02 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/7/2020 5:52:33 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "05:52:33 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/7/2020 5:52:47 PM",
+    "DateOnlyRecord": "2020-09-07T00:00:00",
+    "MyTimeOnlyRecord": "05:52:47 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 9:04:25 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:04:25 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/8/2020 9:10:55 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:10:55 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 9:13:53 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:13:53 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/8/2020 9:18:03 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:18:03 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/8/2020 9:21:00 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:21:00 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 9:26:42 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:26:42 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/8/2020 9:28:11 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:28:11 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/8/2020 9:28:54 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:28:54 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 9:31:00 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:31:00 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/8/2020 9:32:52 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "09:32:52 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/8/2020 10:18:57 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "10:18:57 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 1,
+    "DateTimeRecord": "9/8/2020 10:23:34 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "10:23:34 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 10:23:38 AM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "10:23:38 AM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 3:52:41 PM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "03:52:41 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 6,
+    "DateTimeRecord": "9/8/2020 4:14:54 PM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "04:14:54 PM",
+    "dwInOutMode": 0
+  },
+  {
+    "MachineNumber": 1,
+    "IndRegID": 5,
+    "DateTimeRecord": "9/8/2020 4:15:07 PM",
+    "DateOnlyRecord": "2020-09-08T00:00:00",
+    "MyTimeOnlyRecord": "04:15:07 PM",
+    "dwInOutMode": 0
+  }
+]

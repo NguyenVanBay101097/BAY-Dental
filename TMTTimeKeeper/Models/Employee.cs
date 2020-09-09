@@ -9,6 +9,7 @@ namespace TMTTimeKeeper.Models
         public Guid Id { get; set; }
         public int IdKP { get; set; }
         public string Name { get; set; }
+        public Guid WorkEntryTypeId { get; set; }
         public int MachineNumber { get; set; }
         public string EnrollNumber { get; set; }
         public int FingerIndex { get; set; }
