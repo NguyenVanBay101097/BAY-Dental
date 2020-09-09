@@ -45,6 +45,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SyncToTimeKeeper(IList<ImportFileExcellChamCongModel> vals)
+        {
+            if (vals == null || !ModelState.IsValid)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            var result = await _chamCongService.SyncChamCong(vals);
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

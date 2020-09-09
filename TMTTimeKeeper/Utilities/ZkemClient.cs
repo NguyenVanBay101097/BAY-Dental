@@ -392,7 +392,7 @@ namespace TMTTimeKeeper.Utilities
 
         public bool ClearKeeperData(int dwMachineNumber)
         {
-            throw new NotImplementedException();
+           return objCZKEM.ClearKeeperData(dwMachineNumber);
         }
 
         public bool ClearLCD()

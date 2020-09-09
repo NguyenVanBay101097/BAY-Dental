@@ -324,6 +324,7 @@ namespace TMTTimeKeeper
             DialogResult rslt = MessageBox.Show("Do you wish to restart the device now ??", "Restart Device", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (rslt == DialogResult.Yes)
             {
+                objZkeeper.ClearKeeperData(1);
                 if (objZkeeper.RestartDevice(int.Parse(tbxMachineNumber.Text.Trim())))
                     ShowStatusBar("The device is being restarted, Please wait...", true);
                 else

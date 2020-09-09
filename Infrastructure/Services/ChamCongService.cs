@@ -423,7 +423,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                soNgayCong = Math.Round(soNgayCong,2);
+                soNgayCong = Math.Round(soNgayCong, 2);
             }
 
 
@@ -589,6 +589,50 @@ namespace Infrastructure.Services
             return new ChamCongImportResponse { Success = true };
         }
 
+        public async Task<ChamCongImportResponse> SyncChamCong(IList<ImportFileExcellChamCongModel> listData)
+        {
+            int count = listData.Count();
+            var errors_2 = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                var cc = listData[i];
+                try
+                {
+                    if (cc.Type == "check-in")
+                    {
+                        var chamcong = new ChamCong();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = cc.EmpId.Value;
+                        chamcong.WorkEntryTypeId = cc.WorkId.Value;
+                        chamcong.Date = cc.Date;
+                        chamcong.TimeIn = cc.Time;
+                        await CreateAsync(chamcong);
+                    }
+                    else if (cc.Type == "check-out")
+                    {
+                        var ccIn = await SearchQuery(x => x.EmployeeId == cc.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
+                        if (ccIn != null)
+                        {
+                            ccIn.TimeOut = cc.Time;
+                            await UpdateAsync(ccIn);
+                        }
+                        else
+                        {
+                            throw new Exception("không tìm thấy chấm công nào chưa check-out.");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    errors_2.Add(e.Message);
+                }
+            }
+            if (errors_2.Any())
+                return new ChamCongImportResponse { Success = false, Errors = errors_2 };
+
+            return new ChamCongImportResponse { Success = true };
+        }
+
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
         {
             var empObj = GetService<IEmployeeService>();
@@ -630,6 +674,7 @@ namespace Infrastructure.Services
                     }
                 }
             }
+          
         }
 
         public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)

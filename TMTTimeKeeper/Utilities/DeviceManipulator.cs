@@ -21,24 +21,19 @@ namespace TMTTimeKeeper.Utilities
 
             while (objZkeeper.SSR_GetAllUserInfo(machineNumber, out sdwEnrollNumber, out sName, out sPassword, out iPrivilege, out bEnabled))
             {
-                for (idwFingerIndex = 0; idwFingerIndex < 10; idwFingerIndex++)
-                {
-                    if (objZkeeper.GetUserTmpExStr(machineNumber, sdwEnrollNumber, idwFingerIndex, out iFlag, out sTmpData, out iTmpLength))
-                    {
-                        UserInfo fpInfo = new UserInfo();
-                        fpInfo.MachineNumber = machineNumber;
-                        fpInfo.EnrollNumber = sdwEnrollNumber;
-                        fpInfo.Name = sName;
-                        fpInfo.FingerIndex = idwFingerIndex;
-                        fpInfo.TmpData = sTmpData;
-                        fpInfo.Privelage = iPrivilege;
-                        fpInfo.Password = sPassword;
-                        fpInfo.Enabled = bEnabled;
-                        fpInfo.iFlag = iFlag.ToString();
 
-                        lstFPTemplates.Add(fpInfo);
-                    }
-                }
+                UserInfo fpInfo = new UserInfo();
+                fpInfo.MachineNumber = machineNumber;
+                fpInfo.EnrollNumber = sdwEnrollNumber;
+                fpInfo.Name = sName;
+                fpInfo.TmpData = sTmpData;
+                fpInfo.Privelage = iPrivilege;
+                fpInfo.Password = sPassword;
+                fpInfo.Enabled = bEnabled;
+                fpInfo.iFlag = iFlag.ToString();
+
+                lstFPTemplates.Add(fpInfo);
+
 
             }
             return lstFPTemplates;
@@ -126,12 +121,11 @@ namespace TMTTimeKeeper.Utilities
             }
         }
 
-        public bool PushUserDataToDevice(ZkemClient objZkeeper, int machineNumber, string enrollNo)
+        public bool PushUserDataToDevice(ZkemClient objZkeeper, int machineNumber, string enrollNo, string name)
         {
-            string userName = string.Empty;
             string password = string.Empty;
             int privelage = 1;
-            return objZkeeper.SSR_SetUserInfo(machineNumber, enrollNo, userName, password, privelage, true);
+            return objZkeeper.SSR_SetUserInfo(machineNumber, enrollNo, name, password, privelage, true);
         }
 
         public bool UploadFTPTemplate(ZkemClient objZkeeper, int machineNumber, List<UserInfo> lstUserInfo)

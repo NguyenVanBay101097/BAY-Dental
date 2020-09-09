@@ -16,6 +16,7 @@ using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Info;
 using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Utilities;
+using zkemkeeper;
 
 namespace TMTTimeKeeper
 {
@@ -160,78 +161,98 @@ namespace TMTTimeKeeper
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            var account = main.getAccount();
-            if (account == null)
-                ShowStatusBar("lỗi đăng nhập !!", true);
+            objZkeeper = new ZkemClient(RaiseDeviceEvent);
+            IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
 
-            //var timeKeeper = main.getTimeKepper();
-            //if (timeKeeper == null)
-            //    ShowStatusBar("chưa kết nối máy chấm công !!", true);
-
-            // Update port # in the following line.
-            client.BaseAddress = new Uri("https://localhost:44377/");
-            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
-
-            EmployeePaged employeePaged = new EmployeePaged
+            if (IsDeviceConnected)
             {
-                offset = 0,
-                limit = 100,
-                search = null
-            };
-
-            var response = await client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
-            var rs = response.Content.ReadAsStringAsync().Result;
-            var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
-            var empTimes = main.getEmployee();
-            var emps = res.Items.Where(x => empTimes.Any(s => s.Id == x.Id)).ToList();
-
-            ///Set User
-            foreach(var emp in emps)
-            {
-                int MachineNumber = 1;
-                string EnrollNumber = null;
-                string Name = emp.Name;
-                string Password = "123456";
-                int Privilege = 1;
-                bool Enabled = true;
-
-                bool result = objZkeeper.SSR_SetUserInfo(MachineNumber, EnrollNumber, Name, Password, Privilege, Enabled);
-
-                if (result == true)
-                {              
-                    //Add json
-                    var employee = new Employee();
-                    employee.Id = emp.Id;
-                    employee.IdKP = Int32.Parse(EnrollNumber);
-                    employee.Name = Name;
-                    employee.MachineNumber = MachineNumber;
-                    employee.Password = Password;
-                    employee.Privelage = Privilege;
-                    employee.Enabled = Enabled;
-
-                    AddEmployee(employee);
-                    MessageBox.Show("Result Stored in the Device");
-
-                }
-                else
+                try
                 {
-                    MessageBox.Show("Result Not Stored in the Device");
+                    ShowStatusBar(string.Empty, true);
+                    var account = main.getAccount();
+                    if (account == null)
+                        ShowStatusBar("lỗi đăng nhập !!", true);
+
+                    //var timeKeeper = main.getTimeKepper();
+                    //if (timeKeeper == null)
+                    //    ShowStatusBar("chưa kết nối máy chấm công !!", true);
+
+                    // Update port # in the following line.
+                    client.BaseAddress = new Uri("https://localhost:44377/");
+                    //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
+
+                    EmployeePaged employeePaged = new EmployeePaged
+                    {
+                        offset = 0,
+                        limit = 100,
+                        search = null
+                    };
+
+                    var response = await client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
+                    var rs = response.Content.ReadAsStringAsync().Result;
+                    List<Employee> listEmp = new List<Employee>();
+                    var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
+                    var empTimes = main.getEmployee().Select(x => x.Id);
+                    if (res != null && empTimes != null)
+                    {
+                        listEmp = res.Items.Where(x => !empTimes.Contains(x.Id)).ToList();
+                    }
+
+                    var listSave = new List<Employee>();
+                    ///Set User
+                    for (int i = 0; i < listEmp.Count(); i++)
+                    {
+                        var emp = listEmp[i];
+                        int MachineNumber = 1;
+                        string EnrollNumber = (i + 2).ToString();
+                        string Name = emp.Name;
+                        string Password = "123";
+                        int Privilege = 1;
+                        bool Enabled = true;
+
+                        bool result = manipulator.PushUserDataToDevice(objZkeeper, MachineNumber, EnrollNumber, Name);
+
+                        if (result)
+                        {
+                            //Add json
+                            var employee = new Employee();
+                            employee.Id = emp.Id;
+                            employee.IdKP = Int32.Parse(EnrollNumber);
+                            employee.Name = Name;
+                            employee.MachineNumber = MachineNumber;
+                            employee.Password = Password;
+                            employee.Privelage = Privilege;
+                            employee.Enabled = Enabled;
+                            listSave.Add(employee);
+
+
+                        }
+                        else
+                        {
+                            MessageBox.Show("Result Not Stored in the Device");
+                        }
+                    }
+                    if (listSave.Count() > 0)
+                        AddEmployee(listSave);
+                    
+                }
+                catch (Exception ex)
+                {
+                    //DisplayListOutput(ex.Message);
                 }
             }
-            
-
-
         }
 
-        public void AddEmployee(Employee val)
+        public void AddEmployee(IList<Employee> vals)
         {
             string fileName = "Employees.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.AppendAllText(path, JsonConvert.SerializeObject(val));
+            File.AppendAllText(path, JsonConvert.SerializeObject(vals));
+            MessageBox.Show("Đồng bộ thành công");
         }
     }
 }

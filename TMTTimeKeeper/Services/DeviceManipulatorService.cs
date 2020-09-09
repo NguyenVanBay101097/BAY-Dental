@@ -184,7 +184,7 @@ namespace TMTTimeKeeper.Services
             string pathLogEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", logEnroll);
             string account = "AccountLogin.json";
             string pathAccountLogin = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", account);
-
+            var listChamCongSync = new List<ChamCongSync>();
             var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
             listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
 
@@ -193,35 +193,44 @@ namespace TMTTimeKeeper.Services
 
             if (acc != null)
             {
+
                 HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44377/");
                 var token = acc.AccessToken;
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var url = "api/ChamCongs?";
+                var url = "api/ChamCongs/SyncToTimeKeeper";
 
                 try
                 {
                     foreach (var item in listLogs)
                     {
+                        ChamCongSync val = new ChamCongSync();
                         var emp = GetEmp(item.IndRegID);
-                        ChamCongSave val = new ChamCongSave();
-                        val.CompanyId = new Guid(acc.CompanyId);
-                        val.EmployeeId = emp.Id;
-                        val.WorkEntryTypeId = emp.WorkEntryTypeId;
-                        if (item.dwInOutMode == 0)
-                        {
-                            val.TimeIn = DateTime.Parse(item.DateTimeRecord);
-                            continue;
-                        }
+                        val.EmpId = emp.Id;
+                        val.Date = item.DateOnlyRecord;
+                        val.IdMayChamCong = emp.MachineNumber.ToString();
+                        val.Time = DateTime.Parse(item.DateTimeRecord);
                         if (item.dwInOutMode == 1)
+                            val.Type = "check-out";
+                        else if (item.dwInOutMode == 0)
+                            val.Type = "check-in";
+                        val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
+                        listChamCongSync.Add(val);
+                    }
+
+                    var respose = await client.PostAsJsonAsync(url, listChamCongSync);
+                    var content = await respose.Content.ReadAsStringAsync();
+                    var res = JsonConvert.DeserializeObject<Response>(content);
+                    if (!res.Success)
+                    {
+                        foreach (var item in res.Errors)
                         {
-                            val.TimeOut = DateTime.Parse(item.DateTimeRecord);
-                            await client.PostAsJsonAsync(url, val);
+                            throw new Exception(item);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-
                     return new Response() { Success = false, Errors = new List<string>() { e.Message } };
                 }
             }
@@ -234,8 +243,13 @@ namespace TMTTimeKeeper.Services
             Employee emp = new Employee();
             var fileEmp = "Employees.json";
             var empPath = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileEmp);
-            var empJson = File.ReadAllText(fileEmp);
-            emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            var empJson = File.ReadAllText(empPath);
+            var empList = JsonConvert.DeserializeObject<List<Employee>>(empJson);
+
+            if (empList != null && empList.Any())
+                emp = empList.Where(x => x.IdKP == idKp).FirstOrDefault();
+            else
+                emp = null;
             return emp;
         }
 

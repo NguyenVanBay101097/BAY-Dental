@@ -132,10 +132,11 @@ namespace TMTTimeKeeper
             var employees = new List<Employee>();
             string fileName = "Employees.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                employees = JsonConvert.DeserializeObject<List<Employee>>(sr.ReadToEnd());
-            }
+            string json = File.ReadAllText(path);
+            if (string.IsNullOrEmpty(json))
+                return employees;
+            employees = JsonConvert.DeserializeObject<List<Employee>>(json);
+
             return employees;
         }
 
