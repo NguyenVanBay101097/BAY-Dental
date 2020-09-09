@@ -303,7 +303,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   timeKeepingForAll() {
     const modalRef = this.modalService.open(TimeKeepingForallDialogComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title  = 'Chấm công cho tất cả nhân viên';
+    modalRef.componentInstance.title  = 'Chấm công nguyên ngày';
     modalRef.result.then(res => {
       this.timeKeepingService.timeKeepingForAll(res).subscribe(result => {
         this.notificationService.show({
