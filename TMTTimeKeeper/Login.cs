@@ -236,7 +236,7 @@ namespace TMTTimeKeeper
         /// </summary>
         /// <param name="account"></param>
         public void AddAccount(AccountLogin account)
-        {
+        {            
             string fileName = "AccountLogin.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(account));

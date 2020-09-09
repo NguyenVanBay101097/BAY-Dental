@@ -115,6 +115,30 @@ namespace TMTTimeKeeper
             return account;
         }
 
+        public TimeKeeper getTimeKepper()
+        {
+            var timeKeeper = new TimeKeeper();
+            string fileName = "TimeKeeper.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                timeKeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
+            }
+            return timeKeeper;
+        }
+
+        public List<Employee> getEmployee()
+        {
+            var employees = new List<Employee>();
+            string fileName = "Employees.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                employees = JsonConvert.DeserializeObject<List<Employee>>(sr.ReadToEnd());
+            }
+            return employees;
+        }
+
         private void lblLogout_Click(object sender, EventArgs e)
         {
             string fileName = "AccountLogin.json";
