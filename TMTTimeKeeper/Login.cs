@@ -127,17 +127,8 @@ namespace TMTTimeKeeper
         }
         #endregion
 
-        static HttpClient client = new HttpClient();
-
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            // Update port # in the following line.
-            client.BaseAddress = new Uri("https://localhost:44377/");
-            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
             LoginInfo loginInfo = new LoginInfo
             {
                 userName = tbxUsername.Text,
@@ -145,9 +136,9 @@ namespace TMTTimeKeeper
                 rememberMe = chkRememberMe.Checked
             };
 
+            
 
-
-            var response = await client.PostAsJsonAsync("api/Account/Login", loginInfo);
+            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
             if (response.IsSuccessStatusCode)
             {

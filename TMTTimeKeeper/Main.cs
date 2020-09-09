@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Models;
@@ -18,6 +20,13 @@ namespace TMTTimeKeeper
         public Main()
         {
             InitializeComponent();
+
+            // Update port # in the following line.
+            HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -135,9 +144,14 @@ namespace TMTTimeKeeper
             string fileName = "AccountLogin.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, String.Empty);
-            this.Shown += Form1_Shown;
+            Form1_Shown(sender, e);
         }
     }
+}
+
+public static class HttpClientConfig
+{
+    public static HttpClient client = new HttpClient();
 }
 
 public static class DataConnect
