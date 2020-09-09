@@ -115,6 +115,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> TimeKeepingForAll(TimeKeepingForAll val)
+        {
+            _unitOfWork.BeginTransaction();
+            await _chamCongService.TimeKeepingForAll(val);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
         //[HttpPost("[action]")]
         //public async Task<IActionResult> ExportExcelFile(employeePaged val)
         //{

@@ -7,6 +7,12 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
+    public class WorkEntryTypeBasic
+    {
+        public Guid id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class WorkEntryTypePaged
     {
 

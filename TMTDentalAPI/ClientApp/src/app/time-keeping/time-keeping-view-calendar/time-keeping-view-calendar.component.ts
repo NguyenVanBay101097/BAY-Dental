@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic } from '../time-keeping.service';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
+import { PopupCloseEvent } from '@progress/kendo-angular-grid';
+import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -297,6 +299,23 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.result.then(res => {
 
     })
+  }
+
+  timeKeepingForAll() {
+    const modalRef = this.modalService.open(TimeKeepingForallDialogComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title  = 'Chấm công cho tất cả nhân viên';
+    modalRef.result.then(res => {
+      this.timeKeepingService.timeKeepingForAll(res).subscribe(result => {
+        this.notificationService.show({
+          content: 'Thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.getDateMonthList();
+      });
+    });
   }
 
 }

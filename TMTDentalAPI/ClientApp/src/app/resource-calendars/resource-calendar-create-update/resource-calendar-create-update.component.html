@@ -122,13 +122,51 @@
 
                             </ng-template>
                         </ngb-tab>
-                        <!-- <ngb-tab title="Thời gian nghỉ">
-                            <ng-template ngbTabContent>Food truck fixie locavore, accusamus mcsweeney's marfa nulla
-                                <table class="table table-sm">
-
+                        <ngb-tab title="Thời gian nghỉ lễ">
+                            <ng-template ngbTabContent>
+                                <div class="d-flex">
+                                    <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
+                                        (click)="onCreateLeave()">Thêm</button>
+                                </div>
+                                <table class="table table-sm mt-2">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Lý do</th>
+                                            <th scope="col">Từ ngày</th>
+                                            <th scope="col">Đến hết ngày</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="leaves">
+                                        <ng-container
+                                            *ngFor="let item of leaves.controls; let i = index;">
+                                            <tr [formGroupName]="i">
+                                                <td>
+                                                    <input class="form-control" formControlName="name" name="name">
+                                                </td>
+                                                <td>
+                                                    <kendo-datepicker
+                                                    formControlName="dateFrom"
+                                                ></kendo-datepicker>
+                                                </td>
+                                                <td>
+                                                    <kendo-datepicker
+                                                    formControlName="dateTo"
+                                                ></kendo-datepicker>
+                                                </td>
+                                                <td>
+                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                                        (click)="deleteLeave(i)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
                                 </table>
+
                             </ng-template>
-                        </ngb-tab> -->
+                        </ngb-tab>
                     </ngb-tabset>
                     <div class="clearfix"></div>
                 </div>

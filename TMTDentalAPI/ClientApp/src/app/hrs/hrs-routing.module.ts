@@ -7,6 +7,7 @@ import { HrPayslipToPayListComponent } from './hr-payslip-to-pay-list/hr-payslip
 import { HrPayslipToPayCreateUpdateComponent } from './hr-payslip-to-pay-create-update/hr-payslip-to-pay-create-update.component';
 import { HrPayslipRunListComponent } from './hr-payslip-run-list/hr-payslip-run-list.component';
 import { HrPayslipRunFormComponent } from './hr-payslip-run-form/hr-payslip-run-form.component';
+import { HrSalaryConfigCreateUpdateComponent } from './hr-salary-config-create-update/hr-salary-config-create-update.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,9 @@ const routes: Routes = [
   },
   {
     path: 'payslip-run/form', component: HrPayslipRunFormComponent
+  },
+  {
+    path: 'salary-configs', component: HrSalaryConfigCreateUpdateComponent
   }
 ];
 

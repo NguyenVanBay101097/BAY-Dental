@@ -13,7 +13,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<WorkEntryTypeSave, WorkEntryType>() ;
             CreateMap<WorkEntryType, WorkEntryTypeDisplay>();
-         
+            CreateMap<WorkEntryType, WorkEntryTypeBasic>();
+
         }
     }
 }

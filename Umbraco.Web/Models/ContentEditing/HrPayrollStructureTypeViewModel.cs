@@ -23,7 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DefaultResourceCalendarId { get; set; }
         public string DefaultSchedulePay { get; set; }
         public Guid? DefaultStructId { get; set; }
-        public Guid DefaultWorkEntryTypeId { get; set; }
+        public Guid? DefaultWorkEntryTypeId { get; set; }
         public string Name { get; set; }
         public string WageType { get; set; }
     }
@@ -35,7 +35,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DefaultSchedulePay { get; set; }
         public Guid? DefaultStructId { get; set; }
         public HrPayrollStructureDisplay DefaultStruct { get; set; }
-        public Guid DefaultWorkEntryTypeId { get; set; }
+        public Guid? DefaultWorkEntryTypeId { get; set; }
         public string Name { get; set; }
         public string WageType { get; set; }
     }

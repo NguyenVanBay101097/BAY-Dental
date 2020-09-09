@@ -99,5 +99,7 @@ export class TimeKeepingService {
     return this.http.put(this.base_api + 'api/SetupChamcongs/' + id, val);
   }
 
-  
+  timeKeepingForAll(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/TimeKeepingForAll', val);
+  }
 }

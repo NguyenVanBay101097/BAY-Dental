@@ -30,7 +30,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// help=Work entry type for regular attendances.
         /// </summary>
-        public Guid DefaultWorkEntryTypeId { get; set; }
+        public Guid? DefaultWorkEntryTypeId { get; set; }
         public WorkEntryType DefaultWorkEntryType { get; set; }
 
         public string Name { get; set; }

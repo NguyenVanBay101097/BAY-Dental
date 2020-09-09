@@ -14,6 +14,7 @@ namespace ApplicationCore.Entities
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
         public ICollection<ResourceCalendarAttendance> Attendances { get; set; } = new List<ResourceCalendarAttendance>();
+        public ICollection<ResourceCalendarLeaves> Leaves { get; set; } = new List<ResourceCalendarLeaves>();
         /// <summary>
         /// Số giờ trung bình trên 1 ngày
         /// </summary>

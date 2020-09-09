@@ -69,4 +69,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeDisplay Employee { get; set; }
         public IEnumerable<DateTime> Dates { get; set; } = new List<DateTime>();
     }
+
+    public class TimeKeepingForAll
+    {
+        public DateTime date { get; set; }
+        public Guid workEntryTypeId { get; set; }
+    }
 }

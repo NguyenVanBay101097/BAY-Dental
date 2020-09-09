@@ -21,8 +21,10 @@ namespace Infrastructure.Services
         ChamCongTinhCong TinhSoCongGioCong(ChamCong cc, IEnumerable<AttendanceInterval> attendanceIntervals, decimal hoursPerDay);
 
         Task ImportExcel(IFormFile file, Ex_ImportExcelDirect dir);
-        //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
 
+        Task TaoChamcongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null);
+        //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
+        Task TimeKeepingForAll(TimeKeepingForAll val);
 
     }
 }

@@ -19,12 +19,12 @@ import { WorkEntryTypeBasic, WorkEntryTypeService } from 'src/app/work-entry-typ
 export class HrPayrollStructureTypeCreateComponent implements OnInit {
 
   @ViewChild('calendarCbx', { static: true }) private CalendarCbx: ComboBoxComponent;
-  @ViewChild('workEntryTypeCbx', { static: true }) private workEntryTypeCbx: ComboBoxComponent;
+  // @ViewChild('workEntryTypeCbx', { static: true }) private workEntryTypeCbx: ComboBoxComponent;
   formGroup: FormGroup;
   title: string;
   id: string;
   filterResourceCalendars: ResourceCalendarBasic[] = [];
-  filterResourceWorkEntryTypes: WorkEntryTypeBasic[] = [];
+  // filterResourceWorkEntryTypes: WorkEntryTypeBasic[] = [];
   hrPayrollStructureDisplay: HrPayrollStructureTypeDisplay = new HrPayrollStructureTypeDisplay();
   constructor(
     private fb: FormBuilder,
@@ -42,11 +42,11 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
       wageType: ['monthly', Validators.required],
       defaultSchedulePay: ['monthly', Validators.required],
       defaultResourceCalendarId: [null, Validators.required],
-      defaultWorkEntryTypeId: [null, Validators.required]
+      defaultWorkEntryTypeId: [null]
     });
 
     this.filterCbx();
-    this.loadWorkEntryType();
+    // this.loadWorkEntryType();
     this.loadCalendar();
     if (this.id) {
       this.loadData();
@@ -63,14 +63,14 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
       this.CalendarCbx.loading = false;
     });
 
-    this.workEntryTypeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.workEntryTypeCbx.loading = true)),
-      switchMap(value => this.searchWorkEntryType(value))
-    ).subscribe(result => {
-      this.filterResourceWorkEntryTypes = result.items;
-      this.workEntryTypeCbx.loading = false;
-    });
+    // this.workEntryTypeCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.workEntryTypeCbx.loading = true)),
+    //   switchMap(value => this.searchWorkEntryType(value))
+    // ).subscribe(result => {
+    //   this.filterResourceWorkEntryTypes = result.items;
+    //   this.workEntryTypeCbx.loading = false;
+    // });
   }
 
   loadData() {
@@ -98,13 +98,13 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
     return this.resourceCalendarService.getPage(val);
   }
 
-  loadWorkEntryType() {
-    this.searchWorkEntryType().subscribe(
-      result => {
-        this.filterResourceWorkEntryTypes = result.items;
-      }
-    )
-  }
+  // loadWorkEntryType() {
+  //   this.searchWorkEntryType().subscribe(
+  //     result => {
+  //       this.filterResourceWorkEntryTypes = result.items;
+  //     }
+  //   )
+  // }
 
   searchWorkEntryType(q?: string) {
     var val = new ResourceCalendarPaged();

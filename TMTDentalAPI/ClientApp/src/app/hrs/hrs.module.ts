@@ -25,6 +25,8 @@ import { SelectEmployeeDialogComponent } from '../shared/select-employee-dialog/
 import { SharedModule } from '../shared/shared.module';
 import { EmployeeService } from '../employees/employee.service';
 import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-payslip-date-filter.component';
+import { HrSalaryConfigCreateUpdateComponent } from './hr-salary-config-create-update/hr-salary-config-create-update.component';
+import { HrSalaryConfigService } from './hr-salary-config.service';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
     HrPayslipRunConfirmDialogComponent,
     SelectEmployeeDialogComponent,
     HrPayslipDateFilterComponent,
+    HrSalaryConfigCreateUpdateComponent,
   ],
   imports: [
     CommonModule,
@@ -56,11 +59,12 @@ import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-paysli
     HrPayrollStructureService,
     HrPayslipService,
     HrPaysliprunService,
-    EmployeeService
+    EmployeeService,
+    HrSalaryConfigService
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    HrPayslipRunConfirmDialogComponent,SelectEmployeeDialogComponent
+    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent
   ]
 })
 export class HrsModule { }
