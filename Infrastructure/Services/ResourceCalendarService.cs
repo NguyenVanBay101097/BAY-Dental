@@ -211,6 +211,9 @@ namespace Infrastructure.Services
             foreach(var calendar in self)
             {
                 var leaves = calendar.Leaves.ToList();
+                var wrongItem = leaves.Where(x => x.DateFrom.Date > x.DateTo.Date).FirstOrDefault();
+                if (wrongItem != null) throw new Exception($"Lịch nghỉ {wrongItem.Name}: ngày kết thúc lớn hơn ngày bắt đầu");
+
                 for (int i = 0; i < leaves.Count - 1; i++)
                 {
                     for (int j = i + 1; j < leaves.Count; j++)
