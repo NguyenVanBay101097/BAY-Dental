@@ -32,7 +32,6 @@ namespace TMTTimeKeeper
         private void Form1_Shown(object sender, EventArgs e)
         {
             account = getAccount();
-            lblAccountName.Text = account.Name;
             if (account == null)
             {
                 Visible = false;
@@ -41,12 +40,18 @@ namespace TMTTimeKeeper
 
                 if (result == DialogResult.OK)
                 {
+                    account = getAccount();
+                    lblAccountName.Text = account.Name;
                     Visible = true;
                 }
                 else if (result == DialogResult.Cancel)
                 {
                     Close();
                 }
+            }
+            else
+            {
+                lblAccountName.Text = account.Name;
             }
         }
 
@@ -105,10 +110,8 @@ namespace TMTTimeKeeper
         {
             string fileName = "AccountLogin.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
-            }
+            File.WriteAllText(path, String.Empty);
+            this.Shown += Form1_Shown;
         }
     }
 }
