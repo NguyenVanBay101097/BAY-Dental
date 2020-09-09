@@ -46,7 +46,10 @@ namespace TMTTimeKeeper
                 if (result == DialogResult.OK)
                 {
                     account = getAccount();
-                    lblAccountName.Text = account.Name;
+                    if (account != null)
+                        lblAccountName.Text = account.Name;
+                    else
+                        lblAccountName.Text = AccountLoginTemp.name;
                     //
                     stateNav = button1;
                     Page1 page1 = new Page1();
@@ -165,5 +168,10 @@ public static class DataConnect
     public static string port;
     public static string machineID;
     public static string machineName;
+}
+
+public static class AccountLoginTemp
+{
+    public static string name;
 }
 

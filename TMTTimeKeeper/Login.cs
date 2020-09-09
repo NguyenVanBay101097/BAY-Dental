@@ -150,20 +150,25 @@ namespace TMTTimeKeeper
 
                 if (loginResponse.succeeded)
                 {
-                    ///save account login
+                    if (chkRememberMe.Checked)
+                    {
+                        ///save account login
 
-                    var account = new AccountLogin();
-                    account.Name = loginResponse.user.name;
-                    account.UserName = loginResponse.user.userName;
-                    account.CompanyId = loginResponse.user.companyId;
-                    account.CompanyName = tbxCompanyName.Text;
-                    account.Email = loginResponse.user.email;
-                    account.AccessToken = loginResponse.token;
-                    account.RefeshToken = loginResponse.refreshToken;
+                        var account = new AccountLogin();
+                        account.Name = loginResponse.user.name;
+                        account.UserName = loginResponse.user.userName;
+                        account.CompanyId = loginResponse.user.companyId;
+                        account.CompanyName = tbxCompanyName.Text;
+                        account.Email = loginResponse.user.email;
+                        account.AccessToken = loginResponse.token;
+                        account.RefeshToken = loginResponse.refreshToken;
 
-
-                    AddAccount(account);
-
+                        AddAccount(account);
+                    }
+                    else
+                    {
+                        AccountLoginTemp.name = loginResponse.user.name;
+                    }
                     // Add Get employees
 
                     //var token = loginResponse.token;
