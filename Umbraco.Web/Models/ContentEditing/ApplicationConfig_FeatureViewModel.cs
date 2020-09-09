@@ -4,40 +4,25 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class ApplicationConfig_FeatureFunctionViewModel
+    public class PermissionTreeFunctionOpVM
     {
-        public string Id { get; set; }
         public string Name { get; set; }
-        public string Text { get; set; }
-        public List<object> Requireds { get; set; }
+
+        public string Permission { get; set; }
     }
 
-    public class ApplicationConfig_FeatureObjectViewModel
+    public class PermissionTreeFunctionVM
     {
-        public string Id { get; set; }
         public string Name { get; set; }
-        public string Text { get; set; }
-        public List<ApplicationConfig_FeatureFunctionViewModel> Functions { get; set; }
-        public List<string> Packages { get; set; } = new List<string>();
+
+        public string Permission { get; set; }
+
+        public List<PermissionTreeFunctionOpVM> Ops { get; set; } = new List<PermissionTreeFunctionOpVM>();
     }
 
-    public class ApplicationConfig_FeatureChildViewModel
+    public class PermissionTreeViewModel
     {
-        public string Id { get; set; }
         public string Name { get; set; }
-        public string Text { get; set; }
-        public List<ApplicationConfig_FeatureObjectViewModel> Objects { get; set; } = new List<ApplicationConfig_FeatureObjectViewModel>();
-        public List<ApplicationConfig_FeatureFunctionViewModel> Functions { get; set; }
-        public List<string> Packages { get; set; } = new List<string>();
-    }
-
-    public class ApplicationConfig_FeatureViewModel
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Text { get; set; }
-        public List<ApplicationConfig_FeatureObjectViewModel> Objects { get; set; } = new List<ApplicationConfig_FeatureObjectViewModel>();
-        public List<ApplicationConfig_FeatureChildViewModel> Children { get; set; } = new List<ApplicationConfig_FeatureChildViewModel>();
-        public List<string> Packages { get; set; } = new List<string>();
+        public List<PermissionTreeFunctionVM> Functions { get; set; } = new List<PermissionTreeFunctionVM>();
     }
 }

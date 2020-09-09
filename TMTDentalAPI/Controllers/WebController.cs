@@ -204,7 +204,7 @@ namespace TMTDentalAPI.Controllers
             using (var reader = new StreamReader(filePath))
             {
                 var fileContent = reader.ReadToEnd();
-                var features = JsonConvert.DeserializeObject<List<ApplicationConfig_FeatureViewModel>>(fileContent);
+                var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
 
                 return Ok(features);
             }

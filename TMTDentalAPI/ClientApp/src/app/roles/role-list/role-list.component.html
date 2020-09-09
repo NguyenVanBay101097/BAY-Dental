@@ -1,34 +1,62 @@
-<div class="row">
-    <div class="col-4">
-        <div class="wrapper-sm">
-            <a class="pull-right btn btn-sm btn-info m-t-n-xs" (click)="createRole()">Thêm</a>
-            <div class="h4">Danh sách</div>
-        </div>
-        <div class="vbox">
-            <div class="list-group">
-                <a class="list-group-item" *ngFor="let role of roles" (click)="selectRole(role)">{{role.name}}</a>
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Nhóm quyền</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc tên..." type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
             </div>
         </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="c"
+                        (click)="createItem()">Thêm</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
     </div>
-    <div class="col-8">
-        <div class="wrapper-sm">
-            <div *ngIf="displayRole">
-                <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" placeholder="Tên nhóm" [(ngModel)]="displayRole.name">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-sm btn-success" (click)="onSave()">
-                            <i class="fa fa-save"></i> Lưu
-                        </button>
-                    </span>
+</div>
+
+<div class="o_content">
+    <div class="hbox">
+        <div class="hbox-left">
+            <div class="p-2">
+                <div class="list-group">
+                    <a class="list-group-item rounded-0" [class.list-group-item-secondary]="selectedRole == role" *ngFor="let role of roles"
+                        (click)="selectRole(role)">{{role.name}}</a>
                 </div>
-                <div class="example-config">
-                    Checked keys: {{functions.join(",")}}
-                </div>
-                <div>
-                    <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings"
-                        [nodes]="features" textField="text" [children]="fetchChildren" [hasChildren]="hasChildren"
-                        [(checkedKeys)]="checkedKeys" (checkedChange)="handleChecking($event)">
-                    </kendo-treeview>
+            </div>
+        </div>
+        <div class="hbox-right">
+            <div class="p-2">
+                <div *ngIf="displayRole">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="Tên nhóm" [(ngModel)]="displayRole.name">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-sm btn-success" (click)="onSave()">
+                                <i class="fa fa-save"></i> Lưu
+                            </button>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <div class="col-4" *ngFor="let group of featureGroups">
+                            <h4>{{group.name}}</h4>
+                            <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings"
+                                (childrenLoaded)="onChildrenLoaded($event)" [checkBy]="'permission'"
+                                [(checkedKeys)]="checkedKeys" [isChecked]="isChecked" [nodes]="group.functions"
+                                textField="name" [children]="fetchChildren" [hasChildren]="hasChildren">
+                            </kendo-treeview>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
