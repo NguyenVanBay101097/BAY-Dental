@@ -46,6 +46,7 @@
             // 
             this.tbxMain.Location = new System.Drawing.Point(146, 55);
             this.tbxMain.Name = "tbxMain";
+            this.tbxMain.PlaceholderText = "Nhập tên chi nhánh";
             this.tbxMain.Size = new System.Drawing.Size(191, 23);
             this.tbxMain.TabIndex = 4;
             // 
@@ -75,7 +76,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(83, 15);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Tên gian hàng";
+            this.label2.Text = "Tên chi nhánh";
             // 
             // label3
             // 

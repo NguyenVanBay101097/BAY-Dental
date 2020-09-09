@@ -124,6 +124,10 @@
             this.label4.TabIndex = 2;
             this.label4.Text = "Seri máy";
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.CurrentChanged += new System.EventHandler(this.bindingSource1_CurrentChanged);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;

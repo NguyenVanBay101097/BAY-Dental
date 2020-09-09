@@ -369,5 +369,10 @@ namespace TMTTimeKeeper
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(val));
         }
+
+        private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
