@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200424045242_AddSaleOrderServiceCardCardRelTable.cs" />
+    <Compile Remove="Data\Migrations\20200424045242_AddSaleOrderServiceCardCardRelTable.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.cs" />
+    <Compile Remove="Data\Migrations\20200417085223_EditMarketingActivity.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.cs" />
+    <Compile Remove="Data\Migrations\20200512102006_UpdateServiceCardTables.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.cs" />
+    <Compile Remove="Data\Migrations\20200522084831_CreateTCareMessaging.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.cs" />
+    <Compile Remove="Data\Migrations\20200804042345_CreateCommission.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.cs" />
+    <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="12.1.2" />
+    <PackageReference Include="Dapper" Version="2.0.30" />
+    <PackageReference Include="Dapper.SqlBuilder" Version="2.0.4" />
+    <PackageReference Include="EPPlus" Version="4.5.3.2" />
+    <PackageReference Include="HangFire" Version="1.7.11" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NPOI" Version="2.4.1" />
+    <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
+    <PackageReference Include="Sendgrid" Version="9.11.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ContentEditing\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
+    <ProjectReference Include="..\Facebook.ApiClient\Facebook.ApiClient.csproj" />
+    <ProjectReference Include="..\Umbraco.Web\Umbraco.Web.csproj" />
+    <ProjectReference Include="..\ZaloDotNetSDK\ZaloDotNetSDK.csproj" />
+  </ItemGroup>
+
+</Project>
