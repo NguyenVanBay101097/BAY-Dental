@@ -124,6 +124,18 @@ namespace Infrastructure.Services
             return await CreateAsync(resourceCalendar);
         }
 
+        public override Task<IEnumerable<ResourceCalendar>> CreateAsync(IEnumerable<ResourceCalendar> entities)
+        {
+            DetectOverLapLeaves(entities);
+            return base.CreateAsync(entities);
+        }
+
+        public override Task UpdateAsync(IEnumerable<ResourceCalendar> entities)
+        {
+            DetectOverLapLeaves(entities);
+            return base.UpdateAsync(entities);
+        }
+
         public async Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val)
         {
             var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.Attendances).Include(x=>x.Leaves).FirstOrDefaultAsync();
@@ -168,9 +180,6 @@ namespace Infrastructure.Services
 
         private void SaveLeaves(ResourceCalendarSave val, ResourceCalendar resourceCalendar)
         {
-            //detect overlap
-            DetectOverLapLeaves(_mapper.Map<List<ResourceCalendarLeaves>>(val.Leaves));
-            //remove leaves
             var lineToRemoves = new List<ResourceCalendarLeaves>();
             foreach (var existLine in resourceCalendar.Leaves)
             {
@@ -197,16 +206,20 @@ namespace Infrastructure.Services
 
         }
 
-        private void DetectOverLapLeaves(List<ResourceCalendarLeaves> leaves)
+        private void DetectOverLapLeaves(IEnumerable<ResourceCalendar> self)
         {
-            for (int i = 0; i < leaves.Count - 1; i++)
+            foreach(var calendar in self)
             {
-                for (int j = i+1; j < leaves.Count; j++)
+                var leaves = calendar.Leaves.ToList();
+                for (int i = 0; i < leaves.Count - 1; i++)
                 {
-                    //nếu ko overlap thì tiếp tục
-                    if (leaves[i].DateTo.Date < leaves[j].DateFrom.Date || leaves[i].DateFrom.Date > leaves[j].DateTo.Date)
-                        continue;
-                    else throw new Exception($"Lịch nghỉ {leaves[i].Name} trùng lịch với {leaves[j].Name}");
+                    for (int j = i + 1; j < leaves.Count; j++)
+                    {
+                        //nếu ko overlap thì tiếp tục
+                        if (leaves[i].DateTo.Date < leaves[j].DateFrom.Date || leaves[i].DateFrom.Date > leaves[j].DateTo.Date)
+                            continue;
+                        else throw new Exception($"Lịch nghỉ {leaves[i].Name} trùng lịch với {leaves[j].Name}");
+                    }
                 }
             }
         }
