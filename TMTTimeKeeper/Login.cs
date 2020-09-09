@@ -129,14 +129,13 @@ namespace TMTTimeKeeper
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             LoginInfo loginInfo = new LoginInfo
             {
                 userName = tbxUsername.Text,
                 password = tbxPassword.Text,
                 rememberMe = chkRememberMe.Checked
             };
-
-            
 
             var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
@@ -151,20 +150,25 @@ namespace TMTTimeKeeper
 
                 if (loginResponse.succeeded)
                 {
-                    ///save account login
+                    if (chkRememberMe.Checked)
+                    {
+                        ///save account login
 
-                    var account = new AccountLogin();
-                    account.Name = loginResponse.user.name;
-                    account.UserName = loginResponse.user.userName;
-                    account.CompanyId = loginResponse.user.companyId;
-                    account.CompanyName = tbxMain.Text;
-                    account.Email = loginResponse.user.email;
-                    account.AccessToken = loginResponse.token;
-                    account.RefeshToken = loginResponse.refreshToken;
+                        var account = new AccountLogin();
+                        account.Name = loginResponse.user.name;
+                        account.UserName = loginResponse.user.userName;
+                        account.CompanyId = loginResponse.user.companyId;
+                        account.CompanyName = tbxCompanyName.Text;
+                        account.Email = loginResponse.user.email;
+                        account.AccessToken = loginResponse.token;
+                        account.RefeshToken = loginResponse.refreshToken;
 
-
-                    AddAccount(account);
-
+                        AddAccount(account);
+                    }
+                    else
+                    {
+                        AccountLoginTemp.name = loginResponse.user.name;
+                    }
                     // Add Get employees
 
                     //var token = loginResponse.token;
@@ -191,7 +195,12 @@ namespace TMTTimeKeeper
                     //var pro = await client.GetAsync(url);
                     // End Demo Get employees
 
+                    var timekeeper = new TimeKeeper();
+                    timekeeper.CompanyName = tbxCompanyName.Text;
+                    AddTimekeeper(timekeeper);
+
                     DialogResult = DialogResult.OK;
+                    this.Cursor = Cursors.Default;
                     Close();
                 }
                 else
@@ -239,6 +248,12 @@ namespace TMTTimeKeeper
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(account));
         }
-     
+
+        public void AddTimekeeper(TimeKeeper val)
+        {
+            string fileName = "TimeKeeper.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            File.WriteAllText(path, JsonConvert.SerializeObject(val));
+        }
     }
 }

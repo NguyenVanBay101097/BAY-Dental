@@ -91,7 +91,7 @@
             this.lblStatus.Padding = new System.Windows.Forms.Padding(5);
             this.lblStatus.Size = new System.Drawing.Size(800, 25);
             this.lblStatus.TabIndex = 6;
-            this.lblStatus.Text = "label2";
+            this.lblStatus.Text = "lblStatus";
             // 
             // btn_Sync
             // 

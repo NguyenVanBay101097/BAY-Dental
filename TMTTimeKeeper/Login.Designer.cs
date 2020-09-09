@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
-            this.tbxMain = new System.Windows.Forms.TextBox();
+            this.tbxCompanyName = new System.Windows.Forms.TextBox();
             this.tbxUsername = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,13 +42,13 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // tbxMain
+            // tbxCompanyName
             // 
-            this.tbxMain.Location = new System.Drawing.Point(146, 55);
-            this.tbxMain.Name = "tbxMain";
-            this.tbxMain.PlaceholderText = "Nhập tên chi nhánh";
-            this.tbxMain.Size = new System.Drawing.Size(191, 23);
-            this.tbxMain.TabIndex = 4;
+            this.tbxCompanyName.Location = new System.Drawing.Point(146, 55);
+            this.tbxCompanyName.Name = "tbxCompanyName";
+            this.tbxCompanyName.PlaceholderText = "Nhập tên chi nhánh";
+            this.tbxCompanyName.Size = new System.Drawing.Size(191, 23);
+            this.tbxCompanyName.TabIndex = 0;
             // 
             // tbxUsername
             // 
@@ -56,7 +56,7 @@
             this.tbxUsername.Name = "tbxUsername";
             this.tbxUsername.PlaceholderText = "Nhập tên đăng nhập";
             this.tbxUsername.Size = new System.Drawing.Size(191, 23);
-            this.tbxUsername.TabIndex = 0;
+            this.tbxUsername.TabIndex = 1;
             // 
             // label1
             // 
@@ -136,7 +136,7 @@
             this.tbxPassword.PasswordChar = '*';
             this.tbxPassword.PlaceholderText = "Nhập mật khẩu";
             this.tbxPassword.Size = new System.Drawing.Size(191, 23);
-            this.tbxPassword.TabIndex = 1;
+            this.tbxPassword.TabIndex = 2;
             // 
             // chkRememberMe
             // 
@@ -144,7 +144,7 @@
             this.chkRememberMe.Location = new System.Drawing.Point(16, 171);
             this.chkRememberMe.Name = "chkRememberMe";
             this.chkRememberMe.Size = new System.Drawing.Size(121, 19);
-            this.chkRememberMe.TabIndex = 2;
+            this.chkRememberMe.TabIndex = 3;
             this.chkRememberMe.Text = "Duy trì đăng nhập";
             this.chkRememberMe.UseVisualStyleBackColor = true;
             // 
@@ -173,7 +173,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbxUsername);
-            this.Controls.Add(this.tbxMain);
+            this.Controls.Add(this.tbxCompanyName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Login";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -185,7 +185,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbxMain;
+        private System.Windows.Forms.TextBox tbxCompanyName;
         private System.Windows.Forms.TextBox tbxUsername;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

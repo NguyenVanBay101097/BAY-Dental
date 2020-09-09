@@ -20,22 +20,18 @@ namespace TMTTimeKeeper
         public Main()
         {
             InitializeComponent();
+        }
 
+        private void Main_Load(object sender, EventArgs e)
+        {
             // Update port # in the following line.
             HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
             //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
             HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
             HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-        }
 
-        private void Main_Load(object sender, EventArgs e)
-        {
             this.Shown += Form1_Shown;
-            //
-            stateNav = button1;
-            Page1 page1 = new Page1();
-            nav(page1, content);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -50,7 +46,15 @@ namespace TMTTimeKeeper
                 if (result == DialogResult.OK)
                 {
                     account = getAccount();
-                    lblAccountName.Text = account.Name;
+                    if (account != null)
+                        lblAccountName.Text = account.Name;
+                    else
+                        lblAccountName.Text = AccountLoginTemp.name;
+                    //
+                    stateNav = button1;
+                    Page1 page1 = new Page1();
+                    nav(page1, content);
+                    //
                     Visible = true;
                 }
                 else if (result == DialogResult.Cancel)
@@ -60,6 +64,10 @@ namespace TMTTimeKeeper
             }
             else
             {
+                stateNav = button1;
+                Page1 page1 = new Page1();
+                nav(page1, content);
+
                 lblAccountName.Text = account.Name;
             }
         }
@@ -163,7 +171,8 @@ public static class DataConnect
     public static string machineName;
 }
 
-public static class DataTablePage1
+public static class AccountLoginTemp
 {
-    public static DataTable dataSource = new DataTable();
+    public static string name;
 }
+
