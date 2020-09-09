@@ -148,5 +148,10 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[7].HeaderText = "Trạng thái";
             dataGridView1.Columns[8].HeaderText = "iFlag";
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

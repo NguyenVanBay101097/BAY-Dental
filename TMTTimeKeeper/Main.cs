@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using TMTTimeKeeper.Models;
 
 namespace TMTTimeKeeper
 {
     public partial class Main : Form
     {
         private Button stateNav = null;
+        private AccountLogin account = null;
         public Main()
         {
             InitializeComponent();
@@ -27,17 +31,22 @@ namespace TMTTimeKeeper
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            Visible = false;
-            Login loginForm = new Login();
-            var result = loginForm.ShowDialog();
+            account = getAccount();
+            lblAccountName.Text = account.Name;
+            if (account == null)
+            {
+                Visible = false;
+                Login loginForm = new Login();
+                var result = loginForm.ShowDialog();
 
-            if (result == DialogResult.OK)
-            {
-                Visible = true;
-            }
-            else if (result == DialogResult.Cancel)
-            {
-                Close();
+                if (result == DialogResult.OK)
+                {
+                    Visible = true;
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    Close();
+                }
             }
         }
 
@@ -78,6 +87,28 @@ namespace TMTTimeKeeper
             button.BackColor = SystemColors.ControlLightLight;
             button.ForeColor = SystemColors.ControlText;
             stateNav = button;
+        }
+
+        public AccountLogin getAccount()
+        {
+            var account = new AccountLogin();
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
+            }
+            return account;
+        }
+
+        private void lblLogout_Click(object sender, EventArgs e)
+        {
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            using (StreamReader sr = File.OpenText(path))
+            {
+                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
+            }
         }
     }
 }
