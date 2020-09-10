@@ -591,7 +591,6 @@ namespace Infrastructure.Services
 
         public async Task<ChamCongImportResponse> SyncChamCong(ImportFileExcellChamCongModel val)
         {
-            var error = new ChamCongImportResponse();
             var modelError = new ImportFileExcellChamCongModel();
             try
             {
@@ -615,18 +614,15 @@ namespace Infrastructure.Services
                     }
                     else
                     {                     
-                        error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });                      
+                       return (new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });                      
                     }
                 }
             }
             catch (Exception e)
             {
                 modelError = val;
-                error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
+                return (new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
             }
-
-            if (error != null)
-                return error;
 
             return new ChamCongImportResponse { Success = true, ModelError = val };
         }

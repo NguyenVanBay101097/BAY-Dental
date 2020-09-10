@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TMTTimeKeeper.APIInfo
 {
-    class ChamCongSync
+    public class ChamCongSync
     {
         public Guid? EmpId { get; set; }
         public string IdMayChamCong { get; set; }

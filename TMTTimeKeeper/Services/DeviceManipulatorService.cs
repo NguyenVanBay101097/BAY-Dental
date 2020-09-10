@@ -195,6 +195,9 @@ namespace TMTTimeKeeper.Services
             string pathLastUpdate = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", lastUpdateLog);
             var jsonlastUpdate = File.ReadAllText(pathLastUpdate);
 
+            string fileErrorEnroll = "DataLogEnrollErrors.json";
+            string pathErrorEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileErrorEnroll);
+
             lastUpdate = JsonConvert.DeserializeObject<LastUpdateLogData>(jsonlastUpdate);
             listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
             acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
@@ -223,28 +226,22 @@ namespace TMTTimeKeeper.Services
                             val.Type = "check-in";
                         val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
                         listChamCongSync.Add(val);
+
+
                     }
-                    var requests = listChamCongSync.Select(x => client.PostAsJsonAsync(url, x));
-                    //var respose = await client.PostAsJsonAsync(url, val);
-                    await Task.WhenAll(requests);
 
-                    var responses = requests.Select(task => task.Result);
+                    var request = await client.PostAsJsonAsync(url, listChamCongSync);
+                    var content = await request.Content.ReadAsStringAsync();
+                    var response = JsonConvert.DeserializeObject<IEnumerable<Response>>(content);
+                    //if (response.Success)
+                    //{
+                    //    File.WriteAllText(pathLogEnroll, string.Empty);
+                    //    if(response.ModelError.)
+                    //}
 
-                    foreach (var r in responses)
-                    {
-                        var content = await r.Content.ReadAsStringAsync();
-                        var res = JsonConvert.DeserializeObject<Response>(content);
-                        if (res.Success)
-                        {
-                            lastUpdate.LastUpdate = DateTime.Now;
-                            lastUpdate.Count += 1;
-                            File.WriteAllText(pathLastUpdate, JsonConvert.SerializeObject(lastUpdate));
-                        }
-                        else
-                        {
 
-                        }
-                    }
+
+
 
                 }
                 catch (Exception e)
