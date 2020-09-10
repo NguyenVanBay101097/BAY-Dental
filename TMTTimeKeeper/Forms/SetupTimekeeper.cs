@@ -12,13 +12,13 @@ using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
 {
-    public partial class Page1 : Form
+    public partial class SetupTimekeeper : Form
     {
         public Dictionary<string, string> deviceInfo { get; set; }
         public Dictionary<string, string> connectInfo { get; set; }
         public Dictionary<string, string> userInputInfo { get; set; }
         private TimeKeeper timekeeper = null;
-        public Page1()
+        public SetupTimekeeper()
         {
             InitializeComponent();
             ShowStatusBar(string.Empty, true);
