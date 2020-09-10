@@ -23,6 +23,9 @@ namespace TMTTimeKeeper
         {
             InitializeComponent();
             ShowStatusBar(string.Empty, true);
+            //
+            this.ActiveControl = tbxCompanyName;
+            tbxCompanyName.Focus();
         }
 
         #region 'Panel Move'
