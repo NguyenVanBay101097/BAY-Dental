@@ -27,7 +27,6 @@ namespace TMTTimeKeeper
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         Main main = new Main();
-        static HttpClient client = new HttpClient();
         public Page2()
         {
             InitializeComponent();
@@ -178,14 +177,6 @@ namespace TMTTimeKeeper
                     if (timeKeeper == null)
                         MessageBox.Show("chưa kết nối máy chấm công");
 
-                    // Update port # in the following line.
-                    client.BaseAddress = new Uri("https://localhost:44377/");
-                    //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
-
                     EmployeePaged employeePaged = new EmployeePaged
                     {
                         offset = 0,
@@ -193,7 +184,7 @@ namespace TMTTimeKeeper
                         search = null
                     };
 
-                    var response = await client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
+                    var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
                     var rs = response.Content.ReadAsStringAsync().Result;
                     List<Employee> listEmp = new List<Employee>();
                     var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
