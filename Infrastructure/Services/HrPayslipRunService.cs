@@ -162,7 +162,7 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var payslipObj = GetService<IHrPayslipService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "done").Include(x => x.Slips).ToListAsync();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Slips).ToListAsync();
 
             foreach (var run in payslipruns)
             {

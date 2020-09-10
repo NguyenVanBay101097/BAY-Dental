@@ -21,24 +21,24 @@
                         (click)="addPayslips()">
                         Tạo phiếu lương
                     </button>
-                    <button type="button" accesskey="1" *ngIf="itemId && paysliprun.state == 'draft'"
+                    <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button"
+                        class="btn btn-primary btn-sm" (click)="actionDone()">
+                        Xác nhận
+                    </button>
+                    <button type="button" accesskey="1"
+                        *ngIf="itemId && ['draft', 'confirm'].indexOf(paysliprun.state) !== -1"
                         class="btn btn-primary btn-sm" (click)="addPayslips()">
                         Tạo phiếu lương
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
                         *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
                         Lưu nháp
-                </button> 
-                <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-primary btn-sm"
-                        (click)="actionDone()">
-                        Xác nhận
-                </button> 
-                <button *ngIf="['done'].indexOf(paysliprun.state) !== -1" type="button" class="btn btn-danger btn-sm"
-                    (click)="actionCancel()">
-                    Hủy đợt lương
-                </button>               
-                <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm"
-                        (click)="createNew()">
+                    </button>
+                    <button *ngIf="['done', 'confirm'].indexOf(paysliprun.state) !== -1" type="button"
+                        class="btn btn-danger btn-sm" (click)="actionCancel()">
+                        Hủy đợt lương
+                    </button>
+                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" (click)="createNew()">
                         Thêm mới
                     </button>
                 </div>
