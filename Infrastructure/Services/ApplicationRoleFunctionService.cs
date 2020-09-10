@@ -1,10 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using Infrastructure.Caches;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,27 +15,32 @@ namespace Infrastructure.Services
 {
     public class ApplicationRoleFunctionService : BaseService<ApplicationRoleFunction>, IApplicationRoleFunctionService
     {
-
-        public ApplicationRoleFunctionService(IAsyncRepository<ApplicationRoleFunction> repository, IHttpContextAccessor httpContextAccessor)
+        private IMyCache _cache;
+        private readonly AppTenant _tenant;
+        public ApplicationRoleFunctionService(IAsyncRepository<ApplicationRoleFunction> repository, IHttpContextAccessor httpContextAccessor,
+            IMyCache cache, ITenant<AppTenant> tenant)
         : base(repository, httpContextAccessor)
         {
+            _cache = cache;
+            _tenant = tenant?.Value;
         }
 
-        public async Task<bool> Check(string function, bool raiseException = true)
+        public async Task<bool> HasAccess(List<string> functions, bool raiseException = true)
         {
-            //var functionP = new SqlParameter("function", function);
-            //var userP = new SqlParameter("userId", UserId);
+            if (string.IsNullOrEmpty(UserId))
+                return false;
+            var key = (_tenant != null ? _tenant.Hostname : "localhost") + $@"-permission-{UserId}";
 
-            //var funcs = await SearchQuery().FromSql("select a.Id,a.CreatedById,a.WriteById,a.DateCreated,a.LastUpdated,a.Func,a.RoleId from ApplicationRoleFunctions a " +
-            //    "INNER JOIN AspNetUserRoles gu ON gu.RoleId=a.RoleId " +
-            //    "WHERE a.Func=@function " +
-            //    "AND gu.UserId=@userId", functionP, userP).ToListAsync();
-            //if (funcs.Count == 0 && raiseException)
-            //{
-            //    throw new Exception("Bạn không có quyền thực hiện thao tác này.");
-            //}
-            //return funcs.Count > 0;
-            return true;
+            //get list permission
+            var permissionList = await _cache.GetOrCreateAsync(key, async entry =>
+            {
+                var res = await SearchQuery(x => x.Role.UserRoles.Any(y => y.UserId == UserId)).Select(x => x.Func).ToListAsync();
+                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+                return res;
+            });
+
+            //check
+            return functions.All(x => permissionList.Any(s => x.IndexOf(s) != -1));
         }
     }
 }

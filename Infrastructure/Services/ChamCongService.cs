@@ -395,8 +395,8 @@ namespace Infrastructure.Services
             double gioCong = 0;
             foreach (var interval in intervals)
             {
-                //nếu chấm công giờ vào và giờ ra hoàn toàn nằm ngoài chặn dưới và chặn trên thì bỏ qua
-                if (cc.TimeOut <= interval.Start || cc.TimeIn >= interval.Stop)
+                //nếu chấm công giờ vào và giờ ra hoàn toàn nằm ngoài chặn dưới và chặn trên hoặc chưa checkout thì bỏ qua
+                if (cc.TimeOut <= interval.Start || cc.TimeIn >= interval.Stop || !cc.TimeOut.HasValue)
                     continue;
 
                 //nếu chấm công vào mà nhỏ hơn chặn dưới thì lấy chặn dưới, còn lớn hơn thì lấy chấm công vào
@@ -757,7 +757,7 @@ namespace Infrastructure.Services
             var calendarObj = GetService<IResourceCalendarService>();
 
             var empList = await empObj.SearchQuery(x => x.Active == true).Include(x => x.StructureType).ToListAsync();
-            var chamcongs = await SearchQuery(x => x.TimeIn.Value.Date == val.date.Date)
+            var chamcongs = await SearchQuery(x => x.TimeIn.Value.Date == val.Date.Date)
                                   .Select(x=> new { Id = x.Id, EmployeeId = x.EmployeeId}).ToListAsync();
 
             var chamcongsToAdd = new List<ChamCong>();
@@ -766,18 +766,18 @@ namespace Infrastructure.Services
                 if (emp.StructureType == null) throw new Exception($"Nhân viên {emp.Name} chưa thiết lập loại mẫu lương!");
                 if (chamcongs.Any(x => x.EmployeeId == emp.Id)) throw new Exception($"Không thể tạo hàng loạt vì nhân viên {emp.Name} đã có chấm công!");
                 //get chu kì làm việc của ngày đó của nhân viên đó
-                var attendanceIntervals = await calendarObj._AttendanceIntervals(emp.StructureType.DefaultResourceCalendarId.Value, val.date.Date, val.date.Date);
+                var attendanceIntervals = await calendarObj._AttendanceIntervals(emp.StructureType.DefaultResourceCalendarId.Value, val.Date.Date, val.Date.Date);
                 foreach (var interval in attendanceIntervals)
                 {
                     chamcongsToAdd.Add(new ChamCong()
                     {
                         CompanyId= CompanyId,
-                        Date= val.date,
+                        Date= val.Date,
                         EmployeeId= emp.Id,
                         Status= "done",
                         TimeIn= interval.Start,
                         TimeOut= interval.Stop,
-                        WorkEntryTypeId= val.workEntryTypeId
+                        WorkEntryTypeId= val.WorkEntryTypeId
                     });
                 }
             }
