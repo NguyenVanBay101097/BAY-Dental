@@ -170,7 +170,7 @@ namespace TMTTimeKeeper
                         AccountLoginTemp.name = loginResponse.user.name;
                     }
                     // Set Authorization
-                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
                     // Add Get employees
 
