@@ -1,6 +1,6 @@
 ﻿namespace TMTTimeKeeper
 {
-    partial class Page1
+    partial class SetupTimekeeper
     {
         /// <summary>
         /// Required designer variable.

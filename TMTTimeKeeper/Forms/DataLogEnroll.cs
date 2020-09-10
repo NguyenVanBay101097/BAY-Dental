@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Info;
-using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -15,7 +14,6 @@ namespace TMTTimeKeeper
     public partial class Page3 : Form
     {
         DeviceManipulator manipulator = new DeviceManipulator();
-        DeviceManipulatorService manipulatorService = new DeviceManipulatorService();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         public Page3()
@@ -42,7 +40,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, DataConnect.machineID);
+                    ICollection<MachineInfo> lstMachineInfo = manipulator.GetAllLogData(objZkeeper, DataConnect.machineID);
                     if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
@@ -52,7 +50,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    ShowStatusBar(ex.Message, true);
                 }
             }
         }
@@ -67,7 +65,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    var response = await manipulatorService.SyncLogData();
+                    var response = await manipulator.SyncLogData();
 
                     if (response != null && response.Success)
                     {

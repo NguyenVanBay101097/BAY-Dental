@@ -52,8 +52,8 @@ namespace TMTTimeKeeper
                         lblAccountName.Text = AccountLoginTemp.name;
                     //
                     stateNav = button1;
-                    Page1 page1 = new Page1();
-                    nav(page1, content);
+                    SetupTimekeeper timekeeper = new SetupTimekeeper();
+                    nav(timekeeper, content);
                     //
                     Visible = true;
                 }
@@ -65,8 +65,8 @@ namespace TMTTimeKeeper
             else
             {
                 stateNav = button1;
-                Page1 page1 = new Page1();
-                nav(page1, content);
+                SetupTimekeeper timekeeper = new SetupTimekeeper();
+                nav(timekeeper, content);
 
                 lblAccountName.Text = account.Name;
             }
@@ -74,14 +74,14 @@ namespace TMTTimeKeeper
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Page1 page1 = new Page1();
-            nav(page1, content);
+            SetupTimekeeper timekeeper = new SetupTimekeeper();
+            nav(timekeeper, content);
             actNav(button1);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Page2 page2 = new Page2();
+            Employee page2 = new Employee();
             nav(page2, content);
             actNav(button2);
         }
@@ -135,15 +135,15 @@ namespace TMTTimeKeeper
             return timeKeeper;
         }
 
-        public List<Employee> getEmployee()
+        public List<Models.Employee> getEmployee()
         {
-            var employees = new List<Employee>();
+            var employees = new List<Models.Employee>();
             string fileName = "Employees.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             string json = File.ReadAllText(path);
             if (string.IsNullOrEmpty(json))
                 return employees;
-            employees = JsonConvert.DeserializeObject<List<Employee>>(json);
+            employees = JsonConvert.DeserializeObject<List<Models.Employee>>(json);
 
             return employees;
         }
