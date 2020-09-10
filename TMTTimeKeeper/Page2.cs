@@ -27,7 +27,6 @@ namespace TMTTimeKeeper
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         Main main = new Main();
-        static HttpClient client = new HttpClient();
         public Page2()
         {
             InitializeComponent();
@@ -179,12 +178,12 @@ namespace TMTTimeKeeper
                         MessageBox.Show("chưa kết nối máy chấm công");
 
                     // Update port # in the following line.
-                    client.BaseAddress = new Uri("https://localhost:44377/");
+                    HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
                     //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
+                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
 
                     EmployeePaged employeePaged = new EmployeePaged
                     {
@@ -193,7 +192,7 @@ namespace TMTTimeKeeper
                         search = null
                     };
 
-                    var response = await client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
+                    var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
                     var rs = response.Content.ReadAsStringAsync().Result;
                     List<Employee> listEmp = new List<Employee>();
                     var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
@@ -248,7 +247,7 @@ namespace TMTTimeKeeper
 
         public static string RemoveVietnamese(string text)
         {
-            string result = text.ToLower();
+            string result = text.ToUpper();
             result = Regex.Replace(result, "à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|/g", "a");
             result = Regex.Replace(result, "è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|/g", "e");
             result = Regex.Replace(result, "ì|í|ị|ỉ|ĩ|/g", "i");

@@ -53,8 +53,7 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             var result = await _chamCongService.SyncChamCong(vals);
-            if (result.Success)
-                _unitOfWork.Commit();
+            _unitOfWork.Commit();
 
             return Ok(result);
         }
