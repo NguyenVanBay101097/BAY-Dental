@@ -239,13 +239,13 @@ namespace TMTTimeKeeper.Utilities
             return new Response() { Success = true };
         }
 
-        public Models.Employee GetEmp(int idKp)
+        public Models.EmployeeSync GetEmp(int idKp)
         {
-            Models.Employee emp = new Models.Employee();
+            Models.EmployeeSync emp = new Models.EmployeeSync();
             var fileEmp = "Employees.json";
             var empPath = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileEmp);
             var empJson = File.ReadAllText(empPath);
-            var empList = JsonConvert.DeserializeObject<List<Models.Employee>>(empJson);
+            var empList = JsonConvert.DeserializeObject<List<Models.EmployeeSync>>(empJson);
 
             if (empList != null && empList.Any())
                 emp = empList.Where(x => x.IdKP == idKp).FirstOrDefault();

@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Models;
+using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -18,6 +19,9 @@ namespace TMTTimeKeeper
         public Dictionary<string, string> connectInfo { get; set; }
         public Dictionary<string, string> userInputInfo { get; set; }
         private TimeKeeper timekeeper = null;
+
+        TimeKeeperService timekeeperObj = new TimeKeeperService();
+
         public SetupTimekeeper()
         {
             InitializeComponent();
@@ -46,7 +50,7 @@ namespace TMTTimeKeeper
 
         private void Page1_Load(object sender, EventArgs e)
         {
-            timekeeper = getTimekeeper();
+            timekeeper = timekeeperObj.getTimekeeper();
             if (timekeeper != null)
             {
                 tbxCompanyName.Text = timekeeper.CompanyName;
@@ -174,7 +178,7 @@ namespace TMTTimeKeeper
                         timekeeper.Seri = tbxMachineSeri.Text;
                         timekeeper.AddressIP = tbxIP.Text;
                         timekeeper.ConnectTCP = tbxPort.Text;
-                        AddTimekeeper(timekeeper);
+                        timekeeperObj.AddTimekeeper(timekeeper);
 
                         DataConnect.ip = tbxIP.Text;
                         DataConnect.port = tbxPort.Text;
@@ -251,23 +255,6 @@ namespace TMTTimeKeeper
             }
         }
 
-        public void AddTimekeeper(TimeKeeper val)
-        {
-            string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(val));
-        }
-
-        public TimeKeeper getTimekeeper()
-        {
-            var timekeeper = new TimeKeeper();
-            string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                timekeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
-            }
-            return timekeeper;
-        }
+       
     }
 }

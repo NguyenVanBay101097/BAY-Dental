@@ -19,6 +19,6 @@ namespace TMTTimeKeeper.Models
   
         public long TotalItems { get; private set; }
  
-        public IEnumerable<Employee> Items { get; set; }
+        public IEnumerable<EmployeeSync> Items { get; set; }
     }
 }

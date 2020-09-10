@@ -13,12 +13,15 @@ using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Models;
+using TMTTimeKeeper.Services;
 
 namespace TMTTimeKeeper
 {
     public partial class Login : Form
     {
 
+        AccountLoginService accountLoginObj = new AccountLoginService();
+        TimeKeeperService timeKeeperObj = new TimeKeeperService();
 
         public Login()
         {
@@ -163,7 +166,7 @@ namespace TMTTimeKeeper
                         account.AccessToken = loginResponse.token;
                         account.RefeshToken = loginResponse.refreshToken;
 
-                        AddAccount(account);
+                        accountLoginObj.AddAccount(account);
                     }
                     else
                     {
@@ -200,7 +203,7 @@ namespace TMTTimeKeeper
 
                     var timekeeper = new TimeKeeper();
                     timekeeper.CompanyName = tbxCompanyName.Text;
-                    AddTimekeeper(timekeeper);
+                    timeKeeperObj.AddTimekeeper(timekeeper);
 
                     DialogResult = DialogResult.OK;
                     this.Cursor = Cursors.Default;
@@ -241,22 +244,8 @@ namespace TMTTimeKeeper
             Close();
         }
 
-        /// <summary>
-        /// luu tai khoan dang nhap
-        /// </summary>
-        /// <param name="account"></param>
-        public void AddAccount(AccountLogin account)
-        {            
-            string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(account));
-        }
+       
 
-        public void AddTimekeeper(TimeKeeper val)
-        {
-            string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(val));
-        }
+       
     }
 }

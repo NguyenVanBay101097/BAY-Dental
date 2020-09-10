@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Info;
 using TMTTimeKeeper.Models;
+using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 using zkemkeeper;
 
@@ -26,7 +27,9 @@ namespace TMTTimeKeeper
         DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
-        Main main = new Main();
+        AccountLoginService accountLoginObj = new AccountLoginService();
+        TimeKeeperService timeKeeperObj = new TimeKeeperService();
+        EmployeeService employeeObj = new EmployeeService();
         public Employee()
         {
             InitializeComponent();
@@ -169,37 +172,29 @@ namespace TMTTimeKeeper
                 try
                 {
                     ShowStatusBar(string.Empty, true);
-                    var account = main.getAccount();
+                    var account = accountLoginObj.getAccount();
                     if (account == null)
                         MessageBox.Show("lỗi đăng nhập");
 
-                    var timeKeeper = main.getTimeKepper();
+                    var timeKeeper = timeKeeperObj.getTimekeeper();
                     if (timeKeeper == null)
                         MessageBox.Show("chưa kết nối máy chấm công");
 
-                    EmployeePaged employeePaged = new EmployeePaged
-                    {
-                        offset = 0,
-                        limit = 100,
-                        search = null
-                    };
 
-                    var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
-                    var rs = response.Content.ReadAsStringAsync().Result;
-                    List<Models.Employee> listEmp = new List<Models.Employee>();
-                    var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
-                    var empJsons = main.getEmployee();
+                    List<EmployeeSync> listEmp = new List<EmployeeSync>();                   
+                    var res = await employeeObj.GetEmployeePC();
+                    var empJsons = employeeObj.getEmployee();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
 
+                    var listSave = new List<EmployeeSync>();
 
-                    var listSave = new List<Models.Employee>();
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
                     {
                         var emp = listEmp[i];
                         int MachineNumber = DataConnect.machineID;
                         string EnrollNumber = (i + 1).ToString();
-                        string Name = RemoveVietnamese(emp.Name);
+                        string Name = employeeObj.RemoveVietnamese(emp.Name);
                         string Password = "123";
                         int Privilege = 1;
                         bool Enabled = true;
@@ -209,7 +204,7 @@ namespace TMTTimeKeeper
                         if (result)
                         {
                             //Add json
-                            var employee = new Models.Employee();
+                            var employee = new EmployeeSync();
                             employee.Id = emp.Id;
                             employee.IdKP = Int32.Parse(EnrollNumber);
                             employee.Name = Name;
@@ -227,7 +222,7 @@ namespace TMTTimeKeeper
                         }
                     }
                     if (listSave.Count() > 0)
-                        AddEmployee(listSave);
+                        employeeObj.AddEmployee(listSave);
 
                 }
                 catch (Exception ex)
@@ -237,25 +232,6 @@ namespace TMTTimeKeeper
             }
         }
 
-        public static string RemoveVietnamese(string text)
-        {
-            string result = text.ToUpper();
-            result = Regex.Replace(result, "à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|/g", "a");
-            result = Regex.Replace(result, "è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|/g", "e");
-            result = Regex.Replace(result, "ì|í|ị|ỉ|ĩ|/g", "i");
-            result = Regex.Replace(result, "ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|/g", "o");
-            result = Regex.Replace(result, "ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|/g", "u");
-            result = Regex.Replace(result, "ỳ|ý|ỵ|ỷ|ỹ|/g", "y");
-            result = Regex.Replace(result, "đ", "d");
-            return result;
-        }
-
-        public void AddEmployee(IList<Models.Employee> vals)
-        {
-            string fileName = "Employees.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.AppendAllText(path, JsonConvert.SerializeObject(vals));
-            MessageBox.Show("Đồng bộ thành công");
-        }
+     
     }
 }

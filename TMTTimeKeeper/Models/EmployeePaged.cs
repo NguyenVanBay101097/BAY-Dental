@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TMTTimeKeeper.APIInfo
+namespace TMTTimeKeeper.Models
 {
     public class EmployeePaged
     {

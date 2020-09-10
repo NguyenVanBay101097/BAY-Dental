@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Models;
+using TMTTimeKeeper.Services;
 
 namespace TMTTimeKeeper
 {
@@ -17,6 +18,9 @@ namespace TMTTimeKeeper
     {
         private Button stateNav = null;
         private AccountLogin account = null;
+
+        AccountLoginService accountloginObj = new AccountLoginService();
+
         public Main()
         {
             InitializeComponent();
@@ -36,7 +40,7 @@ namespace TMTTimeKeeper
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            account = getAccount();
+            account = accountloginObj.getAccount();
             if (account == null)
             {
                 Visible = false;
@@ -45,7 +49,7 @@ namespace TMTTimeKeeper
 
                 if (result == DialogResult.OK)
                 {
-                    account = getAccount();
+                    account = accountloginObj.getAccount();
                     if (account != null)
                         lblAccountName.Text = account.Name;
                     else
@@ -111,42 +115,9 @@ namespace TMTTimeKeeper
             stateNav = button;
         }
 
-        public AccountLogin getAccount()
-        {
-            var account = new AccountLogin();
-            string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
-            }
-            return account;
-        }
+       
 
-        public TimeKeeper getTimeKepper()
-        {
-            var timeKeeper = new TimeKeeper();
-            string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                timeKeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
-            }
-            return timeKeeper;
-        }
-
-        public List<Models.Employee> getEmployee()
-        {
-            var employees = new List<Models.Employee>();
-            string fileName = "Employees.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            string json = File.ReadAllText(path);
-            if (string.IsNullOrEmpty(json))
-                return employees;
-            employees = JsonConvert.DeserializeObject<List<Models.Employee>>(json);
-
-            return employees;
-        }
+     
 
         private void lblLogout_Click(object sender, EventArgs e)
         {

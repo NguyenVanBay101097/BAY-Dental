@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TMTTimeKeeper.Models
 {
-    public class Employee
+    public class EmployeeSync
     {
         public Guid Id { get; set; }
         public int IdKP { get; set; }
