@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { NgbDatepickerModule, NgbDropdownModule, NgbModalModule, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbDropdownModule, NgbModalModule, NgbNavModule, NgbPopoverModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 const ngb = [
@@ -8,6 +8,7 @@ const ngb = [
     NgbModalModule,
     NgbNavModule,
     NgbPopoverModule,
+    NgbPaginationModule
 ];
 
 @NgModule({
