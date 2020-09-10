@@ -8,5 +8,6 @@ namespace ApplicationCore.Entities
     public class ApplicationRole: IdentityRole
     {
         public ICollection<ApplicationRoleFunction> Functions { get; set; } = new List<ApplicationRoleFunction>();
+        public ICollection<IdentityUserRole<string>> UserRoles { get; set; }
     }
 }

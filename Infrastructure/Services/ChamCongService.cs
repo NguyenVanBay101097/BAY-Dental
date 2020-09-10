@@ -395,8 +395,8 @@ namespace Infrastructure.Services
             double gioCong = 0;
             foreach (var interval in intervals)
             {
-                //nếu chấm công giờ vào và giờ ra hoàn toàn nằm ngoài chặn dưới và chặn trên thì bỏ qua
-                if (cc.TimeOut <= interval.Start || cc.TimeIn >= interval.Stop)
+                //nếu chấm công giờ vào và giờ ra hoàn toàn nằm ngoài chặn dưới và chặn trên hoặc chưa checkout thì bỏ qua
+                if (cc.TimeOut <= interval.Start || cc.TimeIn >= interval.Stop || !cc.TimeOut.HasValue)
                     continue;
 
                 //nếu chấm công vào mà nhỏ hơn chặn dưới thì lấy chặn dưới, còn lớn hơn thì lấy chấm công vào
