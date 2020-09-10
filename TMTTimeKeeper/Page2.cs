@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TMTTimeKeeper.APIInfo;
 using TMTTimeKeeper.Info;
@@ -171,11 +172,11 @@ namespace TMTTimeKeeper
                     ShowStatusBar(string.Empty, true);
                     var account = main.getAccount();
                     if (account == null)
-                        ShowStatusBar("lỗi đăng nhập !!", true);
+                        MessageBox.Show("lỗi đăng nhập");
 
-                    //var timeKeeper = main.getTimeKepper();
-                    //if (timeKeeper == null)
-                    //    ShowStatusBar("chưa kết nối máy chấm công !!", true);
+                    var timeKeeper = main.getTimeKepper();
+                    if (timeKeeper == null)
+                        MessageBox.Show("chưa kết nối máy chấm công");
 
                     // Update port # in the following line.
                     client.BaseAddress = new Uri("https://localhost:44377/");
@@ -207,9 +208,9 @@ namespace TMTTimeKeeper
                     for (int i = 0; i < listEmp.Count(); i++)
                     {
                         var emp = listEmp[i];
-                        int MachineNumber = 1;
+                        int MachineNumber = timeKeeper.Id;
                         string EnrollNumber = (i + 2).ToString();
-                        string Name = emp.Name;
+                        string Name = RemoveVietnamese(emp.Name);
                         string Password = "123";
                         int Privilege = 1;
                         bool Enabled = true;
@@ -220,7 +221,7 @@ namespace TMTTimeKeeper
                         {
                             //Add json
                             var employee = new Employee();
-                            employee.Id = emp.Id;
+                            employee.Id = emp.Id; 
                             employee.IdKP = Int32.Parse(EnrollNumber);
                             employee.Name = Name;
                             employee.MachineNumber = MachineNumber;
@@ -245,6 +246,19 @@ namespace TMTTimeKeeper
                     //DisplayListOutput(ex.Message);
                 }
             }
+        }
+
+        public static string RemoveVietnamese(string text)
+        {
+            string result = text.ToLower();
+            result = Regex.Replace(result, "à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|/g", "a");
+            result = Regex.Replace(result, "è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|/g", "e");
+            result = Regex.Replace(result, "ì|í|ị|ỉ|ĩ|/g", "i");
+            result = Regex.Replace(result, "ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|/g", "o");
+            result = Regex.Replace(result, "ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|/g", "u");
+            result = Regex.Replace(result, "ỳ|ý|ỵ|ỷ|ỹ|/g", "y");
+            result = Regex.Replace(result, "đ", "d");
+            return result;
         }
 
         public void AddEmployee(IList<Employee> vals)
