@@ -52,7 +52,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(DataConnect.machineID));
+                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);

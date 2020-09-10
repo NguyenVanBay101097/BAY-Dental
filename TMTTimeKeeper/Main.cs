@@ -167,7 +167,7 @@ public static class DataConnect
 {
     public static string ip;
     public static string port;
-    public static string machineID;
+    public static int machineID;
     public static string machineName;
 }
 
