@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Info;
-using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
@@ -15,7 +14,6 @@ namespace TMTTimeKeeper
     public partial class Page3 : Form
     {
         DeviceManipulator manipulator = new DeviceManipulator();
-        DeviceManipulatorService manipulatorService = new DeviceManipulatorService();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         public Page3()
@@ -42,21 +40,17 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, DataConnect.machineID);
-
-                    if (lstMachineInfo != null && lstMachineInfo.Count > 0)
+                    ICollection<MachineInfo> lstMachineInfo = manipulator.GetAllLogData(objZkeeper, DataConnect.machineID);
+                    if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
                         ShowStatusBar(lstMachineInfo.Count + " records found !!", true);
                     }
-                    else
-                    {
-                        //DisplayListOutput("No records found");
-                    }
+
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    ShowStatusBar(ex.Message, true);
                 }
             }
         }
@@ -71,11 +65,11 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    var response = await manipulatorService.SyncLogData();
+                    var response = await manipulator.SyncLogData();
 
                     if (response != null && response.Success)
                     {
-                        ShowStatusBar(response.Message, true);
+                        ShowStatusBar("Đồng bộ thành công", true);
                     }
                     else
                     {
@@ -178,5 +172,7 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
         }
+
+
     }
 }

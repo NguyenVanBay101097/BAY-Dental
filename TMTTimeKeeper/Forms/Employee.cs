@@ -21,13 +21,13 @@ using zkemkeeper;
 
 namespace TMTTimeKeeper
 {
-    public partial class Page2 : Form
+    public partial class Employee : Form
     {
         DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         Main main = new Main();
-        public Page2()
+        public Employee()
         {
             InitializeComponent();
             ShowStatusBar(string.Empty, true);
@@ -51,7 +51,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
+                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper,DataConnect.machineID);
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
@@ -186,18 +186,18 @@ namespace TMTTimeKeeper
 
                     var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
                     var rs = response.Content.ReadAsStringAsync().Result;
-                    List<Employee> listEmp = new List<Employee>();
+                    List<Models.Employee> listEmp = new List<Models.Employee>();
                     var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
                     var empJsons = main.getEmployee();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
 
 
-                    var listSave = new List<Employee>();
+                    var listSave = new List<Models.Employee>();
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
                     {
                         var emp = listEmp[i];
-                        int MachineNumber = timeKeeper.Id;
+                        int MachineNumber = DataConnect.machineID;
                         string EnrollNumber = (i + 1).ToString();
                         string Name = RemoveVietnamese(emp.Name);
                         string Password = "123";
@@ -209,7 +209,7 @@ namespace TMTTimeKeeper
                         if (result)
                         {
                             //Add json
-                            var employee = new Employee();
+                            var employee = new Models.Employee();
                             employee.Id = emp.Id;
                             employee.IdKP = Int32.Parse(EnrollNumber);
                             employee.Name = Name;
@@ -232,7 +232,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
@@ -250,7 +250,7 @@ namespace TMTTimeKeeper
             return result;
         }
 
-        public void AddEmployee(IList<Employee> vals)
+        public void AddEmployee(IList<Models.Employee> vals)
         {
             string fileName = "Employees.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
