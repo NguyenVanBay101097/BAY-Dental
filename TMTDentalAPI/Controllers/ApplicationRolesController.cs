@@ -47,7 +47,6 @@ namespace TMTDentalAPI.Controllers
             var query = _roleManager.Roles;
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
-            var companyId = CompanyId;
             query = query.OrderBy(x => x.Name);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -74,11 +73,8 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ApplicationRoleDisplay val)
+        public async Task<IActionResult> Create(ApplicationRoleSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
            
@@ -96,9 +92,9 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            foreach (var user in val.Users)
+            foreach (var userId in val.UserIds)
             {
-                var usr = await _userManager.FindByIdAsync(user.Id);
+                var usr = await _userManager.FindByIdAsync(userId);
                 var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
                 if (!result2.Succeeded)
                 {
@@ -108,19 +104,17 @@ namespace TMTDentalAPI.Controllers
 
             _unitOfWork.Commit();
 
-            val.Id = role.Id;
-            return CreatedAtAction(nameof(Get), new { id = role.Id }, val);
+            var basic = _mapper.Map<ApplicationRoleBasic>(role);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, ApplicationRoleDisplay val)
+        public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
             if (role == null)
                 return NotFound();
+
             await _unitOfWork.BeginTransactionAsync();
 
             role = _mapper.Map(val, role);
@@ -140,8 +134,8 @@ namespace TMTDentalAPI.Controllers
             }
 
             var users = await _userManager.GetUsersInRoleAsync(role.Name);
-            var toRemove = users.Where(x => !val.Users.Any(s => s.Id == x.Id)).ToList();
-            foreach(var u in toRemove)
+            var toRemove = users.Where(x => !val.UserIds.Any(s => s == x.Id)).ToList();
+            foreach (var u in toRemove)
             {
                 var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
                 if (!result2.Succeeded)
@@ -150,11 +144,11 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var toAdd = val.Users.Where(x => !users.Any(s => s.Id == x.Id)).ToList();
+            var toAdd = val.UserIds.Where(x => !users.Any(s => s.Id == x)).ToList();
 
-            foreach (var user in toAdd)
+            foreach (var userId in toAdd)
             {
-                var usr = await _userManager.FindByIdAsync(user.Id);
+                var usr = await _userManager.FindByIdAsync(userId);
                 var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
                 if (!result2.Succeeded)
                 {
