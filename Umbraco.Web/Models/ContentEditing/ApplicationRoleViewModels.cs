@@ -41,5 +41,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public IEnumerable<string> Functions { get; set; } = new List<string>();
+
+        public IEnumerable<string> UserIds { get; set; } = new List<string>();
     }
 }

@@ -47,7 +47,6 @@ namespace TMTDentalAPI.Controllers
             var query = _roleManager.Roles;
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
-            var companyId = CompanyId;
             query = query.OrderBy(x => x.Name);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -93,15 +92,15 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            //foreach (var user in val.Users)
-            //{
-            //    var usr = await _userManager.FindByIdAsync(user.Id);
-            //    var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
-            //    if (!result2.Succeeded)
-            //    {
-            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-            //    }
-            //}
+            foreach (var userId in val.UserIds)
+            {
+                var usr = await _userManager.FindByIdAsync(userId);
+                var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
+                if (!result2.Succeeded)
+                {
+                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+                }
+            }
 
             _unitOfWork.Commit();
 
@@ -134,28 +133,28 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            //var users = await _userManager.GetUsersInRoleAsync(role.Name);
-            //var toRemove = users.Where(x => !val.Users.Any(s => s.Id == x.Id)).ToList();
-            //foreach(var u in toRemove)
-            //{
-            //    var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
-            //    if (!result2.Succeeded)
-            //    {
-            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-            //    }
-            //}
+            var users = await _userManager.GetUsersInRoleAsync(role.Name);
+            var toRemove = users.Where(x => !val.UserIds.Any(s => s == x.Id)).ToList();
+            foreach (var u in toRemove)
+            {
+                var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
+                if (!result2.Succeeded)
+                {
+                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+                }
+            }
 
-            //var toAdd = val.Users.Where(x => !users.Any(s => s.Id == x.Id)).ToList();
+            var toAdd = val.UserIds.Where(x => !users.Any(s => s.Id == x)).ToList();
 
-            //foreach (var user in toAdd)
-            //{
-            //    var usr = await _userManager.FindByIdAsync(user.Id);
-            //    var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
-            //    if (!result2.Succeeded)
-            //    {
-            //        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
-            //    }
-            //}
+            foreach (var userId in toAdd)
+            {
+                var usr = await _userManager.FindByIdAsync(userId);
+                var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
+                if (!result2.Succeeded)
+                {
+                    throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+                }
+            }
 
             _unitOfWork.Commit();
 

@@ -116,7 +116,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
-        { name: 'Nhóm quyền', link: '/res-groups' },
+        { name: 'Nhóm quyền', link: '/roles' },
         { name: 'Cấu hình chung', link: '/config-settings' }
       ]
     },
