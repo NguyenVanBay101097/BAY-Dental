@@ -95,12 +95,14 @@
             // 
             // btn_Sync
             // 
-            this.btn_Sync.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btn_Sync.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btn_Sync.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.btn_Sync.Location = new System.Drawing.Point(592, 14);
+            this.btn_Sync.BackColor = System.Drawing.Color.DarkOrange;
+            this.btn_Sync.FlatAppearance.BorderSize = 0;
+            this.btn_Sync.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_Sync.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btn_Sync.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btn_Sync.Location = new System.Drawing.Point(588, 15);
             this.btn_Sync.Name = "btn_Sync";
-            this.btn_Sync.Size = new System.Drawing.Size(88, 38);
+            this.btn_Sync.Size = new System.Drawing.Size(106, 35);
             this.btn_Sync.TabIndex = 8;
             this.btn_Sync.Text = "Đồng bộ";
             this.btn_Sync.UseVisualStyleBackColor = false;
