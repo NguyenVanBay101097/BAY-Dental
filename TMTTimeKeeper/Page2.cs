@@ -197,11 +197,9 @@ namespace TMTTimeKeeper
                     var rs = response.Content.ReadAsStringAsync().Result;
                     List<Employee> listEmp = new List<Employee>();
                     var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
-                    var empTimes = main.getEmployee().Select(x => x.Id);
-                    if (res != null && empTimes != null)
-                    {
-                        listEmp = res.Items.Where(x => !empTimes.Contains(x.Id)).ToList();
-                    }
+                    var empJsons = main.getEmployee();
+                    listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
+
 
                     var listSave = new List<Employee>();
                     ///Set User
@@ -221,7 +219,7 @@ namespace TMTTimeKeeper
                         {
                             //Add json
                             var employee = new Employee();
-                            employee.Id = emp.Id; 
+                            employee.Id = emp.Id;
                             employee.IdKP = Int32.Parse(EnrollNumber);
                             employee.Name = Name;
                             employee.MachineNumber = MachineNumber;
@@ -239,7 +237,7 @@ namespace TMTTimeKeeper
                     }
                     if (listSave.Count() > 0)
                         AddEmployee(listSave);
-                    
+
                 }
                 catch (Exception ex)
                 {

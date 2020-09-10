@@ -214,13 +214,13 @@ namespace TMTTimeKeeper
 
             bool isValidIpA = UniversalStatic.ValidateIP(ipAddress);
             if (!isValidIpA)
-                throw new Exception("The Device IP is invalid !!");
+               MessageBox.Show("The Device IP is invalid !!");
 
             isValidIpA = UniversalStatic.PingTheDevice(ipAddress);
             if (isValidIpA)
-                ShowStatusBar("The device is active", true);
+                MessageBox.Show("The device is active");
             else
-                ShowStatusBar("Could not read any response", false);
+                MessageBox.Show("Could not read any response");
         }
         #endregion
 
