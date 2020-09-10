@@ -52,8 +52,8 @@ namespace TMTTimeKeeper
                 tbxCompanyName.Text = timekeeper.CompanyName;
                 tbxMachineName.Text = timekeeper.Name;
                 tbxMachineSeri.Text = timekeeper.Seri;
-                tbxIP.Text = timekeeper.AddressIP;
-                tbxPort.Text = timekeeper.ConnectTCP;
+                tbxIP.Text = timekeeper.AddressIP == null ? "192.168.1.201" : timekeeper.AddressIP;
+                tbxPort.Text = timekeeper.ConnectTCP == null ? "4370" : timekeeper.ConnectTCP;
             }
         }
 
@@ -176,7 +176,10 @@ namespace TMTTimeKeeper
                         timekeeper.ConnectTCP = tbxPort.Text;
                         AddTimekeeper(timekeeper);
 
-                        this.Close();
+                        DataConnect.ip = tbxIP.Text;
+                        DataConnect.port = tbxPort.Text;
+                        DataConnect.machineID = 1;
+                        DataConnect.machineName = tbxMachineName.Text;
                     }
                 }
                 catch (Exception ex)
@@ -214,13 +217,13 @@ namespace TMTTimeKeeper
 
             bool isValidIpA = UniversalStatic.ValidateIP(ipAddress);
             if (!isValidIpA)
-                throw new Exception("The Device IP is invalid !!");
+               MessageBox.Show("The Device IP is invalid !!");
 
             isValidIpA = UniversalStatic.PingTheDevice(ipAddress);
             if (isValidIpA)
-                ShowStatusBar("The device is active", true);
+                MessageBox.Show("The device is active");
             else
-                ShowStatusBar("Could not read any response", false);
+                MessageBox.Show("Could not read any response");
         }
         #endregion
 

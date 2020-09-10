@@ -42,7 +42,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, int.Parse(DataConnect.machineID));
+                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, DataConnect.machineID);
 
                     if (lstMachineInfo != null && lstMachineInfo.Count > 0)
                     {
@@ -71,7 +71,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    var response =await manipulatorService.SyncLogData();
+                    var response = await manipulatorService.SyncLogData();
 
                     if (response != null && response.Success)
                     {
@@ -178,7 +178,5 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
         }
-
-
     }
 }
