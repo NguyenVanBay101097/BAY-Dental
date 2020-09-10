@@ -22,6 +22,6 @@ namespace Infrastructure.Services
         Task CheckChamCong(IEnumerable<ChamCong> vals);
         Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val);
         Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val);
-        Task<ChamCongImportResponse> SyncChamCong(ImportFileExcellChamCongModel val);
+        Task<ChamCongImportResponse> SyncChamCong(IEnumerable<ImportFileExcellChamCongModel> vals);
     }
 }

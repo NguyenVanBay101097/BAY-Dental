@@ -589,46 +589,46 @@ namespace Infrastructure.Services
             return new ChamCongImportResponse { Success = true };
         }
 
-        public async Task<ChamCongImportResponse> SyncChamCong(ImportFileExcellChamCongModel val)
+        public async Task<TimeKeeperSync> SyncChamCong(IEnumerable<ImportFileExcellChamCongModel> vals)
         {
-            var error = new ChamCongImportResponse();
+            var timeKeeperSync = new TimeKeeperSync();
             var modelError = new ImportFileExcellChamCongModel();
-            try
+            foreach(var val in vals)
             {
-                if (val.Type == "check-in")
+                try
                 {
-                    var chamcong = new ChamCong();
-                    chamcong.CompanyId = CompanyId;
-                    chamcong.EmployeeId = val.EmpId.Value;
-                    chamcong.WorkEntryTypeId = val.WorkId.Value;
-                    chamcong.Date = val.Date;
-                    chamcong.TimeIn = val.Time;
-                    await CreateAsync(chamcong);
-                }
-                else if (val.Type == "check-out")
-                {
-                    var ccIn = await SearchQuery(x => x.EmployeeId == val.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
-                    if (ccIn != null)
+                    if (val.Type == "check-in")
                     {
-                        ccIn.TimeOut = val.Time;
-                        await UpdateAsync(ccIn);
+                        var chamcong = new ChamCong();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = val.EmpId.Value;
+                        chamcong.WorkEntryTypeId = val.WorkId.Value;
+                        chamcong.Date = val.Date;
+                        chamcong.TimeIn = val.Time;
+                        await CreateAsync(chamcong);
                     }
-                    else
-                    {                     
-                        error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });                      
+                    else if (val.Type == "check-out")
+                    {
+                        var ccIn = await SearchQuery(x => x.EmployeeId == val.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
+                        if (ccIn != null)
+                        {
+                            ccIn.TimeOut = val.Time;
+                            await UpdateAsync(ccIn);
+                        }
+                        else
+                        {
+                            timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                modelError = val;
-                error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
-            }
+                catch (Exception e)
+                {
+                    modelError = val;
+                    timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
+                }
+            }                
 
-            if (error != null)
-                return error;
-
-            return new ChamCongImportResponse { Success = true, ModelError = val };
+            return timeKeeperSync;
         }
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
