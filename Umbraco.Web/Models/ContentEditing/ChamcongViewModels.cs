@@ -73,7 +73,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class TimeKeepingForAll
     {
-        public DateTime date { get; set; }
-        public Guid workEntryTypeId { get; set; }
+        public DateTime Date { get; set; }
+        public Guid WorkEntryTypeId { get; set; }
     }
 }
