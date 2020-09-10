@@ -6,17 +6,15 @@ namespace TMTTimeKeeper.APIInfo
 {
    public class Response
     {
-        public string Message { get; set; }
-        /// <summary>
-        /// True: thành công
-        /// False: không thành công
-        /// </summary>
         public bool Success { get; set; }
+        public IEnumerable<string> Errors { get; set; }
+        public ChamCongSync ModelError { get; set; }
+        public string Message { get; set; }
 
-        /// <summary>
-        /// Danh sách lỗi được add khi có lỗi
-        /// </summary>
-        public List<string> Errors { get; set; } = new List<string>();
+    }
 
+    public class TimekeepingResponse
+    {
+        public IEnumerable<Response> ErrorDatas = new List<Response>();
     }
 }

@@ -51,7 +51,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
+                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper,DataConnect.machineID);
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
@@ -177,14 +177,6 @@ namespace TMTTimeKeeper
                     if (timeKeeper == null)
                         MessageBox.Show("chưa kết nối máy chấm công");
 
-                    // Update port # in the following line.
-                    HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                    //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
-                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
-
                     EmployeePaged employeePaged = new EmployeePaged
                     {
                         offset = 0,
@@ -240,7 +232,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

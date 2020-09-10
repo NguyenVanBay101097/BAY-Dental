@@ -43,16 +43,12 @@ namespace TMTTimeKeeper
                     ShowStatusBar(string.Empty, true);
 
                     ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, DataConnect.machineID);
-
-                    if (lstMachineInfo != null && lstMachineInfo.Count > 0)
+                    if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
                         ShowStatusBar(lstMachineInfo.Count + " records found !!", true);
                     }
-                    else
-                    {
-                        //DisplayListOutput("No records found");
-                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +71,7 @@ namespace TMTTimeKeeper
 
                     if (response != null && response.Success)
                     {
-                        ShowStatusBar(response.Message, true);
+                        ShowStatusBar("Đồng bộ thành công", true);
                     }
                     else
                     {
@@ -178,5 +174,7 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
         }
+
+
     }
 }

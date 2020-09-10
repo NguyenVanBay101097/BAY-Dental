@@ -112,7 +112,7 @@ namespace TMTTimeKeeper.Services
             int dwWorkCode = 0;
             LastUpdateLogData log = new LastUpdateLogData();
             //Lấy lastUpdate
-            string fileName = "DatalogEnroll.json";
+            string fileName = "LastGetLogData.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             string json = File.ReadAllText(path);
 
@@ -144,7 +144,7 @@ namespace TMTTimeKeeper.Services
 
             if (log.LastUpdate.HasValue)
             {
-                lstEnrollData = lstEnrollData.Where(x => x.DateOnlyRecord >= log.LastUpdate.Value).ToList();
+                lstEnrollData = lstEnrollData.Where(x => DateTime.Parse(x.DateTimeRecord) >= log.LastUpdate.Value).ToList();
                 SaveLogDataToJson(lstEnrollData);
             }
             else
@@ -180,20 +180,28 @@ namespace TMTTimeKeeper.Services
         {
             List<MachineInfo> listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
+            var listChamCongSync = new List<ChamCongSync>();
+            var lastUpdate = new LastUpdateLogData();
+
             string logEnroll = "DatalogEnroll.json";
             string pathLogEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", logEnroll);
+            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
+
             string account = "AccountLogin.json";
             string pathAccountLogin = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", account);
-            var listChamCongSync = new List<ChamCongSync>();
-            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
-            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
-
             var jsonAccount = File.ReadAllText(pathAccountLogin);
+
+            string lastUpdateLog = "LastGetLogData.json";
+            string pathLastUpdate = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", lastUpdateLog);
+
+            string fileErrorEnroll = "DataLogEnrollErrors.json";
+            string pathErrorEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileErrorEnroll);
+
+            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
             acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
 
             if (acc != null)
             {
-
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://localhost:44377/");
                 var token = acc.AccessToken;
@@ -218,16 +226,21 @@ namespace TMTTimeKeeper.Services
                         listChamCongSync.Add(val);
                     }
 
-                    var respose = await client.PostAsJsonAsync(url, listChamCongSync);
-                    var content = await respose.Content.ReadAsStringAsync();
-                    var res = JsonConvert.DeserializeObject<Response>(content);
-                    if (!res.Success)
+                    var request = await client.PostAsJsonAsync(url, listChamCongSync);
+                    var content = await request.Content.ReadAsStringAsync();
+                    var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
+                    if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
                     {
-                        foreach (var item in res.Errors)
-                        {
-                            throw new Exception(item);
-                        }
+                        File.WriteAllText(pathErrorEnroll, JsonConvert.SerializeObject(responses.ErrorDatas));
                     }
+                    //Xóa logFile
+                    File.WriteAllText(pathLogEnroll, string.Empty);
+
+                    //Ghi lại last update
+                    lastUpdate.Count += 1;
+                    lastUpdate.LastUpdate = DateTime.Now;
+                    File.WriteAllText(pathLastUpdate, JsonConvert.SerializeObject(lastUpdate));
+
                 }
                 catch (Exception e)
                 {

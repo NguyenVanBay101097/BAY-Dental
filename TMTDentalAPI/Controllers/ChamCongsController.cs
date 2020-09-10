@@ -51,9 +51,7 @@ namespace TMTDentalAPI.Controllers
             if (vals == null || !ModelState.IsValid)
                 return BadRequest();
 
-            await _unitOfWork.BeginTransactionAsync();
             var result = await _chamCongService.SyncChamCong(vals);
-            _unitOfWork.Commit();
 
             return Ok(result);
         }
