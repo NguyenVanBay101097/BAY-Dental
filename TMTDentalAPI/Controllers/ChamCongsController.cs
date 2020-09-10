@@ -46,13 +46,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> SyncToTimeKeeper(IList<ImportFileExcellChamCongModel> vals)
+        public async Task<IActionResult> SyncToTimeKeeper(ImportFileExcellChamCongModel val)
         {
-            if (vals == null || !ModelState.IsValid)
+            if (val == null || !ModelState.IsValid)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            var result = await _chamCongService.SyncChamCong(vals);
+            var result = await _chamCongService.SyncChamCong(val);
             if (result.Success)
                 _unitOfWork.Commit();
 

@@ -589,48 +589,46 @@ namespace Infrastructure.Services
             return new ChamCongImportResponse { Success = true };
         }
 
-        public async Task<ChamCongImportResponse> SyncChamCong(IList<ImportFileExcellChamCongModel> listData)
+        public async Task<ChamCongImportResponse> SyncChamCong(ImportFileExcellChamCongModel val)
         {
-            int count = listData.Count();
-            var errors_2 = new List<string>();
-            for (int i = 0; i < count; i++)
+            var error = new ChamCongImportResponse();
+            var modelError = new ImportFileExcellChamCongModel();
+            try
             {
-                var cc = listData[i];
-                try
+                if (val.Type == "check-in")
                 {
-                    if (cc.Type == "check-in")
-                    {
-                        var chamcong = new ChamCong();
-                        chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = cc.EmpId.Value;
-                        chamcong.WorkEntryTypeId = cc.WorkId.Value;
-                        chamcong.Date = cc.Date;
-                        chamcong.TimeIn = cc.Time;
-                        await CreateAsync(chamcong);
-                    }
-                    else if (cc.Type == "check-out")
-                    {
-                        var ccIn = await SearchQuery(x => x.EmployeeId == cc.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
-                        if (ccIn != null)
-                        {
-                            ccIn.TimeOut = cc.Time;
-                            await UpdateAsync(ccIn);
-                        }
-                        else
-                        {
-                            throw new Exception("không tìm thấy chấm công nào chưa check-out.");
-                        }
-                    }
+                    var chamcong = new ChamCong();
+                    chamcong.CompanyId = CompanyId;
+                    chamcong.EmployeeId = val.EmpId.Value;
+                    chamcong.WorkEntryTypeId = val.WorkId.Value;
+                    chamcong.Date = val.Date;
+                    chamcong.TimeIn = val.Time;
+                    await CreateAsync(chamcong);
                 }
-                catch (Exception e)
+                else if (val.Type == "check-out")
                 {
-                    errors_2.Add(e.Message);
+                    var ccIn = await SearchQuery(x => x.EmployeeId == val.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
+                    if (ccIn != null)
+                    {
+                        ccIn.TimeOut = val.Time;
+                        await UpdateAsync(ccIn);
+                    }
+                    else
+                    {                     
+                        error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });                      
+                    }
                 }
             }
-            if (errors_2.Any())
-                return new ChamCongImportResponse { Success = false, Errors = errors_2 };
+            catch (Exception e)
+            {
+                modelError = val;
+                error = (new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
+            }
 
-            return new ChamCongImportResponse { Success = true };
+            if (error != null)
+                return error;
+
+            return new ChamCongImportResponse { Success = true, ModelError = val };
         }
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
@@ -674,7 +672,7 @@ namespace Infrastructure.Services
                     }
                 }
             }
-          
+
         }
 
         public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)
