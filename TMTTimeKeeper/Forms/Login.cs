@@ -19,7 +19,6 @@ namespace TMTTimeKeeper
     public partial class Login : Form
     {
 
-
         public Login()
         {
             InitializeComponent();
@@ -307,12 +306,5 @@ namespace TMTTimeKeeper
             }
         }
 
-        private void Login_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                btnLogin_Click(sender, e);
-            }
-        }
     }
 }
