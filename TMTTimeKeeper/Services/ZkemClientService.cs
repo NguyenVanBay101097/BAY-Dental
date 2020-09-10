@@ -1427,6 +1427,375 @@ namespace TMTTimeKeeper.Services
             throw new NotImplementedException();
         }
 
+        public bool SetCommuTimeOut(int timeOut)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendFileByType(int dwMachineNumber, string FileName, int iType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetCommProType(int proType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetCompatOldFirmware(int nCompatOkdFirmware)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Connect_P4P(string uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceTableData(int dwMachineNumber, string TableName, string Datas, string Options, out int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetConnectStatus(ref int dwErrorCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetManufacturerData(int dwMachineNumber, string Name, string Value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetDeviceStatusEx(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CancelByUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int SSR_GetDeviceDataCount(string TableName, string Filter, string Options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_DeleteDeviceData(int dwMachineNumber, string TableName, string Datas, string Options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadTimeGLogData(int dwMachineNumber, string sTime, string eTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteAttlogBetweenTheDate(int dwMachineNumber, string sTime, string eTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteAttlogByTime(int dwMachineNumber, string sTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadNewGLogData(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsNewFirmwareMachine(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UploadUserPhoto(int dwMachineNumber, string FileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DownloadUserPhoto(int dwMachineNumber, string FileName, string FilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteUserPhoto(int dwMachineNumber, string FileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllUserPhoto(int dwMachineNumber, string dlDir)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetBellSchDataEx(int dwMachineNumber, int weekDay, int Index, int Enable, int Hour, int min, int voice, int way, int InerBellDelay, int ExtBellDelay)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetBellSchDataEx(int dwMachineNumber, int weekDay, int Index, out int Enable, out int Hour, out int min, out int voice, out int way, out int InerBellDelay, out int ExtBellDelay)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetDayBellSchCount(int dwMachineNumber, out int DayBellCnt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetMaxBellIDInBellSchData(int dwMachineNumber, out int MaxBellID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadAllBellSchData(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetEachBellInfo(int dwMachineNumber, out int weekDay, out int Index, out int Enable, out int Hour, out int min, out int voice, out int way, out int InerBellDelay, out int ExtBellDelay)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserValidDate(int dwMachineNumber, string UserID, int Expires, int ValidCount, string StartDate, string EndDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserValidDate(int dwMachineNumber, string UserID, out int Expires, out int ValidCount, out string StartDate, out string EndDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserValidDateBatch(int dwMachineNumber, string Datas)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserValidDateBatch(int dwMachineNumber, out string Buffer, int BufferSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserVerifyStyle(int dwMachineNumber, string dwEnrollNumber, int VerifyStyle, ref byte Reserved)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserVerifyStyle(int dwMachineNumber, string dwEnrollNumber, out int VerifyStyle, out byte Reserved)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserVerifyStyleBatch(int dwMachineNumber, string Datas, ref byte Reserved)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserVerifyStyleBatch(int dwMachineNumber, out string Buffer, int BufferSize, out byte Reserved)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetDeviceFirmwareVersion(int dwMachineNumber, ref string strVersion)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendFileEx(int dwMachineNumber, string FileName, string FilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UploadTheme(int dwMachineNumber, string FileName, string InDevName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UploadPicture(int dwMachineNumber, string FileName, string InDevName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeletePicture(int dwMachineNumber, string FileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DownloadPicture(int dwMachineNumber, string FileName, string FilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TurnOffAlarm(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CloseAlarm(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_SetWorkCodeEx(int dwMachineNumber, string WorkCodeNum, string Name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_GetWorkCodeEx(int dwMachineNumber, string WorkCodeNum, out string Name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_DeleteWorkCodeEx(int dwMachineNumber, string WorkCodeNum)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_GetGeneralLogDataEx(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, out string dwWorkCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_SetWorkCodeExBatch(int dwMachineNumber, string Datas)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_GetWorkCodeExBatch(int dwMachineNumber, out string Buffer, int BufferSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_GetWorkCodeExByID(int dwMachineNumber, int WorkCodeID, out string WorkCodeNum, out string Name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_GetWorkCodeIDByName(int dwMachineNumber, string workcodeName, out int WorkCodeID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetEventMode(int nType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllSFIDName(int dwMachineNumber, out string ShortkeyIDName, int BufferSize1, out string FunctionIDName, int BufferSize2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetShortkey(int dwMachineNumber, int ShortKeyID, string ShortKeyName, string FunctionName, int ShortKeyFun, int StateCode, string StateName, string Description, int StateAutoChange, string StateAutoChangeTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetShortkey(int dwMachineNumber, int ShortKeyID, ref string ShortKeyName, ref string FunctionName, ref int ShortKeyFun, ref int StateCode, ref string StateName, ref string Description, ref int AutoChange, ref string AutoChangeTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllAppFun(int dwMachineNumber, out string AppName, out string FunofAppName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllRole(int dwMachineNumber, out string RoleName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAppOfRole(int dwMachineNumber, int Permission, out string AppName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetFunOfRole(int dwMachineNumber, int Permission, out string FunName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetPermOfAppFun(int dwMachineNumber, int Permission, string AppName, string FunName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeletePermOfAppFun(int dwMachineNumber, int Permission, string AppName, string FunName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsUserDefRoleEnable(int dwMachineNumber, int Permission, out bool Enable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SearchDevice(string commType, string address, out string DevBuffer, int DevBufferSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserIDCardInfo(int dwMachineNumber, string strEnrollNumber, ref byte IDCardData, int DataLen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserIDCardInfo(int dwMachineNumber, string strEnrollNumber, out byte IDCardData, ref int DataLen)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DelUserIDCardInfo(int dwMachineNumber, string strEnrollNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetPhotoByNameToFile(int dwMachineNumber, string PhotoName, string LocalFileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SendUserFacePhoto(int dwMachineNumber, string FileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserFacePhotoNames(int dwMachineNumber, out string AllPhotoName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserFacePhotoCount(int dwMachineNumber, out int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserFacePhotoByName(int dwMachineNumber, string PhotoName, out byte PhotoData, out int PhotoLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserInfoPR(int dwMachineNumber, bool IsSameUser, string dwEnrollNumber, string Name, string Remark, string Rank, string Photo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearDram(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int MaxP4PConnect => throw new NotImplementedException();
+
+        public int BatchDataMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 
         #endregion
 

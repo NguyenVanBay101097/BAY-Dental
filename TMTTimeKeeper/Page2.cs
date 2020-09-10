@@ -197,11 +197,13 @@ namespace TMTTimeKeeper
                     var rs = response.Content.ReadAsStringAsync().Result;
                     List<Employee> listEmp = new List<Employee>();
                     var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
-                    var empTimes = main.getEmployee().Select(x => x.Id);
-                    if (res != null && empTimes != null)
-                    {
-                        listEmp = res.Items.Where(x => !empTimes.Contains(x.Id)).ToList();
-                    }
+                    var empTimes = main.getEmployee();
+                    //if (res != null && empTimes != null)
+                    //{
+                    //    listEmp = res.Items.Where(x => !empTimes.Contains(x.Id)).ToList();
+
+                    //}
+                    listEmp = res.Items.Where(x => !empTimes.Any(s=>s.Id == x.Id)).ToList();
 
                     var listSave = new List<Employee>();
                     ///Set User
