@@ -178,5 +178,7 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
         }
+
+
     }
 }

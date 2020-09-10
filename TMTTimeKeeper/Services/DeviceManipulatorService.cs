@@ -112,7 +112,7 @@ namespace TMTTimeKeeper.Services
             int dwWorkCode = 0;
             LastUpdateLogData log = new LastUpdateLogData();
             //Lấy lastUpdate
-            string fileName = "DatalogEnroll.json";
+            string fileName = "LastGetLogData.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             string json = File.ReadAllText(path);
 
@@ -180,20 +180,27 @@ namespace TMTTimeKeeper.Services
         {
             List<MachineInfo> listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
+            var listChamCongSync = new List<ChamCongSync>();
+            var lastUpdate = new LastUpdateLogData();
+
             string logEnroll = "DatalogEnroll.json";
             string pathLogEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", logEnroll);
+            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
+
             string account = "AccountLogin.json";
             string pathAccountLogin = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", account);
-            var listChamCongSync = new List<ChamCongSync>();
-            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
-            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
-
             var jsonAccount = File.ReadAllText(pathAccountLogin);
+
+            string lastUpdateLog = "LastGetLogData.json";
+            string pathLastUpdate = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", lastUpdateLog);
+            var jsonlastUpdate = File.ReadAllText(pathLastUpdate);
+
+            lastUpdate = JsonConvert.DeserializeObject<LastUpdateLogData>(jsonlastUpdate);
+            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
             acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
 
             if (acc != null)
             {
-
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://localhost:44377/");
                 var token = acc.AccessToken;
@@ -217,17 +224,28 @@ namespace TMTTimeKeeper.Services
                         val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
                         listChamCongSync.Add(val);
                     }
+                    var requests = listChamCongSync.Select(x => client.PostAsJsonAsync(url, x));
+                    //var respose = await client.PostAsJsonAsync(url, val);
+                    await Task.WhenAll(requests);
 
-                    var respose = await client.PostAsJsonAsync(url, listChamCongSync);
-                    var content = await respose.Content.ReadAsStringAsync();
-                    var res = JsonConvert.DeserializeObject<Response>(content);
-                    if (!res.Success)
+                    var responses = requests.Select(task => task.Result);
+
+                    foreach (var r in responses)
                     {
-                        foreach (var item in res.Errors)
+                        var content = await r.Content.ReadAsStringAsync();
+                        var res = JsonConvert.DeserializeObject<Response>(content);
+                        if (res.Success)
                         {
-                            throw new Exception(item);
+                            lastUpdate.LastUpdate = DateTime.Now;
+                            lastUpdate.Count += 1;
+                            File.WriteAllText(pathLastUpdate, JsonConvert.SerializeObject(lastUpdate));
+                        }
+                        else
+                        {
+
                         }
                     }
+
                 }
                 catch (Exception e)
                 {
