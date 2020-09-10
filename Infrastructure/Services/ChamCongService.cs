@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
@@ -593,7 +594,9 @@ namespace Infrastructure.Services
         {
             var timeKeeperSync = new TimeKeeperSync();
             var modelError = new ImportFileExcellChamCongModel();
-            foreach(var val in vals)
+            var unitObj = GetService<IUnitOfWorkAsync>();
+
+            foreach (var val in vals)
             {
                 try
                 {
@@ -605,7 +608,9 @@ namespace Infrastructure.Services
                         chamcong.WorkEntryTypeId = val.WorkId.Value;
                         chamcong.Date = val.Date;
                         chamcong.TimeIn = val.Time;
+                        await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
+                        unitObj.Commit();
                     }
                     else if (val.Type == "check-out")
                     {
@@ -613,20 +618,24 @@ namespace Infrastructure.Services
                         if (ccIn != null)
                         {
                             ccIn.TimeOut = val.Time;
+                            await unitObj.BeginTransactionAsync();
                             await UpdateAsync(ccIn);
+                            unitObj.Commit();
                         }
                         else
                         {
                             timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });
+                            continue;
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    modelError = val;
                     timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
+                    unitObj.Rollback();
+                    continue;
                 }
-            }                
+            }
 
             return timeKeeperSync;
         }

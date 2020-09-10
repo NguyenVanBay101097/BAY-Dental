@@ -1,0 +1,32 @@
+[
+  {
+    "Success": false,
+    "Errors": [
+      "Không thể tạo chấm công cho nhân viên Nguyễn Văn Thắng, nhân viên này chưa check-out từ lúc 10/09/2020 16:31"
+    ],
+    "ModelError": {
+      "EmpId": "d0ea9974-87d5-4043-41d2-08d838e3fd9a",
+      "IdMayChamCong": "1",
+      "Date": "2020-09-10T00:00:00",
+      "Time": "2020-09-10T16:34:05",
+      "Type": "check-in",
+      "WorkId": "e10bb73b-0b58-4c38-2c07-08d83dcc1e22"
+    },
+    "Message": null
+  },
+  {
+    "Success": false,
+    "Errors": [
+      "Không thể tạo chấm công cho nhân viên Nguyễn Văn Thắng, nhân viên này chưa check-out từ lúc 10/09/2020 16:31"
+    ],
+    "ModelError": {
+      "EmpId": "d0ea9974-87d5-4043-41d2-08d838e3fd9a",
+      "IdMayChamCong": "1",
+      "Date": "2020-09-10T00:00:00",
+      "Time": "2020-09-10T16:35:32",
+      "Type": "check-in",
+      "WorkId": "e10bb73b-0b58-4c38-2c07-08d83dcc1e22"
+    },
+    "Message": null
+  }
+]

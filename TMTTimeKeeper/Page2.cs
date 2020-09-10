@@ -27,7 +27,7 @@ namespace TMTTimeKeeper
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
         Main main = new Main();
-        static HttpClient client = new HttpClient();
+        //static HttpClient client = new HttpClient();
         public Page2()
         {
             InitializeComponent();
@@ -177,7 +177,7 @@ namespace TMTTimeKeeper
                     var timeKeeper = main.getTimeKepper();
                     if (timeKeeper == null)
                         MessageBox.Show("chưa kết nối máy chấm công");
-
+                    HttpClient client = new HttpClient();
                     // Update port # in the following line.
                     client.BaseAddress = new Uri("https://localhost:44377/");
                     //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
@@ -241,7 +241,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

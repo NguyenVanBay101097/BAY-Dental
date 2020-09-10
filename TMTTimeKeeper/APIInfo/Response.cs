@@ -12,4 +12,9 @@ namespace TMTTimeKeeper.APIInfo
         public string Message { get; set; }
 
     }
+
+    public class TimekeepingResponse
+    {
+        public IEnumerable<Response> ErrorDatas = new List<Response>();
+    }
 }

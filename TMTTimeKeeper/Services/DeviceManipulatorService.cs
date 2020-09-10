@@ -144,7 +144,7 @@ namespace TMTTimeKeeper.Services
 
             if (log.LastUpdate.HasValue)
             {
-                lstEnrollData = lstEnrollData.Where(x => x.DateOnlyRecord >= log.LastUpdate.Value).ToList();
+                lstEnrollData = lstEnrollData.Where(x => DateTime.Parse(x.DateTimeRecord) >= log.LastUpdate.Value).ToList();
                 SaveLogDataToJson(lstEnrollData);
             }
             else
@@ -193,12 +193,10 @@ namespace TMTTimeKeeper.Services
 
             string lastUpdateLog = "LastGetLogData.json";
             string pathLastUpdate = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", lastUpdateLog);
-            var jsonlastUpdate = File.ReadAllText(pathLastUpdate);
 
             string fileErrorEnroll = "DataLogEnrollErrors.json";
             string pathErrorEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileErrorEnroll);
 
-            lastUpdate = JsonConvert.DeserializeObject<LastUpdateLogData>(jsonlastUpdate);
             listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
             acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
 
@@ -226,22 +224,22 @@ namespace TMTTimeKeeper.Services
                             val.Type = "check-in";
                         val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
                         listChamCongSync.Add(val);
-
-
                     }
 
                     var request = await client.PostAsJsonAsync(url, listChamCongSync);
                     var content = await request.Content.ReadAsStringAsync();
-                    var response = JsonConvert.DeserializeObject<IEnumerable<Response>>(content);
-                    //if (response.Success)
-                    //{
-                    //    File.WriteAllText(pathLogEnroll, string.Empty);
-                    //    if(response.ModelError.)
-                    //}
+                    var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
+                    if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
+                    {
+                        File.WriteAllText(pathErrorEnroll, JsonConvert.SerializeObject(responses.ErrorDatas));
+                    }
+                    //Xóa logFile
+                    File.WriteAllText(pathLogEnroll, string.Empty);
 
-
-
-
+                    //Ghi lại last update
+                    lastUpdate.Count += 1;
+                    lastUpdate.LastUpdate = DateTime.Now;
+                    File.WriteAllText(pathLastUpdate, JsonConvert.SerializeObject(lastUpdate));
 
                 }
                 catch (Exception e)

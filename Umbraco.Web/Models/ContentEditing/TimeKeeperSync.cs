@@ -6,6 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class TimeKeeperSync
     {
-        public IList<ChamCongImportResponse> ErrorDatas { get; set; } 
+        public IList<ChamCongImportResponse> ErrorDatas { get; set; } = new List<ChamCongImportResponse>();
     }
 }
