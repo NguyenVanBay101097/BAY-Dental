@@ -42,7 +42,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetLogDataByDate(objZkeeper, DataConnect.machineID, timeIn: DateTime.Parse(dateTimeIn.Value.ToString()), timeOut: DateTime.Parse(dateTimeOut.Value.ToString()));
+                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetAllLogData(objZkeeper, DataConnect.machineID);
 
                     if (lstMachineInfo != null && lstMachineInfo.Count > 0)
                     {
@@ -57,6 +57,37 @@ namespace TMTTimeKeeper
                 catch (Exception ex)
                 {
                     //DisplayListOutput(ex.Message);
+                }
+            }
+        }
+
+        private async void btn_sync_Click(object sender, EventArgs e)
+        {
+            objZkeeper = new ZkemClient(RaiseDeviceEvent);
+            IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
+            if (IsDeviceConnected)
+            {
+                try
+                {
+                    ShowStatusBar(string.Empty, true);
+
+                    var response = await manipulatorService.SyncLogData();
+
+                    if (response != null && response.Success)
+                    {
+                        ShowStatusBar(response.Message, true);
+                    }
+                    else
+                    {
+                        foreach (var item in response.Errors)
+                        {
+                            ShowStatusBar(item, true);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowStatusBar(ex.Message, true);
                 }
             }
         }
@@ -146,11 +177,6 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[3].HeaderText = "Ngày";
             dataGridView1.Columns[4].HeaderText = "Giờ";
             dataGridView1.Columns[5].HeaderText = "Trạng Thái";
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
