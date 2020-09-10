@@ -176,7 +176,10 @@ namespace TMTTimeKeeper
                         timekeeper.ConnectTCP = tbxPort.Text;
                         AddTimekeeper(timekeeper);
 
-                        this.Close();
+                        DataConnect.ip = tbxIP.Text;
+                        DataConnect.port = tbxPort.Text;
+                        DataConnect.machineID = 1;
+                        DataConnect.machineName = tbxMachineName.Text;
                     }
                 }
                 catch (Exception ex)

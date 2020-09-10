@@ -42,7 +42,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetLogDataByDate(objZkeeper, int.Parse(DataConnect.machineID), timeIn: DateTime.Parse(dateTimeIn.Value.ToString()), timeOut: DateTime.Parse(dateTimeOut.Value.ToString()));
+                    ICollection<MachineInfo> lstMachineInfo = manipulatorService.GetLogDataByDate(objZkeeper, DataConnect.machineID, timeIn: DateTime.Parse(dateTimeIn.Value.ToString()), timeOut: DateTime.Parse(dateTimeOut.Value.ToString()));
 
                     if (lstMachineInfo != null && lstMachineInfo.Count > 0)
                     {
