@@ -169,6 +169,9 @@ namespace TMTTimeKeeper
                     {
                         AccountLoginTemp.name = loginResponse.user.name;
                     }
+                    // Set Authorization
+                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                     // Add Get employees
 
                     //var token = loginResponse.token;
