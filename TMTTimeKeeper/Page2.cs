@@ -207,7 +207,7 @@ namespace TMTTimeKeeper
                     {
                         var emp = listEmp[i];
                         int MachineNumber = timeKeeper.Id;
-                        string EnrollNumber = (i + 2).ToString();
+                        string EnrollNumber = (i + 1).ToString();
                         string Name = RemoveVietnamese(emp.Name);
                         string Password = "123";
                         int Privilege = 1;
