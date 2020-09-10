@@ -50,7 +50,6 @@ namespace TMTTimeKeeper
             if (timekeeper != null)
             {
                 tbxCompanyName.Text = timekeeper.CompanyName;
-                tbxMachineName.Text = timekeeper.Name;
                 tbxMachineSeri.Text = timekeeper.Seri;
                 tbxIP.Text = timekeeper.AddressIP == null ? "192.168.1.201" : timekeeper.AddressIP;
                 tbxPort.Text = timekeeper.ConnectTCP == null ? "4370" : timekeeper.ConnectTCP;
@@ -100,11 +99,7 @@ namespace TMTTimeKeeper
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            if (tbxMachineName.Text == string.Empty)
-            {
-                ShowStatusBar("Tên máy is Empty", false);
-            }
-            else if (tbxIP.Text == string.Empty)
+            if (tbxIP.Text == string.Empty)
             {
                 ShowStatusBar("Địa chỉ IP is Empty", false);
             }
@@ -170,7 +165,6 @@ namespace TMTTimeKeeper
                         var timekeeper = new TimeKeeper();
                         timekeeper.Id = 1;
                         timekeeper.CompanyName = tbxCompanyName.Text;
-                        timekeeper.Name = tbxMachineName.Text;
                         timekeeper.Seri = tbxMachineSeri.Text;
                         timekeeper.AddressIP = tbxIP.Text;
                         timekeeper.ConnectTCP = tbxPort.Text;
@@ -179,7 +173,6 @@ namespace TMTTimeKeeper
                         DataConnect.ip = tbxIP.Text;
                         DataConnect.port = tbxPort.Text;
                         DataConnect.machineID = 1;
-                        DataConnect.machineName = tbxMachineName.Text;
                     }
                 }
                 catch (Exception ex)
@@ -232,14 +225,6 @@ namespace TMTTimeKeeper
             if (tbxIP.Text == string.Empty)
             {
                 ShowStatusBar("Địa chỉ IP is Empty", false);
-            }
-        }
-
-        private void tbxMachineName_Validating(object sender, CancelEventArgs e)
-        {
-            if (tbxMachineName.Text == string.Empty)
-            {
-                ShowStatusBar("Tên máy is Empty", false);
             }
         }
 

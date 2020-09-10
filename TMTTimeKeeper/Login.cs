@@ -129,91 +129,115 @@ namespace TMTTimeKeeper
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
-            this.Cursor = Cursors.WaitCursor;
-            LoginInfo loginInfo = new LoginInfo
+            if (tbxCompanyName.Text == string.Empty)
             {
-                userName = tbxUsername.Text,
-                password = tbxPassword.Text,
-                rememberMe = chkRememberMe.Checked
-            };
-
-            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
-
-            if (response.IsSuccessStatusCode)
+                ShowStatusBar("Tên chi nhánh đang rỗng", false);
+            }
+            else if (tbxUsername.Text == string.Empty)
             {
-                string jsonData = response.Content.ReadAsStringAsync().Result;
-
-                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(LoginResponse));
-                MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonData));
-                stream.Position = 0;
-                LoginResponse loginResponse = (LoginResponse)jsonSerializer.ReadObject(stream);
-
-                if (loginResponse.succeeded)
-                {
-                    if (chkRememberMe.Checked)
-                    {
-                        ///save account login
-
-                        var account = new AccountLogin();
-                        account.Name = loginResponse.user.name;
-                        account.UserName = loginResponse.user.userName;
-                        account.CompanyId = loginResponse.user.companyId;
-                        account.CompanyName = tbxCompanyName.Text;
-                        account.Email = loginResponse.user.email;
-                        account.AccessToken = loginResponse.token;
-                        account.RefeshToken = loginResponse.refreshToken;
-
-                        AddAccount(account);
-                    }
-                    else
-                    {
-                        AccountLoginTemp.name = loginResponse.user.name;
-                    }
-                    // Set Authorization
-                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
-
-                    // Add Get employees
-
-                    //var token = loginResponse.token;
-                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                    //EmployeePaged employeePaged = new EmployeePaged
-                    //{
-                    //    offset = 0,
-                    //    limit = 20,
-                    //    search = null,
-                    //    //isDoctor = true,
-                    //    //isAssistant = true
-                    //};
-
-                    //var url = "api/Employees?";
-                    //var result = new List<string>();
-                    //foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(employeePaged))
-                    //{
-                    //    result.Add(property.Name + "=" + property.GetValue(employeePaged));
-                    //}
-
-                    //url = url + string.Join("&", result);
-
-                    //var pro = await client.GetAsync(url);
-                    // End Demo Get employees
-
-                    var timekeeper = new TimeKeeper();
-                    timekeeper.CompanyName = tbxCompanyName.Text;
-                    AddTimekeeper(timekeeper);
-
-                    DialogResult = DialogResult.OK;
-                    this.Cursor = Cursors.Default;
-                    Close();
-                }
-                else
-                {
-                    ShowStatusBar("Sai tên đăng nhập hoặc mật khẩu!", false);
-                }
+                ShowStatusBar("Tên đăng nhập đang rỗng", false);
+            }
+            else if (tbxPassword.Text == string.Empty)
+            {
+                ShowStatusBar("Mật khẩu đang rỗng", false);
             }
             else
             {
-                ShowStatusBar("Sai tên đăng nhập hoặc mật khẩu!", false);
+                try
+                {
+                    this.Cursor = Cursors.WaitCursor;
+                    ShowStatusBar(string.Empty, true);
+
+                    LoginInfo loginInfo = new LoginInfo
+                    {
+                        userName = tbxUsername.Text,
+                        password = tbxPassword.Text,
+                        rememberMe = chkRememberMe.Checked
+                    };
+
+                    var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonData = response.Content.ReadAsStringAsync().Result;
+
+                        DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(LoginResponse));
+                        MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonData));
+                        stream.Position = 0;
+                        LoginResponse loginResponse = (LoginResponse)jsonSerializer.ReadObject(stream);
+
+                        if (loginResponse.succeeded)
+                        {
+                            if (chkRememberMe.Checked)
+                            {
+                                ///save account login
+
+                                var account = new AccountLogin();
+                                account.Name = loginResponse.user.name;
+                                account.UserName = loginResponse.user.userName;
+                                account.CompanyId = loginResponse.user.companyId;
+                                account.CompanyName = tbxCompanyName.Text;
+                                account.Email = loginResponse.user.email;
+                                account.AccessToken = loginResponse.token;
+                                account.RefeshToken = loginResponse.refreshToken;
+
+                                AddAccount(account);
+                            }
+                            else
+                            {
+                                AccountLoginTemp.name = loginResponse.user.name;
+                            }
+                            // Set Authorization
+                            HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
+
+                            // Add Get employees
+
+                            //var token = loginResponse.token;
+                            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                            //EmployeePaged employeePaged = new EmployeePaged
+                            //{
+                            //    offset = 0,
+                            //    limit = 20,
+                            //    search = null,
+                            //    //isDoctor = true,
+                            //    //isAssistant = true
+                            //};
+
+                            //var url = "api/Employees?";
+                            //var result = new List<string>();
+                            //foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(employeePaged))
+                            //{
+                            //    result.Add(property.Name + "=" + property.GetValue(employeePaged));
+                            //}
+
+                            //url = url + string.Join("&", result);
+
+                            //var pro = await client.GetAsync(url);
+                            // End Demo Get employees
+
+                            var timekeeper = new TimeKeeper();
+                            timekeeper.CompanyName = tbxCompanyName.Text;
+                            AddTimekeeper(timekeeper);
+
+                            DialogResult = DialogResult.OK;
+                            this.Cursor = Cursors.Default;
+                            Close();
+                        }
+                        else
+                        {
+                            ShowStatusBar("Thông tin đăng nhập sai!", false);
+                        }
+                    }
+                    else
+                    {
+                        ShowStatusBar("Lỗi ...!", false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowStatusBar(ex.Message, false);
+                }
             }
         }
 
@@ -257,6 +281,38 @@ namespace TMTTimeKeeper
             string fileName = "TimeKeeper.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(val));
+        }
+
+        private void tbxCompanyName_Validating(object sender, CancelEventArgs e)
+        {
+            if (tbxCompanyName.Text == string.Empty)
+            {
+                ShowStatusBar("Tên chi nhánh đang rỗng", false);
+            }
+        }
+
+        private void tbxUsername_Validating(object sender, CancelEventArgs e)
+        {
+            if (tbxUsername.Text == string.Empty)
+            {
+                ShowStatusBar("Tên đăng nhập đang rỗng", false);
+            }
+        }
+
+        private void tbxPassword_Validating(object sender, CancelEventArgs e)
+        {
+            if (tbxPassword.Text == string.Empty)
+            {
+                ShowStatusBar("Mật khẩu đang rỗng", false);
+            }
+        }
+
+        private void Login_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnLogin_Click(sender, e);
+            }
         }
     }
 }

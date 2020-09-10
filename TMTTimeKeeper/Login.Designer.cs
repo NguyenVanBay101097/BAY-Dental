@@ -49,6 +49,7 @@
             this.tbxCompanyName.PlaceholderText = "Nhập tên chi nhánh";
             this.tbxCompanyName.Size = new System.Drawing.Size(191, 23);
             this.tbxCompanyName.TabIndex = 0;
+            this.tbxCompanyName.Validating += new System.ComponentModel.CancelEventHandler(this.tbxCompanyName_Validating);
             // 
             // tbxUsername
             // 
@@ -57,6 +58,7 @@
             this.tbxUsername.PlaceholderText = "Nhập tên đăng nhập";
             this.tbxUsername.Size = new System.Drawing.Size(191, 23);
             this.tbxUsername.TabIndex = 1;
+            this.tbxUsername.Validating += new System.ComponentModel.CancelEventHandler(this.tbxUsername_Validating);
             // 
             // label1
             // 
@@ -137,6 +139,7 @@
             this.tbxPassword.PlaceholderText = "Nhập mật khẩu";
             this.tbxPassword.Size = new System.Drawing.Size(191, 23);
             this.tbxPassword.TabIndex = 2;
+            this.tbxPassword.Validating += new System.ComponentModel.CancelEventHandler(this.tbxPassword_Validating);
             // 
             // chkRememberMe
             // 
@@ -178,6 +181,7 @@
             this.Name = "Login";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Login_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
