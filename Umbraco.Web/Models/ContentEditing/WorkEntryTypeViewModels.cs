@@ -7,6 +7,12 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
+    public class WorkEntryTypeBasic
+    {
+        public Guid id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class WorkEntryTypePaged
     {
 
@@ -52,12 +58,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public string RoundDays { get; set; }
         public string RoundDaysType { get; set; }
         public int? Sequence { get; set; }
-    }
-
-    public class WorkEntryTypeBasic
-    {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
     }
 }

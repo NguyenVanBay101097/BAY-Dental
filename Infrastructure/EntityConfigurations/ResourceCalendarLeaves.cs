@@ -16,7 +16,7 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.Calendar)
-            .WithMany()
+            .WithMany(x=>x.Leaves)
             .HasForeignKey(x => x.CalendarId);
 
             builder.HasOne(x => x.CreatedBy)

@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).ToListAsync();
+            var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).Include(x=>x.Leaves).ToListAsync();
             if (resourceCalendar == null)
                 return BadRequest();
 

@@ -70,4 +70,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
         public EmployeeBasic Employee { get; set; }
     }
+
+    public class TimeKeepingForAll
+    {
+        public DateTime date { get; set; }
+        public Guid workEntryTypeId { get; set; }
+    }
 }

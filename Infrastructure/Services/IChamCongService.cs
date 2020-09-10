@@ -22,5 +22,10 @@ namespace Infrastructure.Services
         Task CheckChamCong(IEnumerable<ChamCong> vals);
         Task<PagedResult2<ChamCongDisplay>> GetPaged(ChamCongPaged val);
         Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val);
+
+        Task TaoChamcongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null);
+        //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
+        Task TimeKeepingForAll(TimeKeepingForAll val);
+
     }
 }

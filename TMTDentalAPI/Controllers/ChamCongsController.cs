@@ -122,5 +122,73 @@ namespace TMTDentalAPI.Controllers
             var res = await _chamCongService.DefaultGet(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> TimeKeepingForAll(TimeKeepingForAll val)
+        {
+            _unitOfWork.BeginTransaction();
+            await _chamCongService.TimeKeepingForAll(val);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> ExportExcelFile(employeePaged val)
+        //{
+        //    var stream = new MemoryStream();
+        //    var data = await _chamCongService.GetByEmployeePaged(val);
+        //    byte[] fileContent;
+        //    int dateStart = val.From.HasValue ? val.From.Value.Day : 1;
+        //    int dateEnd = val.To.HasValue ? val.To.Value.Day : 1;
+        //    using (var package = new ExcelPackage(stream))
+        //    {
+
+
+        //        var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+
+
+        //        worksheet.Cells[2, 1].Value = "Tên nhân viên";
+        //        worksheet.Cells[2, 2].Value = "Chức vụ";
+
+        //        for (int i = dateStart + 2; i <= dateEnd + 2; i++)
+        //        {
+        //            worksheet.Cells[2, i].Value = i - 2;
+        //        }
+
+        //        worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+
+        //        var row = 3;
+        //        foreach (var item in data.Items)
+        //        {
+        //            worksheet.Cells[row, 1].Value = item.Name + $" ({item.Ref})";
+        //            worksheet.Cells[row, 2].Value = item.IsDoctor.Value == true ? "Bác sĩ" : (item.IsAssistant.Value == true ? "Y tá" : "Chưa có chức vụ");
+        //            for (int i = dateStart; i <= dateEnd; i++)
+        //            {
+        //                foreach (var cc in item.ChamCongs)
+        //                {
+
+        //                    if ((cc.TimeIn.HasValue ? cc.TimeIn.Value.Day : (cc.TimeOut.HasValue ? cc.TimeOut.Value.Day : 0)) == i)
+        //                    {
+        //                        worksheet.Cells[row, i + 2].Value = "vào: " + (cc.TimeIn.HasValue ? cc.TimeIn.Value.ToString("HH:mm") : "chưa chấm") + "\r\n" + " ra: " + (cc.TimeOut.HasValue ? cc.TimeOut.Value.ToString("HH:mm") : "chưa chấm");
+        //                    }
+        //                }
+        //            }
+
+        //            row++;
+        //        }
+
+        //        worksheet.Column(4).Style.Numberformat.Format = "@";
+        //        worksheet.Column(5).Style.Numberformat.Format = "@";
+
+        //        package.Save();
+
+        //        fileContent = stream.ToArray();
+        //    }
+
+        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    stream.Position = 0;
+
+        //    return new FileContentResult(fileContent, mimeType);
+        //}
     }
 }

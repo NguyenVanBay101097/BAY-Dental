@@ -1,0 +1,53 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <span>Cấu hình lương</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm"
+                        (click)="onSaveOrUpdate()">Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="configForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Loại chấm công nghỉ lễ
+                                        <a class="text-primary">
+                                            <i placement="bottom"
+                                            ngbPopover="Chọn loại chấm công cho các ngày lễ như lễ tết, lễ 2/9, lễ noel....v.v..."
+                                            triggers="mouseenter:mouseleave" popoverTitle="Loại chấm công nghỉ lễ"
+                                            class="fa fa-question-circle" aria-hidden="true"></i>
+                                        </a>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="w-100" [data]="listType" [textField]="'name'"
+                                    [filterable]="true" #typeCbx formControlName="defaultGlobalLeaveType" [valueField]="'id'">
+                                </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

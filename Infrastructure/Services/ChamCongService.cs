@@ -423,7 +423,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                soNgayCong = Math.Round(soNgayCong,2);
+                soNgayCong = Math.Round(soNgayCong, 2);
             }
 
 
@@ -686,6 +686,104 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+        public async Task TaoChamcongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null)
+        {
+            var leaveObj = GetService<IResourceCalendarLeaveService>();
+            var empObj = GetService<IEmployeeService>();
+            var salaryConfigObj = GetService<IHrSalaryConfigService>();
+
+            var employee = await empObj.SearchQuery(x => x.Id == employeeId).Include(x => x.StructureType)
+              .FirstOrDefaultAsync();
+            var calendarId = employee.StructureType.DefaultResourceCalendarId;
+
+            // lấy danh sách ngày nghỉ lễ
+            var leaves = await leaveObj.SearchQuery(x => x.CalendarId == calendarId.Value && x.DateFrom <= dateTo && x.DateFrom >= dateFrom).ToListAsync();
+            if (leaves == null) return;
+
+            // lấy attendanceinterval
+            if (attendanceIntervals == null)
+            {
+                var calendarObj = GetService<IResourceCalendarService>();
+                attendanceIntervals = await calendarObj._AttendanceIntervals(calendarId.Value, dateFrom, dateTo);
+            }
+            var dict = new Dictionary<DateTime, IList<AttendanceInterval>>();
+            foreach (var item in attendanceIntervals)
+            {
+                if (!dict.ContainsKey(item.Start.Date))
+                    dict.Add(item.Start.Date, new List<AttendanceInterval>());
+                dict[item.Start.Date].Add(item);
+            }
+
+            //lấy workentrytype cho ngày lễ
+            var workEntryType = (await salaryConfigObj.GetByCompanyId(CompanyId)).DefaultGlobalLeaveType;
+            if (workEntryType == null) throw new Exception("Cần thiết lập loại chấm công cho ngày nghỉ lễ trong cấu hình lương");
+
+            //lưu chấm công
+
+            var listChamcongs = await SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Date && x.TimeIn.Value.Date <= dateTo.Date).ToListAsync();
+
+            var chamcongsToAdd = new List<ChamCong>();
+            foreach (var leave in leaves)
+            {
+                var day = leave.DateFrom.Date;
+                while (day <= leave.DateTo.Date)
+                {
+                    if (listChamcongs.Any(x => x.TimeIn.Value.Date == day)) { day = day.AddDays(1); continue; }
+
+                    var intervals = dict.ContainsKey(day) ? dict[day] : new List<AttendanceInterval>();
+                    foreach (var interval in intervals)
+                    {
+                        chamcongsToAdd.Add(new ChamCong()
+                        {
+                            EmployeeId = employeeId,
+                            CompanyId = CompanyId,
+                            WorkEntryTypeId = workEntryType.id,
+                            Date = day,
+                            TimeIn = interval.Start,
+                            TimeOut = interval.Stop,
+                            Status = "done"
+                        });
+                    }
+                    day = day.AddDays(1);
+                }
+            }
+            await CreateAsync(chamcongsToAdd);
+        }
+
+        public async Task TimeKeepingForAll(TimeKeepingForAll val)
+        {
+            var empObj = GetService<IEmployeeService>();
+            var calendarObj = GetService<IResourceCalendarService>();
+
+            var empList = await empObj.SearchQuery(x => x.Active == true).Include(x => x.StructureType).ToListAsync();
+            var chamcongs = await SearchQuery(x => x.TimeIn.Value.Date == val.date.Date)
+                                  .Select(x=> new { Id = x.Id, EmployeeId = x.EmployeeId}).ToListAsync();
+
+            var chamcongsToAdd = new List<ChamCong>();
+            foreach (var emp in empList)
+            {
+                if (emp.StructureType == null) throw new Exception($"Nhân viên {emp.Name} chưa thiết lập loại mẫu lương!");
+                if (chamcongs.Any(x => x.EmployeeId == emp.Id)) throw new Exception($"Không thể tạo hàng loạt vì nhân viên {emp.Name} đã có chấm công!");
+                //get chu kì làm việc của ngày đó của nhân viên đó
+                var attendanceIntervals = await calendarObj._AttendanceIntervals(emp.StructureType.DefaultResourceCalendarId.Value, val.date.Date, val.date.Date);
+                foreach (var interval in attendanceIntervals)
+                {
+                    chamcongsToAdd.Add(new ChamCong()
+                    {
+                        CompanyId= CompanyId,
+                        Date= val.date,
+                        EmployeeId= emp.Id,
+                        Status= "done",
+                        TimeIn= interval.Start,
+                        TimeOut= interval.Stop,
+                        WorkEntryTypeId= val.workEntryTypeId
+                    });
+                }
+            }
+
+            //create list chamcongs
+            await CreateAsync(chamcongsToAdd);
         }
     }
 }

@@ -204,6 +204,8 @@ namespace Infrastructure.Data
         public DbSet<HrPayslipLine> HrPayslipLines { get; set; }
         public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
         public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
+        public DbSet<HrSalaryConfig> HrSalaryConfigs { get; set; }
+
 
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
 
@@ -371,6 +373,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayslipLineConfiguration());
             builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
             builder.ApplyConfiguration(new HrPayslipRunConfiguration());
+            builder.ApplyConfiguration(new HrSalaryConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

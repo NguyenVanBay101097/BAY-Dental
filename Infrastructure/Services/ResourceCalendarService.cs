@@ -30,7 +30,10 @@ namespace Infrastructure.Services
         {
             var res = await _mapper.ProjectTo<ResourceCalendarDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var attendanceObj = GetService<IResourceCalendarAttendanceService>();
+            var leaveObj = GetService<IResourceCalendarLeaveService>();
+
             res.Attendances = await _mapper.ProjectTo<ResourceCalendarAttendanceDisplay>(attendanceObj.SearchQuery(x => x.CalendarId == id, orderBy: x => x.OrderBy(s => s.DayOfWeek).ThenBy(s => s.HourFrom))).ToListAsync();
+            res.Leaves = await _mapper.ProjectTo<ResourceCalendarLeaveDisplay>(leaveObj.SearchQuery(x => x.CalendarId == id, orderBy: x => x.OrderBy(s => s.DateFrom))).ToListAsync();
             return res;
         }
 
@@ -116,18 +119,32 @@ namespace Infrastructure.Services
             var resourceCalendar = _mapper.Map<ResourceCalendar>(val);
 
             SaveAttendances(val, resourceCalendar);
+            SaveLeaves(val, resourceCalendar);
 
             return await CreateAsync(resourceCalendar);
         }
 
+        public override Task<IEnumerable<ResourceCalendar>> CreateAsync(IEnumerable<ResourceCalendar> entities)
+        {
+            DetectOverLapLeaves(entities);
+            return base.CreateAsync(entities);
+        }
+
+        public override Task UpdateAsync(IEnumerable<ResourceCalendar> entities)
+        {
+            DetectOverLapLeaves(entities);
+            return base.UpdateAsync(entities);
+        }
+
         public async Task UpdateResourceCalendar(Guid id, ResourceCalendarSave val)
         {
-            var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.Attendances).FirstOrDefaultAsync();
+            var resourceCalendar = await SearchQuery(x => x.Id == id).Include(x => x.Attendances).Include(x=>x.Leaves).FirstOrDefaultAsync();
             if (resourceCalendar == null)
                 throw new Exception("Lịch làm việc không tồn tại");
 
             resourceCalendar = _mapper.Map(val, resourceCalendar);
             SaveAttendances(val, resourceCalendar);
+            SaveLeaves(val, resourceCalendar);
 
             await UpdateAsync(resourceCalendar);
         }
@@ -159,6 +176,55 @@ namespace Infrastructure.Services
                 }
             }
 
+        }
+
+        private void SaveLeaves(ResourceCalendarSave val, ResourceCalendar resourceCalendar)
+        {
+            var lineToRemoves = new List<ResourceCalendarLeaves>();
+            foreach (var existLine in resourceCalendar.Leaves)
+            {
+                if (!val.Attendances.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                resourceCalendar.Leaves.Remove(line);
+            }
+
+            foreach (var line in val.Leaves)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    resourceCalendar.Leaves.Add(_mapper.Map<ResourceCalendarLeaves>(line));
+                }
+                else
+                {
+                    _mapper.Map(line, resourceCalendar.Leaves.SingleOrDefault(c => c.Id == line.Id));
+                }
+            }
+
+        }
+
+        private void DetectOverLapLeaves(IEnumerable<ResourceCalendar> self)
+        {
+            foreach(var calendar in self)
+            {
+                var leaves = calendar.Leaves.ToList();
+                var wrongItem = leaves.Where(x => x.DateFrom.Date > x.DateTo.Date).FirstOrDefault();
+                if (wrongItem != null) throw new Exception($"Lịch nghỉ {wrongItem.Name}: ngày kết thúc lớn hơn ngày bắt đầu");
+
+                for (int i = 0; i < leaves.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < leaves.Count; j++)
+                    {
+                        //nếu ko overlap thì tiếp tục
+                        if (leaves[i].DateTo.Date < leaves[j].DateFrom.Date || leaves[i].DateFrom.Date > leaves[j].DateTo.Date)
+                            continue;
+                        else throw new Exception($"Lịch nghỉ {leaves[i].Name} trùng lịch với {leaves[j].Name}");
+                    }
+                }
+            }
         }
 
         public ResourceCalendarDisplay DefaultGet()

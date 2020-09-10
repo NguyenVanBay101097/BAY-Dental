@@ -122,4 +122,7 @@ export class TimeKeepingService {
   defaultGet(val) {
     return this.http.post(this.base_api + this.apiUrl + '/DefaultGet', val)
   }
+  timeKeepingForAll(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/TimeKeepingForAll', val);
+  }
 }
