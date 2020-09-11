@@ -38,9 +38,11 @@ namespace TMTTimeKeeper
 
         private void Page2_Load(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = new Collection<UserInfo>();
+
+            dataGridView1.DataSource = employeeObj.LoadDataEmployee();
             SetHeaderText();
             MyUniversalStatic.ChangeGridProperties(dataGridView1);
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -52,9 +54,9 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    ShowStatusBar(string.Empty, true);
+                    ShowStatusBar(string.Empty, true); 
 
-                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper,DataConnect.machineID);
+                    ICollection<UserInfo> lstFingerPrintTemplates = employeeObj.LoadDataEmployee();
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
@@ -71,6 +73,10 @@ namespace TMTTimeKeeper
                 }
             }
         }
+
+
+
+
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -181,12 +187,26 @@ namespace TMTTimeKeeper
                         MessageBox.Show("chưa kết nối máy chấm công");
 
 
-                    List<EmployeeSync> listEmp = new List<EmployeeSync>();                   
+                    List<EmployeeSync> listEmp = new List<EmployeeSync>();
+                    List<UserInfo> listEmpSync = new List<UserInfo>();
                     var res = await employeeObj.GetEmployeePC();
                     var empJsons = employeeObj.getEmployee();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
-
+                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
+                    listEmpSync = lstFingerPrintTemplates.Where(x => !empJsons.Any(s => s.IdKP.ToString() == x.EnrollNumber)).ToList();
                     var listSave = new List<EmployeeSync>();
+
+                    if (listEmpSync.Any())
+                    {
+                        foreach (var item in listEmpSync)
+                        {
+                            var rs = await employeeObj.CreateEmployee(item);
+                            listSave.Add(rs);
+                        }
+                           
+
+                    }
+                   
 
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
@@ -224,6 +244,8 @@ namespace TMTTimeKeeper
                     if (listSave.Count() > 0)
                         employeeObj.AddEmployee(listSave);
 
+                    employeeObj.LoadDataEmployee();
+
                 }
                 catch (Exception ex)
                 {
@@ -232,6 +254,6 @@ namespace TMTTimeKeeper
             }
         }
 
-     
+
     }
 }
