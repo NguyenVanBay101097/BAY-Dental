@@ -554,6 +554,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
         public async Task<IActionResult> GetNextAppointment(Guid id)
         {
             var res = await _partnerService.GetNextAppointment(id);
@@ -561,6 +562,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> SaveAvatar(PartnerSaveAvatarVM val)
         {
             var partner = await _partnerService.GetByIdAsync(val.PartnerId);

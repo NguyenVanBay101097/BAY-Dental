@@ -9,11 +9,7 @@ export class AppSharedShowErrorService {
     }
 
     show(error: HttpErrorResponse) {
-        var body = error.error;
         let modalRef = this.modalService.open(SharedErrorDialogComponent, { windowClass: 'o_technical_modal' });
-        if (body.error) {
-            modalRef.componentInstance.body = body.error;
-        } else {
-        }
+        modalRef.componentInstance.body = error.error.message;
     }
 }

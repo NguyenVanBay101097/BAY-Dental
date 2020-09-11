@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -31,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Salary.HrPayslip.Read")]
         public async Task<IActionResult> Get([FromQuery] HrPayslipPaged val)
         {
             var res = await _payslipService.GetPaged(val);
@@ -38,6 +40,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _payslipService.GetHrPayslipDisplay(id);
@@ -47,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Salary.HrPayslip.Create")]
         public async Task<IActionResult> Create(HrPayslipSave val)
         {        
 
@@ -126,6 +130,7 @@ namespace TMTDentalAPI.Controllers
 
         }
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Update")]
         public async Task<IActionResult> Update(Guid id, HrPayslipSave val)
         {
             var payslip = await _payslipService.SearchQuery(x => x.Id == id)
@@ -147,6 +152,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Update")]
         public async Task<IActionResult> ComputeSheet(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -157,6 +163,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _payslipService.Unlink(new List<Guid>() { id });
@@ -164,6 +171,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Update")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
             await _payslipService.ActionDone(ids);
@@ -199,6 +207,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.HrPayslip.Cancel")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();

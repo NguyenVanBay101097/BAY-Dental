@@ -208,18 +208,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           this.filteredSources = result;
           this.sourceCbx.loading = false;       
         });
-
-    this.userCbx.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.userCbx.loading = true)),
-        switchMap((value) => this.searchReferralUsers(value))
-      )
-      .subscribe((result) => {
-        this.filteredReferralUsers = result;
-        this.userCbx.loading = false;
-      });
     });
 
     this.titleCbx.filterChange
