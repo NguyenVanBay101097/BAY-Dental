@@ -21,6 +21,11 @@ namespace TMTTimeKeeper
 
         AccountLoginService accountloginObj = new AccountLoginService();
 
+        Login loginForm = new Login();
+        SetupTimekeeper timekeeper = new SetupTimekeeper();
+        Employee page2 = new Employee();
+        Page3 page3 = new Page3();
+
         public Main()
         {
             InitializeComponent();
@@ -44,7 +49,6 @@ namespace TMTTimeKeeper
             if (account == null)
             {
                 Visible = false;
-                Login loginForm = new Login();
                 var result = loginForm.ShowDialog();
 
                 if (result == DialogResult.OK)
@@ -56,7 +60,6 @@ namespace TMTTimeKeeper
                         lblAccountName.Text = AccountLoginTemp.name;
                     //
                     stateNav = button1;
-                    SetupTimekeeper timekeeper = new SetupTimekeeper();
                     nav(timekeeper, content);
                     //
                     Visible = true;
@@ -69,7 +72,6 @@ namespace TMTTimeKeeper
             else
             {
                 stateNav = button1;
-                SetupTimekeeper timekeeper = new SetupTimekeeper();
                 nav(timekeeper, content);
 
                 lblAccountName.Text = account.Name;
@@ -78,21 +80,25 @@ namespace TMTTimeKeeper
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SetupTimekeeper timekeeper = new SetupTimekeeper();
             nav(timekeeper, content);
             actNav(button1);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Employee page2 = new Employee();
-            nav(page2, content);
-            actNav(button2);
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Thiết bị chưa được kết nối", false);
+            }
+            else
+            {
+                nav(page2, content);
+                actNav(button2);
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Page3 page3 = new Page3();
             nav(page3, content);
             actNav(button3);
         }
@@ -115,10 +121,6 @@ namespace TMTTimeKeeper
             stateNav = button;
         }
 
-       
-
-     
-
         private void lblLogout_Click(object sender, EventArgs e)
         {
             string fileName = "AccountLogin.json";
@@ -139,7 +141,6 @@ public static class DataConnect
     public static string ip;
     public static string port;
     public static int machineID;
-    public static string machineName;
 }
 
 public static class AccountLoginTemp

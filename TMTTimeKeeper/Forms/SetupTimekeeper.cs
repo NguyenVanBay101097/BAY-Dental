@@ -19,13 +19,14 @@ namespace TMTTimeKeeper
         public Dictionary<string, string> connectInfo { get; set; }
         public Dictionary<string, string> userInputInfo { get; set; }
         private TimeKeeper timekeeper = null;
-
         TimeKeeperService timekeeperObj = new TimeKeeperService();
+
+        public Label p_lblStatus { get { return lblStatus; } set { lblStatus = value; } }
 
         public SetupTimekeeper()
         {
             InitializeComponent();
-            ShowStatusBar(string.Empty, true);
+            StatusBarService.ShowStatusBar(lblStatus , string.Empty, true);
             this.deviceInfo = new Dictionary<string, string>()
             {
                 {"Firmware V", ""},
@@ -73,50 +74,32 @@ namespace TMTTimeKeeper
                 isDeviceConnected = value;
                 if (isDeviceConnected)
                 {
-                    ShowStatusBar("The device is connected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "The device is connected !!", true);
                 }
                 else
                 {
-                    ShowStatusBar("The device is disconnected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "The device is disconnected !!", true);
                     objZkeeper.Disconnect();
                 }
             }
-        }
-
-        public void ShowStatusBar(string message, bool type)
-        {
-            if (message.Trim() == string.Empty)
-            {
-                lblStatus.Visible = false;
-                return;
-            }
-
-            lblStatus.Visible = true;
-            lblStatus.Text = message;
-            lblStatus.ForeColor = Color.White;
-
-            if (type)
-                lblStatus.BackColor = Color.FromArgb(79, 208, 154);
-            else
-                lblStatus.BackColor = Color.Tomato;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (tbxIP.Text == string.Empty)
             {
-                ShowStatusBar("Địa chỉ IP is Empty", false);
+                StatusBarService.ShowStatusBar(lblStatus, "Địa chỉ IP is Empty", false);
             }
             else if (tbxPort.Text == string.Empty)
             {
-                ShowStatusBar("Cổng liên kết TCP is Empty", false);
+                StatusBarService.ShowStatusBar(lblStatus, "Cổng liên kết TCP is Empty", false);
             }
             else
             {
                 try
                 {
                     this.Cursor = Cursors.WaitCursor;
-                    ShowStatusBar(string.Empty, true);
+                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
                     if (IsDeviceConnected)
                     {
@@ -181,7 +164,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusBar(ex.Message, false);
+                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, false);
                 }
             }
         }
@@ -197,7 +180,7 @@ namespace TMTTimeKeeper
             {
                 case UniversalStatic.acx_Disconnect:
                     {
-                        ShowStatusBar("The device is switched off", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "The device is switched off", true);
                         break;
                     }
 
@@ -208,7 +191,7 @@ namespace TMTTimeKeeper
 
         private void btnPing_Click(object sender, EventArgs e)
         {
-            ShowStatusBar(string.Empty, true);
+            StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
             string ipAddress = tbxIP.Text.Trim();
 
@@ -228,7 +211,7 @@ namespace TMTTimeKeeper
         {
             if (tbxIP.Text == string.Empty)
             {
-                ShowStatusBar("Địa chỉ IP is Empty", false);
+                StatusBarService.ShowStatusBar(lblStatus, "Địa chỉ IP is Empty", false);
             }
         }
 
@@ -236,7 +219,7 @@ namespace TMTTimeKeeper
         {
             if (tbxPort.Text == string.Empty)
             {
-                ShowStatusBar("Cổng liên kết TCP is Empty", false);
+                StatusBarService.ShowStatusBar(lblStatus, "Cổng liên kết TCP is Empty", false);
             }
         }
 

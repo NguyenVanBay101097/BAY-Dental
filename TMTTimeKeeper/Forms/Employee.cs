@@ -213,8 +213,6 @@ namespace TMTTimeKeeper
                             employee.Privelage = Privilege;
                             employee.Enabled = Enabled;
                             listSave.Add(employee);
-
-
                         }
                         else
                         {
