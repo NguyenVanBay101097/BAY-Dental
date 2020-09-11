@@ -89,7 +89,7 @@ namespace TMTTimeKeeper
             {
                 case UniversalStatic.acx_Disconnect:
                     {
-                        StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã bị tắt", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "Máy chấm công đã bị tắt !!", false);
                         break;
                     }
 
@@ -106,11 +106,11 @@ namespace TMTTimeKeeper
                 isDeviceConnected = value;
                 if (isDeviceConnected)
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã kết nối !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã kết nối máy chấm công !!", true);
                 }
                 else
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã ngắt kết nối !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã ngắt kết nối máy chấm công !!", true);
                     objZkeeper.Disconnect();
                 }
             }

@@ -98,7 +98,7 @@ namespace TMTTimeKeeper
             {
                 case UniversalStatic.acx_Disconnect:
                     {
-                        StatusBarService.ShowStatusBar(lblStatus, "The device is switched off", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "Máy chấm công đã bị tắt !!", true);
                         break;
                     }
 
@@ -115,11 +115,11 @@ namespace TMTTimeKeeper
                 isDeviceConnected = value;
                 if (isDeviceConnected)
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, "The device is connected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã kết nối máy chấm công !!", true);
                 }
                 else
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, "The device is disconnected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã ngắt kết nối máy chấm công !!", true);
                     objZkeeper.Disconnect();
                 }
             }
