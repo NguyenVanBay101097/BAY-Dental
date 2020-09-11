@@ -181,4 +181,33 @@
     "Enabled": true,
     "iFlag": null
   }
+] [
+  {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "IdKP": 0,
+    "Name": null,
+    "WorkEntryTypeId": "00000000-0000-0000-0000-000000000000",
+    "MachineNumber": 0,
+    "EnrollNumber": null,
+    "FingerIndex": 0,
+    "TmpData": null,
+    "Privelage": 0,
+    "Password": null,
+    "Enabled": false,
+    "iFlag": null
+  },
+  {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "IdKP": 0,
+    "Name": null,
+    "WorkEntryTypeId": "00000000-0000-0000-0000-000000000000",
+    "MachineNumber": 0,
+    "EnrollNumber": null,
+    "FingerIndex": 0,
+    "TmpData": null,
+    "Privelage": 0,
+    "Password": null,
+    "Enabled": false,
+    "iFlag": null
+  }
 ]
