@@ -73,7 +73,8 @@ namespace TMTTimeKeeper.Services
                 // custom
                 objInfo.MyTimeOnlyRecord = DateTime.Parse(inputDate).ToString("hh:mm:ss tt");
                 objInfo.dwInOutMode = dwInOutMode;
-
+                objInfo.Type = dwInOutMode == 1 ? "check-out" : (dwInOutMode == 0 ? "check-in" : "");
+                objInfo.Status = "Chưa đồng bộ";
                 lstEnrollData.Add(objInfo);
             }
 
@@ -94,6 +95,7 @@ namespace TMTTimeKeeper.Services
         {
             IList<MachineInfo> listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
+            Response res = new Response();
             var listChamCongSync = new List<ChamCongSync>();
             var lastUpdate = new LastUpdateLogData();
             string lastUpdateLog = "LastGetLogData.json";
@@ -129,15 +131,15 @@ namespace TMTTimeKeeper.Services
                     var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
                     if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
                     {
-                        timeKeeperService.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
+                        await timeKeeperService.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
                     }
                     //Xóa logFile
-                    timeKeeperService.SetJson<DataLogEnroll>(logEnroll, null);
+                    await timeKeeperService.SetJson<DataLogEnroll>(logEnroll, null);
 
                     //Ghi lại last update
                     lastUpdate.Count += 1;
                     lastUpdate.LastUpdate = DateTime.Now;
-                    timeKeeperService.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
+                    await timeKeeperService.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
                 }
                 catch (Exception e)
                 {
@@ -152,7 +154,7 @@ namespace TMTTimeKeeper.Services
         {
             EmployeeSync emp = new EmployeeSync();
             var fileEmp = "Employees.json";
-            var listEmp =await timeKeeperService.GetListModelByJson<EmployeeSync>(fileEmp);
+            var listEmp = await timeKeeperService.GetListModelByJson<EmployeeSync>(fileEmp);
             if (listEmp != null && listEmp.Any())
                 emp = listEmp.Where(x => x.IdKP == idKp).FirstOrDefault();
             else

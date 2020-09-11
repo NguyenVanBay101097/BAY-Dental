@@ -43,22 +43,22 @@ namespace TMTTimeKeeper.Services
             return JsonConvert.DeserializeObject<IList<T>>(pathJson);
         }
 
-        public void SetJson<T>(string fileName, T val)
+        public async Task SetJson<T>(string fileName, T val)
         {
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             if (val != null)
-                File.WriteAllText(path, JsonConvert.SerializeObject(val));
+                await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
             else
-                File.WriteAllText(path, string.Empty);
+                await File.WriteAllTextAsync(path, string.Empty);
         }
 
-        public void SetListJson<T>(string fileName, IEnumerable<T> val)
+        public async Task SetListJson<T>(string fileName, IEnumerable<T> val)
         {
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             if (val != null)
-                File.WriteAllText(path, JsonConvert.SerializeObject(val));
+               await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
             else
-                File.WriteAllText(path, string.Empty);
+               await File.WriteAllTextAsync(path, string.Empty);
         }
     }
 }

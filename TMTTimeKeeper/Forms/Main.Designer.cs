@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button5 = new System.Windows.Forms.Button();
             this.lblLogout = new System.Windows.Forms.Label();
             this.lblAccountName = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
@@ -41,6 +42,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.lblLogout);
             this.panel1.Controls.Add(this.lblAccountName);
             this.panel1.Controls.Add(this.button3);
@@ -51,6 +53,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 50);
             this.panel1.TabIndex = 0;
+            // 
+            // button5
+            // 
+            this.button5.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.button5.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button5.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.button5.Location = new System.Drawing.Point(459, 13);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(108, 41);
+            this.button5.TabIndex = 0;
+            this.button5.Text = "Lịch sử";
+            this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // lblLogout
             // 
@@ -158,5 +173,6 @@
         private System.Windows.Forms.Panel content;
         private System.Windows.Forms.Label lblAccountName;
         private System.Windows.Forms.Label lblLogout;
+        private System.Windows.Forms.Button button5;
     }
 }

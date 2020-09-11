@@ -7,7 +7,7 @@ namespace TMTTimeKeeper.APIInfo
    public class Response
     {
         public bool Success { get; set; }
-        public IEnumerable<string> Errors { get; set; }
+        public IList<string> Errors { get; set; } = new List<string>();
         public ChamCongSync ModelError { get; set; }
         public string Message { get; set; }
 

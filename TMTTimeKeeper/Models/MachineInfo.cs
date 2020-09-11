@@ -21,5 +21,9 @@ namespace TMTTimeKeeper.Info
         public string MyTimeOnlyRecord { get; set; }
 
         public int dwInOutMode { get; set; }
+
+        public string Type { get; set; }
+
+        public string Status { get; set; }
     }
 }

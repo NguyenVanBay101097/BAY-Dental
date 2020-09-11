@@ -11,21 +11,22 @@ using TMTTimeKeeper.Info;
 using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
-namespace TMTTimeKeeper
+namespace TMTTimeKeeper.Forms
 {
-    public partial class DataLogEnroll : Form
+    public partial class DataLogEnrollError : Form
     {
+
         public ZkemClient objZkeeper;
         private DataLogEnrollService dataLogEnrollService = new DataLogEnrollService();
         private TimeKeeperService timeKeeperService = new TimeKeeperService();
         private bool isDeviceConnected = false;
-        public DataLogEnroll()
+        public DataLogEnrollError()
         {
             InitializeComponent();
-            StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
         }
 
-        private void DataLogEnroll_Load(object sender, EventArgs e)
+
+        private void DataLogEnrollError_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = new Collection<MachineInfo>();
             SetHeaderText();
@@ -41,44 +42,34 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
+                    var file = "DataLogEnrollErrors.json";
+                    var listMachinInfo = new List<MachineInfo>();
 
-                    ICollection<MachineInfo> lstMachineInfo = await dataLogEnrollService.GetAllLogData(objZkeeper, DataConnect.machineID);
-                    if (lstMachineInfo != null)
-                    {
-                        BindToGridView(lstMachineInfo);
-                        StatusBarService.ShowStatusBar(lblStatus, lstMachineInfo.Count + " kết quả được tìm thấy !!", true);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, true);
-                }
-            }
-        }
-
-        private async void btn_sync_Click(object sender, EventArgs e)
-        {
-            objZkeeper = new ZkemClient(RaiseDeviceEvent);
-            IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
-            if (IsDeviceConnected)
-            {
-                try
-                {
                     StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-                    var response = await dataLogEnrollService.SyncLogData();
-                    if (response != null && response.Success)
+                    var responses = await timeKeeperService.GetListModelByJson<Response>(file);
+                    if (responses == null)
                     {
-                        StatusBarService.ShowStatusBar(lblStatus, "Đồng bộ thành công", true);
                         BindToGridView(null);
+                        StatusBarService.ShowStatusBar(lblStatus, "Không tìm thấy dữ liệu", true);
                     }
                     else
                     {
-                        foreach (var item in response.Errors)
+                        foreach (var item in responses)
                         {
-                            StatusBarService.ShowStatusBar(lblStatus, item, true);
+                            var machin = new MachineInfo();
+                            machin.DateTimeRecord = item.ModelError.Date.Value.ToLongDateString();
+                            machin.Status = item.Errors[0];
+                            machin.MyTimeOnlyRecord = item.ModelError.Time.ToShortTimeString();
+                            listMachinInfo.Add(machin);
                         }
+                        BindToGridView(listMachinInfo);
+                        StatusBarService.ShowStatusBar(lblStatus, responses.Count + " kết quả được tìm thấy !!", true);
                     }
+                    //if (lstMachineInfo != null)
+                    //{
+                    //    BindToGridView(lstMachineInfo);
+                    //    StatusBarService.ShowStatusBar(lblStatus, lstMachineInfo.Count + " kết quả được tìm thấy !!", true);
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -152,10 +143,8 @@ namespace TMTTimeKeeper
             dataGridView1.Columns[1].HeaderText = "ID TK";
             dataGridView1.Columns[2].HeaderText = "Ngày Giờ";
             dataGridView1.Columns[3].HeaderText = "Ngày";
-            dataGridView1.Columns[4].HeaderText = "Giờ";
-            dataGridView1.Columns[5].HeaderText = "Kiểu 1";
-            dataGridView1.Columns[6].HeaderText = "Kiểu 2";
-            dataGridView1.Columns[7].HeaderText = "Trạng Thái";
+           
         }
+
     }
 }

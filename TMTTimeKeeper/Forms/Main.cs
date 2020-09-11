@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TMTTimeKeeper.Forms;
 using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Services;
 
@@ -25,7 +26,8 @@ namespace TMTTimeKeeper
         Login loginForm = new Login();
         SetupTimekeeper timekeeper = new SetupTimekeeper();
         Employee employee = new Employee();
-        SetupTimekeeper setupTimekeeper = new SetupTimekeeper();
+        DataLogEnroll dataLogEnroll = new DataLogEnroll();
+        DataLogEnrollError dataLogEnrollError = new DataLogEnrollError();
 
         public Main()
         {
@@ -103,6 +105,7 @@ namespace TMTTimeKeeper
             actNav(button1);
         }
 
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (DataConnect.ip == null || DataConnect.port == null)
@@ -124,7 +127,7 @@ namespace TMTTimeKeeper
             }
             else
             {
-                nav(setupTimekeeper, content);
+                nav(dataLogEnroll, content);
                 actNav(button3);
             }
         }
@@ -153,6 +156,19 @@ namespace TMTTimeKeeper
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, String.Empty);
             Form1_Shown(sender, e);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
+            }
+            else
+            {
+                nav(dataLogEnrollError, content);
+                actNav(button5);
+            }
         }
     }
 }
