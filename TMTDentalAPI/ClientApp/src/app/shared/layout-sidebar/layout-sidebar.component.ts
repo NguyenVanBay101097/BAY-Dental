@@ -75,6 +75,24 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
+      name: 'Khuyến mãi',
+      icon: 'fas fa-gift',
+      groups: 'sale.group_sale_coupon_promotion',
+      children: [
+        { name: 'Chương trình coupon', link: '/coupon-programs' },
+        { name: 'Chương trình khuyến mãi', link: '/promotion-programs' },
+      ],
+    },
+    {
+      name: 'Thành viên',
+      icon: 'fas fa-credit-card',
+      groups: 'sale.group_loyalty_card',
+      children: [
+        { name: 'Thẻ thành viên', link: '/card-cards' },
+        { name: 'Loại thẻ thành viên', link: '/card-types' },
+      ],
+    },
+    {
       name: 'Chăm sóc tự động',
       icon: 'fab fa-facebook-f',
       children: [
@@ -83,6 +101,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách kênh', link: '/socials/channels' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
       ],
+      groups: 'tcare.group_tcare',
     },
     {
       name: 'Danh mục',
@@ -103,10 +122,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
-        { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
-        { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
-        { name: 'Chương trình coupon', link: '/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Chương trình khuyến mãi', link: '/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
       ]

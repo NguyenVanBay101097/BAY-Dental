@@ -11,5 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Permission { get; set; }
 
         public List<PermissionTreeViewModel> Children { get; set; } = new List<PermissionTreeViewModel>();
+
+        public string Groups { get; set; }
     }
 }

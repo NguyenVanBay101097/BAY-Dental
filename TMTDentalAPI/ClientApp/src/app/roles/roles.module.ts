@@ -7,6 +7,7 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RoleService } from './role.service';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [RoleListComponent],
@@ -16,7 +17,8 @@ import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    MyCustomNgbModule
+    MyCustomNgbModule,
+    SharedModule
   ],
   providers: [
     RoleService
