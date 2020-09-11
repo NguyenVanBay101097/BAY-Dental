@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
@@ -28,10 +29,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IPartnerService _partnerService;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
+        private readonly IMyCache _cache;
+
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager,
-            IApplicationRoleFunctionService roleFunctionService)
+            IApplicationRoleFunctionService roleFunctionService,
+            IMyCache cache)
         {
             _roleManager = roleManager;
             _mapper = mapper;
@@ -39,6 +43,7 @@ namespace TMTDentalAPI.Controllers
             _partnerService = partnerService;
             _userManager = userManager;
             _roleFunctionService = roleFunctionService;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -102,10 +107,18 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            ClearPermissionsCache(val.UserIds);
+
             _unitOfWork.Commit();
 
             var basic = _mapper.Map<ApplicationRoleBasic>(role);
             return Ok(basic);
+        }
+
+        private void ClearPermissionsCache(IEnumerable<string> userIds)
+        {
+            foreach(var userId in userIds) 
+                _cache.RemoveByPattern($"permissions-{userId}");
         }
 
         [HttpPut("{id}")]
@@ -135,6 +148,7 @@ namespace TMTDentalAPI.Controllers
 
             var users = await _userManager.GetUsersInRoleAsync(role.Name);
             var toRemove = users.Where(x => !val.UserIds.Any(s => s == x.Id)).ToList();
+            var toRemoveIds = toRemove.Select(x => x.Id).ToList();
             foreach (var u in toRemove)
             {
                 var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
@@ -155,6 +169,9 @@ namespace TMTDentalAPI.Controllers
                     throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
                 }
             }
+
+            //clear cache cho những user remove khỏi nhóm và thuộc nhóm này
+            ClearPermissionsCache(toRemoveIds.Union(val.UserIds));
 
             _unitOfWork.Commit();
 

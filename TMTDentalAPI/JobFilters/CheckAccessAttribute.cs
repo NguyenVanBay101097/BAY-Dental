@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,24 +21,28 @@ namespace TMTDentalAPI.JobFilters
                        , Inherited = true)]
     public class CheckAccessAttribute : AuthorizeAttribute, IAsyncAuthorizationFilter
     {
-        private readonly string[] _permission;
-        public CheckAccessAttribute(params string[] permission)
-        {
-            _permission = permission;
-        }
+        public string Actions { get; set; }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var funcObj = (IApplicationRoleFunctionService)context.HttpContext.RequestServices.GetService(typeof(IApplicationRoleFunctionService));
-            var access = await funcObj.HasAccess(_permission.ToList());
-            if (!access)
+            //nếu user id null thì unauthorize
+            if (!context.HttpContext.User.Identity.IsAuthenticated)
             {
-                var result = new JsonResult(new { message = "Bạn không có quyền cho thao tác này!" });
-                result.StatusCode = 403;
-                context.Result = result;
+                context.Result = new UnauthorizedResult();
             }
-            return;
+            else
+            {
+                //Lấy ra danh sách những permission của user
+                var roleFunctionObj = (IApplicationRoleFunctionService)context.HttpContext.RequestServices.GetService(typeof(IApplicationRoleFunctionService));
+                var permissions = Actions.Split(",");
+                var accessResult = await roleFunctionObj.HasAccess(permissions);
+                if (!accessResult.Access)
+                {
+                    var result = new JsonResult(new { message = accessResult.Error });
+                    result.StatusCode = 403;
+                    context.Result = result;
+                }
+            }
         }
     }
-
 }

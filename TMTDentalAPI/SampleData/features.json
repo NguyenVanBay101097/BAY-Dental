@@ -1,236 +1,237 @@
 [
   {
-    "Name": "Cơ bản",
-    "Functions": [
+    "Name": "Tính năng cơ bản",
+    "Permission": "Basic",
+    "Children": [
       {
         "Name": "Phiếu điều trị",
-        "Permission": "SaleOrder",
-        "Ops": [
+        "Permission": "Basic.SaleOrder",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "SaleOrder.Read"
+            "Permission": "Basic.SaleOrder.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "SaleOrder.Create"
+            "Permission": "Basic.SaleOrder.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "SaleOrder.Update"
+            "Permission": "Basic.SaleOrder.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "SaleOrder.Delete"
+            "Permission": "Basic.SaleOrder.Delete"
           },
           {
             "Name": "Hủy phiếu",
-            "Permission": "SaleOrder.Cancel"
+            "Permission": "Basic.SaleOrder.Cancel"
           }
         ]
       },
       {
         "Name": "Thanh toán",
-        "Permission": "AccountPayment",
-        "Ops": [
+        "Permission": "Basic.AccountPayment",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "AccountPayment.Read"
+            "Permission": "Basic.AccountPayment.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "AccountPayment.Create"
+            "Permission": "Basic.AccountPayment.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "AccountPayment.Update"
+            "Permission": "Basic.AccountPayment.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "AccountPayment.Delete"
+            "Permission": "Basic.AccountPayment.Delete"
           }
         ]
       },
       {
         "Name": "Đợt khám",
-        "Permission": "DotKham",
-        "Ops": [
+        "Permission": "Basic.DotKham",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "DotKham.Read"
+            "Permission": "Basic.DotKham.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "DotKham.Create"
+            "Permission": "Basic.DotKham.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "DotKham.Update"
+            "Permission": "Basic.DotKham.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "DotKham.Delete"
+            "Permission": "Basic.DotKham.Delete"
           }
         ]
       },
       {
         "Name": "Phiếu labo",
         "Permission": "LaboOrder",
-        "Ops": [
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "LaboOrder.Read"
+            "Permission": "Basic.LaboOrder.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "LaboOrder.Create"
+            "Permission": "Basic.LaboOrder.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "LaboOrder.Update"
+            "Permission": "Basic.LaboOrder.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "LaboOrder.Delete"
+            "Permission": "Basic.LaboOrder.Delete"
           },
           {
             "Name": "Hủy phiếu",
-            "Permission": "LaboOrder.Cancel"
+            "Permission": "Basic.LaboOrder.Cancel"
           }
         ]
       },
       {
         "Name": "Lịch hẹn",
-        "Permission": "Appointment",
-        "Ops": [
+        "Permission": "Basic.Appointment",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Appointment.Read"
+            "Permission": "Basic.Appointment.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Appointment.Create"
+            "Permission": "Basic.Appointment.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Appointment.Update"
+            "Permission": "Basic.Appointment.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Appointment.Delete"
+            "Permission": "Basic.Appointment.Delete"
           }
         ]
       },
       {
         "Name": "Khách hàng/Nhà cung cấp",
-        "Permission": "Partner",
-        "Ops": [
+        "Permission": "Basic.Partner",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Partner.Read"
+            "Permission": "Basic.Partner.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Partner.Create"
+            "Permission": "Basic.Partner.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Partner.Update"
+            "Permission": "Basic.Partner.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Partner.Delete"
+            "Permission": "Basic.Partner.Delete"
           }
         ]
       },
       {
         "Name": "Thống kê labo",
-        "Permission": "LaboOrder.Statistics"
+        "Permission": "Basic.LaboOrder.Statistics"
       },
       {
         "Name": "Mua/Trả hàng",
-        "Permission": "PurchaseOrder",
-        "Ops": [
+        "Permission": "Basic.PurchaseOrder",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "PurchaseOrder.Read"
+            "Permission": "Basic.PurchaseOrder.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "PurchaseOrder.Create"
+            "Permission": "Basic.PurchaseOrder.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "PurchaseOrder.Update"
+            "Permission": "Basic.PurchaseOrder.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "PurchaseOrder.Delete"
+            "Permission": "Basic.PurchaseOrder.Delete"
           }
         ]
       },
       {
         "Name": "Nhập/Xuất kho",
-        "Permission": "StockPicking",
-        "Ops": [
+        "Permission": "Basic.StockPicking",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "StockPicking.Read"
+            "Permission": "Basic.StockPicking.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "StockPicking.Create"
+            "Permission": "Basic.StockPicking.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "StockPicking.Update"
+            "Permission": "Basic.StockPicking.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "StockPicking.Delete"
+            "Permission": "Basic.StockPicking.Delete"
           }
         ]
       },
       {
         "Name": "Phiếu thu/chi",
-        "Permission": "PhieuThuChi",
-        "Ops": [
+        "Permission": "Basic.PhieuThuChi",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "PhieuThuChi.Read"
+            "Permission": "Basic.PhieuThuChi.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "PhieuThuChi.Create"
+            "Permission": "Basic.PhieuThuChi.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "PhieuThuChi.Update"
+            "Permission": "Basic.PhieuThuChi.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "PhieuThuChi.Delete"
+            "Permission": "Basic.PhieuThuChi.Delete"
           }
         ]
       },
       {
         "Name": "Loại thu/chi",
-        "Permission": "LoaiThuChi",
-        "Ops": [
+        "Permission": "Basic.LoaiThuChi",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "LoaiThuChi.Read"
+            "Permission": "Basic.LoaiThuChi.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "LoaiThuChi.Create"
+            "Permission": "Basic.LoaiThuChi.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "LoaiThuChi.Update"
+            "Permission": "Basic.LoaiThuChi.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "LoaiThuChi.Delete"
+            "Permission": "Basic.LoaiThuChi.Delete"
           }
         ]
       }
@@ -238,158 +239,159 @@
   },
   {
     "Name": "Lương",
-    "Functions": [
+    "Permission": "Salary",
+    "Children": [
       {
         "Name": "Đợt lương",
-        "Permission": "HrPayslipRun",
-        "Ops": [
+        "Permission": "Salary.HrPayslipRun",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "HrPayslipRun.Read"
+            "Permission": "Salary.HrPayslipRun.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "HrPayslipRun.Create"
+            "Permission": "Salary.HrPayslipRun.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "HrPayslipRun.Update"
+            "Permission": "Salary.HrPayslipRun.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "HrPayslipRun.Delete"
+            "Permission": "Salary.HrPayslipRun.Delete"
           }
         ]
       },
       {
         "Name": "Phiếu lương",
-        "Permission": "HrPayslip",
-        "Ops": [
+        "Permission": "Salary.HrPayslip",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "HrPayslip.Read"
+            "Permission": "Salary.HrPayslip.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "HrPayslip.Create"
+            "Permission": "Salary.HrPayslip.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "HrPayslip.Update"
+            "Permission": "Salary.HrPayslip.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "HrPayslip.Delete"
+            "Permission": "Salary.HrPayslip.Delete"
           }
         ]
       },
       {
         "Name": "Chấm công",
-        "Permission": "ChamCong",
-        "Ops": [
+        "Permission": "Salary.ChamCong",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "ChamCong.Read"
+            "Permission": "Salary.ChamCong.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "ChamCong.Create"
+            "Permission": "Salary.ChamCong.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "ChamCong.Update"
+            "Permission": "Salary.ChamCong.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "ChamCong.Delete"
+            "Permission": "Salary.ChamCong.Delete"
           }
         ]
       },
       {
         "Name": "Loại mẫu lương",
-        "Permission": "HrPayrollStructureType",
-        "Ops": [
+        "Permission": "Salary.HrPayrollStructureType",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "HrPayrollStructureType.Read"
+            "Permission": "Salary.HrPayrollStructureType.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "HrPayrollStructureType.Create"
+            "Permission": "Salary.HrPayrollStructureType.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "HrPayrollStructureType.Update"
+            "Permission": "Salary.HrPayrollStructureType.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "HrPayrollStructureType.Delete"
+            "Permission": "Salary.HrPayrollStructureType.Delete"
           }
         ]
       },
       {
         "Name": "Mẫu lương",
-        "Permission": "HrPayrollStructure",
-        "Ops": [
+        "Permission": "Salary.HrPayrollStructure",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "HrPayrollStructure.Read"
+            "Permission": "Salary.HrPayrollStructure.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "HrPayrollStructure.Create"
+            "Permission": "Salary.HrPayrollStructure.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "HrPayrollStructure.Update"
+            "Permission": "Salary.HrPayrollStructure.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "HrPayrollStructure.Delete"
+            "Permission": "Salary.HrPayrollStructure.Delete"
           }
         ]
       },
       {
         "Name": "Loại chấm công",
-        "Permission": "WorkEntryType",
-        "Ops": [
+        "Permission": "Salary.WorkEntryType",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "WorkEntryType.Read"
+            "Permission": "Salary.WorkEntryType.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "WorkEntryType.Create"
+            "Permission": "Salary.WorkEntryType.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "WorkEntryType.Update"
+            "Permission": "Salary.WorkEntryType.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "WorkEntryType.Delete"
+            "Permission": "Salary.WorkEntryType.Delete"
           }
         ]
       },
       {
         "Name": "Lịch làm việc",
-        "Permission": "ResourceCalendar",
-        "Ops": [
+        "Permission": "Salary.ResourceCalendar",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "ResourceCalendar.Read"
+            "Permission": "Salary.ResourceCalendar.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "ResourceCalendar.Create"
+            "Permission": "Salary.ResourceCalendar.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "ResourceCalendar.Update"
+            "Permission": "Salary.ResourceCalendar.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "ResourceCalendar.Delete"
+            "Permission": "Salary.ResourceCalendar.Delete"
           }
         ]
       }
@@ -397,202 +399,203 @@
   },
   {
     "Name": "Danh mục",
-    "Functions": [
+    "Permission": "Catalog",
+    "Children": [
       {
         "Name": "Nhãn khách hàng",
-        "Permission": "PartnerCategory",
-        "Ops": [
+        "Permission": "Catalog.PartnerCategory",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "PartnerCategory.Read"
+            "Permission": "Catalog.PartnerCategory.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "PartnerCategory.Create"
+            "Permission": "Catalog.PartnerCategory.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "PartnerCategory.Update"
+            "Permission": "Catalog.PartnerCategory.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "PartnerCategory.Delete"
+            "Permission": "Catalog.PartnerCategory.Delete"
           }
         ]
       },
       {
         "Name": "Nguồn khách hàng",
-        "Permission": "PartnerSource",
-        "Ops": [
+        "Permission": "Catalog.PartnerSource",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "PartnerSource.Read"
+            "Permission": "Catalog.PartnerSource.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "PartnerSource.Create"
+            "Permission": "Catalog.PartnerSource.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "PartnerSource.Update"
+            "Permission": "Catalog.PartnerSource.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "PartnerSource.Delete"
+            "Permission": "Catalog.PartnerSource.Delete"
           }
         ]
       },
       {
         "Name": "Dịch vụ, vật tư, thuốc",
         "Permission": "Product",
-        "Ops": [
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Product.Read"
+            "Permission": "Catalog.Product.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Product.Create"
+            "Permission": "Catalog.Product.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Product.Update"
+            "Permission": "Catalog.Product.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Product.Delete"
+            "Permission": "Catalog.Product.Delete"
           }
         ]
       },
       {
         "Name": "Nhóm dịch vụ, vật tư, thuốc",
-        "Permission": "ProductCategory",
-        "Ops": [
+        "Permission": "Catalog.ProductCategory",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "ProductCategory.Read"
+            "Permission": "Catalog.ProductCategory.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "ProductCategory.Create"
+            "Permission": "Catalog.ProductCategory.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "ProductCategory.Update"
+            "Permission": "Catalog.ProductCategory.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "ProductCategory.Delete"
+            "Permission": "Catalog.ProductCategory.Delete"
           }
         ]
       },
       {
         "Name": "Đơn thuốc mẫu",
-        "Permission": "SamplePrescription",
-        "Ops": [
+        "Permission": "Catalog.SamplePrescription",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "SamplePrescription.Read"
+            "Permission": "Catalog.SamplePrescription.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "SamplePrescription.Create"
+            "Permission": "Catalog.SamplePrescription.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "SamplePrescription.Update"
+            "Permission": "Catalog.SamplePrescription.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "SamplePrescription.Delete"
+            "Permission": "Catalog.SamplePrescription.Delete"
           }
         ]
       },
       {
         "Name": "Tiểu sử bệnh",
-        "Permission": "History",
-        "Ops": [
+        "Permission": "Catalog.History",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "History.Read"
+            "Permission": "Catalog.History.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "History.Create"
+            "Permission": "Catalog.History.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "History.Update"
+            "Permission": "Catalog.History.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "History.Delete"
+            "Permission": "Catalog.History.Delete"
           }
         ]
       },
       {
         "Name": "Danh xưng",
-        "Permission": "PartnerTitle",
-        "Ops": [
+        "Permission": "Catalog.PartnerTitle",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "PartnerTitle.Read"
+            "Permission": "Catalog.PartnerTitle.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "PartnerTitle.Create"
+            "Permission": "Catalog.PartnerTitle.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "PartnerTitle.Update"
+            "Permission": "Catalog.PartnerTitle.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "PartnerTitle.Delete"
+            "Permission": "Catalog.PartnerTitle.Delete"
           }
         ]
       },
       {
         "Name": "Nhân viên",
-        "Permission": "Employee",
-        "Ops": [
+        "Permission": "Catalog.Employee",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Employee.Read"
+            "Permission": "Catalog.Employee.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Employee.Create"
+            "Permission": "Catalog.Employee.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Employee.Update"
+            "Permission": "Catalog.Employee.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Employee.Delete"
+            "Permission": "Catalog.Employee.Delete"
           }
         ]
       },
       {
         "Name": "Bảng hoa hồng",
-        "Permission": "Commission",
-        "Ops": [
+        "Permission": "Catalog.Commission",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Commission.Read"
+            "Permission": "Catalog.Commission.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Commission.Create"
+            "Permission": "Catalog.Commission.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Commission.Update"
+            "Permission": "Catalog.Commission.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Commission.Delete"
+            "Permission": "Catalog.Commission.Delete"
           }
         ]
       }
@@ -600,70 +603,71 @@
   },
   {
     "Name": "Cấu hình",
-    "Functions": [
+    "Permission": "System",
+    "Children": [
       {
         "Name": "Chi nhánh",
-        "Permission": "Company",
-        "Ops": [
+        "Permission": "System.Company",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "Company.Read"
+            "Permission": "System.Company.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Company.Create"
+            "Permission": "System.Company.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Company.Update"
+            "Permission": "System.Company.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Company.Delete"
+            "Permission": "System.Company.Delete"
           }
         ]
       },
       {
         "Name": "Người dùng",
-        "Permission": "ApplicationUser",
-        "Ops": [
+        "Permission": "System.ApplicationUser",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "ApplicationUser.Read"
+            "Permission": "System.ApplicationUser.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "ApplicationUser.Create"
+            "Permission": "System.ApplicationUser.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "ApplicationUser.Update"
+            "Permission": "System.ApplicationUser.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "ApplicationUser.Delete"
+            "Permission": "System.ApplicationUser.Delete"
           }
         ]
       },
       {
         "Name": "Nhóm quyền",
-        "Permission": "ApplicationRole",
-        "Ops": [
+        "Permission": "System.ApplicationRole",
+        "Children": [
           {
             "Name": "Xem",
-            "Permission": "ApplicationRole.Read"
+            "Permission": "System.ApplicationRole.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "ApplicationRole.Create"
+            "Permission": "System.ApplicationRole.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "ApplicationRole.Update"
+            "Permission": "System.ApplicationRole.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "ApplicationRole.Delete"
+            "Permission": "System.ApplicationRole.Delete"
           }
         ]
       }
@@ -671,58 +675,55 @@
   },
   {
     "Name": "Báo cáo",
-    "Functions": [
+    "Permission": "Report",
+    "Children": [
       {
         "Name": "Kết quả kinh doanh",
-        "Permission": "FinancialReport"
+        "Permission": "Report.Financial"
       },
       {
         "Name": "Tiền mặt, ngân hàng",
-        "Permission": "CashBankAccountReport"
+        "Permission": "Report.CashBankAccount"
       },
       {
         "Name": "Thống kê doanh thu",
-        "Permission": "RevenueReport"
+        "Permission": "Report.Revenue"
       },
       {
         "Name": "Thống kê điều trị",
-        "Permission": "SaleReport"
+        "Permission": "Report.Sale"
       },
       {
         "Name": "Công nợ KH/NCC",
-        "Permission": "AccountPartnerReport"
+        "Permission": "Report.AccountPartner"
       },
       {
         "Name": "Xuất nhập tồn",
-        "Permission": "StockReport"
+        "Permission": "Report.Stock"
       },
       {
         "Name": "Tình hình thu nợ khách hàng",
-        "Permission": "RealRevenueReport"
+        "Permission": "Report.RealRevenue"
       },
       {
         "Name": "Thống kê công việc",
-        "Permission": "DotKhamReport"
-      },
-      {
-        "Name": "Thống kê công việc",
-        "Permission": "DotKhamReport"
+        "Permission": "Report.DotKham"
       },
       {
         "Name": "Thống kê hoa hồng",
-        "Permission": "CommissionReport"
+        "Permission": "Report.Commission"
       },
       {
         "Name": "Khách hàng lân cận phòng khám",
-        "Permission": "PartnerReportLocation"
+        "Permission": "Report.PartnerLocation"
       },
       {
         "Name": "Thống kê nguồn khách hàng",
-        "Permission": "PartnerSourceReport"
+        "Permission": "Report.PartnerSource"
       },
       {
         "Name": "Thống kê khách hàng cũ mới",
-        "Permission": "PartnerOldNewReport"
+        "Permission": "Report.PartnerOldNew"
       }
     ]
   }

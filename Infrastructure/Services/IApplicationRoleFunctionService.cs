@@ -8,6 +8,6 @@ namespace Infrastructure.Services
 {
     public interface IApplicationRoleFunctionService: IBaseService<ApplicationRoleFunction>
     {
-        Task<bool> HasAccess(List<string> functions, bool raiseException = true);
+        Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions);
     }
 }

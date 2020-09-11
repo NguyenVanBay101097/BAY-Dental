@@ -16,6 +16,8 @@
             </div>
         </div>
         <div class="o_cp_right">
+            <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+                <i class="fa fa-save"></i> Lưu</button>
         </div>
     </div>
 </div>
@@ -53,8 +55,8 @@
                         <div>
                             <h4 class="o_horizontal_separator text-dark">Người dùng</h4>
                             <div>
-                                <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm" class="btn btn-sm mr-2"
-                                    [class.btn-success]="isUserSelected(user)"
+                                <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm"
+                                    class="btn btn-sm mr-2" [class.btn-success]="isUserSelected(user)"
                                     *ngFor="let user of userList" (click)="selectUser(user)">{{user.name}}</button>
                             </div>
                         </div>
@@ -62,18 +64,13 @@
                             <h4 class="o_horizontal_separator text-dark">Phân quyền</h4>
                             <div class="row">
                                 <div class="col-4" *ngFor="let group of featureGroups">
-                                    <div class="text-primary">{{group.name}}</div>
                                     <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings"
                                         (childrenLoaded)="onChildrenLoaded($event)" [checkBy]="'permission'"
-                                        [(checkedKeys)]="checkedKeys" [isChecked]="isChecked" [nodes]="group.functions"
+                                        [(checkedKeys)]="checkedKeys" [isChecked]="isChecked" [nodes]="[group]"
                                         textField="name" [children]="fetchChildren" [hasChildren]="hasChildren">
                                     </kendo-treeview>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
-                                <i class="fa fa-save"></i> Lưu</button>
                         </div>
                     </div>
                 </div>

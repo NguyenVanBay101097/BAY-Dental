@@ -80,7 +80,7 @@ export class RoleListComponent implements OnInit {
   public isChecked = (dataItem: any, index: string): CheckedState => {
     if (this.containsItem(dataItem)) { return 'checked'; }
 
-    if (this.isIndeterminate(dataItem.ops)) { return 'indeterminate'; }
+    if (this.isIndeterminate(dataItem.children)) { return 'indeterminate'; }
 
     return 'none';
   }
@@ -121,14 +121,19 @@ export class RoleListComponent implements OnInit {
     });
   }
 
-  loadRoles() {
+  loadRoles(roleId?: any) {
     var val = new ApplicationRolePaged();
     val.limit = this.pageSize;
     val.offset = (this.page - 1) * this.pageSize;
     this.roleService.getPaged(val).subscribe((data: any) => {
       this.rolesPaged = data;
 
-      if (this.rolesPaged.items.length) {
+      if (roleId) {
+        var roles = this.rolesPaged.items.filter(x => x.id == roleId);
+        if (roles.length) {
+          this.selectRole(roles[0]);
+        }
+      } else if (this.rolesPaged.items.length) {
         this.selectRole(this.rolesPaged.items[0]);
       }
     });
@@ -186,12 +191,12 @@ export class RoleListComponent implements OnInit {
 
   public fetchChildren(node: any): Observable<any[]> {
     //Return the items collection of the parent node as children.
-    return of(node.ops);
+    return of(node.children);
   }
 
   public hasChildren(node: any): boolean {
     //Check if the parent node has children.
-    return node.ops && node.ops.length > 0;
+    return node.children && node.children.length > 0;
   }
 
   public get checkableSettings(): CheckableSettings {
@@ -229,7 +234,7 @@ export class RoleListComponent implements OnInit {
           type: { style: 'success', icon: true }
         });
 
-        this.loadRoles();
+        this.loadRoles(result.id);
       });
     } else {
       this.roleService.update(this.id, this.displayRole).subscribe((result: any) => {
@@ -240,6 +245,8 @@ export class RoleListComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+
+        this.loadRoles(this.id);
       });
     }
   }
