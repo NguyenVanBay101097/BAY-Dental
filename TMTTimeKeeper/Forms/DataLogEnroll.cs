@@ -20,7 +20,7 @@ namespace TMTTimeKeeper
         public DataLogEnroll()
         {
             InitializeComponent();
-            ShowStatusBar(string.Empty, true);
+            StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
         }
 
         private void DataLogEnroll_Load(object sender, EventArgs e)
@@ -39,19 +39,19 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    ShowStatusBar(string.Empty, true);
+                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
                     ICollection<MachineInfo> lstMachineInfo =await dataLogEnrollService.GetAllLogData(objZkeeper, DataConnect.machineID);
                     if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
-                        ShowStatusBar(lstMachineInfo.Count + " records found !!", true);
+                        StatusBarService.ShowStatusBar(lblStatus, lstMachineInfo.Count + " kết quả được tìm thấy !!", true);
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusBar(ex.Message, true);
+                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, true);
                 }
             }
         }
@@ -64,25 +64,25 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    ShowStatusBar(string.Empty, true);
+                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
                     var response = await dataLogEnrollService.SyncLogData();
 
                     if (response != null && response.Success)
                     {
-                        ShowStatusBar("Đồng bộ thành công", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "Đồng bộ thành công", true);
                     }
                     else
                     {
                         foreach (var item in response.Errors)
                         {
-                            ShowStatusBar(item, true);
+                            StatusBarService.ShowStatusBar(lblStatus, item, true);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusBar(ex.Message, true);
+                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, true);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace TMTTimeKeeper
             {
                 case UniversalStatic.acx_Disconnect:
                     {
-                        ShowStatusBar("The device is switched off", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "Máy chấm công đã bị tắt !!", true);
                         break;
                     }
 
@@ -115,32 +115,14 @@ namespace TMTTimeKeeper
                 isDeviceConnected = value;
                 if (isDeviceConnected)
                 {
-                    ShowStatusBar("The device is connected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã kết nối máy chấm công !!", true);
                 }
                 else
                 {
-                    ShowStatusBar("The device is disconnected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Đã ngắt kết nối máy chấm công !!", true);
                     objZkeeper.Disconnect();
                 }
             }
-        }
-
-        public void ShowStatusBar(string message, bool type)
-        {
-            if (message.Trim() == string.Empty)
-            {
-                lblStatus.Visible = false;
-                return;
-            }
-
-            lblStatus.Visible = true;
-            lblStatus.Text = message;
-            lblStatus.ForeColor = Color.White;
-
-            if (type)
-                lblStatus.BackColor = Color.FromArgb(79, 208, 154);
-            else
-                lblStatus.BackColor = Color.Tomato;
         }
 
         private void BindToGridView(object list)
