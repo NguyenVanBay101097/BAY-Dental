@@ -17,7 +17,7 @@ namespace TMTTimeKeeper.Services
     public class DataLogEnrollService
     {
         private EmployeeService empService = new EmployeeService();
-
+        private TimeKeeperService timeKeeperService = new TimeKeeperService();
         public Response SaveLogDataToJson(ICollection<MachineInfo> listLog)
         {
             if (listLog == null || listLog.Count() <= 0)
@@ -39,7 +39,7 @@ namespace TMTTimeKeeper.Services
             return new Response() { Success = true, Message = "Đồng bộ thành công" };
         }
 
-        public ICollection<MachineInfo> GetAllLogData(ZkemClient objZkeeper, int machineNumber)
+        public async Task<ICollection<MachineInfo>> GetAllLogData(ZkemClient objZkeeper, int machineNumber)
         {
             string dwEnrollNumber1 = "";
             int dwVerifyMode = 0;
@@ -53,15 +53,9 @@ namespace TMTTimeKeeper.Services
             int dwWorkCode = 0;
             LastUpdateLogData log = new LastUpdateLogData();
             //Lấy lastUpdate
-            string fileName = "LastGetLogData.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            string json = File.ReadAllText(path);
-
-            if (!string.IsNullOrEmpty(json))
-            {
-                log = JsonConvert.DeserializeObject<LastUpdateLogData>(json);
-            }
-
+            string fileLastUpdate = "LastGetLogData.json";
+            string fileEnrollData = "DataLogEnroll.json";
+            log = await timeKeeperService.GetModelByJson<LastUpdateLogData>(fileLastUpdate);
 
             ICollection<MachineInfo> lstEnrollData = new List<MachineInfo>();
 
@@ -83,14 +77,14 @@ namespace TMTTimeKeeper.Services
                 lstEnrollData.Add(objInfo);
             }
 
-            if (log.LastUpdate.HasValue)
+            if (log != null && log.LastUpdate.HasValue)
             {
                 lstEnrollData = lstEnrollData.Where(x => DateTime.Parse(x.DateTimeRecord) >= log.LastUpdate.Value).ToList();
-                SaveLogDataToJson(lstEnrollData);
+                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
             else
             {
-                SaveLogDataToJson(lstEnrollData);
+                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
 
             return lstEnrollData;
@@ -98,34 +92,19 @@ namespace TMTTimeKeeper.Services
 
         public async Task<Response> SyncLogData()
         {
-            List<MachineInfo> listLogs = new List<MachineInfo>();
+            IList<MachineInfo> listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
             var listChamCongSync = new List<ChamCongSync>();
             var lastUpdate = new LastUpdateLogData();
-
-            string logEnroll = "DatalogEnroll.json";
-            string pathLogEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", logEnroll);
-            var jsonLogEnroll = File.ReadAllText(pathLogEnroll);
-
-            string account = "AccountLogin.json";
-            string pathAccountLogin = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", account);
-            var jsonAccount = File.ReadAllText(pathAccountLogin);
-
             string lastUpdateLog = "LastGetLogData.json";
-            string pathLastUpdate = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", lastUpdateLog);
-
+            var url = "api/ChamCongs/SyncToTimeKeeper";
             string fileErrorEnroll = "DataLogEnrollErrors.json";
-            string pathErrorEnroll = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileErrorEnroll);
-
-            listLogs = JsonConvert.DeserializeObject<List<MachineInfo>>(jsonLogEnroll);
-            acc = JsonConvert.DeserializeObject<AccountLogin>(jsonAccount);
-
-
-
+            string logEnroll = "DatalogEnroll.json";
+            listLogs = await timeKeeperService.GetListModelByJson<MachineInfo>(logEnroll);
+            string account = "AccountLogin.json";
+            acc = await timeKeeperService.GetModelByJson<AccountLogin>(account);
             if (acc != null)
             {
-                var url = "api/ChamCongs/SyncToTimeKeeper";
-
                 try
                 {
                     foreach (var item in listLogs)
@@ -150,16 +129,15 @@ namespace TMTTimeKeeper.Services
                     var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
                     if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
                     {
-                        File.WriteAllText(pathErrorEnroll, JsonConvert.SerializeObject(responses.ErrorDatas));
+                        timeKeeperService.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
                     }
                     //Xóa logFile
-                    File.WriteAllText(pathLogEnroll, string.Empty);
+                    timeKeeperService.SetJson<DataLogEnroll>(logEnroll, null);
 
                     //Ghi lại last update
                     lastUpdate.Count += 1;
                     lastUpdate.LastUpdate = DateTime.Now;
-                    File.WriteAllText(pathLastUpdate, JsonConvert.SerializeObject(lastUpdate));
-
+                    timeKeeperService.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
                 }
                 catch (Exception e)
                 {
@@ -172,14 +150,11 @@ namespace TMTTimeKeeper.Services
 
         public async Task<EmployeeSync> GetEmp(int idKp)
         {
-            Models.EmployeeSync emp = new Models.EmployeeSync();
+            EmployeeSync emp = new EmployeeSync();
             var fileEmp = "Employees.json";
-            var empPath = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileEmp);
-            var empJson = await File.ReadAllTextAsync(empPath);
-            var empList = JsonConvert.DeserializeObject<List<Models.EmployeeSync>>(empJson);
-
-            if (empList != null && empList.Any())
-                emp = empList.Where(x => x.IdKP == idKp).FirstOrDefault();
+            var listEmp =await timeKeeperService.GetListModelByJson<EmployeeSync>(fileEmp);
+            if (listEmp != null && listEmp.Any())
+                emp = listEmp.Where(x => x.IdKP == idKp).FirstOrDefault();
             else
                 emp = null;
             return emp;

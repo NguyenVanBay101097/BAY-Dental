@@ -30,7 +30,7 @@ namespace TMTTimeKeeper
             MyUniversalStatic.ChangeGridProperties(dataGridView1);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
             IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
@@ -41,7 +41,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = dataLogEnrollService.GetAllLogData(objZkeeper, DataConnect.machineID);
+                    ICollection<MachineInfo> lstMachineInfo =await dataLogEnrollService.GetAllLogData(objZkeeper, DataConnect.machineID);
                     if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
