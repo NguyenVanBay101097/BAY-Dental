@@ -271,24 +271,6 @@ namespace TMTTimeKeeper
             Close();
         }
 
-        /// <summary>
-        /// luu tai khoan dang nhap
-        /// </summary>
-        /// <param name="account"></param>
-        public void AddAccount(AccountLogin account)
-        {            
-            string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(account));
-        }
-
-        public void AddTimekeeper(TimeKeeper val)
-        {
-            string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(val));
-        }
-
         private void tbxCompanyName_Validating(object sender, CancelEventArgs e)
         {
             if (tbxCompanyName.Text == string.Empty)
