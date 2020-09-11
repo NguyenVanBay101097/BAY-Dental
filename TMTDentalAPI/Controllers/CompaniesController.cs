@@ -83,7 +83,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Company", "Create");
 
             await _unitOfWork.BeginTransactionAsync();
             var partner = new Partner

@@ -78,7 +78,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("ToaThuoc", "Unlink");
             var toaThuoc = await _toaThuocService.GetByIdAsync(id);
             if (toaThuoc == null)
                 return NotFound();

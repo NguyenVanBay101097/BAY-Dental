@@ -51,7 +51,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
         {
-            _modelAccessService.Check("ResUser", "Read");
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
@@ -70,7 +69,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            _modelAccessService.Check("ResUser", "Read");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.Group")
                 .Include("ResCompanyUsersRels.Company").Include(x => x.Partner).FirstOrDefaultAsync();
@@ -89,7 +87,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResUser", "Create");
             await _unitOfWork.BeginTransactionAsync();
             var partner = new Partner()
             {
@@ -160,7 +157,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResUser", "Write");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
                 .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
@@ -248,7 +244,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(string id)
         {
-            _modelAccessService.Check("ResUser", "Unlink");
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();

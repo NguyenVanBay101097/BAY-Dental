@@ -36,7 +36,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]StockPickingPaged val)
         {
-            _modelAccessService.Check("StockPicking", "Read");
             var res = await _stockPickingService.GetPagedResultAsync(val);
             return Ok(res);
         }
@@ -44,7 +43,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("StockPicking", "Read");
             var picking = await _stockPickingService.GetPickingForDisplay(id);
             if (picking == null)
                 return NotFound();

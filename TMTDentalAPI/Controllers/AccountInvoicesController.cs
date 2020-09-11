@@ -43,7 +43,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]AccountInvoicePaged val)
         {
-            _modelAccessService.Check("AccountInvoice", "Read");
             var result = await _accountInvoiceService.GetPagedResultAsync(val);
             return Ok(result);
         }
@@ -51,7 +50,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("AccountInvoice", "Read");
             var accountInvoice = await _accountInvoiceService.GetAccountInvoiceForDisplayAsync(id);
             if (accountInvoice == null)
             {
@@ -71,7 +69,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("AccountInvoice", "Create");
             var inv = _mapper.Map<AccountInvoice>(val);
             SaveInvoiceLines(val, inv);
             await _accountInvoiceService.CreateAsync(inv);
@@ -85,7 +82,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("AccountInvoice", "Update");
             var inv = await _accountInvoiceService.GetAccountInvoiceForDisplayAsync(id);
             if (inv == null)
                 return NotFound();
@@ -102,10 +98,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("AccountInvoice", "Unlink");
-
-
-
             await _accountInvoiceService.DeleteInvoice(id);
 
             return NoContent();
