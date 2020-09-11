@@ -196,11 +196,7 @@ namespace TMTTimeKeeper
                             // Set Authorization
                             HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
-                            // Add Get employees
-
-                            //var token = loginResponse.token;
-                            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+                            #region 'Demo Get employees'
                             //EmployeePaged employeePaged = new EmployeePaged
                             //{
                             //    offset = 0,
@@ -220,7 +216,7 @@ namespace TMTTimeKeeper
                             //url = url + string.Join("&", result);
 
                             //var pro = await client.GetAsync(url);
-                            // End Demo Get employees
+                            #endregion
 
                             var timekeeper = new TimeKeeper();
                             timekeeper.CompanyName = tbxCompanyName.Text;
