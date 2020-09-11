@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -20,6 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReport(CommissionSettlementReport val)
         {
             var result = await _commissionSettlementService.GetReport(val);
@@ -27,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReportDetail(CommissionSettlementReport val)
         {
             var result = await _commissionSettlementService.GetReportDetail(val);

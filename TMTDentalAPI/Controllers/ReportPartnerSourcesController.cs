@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -20,6 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Report.PartnerSource")]
         public async Task<IActionResult> GetReport(ReportFilterPartnerSource val)
         {
             var res = await _sourceService.GetReportPartnerSource(val);

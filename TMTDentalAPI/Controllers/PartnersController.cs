@@ -424,6 +424,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.PartnerLocation")]
         public async Task<IActionResult> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
         {
             var res = await _partnerService.ReportLocationCompanyWard(val);
@@ -431,6 +432,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.PartnerLocation")]
         public async Task<IActionResult> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
         {
             var res = await _partnerService.ReportLocationCompanyDistrict(val);

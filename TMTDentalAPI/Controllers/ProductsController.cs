@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -47,21 +48,21 @@ namespace TMTDentalAPI.Controllers
             _uomService = uomService;
         }
 
-        [HttpGet]
+        [HttpGet][CheckAccess(Actions = "Catalog.Product.Read")]
         public async Task<IActionResult> Get([FromQuery]ProductPaged val)
         {
             var result = await _productService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Product.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _productService.GetProductDisplay(id);
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPost][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> Create(ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -72,7 +73,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Product.Update")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -97,7 +98,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Product.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -130,21 +131,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("Autocomplete")]
+        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Product.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var res = await _productService.GetProductsAutocomplete(filter: filter);
             return Ok(res);
         }
 
-        [HttpPost("Autocomplete2")]
+        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Product.Read")]
         public async Task<IActionResult> Autocomplete2(ProductPaged val)
         {
             var res = await _productService.GetProductsAutocomplete2(val);
             return Ok(res);
         }
 
-        [HttpPost("ImportExcel")]
+        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelViewModel val)
         {
             if (!ModelState.IsValid)
@@ -251,7 +252,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportService(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -392,7 +393,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportMedicine(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -477,7 +478,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportProduct(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -606,7 +607,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Product.Read")]
         public async Task<IActionResult> ExportServiceExcelFile([FromQuery]ProductPaged val)
         {
             var stream = new MemoryStream();

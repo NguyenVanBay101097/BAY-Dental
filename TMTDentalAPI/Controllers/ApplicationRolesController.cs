@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -47,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationRolePaged val)
         {
             var query = _roleManager.Roles;
@@ -63,6 +65,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get(string id)
         {
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
@@ -78,6 +81,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "System.ApplicationRole.Create")]
         public async Task<IActionResult> Create(ApplicationRoleSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -122,6 +126,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "System.ApplicationRole.Update")]
         public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
         {
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
@@ -179,6 +184,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "System.ApplicationRole.Delete")]
         public async Task<IActionResult> Remove(string id)
         {
             var user = await _roleManager.FindByIdAsync(id);

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -20,6 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("XuatNhapTonSummary")]
+        [CheckAccess(Actions = "Report.Stock")]
         public async Task<IActionResult> XuatNhapTonSummary(StockReportXuatNhapTonSearch val)
         {
             var res = await _stockReportService.XuatNhapTonSummary(val);
@@ -27,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("XuatNhapTonDetail")]
+        [CheckAccess(Actions = "Report.Stock")]
         public async Task<IActionResult> XuatNhapTonDetail(StockReportXuatNhapTonItem val)
         {
             var res = await _stockReportService.XuatNhapTonDetail(val);

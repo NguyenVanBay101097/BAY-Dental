@@ -12,6 +12,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -31,7 +32,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
+        [HttpGet][CheckAccess(Actions = "Catalog.History.Read")]
         public async Task<IActionResult> Get([FromQuery]HistoryPaged val)
         {
             var result = await _service.GetPagedResultAsync(val);
@@ -42,7 +43,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(paged);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.History.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -52,7 +53,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(entity);
         }
 
-        [HttpPost]
+        [HttpPost][CheckAccess(Actions = "Catalog.History.Create")]
         public async Task<IActionResult> Create(HistorySimple val)
         {
             if (val == null)
@@ -68,7 +69,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(val);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.History.Update")]
         public async Task<IActionResult> Update(Guid id, HistorySimple val)
         {
             var result = await _service.GetByIdAsync(id);
@@ -85,7 +86,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.History.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -97,6 +98,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("GetHistoriesCheckbox")]
+        [CheckAccess(Actions = "Catalog.History.Read")]
         public async Task<IActionResult> GetHistoriesCheckbox()
         {
             var val = new HistoryPaged();
@@ -106,6 +108,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.History.Create")]
         public async Task<IActionResult> ImportExcel(HistoryImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)

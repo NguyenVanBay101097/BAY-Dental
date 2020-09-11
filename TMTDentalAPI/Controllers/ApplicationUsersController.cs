@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -49,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
         {
             var query = _userManager.Users;
@@ -67,6 +69,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get(string id)
         {
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
@@ -83,6 +86,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "System.ApplicationUser.Create")]
         public async Task<IActionResult> Create(ApplicationUserDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -153,6 +157,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Update")]
         public async Task<IActionResult> Update(string id, ApplicationUserDisplay val)
         {
             if (!ModelState.IsValid)
@@ -242,6 +247,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Delete")]
         public async Task<IActionResult> Remove(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -253,6 +259,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("Autocomplete")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var companyId = CompanyId;
@@ -268,6 +275,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("AutocompleteUser")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> AutocompleteUser(ApplicationUserPaged user)
         {
             var companyId = CompanyId;
@@ -284,6 +292,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("AutocompleteSimple")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> AutocompleteSimple(ApplicationUserPaged val)
         {
             var companyId = CompanyId;
@@ -343,6 +352,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "System.ApplicationUser.Create")]
         public async Task<IActionResult> ActionImport(ApplicationUserImportExcelViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);

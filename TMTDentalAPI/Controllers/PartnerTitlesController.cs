@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,14 +29,14 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
+        [HttpGet][CheckAccess(Actions = "Catalog.PartnerTitle.Read")]
         public async Task<IActionResult> Get([FromQuery] PartnerTitlePaged val)
         {
             var result = await _partnerTitleService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.PartnerTitle.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var result = await _partnerTitleService.GetByIdAsync(id);
@@ -47,14 +48,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.PartnerTitle.Read")]
         public async Task<IActionResult> Autocomplete(PartnerTitlePaged val)
         {
             var res = await _partnerTitleService.GetAutocompleteAsync(val);
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPost][CheckAccess(Actions = "Catalog.PartnerTitle.Create")]
         public async Task<IActionResult> Create(PartnerTitleSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -69,7 +70,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.PartnerTitle.Update")]
         public async Task<IActionResult> Update(Guid id, PartnerTitleSave val)
         {
             if (!ModelState.IsValid)
@@ -88,7 +89,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.PartnerTitle.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var result = await _partnerTitleService.GetByIdAsync(id);

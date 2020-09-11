@@ -21,7 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "FinancialReport")]
+        [CheckAccess(Actions = "Report.Financial")]
         public async Task<IActionResult> GetAccountMoveLines(AccountingReport val)
         {
             var res = await _reportFinancialServiceService.GetAccountLines(val);
