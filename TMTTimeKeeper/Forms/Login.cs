@@ -187,14 +187,14 @@ namespace TMTTimeKeeper
                                 account.AccessToken = loginResponse.token;
                                 account.RefeshToken = loginResponse.refreshToken;
 
-                        accountLoginObj.AddAccount(account);
-                    }
-                    else
-                    {
-                        AccountLoginTemp.name = loginResponse.user.name;
-                    }
-                    // Set Authorization
-                    HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
+                                accountLoginObj.AddAccount(account);
+                            }
+                            else
+                            {
+                                AccountLoginTemp.name = loginResponse.user.name;
+                            }
+                            // Set Authorization
+                            HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
                             // Add Get employees
 
@@ -222,9 +222,9 @@ namespace TMTTimeKeeper
                             //var pro = await client.GetAsync(url);
                             // End Demo Get employees
 
-                    var timekeeper = new TimeKeeper();
-                    timekeeper.CompanyName = tbxCompanyName.Text;
-                    timeKeeperObj.AddTimekeeper(timekeeper);
+                            var timekeeper = new TimeKeeper();
+                            timekeeper.CompanyName = tbxCompanyName.Text;
+                            timeKeeperObj.AddTimekeeper(timekeeper);
 
                             DialogResult = DialogResult.OK;
                             this.Cursor = Cursors.Default;
