@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -48,7 +49,17 @@ namespace TMTTimeKeeper.Services
         {
             string fileName = "Employees.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.AppendAllText(path, JsonConvert.SerializeObject(vals));
+            var list = getEmployee();
+            if (list.Any())
+            {
+                list.AddRange(vals);
+                File.WriteAllText(path, JsonConvert.SerializeObject(list));
+            }
+            else
+            {
+                File.WriteAllText(path, JsonConvert.SerializeObject(vals));
+            }
+           
             MessageBox.Show("Đồng bộ thành công");
         }
 
@@ -71,7 +82,7 @@ namespace TMTTimeKeeper.Services
         {
             var empSave = new EmployeeDisplay();
             empSave.Name = val.Name;
-            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/Create", empSave);
+            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees", empSave);
             var rs = response.Content.ReadAsStringAsync().Result;
             var res = JsonConvert.DeserializeObject<EmployeeDisplay>(rs);
             var emp = new EmployeeSync();
@@ -82,7 +93,7 @@ namespace TMTTimeKeeper.Services
                 emp.Name = val.Name;
                 emp.MachineNumber = val.MachineNumber;
                 emp.Password = val.Password;
-                emp.Privelage = val.Privelage;
+                emp.Privelage = 1;
                 emp.Enabled = val.Enabled;
             }
                     

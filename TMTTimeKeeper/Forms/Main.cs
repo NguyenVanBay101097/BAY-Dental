@@ -24,8 +24,8 @@ namespace TMTTimeKeeper
 
         Login loginForm = new Login();
         SetupTimekeeper timekeeper = new SetupTimekeeper();
-        Employee page2 = new Employee();
-        Page3 page3 = new Page3();
+        Employee employee = new Employee();
+        SetupTimekeeper setupTimekeeper = new SetupTimekeeper();
 
         public Main()
         {
@@ -108,7 +108,7 @@ namespace TMTTimeKeeper
             }
             else
             {
-                nav(page2, content);
+                nav(employee, content);
                 actNav(button2);
             }
         }
@@ -121,7 +121,7 @@ namespace TMTTimeKeeper
             }
             else
             {
-                nav(page3, content);
+                nav(setupTimekeeper, content);
                 actNav(button3);
             }
         }

@@ -182,6 +182,9 @@ namespace TMTTimeKeeper
                     {
                         foreach (var item in listEmpSync)
                         {
+                            if (item.Privelage == 3)
+                                continue;
+
                             var rs = await employeeObj.CreateEmployee(item);
                             listSave.Add(rs);
                         }
