@@ -33,8 +33,6 @@
             this.lblStatus = new System.Windows.Forms.Label();
             this.tbxMachineSeri = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbxMachineName = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.tbxCompanyName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -84,7 +82,8 @@
             // 
             // tbxMachineSeri
             // 
-            this.tbxMachineSeri.Location = new System.Drawing.Point(605, 63);
+            this.tbxMachineSeri.Enabled = false;
+            this.tbxMachineSeri.Location = new System.Drawing.Point(349, 63);
             this.tbxMachineSeri.Name = "tbxMachineSeri";
             this.tbxMachineSeri.ReadOnly = true;
             this.tbxMachineSeri.Size = new System.Drawing.Size(177, 23);
@@ -100,27 +99,9 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Chi nhánh";
             // 
-            // tbxMachineName
-            // 
-            this.tbxMachineName.Location = new System.Drawing.Point(349, 63);
-            this.tbxMachineName.Name = "tbxMachineName";
-            this.tbxMachineName.PlaceholderText = "Nhập tên máy";
-            this.tbxMachineName.Size = new System.Drawing.Size(175, 23);
-            this.tbxMachineName.TabIndex = 0;
-            this.tbxMachineName.Validating += new System.ComponentModel.CancelEventHandler(this.tbxMachineName_Validating);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(292, 66);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 15);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Tên máy";
-            // 
             // tbxCompanyName
             // 
+            this.tbxCompanyName.Enabled = false;
             this.tbxCompanyName.Location = new System.Drawing.Point(87, 63);
             this.tbxCompanyName.Name = "tbxCompanyName";
             this.tbxCompanyName.ReadOnly = true;
@@ -131,7 +112,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(545, 66);
+            this.label4.Location = new System.Drawing.Point(290, 66);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 15);
             this.label4.TabIndex = 2;
@@ -227,8 +208,6 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbxCompanyName);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.tbxMachineName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbxMachineSeri);
             this.Controls.Add(this.lblStatus);
@@ -250,8 +229,6 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.TextBox tbxMachineSeri;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbxMachineName;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbxCompanyName;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
