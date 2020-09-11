@@ -7,22 +7,23 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TMTTimeKeeper.Info;
+using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper
 {
-    public partial class Page3 : Form
+    public partial class DataLogEnroll : Form
     {
-        DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
+        private DataLogEnrollService dataLogEnrollService = new DataLogEnrollService();
         private bool isDeviceConnected = false;
-        public Page3()
+        public DataLogEnroll()
         {
             InitializeComponent();
             ShowStatusBar(string.Empty, true);
         }
 
-        private void Page3_Load(object sender, EventArgs e)
+        private void DataLogEnroll_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = new Collection<MachineInfo>();
             SetHeaderText();
@@ -40,7 +41,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    ICollection<MachineInfo> lstMachineInfo = manipulator.GetAllLogData(objZkeeper, DataConnect.machineID);
+                    ICollection<MachineInfo> lstMachineInfo = dataLogEnrollService.GetAllLogData(objZkeeper, DataConnect.machineID);
                     if (lstMachineInfo != null)
                     {
                         BindToGridView(lstMachineInfo);
@@ -65,7 +66,7 @@ namespace TMTTimeKeeper
                 {
                     ShowStatusBar(string.Empty, true);
 
-                    var response = await manipulator.SyncLogData();
+                    var response = await dataLogEnrollService.SyncLogData();
 
                     if (response != null && response.Success)
                     {

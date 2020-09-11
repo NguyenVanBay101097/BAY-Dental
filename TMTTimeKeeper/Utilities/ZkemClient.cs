@@ -392,7 +392,7 @@ namespace TMTTimeKeeper.Utilities
 
         public bool ClearKeeperData(int dwMachineNumber)
         {
-           return objCZKEM.ClearKeeperData(dwMachineNumber);
+            return objCZKEM.ClearKeeperData(dwMachineNumber);
         }
 
         public bool ClearLCD()
@@ -1296,7 +1296,7 @@ namespace TMTTimeKeeper.Utilities
 
         public bool SSR_GetSuperLogData(int MachineNumber, out int Number, out string Admin, out string User, out int Manipulation, out string Time, out int Params1, out int Params2, out int Params3)
         {
-            throw new NotImplementedException();
+            return objCZKEM.SSR_GetSuperLogData(MachineNumber, out Number, out Admin, out User, out Manipulation, out Time, out Params1, out Params2, out Params3);
         }
 
         public bool SSR_GetUnLockGroup(int dwMachineNumber, int CombNo, ref int Group1, ref int Group2, ref int Group3, ref int Group4, ref int Group5)

@@ -1,6 +1,6 @@
 ﻿namespace TMTTimeKeeper
 {
-    partial class Page3
+    partial class DataLogEnroll
     {
         /// <summary>
         /// Required designer variable.
@@ -122,7 +122,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Page3";
             this.Text = "Page3";
-            this.Load += new System.EventHandler(this.Page3_Load);
+            this.Load += new System.EventHandler(this.DataLogEnroll_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

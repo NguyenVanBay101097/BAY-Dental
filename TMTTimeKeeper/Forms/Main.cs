@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Services;
@@ -26,7 +27,7 @@ namespace TMTTimeKeeper
             InitializeComponent();
         }
 
-        private void Main_Load(object sender, EventArgs e)
+        private async void Main_Load(object sender, EventArgs e)
         {
             // Update port # in the following line.
             HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
@@ -34,8 +35,23 @@ namespace TMTTimeKeeper
             HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
             HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-
+            var acc = await GetAccount();
+            if (acc != null && acc.AccessToken != null)
+                HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", acc.AccessToken);
             this.Shown += Form1_Shown;
+        }
+
+        public async Task<AccountLogin> GetAccount()
+        {
+            var acc = new AccountLogin();
+            string fileName = "AccountLogin.json";
+            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string json = await File.ReadAllTextAsync(path);
+            if (json != null)
+            {
+                acc = JsonConvert.DeserializeObject<AccountLogin>(json);
+            }
+            return acc;
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -85,6 +101,7 @@ namespace TMTTimeKeeper
 
         private void button2_Click(object sender, EventArgs e)
         {
+            
             Employee page2 = new Employee();
             nav(page2, content);
             actNav(button2);
@@ -92,7 +109,7 @@ namespace TMTTimeKeeper
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Page3 page3 = new Page3();
+            DataLogEnroll page3 = new DataLogEnroll();
             nav(page3, content);
             actNav(button3);
         }
@@ -115,9 +132,9 @@ namespace TMTTimeKeeper
             stateNav = button;
         }
 
-       
 
-     
+
+
 
         private void lblLogout_Click(object sender, EventArgs e)
         {

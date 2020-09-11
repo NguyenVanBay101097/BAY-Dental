@@ -7,7 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TMTTimeKeeper.Info;
 using TMTTimeKeeper.Models;
+using TMTTimeKeeper.Utilities;
 
 namespace TMTTimeKeeper.Services
 {
@@ -60,6 +62,19 @@ namespace TMTTimeKeeper.Services
             List<EmployeeSync> listEmp = new List<EmployeeSync>();
             var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
             return res;
+        }
+
+        public async Task<UserInfo> GetAdmin(ZkemClient objZkeeper, int machineNumber)
+        {
+            UserInfo admin = new UserInfo();
+            int MachineNumber = 1, Manipulation = 0, Number = 0, Params1 = 0, Params2 = 0, Params3 = 0;
+            string Admin = string.Empty, User = string.Empty, Time = string.Empty;
+            bool super = objZkeeper.SSR_GetSuperLogData(machineNumber, out Number, out Admin, out User, out Manipulation, out Time, out Params1, out Params2, out Params3);
+            if (super)
+            {
+
+            }
+            return admin;
         }
     }
 }
