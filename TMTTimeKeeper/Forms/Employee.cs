@@ -58,7 +58,7 @@ namespace TMTTimeKeeper
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
-                        StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy!!", true);
+                        StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
                     }
                     else
                     {
