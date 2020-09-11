@@ -309,5 +309,12 @@ namespace TMTTimeKeeper
             }
         }
 
+        private void checkEnter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnLogin.PerformClick();
+            }
+        }
     }
 }
