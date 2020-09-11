@@ -71,6 +71,9 @@ namespace TMTTimeKeeper
             }
             else
             {
+                // Set Authorization
+                HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
+
                 stateNav = button1;
                 nav(timekeeper, content);
 

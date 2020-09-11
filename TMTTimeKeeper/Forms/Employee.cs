@@ -38,11 +38,9 @@ namespace TMTTimeKeeper
 
         private void Page2_Load(object sender, EventArgs e)
         {
-
             dataGridView1.DataSource = employeeObj.LoadDataEmployee();
             SetHeaderText();
             MyUniversalStatic.ChangeGridProperties(dataGridView1);
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -73,10 +71,6 @@ namespace TMTTimeKeeper
                 }
             }
         }
-
-
-
-
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -130,7 +124,6 @@ namespace TMTTimeKeeper
             if (dataGridView1.Controls.Count > 2)
             { dataGridView1.Controls.RemoveAt(2); }
 
-
             dataGridView1.DataSource = null;
             dataGridView1.Controls.Clear();
             dataGridView1.Rows.Clear();
@@ -168,7 +161,6 @@ namespace TMTTimeKeeper
                     if (timeKeeper == null)
                         StatusBarService.ShowStatusBar(lblStatus, "Chưa kết nối máy chấm công !!", false);
 
-
                     List<EmployeeSync> listEmp = new List<EmployeeSync>();
                     List<UserInfo> listEmpSync = new List<UserInfo>();
                     var res = await employeeObj.GetEmployeePC();
@@ -185,11 +177,8 @@ namespace TMTTimeKeeper
                             var rs = await employeeObj.CreateEmployee(item);
                             listSave.Add(rs);
                         }
-                           
-
                     }
                    
-
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
                     {
@@ -233,7 +222,5 @@ namespace TMTTimeKeeper
                 }
             }
         }
-
-
     }
 }
