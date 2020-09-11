@@ -99,8 +99,15 @@ namespace TMTTimeKeeper
 
         private void button3_Click(object sender, EventArgs e)
         {
-            nav(page3, content);
-            actNav(button3);
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Thiết bị chưa được kết nối", false);
+            }
+            else
+            {
+                nav(page3, content);
+                actNav(button3);
+            }
         }
 
         public void nav(Form form, Panel panel)
