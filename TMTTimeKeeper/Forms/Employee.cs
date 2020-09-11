@@ -33,7 +33,7 @@ namespace TMTTimeKeeper
         public Employee()
         {
             InitializeComponent();
-            ShowStatusBar(string.Empty, true);
+            StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
         }
 
         private void Page2_Load(object sender, EventArgs e)
@@ -52,13 +52,13 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    ShowStatusBar(string.Empty, true);
+                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
                     ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper,DataConnect.machineID);
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
-                        ShowStatusBar(lstFingerPrintTemplates.Count + " records found !!", true);
+                        StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy!!", true);
                     }
                     else
                     {
@@ -83,7 +83,7 @@ namespace TMTTimeKeeper
             {
                 case UniversalStatic.acx_Disconnect:
                     {
-                        ShowStatusBar("The device is switched off", true);
+                        StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã bị tắt", true);
                         break;
                     }
 
@@ -100,32 +100,14 @@ namespace TMTTimeKeeper
                 isDeviceConnected = value;
                 if (isDeviceConnected)
                 {
-                    ShowStatusBar("The device is connected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã kết nối !!", true);
                 }
                 else
                 {
-                    ShowStatusBar("The device is disconnected !!", true);
+                    StatusBarService.ShowStatusBar(lblStatus, "Thiết bị đã ngắt kết nối !!", true);
                     objZkeeper.Disconnect();
                 }
             }
-        }
-
-        public void ShowStatusBar(string message, bool type)
-        {
-            if (message.Trim() == string.Empty)
-            {
-                lblStatus.Visible = false;
-                return;
-            }
-
-            lblStatus.Visible = true;
-            lblStatus.Text = message;
-            lblStatus.ForeColor = Color.White;
-
-            if (type)
-                lblStatus.BackColor = Color.FromArgb(79, 208, 154);
-            else
-                lblStatus.BackColor = Color.Tomato;
         }
 
         private void BindToGridView(object list)
@@ -171,14 +153,14 @@ namespace TMTTimeKeeper
             {
                 try
                 {
-                    ShowStatusBar(string.Empty, true);
+                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
                     var account = accountLoginObj.getAccount();
                     if (account == null)
-                        MessageBox.Show("lỗi đăng nhập");
+                        StatusBarService.ShowStatusBar(lblStatus, "Lỗi đăng nhập !!", false);
 
                     var timeKeeper = timeKeeperObj.getTimekeeper();
                     if (timeKeeper == null)
-                        MessageBox.Show("chưa kết nối máy chấm công");
+                        StatusBarService.ShowStatusBar(lblStatus, "Chưa kết nối máy chấm công !!", false);
 
 
                     List<EmployeeSync> listEmp = new List<EmployeeSync>();                   
@@ -216,7 +198,7 @@ namespace TMTTimeKeeper
                         }
                         else
                         {
-                            MessageBox.Show("Result Not Stored in the Device");
+                            StatusBarService.ShowStatusBar(lblStatus, "Kết quả không được lưu trữ trong thiết bị", false);
                         }
                     }
                     if (listSave.Count() > 0)
@@ -225,7 +207,7 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, false);
                 }
             }
         }

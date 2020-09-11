@@ -88,7 +88,7 @@ namespace TMTTimeKeeper
         {
             if (DataConnect.ip == null || DataConnect.port == null)
             {
-                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Thiết bị chưa được kết nối", false);
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace TMTTimeKeeper
         {
             if (DataConnect.ip == null || DataConnect.port == null)
             {
-                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Thiết bị chưa được kết nối", false);
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
             }
             else
             {
