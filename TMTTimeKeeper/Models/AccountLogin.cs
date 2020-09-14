@@ -7,6 +7,8 @@ namespace TMTTimeKeeper.Models
 {
     public class AccountLogin
     {
+        public string Id { get; set; }
+
         [JsonProperty("Name")]
         public string Name { get; set; }
 

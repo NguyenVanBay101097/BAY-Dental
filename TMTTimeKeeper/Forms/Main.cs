@@ -34,9 +34,9 @@ namespace TMTTimeKeeper
             InitializeComponent();
         }
 
-        private async void Main_Load(object sender, EventArgs e)
+        private void Main_Load(object sender, EventArgs e)
         {
-            this.Shown += Form1_Shown;
+            this.Shown += Form1_ShownAsync;
         }
 
         public async Task<AccountLogin> GetAccount()
@@ -52,8 +52,11 @@ namespace TMTTimeKeeper
             return acc;
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        private async void Form1_ShownAsync(object sender, EventArgs e)
         {
+            //// Update port # in the following line.
+          
+
             account = accountloginObj.getAccount();
             if (account == null)
             {
@@ -80,14 +83,21 @@ namespace TMTTimeKeeper
             }
             else
             {
-                // Update port # in the following line.
-                HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                //HttpClientConfig.client.BaseAddress = new Uri($"https://{account.CompanyName}.tdental.vn");
+                if (account.CompanyName == "localhost")
+                {
+                    HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+                }
+                else
+                {
+                    HttpClientConfig.client.BaseAddress = new Uri($"https://{account.CompanyName}.tdental.vn");
+                }
                 HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
                 HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
                 // Set Authorization
                 HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
+                account = await accountloginObj.RefreshAccesstokenAsync(account);
 
                 stateNav = button1;
                 nav(timekeeper, content);
@@ -152,7 +162,7 @@ namespace TMTTimeKeeper
             string fileName = "AccountLogin.json";
             string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
             File.WriteAllText(path, String.Empty);
-            Form1_Shown(sender, e);
+            Form1_ShownAsync(sender, e);
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -167,6 +177,8 @@ namespace TMTTimeKeeper
                 actNav(button5);
             }
         }
+
+        
     }
 }
 

@@ -285,7 +285,7 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
-        private async Task<UserRefreshToken> GenerateRefreshToken(ApplicationUser user)
+        public async Task<UserRefreshToken> GenerateRefreshToken(ApplicationUser user)
         {
             // Create the refresh token
             var refreshToken = new UserRefreshToken()

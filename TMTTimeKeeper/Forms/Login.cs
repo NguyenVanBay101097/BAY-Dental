@@ -161,6 +161,21 @@ namespace TMTTimeKeeper
                         rememberMe = chkRememberMe.Checked
                     };
 
+                    // Update port # in the following line.
+                    if(tbxCompanyName.Text == "localhost")
+                    {
+                        HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+                    }
+                    else
+                    {
+                        HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
+                    }
+
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+                    // Set Authorization
+
                     var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
                     if (response.IsSuccessStatusCode)
@@ -179,6 +194,7 @@ namespace TMTTimeKeeper
                                 ///save account login
 
                                 var account = new AccountLogin();
+                                account.Id = loginResponse.user.id;
                                 account.Name = loginResponse.user.name;
                                 account.UserName = loginResponse.user.userName;
                                 account.CompanyId = loginResponse.user.companyId;
@@ -193,13 +209,7 @@ namespace TMTTimeKeeper
                             {
                                 AccountLoginTemp.name = loginResponse.user.name;
                             }
-                            // Update port # in the following line.
-                            HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                            //HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
-                            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-                            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                                new MediaTypeWithQualityHeaderValue("application/json"));
-                            // Set Authorization
+                          
                             HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
                             #region 'Demo Get employees'
