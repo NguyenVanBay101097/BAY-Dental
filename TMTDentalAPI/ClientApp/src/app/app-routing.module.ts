@@ -184,8 +184,13 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'programs',
+    path: 'coupon-programs',
     loadChildren: () => import('./sale-coupon-promotion/sale-coupon-promotion.module').then(m => m.SaleCouponPromotionModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'promotion-programs',
+    loadChildren: () => import('./promotion-programs/promotion-programs.module').then(m => m.PromotionProgramsModule),
     canActivate: [AuthGuard]
   },
   {
