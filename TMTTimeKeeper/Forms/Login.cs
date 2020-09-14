@@ -137,7 +137,7 @@ namespace TMTTimeKeeper
         {
             if (tbxCompanyName.Text == string.Empty)
             {
-                ShowStatusBar("Tên chi nhánh đang rỗng", false);
+                ShowStatusBar("Địa chỉ phòng khám đang rỗng", false);
             }
             else if (tbxUsername.Text == string.Empty)
             {
@@ -167,21 +167,6 @@ namespace TMTTimeKeeper
                         password = tbxPassword.Text,
                         rememberMe = chkRememberMe.Checked
                     };
-
-                    // Update port # in the following line.
-                    if(tbxCompanyName.Text == "localhost")
-                    {
-                        HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                    }
-                    else
-                    {
-                        HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
-                    }
-
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
-                    // Set Authorization
 
                     var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
