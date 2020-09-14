@@ -1,10 +1,1 @@
-{
-  "Id": "487ecc78-4da4-49a1-b235-ddabe95664b1",
-  "Name": "Huynh Viet Thuong",
-  "UserName": "huynhvietthuong",
-  "AccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI0ODdlY2M3OC00ZGE0LTQ5YTEtYjIzNS1kZGFiZTk1NjY0YjEiLCJ1bmlxdWVfbmFtZSI6Imh1eW5odmlldHRodW9uZyIsImNvbXBhbnlfaWQiOiJjMWQ0MTQ2Mi00OTdmLTQ4YzMtNmIwYS0wOGQ3YmZmNzhkMTQiLCJ1c2VyX3Jvb3QiOiJUcnVlIiwibmJmIjoxNjAwMDU5MTUwLCJleHAiOjE2MDA2NjM5NTAsImlhdCI6MTYwMDA1OTE1MH0.GU1FsSrNxFu4Wq_UUUs2ZSo4hYs5nPIjOpGTYCV6JIU",
-  "RefeshToken": "wi5YvffdSiYJSnU/ZuAJLPOWhA0/37cVH6QiVt63/H0=",
-  "Email": "abc@gmail.com",
-  "CompanyId": "c1d41462-497f-48c3-6b0a-08d7bff78d14",
-  "CompanyName": "abc"
-}
+{"Id":"487ecc78-4da4-49a1-b235-ddabe95664b1","Name":"Huynh Viet Thuong","UserName":"huynhvietthuong","AccessToken":null,"RefeshToken":null,"Email":"abc@gmail.com","CompanyId":"c1d41462-497f-48c3-6b0a-08d7bff78d14","CompanyName":"abc"}
