@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.WebHoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMTTimeKeeper", "TMTTimeKeeper\TMTTimeKeeper.csproj", "{67A19E61-1BB5-4B14-8956-81BD4388BDDA}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupDemo", "SetupDemo\SetupDemo.vdproj", "{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,10 +121,6 @@ Global
 		{67A19E61-1BB5-4B14-8956-81BD4388BDDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67A19E61-1BB5-4B14-8956-81BD4388BDDA}.Release|x86.ActiveCfg = Release|x86
 		{67A19E61-1BB5-4B14-8956-81BD4388BDDA}.Release|x86.Build.0 = Release|x86
-		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Debug|Any CPU.ActiveCfg = Debug
-		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Debug|x86.ActiveCfg = Debug
-		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Release|Any CPU.ActiveCfg = Release
-		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
