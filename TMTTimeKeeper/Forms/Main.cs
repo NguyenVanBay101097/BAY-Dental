@@ -36,15 +36,6 @@ namespace TMTTimeKeeper
 
         private async void Main_Load(object sender, EventArgs e)
         {
-            // Update port # in the following line.
-            HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-            //client.BaseAddress = new Uri($"https://{chinhanh}.tdental.vn");
-            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-            var acc = await GetAccount();
-            if (acc != null && acc.AccessToken != null)
-                HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", acc.AccessToken);
             this.Shown += Form1_Shown;
         }
 
@@ -89,6 +80,12 @@ namespace TMTTimeKeeper
             }
             else
             {
+                // Update port # in the following line.
+                HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+                //HttpClientConfig.client.BaseAddress = new Uri($"https://{account.CompanyName}.tdental.vn");
+                HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+                HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
                 // Set Authorization
                 HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
 
