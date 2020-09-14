@@ -154,6 +154,13 @@ namespace TMTTimeKeeper
                     this.Cursor = Cursors.WaitCursor;
                     ShowStatusBar(string.Empty, true);
 
+                    // Update port # in the following line.
+                    HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
+                    //HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
                     LoginInfo loginInfo = new LoginInfo
                     {
                         userName = tbxUsername.Text,
@@ -193,12 +200,7 @@ namespace TMTTimeKeeper
                             {
                                 AccountLoginTemp.name = loginResponse.user.name;
                             }
-                            // Update port # in the following line.
-                            HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                            //HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
-                            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-                            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                                new MediaTypeWithQualityHeaderValue("application/json"));
+
                             // Set Authorization
                             HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
