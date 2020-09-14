@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
 
         //api get phan trang loai thu , chi
         [HttpGet]
+        [CheckAccess(Actions = "Account.LoaiThuChi.Read")]
         public async Task<IActionResult> GetLoaiThuChi([FromQuery]LoaiThuChiPaged val)
         {
             var res = await _loaiThuChiService.GetThuChiPagedResultAsync(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Account.LoaiThuChi.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _loaiThuChiService.GetByIdThuChi(id);
@@ -52,6 +55,7 @@ namespace TMTDentalAPI.Controllers
 
         //api create
         [HttpPost]
+        [CheckAccess(Actions = "Account.LoaiThuChi.Create")]
         public async Task<IActionResult> Create(LoaiThuChiSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -66,6 +70,7 @@ namespace TMTDentalAPI.Controllers
 
         //api update
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Account.LoaiThuChi.Update")]
         public async Task<IActionResult> Update(Guid id, LoaiThuChiSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -79,6 +84,7 @@ namespace TMTDentalAPI.Controllers
 
         //api xóa
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Account.LoaiThuChi.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {         
             await _loaiThuChiService.RemoveLoaiThuChi(id);

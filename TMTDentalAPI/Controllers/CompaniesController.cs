@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SaasKit.Multitenancy;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -56,6 +57,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "System.Company.Read")]
         public async Task<IActionResult> Get([FromQuery] CompanyPaged val)
         {
             var res = await _companyService.GetPagedResultAsync(val);
@@ -63,6 +65,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "System.Company.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var company = await _companyService.SearchQuery(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
@@ -79,6 +82,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "System.Company.Create")]
         public async Task<IActionResult> Create(CompanyDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -137,6 +141,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "System.Company.Update")]
         public async Task<IActionResult> Update(Guid id, CompanyDisplay val)
         {
             if (!ModelState.IsValid)
@@ -162,6 +167,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "System.Company.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var company = await _companyService.GetByIdAsync(id);

@@ -25,6 +25,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Financial")]
         public async Task<IActionResult> GetProfitAndLossReport()
         {
             var res =await _accountFinancialReportService.GetProfitAndLossReport();

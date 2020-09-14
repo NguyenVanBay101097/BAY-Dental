@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Mapping;
 using Umbraco.Web.Models;
 using Umbraco.Web.Models.ContentEditing;
@@ -32,6 +33,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Salary.ResourceCalendar.Read")]
         public async Task<IActionResult> Get([FromQuery] ResourceCalendarPaged val)
         {
             if (val == null && !ModelState.IsValid)
@@ -42,6 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Salary.ResourceCalendar.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _resourceCalendarService.GetDisplayAsync(id);
@@ -49,6 +52,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Salary.ResourceCalendar.Create")]
         public async Task<IActionResult> Create(ResourceCalendarSave val)
         {
             if (val == null)
@@ -64,6 +68,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Salary.ResourceCalendar.Update")]
         public async Task<IActionResult> Update(Guid id, ResourceCalendarSave val)
         {
             var model = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).FirstOrDefaultAsync();
@@ -78,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Salary.ResourceCalendar.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var resourceCalendar = await _resourceCalendarService.SearchQuery(x => x.Id == id).Include(x => x.Attendances).Include(x=>x.Leaves).ToListAsync();

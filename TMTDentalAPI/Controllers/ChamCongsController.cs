@@ -15,6 +15,7 @@ using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -39,6 +40,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Salary.ChamCong.Read")]
         public async Task<IActionResult> GetPaged([FromQuery] ChamCongPaged val)
         {
             var res = await _chamCongService.GetPaged(val);
@@ -46,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Salary.ChamCong.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var chamcong = await _mapper.ProjectTo<ChamCongDisplay>(_chamCongService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -68,6 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Salary.ChamCong.Read")]
         public async Task<IActionResult> GetLastChamCong([FromQuery] employeePaged val)
         {
             if (!ModelState.IsValid || val == null)
@@ -79,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Salary.ChamCong.Create")]
         public async Task<IActionResult> Create(ChamCongSave val)
         {
             var chamcong = _mapper.Map<ChamCong>(val);
@@ -91,6 +96,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Salary.ChamCong.Update")]
         public async Task<IActionResult> Update(Guid id, ChamCongSave val)
         {
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -106,6 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Salary.ChamCong.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var chamcong = await _chamCongService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -124,6 +131,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.ChamCong.Create")]
         public async Task<IActionResult> TimeKeepingForAll(TimeKeepingForAll val)
         {
             _unitOfWork.BeginTransaction();

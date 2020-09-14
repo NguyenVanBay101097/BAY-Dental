@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> Get([FromQuery] EmployeePaged val)
         {
             var result = await _employeeService.GetPagedResultAsync(val);
@@ -35,6 +37,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _mapper.ProjectTo<EmployeeDisplay>(_employeeService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -44,6 +47,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Catalog.Employee.Create")]
         public async Task<IActionResult> Create(EmployeeDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -60,6 +64,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.Employee.Update")]
         public async Task<IActionResult> Update(Guid id, EmployeeDisplay val)
         {
             if (!ModelState.IsValid)
@@ -83,6 +88,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.Employee.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var employee = await _employeeService.GetByIdAsync(id);
@@ -94,6 +100,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("Autocomplete")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> Autocomplete(EmployeePaged val)
         {
             var result = await _employeeService.GetAutocompleteAsync(val);
@@ -101,6 +108,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> SearchRead(EmployeePaged val)
         {
             var result = await _employeeService.GetPagedResultAsync(val);

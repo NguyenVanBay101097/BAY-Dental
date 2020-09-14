@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -36,14 +37,14 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
         }
 
-        [HttpGet]
+        [HttpGet][CheckAccess(Actions = "Catalog.ProductCategory.Read")]
         public async Task<IActionResult> Get([FromQuery] ProductCategoryPaged val)
         {
             var res = await _productCategoryService.GetPagedResultAsync(val);
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.ProductCategory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var category = await _productCategoryService.GetCategoryForDisplay(id);
@@ -54,7 +55,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<ProductCategoryDisplay>(category));
         }
 
-        [HttpPost]
+        [HttpPost][CheckAccess(Actions = "Catalog.ProductCategory.Create")]
         public async Task<IActionResult> Create(ProductCategoryDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -69,7 +70,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(val);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.ProductCategory.Update")]
         public async Task<IActionResult> Update(Guid id, ProductCategoryDisplay val)
         {
             if (!ModelState.IsValid)
@@ -86,7 +87,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.ProductCategory.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var category = await _productCategoryService.GetByIdAsync(id);
@@ -97,13 +98,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("Autocomplete")]
+        [HttpPost("Autocomplete")][CheckAccess(Actions = "Catalog.ProductCategory.Read")]
         public async Task<IActionResult> Autocomplete(ProductCategoryPaged val)
         {
             var res = await _productCategoryService.GetAutocompleteAsync(val);
             return Ok(res);
         }
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.ProductCategory.Create")]
         public async Task<IActionResult> ImportExcel(ProductCategoryImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);

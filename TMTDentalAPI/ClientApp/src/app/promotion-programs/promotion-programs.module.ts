@@ -8,6 +8,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { PromotionProgramCreateUpdateComponent } from './promotion-program-create-update/promotion-program-create-update.component';
 import { PromotionProgramRuleCuDialogComponent } from './promotion-program-rule-cu-dialog/promotion-program-rule-cu-dialog.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [PromotionProgramListComponent, PromotionProgramCreateUpdateComponent, PromotionProgramRuleCuDialogComponent],
@@ -17,6 +18,7 @@ import { PromotionProgramRuleCuDialogComponent } from './promotion-program-rule-
     ReactiveFormsModule,
     FormsModule,
     MyCustomKendoModule,
+    NgbModule
   ],
   providers: [
     PromotionProgramService

@@ -77,9 +77,9 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Khuyến mãi',
       icon: 'fas fa-gift',
-      groups: 'sale.group_sale_coupon_promotion',
+      // groups: 'sale.group_sale_coupon_promotion',
       children: [
-        { name: 'Chương trình coupon', link: '/coupon-programs' },
+        // { name: 'Chương trình coupon', link: '/coupon-programs' },
         { name: 'Chương trình khuyến mãi', link: '/promotion-programs' },
       ],
     },

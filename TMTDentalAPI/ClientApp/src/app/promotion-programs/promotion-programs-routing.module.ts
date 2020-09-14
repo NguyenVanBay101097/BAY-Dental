@@ -4,7 +4,14 @@ import { PromotionProgramListComponent } from './promotion-program-list/promotio
 import { PromotionProgramCreateUpdateComponent } from './promotion-program-create-update/promotion-program-create-update.component';
 
 const routes: Routes = [
-
+  {
+    path: '',
+    component: PromotionProgramListComponent,
+  },
+  {
+    path: 'form',
+    component: PromotionProgramCreateUpdateComponent,
+  }
 ];
 
 @NgModule({
