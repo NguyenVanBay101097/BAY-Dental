@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NPOI.POIFS.FileSystem;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -30,6 +31,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
         [HttpGet]
+        [CheckAccess(Actions = "Salary.WorkEntryType.Read")]
         public async Task<IActionResult> Get([FromQuery] WorkEntryTypePaged val)
         {
             var res = await _workEntryTypeService.GetPaged(val);
@@ -37,6 +39,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Salary.WorkEntryType.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var wet = await _workEntryTypeService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -47,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Salary.WorkEntryType.Create")]
         public async Task<IActionResult> Create(WorkEntryTypeSave val)
         {
             var wet = _mapper.Map<WorkEntryType>(val);
@@ -55,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Salary.WorkEntryType.Update")]
         public async Task<IActionResult> Update(Guid id, WorkEntryTypeSave val)
         {
             var entity = await _workEntryTypeService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -68,6 +73,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Salary.WorkEntryType.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var entity = await _workEntryTypeService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();

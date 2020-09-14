@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.Record.Chart;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -30,6 +31,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Salary.HrPayrollStructure.Read")]
         public async Task<IActionResult> Get([FromQuery] HrPayrollStructurePaged val)
         {
             var res = await _payrollStructureService.GetPaged(val);
@@ -37,6 +39,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayrollStructure.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _payrollStructureService.GetHrPayrollStructureDisplay(id);
@@ -46,6 +49,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Salary.HrPayrollStructure.Create")]
         public async Task<IActionResult> Create(HrPayrollStructureSave val)
         {
             if (val.RegularPay)
@@ -101,6 +105,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayrollStructure.Update")]
         public async Task<IActionResult> Update(Guid id, HrPayrollStructureSave val)
         {
 
@@ -125,6 +130,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Salary.HrPayrollStructure.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _payrollStructureService.Remove(id);

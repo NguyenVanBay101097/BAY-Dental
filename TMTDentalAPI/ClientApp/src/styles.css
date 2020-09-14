@@ -790,7 +790,9 @@ html .o_web_client {
  outline: none;
 }
 
-
+.k-notification-group{
+  z-index: 1051;
+}
 
 
 

@@ -173,6 +173,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
         public async Task<IActionResult> SearchReadByDate(AppointmentSearchByDate val)
         {
             var res = await _appointmentService.SearchReadByDate(val);
