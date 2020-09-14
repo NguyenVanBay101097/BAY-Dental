@@ -92,7 +92,7 @@ export class SaleCouponProgramListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa chương trình coupon';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
@@ -108,7 +108,7 @@ export class SaleCouponProgramListComponent implements OnInit {
       return false;
     }
 
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa chương trình coupon';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
@@ -121,7 +121,7 @@ export class SaleCouponProgramListComponent implements OnInit {
 
   actionArchive() {
     if (this.selectedIds.length) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
       modalRef.componentInstance.title = 'Đóng chương trình';
       modalRef.componentInstance.body = 'Bạn chắc chắn muốn đóng chương trình?';
       modalRef.result.then(() => {
