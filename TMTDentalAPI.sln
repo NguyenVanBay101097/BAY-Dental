@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMTTimeKeeper", "TMTTimeKee
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupDemo", "SetupDemo\SetupDemo.vdproj", "{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}"
 EndProject
+Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "Setup", "..\..\Desktop\Pro\Setup\Setup.aiproj", "{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
@@ -177,6 +179,12 @@ Global
 		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Debug|x86.ActiveCfg = Debug
 		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Release|Any CPU.ActiveCfg = Release
 		{5BFCCAEA-FA53-422A-8311-9CD0FD67CAE4}.Release|x86.ActiveCfg = Release
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.All|Any CPU.ActiveCfg = DefaultBuild
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.All|x86.ActiveCfg = DefaultBuild
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.Debug|Any CPU.ActiveCfg = DefaultBuild
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.Debug|x86.ActiveCfg = DefaultBuild
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.Release|Any CPU.ActiveCfg = DefaultBuild
+		{41CD7364-D2A2-4908-B822-50A7E1D7D1FB}.Release|x86.ActiveCfg = DefaultBuild
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

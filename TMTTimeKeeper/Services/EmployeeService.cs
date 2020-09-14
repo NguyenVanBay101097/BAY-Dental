@@ -24,7 +24,7 @@ namespace TMTTimeKeeper.Services
         {
             var employees = new List<EmployeeSync>();
             string fileName = "Employees.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             string json = File.ReadAllText(path);
             if (string.IsNullOrEmpty(json))
                 return employees;
@@ -48,7 +48,7 @@ namespace TMTTimeKeeper.Services
         public void AddEmployee(IList<EmployeeSync> vals)
         {
             string fileName = "Employees.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             var list = getEmployee();
             if (list.Any())
             {

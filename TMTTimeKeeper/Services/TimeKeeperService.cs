@@ -13,7 +13,7 @@ namespace TMTTimeKeeper.Services
         public void AddTimekeeper(TimeKeeper val)
         {
             string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(val));
         }
 
@@ -21,7 +21,7 @@ namespace TMTTimeKeeper.Services
         {
             var timekeeper = new TimeKeeper();
             string fileName = "TimeKeeper.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             using (StreamReader sr = File.OpenText(path))
             {
                 timekeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
@@ -31,21 +31,21 @@ namespace TMTTimeKeeper.Services
 
         public async Task<T> GetModelByJson<T>(string fileName)
         {
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             var pathJson = await File.ReadAllTextAsync(path);
             return JsonConvert.DeserializeObject<T>(pathJson);
         }
 
         public async Task<IList<T>> GetListModelByJson<T>(string fileName)
         {
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             var pathJson = await File.ReadAllTextAsync(path);
             return JsonConvert.DeserializeObject<IList<T>>(pathJson);
         }
 
         public async Task SetJson<T>(string fileName, T val)
         {
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             if (val != null)
                 await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
             else
@@ -54,7 +54,7 @@ namespace TMTTimeKeeper.Services
 
         public async Task SetListJson<T>(string fileName, IEnumerable<T> val)
         {
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             if (val != null)
                await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
             else

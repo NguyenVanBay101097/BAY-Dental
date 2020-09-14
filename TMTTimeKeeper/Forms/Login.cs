@@ -154,6 +154,13 @@ namespace TMTTimeKeeper
                     this.Cursor = Cursors.WaitCursor;
                     ShowStatusBar(string.Empty, true);
 
+                    // Update port # in the following line.
+                    if (HttpClientConfig.client.BaseAddress == null)
+                        HttpClientConfig.client.BaseAddress = new Uri(tbxCompanyName.Text);
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+
                     LoginInfo loginInfo = new LoginInfo
                     {
                         userName = tbxUsername.Text,
@@ -209,7 +216,8 @@ namespace TMTTimeKeeper
                             {
                                 AccountLoginTemp.name = loginResponse.user.name;
                             }
-                          
+
+                            // Set Authorization
                             HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
 
                             #region 'Demo Get employees'

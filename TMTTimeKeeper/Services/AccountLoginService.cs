@@ -15,7 +15,7 @@ namespace TMTTimeKeeper.Services
         {
             var account = new AccountLogin();
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             using (StreamReader sr = File.OpenText(path))
             {
                 account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
@@ -31,7 +31,7 @@ namespace TMTTimeKeeper.Services
         public void AddAccount(AccountLogin account)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(account));
         }
 
