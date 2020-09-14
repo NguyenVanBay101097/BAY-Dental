@@ -81,8 +81,8 @@ namespace TMTTimeKeeper
             else
             {
                 // Update port # in the following line.
-                HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                //HttpClientConfig.client.BaseAddress = new Uri($"https://{account.CompanyName}.tdental.vn");
+                if (HttpClientConfig.client.BaseAddress == null)
+                    HttpClientConfig.client.BaseAddress = new Uri(account.CompanyName);
                 HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
                 HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));

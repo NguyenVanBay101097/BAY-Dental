@@ -27,7 +27,7 @@ namespace TMTTimeKeeper.Services
             try
             {
                 string fileName = "DatalogEnroll.json";
-                string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+                string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
                 File.WriteAllText(path, JsonConvert.SerializeObject(listLog));
             }
             catch (Exception e)
