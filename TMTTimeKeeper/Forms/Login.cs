@@ -247,7 +247,8 @@ namespace TMTTimeKeeper
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusBar(ex.Message, false);
+                    //ShowStatusBar(ex.Message, false);
+                    MessageBox.Show(System.Windows.Forms.Application.UserAppDataPath);
                 }
             }
         }

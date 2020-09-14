@@ -155,7 +155,9 @@ namespace TMTTimeKeeper
         private void lblLogout_Click(object sender, EventArgs e)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             File.WriteAllText(path, String.Empty);
             Form1_ShownAsync(sender, e);
         }

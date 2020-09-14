@@ -28,6 +28,8 @@ namespace TMTTimeKeeper.Services
             {
                 string fileName = "DatalogEnroll.json";
                 string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+                if (!File.Exists(path))
+                    File.Create(path);
                 File.WriteAllText(path, JsonConvert.SerializeObject(listLog));
             }
             catch (Exception e)
