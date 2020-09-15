@@ -72,7 +72,8 @@ namespace Demo
             }
             else
             {
-                //DisplayListOutput("No records found");
+                BindToGridView(lstFingerPrintTemplates);
+                StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
             }
         }
 
