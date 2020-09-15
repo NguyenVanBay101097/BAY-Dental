@@ -25,7 +25,6 @@ namespace TMTTimeKeeper.Forms
             InitializeComponent();
         }
 
-
         private void DataLogEnrollError_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = new Collection<MachineInfo>();
@@ -92,7 +91,6 @@ namespace TMTTimeKeeper.Forms
                         StatusBarService.ShowStatusBar(lblStatus, "Máy chấm công đã bị tắt !!", true);
                         break;
                     }
-
                 default:
                     break;
             }
@@ -130,7 +128,6 @@ namespace TMTTimeKeeper.Forms
             if (dataGridView1.Controls.Count > 2)
             { dataGridView1.Controls.RemoveAt(2); }
 
-
             dataGridView1.DataSource = null;
             dataGridView1.Controls.Clear();
             dataGridView1.Rows.Clear();
@@ -143,7 +140,6 @@ namespace TMTTimeKeeper.Forms
             dataGridView1.Columns[1].HeaderText = "ID TK";
             dataGridView1.Columns[2].HeaderText = "Ngày Giờ";
             dataGridView1.Columns[3].HeaderText = "Ngày";
-           
         }
 
     }
