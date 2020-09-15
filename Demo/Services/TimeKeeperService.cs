@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using TMTTimeKeeper.Models;
+using Demo.Models;
 
-namespace TMTTimeKeeper.Services
+namespace Demo.Services
 {
     public class TimeKeeperService
     {
         public void AddTimekeeper(TimeKeeper val)
         {
             string fileName = "TimeKeeper.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);         
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             File.WriteAllText(path, JsonConvert.SerializeObject(val));
         }
 
@@ -29,36 +29,36 @@ namespace TMTTimeKeeper.Services
             return timekeeper;
         }
 
-        public async Task<T> GetModelByJson<T>(string fileName)
+        public T GetModelByJson<T>(string fileName)
         {
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            var pathJson = await File.ReadAllTextAsync(path);
+            var pathJson = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<T>(pathJson);
         }
 
-        public async Task<IList<T>> GetListModelByJson<T>(string fileName)
+        public IList<T> GetListModelByJson<T>(string fileName)
         {
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            var pathJson = await File.ReadAllTextAsync(path);
+            var pathJson = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<IList<T>>(pathJson);
         }
 
-        public async Task SetJson<T>(string fileName, T val)
+        public void SetJson<T>(string fileName, T val)
         {
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             if (val != null)
-                await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
+                File.WriteAllText(path, JsonConvert.SerializeObject(val));
             else
-                await File.WriteAllTextAsync(path, string.Empty);
+                File.WriteAllText(path, string.Empty);
         }
 
-        public async Task SetListJson<T>(string fileName, IEnumerable<T> val)
+        public void SetListJson<T>(string fileName, IEnumerable<T> val)
         {
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             if (val != null)
-               await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
+                File.WriteAllText(path, JsonConvert.SerializeObject(val));
             else
-               await File.WriteAllTextAsync(path, string.Empty);
+                File.WriteAllText(path, string.Empty);
         }
     }
 }
