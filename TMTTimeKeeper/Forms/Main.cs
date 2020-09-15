@@ -157,20 +157,6 @@ namespace TMTTimeKeeper
             Form1_ShownAsync(sender, e);
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (DataConnect.ip == null || DataConnect.port == null)
-            {
-                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
-            }
-            else
-            {
-                nav(dataLogEnrollError, content);
-                actNav(button5);
-            }
-        }
-
-
     }
 }
 
