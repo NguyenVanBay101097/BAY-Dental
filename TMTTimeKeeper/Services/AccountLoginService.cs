@@ -11,16 +11,20 @@ namespace TMTTimeKeeper.Services
 {
     public class AccountLoginService
     {
+        TimeKeeperService timeKeeperService = new TimeKeeperService();
         public AccountLogin getAccount()
         {
             var account = new AccountLogin();
             string fileName = "AccountLogin.json";
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            if (!File.Exists(path))
+                File.Create(path);
+
             using (StreamReader sr = File.OpenText(path))
             {
                 account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
-          
             }
+
             return account;
         }
 
@@ -32,6 +36,8 @@ namespace TMTTimeKeeper.Services
         {
             string fileName = "AccountLogin.json";
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             File.WriteAllText(path, JsonConvert.SerializeObject(account));
         }
 

@@ -46,7 +46,7 @@
             // 
             this.tbxCompanyName.Location = new System.Drawing.Point(146, 55);
             this.tbxCompanyName.Name = "tbxCompanyName";
-            this.tbxCompanyName.PlaceholderText = "Nhập tên chi nhánh";
+            this.tbxCompanyName.PlaceholderText = "Nhập địa chỉ phòng khám";
             this.tbxCompanyName.Size = new System.Drawing.Size(191, 23);
             this.tbxCompanyName.TabIndex = 0;
             this.tbxCompanyName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkEnter);
@@ -78,9 +78,9 @@
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label2.Location = new System.Drawing.Point(12, 58);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 15);
+            this.label2.Size = new System.Drawing.Size(116, 15);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Tên chi nhánh";
+            this.label2.Text = "Địa chỉ phòng khám";
             // 
             // label3
             // 
