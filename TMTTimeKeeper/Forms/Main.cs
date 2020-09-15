@@ -43,10 +43,7 @@ namespace TMTTimeKeeper
 
         private async void Form1_ShownAsync(object sender, EventArgs e)
         {
-            //// Update port # in the following line.
-
-
-            account = await accountloginObj.getAccountAsync();
+            account = accountloginObj.getAccount();
             if (account == null)
             {
                 Visible = false;
@@ -96,7 +93,6 @@ namespace TMTTimeKeeper
             actNav(button1);
         }
 
-
         private void button2_Click(object sender, EventArgs e)
         {
             if (DataConnect.ip == null || DataConnect.port == null)
@@ -120,6 +116,19 @@ namespace TMTTimeKeeper
             {
                 nav(dataLogEnroll, content);
                 actNav(button3);
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
+            }
+            else
+            {
+                nav(dataLogEnrollError, content);
+                actNav(button4);
             }
         }
 

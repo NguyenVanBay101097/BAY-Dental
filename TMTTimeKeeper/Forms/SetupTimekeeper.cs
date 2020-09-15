@@ -184,7 +184,6 @@ namespace TMTTimeKeeper
                         StatusBarService.ShowStatusBar(lblStatus, "The device is switched off", true);
                         break;
                     }
-
                 default:
                     break;
             }
@@ -224,6 +223,5 @@ namespace TMTTimeKeeper
             }
         }
 
-       
     }
 }

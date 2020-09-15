@@ -124,7 +124,6 @@ namespace TMTTimeKeeper.Services
                             lstFingerPrintTemplates.Add(fpInfo);
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -163,7 +162,6 @@ namespace TMTTimeKeeper.Services
                     break;
             }
         }
-
 
     }
 }
