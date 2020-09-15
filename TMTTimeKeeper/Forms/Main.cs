@@ -22,7 +22,6 @@ namespace TMTTimeKeeper
         private AccountLogin account = null;
 
         AccountLoginService accountloginObj = new AccountLoginService();
-
         Login loginForm = new Login();
         SetupTimekeeper timekeeper = new SetupTimekeeper();
         Employee employee = new Employee();
@@ -43,7 +42,7 @@ namespace TMTTimeKeeper
         {
             var acc = new AccountLogin();
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
+            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             string json = await File.ReadAllTextAsync(path);
             if (json != null)
             {
@@ -54,9 +53,6 @@ namespace TMTTimeKeeper
 
         private async void Form1_ShownAsync(object sender, EventArgs e)
         {
-            //// Update port # in the following line.
-          
-
             account = accountloginObj.getAccount();
             if (account == null)
             {

@@ -101,7 +101,6 @@ namespace TMTTimeKeeper
                         StatusBarService.ShowStatusBar(lblStatus, "Máy chấm công đã bị tắt !!", true);
                         break;
                     }
-
                 default:
                     break;
             }
@@ -138,7 +137,6 @@ namespace TMTTimeKeeper
         {
             if (dataGridView1.Controls.Count > 2)
             { dataGridView1.Controls.RemoveAt(2); }
-
 
             dataGridView1.DataSource = null;
             dataGridView1.Controls.Clear();

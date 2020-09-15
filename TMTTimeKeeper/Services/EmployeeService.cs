@@ -132,7 +132,6 @@ namespace TMTTimeKeeper.Services
                             lstFingerPrintTemplates.Add(fpInfo);
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -143,13 +142,9 @@ namespace TMTTimeKeeper.Services
             {                
                 MessageBox.Show("Chưa kết nối máy chấm công");
             }
-                
-          
 
             return lstFingerPrintTemplates;
         }
-
-        
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -170,7 +165,6 @@ namespace TMTTimeKeeper.Services
                     break;
             }
         }
-
 
     }
 }
