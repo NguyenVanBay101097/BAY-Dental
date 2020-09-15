@@ -43,7 +43,7 @@ namespace TMTTimeKeeper
 
         private async void Form1_ShownAsync(object sender, EventArgs e)
         {
-            account = accountloginObj.getAccount();
+            account =  accountloginObj.getAccount();
             if (account == null)
             {
                 Visible = false;
