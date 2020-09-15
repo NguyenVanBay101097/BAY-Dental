@@ -55,6 +55,7 @@
             this.dataGridView1.Size = new System.Drawing.Size(760, 300);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.Text = "dataGridView2";
+            
             // 
             // label1
             // 
@@ -80,7 +81,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Tải dữ liệu";
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.button1_ClickAsync);
             // 
             // lblStatus
             // 
@@ -107,7 +108,7 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // Page2
+            // Employee
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -119,7 +120,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "Page2";
+            this.Name = "Employee";
             this.Text = "Page2";
             this.Load += new System.EventHandler(this.Page2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

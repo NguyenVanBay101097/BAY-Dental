@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TMTTimeKeeper.Models;
 using TMTTimeKeeper.Services;
@@ -49,9 +50,9 @@ namespace TMTTimeKeeper
             };
         }
 
-        private void Page1_Load(object sender, EventArgs e)
+        private async void Page1_LoadAsync(object sender, EventArgs e)
         {
-            timekeeper = timekeeperObj.getTimekeeper();
+            timekeeper = await timekeeperObj.getTimekeeperAsync();
             if (timekeeper != null)
             {
                 tbxCompanyName.Text = timekeeper.CompanyName;

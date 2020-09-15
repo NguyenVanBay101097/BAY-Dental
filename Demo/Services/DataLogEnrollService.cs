@@ -17,7 +17,7 @@ namespace Demo.Services
     public class DataLogEnrollService
     {
         private EmployeeService empService = new EmployeeService();
-        private TimeKeeperService timeKeeperService = new TimeKeeperService();
+        private TimeKeeperService timekeeperObj = new TimeKeeperService();
         public Response SaveLogDataToJson(ICollection<MachineInfo> listLog)
         {
             if (listLog == null || listLog.Count() <= 0)
@@ -27,8 +27,7 @@ namespace Demo.Services
             try
             {
                 string fileName = "DatalogEnroll.json";
-                string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-                File.WriteAllText(path, JsonConvert.SerializeObject(listLog));
+                timekeeperObj.SetListJson<MachineInfo>(fileName, listLog);
             }
             catch (Exception e)
             {
@@ -55,7 +54,7 @@ namespace Demo.Services
             //Lấy lastUpdate
             string fileLastUpdate = "LastGetLogData.json";
             string fileEnrollData = "DataLogEnroll.json";
-            log =  timeKeeperService.GetModelByJson<LastUpdateLogData>(fileLastUpdate);
+            log = await timekeeperObj.GetModelByJson<LastUpdateLogData>(fileLastUpdate);
 
             ICollection<MachineInfo> lstEnrollData = new List<MachineInfo>();
 
@@ -81,11 +80,11 @@ namespace Demo.Services
             if (log != null && log.LastUpdate.HasValue)
             {
                 lstEnrollData = lstEnrollData.Where(x => DateTime.Parse(x.DateTimeRecord) >= log.LastUpdate.Value).ToList();
-                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
+                timekeeperObj.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
             else
             {
-                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
+                timekeeperObj.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
 
             return lstEnrollData;
@@ -93,7 +92,7 @@ namespace Demo.Services
 
         public async Task<Response> SyncLogData()
         {
-            IList<MachineInfo> listLogs = new List<MachineInfo>();
+            var listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
             Response res = new Response();
             var listChamCongSync = new List<ChamCongSync>();
@@ -102,9 +101,9 @@ namespace Demo.Services
             var url = "api/ChamCongs/SyncToTimeKeeper";
             string fileErrorEnroll = "DataLogEnrollErrors.json";
             string logEnroll = "DatalogEnroll.json";
-            listLogs =  timeKeeperService.GetListModelByJson<MachineInfo>(logEnroll);
+            listLogs = (await timekeeperObj.GetListModelByJson<MachineInfo>(logEnroll)).ToList();
             string account = "AccountLogin.json";
-            acc =  timeKeeperService.GetModelByJson<AccountLogin>(account);
+            acc = await timekeeperObj.GetModelByJson<AccountLogin>(account);
             if (acc != null)
             {
                 try
@@ -126,20 +125,19 @@ namespace Demo.Services
                         val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
                         listChamCongSync.Add(val);
                     }
-                    var request = await  HttpClientConfig.client.PostAsync(url, new StringContent(JsonConvert.SerializeObject(listChamCongSync)));
+                    var request = await HttpClientConfig.client.PostAsJsonAsync(url, listChamCongSync);
                     var content = await request.Content.ReadAsStringAsync();
                     var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
                     if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
                     {
-                         timeKeeperService.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
+                        timekeeperObj.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
                     }
                     //Xóa logFile
-                     timeKeeperService.SetJson<DataLogEnroll>(logEnroll, null);
+                    timekeeperObj.SetJson<DataLogEnroll>(logEnroll, null);
 
-                    //Ghi lại last update
-                    lastUpdate.Count += 1;
+                    //Ghi lại last update                  
                     lastUpdate.LastUpdate = DateTime.Now;
-                     timeKeeperService.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
+                    timekeeperObj.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
                 }
                 catch (Exception e)
                 {
@@ -154,7 +152,7 @@ namespace Demo.Services
         {
             EmployeeSync emp = new EmployeeSync();
             var fileEmp = "Employees.json";
-            var listEmp =  timeKeeperService.GetListModelByJson<EmployeeSync>(fileEmp);
+            var listEmp = await timekeeperObj.GetListModelByJson<EmployeeSync>(fileEmp);
             if (listEmp != null && listEmp.Any())
                 emp = listEmp.Where(x => x.IdKP == idKp).FirstOrDefault();
             else

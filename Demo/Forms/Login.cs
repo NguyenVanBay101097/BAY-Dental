@@ -167,27 +167,13 @@ namespace Demo
                         rememberMe = chkRememberMe.Checked
                     };
 
-                    // Update port # in the following line.
-                    //if (tbxCompanyName.Text == "localhost")
-                    //{
-                    //    HttpClientConfig.client.BaseAddress = new Uri("https://localhost:44377/");
-                    //}
-                    //else
-                    //{
-                    //    HttpClientConfig.client.BaseAddress = new Uri($"https://{tbxCompanyName.Text}.tdental.vn");
-                    //}
-
                     HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
                     HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/json"));
                     // Set Authorization
-
-                    var json = JsonConvert.SerializeObject(loginInfo);
-
-                    //var content = new StringContent(json);
-                    var requestContent = new StringContent(json, Encoding.UTF8, "application/x-www-form-urlencoded");
-
-                    var response = await HttpClientConfig.client.PostAsync("api/Account/Login", requestContent);
+                  
+                 
+                    var response = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Login", loginInfo);
 
                     if (response.IsSuccessStatusCode)
                     {

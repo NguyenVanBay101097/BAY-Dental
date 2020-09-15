@@ -307,5 +307,10 @@ namespace TMTTimeKeeper
                 btnLogin.PerformClick();
             }
         }
+
+        private void Login_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

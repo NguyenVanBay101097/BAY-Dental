@@ -216,7 +216,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Page1";
             this.Text = "Page1";
-            this.Load += new System.EventHandler(this.Page1_Load);
+            this.Load += new System.EventHandler(this.Page1_LoadAsync);
             this.ResumeLayout(false);
             this.PerformLayout();
 

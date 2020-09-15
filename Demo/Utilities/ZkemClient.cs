@@ -1483,7 +1483,7 @@ namespace Demo.Utilities
 
         public bool ReadTimeGLogData(int dwMachineNumber, string sTime, string eTime)
         {
-            throw new NotImplementedException();
+            return objCZKEM.ReadTimeGLogData(dwMachineNumber, sTime, eTime);
         }
 
         public bool DeleteAttlogBetweenTheDate(int dwMachineNumber, string sTime, string eTime)
@@ -1789,6 +1789,11 @@ namespace Demo.Utilities
         public int MaxP4PConnect => throw new NotImplementedException();
 
         public int BatchDataMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        void IZKEM.GetConnectStatus(ref int dwErrorCode)
+        {
+            throw new NotImplementedException();
+        }
 
 
         #endregion

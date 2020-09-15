@@ -19,16 +19,13 @@ namespace Demo.Services
     {
         public ZkemClient objZkeeper;
         TimeKeeperService timeKeeperObj = new TimeKeeperService();
+        DeviceManipulator manipulator = new DeviceManipulator();
 
-        public List<EmployeeSync> getEmployee()
+        public async Task<List<EmployeeSync>> getEmployee()
         {
             var employees = new List<EmployeeSync>();
             string fileName = "Employees.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            string json = File.ReadAllText(path);
-            if (string.IsNullOrEmpty(json))
-                return employees;
-            employees = JsonConvert.DeserializeObject<List<EmployeeSync>>(json);
+            employees = await timeKeeperObj.GetListModelByJson<EmployeeSync>(fileName);
             return employees;
         }
 
@@ -45,21 +42,21 @@ namespace Demo.Services
             return result;
         }
 
-        public void AddEmployee(IList<EmployeeSync> vals)
+        public async Task AddEmployee(IList<EmployeeSync> vals)
         {
             string fileName = "Employees.json";
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            var list = getEmployee();
+            if (!File.Exists(path))
+                File.Create(path);
+            var list = await getEmployee() != null ? await getEmployee() : new List<EmployeeSync>() ;
             if (list.Any())
             {
                 list.AddRange(vals);
-                File.WriteAllText(path, JsonConvert.SerializeObject(list));
+
             }
-            else
-            {
-                File.WriteAllText(path, JsonConvert.SerializeObject(vals));
-            }
-           
+
+            timeKeeperObj.SetListJson<EmployeeSync>(fileName, vals);
+
             MessageBox.Show("Đồng bộ thành công");
         }
 
@@ -72,7 +69,7 @@ namespace Demo.Services
                 search = null
             };
 
-            var response = await HttpClientConfig.client.PostAsync("api/Employees/SearchRead", new StringContent(JsonConvert.SerializeObject(employeePaged)));
+            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees/SearchRead", employeePaged);
             var rs = response.Content.ReadAsStringAsync().Result;
             var res = JsonConvert.DeserializeObject<EmployeePagging>(rs);
             return res;
@@ -82,7 +79,7 @@ namespace Demo.Services
         {
             var empSave = new EmployeeDisplay();
             empSave.Name = val.Name;
-            var response = await HttpClientConfig.client.PostAsync("api/Employees", new StringContent(JsonConvert.SerializeObject(empSave)));
+            var response = await HttpClientConfig.client.PostAsJsonAsync("api/Employees", empSave);
             var rs = response.Content.ReadAsStringAsync().Result;
             var res = JsonConvert.DeserializeObject<EmployeeDisplay>(rs);
             var emp = new EmployeeSync();
@@ -96,28 +93,27 @@ namespace Demo.Services
                 emp.Privelage = 1;
                 emp.Enabled = val.Enabled;
             }
-                    
+
             return emp;
         }
 
-        public ICollection<UserInfo> LoadDataEmployee()
+        public async Task<ICollection<UserInfo>> LoadDataEmployeeAsync()
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
-            var timeKeeperJson = timeKeeperObj.getTimekeeper();
-            var employeeJson = getEmployee();
-          
-            ICollection<UserInfo> lstFingerPrintTemplates = new Collection<UserInfo>();
-            if(timeKeeperJson != null)
+            var timeKeeperJson = await timeKeeperObj.getTimekeeper();
+
+            ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
+            if (timeKeeperJson != null)
             {
                 try
                 {
-                    if (employeeJson.Count > 0)
+                    if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Any())
                     {
-                        foreach (var emp in employeeJson)
+                        foreach (var emp in lstFingerPrintTemplates)
                         {
                             UserInfo fpInfo = new UserInfo();
                             fpInfo.MachineNumber = emp.MachineNumber;
-                            fpInfo.EnrollNumber = emp.IdKP.ToString();
+                            fpInfo.EnrollNumber = emp.EnrollNumber.ToString();
                             fpInfo.Name = emp.Name;
                             fpInfo.TmpData = emp.TmpData;
                             fpInfo.Privelage = emp.Privelage;
@@ -132,20 +128,21 @@ namespace Demo.Services
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
+
             }
             else
-            {                
+            {
                 MessageBox.Show("Chưa kết nối máy chấm công");
             }
-                
-          
+
+
 
             return lstFingerPrintTemplates;
         }
 
-        
+
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -166,6 +163,7 @@ namespace Demo.Services
                     break;
             }
         }
+
 
 
     }
