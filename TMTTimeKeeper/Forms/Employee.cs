@@ -38,12 +38,12 @@ namespace TMTTimeKeeper
 
         private void Page2_Load(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = employeeObj.LoadDataEmployee();
+            dataGridView1.DataSource = employeeObj.LoadDataEmployeeAsync();
             SetHeaderText();
             MyUniversalStatic.ChangeGridProperties(dataGridView1);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_ClickAsync(object sender, EventArgs e)
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
             IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
@@ -54,7 +54,7 @@ namespace TMTTimeKeeper
                 {
                     StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
 
-                    ICollection<UserInfo> lstFingerPrintTemplates = employeeObj.LoadDataEmployee();
+                    ICollection<UserInfo> lstFingerPrintTemplates = await employeeObj.LoadDataEmployeeAsync();
                     if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
                     {
                         BindToGridView(lstFingerPrintTemplates);
@@ -153,18 +153,18 @@ namespace TMTTimeKeeper
                 try
                 {
                     StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-                    var account = accountLoginObj.getAccount();
+                    var account = accountLoginObj.getAccountAsync();
                     if (account == null)
                         StatusBarService.ShowStatusBar(lblStatus, "Lỗi đăng nhập !!", false);
 
-                    var timeKeeper = timeKeeperObj.getTimekeeper();
+                    var timeKeeper = timeKeeperObj.getTimekeeperAsync();
                     if (timeKeeper == null)
                         StatusBarService.ShowStatusBar(lblStatus, "Chưa kết nối máy chấm công !!", false);
 
                     List<EmployeeSync> listEmp = new List<EmployeeSync>();
                     List<UserInfo> listEmpSync = new List<UserInfo>();
                     var res = await employeeObj.GetEmployeePC();
-                    var empJsons = employeeObj.getEmployee();
+                    var empJsons = await employeeObj.getEmployeeAsync();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
                     ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
                     listEmpSync = lstFingerPrintTemplates.Where(x => !empJsons.Any(s => s.IdKP.ToString() == x.EnrollNumber)).ToList();
@@ -214,9 +214,9 @@ namespace TMTTimeKeeper
                         }
                     }
                     if (listSave.Count() > 0)
-                        employeeObj.AddEmployee(listSave);
+                        await employeeObj.AddEmployeeAsync(listSave);
 
-                    employeeObj.LoadDataEmployee();
+                    await employeeObj.LoadDataEmployeeAsync();
 
                 }
                 catch (Exception ex)
@@ -225,5 +225,7 @@ namespace TMTTimeKeeper
                 }
             }
         }
+
+       
     }
 }

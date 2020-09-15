@@ -49,9 +49,9 @@ namespace Demo
             };
         }
 
-        private void Page1_Load(object sender, EventArgs e)
+        private async void Page1_Load(object sender, EventArgs e)
         {
-            timekeeper = timekeeperObj.getTimekeeper();
+            timekeeper = await timekeeperObj.getTimekeeper();
             if (timekeeper != null)
             {
                 tbxCompanyName.Text = timekeeper.CompanyName;

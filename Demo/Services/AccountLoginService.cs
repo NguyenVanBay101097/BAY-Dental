@@ -11,29 +11,14 @@ namespace Demo.Services
 {
     public class AccountLoginService
     {
-        public AccountLogin getAccount()
+        TimeKeeperService timeKeeperObj = new TimeKeeperService();
+        public async Task<AccountLogin> getAccount()
         {
             var account = new AccountLogin();
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            //using (StreamReader sr = File.OpenText(path))
-            //{
-            //    account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
+            account = await timeKeeperObj.GetModelByJson<AccountLogin>(fileName);
 
-            //}
-
-            if (!File.Exists(path))
-            {
-                File.Create(path);
-                return null;
-            }
-            else
-            {
-                account = JsonConvert.DeserializeObject<AccountLogin>(File.ReadAllText(path));
-                return account;
-            }
-
-
+            return account;
         }
 
         /// <summary>
@@ -43,17 +28,16 @@ namespace Demo.Services
         public void AddAccount(AccountLogin account)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(account));
+            timeKeeperObj.SetJson<AccountLogin>(fileName, account);
         }
 
-        public async Task<AccountLogin> RefreshAccesstokenAsync(AccountLogin account)
+        public async Task<AccountLogin> RefreshAccesstoken(AccountLogin account)
         {
             RefreshAccesstokenViewModel refresh = new RefreshAccesstokenViewModel();
             refresh.AccessToken = account.AccessToken;
             refresh.RefreshToken = account.RefeshToken;
 
-            var response1 = await HttpClientConfig.client.PostAsync("api/Account/Refresh", new StringContent(JsonConvert.SerializeObject(refresh)));
+            var response1 = await HttpClientConfig.client.PostAsJsonAsync("api/Account/Refresh", refresh);
             var rs = response1.Content.ReadAsStringAsync().Result;
             var res = JsonConvert.DeserializeObject<RefreshAccesstokenViewModel>(rs);
             if (account.AccessToken != res.AccessToken && account.RefeshToken != res.RefreshToken)
@@ -61,7 +45,7 @@ namespace Demo.Services
                 account.AccessToken = res.AccessToken;
                 account.RefeshToken = res.RefreshToken;
                 AddAccount(account);
-                var acc = getAccount();
+                var acc = await getAccount();
                 return acc;
             }
 

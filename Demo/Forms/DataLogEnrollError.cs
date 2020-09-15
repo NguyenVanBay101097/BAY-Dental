@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Demo.APIInfo;
@@ -46,7 +47,7 @@ namespace Demo.Forms
                     var listMachinInfo = new List<MachineInfo>();
 
                     StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-                    var responses =  timeKeeperService.GetListModelByJson<Response>(file);
+                    var responses = (await timeKeeperService.GetListModelByJson<Response>(file)).ToList();
                     if (responses == null)
                     {
                         BindToGridView(null);

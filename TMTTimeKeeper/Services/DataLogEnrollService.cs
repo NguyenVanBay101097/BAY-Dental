@@ -17,7 +17,7 @@ namespace TMTTimeKeeper.Services
     public class DataLogEnrollService
     {
         private EmployeeService empService = new EmployeeService();
-        private TimeKeeperService timeKeeperService = new TimeKeeperService();
+        private TimeKeeperService timekeeperObj = new TimeKeeperService();
         public Response SaveLogDataToJson(ICollection<MachineInfo> listLog)
         {
             if (listLog == null || listLog.Count() <= 0)
@@ -27,10 +27,7 @@ namespace TMTTimeKeeper.Services
             try
             {
                 string fileName = "DatalogEnroll.json";
-                string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-                if (!File.Exists(path))
-                    File.Create(path);
-                File.WriteAllText(path, JsonConvert.SerializeObject(listLog));
+                timekeeperObj.SetListJson<MachineInfo>(fileName, listLog);
             }
             catch (Exception e)
             {
@@ -57,7 +54,7 @@ namespace TMTTimeKeeper.Services
             //Lấy lastUpdate
             string fileLastUpdate = "LastGetLogData.json";
             string fileEnrollData = "DataLogEnroll.json";
-            log = await timeKeeperService.GetModelByJson<LastUpdateLogData>(fileLastUpdate);
+            log = await timekeeperObj.GetModelByJson<LastUpdateLogData>(fileLastUpdate);
 
             ICollection<MachineInfo> lstEnrollData = new List<MachineInfo>();
 
@@ -83,11 +80,11 @@ namespace TMTTimeKeeper.Services
             if (log != null && log.LastUpdate.HasValue)
             {
                 lstEnrollData = lstEnrollData.Where(x => DateTime.Parse(x.DateTimeRecord) >= log.LastUpdate.Value).ToList();
-                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
+                timekeeperObj.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
             else
             {
-                timeKeeperService.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
+                timekeeperObj.SetListJson<MachineInfo>(fileEnrollData, lstEnrollData.ToList());
             }
 
             return lstEnrollData;
@@ -95,7 +92,7 @@ namespace TMTTimeKeeper.Services
 
         public async Task<Response> SyncLogData()
         {
-            IList<MachineInfo> listLogs = new List<MachineInfo>();
+            var listLogs = new List<MachineInfo>();
             AccountLogin acc = new AccountLogin();
             Response res = new Response();
             var listChamCongSync = new List<ChamCongSync>();
@@ -104,9 +101,9 @@ namespace TMTTimeKeeper.Services
             var url = "api/ChamCongs/SyncToTimeKeeper";
             string fileErrorEnroll = "DataLogEnrollErrors.json";
             string logEnroll = "DatalogEnroll.json";
-            listLogs = await timeKeeperService.GetListModelByJson<MachineInfo>(logEnroll);
+            listLogs = (await timekeeperObj.GetListModelByJson<MachineInfo>(logEnroll)).ToList();
             string account = "AccountLogin.json";
-            acc = await timeKeeperService.GetModelByJson<AccountLogin>(account);
+            acc = await timekeeperObj.GetModelByJson<AccountLogin>(account);
             if (acc != null)
             {
                 try
@@ -133,15 +130,14 @@ namespace TMTTimeKeeper.Services
                     var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
                     if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
                     {
-                        await timeKeeperService.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
+                        timekeeperObj.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
                     }
                     //Xóa logFile
-                    await timeKeeperService.SetJson<DataLogEnroll>(logEnroll, null);
+                    timekeeperObj.SetJson<DataLogEnroll>(logEnroll, null);
 
-                    //Ghi lại last update
-                    lastUpdate.Count += 1;
+                    //Ghi lại last update                  
                     lastUpdate.LastUpdate = DateTime.Now;
-                    await timeKeeperService.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
+                    timekeeperObj.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
                 }
                 catch (Exception e)
                 {
@@ -156,11 +152,12 @@ namespace TMTTimeKeeper.Services
         {
             EmployeeSync emp = new EmployeeSync();
             var fileEmp = "Employees.json";
-            var listEmp = await timeKeeperService.GetListModelByJson<EmployeeSync>(fileEmp);
+            var listEmp = await timekeeperObj.GetListModelByJson<EmployeeSync>(fileEmp);
             if (listEmp != null && listEmp.Any())
                 emp = listEmp.Where(x => x.IdKP == idKp).FirstOrDefault();
             else
                 emp = null;
+
             return emp;
         }
     }

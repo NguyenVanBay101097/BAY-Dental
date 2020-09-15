@@ -22,6 +22,7 @@ namespace TMTTimeKeeper
         private AccountLogin account = null;
 
         AccountLoginService accountloginObj = new AccountLoginService();
+        TimeKeeperService timekeeperObj = new TimeKeeperService();
 
         Login loginForm = new Login();
         SetupTimekeeper timekeeper = new SetupTimekeeper();
@@ -39,24 +40,9 @@ namespace TMTTimeKeeper
             this.Shown += Form1_ShownAsync;
         }
 
-        public async Task<AccountLogin> GetAccount()
-        {
-            var acc = new AccountLogin();
-            string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            string json = await File.ReadAllTextAsync(path);
-            if (json != null)
-            {
-                acc = JsonConvert.DeserializeObject<AccountLogin>(json);
-            }
-            return acc;
-        }
 
         private async void Form1_ShownAsync(object sender, EventArgs e)
         {
-            //// Update port # in the following line.
-          
-
             account = accountloginObj.getAccount();
             if (account == null)
             {
@@ -65,7 +51,7 @@ namespace TMTTimeKeeper
 
                 if (result == DialogResult.OK)
                 {
-                    account = accountloginObj.getAccount();
+                    account = await accountloginObj.getAccountAsync();
                     if (account != null)
                         lblAccountName.Text = account.Name;
                     else
@@ -107,7 +93,6 @@ namespace TMTTimeKeeper
             actNav(button1);
         }
 
-
         private void button2_Click(object sender, EventArgs e)
         {
             if (DataConnect.ip == null || DataConnect.port == null)
@@ -134,6 +119,19 @@ namespace TMTTimeKeeper
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
+            }
+            else
+            {
+                nav(dataLogEnrollError, content);
+                actNav(button4);
+            }
+        }
+
         public void nav(Form form, Panel panel)
         {
             form.TopLevel = false;
@@ -155,27 +153,13 @@ namespace TMTTimeKeeper
         private void lblLogout_Click(object sender, EventArgs e)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            if (!File.Exists(path))
-                File.Create(path);
-            File.WriteAllText(path, String.Empty);
+            timekeeperObj.SetJson<AccountLogin>(fileName, null);
             Form1_ShownAsync(sender, e);
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (DataConnect.ip == null || DataConnect.port == null)
-            {
-                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
-            }
-            else
-            {
-                nav(dataLogEnrollError, content);
-                actNav(button5);
-            }
-        }
+      
 
-        
+
     }
 }
 

@@ -20,17 +20,11 @@ namespace TMTTimeKeeper.Services
         public ZkemClient objZkeeper;
         TimeKeeperService timeKeeperObj = new TimeKeeperService();
 
-        public List<EmployeeSync> getEmployee()
+        public async Task<List<EmployeeSync>> getEmployeeAsync()
         {
             var employees = new List<EmployeeSync>();
             string fileName = "Employees.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            if (!File.Exists(path))
-                File.Create(path);
-            string json = File.ReadAllText(path);
-            if (string.IsNullOrEmpty(json))
-                return employees;
-            employees = JsonConvert.DeserializeObject<List<EmployeeSync>>(json);
+            employees = (await timeKeeperObj.GetListModelByJson<EmployeeSync>(fileName)).ToList();
             return employees;
         }
 
@@ -47,23 +41,21 @@ namespace TMTTimeKeeper.Services
             return result;
         }
 
-        public void AddEmployee(IList<EmployeeSync> vals)
+        public async Task AddEmployeeAsync(IList<EmployeeSync> vals)
         {
             string fileName = "Employees.json";
             string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
             if (!File.Exists(path))
                 File.Create(path);
-            var list = getEmployee();
+            var list = await getEmployeeAsync();
             if (list.Any())
             {
                 list.AddRange(vals);
-                File.WriteAllText(path, JsonConvert.SerializeObject(list));
+
             }
-            else
-            {
-                File.WriteAllText(path, JsonConvert.SerializeObject(vals));
-            }
-           
+
+            timeKeeperObj.SetListJson<EmployeeSync>(fileName, vals);
+
             MessageBox.Show("Đồng bộ thành công");
         }
 
@@ -100,18 +92,18 @@ namespace TMTTimeKeeper.Services
                 emp.Privelage = 1;
                 emp.Enabled = val.Enabled;
             }
-                    
+
             return emp;
         }
 
-        public ICollection<UserInfo> LoadDataEmployee()
+        public async Task<ICollection<UserInfo>> LoadDataEmployeeAsync()
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
-            var timeKeeperJson = timeKeeperObj.getTimekeeper();
-            var employeeJson = getEmployee();
-          
+            var timeKeeperJson = timeKeeperObj.getTimekeeperAsync();
+            var employeeJson = await getEmployeeAsync();
+
             ICollection<UserInfo> lstFingerPrintTemplates = new Collection<UserInfo>();
-            if(timeKeeperJson != null)
+            if (timeKeeperJson != null)
             {
                 try
                 {
@@ -132,24 +124,24 @@ namespace TMTTimeKeeper.Services
                             lstFingerPrintTemplates.Add(fpInfo);
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
+
             }
             else
-            {                
+            {
                 MessageBox.Show("Chưa kết nối máy chấm công");
             }
-                
-          
+
+
 
             return lstFingerPrintTemplates;
         }
 
-        
+
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -170,7 +162,6 @@ namespace TMTTimeKeeper.Services
                     break;
             }
         }
-
 
     }
 }

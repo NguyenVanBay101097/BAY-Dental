@@ -38,12 +38,10 @@ namespace Demo
 
         private void Page2_Load(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = employeeObj.LoadDataEmployee();
-            SetHeaderText();
-            MyUniversalStatic.ChangeGridProperties(dataGridView1);
+            LoadDataEmployeeAsync();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_ClickAsync(object sender, EventArgs e)
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
             IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
@@ -52,25 +50,33 @@ namespace Demo
             {
                 try
                 {
-                    StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-
-                    ICollection<UserInfo> lstFingerPrintTemplates = employeeObj.LoadDataEmployee();
-                    if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
-                    {
-                        BindToGridView(lstFingerPrintTemplates);
-                        StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
-                    }
-                    else
-                    {
-                        //DisplayListOutput("No records found");
-                    }
+                    LoadDataEmployeeAsync();
                 }
                 catch (Exception ex)
                 {
-                    //DisplayListOutput(ex.Message);
+                    StatusBarService.ShowStatusBar(lblStatus,ex.Message, true);
                 }
             }
         }
+
+        public void LoadDataEmployeeAsync()
+        {
+            objZkeeper = new ZkemClient(RaiseDeviceEvent);
+            StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
+            
+            ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
+            if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
+            {
+                BindToGridView(lstFingerPrintTemplates);
+                StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
+            }
+            else
+            {
+                BindToGridView(lstFingerPrintTemplates);
+                StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
+            }
+        }
+
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -153,35 +159,21 @@ namespace Demo
                 try
                 {
                     StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-                    var account = accountLoginObj.getAccount();
+                    var account = await accountLoginObj.getAccount();
                     if (account == null)
                         StatusBarService.ShowStatusBar(lblStatus, "Lỗi đăng nhập !!", false);
 
-                    var timeKeeper = timeKeeperObj.getTimekeeper();
+                    var timeKeeper = await timeKeeperObj.getTimekeeper();
                     if (timeKeeper == null)
                         StatusBarService.ShowStatusBar(lblStatus, "Chưa kết nối máy chấm công !!", false);
 
                     List<EmployeeSync> listEmp = new List<EmployeeSync>();
-                    List<UserInfo> listEmpSync = new List<UserInfo>();
                     var res = await employeeObj.GetEmployeePC();
-                    var empJsons = employeeObj.getEmployee();
+                    var empJsons = await employeeObj.getEmployee() != null ? await employeeObj.getEmployee() : new List<EmployeeSync>();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
-                    ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
-                    listEmpSync = lstFingerPrintTemplates.Where(x => !empJsons.Any(s => s.IdKP.ToString() == x.EnrollNumber)).ToList();
-                    var listSave = new List<EmployeeSync>();
-
-                    if (listEmpSync.Any())
-                    {
-                        foreach (var item in listEmpSync)
-                        {
-                            if (item.Privelage == 3)
-                                continue;
-
-                            var rs = await employeeObj.CreateEmployee(item);
-                            listSave.Add(rs);
-                        }
-                    }
                    
+                    var listSave = new List<EmployeeSync>();                    
+
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
                     {
@@ -214,9 +206,9 @@ namespace Demo
                         }
                     }
                     if (listSave.Count() > 0)
-                        employeeObj.AddEmployee(listSave);
+                        await employeeObj.AddEmployee(listSave);
 
-                    employeeObj.LoadDataEmployee();
+                    await employeeObj.LoadDataEmployeeAsync();
 
                 }
                 catch (Exception ex)

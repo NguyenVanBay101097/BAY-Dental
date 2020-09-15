@@ -22,6 +22,7 @@ namespace Demo
         private AccountLogin account = null;
 
         AccountLoginService accountloginObj = new AccountLoginService();
+        TimeKeeperService timekeeperObj = new TimeKeeperService();
 
         Login loginForm = new Login();
         SetupTimekeeper timekeeper = new SetupTimekeeper();
@@ -39,25 +40,13 @@ namespace Demo
             this.Shown += Form1_ShownAsync;
         }
 
-        public  AccountLogin GetAccount()
-        {
-            var acc = new AccountLogin();
-            string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            string json = File.ReadAllText(path);
-            if (json != null)
-            {
-                acc = JsonConvert.DeserializeObject<AccountLogin>(json);
-            }
-            return acc;
-        }
 
         private async void Form1_ShownAsync(object sender, EventArgs e)
         {
             //// Update port # in the following line.
 
 
-            account = accountloginObj.getAccount();
+            account = await accountloginObj.getAccount();
             if (account == null)
             {
                 Visible = false;
@@ -65,7 +54,7 @@ namespace Demo
 
                 if (result == DialogResult.OK)
                 {
-                    account = accountloginObj.getAccount();
+                    account = await accountloginObj.getAccount();
                     if (account != null)
                         lblAccountName.Text = account.Name;
                     else
@@ -92,7 +81,7 @@ namespace Demo
 
                 // Set Authorization
                 HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", account.AccessToken);
-                account = await accountloginObj.RefreshAccesstokenAsync(account);
+                account = await accountloginObj.RefreshAccesstoken(account);
 
                 stateNav = button1;
                 nav(timekeeper, content);
@@ -134,6 +123,19 @@ namespace Demo
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (DataConnect.ip == null || DataConnect.port == null)
+            {
+                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
+            }
+            else
+            {
+                nav(dataLogEnrollError, content);
+                actNav(button4);
+            }
+        }
+
         public void nav(Form form, Panel panel)
         {
             form.TopLevel = false;
@@ -155,23 +157,11 @@ namespace Demo
         private void lblLogout_Click(object sender, EventArgs e)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(Environment.CurrentDirectory.Replace(@"bin\x86\Debug\netcoreapp3.1", string.Empty), @"Data\", fileName);
-            File.WriteAllText(path, String.Empty);
+            timekeeperObj.SetJson<AccountLogin>(fileName, null);
             Form1_ShownAsync(sender, e);
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            if (DataConnect.ip == null || DataConnect.port == null)
-            {
-                StatusBarService.ShowStatusBar(timekeeper.p_lblStatus, "Chưa kết nối máy chấm công !!", false);
-            }
-            else
-            {
-                nav(dataLogEnrollError, content);
-                actNav(button5);
-            }
-        }
+      
 
 
     }

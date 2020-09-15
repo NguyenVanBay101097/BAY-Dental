@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Demo.Models;
+using System.IO.MemoryMappedFiles;
+using System.IO;
 
 namespace Demo.Services
 {
@@ -13,39 +14,40 @@ namespace Demo.Services
         public void AddTimekeeper(TimeKeeper val)
         {
             string fileName = "TimeKeeper.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            File.WriteAllText(path, JsonConvert.SerializeObject(val));
+            SetJson<TimeKeeper>(fileName, val);
         }
 
-        public TimeKeeper getTimekeeper()
+        public async Task<TimeKeeper> getTimekeeper()
         {
             var timekeeper = new TimeKeeper();
             string fileName = "TimeKeeper.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            using (StreamReader sr = File.OpenText(path))
-            {
-                timekeeper = JsonConvert.DeserializeObject<TimeKeeper>(sr.ReadToEnd());
-            }
+            timekeeper = await GetModelByJson<TimeKeeper>(fileName);
             return timekeeper;
         }
 
-        public T GetModelByJson<T>(string fileName)
+        public async Task<T> GetModelByJson<T>(string fileName)
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             var pathJson = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<T>(pathJson);
         }
 
-        public IList<T> GetListModelByJson<T>(string fileName)
+        public async Task<List<T>> GetListModelByJson<T>(string fileName)
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             var pathJson = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<IList<T>>(pathJson);
+            return JsonConvert.DeserializeObject<List<T>>(pathJson);
         }
 
         public void SetJson<T>(string fileName, T val)
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             if (val != null)
                 File.WriteAllText(path, JsonConvert.SerializeObject(val));
             else
@@ -54,7 +56,9 @@ namespace Demo.Services
 
         public void SetListJson<T>(string fileName, IEnumerable<T> val)
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
+            if (!File.Exists(path))
+                File.Create(path);
             if (val != null)
                 File.WriteAllText(path, JsonConvert.SerializeObject(val));
             else

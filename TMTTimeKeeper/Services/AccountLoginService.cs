@@ -11,19 +11,12 @@ namespace TMTTimeKeeper.Services
 {
     public class AccountLoginService
     {
-        TimeKeeperService timeKeeperService = new TimeKeeperService();
-        public AccountLogin getAccount()
+        TimeKeeperService timeKeeperObj = new TimeKeeperService();
+        public async Task<AccountLogin> getAccountAsync()
         {
             var account = new AccountLogin();
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            if (!File.Exists(path))
-                File.Create(path);
-
-            using (StreamReader sr = File.OpenText(path))
-            {
-                account = JsonConvert.DeserializeObject<AccountLogin>(sr.ReadToEnd());
-            }
+            account = await timeKeeperObj.GetModelByJson<AccountLogin>(fileName);
 
             return account;
         }
@@ -35,10 +28,7 @@ namespace TMTTimeKeeper.Services
         public void AddAccount(AccountLogin account)
         {
             string fileName = "AccountLogin.json";
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, fileName);
-            if (!File.Exists(path))
-                File.Create(path);
-            File.WriteAllText(path, JsonConvert.SerializeObject(account));
+            timeKeeperObj.SetJson<AccountLogin>(fileName, account);
         }
 
         public async Task<AccountLogin> RefreshAccesstokenAsync(AccountLogin account)
@@ -55,7 +45,7 @@ namespace TMTTimeKeeper.Services
                 account.AccessToken = res.AccessToken;
                 account.RefeshToken = res.RefreshToken;
                 AddAccount(account);
-                var acc = getAccount();
+                var acc = await getAccountAsync();
                 return acc;
             }
 
