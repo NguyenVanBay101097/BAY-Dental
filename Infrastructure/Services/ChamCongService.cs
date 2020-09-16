@@ -590,54 +590,75 @@ namespace Infrastructure.Services
             return new ChamCongImportResponse { Success = true };
         }
 
-        public async Task<TimeKeeperSync> SyncChamCong(IEnumerable<ImportFileExcellChamCongModel> vals)
+        public async Task<ResultSyncDataViewModel> SyncChamCong(IEnumerable<ReadLogResultDataViewModel> vals)
         {
-            var timeKeeperSync = new TimeKeeperSync();
+            var resultSyncData = new ResultSyncDataViewModel();
             var modelError = new ImportFileExcellChamCongModel();
+            var employeObj = GetService<IEmployeeService>();
             var unitObj = GetService<IUnitOfWorkAsync>();
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
 
             foreach (var val in vals)
             {
                 try
                 {
-                    if (val.Type == "check-in")
+                    var emp = await employeObj.SearchQuery(x => x.EnrollNumber == val.UserId).FirstOrDefaultAsync();
+                    if(emp == null)
+                    {
+                        resultSyncData.IsError += 1;
+                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Khong tìm thấy nhân viên", LogReponseData = val });
+                        continue;
+
+                    }
+
+                    if (val.VerifyType == 0)
                     {
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = val.EmpId.Value;
-                        chamcong.WorkEntryTypeId = val.WorkId.Value;
-                        chamcong.Date = val.Date;
-                        chamcong.TimeIn = val.Time;
+                        chamcong.EmployeeId = emp.Id;
+                        chamcong.WorkEntryTypeId = workEntryType.Id;
+                        chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture); 
+                        chamcong.TimeIn = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
                         await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
+
+                        resultSyncData.IsSuccess += 1;
+                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
                         unitObj.Commit();
                     }
-                    else if (val.Type == "check-out")
+                    else if (val.VerifyType == 1)
                     {
-                        var ccIn = await SearchQuery(x => x.EmployeeId == val.EmpId.Value && x.TimeOut == null).FirstOrDefaultAsync();
+                        var ccIn = await SearchQuery(x => x.EmployeeId == emp.Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
-                            ccIn.TimeOut = val.Time;
+                            ccIn.TimeOut = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
                             await unitObj.BeginTransactionAsync();
                             await UpdateAsync(ccIn);
+
+                            resultSyncData.IsSuccess += 1;
+                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
                             unitObj.Commit();
+
                         }
                         else
                         {
-                            timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { "không tìm thấy chấm công nào chưa check-out." }, ModelError = val });
+                            resultSyncData.IsError += 1;
+                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });                         
                             continue;
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    timeKeeperSync.ErrorDatas.Add(new ChamCongImportResponse { Success = false, Errors = new List<string> { e.Message }, ModelError = val });
+                    resultSyncData.IsError += 1;
+                    resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = e.Message, LogReponseData = val });           
                     unitObj.Rollback();
                     continue;
                 }
             }
 
-            return timeKeeperSync;
+            return resultSyncData;
         }
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
