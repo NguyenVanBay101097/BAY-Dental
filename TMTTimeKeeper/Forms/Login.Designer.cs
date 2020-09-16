@@ -147,6 +147,8 @@
             // chkRememberMe
             // 
             this.chkRememberMe.AutoSize = true;
+            this.chkRememberMe.Checked = true;
+            this.chkRememberMe.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRememberMe.Location = new System.Drawing.Point(16, 171);
             this.chkRememberMe.Name = "chkRememberMe";
             this.chkRememberMe.Size = new System.Drawing.Size(121, 19);
@@ -162,7 +164,6 @@
             this.lblStatus.Padding = new System.Windows.Forms.Padding(5);
             this.lblStatus.Size = new System.Drawing.Size(350, 25);
             this.lblStatus.TabIndex = 6;
-            this.lblStatus.Text = "lblStatus";
             // 
             // Login
             // 
@@ -185,7 +186,6 @@
             this.Name = "Login";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login";
-            this.Load += new System.EventHandler(this.Login_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.checkEnter);
             this.ResumeLayout(false);
             this.PerformLayout();

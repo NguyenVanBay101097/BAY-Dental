@@ -20,9 +20,8 @@ namespace TMTTimeKeeper
     public partial class Login : Form
     {
 
-        AccountLoginService accountLoginObj = new AccountLoginService();
-        TimeKeeperService timeKeeperObj = new TimeKeeperService();
-
+        private readonly AccountLoginService accountLoginObj = new AccountLoginService();
+        private readonly TimeKeeperService timeKeeperObj = new TimeKeeperService();
         public Login()
         {
             InitializeComponent();
@@ -156,10 +155,11 @@ namespace TMTTimeKeeper
 
                     // Update port # in the following line.
                     if (HttpClientConfig.client.BaseAddress == null)
-                        HttpClientConfig.client.BaseAddress = new Uri(tbxCompanyName.Text);
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
-                    HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
+                    {
+                        Master.SetHttpClient(tbxCompanyName.Text);
+                    }
+
+
 
                     LoginInfo loginInfo = new LoginInfo
                     {
@@ -184,7 +184,6 @@ namespace TMTTimeKeeper
                             if (chkRememberMe.Checked)
                             {
                                 ///save account login
-
                                 var account = new AccountLogin();
                                 account.Id = loginResponse.user.id;
                                 account.Name = loginResponse.user.name;
@@ -194,7 +193,6 @@ namespace TMTTimeKeeper
                                 account.Email = loginResponse.user.email;
                                 account.AccessToken = loginResponse.token;
                                 account.RefeshToken = loginResponse.refreshToken;
-
                                 accountLoginObj.AddAccount(account);
                             }
                             else
@@ -204,32 +202,6 @@ namespace TMTTimeKeeper
 
                             // Set Authorization
                             HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.token);
-
-                            #region 'Demo Get employees'
-                            //EmployeePaged employeePaged = new EmployeePaged
-                            //{
-                            //    offset = 0,
-                            //    limit = 20,
-                            //    search = null,
-                            //    //isDoctor = true,
-                            //    //isAssistant = true
-                            //};
-
-                            //var url = "api/Employees?";
-                            //var result = new List<string>();
-                            //foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(employeePaged))
-                            //{
-                            //    result.Add(property.Name + "=" + property.GetValue(employeePaged));
-                            //}
-
-                            //url = url + string.Join("&", result);
-
-                            //var pro = await client.GetAsync(url);
-                            #endregion
-
-                            var timekeeper = new TimeKeeper();
-                            timekeeper.CompanyName = tbxCompanyName.Text;
-                            timeKeeperObj.AddTimekeeper(timekeeper);
 
                             DialogResult = DialogResult.OK;
                             this.Cursor = Cursors.Default;
@@ -308,9 +280,6 @@ namespace TMTTimeKeeper
             }
         }
 
-        private void Login_Load(object sender, EventArgs e)
-        {
 
-        }
     }
 }

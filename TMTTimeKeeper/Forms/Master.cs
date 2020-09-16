@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using TMTTimeKeeper.Utilities;
 using TMTTimeKeeper.Info;
 using TMTTimeKeeper.Helpers;
+using TMTTimeKeeper.Services;
+using TMTTimeKeeper.Models;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace TMTTimeKeeper
 {
@@ -17,7 +21,13 @@ namespace TMTTimeKeeper
         DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
+        private readonly TimeKeeperService timeKeeperObj = new TimeKeeperService();
         public SDKHelper SDK = new SDKHelper();
+        public DataLogEnrollService dataLogEnroll = new DataLogEnrollService();
+        public ReadLogResult readLogData = new ReadLogResult();
+        public readonly int MachineNumber = 1;
+        private readonly Login loginForm = new Login();
+        private readonly AccountLoginService accountloginObj = new AccountLoginService();
 
         public bool IsDeviceConnected
         {
@@ -44,7 +54,6 @@ namespace TMTTimeKeeper
 
         private void ToggleControls(bool value)
         {
-            tbxMachineNumber.Enabled = !value;
             tbxPort.Enabled = !value;
             tbxDeviceIP.Enabled = !value;
         }
@@ -52,11 +61,49 @@ namespace TMTTimeKeeper
         public Master()
         {
             InitializeComponent();
-            //ToggleControls(false);
             ShowStatusBar(string.Empty, true);
             DisplayEmpty();
+            loadMaster();
         }
 
+        public async void loadMaster()
+        {
+
+            var account = await CheckLoginAsync();
+            if (account == null)
+            {
+                Visible = false;
+                var result = loginForm.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    account = await accountloginObj.getAccountAsync();
+                    if (account != null)
+                    {
+                        lbCompany.Visible = true;
+                        lbEmployee.Visible = true;
+                        lbEmployee.Text = account.Name;
+                        lbCompany.Text = account.CompanyName;
+                    }
+                    Visible = true;
+
+                    //ToggleControls(false);
+
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    Close();
+                }
+            }
+            else
+            {
+                SetHttpClient(account.CompanyName, account.AccessToken);
+                lbCompany.Visible = true;
+                lbEmployee.Visible = true;
+                lbEmployee.Text = account.Name;
+                lbCompany.Text = account.CompanyName;
+            }
+        }
 
         /// <summary>
         /// Your Events will reach here if implemented
@@ -88,8 +135,29 @@ namespace TMTTimeKeeper
             string port = tbxPort.Text.Trim();
 
             var result = SDK.sta_ConnectTCP(ip, port);
+            if (result == 1)
+            {
+                btnConnect.Text = "Ngắt kết nối";
+                string returnValue = string.Empty;
+                ShowStatusBar("Kết nối thành công", true);
+                var seri = SDK.axCZKEM1.GetSerialNumber(MachineNumber, out returnValue);
+                if (seri)
+                {
+                    lblDeviceInfo.Text = returnValue;
+                    lblDeviceInfo.Visible = true;
+                }
+            }
+            else if (result == -2)
+            {
+                ShowStatusBar("Đã ngắt kết nối", true);
+                btnConnect.Text = "Kết nối";
+                lblDeviceInfo.Visible = false;
+            }
+            else
+            {
+                ShowStatusBar("Kết nối thất bại", false);
+            }
         }
-
 
         public void ShowStatusBar(string message, bool type)
         {
@@ -110,28 +178,28 @@ namespace TMTTimeKeeper
         }
 
 
-        private void btnPingDevice_Click(object sender, EventArgs e)
-        {
-            ShowStatusBar(string.Empty, true);
+        //private void btnPingDevice_Click(object sender, EventArgs e)
+        //{
+        //    ShowStatusBar(string.Empty, true);
 
-            string ipAddress = tbxDeviceIP.Text.Trim();
+        //    string ipAddress = tbxDeviceIP.Text.Trim();
 
-            bool isValidIpA = UniversalStatic.ValidateIP(ipAddress);
-            if (!isValidIpA)
-                throw new Exception("The Device IP is invalid !!");
+        //    bool isValidIpA = UniversalStatic.ValidateIP(ipAddress);
+        //    if (!isValidIpA)
+        //        throw new Exception("The Device IP is invalid !!");
 
-            isValidIpA = UniversalStatic.PingTheDevice(ipAddress);
-            if (isValidIpA)
-                ShowStatusBar("The device is active", true);
-            else
-                ShowStatusBar("Could not read any response", false);
-        }
+        //    isValidIpA = UniversalStatic.PingTheDevice(ipAddress);
+        //    if (isValidIpA)
+        //        ShowStatusBar("The device is active", true);
+        //    else
+        //        ShowStatusBar("Could not read any response", false);
+        //}
 
         private void btnGetAllUserID_Click(object sender, EventArgs e)
         {
             try
             {
-                ICollection<UserIDInfo> lstUserIDInfo = manipulator.GetAllUserID(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
+                ICollection<UserIDInfo> lstUserIDInfo = manipulator.GetAllUserID(objZkeeper, MachineNumber);
 
                 if (lstUserIDInfo != null && lstUserIDInfo.Count > 0)
                 {
@@ -152,40 +220,12 @@ namespace TMTTimeKeeper
 
         }
 
-        private void btnBeep_Click(object sender, EventArgs e)
-        {
-            objZkeeper.Beep(100);
-        }
-
-        private void btnDownloadFingerPrint_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ShowStatusBar(string.Empty, true);
-
-                ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
-                if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
-                {
-                    BindToGridView(lstFingerPrintTemplates);
-                    ShowStatusBar(lstFingerPrintTemplates.Count + " records found !!", true);
-                }
-                else
-                    DisplayListOutput("No records found");
-            }
-            catch (Exception ex)
-            {
-                DisplayListOutput(ex.Message);
-            }
-
-        }
-
-
         private void btnPullData_Click(object sender, EventArgs e)
         {
             string fromTime = dpDateFrom.Value.Date.ToString("yyyy-MM-dd HH:mm:ss");
             string toTime = dpDateTo.Value.Date.AddDays(1).AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss");
             var result = SDK.sta_readLogByPeriod(fromTime, toTime);
-
+            readLogData = result;
             BindToGridView(result.Data);
             dgvRecords.Columns[0].HeaderText = "Mã vân tay";
             dgvRecords.Columns[1].HeaderText = "Ngày chấm công";
@@ -193,7 +233,6 @@ namespace TMTTimeKeeper
             dgvRecords.Columns[3].HeaderText = "Vào/Ra";
             dgvRecords.Columns[4].HeaderText = "Loại chấm công";
         }
-
 
         private void ClearGrid()
         {
@@ -206,6 +245,7 @@ namespace TMTTimeKeeper
             dgvRecords.Rows.Clear();
             dgvRecords.Columns.Clear();
         }
+
         private void BindToGridView(object list)
         {
             ClearGrid();
@@ -214,7 +254,13 @@ namespace TMTTimeKeeper
             UniversalStatic.ChangeGridProperties(dgvRecords);
         }
 
-
+        public async Task<AccountLogin> CheckLoginAsync()
+        {
+            AccountLogin acc = new AccountLogin();
+            var fileName = "AccountLogin.json";
+            acc = await timeKeeperObj.GetModelByJson<AccountLogin>(fileName);
+            return acc;
+        }
 
         private void DisplayListOutput(string message)
         {
@@ -230,83 +276,28 @@ namespace TMTTimeKeeper
             //dgvRecords.Controls.Add(new DataEmpty());
         }
 
+        public static void SetHttpClient(string url, string accessToken = "")
+        {
+
+            HttpClientConfig.client.BaseAddress = new Uri(url);
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Clear();
+            HttpClientConfig.client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            if (!string.IsNullOrEmpty(accessToken))
+                HttpClientConfig.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
         private void pnlHeader_Paint(object sender, PaintEventArgs e)
         { UniversalStatic.DrawLineInFooter(pnlHeader, Color.FromArgb(204, 204, 204), 2); }
 
 
-
-        private void btnPowerOff_Click(object sender, EventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-
-            var resultDia = DialogResult.None;
-            resultDia = MessageBox.Show("Do you wish to Power Off the Device ??", "Power Off Device", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (resultDia == DialogResult.Yes)
-            {
-                bool deviceOff = objZkeeper.PowerOffDevice(int.Parse(tbxMachineNumber.Text.Trim()));
-
-            }
-
-            this.Cursor = Cursors.Default;
-        }
-
-        private void btnRestartDevice_Click(object sender, EventArgs e)
-        {
-
-            DialogResult rslt = MessageBox.Show("Do you wish to restart the device now ??", "Restart Device", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (rslt == DialogResult.Yes)
-            {
-                if (objZkeeper.RestartDevice(int.Parse(tbxMachineNumber.Text.Trim())))
-                    ShowStatusBar("The device is being restarted, Please wait...", true);
-                else
-                    ShowStatusBar("Operation failed,please try again", false);
-            }
-
-        }
-
-        private void btnGetDeviceTime_Click(object sender, EventArgs e)
-        {
-            int machineNumber = int.Parse(tbxMachineNumber.Text.Trim());
-            int dwYear = 0;
-            int dwMonth = 0;
-            int dwDay = 0;
-            int dwHour = 0;
-            int dwMinute = 0;
-            int dwSecond = 0;
-
-            bool result = objZkeeper.GetDeviceTime(machineNumber, ref dwYear, ref dwMonth, ref dwDay, ref dwHour, ref dwMinute, ref dwSecond);
-
-            string deviceTime = new DateTime(dwYear, dwMonth, dwDay, dwHour, dwMinute, dwSecond).ToString();
-            List<DeviceTimeInfo> lstDeviceInfo = new List<DeviceTimeInfo>();
-            lstDeviceInfo.Add(new DeviceTimeInfo() { DeviceTime = deviceTime });
-            BindToGridView(lstDeviceInfo);
-        }
-
-
-        private void btnEnableDevice_Click(object sender, EventArgs e)
-        {
-            // This is of no use since i implemented zkemKeeper the other way
-            bool deviceEnabled = objZkeeper.EnableDevice(int.Parse(tbxMachineNumber.Text.Trim()), true);
-
-        }
-
-        private void btnDisableDevice_Click(object sender, EventArgs e)
-        {
-            // This is of no use since i implemented zkemKeeper the other way
-            bool deviceDisabled = objZkeeper.DisableDeviceWithTimeOut(int.Parse(tbxMachineNumber.Text.Trim()), 3000);
-        }
-
         private void tbxPort_TextChanged(object sender, EventArgs e)
         { UniversalStatic.ValidateInteger(tbxPort); }
 
-        private void tbxMachineNumber_TextChanged(object sender, EventArgs e)
-        { UniversalStatic.ValidateInteger(tbxMachineNumber); }
-
-        private void btnUploadUserInfo_Click(object sender, EventArgs e)
+        private async void btnSyncData_Click(object sender, EventArgs e)
         {
-            // Add you new UserInfo Here and  uncomment the below code
-            //List<UserInfo> lstUserInfo = new List<UserInfo>();
-            //manipulator.UploadFTPTemplate(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()), lstUserInfo);
+            if (readLogData != null)
+                await dataLogEnroll.SyncLogData(readLogData);
         }
     }
 }

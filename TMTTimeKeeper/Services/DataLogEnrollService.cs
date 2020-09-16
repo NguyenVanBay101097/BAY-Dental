@@ -90,75 +90,20 @@ namespace TMTTimeKeeper.Services
             return lstEnrollData;
         }
 
-        public async Task<Response> SyncLogData()
+        public async Task SyncLogData(ReadLogResult model)
         {
-            var listLogs = new List<MachineInfo>();
-            AccountLogin acc = new AccountLogin();
-            Response res = new Response();
-            var listChamCongSync = new List<ChamCongSync>();
-            var lastUpdate = new LastUpdateLogData();
-            string lastUpdateLog = "LastGetLogData.json";
-            var url = "api/ChamCongs/SyncToTimeKeeper";
-            string fileErrorEnroll = "DataLogEnrollErrors.json";
-            string logEnroll = "DatalogEnroll.json";
-            listLogs = (await timekeeperObj.GetListModelByJson<MachineInfo>(logEnroll)).ToList();
-            string account = "AccountLogin.json";
-            acc = await timekeeperObj.GetModelByJson<AccountLogin>(account);
-            if (acc != null)
+            try
             {
-                try
-                {
-                    foreach (var item in listLogs)
-                    {
-                        ChamCongSync val = new ChamCongSync();
-                        var emp = await GetEmp(item.IndRegID);
-                        if (emp == null)
-                            continue;
-                        val.EmpId = emp.Id;
-                        val.Date = item.DateOnlyRecord;
-                        val.IdMayChamCong = emp.MachineNumber.ToString();
-                        val.Time = DateTime.Parse(item.DateTimeRecord);
-                        if (item.dwInOutMode == 1)
-                            val.Type = "check-out";
-                        else if (item.dwInOutMode == 0)
-                            val.Type = "check-in";
-                        val.WorkId = new Guid("e10bb73b-0b58-4c38-2c07-08d83dcc1e22");
-                        listChamCongSync.Add(val);
-                    }
-                    var request = await HttpClientConfig.client.PostAsJsonAsync(url, listChamCongSync);
-                    var content = await request.Content.ReadAsStringAsync();
-                    var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
-                    if (responses != null && responses.ErrorDatas != null && responses.ErrorDatas.Count() > 0)
-                    {
-                        timekeeperObj.SetListJson<Response>(fileErrorEnroll, responses.ErrorDatas);
-                    }
-                    //Xóa logFile
-                    timekeeperObj.SetJson<DataLogEnroll>(logEnroll, null);
-
-                    //Ghi lại last update                  
-                    lastUpdate.LastUpdate = DateTime.Now;
-                    timekeeperObj.SetJson<LastUpdateLogData>(lastUpdateLog, lastUpdate);
-                }
-                catch (Exception e)
-                {
-                    return new Response() { Success = false, Errors = new List<string>() { e.Message } };
-                }
+                var url = "api/ChamCongs/SyncToTimeKeeper";
+                var request = await HttpClientConfig.client.PostAsJsonAsync(url, model.Data);
+                var content = await request.Content.ReadAsStringAsync();
+                var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
             }
-
-            return new Response() { Success = true };
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
-        public async Task<EmployeeSync> GetEmp(int idKp)
-        {
-            EmployeeSync emp = new EmployeeSync();
-            var fileEmp = "Employees.json";
-            var listEmp = await timekeeperObj.GetListModelByJson<EmployeeSync>(fileEmp);
-            if (listEmp != null && listEmp.Any())
-                emp = listEmp.Where(x => x.IdKP == idKp).FirstOrDefault();
-            else
-                emp = null;
-
-            return emp;
-        }
     }
 }

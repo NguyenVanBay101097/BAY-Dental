@@ -13,7 +13,7 @@ namespace TMTTimeKeeper.Services
         public void AddTimekeeper(TimeKeeper val)
         {
             string fileName = "TimeKeeper.json";
-             SetJson<TimeKeeper>(fileName, val);
+            SetJson<TimeKeeper>(fileName, val);
         }
 
         public async Task<TimeKeeper> getTimekeeperAsync()
@@ -28,31 +28,35 @@ namespace TMTTimeKeeper.Services
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
             if (!File.Exists(path))
-                File.Create(path);
-            var pathJson = await File.ReadAllTextAsync(path);
-            return JsonConvert.DeserializeObject<T>(pathJson);
+            {
+                var myFile = File.Create(path);
+                myFile.Close();
+                return default(T);
+            }
+            else
+            {
+                var pathJson = await File.ReadAllTextAsync(path);
+                return JsonConvert.DeserializeObject<T>(pathJson);
+            }
+
         }
 
         public async Task<IEnumerable<T>> GetListModelByJson<T>(string fileName)
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
             if (!File.Exists(path))
-                File.Create(path);
-           
+            {
+                var myFile = File.Create(path);
+                myFile.Close();
+            }
             var pathJson = await File.ReadAllTextAsync(path);
-
             return JsonConvert.DeserializeObject<IList<T>>(pathJson);
         }
 
         public void SetJson<T>(string fileName, T val)
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
-            if (!File.Exists(path))
-                File.Create(path);
-            if (val != null)
-                 File.WriteAllText(path, JsonConvert.SerializeObject(val));
-            else
-                 File.WriteAllText(path, string.Empty);
+            File.WriteAllTextAsync(path, JsonConvert.SerializeObject(val));
         }
 
         public void SetListJson<T>(string fileName, IEnumerable<T> val)

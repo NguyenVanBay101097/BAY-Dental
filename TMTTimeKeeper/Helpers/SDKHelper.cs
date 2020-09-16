@@ -198,6 +198,7 @@ namespace TMTTimeKeeper.Helpers
             {
                 axCZKEM1.Disconnect();
                 //connected = false;
+                bIsConnected = false;
                 return -2; //disconnect
             }
 
