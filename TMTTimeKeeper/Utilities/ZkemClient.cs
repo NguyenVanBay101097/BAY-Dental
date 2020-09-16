@@ -1451,7 +1451,7 @@ namespace TMTTimeKeeper.Utilities
             throw new NotImplementedException();
         }
 
-        public bool GetConnectStatus(ref int dwErrorCode)
+        public void GetConnectStatus(ref int dwErrorCode)
         {
             throw new NotImplementedException();
         }
@@ -1789,6 +1789,11 @@ namespace TMTTimeKeeper.Utilities
         public int MaxP4PConnect => throw new NotImplementedException();
 
         public int BatchDataMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        void IZKEM.GetConnectStatus(ref int dwErrorCode)
+        {
+            throw new NotImplementedException();
+        }
 
 
         #endregion

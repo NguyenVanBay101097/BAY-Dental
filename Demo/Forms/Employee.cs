@@ -34,6 +34,8 @@ namespace Demo
         {
             InitializeComponent();
             StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
+            // objZkeeper = new ZkemClient(RaiseDeviceEvent);
+            //IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
         }
 
         private void Page2_Load(object sender, EventArgs e)
@@ -54,7 +56,7 @@ namespace Demo
                 }
                 catch (Exception ex)
                 {
-                    StatusBarService.ShowStatusBar(lblStatus,ex.Message, true);
+                    StatusBarService.ShowStatusBar(lblStatus, ex.Message, true);
                 }
             }
         }
@@ -62,18 +64,14 @@ namespace Demo
         public void LoadDataEmployeeAsync()
         {
             objZkeeper = new ZkemClient(RaiseDeviceEvent);
+            IsDeviceConnected = objZkeeper.Connect_Net(DataConnect.ip, int.Parse(DataConnect.port));
+
             StatusBarService.ShowStatusBar(lblStatus, string.Empty, true);
-            
+
             ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, DataConnect.machineID);
-            if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
-            {
-                BindToGridView(lstFingerPrintTemplates);
-                StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
-            }
-            else
-            {
-                //DisplayListOutput("No records found");
-            }
+            BindToGridView(lstFingerPrintTemplates);
+            StatusBarService.ShowStatusBar(lblStatus, lstFingerPrintTemplates.Count + " kết quả được tìm thấy !!", true);
+
         }
 
 
@@ -170,8 +168,8 @@ namespace Demo
                     var res = await employeeObj.GetEmployeePC();
                     var empJsons = await employeeObj.getEmployee() != null ? await employeeObj.getEmployee() : new List<EmployeeSync>();
                     listEmp = res.Items.Where(x => !empJsons.Any(s => s.Id == x.Id)).ToList();
-                   
-                    var listSave = new List<EmployeeSync>();                    
+
+                    var listSave = new List<EmployeeSync>();
 
                     ///Set User
                     for (int i = 0; i < listEmp.Count(); i++)
@@ -207,7 +205,7 @@ namespace Demo
                     if (listSave.Count() > 0)
                         await employeeObj.AddEmployee(listSave);
 
-                    await employeeObj.LoadDataEmployeeAsync();
+                    LoadDataEmployeeAsync();
 
                 }
                 catch (Exception ex)

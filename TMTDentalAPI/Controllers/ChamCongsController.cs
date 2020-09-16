@@ -46,7 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> SyncToTimeKeeper(IEnumerable<ImportFileExcellChamCongModel> vals)
+        public async Task<IActionResult> SyncToTimeKeeper(IEnumerable<ReadLogResultDataViewModel> vals)
         {
             if (vals == null || !ModelState.IsValid)
                 return BadRequest();

@@ -88,5 +88,10 @@ namespace ApplicationCore.Entities
         /// </summary>
 
         public DateTime? StartWorkDate { get; set; }
+        
+        /// <summary>
+        /// Mã vân tay
+        /// </summary>
+        public string EnrollNumber { get; set; }
     }
 }
