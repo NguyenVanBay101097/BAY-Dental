@@ -39,29 +39,27 @@
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
             this.lblDeviceInfo = new System.Windows.Forms.Label();
-            this.dgvRecords = new System.Windows.Forms.DataGridView();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.dpDateFrom = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
             this.dpDateTo = new System.Windows.Forms.DateTimePicker();
             this.btnSyncData = new System.Windows.Forms.Button();
+            this.dgvRecords = new System.Windows.Forms.DataGridView();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label12 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.lbEmployee = new System.Windows.Forms.Label();
-            this.lbCompany = new System.Windows.Forms.Label();
             this.pnlHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.panel1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbxDeviceIP
             // 
             this.tbxDeviceIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxDeviceIP.Location = new System.Drawing.Point(58, 9);
+            this.tbxDeviceIP.Location = new System.Drawing.Point(55, 9);
             this.tbxDeviceIP.Name = "tbxDeviceIP";
             this.tbxDeviceIP.Size = new System.Drawing.Size(99, 22);
             this.tbxDeviceIP.TabIndex = 0;
@@ -71,7 +69,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 13);
+            this.label1.Location = new System.Drawing.Point(9, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 1;
@@ -81,7 +79,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(163, 13);
+            this.label2.Location = new System.Drawing.Point(160, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 13);
             this.label2.TabIndex = 3;
@@ -90,7 +88,7 @@
             // tbxPort
             // 
             this.tbxPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxPort.Location = new System.Drawing.Point(220, 9);
+            this.tbxPort.Location = new System.Drawing.Point(217, 9);
             this.tbxPort.MaxLength = 6;
             this.tbxPort.Name = "tbxPort";
             this.tbxPort.Size = new System.Drawing.Size(56, 22);
@@ -101,7 +99,7 @@
             // btnConnect
             // 
             this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnect.Location = new System.Drawing.Point(282, 9);
+            this.btnConnect.Location = new System.Drawing.Point(279, 9);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(104, 23);
             this.btnConnect.TabIndex = 4;
@@ -123,7 +121,7 @@
             // 
             // btnPullData
             // 
-            this.btnPullData.Location = new System.Drawing.Point(530, 3);
+            this.btnPullData.Location = new System.Drawing.Point(550, 143);
             this.btnPullData.Name = "btnPullData";
             this.btnPullData.Size = new System.Drawing.Size(80, 23);
             this.btnPullData.TabIndex = 10;
@@ -142,9 +140,9 @@
             this.pnlHeader.Controls.Add(this.tbxPort);
             this.pnlHeader.Controls.Add(this.label2);
             this.pnlHeader.Controls.Add(this.btnConnect);
-            this.pnlHeader.Location = new System.Drawing.Point(-1, 73);
+            this.pnlHeader.Location = new System.Drawing.Point(2, 73);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(1284, 65);
+            this.pnlHeader.Size = new System.Drawing.Size(1281, 63);
             this.pnlHeader.TabIndex = 712;
             this.pnlHeader.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlHeader_Paint);
             // 
@@ -159,57 +157,17 @@
             // 
             // lblDeviceInfo
             // 
-            this.lblDeviceInfo.Location = new System.Drawing.Point(79, 39);
+            this.lblDeviceInfo.Location = new System.Drawing.Point(64, 39);
             this.lblDeviceInfo.Name = "lblDeviceInfo";
             this.lblDeviceInfo.Size = new System.Drawing.Size(100, 18);
             this.lblDeviceInfo.TabIndex = 0;
             this.lblDeviceInfo.Text = "lblDeviceInfo";
             this.lblDeviceInfo.Visible = false;
             // 
-            // dgvRecords
-            // 
-            this.dgvRecords.AllowUserToAddRows = false;
-            this.dgvRecords.AllowUserToDeleteRows = false;
-            this.dgvRecords.AllowUserToOrderColumns = true;
-            this.dgvRecords.AllowUserToResizeColumns = false;
-            this.dgvRecords.AllowUserToResizeRows = false;
-            this.dgvRecords.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvRecords.Location = new System.Drawing.Point(0, 29);
-            this.dgvRecords.Name = "dgvRecords";
-            this.dgvRecords.Size = new System.Drawing.Size(1259, 418);
-            this.dgvRecords.TabIndex = 883;
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.dgvRecords);
-            this.panel1.Controls.Add(this.flowLayoutPanel1);
-            this.panel1.Location = new System.Drawing.Point(12, 148);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1259, 447);
-            this.panel1.TabIndex = 891;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.Controls.Add(this.label4);
-            this.flowLayoutPanel1.Controls.Add(this.dpDateFrom);
-            this.flowLayoutPanel1.Controls.Add(this.label5);
-            this.flowLayoutPanel1.Controls.Add(this.dpDateTo);
-            this.flowLayoutPanel1.Controls.Add(this.btnPullData);
-            this.flowLayoutPanel1.Controls.Add(this.btnSyncData);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1259, 29);
-            this.flowLayoutPanel1.TabIndex = 0;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 0);
+            this.label4.Location = new System.Drawing.Point(14, 148);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(48, 13);
             this.label4.TabIndex = 12;
@@ -220,7 +178,7 @@
             this.dpDateFrom.Checked = false;
             this.dpDateFrom.CustomFormat = "";
             this.dpDateFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dpDateFrom.Location = new System.Drawing.Point(57, 3);
+            this.dpDateFrom.Location = new System.Drawing.Point(67, 144);
             this.dpDateFrom.Name = "dpDateFrom";
             this.dpDateFrom.Size = new System.Drawing.Size(200, 22);
             this.dpDateFrom.TabIndex = 11;
@@ -229,7 +187,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(263, 0);
+            this.label5.Location = new System.Drawing.Point(274, 147);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 13);
             this.label5.TabIndex = 13;
@@ -239,20 +197,54 @@
             // 
             this.dpDateTo.Checked = false;
             this.dpDateTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dpDateTo.Location = new System.Drawing.Point(324, 3);
+            this.dpDateTo.Location = new System.Drawing.Point(335, 144);
             this.dpDateTo.Name = "dpDateTo";
             this.dpDateTo.Size = new System.Drawing.Size(200, 22);
             this.dpDateTo.TabIndex = 14;
             // 
             // btnSyncData
             // 
-            this.btnSyncData.Location = new System.Drawing.Point(616, 3);
+            this.btnSyncData.Location = new System.Drawing.Point(638, 143);
             this.btnSyncData.Name = "btnSyncData";
             this.btnSyncData.Size = new System.Drawing.Size(75, 23);
             this.btnSyncData.TabIndex = 15;
             this.btnSyncData.Text = "Đồng bộ";
             this.btnSyncData.UseVisualStyleBackColor = true;
             this.btnSyncData.Click += new System.EventHandler(this.btnSyncData_Click);
+            // 
+            // dgvRecords
+            // 
+            this.dgvRecords.AllowUserToAddRows = false;
+            this.dgvRecords.AllowUserToDeleteRows = false;
+            this.dgvRecords.AllowUserToOrderColumns = true;
+            this.dgvRecords.AllowUserToResizeColumns = false;
+            this.dgvRecords.AllowUserToResizeRows = false;
+            this.dgvRecords.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvRecords.Location = new System.Drawing.Point(0, 0);
+            this.dgvRecords.Name = "dgvRecords";
+            this.dgvRecords.Size = new System.Drawing.Size(1257, 423);
+            this.dgvRecords.TabIndex = 883;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.dgvRecords);
+            this.panel1.Controls.Add(this.flowLayoutPanel1);
+            this.panel1.Location = new System.Drawing.Point(14, 172);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1257, 423);
+            this.panel1.TabIndex = 891;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1257, 0);
+            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // label12
             // 
@@ -270,7 +262,6 @@
             this.panel2.AllowDrop = true;
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
             this.panel2.Controls.Add(this.lbEmployee);
-            this.panel2.Controls.Add(this.lbCompany);
             this.panel2.Controls.Add(this.label12);
             this.panel2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.panel2.Location = new System.Drawing.Point(0, 1);
@@ -282,24 +273,13 @@
             // lbEmployee
             // 
             this.lbEmployee.AutoSize = true;
-            this.lbEmployee.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lbEmployee.Location = new System.Drawing.Point(1028, 20);
+            this.lbEmployee.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lbEmployee.Location = new System.Drawing.Point(1151, 8);
             this.lbEmployee.Name = "lbEmployee";
-            this.lbEmployee.Size = new System.Drawing.Size(115, 25);
+            this.lbEmployee.Size = new System.Drawing.Size(80, 17);
             this.lbEmployee.TabIndex = 5;
             this.lbEmployee.Text = "lbEmployee";
             this.lbEmployee.Visible = false;
-            // 
-            // lbCompany
-            // 
-            this.lbCompany.AutoSize = true;
-            this.lbCompany.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lbCompany.Location = new System.Drawing.Point(787, 20);
-            this.lbCompany.Name = "lbCompany";
-            this.lbCompany.Size = new System.Drawing.Size(114, 25);
-            this.lbCompany.TabIndex = 5;
-            this.lbCompany.Text = "lbCompany";
-            this.lbCompany.Visible = false;
             // 
             // Master
             // 
@@ -310,6 +290,12 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pnlHeader);
             this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.dpDateFrom);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.btnSyncData);
+            this.Controls.Add(this.dpDateTo);
+            this.Controls.Add(this.btnPullData);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(615, 425);
@@ -321,11 +307,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -354,7 +339,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label lbEmployee;
-        private System.Windows.Forms.Label lbCompany;
     }
 }
 

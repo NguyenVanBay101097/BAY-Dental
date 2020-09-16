@@ -13,6 +13,7 @@ using TMTTimeKeeper.Services;
 using TMTTimeKeeper.Models;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
+using System.Linq;
 
 namespace TMTTimeKeeper
 {
@@ -80,10 +81,8 @@ namespace TMTTimeKeeper
                     account = await accountloginObj.getAccountAsync();
                     if (account != null)
                     {
-                        lbCompany.Visible = true;
                         lbEmployee.Visible = true;
                         lbEmployee.Text = account.Name;
-                        lbCompany.Text = account.CompanyName;
                     }
                     Visible = true;
 
@@ -98,10 +97,8 @@ namespace TMTTimeKeeper
             else
             {
                 SetHttpClient(account.CompanyName, account.AccessToken);
-                lbCompany.Visible = true;
                 lbEmployee.Visible = true;
                 lbEmployee.Text = account.Name;
-                lbCompany.Text = account.CompanyName;
             }
         }
 
@@ -226,6 +223,7 @@ namespace TMTTimeKeeper
             string toTime = dpDateTo.Value.Date.AddDays(1).AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss");
             var result = SDK.sta_readLogByPeriod(fromTime, toTime);
             readLogData = result;
+            ShowStatusBar($"Tìm thấy {result.Data.Count()} chấm công", true);
             BindToGridView(result.Data);
             dgvRecords.Columns[0].HeaderText = "Mã vân tay";
             dgvRecords.Columns[1].HeaderText = "Ngày chấm công";
@@ -296,15 +294,23 @@ namespace TMTTimeKeeper
 
         private async void btnSyncData_Click(object sender, EventArgs e)
         {
-            var response = new ResponseDataLogViewModel();
-            if (readLogData != null)
+            try
             {
-                response = await dataLogEnroll.SyncLogData(readLogData);
-                ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
+                var response = new ResponseDataLogViewModel();
+                if (readLogData != null)
+                {
+                    response = await dataLogEnroll.SyncLogData(readLogData);
+                    ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
+                }
+                else
+                {
+                    ShowStatusBar("Lỗi hệ thống", false);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ShowStatusBar("Lỗi hệ thống", false);
+
+                throw new Exception(ex.Message);
             }
 
         }

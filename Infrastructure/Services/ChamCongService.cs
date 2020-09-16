@@ -609,7 +609,6 @@ namespace Infrastructure.Services
                         resultSyncData.IsError += 1;
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
                         continue;
-
                     }
 
                     if (val.VerifyState == 0)
@@ -618,8 +617,7 @@ namespace Infrastructure.Services
                         chamcong.CompanyId = CompanyId;
                         chamcong.EmployeeId = emp.Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
-                        chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        chamcong.TimeIn = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
+                        chamcong.TimeIn = DateTime.ParseExact(DateTime.Parse(val.VerifyDate).ToString("HH:mm:ss"), "HH:mm:ss", CultureInfo.InvariantCulture);
                         await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
 
@@ -632,7 +630,7 @@ namespace Infrastructure.Services
                         var ccIn = await SearchQuery(x => x.EmployeeId == emp.Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
-                            ccIn.TimeOut = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
+                            ccIn.TimeOut = DateTime.ParseExact(DateTime.Parse(val.VerifyDate).ToString("HH:mm:ss"), "HH:mm:ss", CultureInfo.InvariantCulture);
                             await unitObj.BeginTransactionAsync();
                             await UpdateAsync(ccIn);
 
