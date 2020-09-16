@@ -607,7 +607,7 @@ namespace Infrastructure.Services
                     if(emp == null)
                     {
                         resultSyncData.IsError += 1;
-                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Khong tìm thấy nhân viên", LogReponseData = val });
+                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
                         continue;
 
                     }

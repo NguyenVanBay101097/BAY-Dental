@@ -90,7 +90,7 @@ namespace ApplicationCore.Entities
         public DateTime? StartWorkDate { get; set; }
         
         /// <summary>
-        /// Ma van tay
+        /// Mã vân tay
         /// </summary>
         public string EnrollNumber { get; set; }
     }
