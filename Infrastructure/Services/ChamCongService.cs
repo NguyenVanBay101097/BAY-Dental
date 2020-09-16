@@ -598,14 +598,14 @@ namespace Infrastructure.Services
             var unitObj = GetService<IUnitOfWorkAsync>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
             var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
-            var emps = await employeObj.SearchQuery().ToDictionaryAsync(s=>s.EnrollNumber);
+            var emps = await employeObj.SearchQuery(x => !string.IsNullOrEmpty(x.EnrollNumber)).ToDictionaryAsync(s => s.EnrollNumber);
 
             foreach (var val in vals)
             {
                 try
                 {
-                    
-                    if (emps.ContainsKey(val.UserId))
+
+                    if (!emps.ContainsKey(val.UserId))
                     {
                         resultSyncData.IsError += 1;
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
