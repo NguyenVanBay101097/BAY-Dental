@@ -1790,6 +1790,11 @@ namespace TMTTimeKeeper.Utilities
 
         public int BatchDataMode { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        void IZKEM.GetConnectStatus(ref int dwErrorCode)
+        {
+            throw new NotImplementedException();
+        }
+
 
         #endregion
 
