@@ -598,13 +598,14 @@ namespace Infrastructure.Services
             var unitObj = GetService<IUnitOfWorkAsync>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
             var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+            var emps = await employeObj.SearchQuery().ToDictionaryAsync(s=>s.EnrollNumber);
 
             foreach (var val in vals)
             {
                 try
                 {
-                    var emp = await employeObj.SearchQuery(x => x.EnrollNumber == val.UserId).FirstOrDefaultAsync();
-                    if (emp == null)
+                    
+                    if (emps.ContainsKey(val.UserId))
                     {
                         resultSyncData.IsError += 1;
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
@@ -616,7 +617,7 @@ namespace Infrastructure.Services
                     {
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = emp.Id;
+                        chamcong.EmployeeId = emps[val.UserId].Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
                         chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                         chamcong.TimeIn = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
@@ -624,12 +625,12 @@ namespace Infrastructure.Services
                         await CreateAsync(chamcong);
 
                         resultSyncData.IsSuccess += 1;
-                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
+                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "Thành công", LogReponseData = val });
                         unitObj.Commit();
                     }
                     else if (val.VerifyState == 1)
                     {
-                        var ccIn = await SearchQuery(x => x.EmployeeId == emp.Id && x.TimeOut == null).FirstOrDefaultAsync();
+                        var ccIn = await SearchQuery(x => x.EmployeeId == emps[val.UserId].Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
                             ccIn.TimeOut = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
@@ -637,7 +638,7 @@ namespace Infrastructure.Services
                             await UpdateAsync(ccIn);
 
                             resultSyncData.IsSuccess += 1;
-                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
+                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "Thành công", LogReponseData = val });
                             unitObj.Commit();
 
                         }
