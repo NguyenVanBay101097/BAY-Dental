@@ -612,15 +612,14 @@ namespace Infrastructure.Services
                         continue;
 
                     }
-
+                    ///check in
                     if (val.VerifyState == 0)
                     {
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
                         chamcong.EmployeeId = emps[val.UserId].Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
-                        chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        chamcong.TimeIn = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
+                        chamcong.TimeIn = DateTime.Parse(val.VerifyDate);
                         await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
 
@@ -628,12 +627,13 @@ namespace Infrastructure.Services
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "Thành công", LogReponseData = val });
                         unitObj.Commit();
                     }
+                    ///check out
                     else if (val.VerifyState == 1)
                     {
                         var ccIn = await SearchQuery(x => x.EmployeeId == emps[val.UserId].Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
-                            ccIn.TimeOut = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
+                            ccIn.TimeOut = DateTime.Parse(val.VerifyDate);
                             await unitObj.BeginTransactionAsync();
                             await UpdateAsync(ccIn);
 
