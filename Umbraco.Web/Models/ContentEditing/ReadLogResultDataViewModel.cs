@@ -19,6 +19,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ResultSyncDataViewModel
     {
+        public ResultSyncDataViewModel()
+        {
+            IsError = 0;
+            IsSuccess = 0;
+        }
         public int? IsSuccess { get; set; }
         public int? IsError { get; set; }
 

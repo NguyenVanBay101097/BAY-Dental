@@ -604,7 +604,7 @@ namespace Infrastructure.Services
                 try
                 {
                     var emp = await employeObj.SearchQuery(x => x.EnrollNumber == val.UserId).FirstOrDefaultAsync();
-                    if(emp == null)
+                    if (emp == null)
                     {
                         resultSyncData.IsError += 1;
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
@@ -612,13 +612,13 @@ namespace Infrastructure.Services
 
                     }
 
-                    if (val.VerifyType == 0)
+                    if (val.VerifyState == 0)
                     {
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
                         chamcong.EmployeeId = emp.Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
-                        chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture); 
+                        chamcong.Date = DateTime.ParseExact(val.VerifyDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                         chamcong.TimeIn = DateTime.ParseExact(val.VerifyDate, "hh:mm:ss", CultureInfo.InvariantCulture);
                         await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
@@ -627,7 +627,7 @@ namespace Infrastructure.Services
                         resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
                         unitObj.Commit();
                     }
-                    else if (val.VerifyType == 1)
+                    else if (val.VerifyState == 1)
                     {
                         var ccIn = await SearchQuery(x => x.EmployeeId == emp.Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
@@ -644,7 +644,7 @@ namespace Infrastructure.Services
                         else
                         {
                             resultSyncData.IsError += 1;
-                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });                         
+                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
                             continue;
                         }
                     }
@@ -652,7 +652,7 @@ namespace Infrastructure.Services
                 catch (Exception e)
                 {
                     resultSyncData.IsError += 1;
-                    resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = e.Message, LogReponseData = val });           
+                    resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = e.Message, LogReponseData = val });
                     unitObj.Rollback();
                     continue;
                 }

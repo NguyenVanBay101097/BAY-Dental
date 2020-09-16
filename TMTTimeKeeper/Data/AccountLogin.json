@@ -1,0 +1,149 @@
+{
+  "isSuccess": null,
+  "isError": null,
+  "responeseDataViewModel": [
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "13",
+        "verifyDate": "2020-9-10 16:29:25",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-10 16:29:28",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "13",
+        "verifyDate": "2020-9-10 16:30:31",
+        "verifyType": 1,
+        "verifyState": 1,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-10 16:30:35",
+        "verifyType": 1,
+        "verifyState": 1,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "13",
+        "verifyDate": "2020-9-10 16:31:54",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "123456789",
+        "verifyDate": "2020-9-10 16:33:40",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "13",
+        "verifyDate": "2020-9-10 16:34:5",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "13",
+        "verifyDate": "2020-9-10 16:35:32",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-10 16:42:58",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-11 8:45:18",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-14 18:4:17",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "6",
+        "verifyDate": "2020-9-16 9:34:12",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    },
+    {
+      "isSuccess": false,
+      "message": "Không tìm th?y nhân viên",
+      "logReponseData": {
+        "userId": "123456789",
+        "verifyDate": "2020-9-16 15:7:37",
+        "verifyType": 1,
+        "verifyState": 0,
+        "workCode": 0
+      }
+    }
+  ]
+}

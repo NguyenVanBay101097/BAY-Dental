@@ -90,14 +90,15 @@ namespace TMTTimeKeeper.Services
             return lstEnrollData;
         }
 
-        public async Task SyncLogData(ReadLogResult model)
+        public async Task<ResponseDataLogViewModel> SyncLogData(ReadLogResult model)
         {
             try
             {
                 var url = "api/ChamCongs/SyncToTimeKeeper";
                 var request = await HttpClientConfig.client.PostAsJsonAsync(url, model.Data);
                 var content = await request.Content.ReadAsStringAsync();
-                var responses = JsonConvert.DeserializeObject<TimekeepingResponse>(content);
+                var responses = JsonConvert.DeserializeObject<ResponseDataLogViewModel>(content);
+                return responses;
             }
             catch (Exception e)
             {

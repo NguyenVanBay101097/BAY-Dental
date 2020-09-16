@@ -296,8 +296,17 @@ namespace TMTTimeKeeper
 
         private async void btnSyncData_Click(object sender, EventArgs e)
         {
+            var response = new ResponseDataLogViewModel();
             if (readLogData != null)
-                await dataLogEnroll.SyncLogData(readLogData);
+            {
+                response = await dataLogEnroll.SyncLogData(readLogData);
+                ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
+            }
+            else
+            {
+                ShowStatusBar("Lỗi hệ thống", false);
+            }
+
         }
     }
 }
