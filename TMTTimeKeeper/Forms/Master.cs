@@ -307,7 +307,6 @@ namespace TMTTimeKeeper
 
             try
             {
-                pictureBox1.Visible = true;
                 Cursor.Current = Cursors.WaitCursor;
                 var response = new ResponseDataLogViewModel();
                 if (readLogData != null)
@@ -321,7 +320,6 @@ namespace TMTTimeKeeper
                 else
                 {
                     ShowStatusBar("Lỗi hệ thống", false);
-                    pictureBox1.Visible = false;
                 }
             }
             catch
@@ -330,6 +328,12 @@ namespace TMTTimeKeeper
             }
 
             this.Cursor = Cursors.Default;
+        }
+
+        private void lblSignOut_Click(object sender, EventArgs e)
+        {
+            accountloginObj.SignOut();
+            loadMaster();
         }
     }
 }

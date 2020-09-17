@@ -41,6 +41,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label12 = new System.Windows.Forms.Label();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.lblSignOut = new System.Windows.Forms.Label();
             this.lbEmployee = new System.Windows.Forms.Label();
             this.btnConnect = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -144,18 +145,6 @@
             this.panel1.Size = new System.Drawing.Size(812, 264);
             this.panel1.TabIndex = 891;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.WaitCursor;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(565, 177);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(100, 50);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 884;
-            this.pictureBox1.TabStop = false;
-            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoSize = true;
@@ -180,26 +169,42 @@
             // 
             this.pnlHeader.AllowDrop = true;
             this.pnlHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(236)))), ((int)(((byte)(236)))));
+            this.pnlHeader.Controls.Add(this.lblSignOut);
             this.pnlHeader.Controls.Add(this.lbEmployee);
             this.pnlHeader.Controls.Add(this.label12);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeader.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.pnlHeader.Font = new System.Drawing.Font("Segoe UI Light", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Size = new System.Drawing.Size(839, 49);
             this.pnlHeader.TabIndex = 712;
             this.pnlHeader.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlHeader_Paint);
             // 
+            // lblSignOut
+            // 
+            this.lblSignOut.AllowDrop = true;
+            this.lblSignOut.AutoSize = true;
+            this.lblSignOut.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblSignOut.Location = new System.Drawing.Point(769, 22);
+            this.lblSignOut.Name = "lblSignOut";
+            this.lblSignOut.Size = new System.Drawing.Size(55, 13);
+            this.lblSignOut.TabIndex = 6;
+            this.lblSignOut.Text = "Đăng xuất";
+            this.lblSignOut.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lblSignOut.Click += new System.EventHandler(this.lblSignOut_Click);
+            // 
             // lbEmployee
             // 
             this.lbEmployee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbEmployee.AutoSize = true;
             this.lbEmployee.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lbEmployee.Location = new System.Drawing.Point(729, 8);
+            this.lbEmployee.Location = new System.Drawing.Point(700, 4);
+            this.lbEmployee.MaximumSize = new System.Drawing.Size(200, 0);
             this.lbEmployee.Name = "lbEmployee";
             this.lbEmployee.Size = new System.Drawing.Size(80, 17);
             this.lbEmployee.TabIndex = 5;
             this.lbEmployee.Text = "lbEmployee";
+            this.lbEmployee.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.lbEmployee.Visible = false;
             // 
             // btnConnect
@@ -327,6 +332,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblDeviceInfo;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblSignOut;
     }
 }
 

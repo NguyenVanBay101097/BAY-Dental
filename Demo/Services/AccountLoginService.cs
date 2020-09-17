@@ -21,6 +21,12 @@ namespace Demo.Services
             return account;
         }
 
+        public void SignOut()
+        {
+            var fileName = "AccountLogin.json";
+            timeKeeperObj.SetJson<AccountLogin>(fileName, null);
+        }
+
         /// <summary>
         /// luu tai khoan dang nhap
         /// </summary>
