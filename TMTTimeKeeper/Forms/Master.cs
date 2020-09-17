@@ -65,7 +65,6 @@ namespace TMTTimeKeeper
             ShowStatusBar(string.Empty, true);
             DisplayEmpty();
             loadMaster();
-            pictureBox1.Dispose();
         }
 
         public async void loadMaster()
@@ -295,20 +294,19 @@ namespace TMTTimeKeeper
 
         private async void btnSyncData_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
+
             try
             {
-                pictureBox1.Visible = true;
                 var response = new ResponseDataLogViewModel();
                 if (readLogData != null)
                 {
                     response = await dataLogEnroll.SyncLogData(readLogData);
                     ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
-                    pictureBox1.Dispose();
                 }
                 else
                 {
                     ShowStatusBar("Lỗi hệ thống", false);
-                    pictureBox1.Dispose();
                 }
             }
             catch (Exception ex)
@@ -317,6 +315,7 @@ namespace TMTTimeKeeper
                 throw new Exception(ex.Message);
             }
 
+            this.Cursor = Cursors.Default;
         }
     }
 }
