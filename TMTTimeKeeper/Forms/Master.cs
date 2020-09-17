@@ -52,26 +52,30 @@ namespace TMTTimeKeeper
             }
         }
 
-
         private void ToggleControls(bool value)
         {
-            tbxPort.Enabled = !value;
-            tbxDeviceIP.Enabled = !value;
+            btnPullData.Enabled = value;
+            btnSyncData.Enabled = value;
         }
 
         public Master()
         {
             InitializeComponent();
-            SetDedaufltTimeRange();
             ShowStatusBar(string.Empty, true);
+            ToggleControls(false);
             DisplayEmpty();
             loadMaster();
-            pictureBox1.Visible = false;
+
+            var now = DateTime.Now;
+            var tmp = now.AddMonths(1);
+            var tmp2 = new DateTime(tmp.Year, tmp.Month, 1);
+
+            dpDateFrom.Value = new DateTime(now.Year, now.Month, 1);
+            dpDateTo.Value = tmp2.AddDays(-1).Date;
         }
 
         public async void loadMaster()
         {
-           
             var account = await CheckLoginAsync();
             if (account == null)
             {
@@ -145,12 +149,15 @@ namespace TMTTimeKeeper
                     lblDeviceInfo.Text = returnValue;
                     lblDeviceInfo.Visible = true;
                 }
+
+                ToggleControls(true);
             }
             else if (result == -2)
             {
                 ShowStatusBar("Đã ngắt kết nối", true);
                 btnConnect.Text = "Kết nối";
                 lblDeviceInfo.Visible = false;
+                ToggleControls(false);
             }
             else
             {
@@ -218,15 +225,10 @@ namespace TMTTimeKeeper
             }
 
         }
-        public void SetDedaufltTimeRange()
-        {
-            dpDateFrom.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            dpDateTo.Value = dpDateFrom.Value.AddMonths(1).AddDays(-1);
-        }
 
         private void btnPullData_Click(object sender, EventArgs e)
         {
-            string fromTime = dpDateFrom.Value.ToString("yyyy-MM-dd HH:mm:ss");
+            string fromTime = dpDateFrom.Value.Date.ToString("yyyy-MM-dd HH:mm:ss");
             string toTime = dpDateTo.Value.Date.AddDays(1).AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss");
             var result = SDK.sta_readLogByPeriod(fromTime, toTime);
             readLogData = result;
@@ -311,8 +313,10 @@ namespace TMTTimeKeeper
                 if (readLogData != null)
                 {
                     response = await dataLogEnroll.SyncLogData(readLogData);
-                    ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
-                    pictureBox1.Visible = false;
+                    if (!response.Success)
+                        ShowStatusBar(response.Message, true);
+                    else
+                        ShowStatusBar($"Đồng bộ thành công", true);
                 }
                 else
                 {
@@ -320,15 +324,12 @@ namespace TMTTimeKeeper
                     pictureBox1.Visible = false;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-
-                throw new Exception(ex.Message);
+                ShowStatusBar("Có lỗi xảy ra, vui lòng thử lại sau", false);
             }
 
             this.Cursor = Cursors.Default;
         }
-
-      
     }
 }
