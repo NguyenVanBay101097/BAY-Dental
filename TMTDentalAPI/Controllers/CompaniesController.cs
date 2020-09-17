@@ -222,8 +222,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(true);
         }
 
-     
-
         [HttpPost("[action]")]
         public async Task<IActionResult> InsertSecurityData()
         {

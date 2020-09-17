@@ -47,6 +47,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SyncToTimeKeeper(IEnumerable<ReadLogResultDataViewModel> vals)
+        {
+            if (vals == null || !ModelState.IsValid)
+                return BadRequest();
+
+            var result = await _chamCongService.SyncChamCong(vals);
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Salary.ChamCong.Read")]
         public async Task<IActionResult> Get(Guid id)

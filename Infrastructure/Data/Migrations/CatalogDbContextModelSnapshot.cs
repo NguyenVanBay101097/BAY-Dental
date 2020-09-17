@@ -2023,6 +2023,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EnrollNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("HourlyWage")
                         .HasColumnType("decimal(18,2)");
 

@@ -66,7 +66,7 @@ namespace Infrastructure.UnitOfWork
 
         public void Rollback()
         {
-            throw new NotImplementedException();
+            _transaction.Rollback();
         }
 
         public int SaveChanges()

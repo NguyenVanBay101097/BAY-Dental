@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string MaNV { get; set; }
 
+        public Guid? EmpId { get; set; }
         /// <summary>
         /// Id của máy chấm công
         /// </summary>
@@ -42,6 +43,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// code : tkp
         /// </summary>
         public string CodeWorkEntryType { get; set; }
+
+        public Guid? WorkId { get; set; }
 
         public int Stt { get; set; }
     }

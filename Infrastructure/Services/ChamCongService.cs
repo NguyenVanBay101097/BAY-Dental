@@ -3,6 +3,7 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
@@ -589,6 +590,87 @@ namespace Infrastructure.Services
             return new ChamCongImportResponse { Success = true };
         }
 
+        public async Task<ResultSyncDataViewModel> SyncChamCong(IEnumerable<ReadLogResultDataViewModel> vals)
+        {
+            var resultSyncData = new ResultSyncDataViewModel();
+            var modelError = new ImportFileExcellChamCongModel();
+            var employeObj = GetService<IEmployeeService>();
+            var unitObj = GetService<IUnitOfWorkAsync>();
+            var workEntryTypeObj = GetService<IWorkEntryTypeService>();
+            var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+            if (workEntryType == null)
+            {
+                return new ResultSyncDataViewModel
+                {
+                    Success = false,
+                    Message = "Không tìm thấy loại chấm công nào"
+                };
+            }
+
+            var enrolls = vals.Select(x => x.UserId).Distinct().ToList();
+            var emps = await employeObj.SearchQuery(x => !string.IsNullOrEmpty(x.EnrollNumber) && enrolls.Contains(x.EnrollNumber)).ToListAsync();
+            var emp_dict = emps.GroupBy(x => x.EnrollNumber).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+
+            int number_success = 0;
+            int number_error = 0;
+            foreach (var val in vals)
+            {
+                if (!emp_dict.ContainsKey(val.UserId))
+                    continue;
+
+                try
+                {
+                    ///check in
+                    if (val.VerifyState == 0)
+                    {
+                        var chamcong = new ChamCong();
+                        chamcong.CompanyId = CompanyId;
+                        chamcong.EmployeeId = emp_dict[val.UserId].Id;
+                        chamcong.WorkEntryTypeId = workEntryType.Id;
+                        chamcong.TimeIn = DateTime.Parse(val.VerifyDate);
+                        await unitObj.BeginTransactionAsync();
+                        await CreateAsync(chamcong);
+                        unitObj.Commit();
+
+                        number_success += 1;
+                    }
+                    ///check out
+                    else if (val.VerifyState == 1)
+                    {
+                        var employee = emp_dict[val.UserId];
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).FirstOrDefaultAsync();
+                        if (ccIn != null)
+                        {
+                            ccIn.TimeOut = DateTime.Parse(val.VerifyDate);
+                            await unitObj.BeginTransactionAsync();
+                            await UpdateAsync(ccIn);
+                            unitObj.Commit();
+
+                            number_success += 1;
+                        }
+                        else
+                        {
+                            number_error += 1;
+                            continue;
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    number_error += 1;
+                    unitObj.Rollback();
+                    continue;
+                }
+            }
+
+            return new ResultSyncDataViewModel { 
+                Success = true,
+                NumberSuccess = number_success,
+                NumberError = number_error
+            };
+        }
+
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)
         {
             var empObj = GetService<IEmployeeService>();
@@ -630,6 +712,7 @@ namespace Infrastructure.Services
                     }
                 }
             }
+
         }
 
         public void _ComputeStatusChamCong(IEnumerable<ChamCong> vals)
