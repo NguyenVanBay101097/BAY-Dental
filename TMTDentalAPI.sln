@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", 
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupDemo", "SetupDemo\SetupDemo.vdproj", "{C0D895E2-A284-45C3-B5D7-65BE2A40AD33}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TMTTimeKeeperSetup", "TMTTimeKeeperSetup\TMTTimeKeeperSetup.vdproj", "{B81734CC-9635-479F-B1A4-1BAAFB0213FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
@@ -189,6 +191,12 @@ Global
 		{C0D895E2-A284-45C3-B5D7-65BE2A40AD33}.Debug|x86.ActiveCfg = Debug
 		{C0D895E2-A284-45C3-B5D7-65BE2A40AD33}.Release|Any CPU.ActiveCfg = Release
 		{C0D895E2-A284-45C3-B5D7-65BE2A40AD33}.Release|x86.ActiveCfg = Release
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.All|Any CPU.ActiveCfg = Debug
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.All|x86.ActiveCfg = Debug
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.Debug|Any CPU.ActiveCfg = Debug
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.Debug|x86.ActiveCfg = Debug
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.Release|Any CPU.ActiveCfg = Release
+		{B81734CC-9635-479F-B1A4-1BAAFB0213FD}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
