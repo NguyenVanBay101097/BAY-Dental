@@ -1,4 +1,6 @@
-﻿namespace TMTTimeKeeper
+﻿using System;
+
+namespace TMTTimeKeeper
 {
     partial class Master
     {
@@ -177,14 +179,13 @@
             // 
             // dpDateFrom
             // 
-            this.dpDateFrom.Checked = false;
-            this.dpDateFrom.CustomFormat = "";
-            this.dpDateFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dpDateFrom.Checked = true;
+            this.dpDateFrom.CustomFormat = "dd/MM/yyyy";
+            this.dpDateFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dpDateFrom.Location = new System.Drawing.Point(67, 144);
             this.dpDateFrom.Name = "dpDateFrom";
             this.dpDateFrom.Size = new System.Drawing.Size(200, 22);
             this.dpDateFrom.TabIndex = 11;
-            this.dpDateFrom.Value = new System.DateTime(2020, 9, 15, 0, 0, 0, 0);
             // 
             // label5
             // 
@@ -197,12 +198,13 @@
             // 
             // dpDateTo
             // 
-            this.dpDateTo.Checked = false;
-            this.dpDateTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dpDateTo.Checked = true;
+            this.dpDateTo.CustomFormat = "dd/MM/yyyy";
+            this.dpDateTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dpDateTo.Location = new System.Drawing.Point(335, 144);
             this.dpDateTo.Name = "dpDateTo";
             this.dpDateTo.Size = new System.Drawing.Size(200, 22);
-            this.dpDateTo.TabIndex = 14;
+            this.dpDateTo.TabIndex = 14;          
             // 
             // btnSyncData
             // 
