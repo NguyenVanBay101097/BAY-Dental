@@ -13,6 +13,7 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
 
   RuleForm: FormGroup;
   rule: any;
+  title: string;
   listAmountSelect = [
     // { text: 'Phần trăm (%)', value: 'percentage' },
     { text: 'Tiền cố định', value: 'fix' },

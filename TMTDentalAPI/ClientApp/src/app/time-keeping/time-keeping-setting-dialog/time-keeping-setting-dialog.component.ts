@@ -10,10 +10,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class TimeKeepingSettingDialogComponent implements OnInit {
 
-  constructor(public timeKeepingService: TimeKeepingService, public fb: FormBuilder, private activeModal: NgbActiveModal,) { }
+  constructor(public timeKeepingService: TimeKeepingService, public fb: FormBuilder, public activeModal: NgbActiveModal,) { }
 
   settingForm: FormGroup;
   id: string;
+  title: string;
 
   ngOnInit() {
     this.settingForm = this.fb.group({

@@ -25,7 +25,7 @@ export class ResourceCalendarAttendanceCreateUpdateDialogComponent implements On
 
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private resourceCalendarService: ResourceCalendarService,
     private notificationService: NotificationService,
     private intl: IntlService

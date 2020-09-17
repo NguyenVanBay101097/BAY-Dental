@@ -28,7 +28,7 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
   hrPayrollStructureDisplay: HrPayrollStructureTypeDisplay = new HrPayrollStructureTypeDisplay();
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
     private resourceCalendarService: ResourceCalendarService,
     private timeKeepingService: TimeKeepingService,

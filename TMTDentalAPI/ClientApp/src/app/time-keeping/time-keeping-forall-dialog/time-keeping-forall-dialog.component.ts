@@ -17,11 +17,12 @@ export class TimeKeepingForallDialogComponent implements OnInit {
   @ViewChild('typeCbx', { static: true }) typeCbx: ComboBoxComponent;
   formGroup: FormGroup;
   typeList: any;
+  title: string;
 
   constructor(
     private fb: FormBuilder,
     private entryTypeService: WorkEntryTypeService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private intelservice: IntlService
   ) { }
 

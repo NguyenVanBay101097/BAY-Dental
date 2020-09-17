@@ -34,7 +34,7 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
   chamCong: ChamCongBasic = new ChamCongBasic();
   error = false;
   constructor(
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private timeKeepingServive: TimeKeepingService,
     private intl: IntlService,
