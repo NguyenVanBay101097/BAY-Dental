@@ -618,14 +618,20 @@ namespace Infrastructure.Services
                 if (!emp_dict.ContainsKey(val.UserId))
                     continue;
 
+                var employee = emp_dict[val.UserId];
                 try
                 {
-                    ///check in
+                    ///nếu 2 checkin liên tiếp từ máy chấm công thì xóa tất cả cả chấm công mà chưa checkout trước
+                    ///sau đó mới tạo chấm công
                     if (val.VerifyState == 0)
                     {
+                        var cham_congs_not_check_out = await SearchQuery(x => x.EmployeeId == employee.Id && !x.TimeOut.HasValue).ToListAsync();
+                        if (cham_congs_not_check_out.Any())
+                            await DeleteAsync(cham_congs_not_check_out);
+
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = emp_dict[val.UserId].Id;
+                        chamcong.EmployeeId = employee.Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
                         chamcong.TimeIn = DateTime.Parse(val.VerifyDate);
                         await unitObj.BeginTransactionAsync();
@@ -637,8 +643,7 @@ namespace Infrastructure.Services
                     ///check out
                     else if (val.VerifyState == 1)
                     {
-                        var employee = emp_dict[val.UserId];
-                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).FirstOrDefaultAsync();
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && !x.TimeOut.HasValue).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
                             ccIn.TimeOut = DateTime.Parse(val.VerifyDate);

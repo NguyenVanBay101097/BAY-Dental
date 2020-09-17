@@ -69,7 +69,8 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       structureType: null,
       wage: 0,
       hourlyWage: 0,
-      startWorkDate: null
+      startWorkDate: null,
+      enrollNumber: null
     });
 
     setTimeout(() => {

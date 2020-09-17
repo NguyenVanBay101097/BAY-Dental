@@ -105,6 +105,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Wage { get; set; }
         public decimal? HourlyWage { get; set; }
         public DateTime? StartWorkDate { get; set; }
+
+        public string EnrollNumber { get; set; }
     }
 
     public class EmployeePaged
