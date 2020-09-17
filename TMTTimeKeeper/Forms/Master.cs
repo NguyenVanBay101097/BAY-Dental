@@ -62,6 +62,7 @@ namespace TMTTimeKeeper
         public Master()
         {
             InitializeComponent();
+            SetDedaufltTimeRange();
             ShowStatusBar(string.Empty, true);
             DisplayEmpty();
             loadMaster();
@@ -70,7 +71,7 @@ namespace TMTTimeKeeper
 
         public async void loadMaster()
         {
-
+           
             var account = await CheckLoginAsync();
             if (account == null)
             {
@@ -217,10 +218,15 @@ namespace TMTTimeKeeper
             }
 
         }
+        public void SetDedaufltTimeRange()
+        {
+            dpDateFrom.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            dpDateTo.Value = dpDateFrom.Value.AddMonths(1).AddDays(-1);
+        }
 
         private void btnPullData_Click(object sender, EventArgs e)
         {
-            string fromTime = dpDateFrom.Value.Date.ToString("yyyy-MM-dd HH:mm:ss");
+            string fromTime = dpDateFrom.Value.ToString("yyyy-MM-dd HH:mm:ss");
             string toTime = dpDateTo.Value.Date.AddDays(1).AddSeconds(-1).ToString("yyyy-MM-dd HH:mm:ss");
             var result = SDK.sta_readLogByPeriod(fromTime, toTime);
             readLogData = result;
@@ -295,6 +301,8 @@ namespace TMTTimeKeeper
 
         private async void btnSyncData_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
+
             try
             {
                 pictureBox1.Visible = true;
@@ -318,6 +326,9 @@ namespace TMTTimeKeeper
                 throw new Exception(ex.Message);
             }
 
+            this.Cursor = Cursors.Default;
         }
+
+      
     }
 }
