@@ -598,67 +598,77 @@ namespace Infrastructure.Services
             var unitObj = GetService<IUnitOfWorkAsync>();
             var workEntryTypeObj = GetService<IWorkEntryTypeService>();
             var workEntryType = await workEntryTypeObj.SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
-            var emps = await employeObj.SearchQuery(x => !string.IsNullOrEmpty(x.EnrollNumber)).ToDictionaryAsync(s => s.EnrollNumber);
+            if (workEntryType == null)
+            {
+                return new ResultSyncDataViewModel
+                {
+                    Success = false,
+                    Message = "Không tìm thấy loại chấm công nào"
+                };
+            }
 
+            var enrolls = vals.Select(x => x.UserId).Distinct().ToList();
+            var emps = await employeObj.SearchQuery(x => !string.IsNullOrEmpty(x.EnrollNumber) && enrolls.Contains(x.EnrollNumber)).ToListAsync();
+            var emp_dict = emps.GroupBy(x => x.EnrollNumber).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+
+            int number_success = 0;
+            int number_error = 0;
             foreach (var val in vals)
             {
+                if (!emp_dict.ContainsKey(val.UserId))
+                    continue;
+
                 try
                 {
-
-                    if (!emps.ContainsKey(val.UserId))
-                    {
-                        resultSyncData.IsError += 1;
-                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "Không tìm thấy nhân viên", LogReponseData = val });
-                        continue;
-                    }
                     ///check in
                     if (val.VerifyState == 0)
                     {
                         var chamcong = new ChamCong();
                         chamcong.CompanyId = CompanyId;
-                        chamcong.EmployeeId = emps[val.UserId].Id;
+                        chamcong.EmployeeId = emp_dict[val.UserId].Id;
                         chamcong.WorkEntryTypeId = workEntryType.Id;
                         chamcong.TimeIn = DateTime.Parse(val.VerifyDate);
                         await unitObj.BeginTransactionAsync();
                         await CreateAsync(chamcong);
-
-                        resultSyncData.IsSuccess += 1;
-                        resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "Thành công", LogReponseData = val });
                         unitObj.Commit();
+
+                        number_success += 1;
                     }
                     ///check out
                     else if (val.VerifyState == 1)
                     {
-                        var ccIn = await SearchQuery(x => x.EmployeeId == emps[val.UserId].Id && x.TimeOut == null).FirstOrDefaultAsync();
+                        var employee = emp_dict[val.UserId];
+                        var ccIn = await SearchQuery(x => x.EmployeeId == employee.Id && x.TimeOut == null).FirstOrDefaultAsync();
                         if (ccIn != null)
                         {
                             ccIn.TimeOut = DateTime.Parse(val.VerifyDate);
                             await unitObj.BeginTransactionAsync();
                             await UpdateAsync(ccIn);
-
-                            resultSyncData.IsSuccess += 1;
-                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = true, Message = "Thành công", LogReponseData = val });
                             unitObj.Commit();
 
+                            number_success += 1;
                         }
                         else
                         {
-                            resultSyncData.IsError += 1;
-                            resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = "không tìm thấy chấm công nào chưa check-out.", LogReponseData = val });
+                            number_error += 1;
                             continue;
                         }
                     }
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
-                    resultSyncData.IsError += 1;
-                    resultSyncData.ResponeseDataViewModel.Add(new ResponeseDataViewModel { IsSuccess = false, Message = e.Message, LogReponseData = val });
+                    Console.WriteLine(e.Message);
+                    number_error += 1;
                     unitObj.Rollback();
                     continue;
                 }
             }
 
-            return resultSyncData;
+            return new ResultSyncDataViewModel { 
+                Success = true,
+                NumberSuccess = number_success,
+                NumberError = number_error
+            };
         }
 
         public async Task CheckChamCong(IEnumerable<ChamCong> vals)

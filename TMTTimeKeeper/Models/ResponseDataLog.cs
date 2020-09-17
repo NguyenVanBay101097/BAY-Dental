@@ -22,8 +22,10 @@ namespace TMTTimeKeeper.Models
 
     public class ResponseDataLogViewModel
     {
-        public int isSuccess { get; set; }
-        public int isError { get; set; }
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public int NumberSuccess { get; set; }
+        public int NumberError { get; set; }
         public List<ResponeseDataViewModel> responeseDataViewModel { get; set; }
     }
 }

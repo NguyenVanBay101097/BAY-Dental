@@ -87,14 +87,12 @@
             // 
             // dpDateFrom
             // 
-            this.dpDateFrom.Checked = false;
             this.dpDateFrom.CustomFormat = "";
             this.dpDateFrom.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dpDateFrom.Location = new System.Drawing.Point(67, 80);
             this.dpDateFrom.Name = "dpDateFrom";
             this.dpDateFrom.Size = new System.Drawing.Size(200, 22);
             this.dpDateFrom.TabIndex = 11;
-            this.dpDateFrom.Value = new System.DateTime(2020, 9, 15, 0, 0, 0, 0);
             // 
             // label5
             // 
@@ -107,7 +105,6 @@
             // 
             // dpDateTo
             // 
-            this.dpDateTo.Checked = false;
             this.dpDateTo.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dpDateTo.Location = new System.Drawing.Point(335, 81);
             this.dpDateTo.Name = "dpDateTo";

@@ -52,24 +52,30 @@ namespace TMTTimeKeeper
             }
         }
 
-
         private void ToggleControls(bool value)
         {
-            tbxPort.Enabled = !value;
-            tbxDeviceIP.Enabled = !value;
+            btnPullData.Enabled = value;
+            btnSyncData.Enabled = value;
         }
 
         public Master()
         {
             InitializeComponent();
             ShowStatusBar(string.Empty, true);
+            ToggleControls(false);
             DisplayEmpty();
             loadMaster();
+
+            var now = DateTime.Now;
+            var tmp = now.AddMonths(1);
+            var tmp2 = new DateTime(tmp.Year, tmp.Month, 1);
+
+            dpDateFrom.Value = new DateTime(now.Year, now.Month, 1);
+            dpDateTo.Value = tmp2.AddDays(-1).Date;
         }
 
         public async void loadMaster()
         {
-
             var account = await CheckLoginAsync();
             if (account == null)
             {
@@ -143,12 +149,15 @@ namespace TMTTimeKeeper
                     lblDeviceInfo.Text = returnValue;
                     lblDeviceInfo.Visible = true;
                 }
+
+                ToggleControls(true);
             }
             else if (result == -2)
             {
                 ShowStatusBar("Đã ngắt kết nối", true);
                 btnConnect.Text = "Kết nối";
                 lblDeviceInfo.Visible = false;
+                ToggleControls(false);
             }
             else
             {
@@ -302,17 +311,19 @@ namespace TMTTimeKeeper
                 if (readLogData != null)
                 {
                     response = await dataLogEnroll.SyncLogData(readLogData);
-                    ShowStatusBar($"Thành công: {response.isSuccess}, Lỗi: {response.isError}", true);
+                    if (!response.Success)
+                        ShowStatusBar(response.Message, true);
+                    else
+                        ShowStatusBar($"Đồng bộ thành công", true);
                 }
                 else
                 {
                     ShowStatusBar("Lỗi hệ thống", false);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-
-                throw new Exception(ex.Message);
+                ShowStatusBar("Có lỗi xảy ra, vui lòng thử lại sau", false);
             }
 
             this.Cursor = Cursors.Default;
