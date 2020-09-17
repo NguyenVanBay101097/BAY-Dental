@@ -134,6 +134,7 @@ namespace TMTTimeKeeper
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             string ip = tbxDeviceIP.Text.Trim();
             string port = tbxPort.Text.Trim();
 
@@ -163,6 +164,8 @@ namespace TMTTimeKeeper
             {
                 ShowStatusBar("Kết nối thất bại", false);
             }
+
+            this.Cursor = Cursors.Default;
         }
 
         public void ShowStatusBar(string message, bool type)

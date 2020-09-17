@@ -210,16 +210,19 @@ namespace TMTTimeKeeper
                         else
                         {
                             ShowStatusBar("Thông tin đăng nhập sai!", false);
+                            this.Cursor = Cursors.Default;
                         }
                     }
                     else
                     {
                         ShowStatusBar("Lỗi ...!", false);
+                        this.Cursor = Cursors.Default;
                     }
                 }
                 catch (Exception ex)
                 {
                     ShowStatusBar(ex.Message, false);
+                    this.Cursor = Cursors.Default;
                 }
             }
         }
@@ -244,8 +247,7 @@ namespace TMTTimeKeeper
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-            Close();
+            Application.Exit();
         }
 
         private void tbxCompanyName_Validating(object sender, CancelEventArgs e)
