@@ -61,6 +61,13 @@ account.model_loai_thu_chi,LoaiThuChi,Loại thu chi,0
 sale.model_commission,Commission,Bảng hoa hồng,0
 sale.model_commission_settlement,CommissionSettlement,Commission Settlement,1
 hr.model_employee,Employee,Nhân viên,0
+hr.model_payslip_run,HrPayslipRun,Đợt lương,0
+hr.model_payslip,HrPayslip,Phiếu lương,0
+hr.model_cham_cong,ChamCong,Chấm công,0
+hr.model_payroll_structure_type,HrPayrollStructureType,Loại mẫu lương,0
+hr.model_payroll_structure,HrPayrollStructure,Mẫu lương,0
+hr.model_work_entry_type,WorkEntryType,Loại chấm công,0
+base.model_resource_calendar,ResourceCalendar,Lịch làm việc,0
 
 
 

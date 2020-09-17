@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -30,6 +31,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
         public async Task<IActionResult> Get([FromQuery]ToaThuocPaged val)
         {
             var result = await _toaThuocService.GetPagedResultAsync(val);
@@ -37,6 +39,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var toaThuoc = await _toaThuocService.GetToaThuocForDisplayAsync(id);
@@ -47,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Create")]
         public async Task<IActionResult> Create(ToaThuocSave val)
         {
             var order = _mapper.Map<ToaThuoc>(val);
@@ -60,6 +64,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Update")]
         public async Task<IActionResult> Update(Guid id, ToaThuocSave val)
         {
             var order = await _toaThuocService.GetToaThuocForDisplayAsync(id);
@@ -76,9 +81,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("ToaThuoc", "Unlink");
             var toaThuoc = await _toaThuocService.GetByIdAsync(id);
             if (toaThuoc == null)
                 return NotFound();
@@ -102,6 +107,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/Print")]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);

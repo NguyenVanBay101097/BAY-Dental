@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -20,6 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.RealRevenue")]
         public async Task<IActionResult> GetReport(RealRevenueReportSearch val)
         {
             var res = await _realRevenueReportService.GetReport(val);

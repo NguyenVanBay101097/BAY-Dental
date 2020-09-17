@@ -22,6 +22,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Infrastructure;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -66,6 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
         {
             var result = await _partnerService.GetPagedResultAsync(val);
@@ -74,6 +76,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var partner = await _partnerService.GetPartnerForDisplayAsync(id);
@@ -98,6 +101,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> Create(PartnerDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -137,6 +141,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> Update(Guid id, PartnerDisplay val)
         {
             if (!ModelState.IsValid)
@@ -174,6 +179,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.Partner.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var partner = await _partnerService.GetByIdAsync(id);
@@ -323,9 +329,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-
-
-        [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
         {
@@ -334,6 +337,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -420,6 +424,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.PartnerLocation")]
         public async Task<IActionResult> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
         {
             var res = await _partnerService.ReportLocationCompanyWard(val);
@@ -427,6 +432,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.PartnerLocation")]
         public async Task<IActionResult> ReportLocationCompanyDistrict(PartnerReportLocationCompanySearch val)
         {
             var res = await _partnerService.ReportLocationCompanyDistrict(val);
@@ -474,6 +480,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> ExportExcelFile(PartnerPaged val)
         {
             var stream = new MemoryStream();
@@ -549,6 +556,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
         public async Task<IActionResult> GetNextAppointment(Guid id)
         {
             var res = await _partnerService.GetNextAppointment(id);
@@ -556,6 +564,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> SaveAvatar(PartnerSaveAvatarVM val)
         {
             var partner = await _partnerService.GetByIdAsync(val.PartnerId);

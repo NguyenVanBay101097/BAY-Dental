@@ -1,4 +1,6 @@
 import { EmployeeCategoryBasic } from '../employee-categories/emp-category';
+import { ChamCongBasic } from '../time-keeping/time-keeping.service';
+import { HrPayrollStructureTypeSimple } from '../hrs/hr-payroll-structure-type.service';
 
 export class EmployeePaged {
     offset: number;
@@ -7,6 +9,7 @@ export class EmployeePaged {
     position: string;
     isDoctor: boolean;
     isAssistant: boolean;
+    ids: string[];
 }
 
 export class EmployeeBasic {
@@ -17,14 +20,20 @@ export class EmployeeBasic {
     email: boolean;
     categoryId: string;
     category: EmployeeCategoryBasic;
+    chamCongs: ChamCongBasic[];
 }
 
 export class EmployeeDisplay extends EmployeeBasic {
     address: string;
     identityCard: string;
-    birthDay: string;
+    birthDay: any;
     isDoctor: boolean;
     isAssistant: boolean;
+    structureTypeId: string;
+    structureType: HrPayrollStructureTypeSimple;
+    wage: number;
+    hourlyWage: number;
+    startWorkDate: any;
 }
 
 export class PagedResult2<T>{

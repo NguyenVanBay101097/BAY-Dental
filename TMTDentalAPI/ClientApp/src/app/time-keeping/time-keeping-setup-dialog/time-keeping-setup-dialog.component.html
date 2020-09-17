@@ -1,0 +1,75 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" ngbAutofocus data-dismiss="modal" aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" kendo-validator="validator">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr *ngIf="employee">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nhân viên</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" *ngIf="employee">
+                                    {{employee.name}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{dateTime | date:'EEEE , dd/MM/yyyy'}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox class="form-control" [data]="filterdWorks" [textField]="'name'"
+                                        [filterable]="true" #workCbx formControlName="workEntryTypeId"
+                                        [valueField]="'id'" [valuePrimitive]="true">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label ">Giờ vào</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-timepicker formControlName="timeInObj">
+                                    </kendo-timepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giờ ra</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-timepicker formControlName="timeOutObj">
+                                    </kendo-timepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="formGroup.invalid"
+        (click)="onSave()">Lưu</button>
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
+    <button *ngIf="id" type="button" class="btn btn-danger ml-2" accesskey="x" (click)="delete(chamCong)">Xóa</button>
+</div>

@@ -20,5 +20,6 @@ namespace Infrastructure.Services
         Task UpdateAsync(ApplicationUser user);
         IEnumerable<Guid> GetListCompanyIdsAllowCurrentUser();
         Task<ApplicationUser> GetByIdAsync(string id);
+        Task<IList<string>> GetPermissions(string uid);
     }
 }

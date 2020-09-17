@@ -23,15 +23,18 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 
+
+
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
+
 
 registerLocaleData(localeVi, "vi");
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     CommonModule,

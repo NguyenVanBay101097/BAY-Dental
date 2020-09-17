@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using Infrastructure.EntityConfigurations;
 using Infrastructure.TenantData;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -190,6 +191,22 @@ namespace Infrastructure.Data
         public DbSet<PhieuThuChi> PhieuThuChis { get; set; }
         public DbSet<TCareScenario> TCareScenarios { get; set; }
 
+        public DbSet<ChamCong> ChamCongs { get; set; }
+        public DbSet<SetupChamcong> setupChamcongs { get; set; }
+        public DbSet<WorkEntryType> WorkEntryTypes { get; set; }
+        public DbSet<HrPayrollStructure> HrPayrollStructures { get; set; }
+        public DbSet<HrSalaryRule> HrSalaryRules { get; set; }
+        public DbSet<HrSalaryRuleCategory> HrSalaryRuleCategories { get; set; }
+        public DbSet<HrPayrollStructureType> HrPayrollStructureTypes { get; set; }
+        public DbSet<ResourceCalendar> ResourceCalendars { get; set; }
+        public DbSet<ResourceCalendarAttendance> ResourceCalendarAttendances { get; set; }
+        public DbSet<ResourceCalendarLeaves> ResourceCalendarLeaves { get; set; }
+        public DbSet<HrPayslip> HrPayslips { get; set; }
+        public DbSet<HrPayslipLine> HrPayslipLines { get; set; }
+        public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
+        public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
+        public DbSet<HrSalaryConfig> HrSalaryConfigs { get; set; }
+
 
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
 
@@ -344,6 +361,20 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleOrderLinePaymentRelConfiguration());
             builder.ApplyConfiguration(new CommissionSettlementConfiguration());
             builder.ApplyConfiguration(new TCareScenarioConfiguration());
+            builder.ApplyConfiguration(new ChamCongConfiguration());
+            builder.ApplyConfiguration(new HrPayrollStructureConfiguration());
+            builder.ApplyConfiguration(new HrSalaryRuleConfiguration());
+            builder.ApplyConfiguration(new HrSalaryRuleCategoryConfiguration());
+            builder.ApplyConfiguration(new HrPayrollStructureTypeConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarAttendanceConfiguration());
+            builder.ApplyConfiguration(new ResourceCalendarLeavesConfiguration());
+            builder.ApplyConfiguration(new WorkEntryTypeConfiguration());
+            builder.ApplyConfiguration(new HrPayslipConfiguration());
+            builder.ApplyConfiguration(new HrPayslipLineConfiguration());
+            builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
+            builder.ApplyConfiguration(new HrPayslipRunConfiguration());
+            builder.ApplyConfiguration(new HrSalaryConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
@@ -378,6 +409,15 @@ namespace Infrastructure.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationRole>(b =>
+            {
+                // Each Role can have many entries in the UserRole join table
+                b.HasMany(e => e.UserRoles)
+                    .WithOne()
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+            });
         }
 
         public int? DatePart(string datePartArg, DateTime? date) => throw new Exception();

@@ -8,6 +8,7 @@ import { TimePickerModule } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxModule } from '@progress/kendo-angular-dropdowns';
 import { MultiSelectModule } from '@progress/kendo-angular-dropdowns';
 import { ChartModule } from '@progress/kendo-angular-charts';
+import { TreeViewModule } from '@progress/kendo-angular-treeview';
 
 
 const kendo = [
@@ -19,7 +20,8 @@ const kendo = [
     ComboBoxModule,
     MultiSelectModule,
     NotificationModule,
-    ChartModule
+    ChartModule,
+    TreeViewModule
 ];
 
 @NgModule({

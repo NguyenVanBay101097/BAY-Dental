@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface IDotKhamService: IBaseService<DotKham>
     {
-        Task<PagedResult2<DotKham>> GetPagedResultAsync(DotKhamPaged val);
+        Task<PagedResult2<DotKhamBasic>> GetPagedResultAsync(DotKhamPaged val);
         Task ActionConfirm(Guid id);
         Task<DotKhamDisplay> DefaultGet(DotKhamDefaultGet val);
         Task<DotKham> GetDotKhamForDisplayAsync(Guid id);

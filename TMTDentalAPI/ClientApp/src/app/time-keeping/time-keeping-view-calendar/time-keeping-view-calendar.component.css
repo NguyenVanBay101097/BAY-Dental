@@ -1,0 +1,127 @@
+.o_kanban_view.o_kanban_grouped.o_kanban_small_column .o_kanban_group:not(.o_column_folded) {
+    width: 47px;
+    padding: 0;
+}
+
+.o_kanban_employee {
+    max-width: 200px;
+}
+
+.o_kanban_record {
+    margin-top: 10px;
+}
+
+.o_kanban_view .o_kanban_record, .cdk-drag-preview .o_kanban_record, .o_kanban_record.cdk-drag-preview {
+    min-width: 47px;
+    max-width: 47px;
+}
+
+.oe_kanban_timekepping {
+    min-width: 59px;
+    min-height: 35px;
+    border-radius: 3px;
+    max-width: 55px;
+    position: relative;
+}
+
+.o_control_panel .o_cp_right {
+    margin-top: -1px;
+}
+
+.oe_kanban_content {
+    cursor: pointer;
+    position: relative;
+}
+
+.o_content {
+    max-width: 100%;
+    padding: 10px;
+    background-color: white;
+}
+
+.fa-circle {
+    float: left;
+    font-size: 12px;
+    margin: 2px;
+}
+
+.o_kanban_view .o_kanban_record, .o_kanban_view .o_kanban_quick_create, .cdk-drag-preview .o_kanban_record, .cdk-drag-preview .o_kanban_quick_create, .o_kanban_record.cdk-drag-preview {
+    padding: 5px 5px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+}
+
+.o_column_title {
+    text-align: center;
+}
+
+.table {
+    max-width: 100%;
+    display: block;
+    overflow-x: scroll;
+}
+
+.table td {
+    padding: 2px !important;
+}
+
+.title_month {
+    padding-right: 3px;
+    padding-left: 3px;
+    padding-top: 2.5px;
+    background-color: #f0eeee;
+    padding-bottom: 8px;
+}
+
+.table thead th {
+    vertical-align: middle;
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+    min-width: 64px;
+    padding: 7px !important;
+}
+
+.table tbody th {
+    padding: 7px !important;
+}
+
+.o_content {
+    max-width: 100%;
+    padding: 10px 15px 15px 15px;
+    background-color: white;
+}
+
+.oe_kanban_timeSheet {
+    background-color: #dee2e6;
+    height: 34px;
+    border-radius: 5px;
+    display: flex;
+    position: relative;
+}
+
+.time_sheet_type {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+}
+
+.oe_kanban_timeSheet_create {}
+
+.oe_kanban_timeSheet>span>i:hover {
+    opacity: 0.6;
+    border-radius: 50%;
+}
+
+.oe_kanban_timeSheet_create>i {
+    font-size: 30px;
+    margin-left: 14px;
+    margin-top: 3px;
+    opacity: 0.5;
+}
+
+.oe_kanban_timeSheet>span {
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
+    padding: 4px;
+}

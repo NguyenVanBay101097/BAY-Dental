@@ -20,7 +20,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 })
 export class EmpCategoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmpCategoryService, private modalService: NgbModal, private dialogService: DialogService) { }
+  constructor(private fb: FormBuilder, private service: EmpCategoryService, private modalService: NgbModal) { }
 
   loading = false;
   gridView: GridDataResult;

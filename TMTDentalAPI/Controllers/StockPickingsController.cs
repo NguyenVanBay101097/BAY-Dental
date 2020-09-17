@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -34,17 +35,17 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Stock.Picking.Read")]
         public async Task<IActionResult> Get([FromQuery]StockPickingPaged val)
         {
-            _modelAccessService.Check("StockPicking", "Read");
             var res = await _stockPickingService.GetPagedResultAsync(val);
             return Ok(res);
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Stock.Picking.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("StockPicking", "Read");
             var picking = await _stockPickingService.GetPickingForDisplay(id);
             if (picking == null)
                 return NotFound();
@@ -54,6 +55,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Stock.Picking.Create")]
         public async Task<IActionResult> Create(StockPickingDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -72,6 +74,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Stock.Picking.Update")]
         public async Task<IActionResult> Update(Guid id, StockPickingDisplay val)
         {
             if (!ModelState.IsValid)
@@ -91,6 +94,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Stock.Picking.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -160,6 +164,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("ActionDone")]
+        [CheckAccess(Actions = "Stock.Picking.Update")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
             if (ids == null)

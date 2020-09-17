@@ -31,7 +31,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]RoutingPaged val)
         {
-            _modelAccessService.Check("Routing", "Read");
             var result = await _routingService.GetPagedResultAsync(val);
 
             var paged = new PagedResult2<RoutingBasic>(result.TotalItems, val.Offset, val.Limit)
@@ -46,7 +45,6 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            _modelAccessService.Check("Routing", "Read");
             var routing = await _routingService.GetRoutingForDisplayAsync(id);
             if (routing == null)
             {
@@ -63,7 +61,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Routing", "Create");
             var routing = _mapper.Map<Routing>(val);
             SaveRoutingLines(val, routing);
             await _routingService.CreateAsync(routing);
@@ -77,7 +74,6 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("Routing", "Update");
             var routing = await _routingService.GetRoutingForDisplayAsync(id);
             if (routing == null)
                 return NotFound();
@@ -93,7 +89,6 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            _modelAccessService.Check("Routing", "Unlink");
             var routing = await _routingService.GetByIdAsync(id);
             if (routing == null)
                 return NotFound();

@@ -1,0 +1,57 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="settingForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6  d-block m-auto">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label w-50">
+                                    <label class="o_form_label">Thời gian cho 1 công (giờ): </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox formControlName="oneStandardWorkHour" [value]="34" [min]="0"
+                                        [max]="100">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Thời gian cho 1/2 công (giờ): </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox formControlName="halfStandardWorkHour" [value]="1" [min]="0"
+                                        [max]="100">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Thời gian được chênh lệch (phút): </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox formControlName="differenceTime" [value]="1" [min]="0"
+                                        [max]="100">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
+</div>

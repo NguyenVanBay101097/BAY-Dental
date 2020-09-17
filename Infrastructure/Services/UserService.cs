@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.IO;
 using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
+using SaasKit.Multitenancy;
 
 namespace Infrastructure.Services
 {
@@ -25,15 +26,17 @@ namespace Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly CatalogDbContext _dbContext;
         private readonly IMyCache _cache;
+        private readonly AppTenant _tenant;
 
         public UserService(UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor,
-            IMyCache cache, CatalogDbContext dbContext)
+            IMyCache cache, CatalogDbContext dbContext, ITenant<AppTenant> tenant)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _cache = cache;
             _dbContext = dbContext;
+            _tenant = tenant?.Value;
         }
 
         protected string UserId
@@ -157,6 +160,13 @@ namespace Infrastructure.Services
         public IEnumerable<Guid> GetListCompanyIdsAllowCurrentUser()
         {
             return GetListCompanyIdsAllow(UserId);
+        }
+
+        public async Task<IList<string>> GetPermissions(string uid)
+        {
+            var roleFunctionObj = GetService<IApplicationRoleFunctionService>();
+            var res = await roleFunctionObj.SearchQuery(x => x.Role.UserRoles.Any(y => y.UserId == UserId)).Select(x => x.Func).ToListAsync();
+            return res;
         }
     }
 }
