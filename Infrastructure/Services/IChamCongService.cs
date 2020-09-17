@@ -24,9 +24,9 @@ namespace Infrastructure.Services
         Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val);
         Task<ResultSyncDataViewModel> SyncChamCong(IEnumerable<ReadLogResultDataViewModel> vals);
 
-        Task TaoChamcongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null);
+        Task TaoChamCongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null);
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
-        Task TimeKeepingForAll(TimeKeepingForAll val);
+        Task TaoChamCongNguyenNgay(TaoChamCongNguyenNgayViewModel val);
 
     }
 }

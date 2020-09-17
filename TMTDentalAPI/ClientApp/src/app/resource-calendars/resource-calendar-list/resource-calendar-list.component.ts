@@ -16,7 +16,7 @@ export class ResourceCalendarListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = 'Lịch làm việc';
+  title = 'Thời gian làm việc';
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();

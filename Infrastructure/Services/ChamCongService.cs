@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
@@ -660,7 +661,7 @@ namespace Infrastructure.Services
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                     number_error += 1;
@@ -669,7 +670,8 @@ namespace Infrastructure.Services
                 }
             }
 
-            return new ResultSyncDataViewModel { 
+            return new ResultSyncDataViewModel
+            {
                 Success = true,
                 NumberSuccess = number_success,
                 NumberError = number_error
@@ -775,7 +777,8 @@ namespace Infrastructure.Services
 
             return res;
         }
-        public async Task TaoChamcongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null)
+
+        public async Task TaoChamCongNgayLe(Guid employeeId, DateTime dateFrom, DateTime dateTo, IEnumerable<AttendanceInterval> attendanceIntervals = null)
         {
             var leaveObj = GetService<IResourceCalendarLeaveService>();
             var empObj = GetService<IEmployeeService>();
@@ -787,7 +790,8 @@ namespace Infrastructure.Services
 
             // lấy danh sách ngày nghỉ lễ
             var leaves = await leaveObj.SearchQuery(x => x.CalendarId == calendarId.Value && x.DateFrom <= dateTo && x.DateFrom >= dateFrom).ToListAsync();
-            if (leaves == null) return;
+            if (!leaves.Any()) 
+                return;
 
             // lấy attendanceinterval
             if (attendanceIntervals == null)
@@ -839,33 +843,32 @@ namespace Infrastructure.Services
             await CreateAsync(chamcongsToAdd);
         }
 
-        public async Task TimeKeepingForAll(TimeKeepingForAll val)
+        public async Task TaoChamCongNguyenNgay(TaoChamCongNguyenNgayViewModel val)
         {
+            //tạo chấm công làm việc nguyên ngày theo 1 work entry type
             var empObj = GetService<IEmployeeService>();
             var calendarObj = GetService<IResourceCalendarService>();
 
             var empList = await empObj.SearchQuery(x => x.Active == true).Include(x => x.StructureType).ToListAsync();
-            var chamcongs = await SearchQuery(x => x.TimeIn.Value.Date == val.Date.Date)
-                                  .Select(x=> new { Id = x.Id, EmployeeId = x.EmployeeId}).ToListAsync();
-
             var chamcongsToAdd = new List<ChamCong>();
             foreach (var emp in empList)
             {
-                if (emp.StructureType == null) throw new Exception($"Nhân viên {emp.Name} chưa thiết lập loại mẫu lương!");
-                if (chamcongs.Any(x => x.EmployeeId == emp.Id)) throw new Exception($"Không thể tạo hàng loạt vì nhân viên {emp.Name} đã có chấm công!");
+                if (emp.StructureType == null) 
+                    throw new Exception($"Nhân viên {emp.Name} chưa thiết lập loại mẫu lương!");
+
                 //get chu kì làm việc của ngày đó của nhân viên đó
-                var attendanceIntervals = await calendarObj._AttendanceIntervals(emp.StructureType.DefaultResourceCalendarId.Value, val.Date.Date, val.Date.Date);
+                var dateFrom = val.Date.AbsoluteBeginOfDate();
+                var dateTo = val.Date.AbsoluteEndOfDate();
+                var attendanceIntervals = await calendarObj._AttendanceIntervals(emp.StructureType.DefaultResourceCalendarId.Value, dateFrom, dateTo);
                 foreach (var interval in attendanceIntervals)
                 {
                     chamcongsToAdd.Add(new ChamCong()
                     {
-                        CompanyId= CompanyId,
-                        Date= val.Date,
-                        EmployeeId= emp.Id,
-                        Status= "done",
-                        TimeIn= interval.Start,
-                        TimeOut= interval.Stop,
-                        WorkEntryTypeId= val.WorkEntryTypeId
+                        CompanyId = CompanyId,
+                        EmployeeId = emp.Id,
+                        TimeIn = interval.Start,
+                        TimeOut = interval.Stop,
+                        WorkEntryTypeId = val.WorkEntryTypeId
                     });
                 }
             }

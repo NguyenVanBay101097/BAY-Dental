@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a routerLink="/resource-calendars">Lịch làm việc</a>
+                <a routerLink="/resource-calendars">Thời gian làm việc</a>
             </li>
             <li class="active">
                 <span *ngIf="id">{{resourceCalendar.name}}</span>
@@ -28,9 +28,9 @@
     <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="oe_title mt-2 mb-3">
+                <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên </label>
-                    <h1 class="mb-1">
+                    <h1>
                         <input class="form-control" formControlName="name" name="name" required #nameInput>
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty)" class="text-danger">
@@ -43,7 +43,7 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Số giờ trung bình trên 1 ngày
+                                        Số giờ/ngày
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -122,7 +122,7 @@
 
                             </ng-template>
                         </ngb-tab>
-                        <ngb-tab title="Thời gian nghỉ lễ">
+                        <!-- <ngb-tab title="Thời gian nghỉ lễ">
                             <ng-template ngbTabContent>
                                 <div class="d-flex">
                                     <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
@@ -166,7 +166,7 @@
                                 </table>
 
                             </ng-template>
-                        </ngb-tab>
+                        </ngb-tab> -->
                     </ngb-tabset>
                     <div class="clearfix"></div>
                 </div>

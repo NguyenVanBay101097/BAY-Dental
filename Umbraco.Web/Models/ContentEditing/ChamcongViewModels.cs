@@ -71,7 +71,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeBasic Employee { get; set; }
     }
 
-    public class TimeKeepingForAll
+    public class TaoChamCongNguyenNgayViewModel
     {
         public DateTime Date { get; set; }
         public Guid WorkEntryTypeId { get; set; }

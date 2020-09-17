@@ -143,10 +143,10 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.ChamCong.Create")]
-        public async Task<IActionResult> TimeKeepingForAll(TimeKeepingForAll val)
+        public async Task<IActionResult> TimeKeepingForAll(TaoChamCongNguyenNgayViewModel val)
         {
             _unitOfWork.BeginTransaction();
-            await _chamCongService.TimeKeepingForAll(val);
+            await _chamCongService.TaoChamCongNguyenNgay(val);
             _unitOfWork.Commit();
             return Ok();
         }
