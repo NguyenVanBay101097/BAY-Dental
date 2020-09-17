@@ -183,9 +183,10 @@
             // lblSignOut
             // 
             this.lblSignOut.AllowDrop = true;
+            this.lblSignOut.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSignOut.AutoSize = true;
             this.lblSignOut.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblSignOut.Location = new System.Drawing.Point(769, 22);
+            this.lblSignOut.Location = new System.Drawing.Point(769, 28);
             this.lblSignOut.Name = "lblSignOut";
             this.lblSignOut.Size = new System.Drawing.Size(55, 13);
             this.lblSignOut.TabIndex = 6;
@@ -198,7 +199,7 @@
             this.lbEmployee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lbEmployee.AutoSize = true;
             this.lbEmployee.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lbEmployee.Location = new System.Drawing.Point(700, 4);
+            this.lbEmployee.Location = new System.Drawing.Point(744, 5);
             this.lbEmployee.MaximumSize = new System.Drawing.Size(200, 0);
             this.lbEmployee.Name = "lbEmployee";
             this.lbEmployee.Size = new System.Drawing.Size(80, 17);
