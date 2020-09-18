@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -166,7 +167,7 @@ namespace Infrastructure.Services
             res.StructureType = _mapper.Map<HrPayrollStructureTypeSimple>(structureType);
             res.StructureTypeId = structureType.Id;
 
-            res.Struct = await _mapper.ProjectTo<HrPayrollStructureBasic>(structObj.SearchQuery(x=>x.TypeId == structureType.Id && x.RegularPay == true)).FirstOrDefaultAsync();
+            res.Struct = await _mapper.ProjectTo<HrPayrollStructureBasic>(structObj.SearchQuery(x => x.TypeId == structureType.Id && x.RegularPay == true)).FirstOrDefaultAsync();
 
             res.Name = $"Phiếu lương tháng {dateFrom.Value.ToString("M yyyy", new CultureInfo("vi-VN")).ToLower()} {employee.Name}";
 
@@ -180,7 +181,7 @@ namespace Infrastructure.Services
 
             //tìm những chấm công theo nhân viên từ ngày đến ngày của tháng
             var listChamcongs = await ccObj.SearchQuery(x => x.EmployeeId == employeeId && x.TimeIn.Value.Date >= dateFrom.Value.Date && x.TimeIn.Value.Date <= dateTo.Value.Date)
-                .Include(x=>x.WorkEntryType).ToListAsync();
+                .Include(x => x.WorkEntryType).ToListAsync();
 
             //gom lại theo từng work entry type
             var work_entry_type_dict = new Dictionary<Guid, ChamCongTinhCong>();
@@ -473,6 +474,19 @@ namespace Infrastructure.Services
             foreach (var payslip in self)
                 payslip.State = "draft";
             await UpdateAsync(self);
+        }
+
+        public override ISpecification<HrPayslip> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.payslip_comp_rule":
+                    return new InitialSpecification<HrPayslip>(x => companyIds.Contains(x.CompanyId));
+                default:
+                    return null;
+            }
         }
     }
 

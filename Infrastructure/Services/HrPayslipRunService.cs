@@ -137,7 +137,6 @@ namespace Infrastructure.Services
             await UpdateAsync(paysliprun);
         }
 
-
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var payslipObj = GetService<IHrPayslipService>();
@@ -172,6 +171,19 @@ namespace Infrastructure.Services
             }
 
             await UpdateAsync(payslipruns);
+        }
+
+        public override ISpecification<HrPayslipRun> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.payslip_run_comp_rule":
+                    return new InitialSpecification<HrPayslipRun>(x => companyIds.Contains(x.CompanyId));
+                default:
+                    return null;
+            }
         }
     }
 

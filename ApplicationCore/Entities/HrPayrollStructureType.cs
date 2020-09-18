@@ -6,6 +6,12 @@ namespace ApplicationCore.Entities
 {
     public class HrPayrollStructureType: BaseEntity
     {
+        public HrPayrollStructureType()
+        {
+            DefaultSchedulePay = "monthly";
+            WageType = "monthly";
+        }
+
         /// <summary>
         /// Thời gian làm việc mặc định
         /// </summary>
@@ -41,5 +47,8 @@ namespace ApplicationCore.Entities
         /// hourly: Lương theo giờ
         /// </summary>
         public string WageType { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

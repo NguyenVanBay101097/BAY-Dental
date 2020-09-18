@@ -14,7 +14,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-   public class HrPayrollStructureTypeService : BaseService<HrPayrollStructureType>, IHrPayrollStructureTypeService
+    public class HrPayrollStructureTypeService : BaseService<HrPayrollStructureType>, IHrPayrollStructureTypeService
     {
 
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayrollStructureType> GetHrPayrollStructureTypeDisplay(Guid Id)
         {
-            var res = await SearchQuery(x=>x.Id == Id).Include(x => x.DefaultStruct).FirstOrDefaultAsync();
+            var res = await SearchQuery(x => x.Id == Id).Include(x => x.DefaultStruct).FirstOrDefaultAsync();
             return res;
         }
 
@@ -59,6 +59,19 @@ namespace Infrastructure.Services
             var items = await _mapper.ProjectTo<HrPayrollStructureTypeSimple>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
 
             return items;
+        }
+
+        public override ISpecification<HrPayrollStructureType> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.payroll_structure_type_comp_rule":
+                    return new InitialSpecification<HrPayrollStructureType>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
         }
     }
 }

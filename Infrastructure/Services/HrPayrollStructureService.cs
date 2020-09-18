@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -83,5 +84,17 @@ namespace Infrastructure.Services
             return await _mapper.ProjectTo<HrPayrollStructureBasic>(SearchQuery(x => x.TypeId == typeId && x.RegularPay == true && x.Id != currentId)).FirstOrDefaultAsync();
         }
 
+        public override ISpecification<HrPayrollStructure> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.payroll_structure_comp_rule":
+                    return new InitialSpecification<HrPayrollStructure>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
     }
 }

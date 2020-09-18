@@ -53,13 +53,16 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Salary.HrPayrollStructureType.Create")]
         public async Task<IActionResult> Create(HrPayrollStructureTypeSave val)
         {
-            var entitys = _mapper.Map<HrPayrollStructureType>(val);
+            var type = new HrPayrollStructureType();
+            type.CompanyId = CompanyId;
+
+            type = _mapper.Map(val, type);
 
             await _unitOfWork.BeginTransactionAsync();
-            await _HrPayrollStructureTypeService.CreateAsync(entitys);
+            await _HrPayrollStructureTypeService.CreateAsync(type);
             _unitOfWork.Commit();
 
-            return Ok(_mapper.Map<HrPayrollStructureTypeDisplay>(entitys));
+            return Ok(_mapper.Map<HrPayrollStructureTypeDisplay>(type));
         }
 
         [HttpPut("{id}")]

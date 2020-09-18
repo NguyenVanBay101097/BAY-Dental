@@ -250,6 +250,19 @@ namespace Infrastructure.Services
             res.Attendances = attendances;
             return res;
         }
+
+        public override ISpecification<ResourceCalendar> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "base.resource_calendar_comp_rule":
+                    return new InitialSpecification<ResourceCalendar>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
     }
 
     public class AttendanceInterval

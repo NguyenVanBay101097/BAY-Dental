@@ -52,15 +52,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Salary.HrPayrollStructure.Create")]
         public async Task<IActionResult> Create(HrPayrollStructureSave val)
         {
-            if (val.RegularPay)
-            {
-                var existItem = await _payrollStructureService.ExistRegular(val.TypeId, Guid.Empty);
-                if (existItem != null)
-                {
-                    throw new Exception("Loại mẫu lương này đã tồn tại 1 bản mẫu lương thông dụng khác: " + existItem.Name);
-                }
-            }
-            var structure = _mapper.Map<HrPayrollStructure>(val);
+            var structure = new HrPayrollStructure();
+            structure.CompanyId = CompanyId;
+
+            structure = _mapper.Map(val, structure);
             SaveRules(val, structure);
 
             await _unitOfWork.BeginTransactionAsync();

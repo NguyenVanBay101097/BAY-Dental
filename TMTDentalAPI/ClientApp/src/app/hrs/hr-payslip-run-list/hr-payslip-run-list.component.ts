@@ -87,7 +87,7 @@ export class HrPayslipRunListComponent implements OnInit {
 
   deleteItem(item: HrPayslipRunBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa ' + item.name;
+    modalRef.componentInstance.title = 'Xóa ' + this.title + ': ' + item.name;
 
     modalRef.result.then(() => {
       this.hrPaysliprunService.delete(item.id).subscribe(() => {

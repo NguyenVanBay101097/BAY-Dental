@@ -41,5 +41,8 @@ namespace ApplicationCore.Entities
         public string SchedulePay { get; set; }
 
         public ICollection<HrSalaryRule> Rules { get; set; } = new List<HrSalaryRule>();
+
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }
