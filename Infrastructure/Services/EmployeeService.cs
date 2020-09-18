@@ -39,6 +39,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => positionList.Contains(x.Category.Type));
             }
 
+            if (val.Ids != null)
+                query = query.Where(x => val.Ids.Contains(x.Id));
+
             if (val.IsDoctor.HasValue)
                 query = query.Where(x => x.IsDoctor == val.IsDoctor);
 
@@ -67,7 +70,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category)
+            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -150,6 +153,27 @@ namespace Infrastructure.Services
                 Prefix = "NV",
                 Padding = 5,
             });
+        }
+
+        public override async Task UpdateAsync(Employee entity)
+        {
+            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
+            //if (category.Type == "doctor")
+            //{
+            //    entity.IsDoctor = true;
+            //    entity.IsAssistant = false;
+            //}
+            //else if (category.Type == "assistant")
+            //{
+            //    entity.IsAssistant = true;
+            //    entity.IsDoctor = false;
+            //}
+            //else
+            //{
+            //    entity.IsAssistant = false;
+            //    entity.IsDoctor = false;
+            //}
+            await base.UpdateAsync(entity);
         }
     }
 }

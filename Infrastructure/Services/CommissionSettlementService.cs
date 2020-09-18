@@ -113,13 +113,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateFrom);
+                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated <= val.DateTo);
+                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)
@@ -156,13 +156,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.DateCreated >= val.DateFrom);
+                query = query.Where(x => x.Payment.PaymentDate >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateCreated <= val.DateTo);
+                query = query.Where(x => x.Payment.PaymentDate <= val.DateTo);
             }
 
             if (val.CompanyId.HasValue)

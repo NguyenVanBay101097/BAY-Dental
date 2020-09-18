@@ -191,6 +191,27 @@ namespace Infrastructure.Services
             };
             #endregion
 
+            #region for PayrollDiary
+            var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+            var acc334 = new AccountAccount
+            {
+                Name = "Phải trả người lao động",
+                Code = "334",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
+            var expensesType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
+            var acc642 = new AccountAccount
+            {
+                Name = "Chi phí quản lý doanh nghiệp",
+                Code = "642",
+                InternalType = expensesType.Type,
+                UserTypeId = expensesType.Id,
+                CompanyId = company.Id,
+            };
+            #endregion
+
             #region For payableAccType
             var payableAccType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_payable");
             var debtorsAcc = new AccountAccount
@@ -243,7 +264,9 @@ namespace Infrastructure.Services
 
             #endregion
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561 });
+
+
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642 });
 
             #endregion
 
@@ -295,7 +318,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal });
+            var salaryJournal = new AccountJournal
+            {
+                Name = "Nhật ký lương",
+                Type = "payroll",
+                UpdatePosted = true,
+                Code = "SALARY",
+                DefaultDebitAccountId = acc642.Id,
+                DefaultCreditAccountId = acc334.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal , salaryJournal });
 
             #endregion
         }

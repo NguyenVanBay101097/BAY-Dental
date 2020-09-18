@@ -1464,6 +1464,63 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("CardTypes");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ChamCong", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("HourWorked")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TimeIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("TimeOut")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("WorkEntryTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("WorkEntryTypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ChamCongs");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Commission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1966,6 +2023,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EnrollNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("HourlyWage")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("IdentityCard")
                         .HasColumnType("nvarchar(max)");
 
@@ -1988,8 +2051,17 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Ref")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("StartWorkDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("StructureTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal?>("Wage")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
@@ -2003,6 +2075,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("StructureTypeId");
 
                     b.HasIndex("UserId");
 
@@ -2465,6 +2539,516 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayrollStructure", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("RegularPay")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SchedulePay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("UseWorkedDayLines")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("TypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayrollStructures");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayrollStructureType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DefaultResourceCalendarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DefaultSchedulePay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DefaultStructId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DefaultWorkEntryTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DefaultResourceCalendarId");
+
+                    b.HasIndex("DefaultStructId");
+
+                    b.HasIndex("DefaultWorkEntryTypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayrollStructureTypes");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslip", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AccountMoveId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PayslipRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StructId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("StructureTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountMoveId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("PayslipRunId");
+
+                    b.HasIndex("StructId");
+
+                    b.HasIndex("StructureTypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayslips");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("SalaryRuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SlipId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("SalaryRuleId");
+
+                    b.HasIndex("SlipId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayslipLines");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayslipRuns");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipWorkedDays", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("NumberOfDays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("NumberOfHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("PayslipId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WorkEntryTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PayslipId");
+
+                    b.HasIndex("WorkEntryTypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrPayslipWorkedDays");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DefaultGlobalLeaveTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("DefaultGlobalLeaveTypeId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrSalaryConfigs");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AmountCodeCompute")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("AmountFix")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("AmountPercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AmountPercentageBase")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AmountSelect")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("AppearsOnPayslip")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StructId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("StructId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrSalaryRules");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryRuleCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrSalaryRuleCategories");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.IRModel", b =>
@@ -5135,6 +5719,150 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ResPartnerBanks");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendar", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("HoursPerDay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResourceCalendars");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendarAttendance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CalendarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DayPeriod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("HourFrom")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HourTo")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResourceCalendarAttendances");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendarLeaves", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CalendarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ResourceCalendarLeaves");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6278,6 +7006,47 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ServiceCardTypes");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.SetupChamcong", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DifferenceTime")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HalfStandardWorkHour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("OneStandardWorkHour")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("setupChamcongs");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.StockLocation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7355,6 +8124,57 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("UserRefreshTokens");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.WorkEntryType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsHasTimeKeeping")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoundDays")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoundDaysType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("WorkEntryTypes");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ZaloOAConfig", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8139,6 +8959,33 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ChamCong", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany("ChamCongs")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.WorkEntryType", "WorkEntryType")
+                        .WithMany("ChamCongs")
+                        .HasForeignKey("WorkEntryTypeId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Commission", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -8384,6 +9231,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructureType", "StructureType")
+                        .WithMany()
+                        .HasForeignKey("StructureTypeId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
@@ -8547,6 +9398,226 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayrollStructure", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructureType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayrollStructureType", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ResourceCalendar", "DefaultResourceCalendar")
+                        .WithMany()
+                        .HasForeignKey("DefaultResourceCalendarId");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructure", "DefaultStruct")
+                        .WithMany()
+                        .HasForeignKey("DefaultStructId");
+
+                    b.HasOne("ApplicationCore.Entities.WorkEntryType", "DefaultWorkEntryType")
+                        .WithMany()
+                        .HasForeignKey("DefaultWorkEntryTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslip", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.AccountMove", "AccountMove")
+                        .WithMany()
+                        .HasForeignKey("AccountMoveId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.HrPayslipRun", "PayslipRun")
+                        .WithMany("Slips")
+                        .HasForeignKey("PayslipRunId");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructure", "Struct")
+                        .WithMany()
+                        .HasForeignKey("StructId");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructureType", "StructureType")
+                        .WithMany()
+                        .HasForeignKey("StructureTypeId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipLine", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.HrSalaryRuleCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.HrSalaryRule", "SalaryRule")
+                        .WithMany()
+                        .HasForeignKey("SalaryRuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.HrPayslip", "Slip")
+                        .WithMany("Lines")
+                        .HasForeignKey("SlipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipRun", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrPayslipWorkedDays", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayslip", "Payslip")
+                        .WithMany("WorkedDaysLines")
+                        .HasForeignKey("PayslipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.WorkEntryType", "WorkEntryType")
+                        .WithMany()
+                        .HasForeignKey("WorkEntryTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryConfig", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.WorkEntryType", "DefaultGlobalLeaveType")
+                        .WithMany()
+                        .HasForeignKey("DefaultGlobalLeaveTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryRule", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.HrSalaryRuleCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.HrPayrollStructure", "Struct")
+                        .WithMany("Rules")
+                        .HasForeignKey("StructId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrSalaryRuleCategory", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.HrSalaryRuleCategory", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -9606,6 +10677,57 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendar", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendarAttendance", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ResourceCalendar", "Calendar")
+                        .WithMany("Attendances")
+                        .HasForeignKey("CalendarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ResourceCalendarLeaves", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ResourceCalendar", "Calendar")
+                        .WithMany("Leaves")
+                        .HasForeignKey("CalendarId");
+
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Routing", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -10161,6 +11283,21 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.SetupChamcong", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.StockLocation", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -10638,6 +11775,17 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.WorkEntryType", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.ZaloOAConfig", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
@@ -10679,7 +11827,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationRole", null)
-                        .WithMany()
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

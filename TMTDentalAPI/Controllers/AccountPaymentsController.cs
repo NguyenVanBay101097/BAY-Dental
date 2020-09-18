@@ -8,6 +8,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> Get([FromQuery]AccountPaymentPaged val)
         {
             var result = await _paymentService.GetPagedResultAsync(val);
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var payment = await _paymentService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.Journal)
@@ -49,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost()]
+        [HttpPost]
+        [CheckAccess(Actions = "Basic.AccountPayment.Create")]
         public async Task<IActionResult> Create(AccountPaymentSave val)
         {
             var payment = await _paymentService.CreateUI(val);
@@ -58,6 +62,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Update")]
         public async Task<IActionResult> Post(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -67,6 +72,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null || !ids.Any())
@@ -79,6 +85,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ids.Any())
@@ -118,6 +125,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _paymentService.GetPrint(id);

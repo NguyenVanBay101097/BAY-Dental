@@ -27,7 +27,7 @@ namespace Infrastructure.Services
 
         public async Task<AccountJournal> GetJournalByTypeAndCompany(string type, Guid companyId)
         {
-            return await SearchQuery(x => x.Type == type && x.CompanyId == companyId).FirstOrDefaultAsync();
+            return await SearchQuery(x => x.Type == type && x.CompanyId == companyId).Include(x=>x.DefaultDebitAccount).Include(x=>x.DefaultCreditAccount).FirstOrDefaultAsync();
         }
 
         public override async Task<IEnumerable<AccountJournal>> CreateAsync(IEnumerable<AccountJournal> self)

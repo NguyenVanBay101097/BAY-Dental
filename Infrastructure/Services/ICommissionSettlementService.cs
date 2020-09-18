@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> paymentIds);
         Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementReport val);
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementReport val);
+
     }
 }

@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -19,7 +20,6 @@ namespace TMTDentalAPI.Controllers
         private readonly IPurchaseOrderService _purchaseOrderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        private readonly IDotKhamService _dotKhamService;
 
         public PurchaseOrdersController(IPurchaseOrderService purchaseOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork)
@@ -30,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Purchase.Order.Read")]
         public async Task<IActionResult> Get([FromQuery]PurchaseOrderPaged val)
         {
             var result = await _purchaseOrderService.GetPagedResultAsync(val);
@@ -37,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Purchase.Order.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _purchaseOrderService.GetPurchaseDisplay(id);
@@ -44,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Purchase.Order.Create")]
         public async Task<IActionResult> Create(PurchaseOrderDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -60,6 +63,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Purchase.Order.Update")]
         public async Task<IActionResult> Update(Guid id, PurchaseOrderDisplay val)
         {
             if (!ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Purchase.Order.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _purchaseOrderService.Unlink(new List<Guid>() { id });
@@ -87,6 +92,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Purchase.Order.Update")]
         public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -99,6 +105,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Purchase.Order.Cancel")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -111,6 +118,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Purchase.Order.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)

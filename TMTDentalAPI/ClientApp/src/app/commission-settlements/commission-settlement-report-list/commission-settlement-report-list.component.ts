@@ -19,7 +19,7 @@ import { PageChangeEvent } from '@progress/kendo-angular-grid';
 export class CommissionSettlementReportListComponent implements OnInit {
   loading = false;
   monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   formGroup: FormGroup;
   limit = 20;
   skip = 0;

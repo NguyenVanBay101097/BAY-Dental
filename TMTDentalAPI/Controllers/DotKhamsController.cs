@@ -12,6 +12,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 
@@ -57,20 +58,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> Get([FromQuery]DotKhamPaged val)
         {
             var result = await _dotKhamService.GetPagedResultAsync(val);
-
-            var paged = new PagedResult2<DotKhamBasic>(result.TotalItems, val.Offset, val.Limit)
-            {
-                //Có thể dùng thư viện automapper
-                Items = _mapper.Map<IEnumerable<DotKhamBasic>>(result.Items),
-            };
-
-            return Ok(paged);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var dotKham = await _dotKhamService.GetDotKhamDisplayAsync(id);
@@ -83,6 +79,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.DotKham.Create")]
         public async Task<IActionResult> Create(DotKhamSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -95,6 +92,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.DotKham.Update")]
         public async Task<IActionResult> Update(Guid id, DotKhamSave val)
         {
             if (!ModelState.IsValid)
@@ -110,6 +108,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.DotKham.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _dotKhamService.Unlink(new List<Guid>() { id });

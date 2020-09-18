@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -49,9 +50,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
         {
-            _modelAccessService.Check("ResUser", "Read");
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
@@ -68,9 +69,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get(string id)
         {
-            _modelAccessService.Check("ResUser", "Read");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)
                 .Include(x => x.ResGroupsUsersRels).Include("ResGroupsUsersRels.Group")
                 .Include("ResCompanyUsersRels.Company").Include(x => x.Partner).FirstOrDefaultAsync();
@@ -85,11 +86,11 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "System.ApplicationUser.Create")]
         public async Task<IActionResult> Create(ApplicationUserDisplay val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResUser", "Create");
             await _unitOfWork.BeginTransactionAsync();
             var partner = new Partner()
             {
@@ -156,11 +157,11 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Update")]
         public async Task<IActionResult> Update(string id, ApplicationUserDisplay val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            _modelAccessService.Check("ResUser", "Write");
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
                 .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
@@ -246,9 +247,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "System.ApplicationUser.Delete")]
         public async Task<IActionResult> Remove(string id)
         {
-            _modelAccessService.Check("ResUser", "Unlink");
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
@@ -258,6 +259,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("Autocomplete")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var companyId = CompanyId;
@@ -273,6 +275,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("AutocompleteUser")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> AutocompleteUser(ApplicationUserPaged user)
         {
             var companyId = CompanyId;
@@ -289,6 +292,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("AutocompleteSimple")]
+        [CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> AutocompleteSimple(ApplicationUserPaged val)
         {
             var companyId = CompanyId;
@@ -348,6 +352,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "System.ApplicationUser.Create")]
         public async Task<IActionResult> ActionImport(ApplicationUserImportExcelViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);

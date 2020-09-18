@@ -1,0 +1,25 @@
+<div ngbDropdown #myDrop="ngbDropdown">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+        <i class="fas fa-filter"></i>
+        Lọc theo tháng:
+        <span>{{getMonthFilter()}}</span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
+        <button class="dropdown-item" *ngFor="let option of optionMonths" type="button"
+            (click)="onSelectMonth(option)">{{option.text}}</button>
+        <div class="dropdown-divider"></div>
+        <div class="px-4 pb-3">
+            <div class="form-group">
+                <label>Tùy chọn</label>
+                <div class="input-group">
+                    <kendo-datepicker
+                    [bottomView]="'year'"
+                    [topView]="'decade'"
+                    [format]="'MMMM yyyy'"  (valueChange)="onOtherMonthChange($event)"
+                    [(ngModel)]="otherDate"
+                ></kendo-datepicker>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

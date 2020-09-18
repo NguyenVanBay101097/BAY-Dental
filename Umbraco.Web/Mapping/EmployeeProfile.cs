@@ -19,8 +19,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Category, x => x.Ignore())
                 .ForMember(x => x.Commission, x => x.Ignore())
-                .ForMember(x => x.User, x => x.Ignore());
-
+                .ForMember(x => x.User, x => x.Ignore())
+                .ForMember(x => x.StructureType, x => x.Ignore());
             CreateMap<EmployeeSimple, Employee>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Category, x => x.Ignore());

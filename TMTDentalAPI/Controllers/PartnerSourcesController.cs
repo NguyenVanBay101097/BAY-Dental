@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,7 +28,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
+        [HttpGet][CheckAccess(Actions = "Catalog.PartnerSource.Read")]
         public async Task<IActionResult> Get([FromQuery]PartnerSourcePaged val)
         {
             var result = await _partnerSourceService.GetPagedResultAsync(val);
@@ -35,7 +36,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.PartnerSource.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var result = await _partnerSourceService.GetByIdAsync(id);
@@ -47,14 +48,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.PartnerSource.Read")]
         public async Task<IActionResult> Autocomplete(PartnerSourcePaged val)
         {
             var res = await _partnerSourceService.GetAutocompleteAsync(val);
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPost][CheckAccess(Actions = "Catalog.PartnerSource.Create")]
         public async Task<IActionResult> Create(PartnerSourceSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -73,7 +74,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.PartnerSource.Update")]
         public async Task<IActionResult> Update(Guid id, PartnerSourceSave val)
         {
             if (!ModelState.IsValid)
@@ -95,7 +96,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.PartnerSource.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var source = await _partnerSourceService.GetByIdAsync(id);

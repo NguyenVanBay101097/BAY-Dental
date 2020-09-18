@@ -147,6 +147,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public string UserId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
     }
 
     public class AppointmentDefaultGet

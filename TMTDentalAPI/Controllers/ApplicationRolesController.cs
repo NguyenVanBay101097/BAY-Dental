@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,10 +30,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IPartnerService _partnerService;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
+        private readonly IMyCache _cache;
+
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager,
-            IApplicationRoleFunctionService roleFunctionService)
+            IApplicationRoleFunctionService roleFunctionService,
+            IMyCache cache)
         {
             _roleManager = roleManager;
             _mapper = mapper;
@@ -39,15 +44,16 @@ namespace TMTDentalAPI.Controllers
             _partnerService = partnerService;
             _userManager = userManager;
             _roleFunctionService = roleFunctionService;
+            _cache = cache;
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get([FromQuery]ApplicationRolePaged val)
         {
             var query = _roleManager.Roles;
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NormalizedName.Contains(val.Search));
-            var companyId = CompanyId;
             query = query.OrderBy(x => x.Name);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
             var totalItems = await query.CountAsync();
@@ -59,6 +65,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "System.ApplicationRole.Read")]
         public async Task<IActionResult> Get(string id)
         {
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
@@ -74,11 +81,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ApplicationRoleDisplay val)
+        [CheckAccess(Actions = "System.ApplicationRole.Create")]
+        public async Task<IActionResult> Create(ApplicationRoleSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
            
@@ -96,9 +101,9 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
-            foreach (var user in val.Users)
+            foreach (var userId in val.UserIds)
             {
-                var usr = await _userManager.FindByIdAsync(user.Id);
+                var usr = await _userManager.FindByIdAsync(userId);
                 var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
                 if (!result2.Succeeded)
                 {
@@ -106,21 +111,28 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            ClearPermissionsCache(val.UserIds);
+
             _unitOfWork.Commit();
 
-            val.Id = role.Id;
-            return CreatedAtAction(nameof(Get), new { id = role.Id }, val);
+            var basic = _mapper.Map<ApplicationRoleBasic>(role);
+            return Ok(basic);
+        }
+
+        private void ClearPermissionsCache(IEnumerable<string> userIds)
+        {
+            foreach(var userId in userIds) 
+                _cache.RemoveByPattern($"permissions-{userId}");
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, ApplicationRoleDisplay val)
+        [CheckAccess(Actions = "System.ApplicationRole.Update")]
+        public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             var role = await _roleManager.Roles.Where(x => x.Id == id).Include(x => x.Functions).FirstOrDefaultAsync();
             if (role == null)
                 return NotFound();
+
             await _unitOfWork.BeginTransactionAsync();
 
             role = _mapper.Map(val, role);
@@ -140,8 +152,9 @@ namespace TMTDentalAPI.Controllers
             }
 
             var users = await _userManager.GetUsersInRoleAsync(role.Name);
-            var toRemove = users.Where(x => !val.Users.Any(s => s.Id == x.Id)).ToList();
-            foreach(var u in toRemove)
+            var toRemove = users.Where(x => !val.UserIds.Any(s => s == x.Id)).ToList();
+            var toRemoveIds = toRemove.Select(x => x.Id).ToList();
+            foreach (var u in toRemove)
             {
                 var result2 = await _userManager.RemoveFromRoleAsync(u, role.Name);
                 if (!result2.Succeeded)
@@ -150,11 +163,11 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var toAdd = val.Users.Where(x => !users.Any(s => s.Id == x.Id)).ToList();
+            var toAdd = val.UserIds.Where(x => !users.Any(s => s.Id == x)).ToList();
 
-            foreach (var user in toAdd)
+            foreach (var userId in toAdd)
             {
-                var usr = await _userManager.FindByIdAsync(user.Id);
+                var usr = await _userManager.FindByIdAsync(userId);
                 var result2 = await _userManager.AddToRoleAsync(usr, role.Name);
                 if (!result2.Succeeded)
                 {
@@ -162,12 +175,16 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            //clear cache cho những user remove khỏi nhóm và thuộc nhóm này
+            ClearPermissionsCache(toRemoveIds.Union(val.UserIds));
+
             _unitOfWork.Commit();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "System.ApplicationRole.Delete")]
         public async Task<IActionResult> Remove(string id)
         {
             var user = await _roleManager.FindByIdAsync(id);

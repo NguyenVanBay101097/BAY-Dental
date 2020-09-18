@@ -255,6 +255,43 @@
       <field name="model_id" ref="hr.model_employee"/>
       <field name="global" eval="True"/>
     </record>
+
+    <record model="ir.rule" id="hr.cham_cong_comp_rule">
+      <field name="name">Cham cong multi-company</field>
+      <field name="model_id" ref="hr.model_cham_cong"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="hr.payslip_run_comp_rule">
+      <field name="name">Payslip Run multi-company</field>
+      <field name="model_id" ref="hr.model_payslip_run"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="hr.payslip_comp_rule">
+      <field name="name">Payslip multi-company</field>
+      <field name="model_id" ref="hr.model_payslip"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="hr.payroll_structure_comp_rule">
+      <field name="name">Payroll Structure multi-company</field>
+      <field name="model_id" ref="hr.model_payroll_structure"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="hr.payroll_structure_type_comp_rule">
+      <field name="name">Payroll Structure Type multi-company</field>
+      <field name="model_id" ref="hr.model_payroll_structure_type"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="base.resource_calendar_comp_rule">
+      <field name="name">Resource Calendar multi-company</field>
+      <field name="model_id" ref="base.model_resource_calendar"/>
+      <field name="global" eval="True"/>
+    </record>
+    
   </data>
 </odoo>
 

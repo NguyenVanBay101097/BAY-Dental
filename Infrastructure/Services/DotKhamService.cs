@@ -127,7 +127,7 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task<PagedResult2<DotKham>> GetPagedResultAsync(DotKhamPaged val)
+        public async Task<PagedResult2<DotKhamBasic>> GetPagedResultAsync(DotKhamPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
@@ -137,12 +137,11 @@ namespace Infrastructure.Services
             if (val.AppointmentId.HasValue)
                 query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
 
-            var items = await query.Include(x => x.User).Include(x => x.Partner).Include(x => x.Invoice)
-                .OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit)
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit)) 
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            return new PagedResult2<DotKham>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<DotKhamBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };

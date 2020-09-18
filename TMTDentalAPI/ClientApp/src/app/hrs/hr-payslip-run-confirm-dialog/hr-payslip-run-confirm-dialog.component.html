@@ -1,0 +1,82 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="myForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">             
+                <div class="o_group mb-0"> 
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>                                
+                                <td colspan="1" class="o_td_label">
+                                    <div>
+                                        <span class="text-muted">Chọn mẫu lương nếu bạn muốn tạo những phiếu lương đặc biệt (ví dụ: Thưởng cuối năm...). Nếu không chọn, 
+                                            Mẫu lương thông dụng sẽ được sử dụng để tạo phiếu lương cho tất cả các nhân viên đã chọn, dựa trên loại mẫu lương của họ.</span> 
+                                     </div> 
+                                </td>                            
+                            </tr>
+                        </tbody>
+                    </table> 
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>                                                             
+                                <td colspan="1" style="width: 100%;">
+                                    <label class="o_form_label">
+                                        Mẫu lương
+                                     </label>
+                                    <div class="d-flex">
+                                        <kendo-combobox [data]="filterStructures" [textField]="'name'" [filterable]="true"
+                                            #structureCbx formControlName="structure" [valueField]="'id'">
+                                        </kendo-combobox>   
+                                                                       
+                                    </div>
+                                   
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>                  
+                </div>
+                <div>
+                    <div class="d-flex mb-2">
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="openEmployees()">Chọn nhân viên</button>                    
+                    </div>
+                    <table class="table table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Điện thoại</th>                              
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines" >
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">
+                                    <td class="align-middle">{{ item.get('ref').value }}</td>
+                                    <td class="align-middle">{{item.get('name').value }}</td>
+                                    <td class="align-middle">{{ item.get('phone').value }}
+                                    </td>                          
+                                    <td>
+                                        <button type="button" title="Xóa" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>                                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="actionConfirm()"  accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

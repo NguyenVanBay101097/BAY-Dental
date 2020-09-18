@@ -130,6 +130,10 @@ namespace TMTDentalAPI
             services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<IIRSequenceService, IRSequenceService>();
+
+            services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
+            services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
+
             services.AddScoped<ISaleOrderService, SaleOrderService>();
             services.AddScoped<ISaleOrderLineService, SaleOrderLineService>();
             services.AddScoped<IAccountInvoiceService, AccountInvoiceService>();
@@ -260,6 +264,20 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareScenarioService, TCareScenarioService>();
             services.AddScoped<IFacebookWebhookJobService, FacebookWebhookJobService>();
             services.AddScoped<ITCareReportService, TCareReportService>();
+            services.AddScoped<IChamCongService, ChamCongService>();
+            services.AddScoped<ISetupChamcongService, SetupChamcongService>();
+            services.AddScoped<IWorkEntryTypeService, WorkEntryTypeService>();
+            services.AddScoped<IHrPayrollStructureService, HrPayrollStructureService>();
+            services.AddScoped<IHrPayrollStructureTypeService, HrPayrollStructureTypeService>();
+            services.AddScoped<IHrSalaryRuleService, HrSalaryRuleService>();
+            services.AddScoped<IResourceCalendarService, ResourceCalendarService>();
+            services.AddScoped<IResourceCalendarAttendanceService, ResourceCalendarAttendanceService>();
+            services.AddScoped<IHrPayslipService, HrPayslipService>();
+            services.AddScoped<IHrPayslipLineService, HrPayslipLineService>();
+            services.AddScoped<IHrPayslipWorkedDayService, HrPayslipWorkedDayService>();
+            services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
+            services.AddScoped<IHrSalaryConfigService, HrSalaryConfigService>();
+            services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -366,6 +384,20 @@ namespace TMTDentalAPI
                 mc.AddProfile(new CommissionProductRuleProfile());
                 mc.AddProfile(new SaleOrderLinePaymentRelProfile());
                 mc.AddProfile(new TCareScenarioProfile());
+                mc.AddProfile(new ChamCongProfile());
+                mc.AddProfile(new SetupChamcongProfile());
+                mc.AddProfile(new WorkEntryTypeProfile());
+                mc.AddProfile(new HrPayrollStructureProfile());
+                mc.AddProfile(new HrSalaryRuleProfile());
+                mc.AddProfile(new HrPayrollStructureTypeProfile());
+                mc.AddProfile(new ResourceCalendarAttendanceProfile());
+                mc.AddProfile(new ResourceCalendarProfile());
+                mc.AddProfile(new HrPayslipProfile());
+                mc.AddProfile(new HrPayslipLineProfile());
+                mc.AddProfile(new HrPayslipWorkedDayProfile());
+                mc.AddProfile(new HrPayslipRunProfile());
+                mc.AddProfile(new HrSalaryConfigProfile());
+                mc.AddProfile(new ResourceCalendarLeaveProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

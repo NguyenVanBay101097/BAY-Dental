@@ -187,6 +187,18 @@
       <field name="user_type_id" ref="account.data_account_type_equity" />
     </record>
 
+    <record model="account.account" id="data_account_334">
+      <field name="name">Phải trả người lao động</field>
+      <field name="code">334</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
+    <record model="account.account" id="data_account_642">
+      <field name="name">Chi phí quản lý doanh nghiệp</field>
+      <field name="code">642</field>
+      <field name="user_type_id" ref="account.data_account_type_expenses" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -238,6 +250,15 @@
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_dccn" />
       <field name="default_credit_account_id" ref="account.data_account_dccn" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_salary">
+      <field name="name">Nhật ký lương</field>
+      <field name="type">payroll</field>
+      <field name="code">SALARY</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_642" />
+      <field name="default_credit_account_id" ref="account.data_account_334" />
     </record>
 
     <!-- ir.property -->

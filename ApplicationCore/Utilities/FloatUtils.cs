@@ -46,6 +46,12 @@ namespace MyERP.Utilities
                 normalizedValue -= sign * epsilon;
                 roundedValue = Math.Ceiling(Math.Abs(normalizedValue)) * sign; //ceil to integer
             }
+            else if(roundingMethod == "DOWN")
+            {
+                var sign = Math.Sign(normalizedValue);
+                normalizedValue += sign * epsilon;
+                roundedValue = Math.Floor(Math.Abs(normalizedValue)) * sign; //floor to integer
+            }
 
             var result = roundedValue * roundingFactor; //de-normalize
             return result;

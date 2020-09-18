@@ -1,8 +1,8 @@
+import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmployeeDisplay } from '../employee';
 import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
 import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
 import { EmployeeCategoryPaged, EmployeeCategoryBasic, EmployeeCategoryDisplay } from 'src/app/employee-categories/emp-category';
@@ -14,6 +14,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { UserPaged, UserService } from 'src/app/users/user.service';
+import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -21,12 +22,16 @@ import { UserPaged, UserService } from 'src/app/users/user.service';
   styleUrls: ['./employee-create-update.component.css']
 })
 export class EmployeeCreateUpdateComponent implements OnInit {
+  @ViewChild("structureTypeCbx", { static: true }) structureTypeCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private employeeService: EmployeeService,
-    private empCategService: EmpCategoryService, public activeModal: NgbActiveModal, 
-    private modalService: NgbModal, private intlService: IntlService, 
-    private commissionService: CommissionService, private userService: UserService) { }
 
+  constructor(private fb: FormBuilder,
+    private employeeService: EmployeeService,
+    private structureTypeService: HrPayrollStructureTypeService,
+    private empCategService: EmpCategoryService,
+    public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private intlService: IntlService, private commissionService: CommissionService, private userService: UserService) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: true }) commissionCbx: ComboBoxComponent;
@@ -38,6 +43,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   isDoctor: boolean;
   isAssistant: boolean;
 
+  filteredstructureTypes: HrPayrollStructureTypeSimple[] = [];
   categoriesList: EmployeeCategoryBasic[] = [];
   categoriesList2: EmployeeCategoryDisplay[] = [];
   filteredUsers: UserSimple[] = [];
@@ -52,21 +58,26 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       identityCard: null,
       email: null,
       birthDay: null,
-      birthDayObj: null,
       category: [null],
       isDoctor: this.isDoctor || false,
-      isAssistant: this.isAssistant || false, 
-      commissionId: null, 
+      isAssistant: this.isAssistant || false,
+      commissionId: null,
       commission: null,
       userId: null,
       user: null,
+      structureTypeId: null,
+      structureType: null,
+      wage: 0,
+      hourlyWage: 0,
+      startWorkDate: null,
+      enrollNumber: null
     });
 
     setTimeout(() => {
-      // this.loadAutocompleteTypes(null);
       this.loadListCommissions();
       this.getEmployeeInfo();
       this.loadUsers();
+      this.loadstructureTypes();
 
       this.commissionCbx.filterChange.asObservable().pipe(
         debounceTime(300),
@@ -85,6 +96,18 @@ export class EmployeeCreateUpdateComponent implements OnInit {
         this.filteredUsers = result;
         this.userCbx.loading = false;
       });
+
+      this.structureTypeCbx.filterChange
+        .asObservable()
+        .pipe(
+          debounceTime(300),
+          tap(() => (this.structureTypeCbx.loading = true)),
+          switchMap((value) => this.searchstructureTypes(value))
+        )
+        .subscribe((result) => {
+          this.filteredstructureTypes = result;
+          this.structureTypeCbx.loading = false;
+        });
     });
   }
 
@@ -121,14 +144,18 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     if (this.empId != null) {
       this.employeeService.getEmployee(this.empId).subscribe(
         rs => {
+          rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
+          rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
           this.formCreate.patchValue(rs);
-          let birthDay = this.intlService.parseDate(rs.birthDay);
-          this.formCreate.get('birthDayObj').patchValue(birthDay);
+
+          if (rs.structureType) {
+            this.filteredstructureTypes = _.unionBy(this.filteredstructureTypes, [rs.structureType], 'id');
+          }
         },
         er => {
           console.log(er);
         }
-      )
+      );
     }
   }
 
@@ -142,7 +169,11 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     value.categoryId = value.category ? value.category.id : null;
     value.commissionId = value.commission ? value.commission.id : null;
     value.userId = value.user ? value.user.id : null;
-    value.birthDay = this.intlService.formatDate(value.birthDayObj, 'yyyy-MM-dd');
+    value.birthDay = value.birthDay ? this.intlService.formatDate(value.birthDay, 'yyyy-MM-dd') : null;
+    value.structureTypeId = value.structureType ? value.structureType.id : null;
+    value.structureType = value.structureType ? value.structureType : null;
+    value.startWorkDate = value.startWorkDate ? this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd') : null;
+
     this.isChange = true;
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
       rs => {
@@ -156,6 +187,10 @@ export class EmployeeCreateUpdateComponent implements OnInit {
         console.log(er);
       }
     );
+  }
+
+  get structureTypeValue() {
+    return this.formCreate.get('structureType').value ? this.formCreate.get('structureType').value : null;
   }
 
   //Cho phép field phone chỉ nhập số
@@ -223,6 +258,24 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       },
       er => { }
     )
+  }
+
+  handleSourceFilter(value) {
+    this.filteredstructureTypes = this.filteredstructureTypes.filter(
+      (s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
+  }
+
+  searchstructureTypes(q?: string) {
+    var val = new HrPayrollStructureTypePaged();
+    val.search = q;
+    return this.structureTypeService.autocomplete(val);
+  }
+
+  loadstructureTypes() {
+    this.searchstructureTypes().subscribe((result) => {
+      this.filteredstructureTypes = _.unionBy(this.filteredstructureTypes, result, 'id');
+    });
   }
 
   loadAutocompleteTypes(searchKw: string) {

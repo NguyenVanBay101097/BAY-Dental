@@ -7,8 +7,7 @@
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
-                        type="text" [(ngModel)]="search"
-                        (ngModelChange)="this.searchUpdate.next($event)">
+                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -23,8 +22,9 @@
             </div>
             <div class="o_cp_sidebar">
                 <div>
-                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)" class="kendo-combobox-sm" [filterable]="true" [data]="listUsers"
-                        #userCbx [valueField]="'id'" [textField]="'name'">
+                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
+                        class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx
+                        [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox>
                 </div>
             </div>
@@ -50,7 +50,8 @@
                         <span class="o_column_title"
                             *ngIf="date.toDateString() != today.toDateString()">{{date | date: 'EEEE'}},
                             {{date | date: 'dd/MM'}}</span>
-                        <span class="o_column_title text-success" *ngIf="date.toDateString() == today.toDateString()">Hôm
+                        <span class="o_column_title text-success"
+                            *ngIf="date.toDateString() == today.toDateString()">Hôm
                             nay,
                             {{date | date: 'dd/MM'}}</span>
                     </div>
@@ -103,4 +104,3 @@
         </div>
     </div>
 </div>
-

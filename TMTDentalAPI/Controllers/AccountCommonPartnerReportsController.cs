@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -20,6 +21,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("GetSummary")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> GetSummary(AccountCommonPartnerReportSearch val)
         {
             var res = await _reportService.ReportSummary(val);
@@ -27,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("GetDetail")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> GetDetail(AccountCommonPartnerReportItem val)
         {
             var res = await _reportService.ReportDetail(val);

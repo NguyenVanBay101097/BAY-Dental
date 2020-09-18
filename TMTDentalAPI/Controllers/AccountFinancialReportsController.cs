@@ -7,13 +7,14 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountFinancialReportsController : ControllerBase
+    public class AccountFinancialReportsController : BaseApiController
     {
         private readonly IAccountFinancialReportService _accountFinancialReportService;
         private readonly IMapper _mapper;
@@ -24,6 +25,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Financial")]
         public async Task<IActionResult> GetProfitAndLossReport()
         {
             var res =await _accountFinancialReportService.GetProfitAndLossReport();

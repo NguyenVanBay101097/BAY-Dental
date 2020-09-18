@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
 
         //api get phan trang loai thu , chi
         [HttpGet]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> GetLoaiThuChi([FromQuery]PhieuThuChiPaged val)
         {
             var res = await _phieuThuChiService.GetPhieuThuChiPagedResultAsync(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _phieuThuChiService.GetByIdPhieuThuChi(id);
@@ -45,6 +48,7 @@ namespace TMTDentalAPI.Controllers
 
         //api create
         [HttpPost]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Create")]
         public async Task<IActionResult> Create(PhieuThuChiSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -59,6 +63,7 @@ namespace TMTDentalAPI.Controllers
 
         //api update
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Update")]
         public async Task<IActionResult> Update(Guid id, PhieuThuChiSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -71,6 +76,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Update")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -80,6 +86,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null || !ids.Any())
@@ -92,6 +99,7 @@ namespace TMTDentalAPI.Controllers
 
         //api xóa
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _phieuThuChiService.Unlink(id);

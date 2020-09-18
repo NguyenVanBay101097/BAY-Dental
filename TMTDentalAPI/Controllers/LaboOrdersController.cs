@@ -10,6 +10,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -33,6 +34,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> Get([FromQuery]LaboOrderPaged val)
         {
             var result = await _laboOrderService.GetPagedResultAsync(val);
@@ -40,6 +42,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> GetFromSaleOrder_OrderLine([FromQuery] LaboOrderPaged val)
         {
             var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
@@ -47,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _laboOrderService.GetLaboDisplay(id);
@@ -54,6 +58,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.LaboOrder.Create")]
         public async Task<IActionResult> Create(LaboOrderDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -66,6 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Update")]
         public async Task<IActionResult> Update(Guid id, LaboOrderDisplay val)
         {
             if (!ModelState.IsValid)
@@ -79,6 +85,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -95,6 +102,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Update")]
         public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -107,6 +115,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Cancel")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -119,6 +128,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)
@@ -130,6 +140,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _laboOrderService.GetPrint(id);
@@ -137,8 +148,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Statistics")] 
         public async Task<IActionResult> Statistics(LaboOrderStatisticsPaged val)
         {
             var result = await _laboOrderService.GetStatisticsPaged(val);

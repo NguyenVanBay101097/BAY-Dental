@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -42,6 +43,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get([FromQuery]SaleOrderPaged val)
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
@@ -49,6 +51,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _saleOrderService.GetDisplayAsync(id);
@@ -68,6 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrder.Create")]
         public async Task<IActionResult> Create(SaleOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -79,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> Update(Guid id, SaleOrderSave val)
         {
             if (!ModelState.IsValid)
@@ -92,6 +97,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var saleOrder = await _saleOrderService.GetSaleOrderByIdAsync(id);
@@ -132,6 +138,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Cancel")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)
@@ -143,6 +150,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update,Basic.SaleOrder.Create")]
         public async Task<IActionResult> ActionConvertToOrder(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -164,6 +172,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ApplyCoupon(SaleOrderApplyCoupon val)
         {
             if (!ModelState.IsValid)
@@ -175,6 +184,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ApplyPromotion(Guid id)
         {
             if (!ModelState.IsValid)
@@ -186,20 +196,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> GetPayments(Guid id)
         {
             var res = await _saleOrderService._GetPaymentInfoJson(id);
             return Ok(res);
         }
 
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetInvoices(Guid id)
-        {
-            var res = await _saleOrderService.GetInvoicesBasic(id);
-            return Ok(res);
-        }
-
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)
@@ -238,6 +243,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _saleOrderService.GetPrint(id);
@@ -307,6 +313,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -318,6 +325,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -329,6 +337,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionUnlock(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -340,6 +349,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/GetDotKhamList")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> GetDotKhamList(Guid id)
         {
             var res = await _dotKhamService.GetDotKhamBasicsForSaleOrder(id);
@@ -347,6 +357,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ApplyServiceCards(SaleOrderApplyServiceCards val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -363,8 +374,6 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
-
-       
 
 
         [HttpGet("{id}/[action]")]
@@ -387,6 +396,5 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleOrderService.GetLaboBySaleOrderId(id);
             return Ok(res);
         }
-
     }
 }

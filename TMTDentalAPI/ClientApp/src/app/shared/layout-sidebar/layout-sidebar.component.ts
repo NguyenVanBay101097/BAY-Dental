@@ -41,6 +41,20 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
+      name: 'Lương',
+      icon: 'fas fa-money-bill-alt',
+      children: [
+        { name: 'Đợt lương', link: '/hr/payslip-runs' },
+        { name: 'Phiếu lương', link: '/hr/payslips' },
+        { name: 'Chấm công', link: 'time-keepings' },
+        { name: 'Loại mẫu lương', link: '/hr/payroll-structure-types' },
+        { name: 'Mẫu lương', link: '/hr/payroll-structures' },
+        { name: 'Loại chấm công', link: '/work-entry-types' },
+        { name: 'Thời gian làm việc', link: '/resource-calendars' },
+        // { name: 'Cấu hình lương', link: '/hr/salary-configs' }
+      ],
+    },
+    {
       name: 'Thu chi',
       icon: 'fas fa-dollar-sign',
       children: [
@@ -61,6 +75,24 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
+      name: 'Khuyến mãi',
+      icon: 'fas fa-gift',
+      groups: 'sale.group_sale_coupon_promotion',
+      children: [
+        { name: 'Chương trình coupon', link: '/programs/coupon-programs' },
+        { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs' },
+      ],
+    },
+    {
+      name: 'Thành viên',
+      icon: 'fas fa-credit-card',
+      groups: 'sale.group_loyalty_card',
+      children: [
+        { name: 'Thẻ thành viên', link: '/card-cards' },
+        { name: 'Loại thẻ thành viên', link: '/card-types' },
+      ],
+    },
+    {
       name: 'Chăm sóc tự động',
       icon: 'fab fa-facebook-f',
       children: [
@@ -69,6 +101,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách kênh', link: '/socials/channels' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
       ],
+      groups: 'tcare.group_tcare',
     },
     {
       name: 'Danh mục',
@@ -86,12 +119,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
         { name: 'Danh xưng', link: '/partner-titles' },
+        { name: 'Nhân viên', link: '/employees' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
-        { name: 'Thẻ thành viên', link: '/card-cards', groups: 'sale.group_loyalty_card' },
-        { name: 'Loại thẻ thành viên', link: '/card-types', groups: 'sale.group_loyalty_card' },
-        { name: 'Chương trình coupon', link: '/programs/coupon-programs', groups: 'sale.group_sale_coupon_promotion' },
-        { name: 'Chương trình khuyến mãi', link: '/programs/promotion-programs', groups: 'sale.group_sale_coupon_promotion' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
       ]
@@ -102,8 +132,8 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', link: '/companies' },
         { name: 'Người dùng', link: '/users' },
-        { name: 'Nhóm quyền', link: '/res-groups' },
-        { name: 'Cấu hình chung', link: '/config-settings' },
+        { name: 'Nhóm quyền', link: '/roles' },
+        { name: 'Cấu hình chung', link: '/config-settings' }
       ]
     },
     {

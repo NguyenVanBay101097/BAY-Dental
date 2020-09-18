@@ -68,5 +68,30 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+        public ICollection<ChamCong> ChamCongs { get; set; } = new List<ChamCong>();
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureType StructureType { get; set; }
+
+        /// <summary>
+        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
+        /// </summary>
+        public decimal? Wage { get; set; }
+
+        /// <summary>
+        /// Tiền lương mỗi giờ, nếu StructureType.WageType == hourly
+        /// </summary>
+        public decimal? HourlyWage { get; set; }
+
+        /// <summary>
+        ///  ngày bắt đầu đi làm của nhân viên
+        /// </summary>
+
+        public DateTime? StartWorkDate { get; set; }
+        
+        /// <summary>
+        /// Mã vân tay
+        /// </summary>
+        public string EnrollNumber { get; set; }
     }
 }

@@ -5,6 +5,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,6 +28,8 @@
     <Compile Remove="Data\Migrations\20200804042345_CreateCommission.Designer.cs" />
     <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.cs" />
     <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.cs" />
+    <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

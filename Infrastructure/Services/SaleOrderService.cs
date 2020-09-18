@@ -774,7 +774,7 @@ namespace Infrastructure.Services
                 {
                     new SaleOrderLine()
                     {
-                        Name = $"Chiết khấu: " + program.Name,
+                        Name = $"Giảm giá: " + program.Name,
                         ProductId = program.DiscountLineProductId,
                         PriceUnit = -_GetRewardValuesDiscountFixedAmount(self, program),
                         ProductUOMQty = 1,
@@ -808,7 +808,7 @@ namespace Infrastructure.Services
 
                 rewards.Add(new SaleOrderLine
                 {
-                    Name = $"Chiết khấu: {program.Name}",
+                    Name = $"Giảm giá: {program.Name}",
                     ProductId = program.DiscountLineProductId,
                     PriceUnit = -total_discount_amount,
                     ProductUOMQty = 1,

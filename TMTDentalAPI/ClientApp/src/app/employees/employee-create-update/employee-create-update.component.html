@@ -50,7 +50,7 @@
                                                 <label class="o_form_label">Ngày sinh</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-datepicker formControlName="birthDayObj">
+                                                <kendo-datepicker formControlName="birthDay">
                                                 </kendo-datepicker>
                                             </td>
                                         </tr>
@@ -61,10 +61,50 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox [filterable]="true" [data]="listCommissions" [textField]="'name'" #commissionCbx
-                                                    formControlName="commission" [valueField]="'id'">
+                                                <kendo-combobox [filterable]="true" [data]="listCommissions"
+                                                    [textField]="'name'" #commissionCbx formControlName="commission"
+                                                    [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Loại mẫu lương</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div>
+                                                    <kendo-combobox formControlName="structureType" [filterable]="true"
+                                                        [data]="filteredstructureTypes" [valueField]="'id'"
+                                                        #structureTypeCbx [textField]="'name'">
+                                                    </kendo-combobox>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            [class.d-none]="!structureTypeValue || structureTypeValue.wageType !== 'monthly'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Lương/tháng</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div>
+                                                    <kendo-numerictextbox [format]="'n0'" formControlName="wage"
+                                                        [autoCorrect]="true">
+                                                    </kendo-numerictextbox>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            [class.d-none]="!structureTypeValue || structureTypeValue.wageType !== 'hourly'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Lương/giờ</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div>
+                                                    <kendo-numerictextbox [format]="'n0'" formControlName="hourlyWage">
+                                                    </kendo-numerictextbox>
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -101,9 +141,31 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox [filterable]="true" [data]="filteredUsers" [textField]="'name'" #userCbx
-                                                    formControlName="user" [valueField]="'id'">
+                                                <kendo-combobox [filterable]="true" [data]="filteredUsers"
+                                                    [textField]="'name'" #userCbx formControlName="user"
+                                                    [valueField]="'id'">
                                                 </kendo-combobox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày bắt đầu làm việc
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="startWorkDate">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã vân tay
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="enrollNumber" />
                                             </td>
                                         </tr>
                                     </tbody>

@@ -1,1900 +1,1055 @@
 [
   {
-    "Id": "App.Catalog",
-    "Name": "Catalog",
-    "Text": "Danh mục",
-    "Items": [
-      {
-        "Id": "App.Catalog.Partner.Customer",
-        "Name": "Partner.Customer",
-        "Text": "Khách hàng",
-        "Items": [
-          {
-            "Id": "App.Catalog.Partner.Customer.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.Partner.Customer.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Partner.Customer.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Partner.Customer.Transfer",
-            "Name": "Transfer",
-            "Text": "Chuyển đổi khách hàng",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Update",
-              "App.Sale.Fast.Order.Update",
-              "App.Sale.Pos.Order.Update",
-              "App.SaleOnline.Order.Update"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Partner.Customer.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.Partner.Supplier",
-        "Name": "Partner.Supplier",
-        "Text": "Nhà cung cấp",
-        "Items": [
-          {
-            "Id": "App.Catalog.Partner.Supplier.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.Partner.Supplier.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Supplier.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Partner.Supplier.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Supplier.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Partner.Supplier.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.Partner.Supplier.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.DeliveryCarrier",
-        "Name": "DeliveryCarrier",
-        "Text": "Đối tác giao hàng",
-        "Items": [
-          {
-            "Id": "App.Catalog.DeliveryCarrier.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.DeliveryCarrier.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.DeliveryCarrier.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.DeliveryCarrier.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.DeliveryCarrier.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.DeliveryCarrier.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.DeliveryCarrier.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.ProductTemplate",
-        "Name": "ProductTemplate",
-        "Text": "Sản phẩm",
-        "Items": [
-          {
-            "Id": "App.Catalog.ProductTemplate.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.ProductTemplate.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.ProductTemplate.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.ProductTemplate.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.Product",
-        "Name": "Product",
-        "Text": "Biến thể sản phẩm",
-        "Items": [
-          {
-            "Id": "App.Catalog.Product.Read",
-            "Name": "Read",
-            "Text": "Đọc",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Update",
-              "App.Catalog.Product.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Update",
-              "App.Catalog.Product.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Update",
-              "App.Catalog.Product.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.Product_PriceList",
-        "Name": "Product_PriceList",
-        "Text": "Bảng giá",
-        "Items": [
-          {
-            "Id": "App.Catalog.Product_PriceList.Read",
-            "Name": "Read",
-            "Text": "Đọc",
-            "Requireds": [
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product_PriceList.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Product_PriceList.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Others.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product_PriceList.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Product_PriceList.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Others.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Product_PriceList.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.Product_PriceList.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.PromotionProgram",
-        "Name": "Catalog.PromotionProgram",
-        "Text": "Chương trình khuyến mãi",
-        "Items": [
-          {
-            "Id": "App.Catalog.PromotionProgram.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.PromotionProgram.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Product.Read",
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.ProductCategory.Read",
-              "App.Catalog.PromotionProgram.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.PromotionProgram.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Product.Read",
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.ProductCategory.Read",
-              "App.Catalog.PromotionProgram.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.PromotionProgram.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.PromotionProgram.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.LoaiThuChi",
-        "Name": "Catalog.LoaiThuChi",
-        "Text": "Loại thu & chi",
-        "Items": [
-          {
-            "Id": "App.Catalog.LoaiThuChi.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.LoaiThuChi.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.LoaiThuChi.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.LoaiThuChi.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.Warehouse",
-        "Name": "Warehouse",
-        "Text": "Kho hàng",
-        "Items": [
-          {
-            "Id": "App.Catalog.Warehouse.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.Warehouse.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Warehouse.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Warehouse.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Warehouse.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Warehouse.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.Warehouse.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Catalog.Others",
-        "Name": "Others",
-        "Text": "Danh mục khác",
-        "Items": [
-          {
-            "Id": "App.Catalog.Others.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Catalog.Others.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Others.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Others.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Others.Read"
-            ]
-          },
-          {
-            "Id": "App.Catalog.Others.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Catalog.Others.Read"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "Id": "App.Sale",
-    "Name": "Sale",
-    "Text": "Bán hàng",
+    "Name": "Điều trị",
+    "Permission": "Basic",
     "Children": [
       {
-        "Id": "App.Sale.Pos",
-        "Name": "Pos",
-        "Text": "Điểm bán hàng",
-        "Items": [
+        "Name": "Khách hàng/Nhà cung cấp",
+        "Permission": "Basic.Partner",
+        "Children": [
           {
-            "Id": "App.Sale.Pos.Order",
-            "Name": "Pos.Order",
-            "Text": "Hóa đơn",
-            "Items": [
-              {
-                "Id": "App.Sale.Pos.Order.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Pos.Order.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Pos.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Order.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Pos.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Order.Return",
-                "Name": "Return",
-                "Text": "Trả hàng",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Pos.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Order.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Sale.Pos.Order.Read"
-                ]
-              }
-            ]
+            "Name": "Xem",
+            "Permission": "Basic.Partner.Read"
           },
           {
-            "Id": "App.Sale.Pos.Configs",
-            "Name": "Pos.Kanban",
-            "Text": "Danh sách điểm bán hàng",
-            "Items": [
-              {
-                "Id": "App.Sale.Pos.Configs.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Pos.Configs.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Sale.Pos.Configs.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Configs.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Sale.Pos.Configs.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Configs.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Sale.Pos.Configs.Read"
-                ]
-              }
-            ]
+            "Name": "Thêm",
+            "Permission": "Basic.Partner.Create"
           },
           {
-            "Id": "App.Sale.Pos.Session",
-            "Name": "Pos.Session",
-            "Text": "Phiên bán hàng",
-            "Items": [
-              {
-                "Id": "App.Sale.Pos.Session.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Pos.Session.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Sale.Pos.Session.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Session.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Sale.Pos.Session.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Pos.Session.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Sale.Pos.Kanban.Read"
-                ]
-              }
-            ]
+            "Name": "Cập nhật",
+            "Permission": "Basic.Partner.Update"
           },
           {
-            "Id": "App.Sale.Pos.PriceStaff",
-            "Name": "Pos.PriceStaff",
-            "Text": "Sửa giá, thu ngân",
-            "Items": [
-              {
-                "Id": "App.Sale.Pos.PriceStaff.Price",
-                "Name": "Price",
-                "Text": "Sửa giá"
-              },
-              {
-                "Id": "App.Sale.Pos.PriceStaff.Staff",
-                "Name": "Staff",
-                "Text": "Thay đổi thu ngân"
-              }
-            ]
+            "Name": "Xóa",
+            "Permission": "Basic.Partner.Delete"
           }
         ]
       },
       {
-        "Id": "App.Sale.Fast",
-        "Name": "Fast",
-        "Text": "Bán hàng nhanh",
-        "Items": [
+        "Name": "Điều trị/Tư vấn",
+        "Permission": "Basic.SaleOrder",
+        "Children": [
           {
-            "Id": "App.Sale.Fast.Order",
-            "Name": "Sale.Order",
-            "Text": "Hóa đơn",
-            "Items": [
-              {
-                "Id": "App.Sale.Fast.Order.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Fast.Order.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Order.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Order.SendDelivery",
-                "Name": "SendDelivery",
-                "Text": "Gửi vận đơn",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Update",
-                  "App.Catalog.DeliveryCarrier.Read",
-                  "App.Catalog.Partner.Customer.Update"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Order.Facebook_SendMessage",
-                "Name": "Facebook_SendMessage",
-                "Text": "Gửi tin nhắn Facebook",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Read",
-                  "App.Sale.Fast.Order.Update"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Order.Cancel",
-                "Name": "Cancel",
-                "Text": "Hủy",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Order.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Read"
-                ]
-              }
-            ]
+            "Name": "Xem",
+            "Permission": "Basic.SaleOrder.Read"
           },
           {
-            "Id": "App.Sale.Fast.Refund",
-            "Name": "Sale.Refund",
-            "Text": "Trả hàng",
-            "Items": [
-              {
-                "Id": "App.Sale.Fast.Refund.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Fast.Refund.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Fast.Refund.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Refund.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Customer.Read",
-                  "App.Sale.Fast.Refund.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.Refund.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Sale.Fast.Refund.Read"
-                ]
-              }
-            ]
+            "Name": "Thêm",
+            "Permission": "Basic.SaleOrder.Create"
           },
           {
-            "Id": "App.Sale.Fast.DeliveryOrder",
-            "Name": "Sale.DeliveryOrder",
-            "Text": "Hóa đơn giao hàng",
-            "Items": [
-              {
-                "Id": "App.Sale.Fast.DeliveryOrder.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Sale.Fast.DeliveryOrder.UpdateStatus",
-                "Name": "UpdateStatus",
-                "Text": "Cập nhật trạng thái GH",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Update"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.DeliveryOrder.Resend",
-                "Name": "Resend",
-                "Text": "Gửi lại vận đơn",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Update",
-                  "App.Catalog.DeliveryCarrier.Read",
-                  "App.Sale.Fast.DeliveryOrder.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.DeliveryOrder.Cancel",
-                "Name": "Cancel",
-                "Text": "Hủy vận đơn",
-                "Requireds": [
-                  "App.Sale.Fast.Order.Update",
-                  "App.Sale.Fast.DeliveryOrder.Read"
-                ]
-              },
-              {
-                "Id": "App.Sale.Fast.DeliveryOrder.ExportExcel",
-                "Name": "ExportExcel",
-                "Text": "Xuất file excel",
-                "Requireds": [
-                  "App.Sale.Fast.DeliveryOrder.Read"
-                ]
-              }
-            ]
+            "Name": "Cập nhật",
+            "Permission": "Basic.SaleOrder.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.SaleOrder.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Basic.SaleOrder.Cancel"
           }
         ]
       },
       {
-        "Id": "App.Sale.Quotation",
-        "Name": "Sale.Quotation",
-        "Text": "Báo giá",
-        "Items": [
+        "Name": "Lịch hẹn",
+        "Permission": "Basic.Appointment",
+        "Children": [
           {
-            "Id": "App.Sale.Quotation.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "Basic.Appointment.Read"
           },
           {
-            "Id": "App.Sale.Quotation.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Sale.Quotation.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "Basic.Appointment.Create"
           },
           {
-            "Id": "App.Sale.Quotation.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Sale.Quotation.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "Basic.Appointment.Update"
           },
           {
-            "Id": "App.Sale.Quotation.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Sale.Quotation.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "Basic.Appointment.Delete"
           }
         ]
       },
       {
-        "Id": "App.Sale.Order",
-        "Name": "Order",
-        "Text": "Đơn đặt hàng",
-        "Items": [
+        "Name": "Đơn thuốc",
+        "Permission": "Basic.ToaThuoc",
+        "Children": [
           {
-            "Id": "App.Sale.Order.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "Basic.ToaThuoc.Read"
           },
           {
-            "Id": "App.Sale.Order.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Sale.Order.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "Basic.ToaThuoc.Create"
           },
           {
-            "Id": "App.Sale.Order.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Sale.Order.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "Basic.ToaThuoc.Update"
           },
           {
-            "Id": "App.Sale.Order.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Sale.Order.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "Basic.ToaThuoc.Delete"
           }
         ]
+      },
+      {
+        "Name": "Đợt khám",
+        "Permission": "Basic.DotKham",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.DotKham.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.DotKham.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.DotKham.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.DotKham.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Phiếu labo",
+        "Permission": "LaboOrder",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.LaboOrder.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.LaboOrder.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.LaboOrder.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.LaboOrder.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Basic.LaboOrder.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Thanh toán",
+        "Permission": "Basic.AccountPayment",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.AccountPayment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.AccountPayment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.AccountPayment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.AccountPayment.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê labo",
+        "Permission": "Basic.LaboOrder.Statistics"
       }
     ]
   },
   {
-    "Id": "App.Purchase",
-    "Name": "Purchase",
-    "Text": "Mua hàng",
+    "Name": "Mua hàng",
+    "Permission": "Purchase",
     "Children": [
       {
-        "Id": "App.Purchase.Fast",
-        "Name": "Fast",
-        "Text": "Mua hàng nhanh",
-        "Items": [
+        "Name": "Mua/trả hàng",
+        "Permission": "Purchase.Order",
+        "Children": [
           {
-            "Id": "App.Purchase.Fast.Order",
-            "Name": "Purchase.Order",
-            "Text": "Hóa đơn",
-            "Items": [
-              {
-                "Id": "App.Purchase.Fast.Order.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Purchase.Fast.Order.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Supplier.Read",
-                  "App.Purchase.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Purchase.Fast.Order.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Supplier.Read",
-                  "App.Purchase.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Purchase.Fast.Order.Cancel",
-                "Name": "Cancel",
-                "Text": "Hủy",
-                "Requireds": [
-                  "App.Purchase.Fast.Order.Read"
-                ]
-              },
-              {
-                "Id": "App.Purchase.Fast.Order.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Purchase.Fast.Order.Read"
-                ]
-              }
-            ]
+            "Name": "Xem",
+            "Permission": "Purchase.Order.Read"
           },
           {
-            "Id": "App.Purchase.Fast.Refund",
-            "Name": "Purchase.Refund",
-            "Text": "Trả hàng",
-            "Items": [
-              {
-                "Id": "App.Purchase.Fast.Refund.Read",
-                "Name": "Read",
-                "Text": "Đọc"
-              },
-              {
-                "Id": "App.Purchase.Fast.Refund.Insert",
-                "Name": "Insert",
-                "Text": "Thêm mới",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Supplier.Read",
-                  "App.Purchase.Fast.Refund.Read"
-                ]
-              },
-              {
-                "Id": "App.Purchase.Fast.Refund.Update",
-                "Name": "Update",
-                "Text": "Cập nhật",
-                "Requireds": [
-                  "App.Catalog.ProductTemplate.Read",
-                  "App.Catalog.Product.Read",
-                  "App.Catalog.Partner.Supplier.Read",
-                  "App.Purchase.Fast.Refund.Read"
-                ]
-              },
-              {
-                "Id": "App.Purchase.Fast.Refund.Delete",
-                "Name": "Delete",
-                "Text": "Xóa",
-                "Requireds": [
-                  "App.Purchase.Fast.Refund.Read"
-                ]
-              }
-            ]
+            "Name": "Thêm",
+            "Permission": "Purchase.Order.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Purchase.Order.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Purchase.Order.Delete"
           }
         ]
       }
     ]
   },
   {
-    "Id": "App.SaleOnline",
-    "Name": "SaleOnline",
-    "Text": "Sale Online",
-    "Packages": [
-      "Facebook",
-      "FacebookPlus"
+    "Name": "Kho",
+    "Permission": "Stock",
+    "Children": [
+      {
+        "Name": "Phiếu nhập/xuất",
+        "Permission": "Stock.Picking",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Picking.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Picking.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Picking.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Picking.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Lương",
+    "Permission": "Salary",
+    "Children": [
+      {
+        "Name": "Đợt lương",
+        "Permission": "Salary.HrPayslipRun",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.HrPayslipRun.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.HrPayslipRun.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.HrPayslipRun.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.HrPayslipRun.Delete"
+          },
+          {
+            "Name": "Hủy",
+            "Permission": "Salary.HrPayslipRun.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Phiếu lương",
+        "Permission": "Salary.HrPayslip",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.HrPayslip.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.HrPayslip.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.HrPayslip.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.HrPayslip.Delete"
+          },
+          {
+            "Name": "Hủy",
+            "Permission": "Salary.HrPayslip.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Chấm công",
+        "Permission": "Salary.ChamCong",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.ChamCong.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.ChamCong.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.ChamCong.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.ChamCong.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại mẫu lương",
+        "Permission": "Salary.HrPayrollStructureType",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.HrPayrollStructureType.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.HrPayrollStructureType.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.HrPayrollStructureType.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.HrPayrollStructureType.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Mẫu lương",
+        "Permission": "Salary.HrPayrollStructure",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.HrPayrollStructure.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.HrPayrollStructure.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.HrPayrollStructure.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.HrPayrollStructure.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại chấm công",
+        "Permission": "Salary.WorkEntryType",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.WorkEntryType.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.WorkEntryType.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.WorkEntryType.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.WorkEntryType.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Lịch làm việc",
+        "Permission": "Salary.ResourceCalendar",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.ResourceCalendar.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.ResourceCalendar.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.ResourceCalendar.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.ResourceCalendar.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Thu chi",
+    "Permission": "Account",
+    "Children": [
+      {
+        "Name": "Phiếu thu/chi",
+        "Permission": "Account.PhieuThuChi",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.PhieuThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.PhieuThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.PhieuThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.PhieuThuChi.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thu/chi",
+        "Permission": "Account.LoaiThuChi",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.LoaiThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.LoaiThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.LoaiThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.LoaiThuChi.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Danh mục",
+    "Permission": "Catalog",
+    "Children": [
+      {
+        "Name": "Nhãn khách hàng",
+        "Permission": "Catalog.PartnerCategory",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerCategory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerCategory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerCategory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerCategory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nguồn khách hàng",
+        "Permission": "Catalog.PartnerSource",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerSource.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerSource.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerSource.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerSource.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Dịch vụ, vật tư, thuốc",
+        "Permission": "Product",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Product.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Product.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Product.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Product.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhóm dịch vụ, vật tư, thuốc",
+        "Permission": "Catalog.ProductCategory",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.ProductCategory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.ProductCategory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.ProductCategory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.ProductCategory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đơn thuốc mẫu",
+        "Permission": "Catalog.SamplePrescription",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.SamplePrescription.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.SamplePrescription.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.SamplePrescription.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.SamplePrescription.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiểu sử bệnh",
+        "Permission": "Catalog.History",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.History.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.History.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.History.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.History.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Danh xưng",
+        "Permission": "Catalog.PartnerTitle",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerTitle.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerTitle.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerTitle.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerTitle.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhân viên",
+        "Permission": "Catalog.Employee",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Employee.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Employee.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Employee.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Employee.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảng hoa hồng",
+        "Permission": "Catalog.Commission",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Commission.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Commission.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Commission.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Commission.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Cấu hình",
+    "Permission": "System",
+    "Children": [
+      {
+        "Name": "Chi nhánh",
+        "Permission": "System.Company",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "System.Company.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "System.Company.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "System.Company.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "System.Company.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Người dùng",
+        "Permission": "System.ApplicationUser",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "System.ApplicationUser.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "System.ApplicationUser.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "System.ApplicationUser.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "System.ApplicationUser.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhóm quyền",
+        "Permission": "System.ApplicationRole",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "System.ApplicationRole.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "System.ApplicationRole.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "System.ApplicationRole.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "System.ApplicationRole.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Báo cáo",
+    "Permission": "Report",
+    "Children": [
+      {
+        "Name": "Kết quả kinh doanh",
+        "Permission": "Report.Financial"
+      },
+      {
+        "Name": "Tiền mặt, ngân hàng",
+        "Permission": "Report.CashBankAccount"
+      },
+      {
+        "Name": "Thống kê doanh thu",
+        "Permission": "Report.Revenue"
+      },
+      {
+        "Name": "Thống kê điều trị",
+        "Permission": "Report.Sale"
+      },
+      {
+        "Name": "Công nợ KH/NCC",
+        "Permission": "Report.AccountPartner"
+      },
+      {
+        "Name": "Xuất nhập tồn",
+        "Permission": "Report.Stock"
+      },
+      {
+        "Name": "Tình hình thu nợ khách hàng",
+        "Permission": "Report.RealRevenue"
+      },
+      {
+        "Name": "Thống kê công việc",
+        "Permission": "Report.DotKham"
+      },
+      {
+        "Name": "Thống kê hoa hồng",
+        "Permission": "Report.Commission"
+      },
+      {
+        "Name": "Khách hàng lân cận phòng khám",
+        "Permission": "Report.PartnerLocation"
+      },
+      {
+        "Name": "Thống kê nguồn khách hàng",
+        "Permission": "Report.PartnerSource"
+      },
+      {
+        "Name": "Thống kê khách hàng cũ mới",
+        "Permission": "Report.PartnerOldNew"
+      }
+    ]
+  },
+  {
+    "Name": "Khuyến mãi/coupon",
+    "Permission": "SaleCoupon",
+    "Children": [
+      {
+        "Name": "Chương trình khuyến mãi/coupon",
+        "Permission": "SaleCoupon.SaleCouponProgram",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Coupon",
+        "Permission": "SaleCoupon.SaleCoupon",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "SaleCoupon.SaleCoupon.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SaleCoupon.SaleCoupon.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SaleCoupon.SaleCoupon.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SaleCoupon.SaleCoupon.Delete"
+          }
+        ]
+      }
     ],
-    "Items": [
+    "Groups": "sale.group_sale_coupon_promotion"
+  },
+  {
+    "Name": "Thẻ tiền mặt",
+    "Permission": "ServiceCard",
+    "Children": [
       {
-        "Id": "App.SaleOnline.LiveCampaign",
-        "Name": "LiveCampaign",
-        "Text": "Chiến dịch live",
-        "Items": [
+        "Name": "Đơn bán thẻ",
+        "Permission": "ServiceCard.Order",
+        "Children": [
           {
-            "Id": "App.SaleOnline.LiveCampaign.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "ServiceCard.Order.Read"
           },
           {
-            "Id": "App.SaleOnline.LiveCampaign.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.SaleOnline.LiveCampaign.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Order.Create"
           },
           {
-            "Id": "App.SaleOnline.LiveCampaign.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.SaleOnline.LiveCampaign.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Order.Update"
           },
           {
-            "Id": "App.SaleOnline.LiveCampaign.Approve",
-            "Name": "Approve",
-            "Text": "Ẩn/Hiện",
-            "Requireds": [
-              "App.SaleOnline.LiveCampaign.Read"
-            ]
-          },
-          {
-            "Id": "App.SaleOnline.LiveCampaign.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.SaleOnline.LiveCampaign.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Order.Delete"
           }
         ]
       },
       {
-        "Id": "App.SaleOnline.Order",
-        "Name": "SaleOnline.Order",
-        "Text": "Đơn hàng",
-        "Items": [
+        "Name": "Loại thẻ",
+        "Permission": "ServiceCard.Type",
+        "Children": [
           {
-            "Id": "App.SaleOnline.Order.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "ServiceCard.Type.Read"
           },
           {
-            "Id": "App.SaleOnline.Order.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Type.Create"
           },
           {
-            "Id": "App.SaleOnline.Order.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Insert",
-              "App.Catalog.Partner.Customer.Update",
-              "App.SaleOnline.LiveCampaign.Read",
-              "App.SaleOnline.Order.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Type.Update"
           },
           {
-            "Id": "App.SaleOnline.Order.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.ProductTemplate.Read",
-              "App.Catalog.Product.Read",
-              "App.Catalog.Partner.Customer.Insert",
-              "App.Catalog.Partner.Customer.Update",
-              "App.SaleOnline.LiveCampaign.Read",
-              "App.SaleOnline.Order.Read",
-              "App.SaleOnline.Order.Insert"
-            ]
-          },
-          {
-            "Id": "App.SaleOnline.Order.CreateFSO",
-            "Name": "CreateFSO",
-            "Text": "Tạo hóa đơn",
-            "Requireds": [
-              "App.Sale.Fast.Order.Insert",
-              "App.SaleOnline.Order.Read"
-            ]
-          },
-          {
-            "Id": "App.SaleOnline.Order.QuickCreateFSO",
-            "Name": "QuickCreateFSO",
-            "Text": "Tạo nhanh hóa đơn",
-            "Requireds": [
-              "App.Sale.Fast.Order.Insert",
-              "App.SaleOnline.Order.Read"
-            ]
-          },
-          {
-            "Id": "App.SaleOnline.Order.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.SaleOnline.Order.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Type.Delete"
           }
         ]
       },
       {
-        "Id": "App.SaleOnline.Facebook",
-        "Name": "SaleOnline.Facebook",
-        "Text": "Facebook",
-        "Items": [
+        "Name": "Danh sách thẻ",
+        "Permission": "ServiceCard.Card",
+        "Children": [
           {
-            "Id": "App.SaleOnline.Facebook.Feed",
-            "Name": "Feed",
-            "Text": "Feed"
+            "Name": "Xem",
+            "Permission": "ServiceCard.Card.Read"
           },
           {
-            "Id": "App.SaleOnline.Facebook.SetCampaign",
-            "Name": "SetCampaign",
-            "Text": "Chọn/hủy chiến dịch"
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Card.Create"
           },
           {
-            "Id": "App.SaleOnline.Facebook.EnableSession",
-            "Name": "EnableSession",
-            "Text": "Bật/tắt số thứ tự phiếu"
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Card.Update"
           },
           {
-            "Id": "App.SaleOnline.Facebook.RefreshSession",
-            "Name": "RefreshSession",
-            "Text": "Làm mới số thứ tự phiếu"
-          },
-          {
-            "Id": "App.SaleOnline.Facebook.RegisterMessage",
-            "Name": "RegisterMessage",
-            "Text": "Đăng ký gửi tin nhắn"
-          },
-          {
-            "Id": "App.SaleOnline.Facebook.Advanced",
-            "Name": "Advanced",
-            "Text": "Nâng cao"
-          },
-          {
-            "Id": "App.SaleOnline.Facebook.Configs",
-            "Name": "Configs",
-            "Text": "Cấu hình nâng cao"
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Card.Delete"
           }
         ]
       }
-    ]
-  },
-  {
-    "Id": "App.MarketingOnline",
-    "Name": "MarketingOnline",
-    "Text": "Marketing Online",
-    "Packages": [
-      "FacebookPlus"
     ],
-    "Items": [
-      {
-        "Id": "App.MarketingOnline.PartnerGroup",
-        "Name": "MarketingOnline.PartnerGroup",
-        "Text": "Nhóm đối tượng",
-        "Items": [
-          {
-            "Id": "App.MarketingOnline.PartnerGroup.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.MarketingOnline.PartnerGroup.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.MarketingOnline.PartnerGroup.Read"
-            ]
-          },
-          {
-            "Id": "App.MarketingOnline.PartnerGroup.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.MarketingOnline.PartnerGroup.Read"
-            ]
-          },
-          {
-            "Id": "App.MarketingOnline.PartnerGroup.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.MarketingOnline.PartnerGroup.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.MarketingOnline.Facebook",
-        "Name": "MarketingOnline.Facebook",
-        "Text": "Facebook",
-        "Items": [
-          {
-            "Id": "App.MarketingOnline.Facebook.Feed",
-            "Name": "Feed",
-            "Text": "Feed"
-          }
-        ]
-      }
-    ]
+    "Groups": "sale.group_service_card"
   },
   {
-    "Id": "App.Accounting",
-    "Name": "Accounting",
-    "Text": "Kế toán",
-    "Items": [
+    "Name": "Thành viên",
+    "Permission": "LoyaltyCard",
+    "Children": [
       {
-        "Id": "App.Accounting.PaymentCustomer",
-        "Name": "Accounting.PaymentCustomer",
-        "Text": "Thanh toán bán hàng",
-        "Items": [
+        "Name": "Thẻ thành viên",
+        "Permission": "LoyaltyCard.CardCard",
+        "Children": [
           {
-            "Id": "App.Accounting.PaymentCustomer.Read",
-            "Name": "Read",
-            "Text": "Đọc",
-            "Requireds": [
-              "App.Accounting.PhieuThu.Read"
-            ]
+            "Name": "Xem",
+            "Permission": "LoyaltyCard.CardCard.Read"
           },
           {
-            "Id": "App.Accounting.PaymentCustomer.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Accounting.PhieuThu.Insert",
-              "App.Accounting.PaymentCustomer.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "LoyaltyCard.CardCard.Create"
           },
           {
-            "Id": "App.Accounting.PaymentCustomer.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Accounting.PhieuThu.Update",
-              "App.Accounting.PaymentCustomer.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "LoyaltyCard.CardCard.Update"
           },
           {
-            "Id": "App.Accounting.PaymentCustomer.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.PhieuThu.Delete",
-              "App.Accounting.PaymentCustomer.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "LoyaltyCard.CardCard.Delete"
           }
         ]
       },
       {
-        "Id": "App.Accounting.PaymentSupplier",
-        "Name": "Accounting.PaymentSupplier",
-        "Text": "Thanh toán mua hàng",
-        "Items": [
+        "Name": "Loại thẻ thành viên",
+        "Permission": "LoyaltyCard.CardType",
+        "Children": [
           {
-            "Id": "App.Accounting.PaymentSupplier.Read",
-            "Name": "Read",
-            "Text": "Đọc",
-            "Requireds": [
-              "App.Accounting.PhieuChi.Read"
-            ]
+            "Name": "Xem",
+            "Permission": "LoyaltyCard.CardType.Read"
           },
           {
-            "Id": "App.Accounting.PaymentSupplier.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuChi.Insert",
-              "App.Accounting.PaymentSupplier.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "LoyaltyCard.CardType.Create"
           },
           {
-            "Id": "App.Accounting.PaymentSupplier.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuChi.Update",
-              "App.Accounting.PaymentSupplier.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "LoyaltyCard.CardType.Update"
           },
           {
-            "Id": "App.Accounting.PaymentSupplier.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.PhieuChi.Delete",
-              "App.Accounting.PaymentSupplier.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Accounting.Inventory",
-        "Name": "Accounting.Inventory",
-        "Text": "Điều chỉnh công nợ",
-        "Items": [
-          {
-            "Id": "App.Accounting.Inventory.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Accounting.Inventory.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.Inventory.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.Inventory.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.Inventory.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.Inventory.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.Inventory.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Accounting.Deposit",
-        "Name": "Accounting.Deposit",
-        "Text": "Ký quỹ",
-        "Items": [
-          {
-            "Id": "App.Accounting.Deposit.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Accounting.Deposit.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.Deposit.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.Deposit.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.Deposit.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.Deposit.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.Deposit.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Accounting.PhieuThu",
-        "Name": "Accounting.PhieuThu",
-        "Text": "Phiếu thu",
-        "Items": [
-          {
-            "Id": "App.Accounting.PhieuThu.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Accounting.PhieuThu.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuThu.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.PhieuThu.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuThu.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.PhieuThu.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.PhieuThu.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Accounting.PhieuChi",
-        "Name": "Accounting.PhieuChi",
-        "Text": "Phiếu chi",
-        "Items": [
-          {
-            "Id": "App.Accounting.PhieuChi.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Accounting.PhieuChi.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuChi.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.PhieuChi.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Catalog.LoaiThuChi.Read",
-              "App.Catalog.Partner.Customer.Read",
-              "App.Catalog.Partner.Supplier.Read",
-              "App.Accounting.PhieuChi.Read"
-            ]
-          },
-          {
-            "Id": "App.Accounting.PhieuChi.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Accounting.PhieuChi.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "LoyaltyCard.CardType.Delete"
           }
         ]
       }
-    ]
+    ],
+    "Groups": "sale.group_loyalty_card"
   },
   {
-    "Id": "App.Stock",
-    "Name": "Stock",
-    "Text": "Kho",
-    "Items": [
+    "Name": "Đơn vị tính",
+    "Permission": "UoM",
+    "Children": [
       {
-        "Id": "App.Stock.Location",
-        "Name": "Stock.Location",
-        "Text": "Địa điểm",
-        "Items": [
+        "Name": "Đơn vị tính",
+        "Permission": "UoM.UoM",
+        "Children": [
           {
-            "Id": "App.Stock.Location.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "UoM.UoM.Read"
           },
           {
-            "Id": "App.Stock.Location.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Stock.Location.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "UoM.UoM.Create"
           },
           {
-            "Id": "App.Stock.Location.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Stock.Location.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "UoM.UoM.Update"
           },
           {
-            "Id": "App.Stock.Location.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Stock.Location.Read"
-            ]
+            "Name": "Xóa",
+            "Permission": "UoM.UoM.Delete"
           }
         ]
       },
       {
-        "Id": "App.Stock.Inventory",
-        "Name": "Stock.Inventory",
-        "Text": "Điều chỉnh tồn kho",
-        "Items": [
+        "Name": "Nhóm đơn vị tính",
+        "Permission": "UoM.UoMCategory",
+        "Children": [
           {
-            "Id": "App.Stock.Inventory.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "UoM.UoMCategory.Read"
           },
           {
-            "Id": "App.Stock.Inventory.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Stock.Inventory.Read"
-            ]
+            "Name": "Thêm",
+            "Permission": "UoM.UoMCategory.Create"
           },
           {
-            "Id": "App.Stock.Inventory.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Stock.Inventory.Read"
-            ]
+            "Name": "Cập nhật",
+            "Permission": "UoM.UoMCategory.Update"
           },
           {
-            "Id": "App.Stock.Inventory.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Stock.Inventory.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Stock.Move",
-        "Name": "Stock.Move",
-        "Text": "Dịch chuyển kho",
-        "Items": [
-          {
-            "Id": "App.Stock.Move.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          }
-        ]
-      },
-      {
-        "Id": "App.Stock.PickingType",
-        "Name": "Stock.PickingType",
-        "Text": "Tất cả hoạt động",
-        "Items": [
-          {
-            "Id": "App.Stock.PickingType.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xóa",
+            "Permission": "UoM.UoMCategory.Delete"
           }
         ]
       }
-    ]
+    ],
+    "Groups": "product.group_uom"
   },
   {
-    "Id": "App.Reports",
-    "Name": "Reports",
-    "Text": "Báo cáo",
-    "Items": [
+    "Name": "Chăm sóc tự động",
+    "Permission": "TCare",
+    "Children": [
       {
-        "Id": "App.Reports.InventoryValuation",
-        "Name": "Reports.InventoryValuation",
-        "Text": "Giá trị tồn kho",
-        "Items": [
+        "Name": "Kênh chăm sóc",
+        "Permission": "TCare.Channel",
+        "Children": [
           {
-            "Id": "App.Reports.InventoryValuation.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "TCare.Channel.Read"
           },
           {
-            "Id": "App.Reports.InventoryValuation.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
+            "Name": "Thêm",
+            "Permission": "TCare.Channel.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "TCare.Channel.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "TCare.Channel.Delete"
           }
         ]
       },
       {
-        "Id": "App.Reports.NXT",
-        "Name": "Reports.NXT",
-        "Text": "Nhập - Xuất - Tồn",
-        "Items": [
+        "Name": "Kịch bản",
+        "Permission": "TCare.Scenario",
+        "Children": [
           {
-            "Id": "App.Reports.NXT.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Xem",
+            "Permission": "TCare.Scenario.Read"
           },
           {
-            "Id": "App.Reports.NXT.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Imported",
-        "Name": "Reports.Imported",
-        "Text": "Thống kê nhập kho",
-        "Items": [
-          {
-            "Id": "App.Reports.Imported.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Thêm",
+            "Permission": "TCare.Scenario.Create"
           },
           {
-            "Id": "App.Reports.Imported.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Exported",
-        "Name": "Reports.Exported",
-        "Text": "Thống kê xuất kho",
-        "Items": [
-          {
-            "Id": "App.Reports.Exported.Read",
-            "Name": "Read",
-            "Text": "Đọc"
+            "Name": "Cập nhật",
+            "Permission": "TCare.Scenario.Update"
           },
           {
-            "Id": "App.Reports.Exported.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Order",
-        "Name": "Reports.Order",
-        "Text": "Thống kê hóa đơn",
-        "Items": [
-          {
-            "Id": "App.Reports.Order.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Order.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Revenue",
-        "Name": "Reports.Revenue",
-        "Text": "Thống kê doanh thu",
-        "Items": [
-          {
-            "Id": "App.Reports.Revenue.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Revenue.Print",
-            "Name": "Print",
-            "Text": "In"
-          },
-          {
-            "Id": "App.Reports.Revenue.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.BusinessResult",
-        "Name": "Reports.BusinessResult",
-        "Text": "Kết quả kinh doanh",
-        "Items": [
-          {
-            "Id": "App.Reports.BusinessResult.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.BusinessResult.Print",
-            "Name": "Print",
-            "Text": "In"
-          },
-          {
-            "Id": "App.Reports.BusinessResult.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Quotation",
-        "Name": "Reports.Quotation",
-        "Text": "Thống kê báo giá",
-        "Items": [
-          {
-            "Id": "App.Reports.Quotation.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Quotation.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Delivery",
-        "Name": "Reports.Delivery",
-        "Text": "Thống kê giao hàng",
-        "Items": [
-          {
-            "Id": "App.Reports.Delivery.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Delivery.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Purchase",
-        "Name": "Reports.Purchase",
-        "Text": "Thống kê mua hàng",
-        "Items": [
-          {
-            "Id": "App.Reports.Purchase.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Purchase.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Dept_Customer",
-        "Name": "Reports.Dept_Customer",
-        "Text": "Công nợ KH",
-        "Items": [
-          {
-            "Id": "App.Reports.Dept_Customer.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Dept_Customer.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.Dept_Supplier",
-        "Name": "Reports.Dept_Supplier",
-        "Text": "Công nợ NCC",
-        "Items": [
-          {
-            "Id": "App.Reports.Dept_Supplier.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.Dept_Supplier.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
-          }
-        ]
-      },
-      {
-        "Id": "App.Reports.AccountCashPrintJournal",
-        "Name": "Reports.AccountCashPrintJournal",
-        "Text": "Báo cáo sổ tiền mặt",
-        "Items": [
-          {
-            "Id": "App.Reports.AccountCashPrintJournal.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Reports.AccountCashPrintJournal.Excel",
-            "Name": "Excel",
-            "Text": "Xuất excel"
+            "Name": "Xóa",
+            "Permission": "TCare.Scenario.Delete"
           }
         ]
       }
-    ]
-  },
-  {
-    "Id": "App.Configs",
-    "Name": "Configs",
-    "Text": "Cấu hình",
-    "Items": [
-      {
-        "Id": "App.Configs.Company",
-        "Name": "Company",
-        "Text": "Công ty",
-        "Items": [
-          {
-            "Id": "App.Configs.Company.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Configs.Company.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Configs.Company.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.Company.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Configs.Company.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.Company.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Configs.Company.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Configs.User",
-        "Name": "User",
-        "Text": "Người dùng",
-        "Items": [
-          {
-            "Id": "App.Configs.User.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Configs.User.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Configs.User.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.User.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Configs.User.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.User.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Configs.User.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Configs.Role",
-        "Name": "User",
-        "Text": "Nhóm người dùng",
-        "Items": [
-          {
-            "Id": "App.Configs.Role.Read",
-            "Name": "Read",
-            "Text": "Đọc"
-          },
-          {
-            "Id": "App.Configs.Role.Insert",
-            "Name": "Insert",
-            "Text": "Thêm mới",
-            "Requireds": [
-              "App.Configs.Role.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.Role.Update",
-            "Name": "Update",
-            "Text": "Cập nhật",
-            "Requireds": [
-              "App.Configs.User.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.Role.Delete",
-            "Name": "Delete",
-            "Text": "Xóa",
-            "Requireds": [
-              "App.Configs.Role.Read"
-            ]
-          },
-          {
-            "Id": "App.Configs.Role.UpdatePermissions",
-            "Name": "GrantPermission",
-            "Text": "Phân quyền",
-            "Requireds": [
-              "App.Configs.Role.Read",
-              "App.Configs.User.Read"
-            ]
-          }
-        ]
-      },
-      {
-        "Id": "App.Configs.Others",
-        "Name": "Configs.Others",
-        "Text": "Khác",
-        "Items": [
-          {
-            "Id": "App.Configs.Others.Sale",
-            "Name": "Sale",
-            "Text": "Bán hàng"
-          },
-          {
-            "Id": "App.Configs.Others.Stock",
-            "Name": "Sale",
-            "Text": "Cấu hình kho"
-          },
-          {
-            "Id": "App.Configs.Others.BarcodeTemplate",
-            "Name": "BarcodeTemplate",
-            "Text": "Giấy in mã vạch"
-          },
-          {
-            "Id": "App.Configs.Others.Printer",
-            "Name": "Printer",
-            "Text": "Máy in"
-          },
-          {
-            "Id": "App.Configs.Others.Advanced",
-            "Name": "Advanced",
-            "Text": "Nâng cao"
-          }
-        ]
-      }
-    ]
+    ],
+    "Groups": "tcare.group_tcare"
   }
 ]

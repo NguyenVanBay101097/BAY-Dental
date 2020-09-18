@@ -20,6 +20,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<ApplicationRoleDisplay, ApplicationRole>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Functions, x => x.Ignore());
+
+            CreateMap<ApplicationRoleSave, ApplicationRole>()
+                .ForMember(x => x.Functions, x => x.Ignore());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -37,6 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
         public Guid? CategoryId { get; set; }
         public EmployeeCategoryBasic Category { get; set; }
+        public decimal? Wage { get; set; }
+        public Guid? StructureTypeId { get; set; }
     }
 
     public class EmployeeDisplay
@@ -95,6 +98,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUserSimple User { get; set; }
+
+        public Guid? StructureTypeId { get; set; }
+        public HrPayrollStructureTypeDisplay StructureType { get; set; }
+
+        public decimal? Wage { get; set; }
+        public decimal? HourlyWage { get; set; }
+        public DateTime? StartWorkDate { get; set; }
+
+        public string EnrollNumber { get; set; }
     }
 
     public class EmployeePaged
@@ -112,5 +124,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsAssistant { get; set; }
         //public bool? IsOther { get; set; }
         public string Position { get; set; }
+
+        public IEnumerable<Guid> Ids { get; set; }
     }
 }
