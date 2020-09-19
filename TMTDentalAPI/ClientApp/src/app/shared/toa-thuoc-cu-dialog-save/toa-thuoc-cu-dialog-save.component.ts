@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { UserPaged, UserService } from 'src/app/users/user.service';
-import { UserSimple } from 'src/app/users/user-simple';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -10,8 +9,10 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { DropDownFilterSettings, ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { SamplePrescriptionsService, SamplePrescriptionsDisplay, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { result } from 'lodash';
 import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog-save',
@@ -22,11 +23,11 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
   toaThuocForm: FormGroup;
   id: string;
-  userSimpleFilter: UserSimple[] = [];
+  employeeList: EmployeeBasic[] = [];
   filteredProducts: ProductSimple[];
   defaultVal: any;
   samplePrescriptionAdded: any;
-  @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   @ViewChild('samplePrescriptionCbx', { static: true }) samplePrescriptionCbx: ComboBoxComponent;
   title: string;
 
@@ -38,7 +39,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, 
     private userService: UserService, public activeModal: NgbActiveModal, 
     private intlService: IntlService, private errorService: AppSharedShowErrorService,
-    private productService: ProductService, private samplePrescriptionsService: SamplePrescriptionsService) { }
+    private productService: ProductService, private samplePrescriptionsService: SamplePrescriptionsService,
+    private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -46,30 +48,34 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       dateObj: null, 
       note: null,
       diagnostic: null,
-      user: null,
-      userId: null,
+      employee: null,
       partnerId: null,
       companyId: null,
       dotKhamId: null,
       lines: this.fb.array([]),
-    })
-
-    if (this.id) {
-      setTimeout(() => {
-        this.loadRecord();
-      });
-    } else {
-      setTimeout(() => {
-        this.loadDefault(this.defaultVal || {});
-      });
-    }
-
-    setTimeout(() => {
-      this.getUserList(); 
-      this.loadFilteredProducts();
     });
 
-    this.filterChangeCombobox();
+    setTimeout(() => {
+      if (this.id) {
+        this.loadRecord();
+      } else {
+        this.loadDefault(this.defaultVal || {});
+      }
+  
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmployees(val))
+      ).subscribe(
+        result => {
+          this.employeeList = result.items;
+          this.employeeCbx.loading = false;
+        }
+      )
+  
+      this.loadEmployeeList(); 
+      this.loadFilteredProducts();
+    });
   }
 
   searchProducts() {
@@ -79,22 +85,27 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     return this.productService.autocomplete2(val);
   }
 
+  searchEmployees(q?: string) {
+    var val = new EmployeePaged();
+    val.isDoctor = true;
+    val.search = q || '';
+    return this.employeeService.getEmployeePaged(val);
+  }
+
+  loadEmployeeList() {
+    return this.searchEmployees().subscribe(result => {
+      this.employeeList = _.unionBy(this.employeeList, result.items, 'id');
+    });
+  }
+
   loadFilteredProducts() {
     return this.searchProducts().subscribe(result => {
-      this.filteredProducts = result;
+      this.filteredProducts = _.unionBy(this.filteredProducts, result, 'id');
     });
   }
 
   get lines() {
     return this.toaThuocForm.get('lines') as FormArray;
-  }
-
-  getUserList() {
-    var val = new UserPaged;
-    this.userService.autocompleteSimple(val).subscribe(
-      result => {
-        this.userSimpleFilter = result;
-      });
   }
 
   loadRecord() {
@@ -103,6 +114,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.toaThuocForm.patchValue(result);
         let date = new Date(result.date);
         this.toaThuocForm.get('dateObj').patchValue(date);
+
+        if (result.employee) {
+          this.employeeList = _.unionBy(this.employeeList, [result.employee], 'id');
+        }
 
         this.lines.clear();
 
@@ -153,7 +168,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     }
     
     var val = Object.assign({}, this.toaThuocForm.value);
-    val.userId = val.user ? val.user.id : null;
+    val.employeeId = val.employee ? val.employee.id : null;
     val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.lines.forEach(line => {
       line.productId = line.product.id;
@@ -183,19 +198,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     var val = new UserPaged();
     val.search = filter;
     return this.userService.autocompleteSimple(val);
-  }
-
-  filterChangeCombobox() {
-    this.userCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.userCbx.loading = true),
-      switchMap(val => this.searchUsers(val.toString().toLowerCase()))
-    ).subscribe(
-      result => {
-        this.userSimpleFilter = result;
-        this.userCbx.loading = false;
-      }
-    )
   }
 
   deleteLine(index: number) {

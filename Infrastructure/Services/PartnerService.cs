@@ -236,25 +236,40 @@ namespace Infrastructure.Services
             var seqObj = GetService<IIRSequenceService>();
             var customers = self.Where(x => x.Customer == true && string.IsNullOrEmpty(x.Ref));
             foreach (var cus in customers)
-            {
-                cus.Ref = await seqObj.NextByCode("customer");
-                if (string.IsNullOrEmpty(cus.Ref))
-                {
-                    await InsertCustomerSequence();
-                    cus.Ref = await seqObj.NextByCode("customer");
-                }
-            }
+                cus.Ref = await GenerateUniqueRef("customer");
 
             var suppliers = self.Where(x => x.Supplier == true && string.IsNullOrEmpty(x.Ref));
             foreach (var sup in suppliers)
+                sup.Ref = await GenerateUniqueRef("supplier");
+        }
+
+        private async Task<string> GenerateUniqueRef(string type = "customer")
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            if (type == "customer")
             {
-                sup.Ref = await seqObj.NextByCode("supplier");
-                if (string.IsNullOrEmpty(sup.Ref))
+                var code = await seqObj.NextByCode(type);
+                var count = 0;
+                while ((await SearchQuery(x => x.Customer == true && x.Ref == code).CountAsync()) > 0 && count < 100)
                 {
-                    await InsertSupplierSequence();
-                    sup.Ref = await seqObj.NextByCode("supplier");
+                    code = await seqObj.NextByCode(type);
                 }
+
+                return code;
             }
+            else if (type == "supplier")
+            {
+                var code = await seqObj.NextByCode(type);
+                var count = 0;
+                while ((await SearchQuery(x => x.Supplier == true && x.Ref == code).CountAsync()) > 0 && count < 100)
+                {
+                    code = await seqObj.NextByCode(type);
+                }
+
+                return code;
+            }
+
+            return string.Empty;
         }
 
         private async Task _CheckUniqueRef(IEnumerable<Partner> self)
@@ -281,6 +296,7 @@ namespace Infrastructure.Services
         {
             _ComputeDisplayName(entities);
             _UpdateCityName(entities);
+            await _GenerateRefIfEmpty(entities);
             //_SetCompanyIfNull(entities);
 
             await base.UpdateAsync(entities);

@@ -44,6 +44,12 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
         public ICollection<ToaThuocLine> Lines { get; set; } = new List<ToaThuocLine>();
     }
 }

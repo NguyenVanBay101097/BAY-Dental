@@ -33,7 +33,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="note" />
+                                    <textarea class="form-control" formControlName="note"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -58,8 +58,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="user" [filterable]="true"
-                                        [data]="userSimpleFilter" #userCbx [valueField]="'id'"
+                                    <kendo-combobox formControlName="employee" [filterable]="true"
+                                        [data]="employeeList" #employeeCbx [valueField]="'id'"
                                         [textField]="'name'">
                                     </kendo-combobox>
                                 </td>

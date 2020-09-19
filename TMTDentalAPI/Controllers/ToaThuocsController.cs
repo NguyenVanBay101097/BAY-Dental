@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -46,7 +47,7 @@ namespace TMTDentalAPI.Controllers
             if (toaThuoc == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<ToaThuocDisplay>(toaThuoc));
+            return Ok(toaThuoc);
         }
 
         [HttpPost]
@@ -67,15 +68,15 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.ToaThuoc.Update")]
         public async Task<IActionResult> Update(Guid id, ToaThuocSave val)
         {
-            var order = await _toaThuocService.GetToaThuocForDisplayAsync(id);
-            if (order == null)
+            var toathuoc = await _toaThuocService.SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            if (toathuoc == null)
                 return NotFound();
 
-            order = _mapper.Map(val, order);
+            toathuoc = _mapper.Map(val, toathuoc);
 
-            SaveOrderLines(val, order);
+            SaveOrderLines(val, toathuoc);
 
-            await _toaThuocService.Write(order);
+            await _toaThuocService.Write(toathuoc);
 
             return NoContent();
         }
@@ -111,7 +112,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
-            res.Lines = res.Lines.OrderBy(x => x.Sequence);
+            if (res == null)
+                return NotFound();
             return Ok(res);
         }
 

@@ -32,9 +32,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         /// <summary>
-        /// Tài khoản tạo toa thuốc này
+        /// Bác sĩ
         /// </summary>
-        public string UserId { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         public Guid CompanyId { get; set; }
 

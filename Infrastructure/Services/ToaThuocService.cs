@@ -25,23 +25,32 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<ToaThuoc> GetToaThuocForDisplayAsync(Guid id)
+        public async Task<ToaThuocDisplay> GetToaThuocForDisplayAsync(Guid id)
         {
-            return await SearchQuery(x => x.Id == id)
-                .Include(x => x.User)
-                .Include(x => x.Lines)
-                .Include("Lines.Product")
-                .FirstOrDefaultAsync();
+            var toathuoc = await _mapper.ProjectTo<ToaThuocDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (toathuoc == null)
+                return null;
+
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            toathuoc.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+
+            return toathuoc;
         }
 
         public async Task<ToaThuocDisplay> DefaultGet(ToaThuocDefaultGet val)
         {
             var res = new ToaThuocDisplay();
             res.CompanyId = CompanyId;
-            var userManager = GetService<UserManager<ApplicationUser>>();
-            var user = await userManager.FindByIdAsync(UserId);
-            res.UserId = user.Id;
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
+            var employeeObj = GetService<IEmployeeService>();
+            var userId = UserId;
+
+            var employee = await employeeObj.SearchQuery(x => x.IsDoctor && x.UserId == userId).FirstOrDefaultAsync();
+            if (employee != null)
+            {
+                res.EmployeeId = employee.Id;
+                res.Employee = _mapper.Map<EmployeeBasic>(employee);
+            }
+
             if (val.DotKhamId.HasValue)
             {
                 var dkObj = GetService<IDotKhamService>();
@@ -112,18 +121,14 @@ namespace Infrastructure.Services
 
         public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)
         {
-            var toaThuoc = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Company.Partner)
-                .Include(x => x.Partner)
-                .Include(x => x.Lines)
-                .Include("Lines.Product").FirstOrDefaultAsync();
-            var res = _mapper.Map<ToaThuocPrintViewModel>(toaThuoc);
-            var partnerObj = GetService<IPartnerService>();
-            res.CompanyAddress = partnerObj.GetFormatAddress(toaThuoc.Company.Partner);
-            res.PartnerAddress = partnerObj.GetFormatAddress(toaThuoc.Partner);
-            var now = DateTime.Now;
-            res.PartnerAge = toaThuoc.Partner.BirthYear.HasValue ? (now.Year - toaThuoc.Partner.BirthYear.Value).ToString() : string.Empty;
-            res.PartnerGender = partnerObj.GetGenderDisplay(toaThuoc.Partner);
-            return res;
+            var toaThuoc = await _mapper.ProjectTo<ToaThuocPrintViewModel>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (toaThuoc == null)
+                return null;
+
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            toaThuoc.Lines = await _mapper.ProjectTo<ToaThuocLinePrintViewModel>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+
+            return toaThuoc;
         }
 
         private async Task InsertToaThuocSequence()

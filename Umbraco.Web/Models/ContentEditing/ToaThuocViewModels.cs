@@ -15,9 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
-        public string Note { get; set; }
-
-        public string UserName { get; set; }
+        public string EmployeeName { get; set; }
 
         public string Diagnostic { get; set; }
     }
@@ -35,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
     }
 
-    public class ToaThuocDisplay: ToaThuocBasic
+    public class ToaThuocDisplay
     {
         public ToaThuocDisplay()
         {
@@ -48,6 +46,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
+        public DateTime Date { get; set; }
+
         public string Note { get; set; }
 
         public string Diagnostic { get; set; }
@@ -58,11 +58,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
         public DotKhamSimple DotKham { get; set; }
 
-        /// <summary>
-        /// Tài khoản tạo toa thuốc này
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public EmployeeBasic Employee { get; set; }
 
         public Guid CompanyId { get; set; }
 
@@ -83,19 +80,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ToaThuocPrintViewModel
     {
-        public string CompanyName { get; set; }
-        public string CompanyAddress { get; set; }
-        public string CompanyPhone { get; set; }
-        public string CompanyEmail { get; set; }
-        public string Name { get; set; }
-        public string PartnerName { get; set; }
-        public string PartnerGender { get; set; }
-        public string PartnerAge { get; set; }
-        public string PartnerAddress { get; set; }
-        public DateTime Date { get; set; }
+        public CompanyPrintVM Company { get; set; }
 
+        public PartnerPrintVM Partner { get; set; }
+
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
         public string Note { get; set; }
         public string Diagnostic { get; set; }
+        public string EmployeeName { get; set; }
 
         public IEnumerable<ToaThuocLinePrintViewModel> Lines { get; set; } = new List<ToaThuocLinePrintViewModel>();
     }

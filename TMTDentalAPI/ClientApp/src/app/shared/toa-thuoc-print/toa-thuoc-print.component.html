@@ -1,10 +1,10 @@
 <div id="printToaThuocDiv" *ngIf="toaThuocPrint" style="display: none;">
     <div class="o_form_view o_print">
         <div class="text-center">
-            <h5 class="mb-0">{{toaThuocPrint.companyName}}</h5>
-            <div>Địa chỉ: {{toaThuocPrint.companyAddress}}</div>
-            <div *ngIf="toaThuocPrint.companyPhone">ĐT: {{toaThuocPrint.companyPhone}}</div>
-            <div *ngIf="toaThuocPrint.companyEmail">Email: {{toaThuocPrint.companyEmail}}</div>
+            <h5 class="mb-0">{{toaThuocPrint.company.name}}</h5>
+            <div *ngIf="toaThuocPrint.company.address">Địa chỉ: {{toaThuocPrint.company.address}}</div>
+            <div *ngIf="toaThuocPrint.company.phone">ĐT: {{toaThuocPrint.companyPhone}}</div>
+            <div *ngIf="toaThuocPrint.company.email">Email: {{toaThuocPrint.companyEmail}}</div>
         </div>
         <div class="text-center">
             <h1>Đơn thuốc</h1>
@@ -20,7 +20,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{toaThuocPrint.partnerName}}
+                            {{toaThuocPrint.partner.name}}
                         </td>
                     </tr>
                     <tr>
@@ -30,7 +30,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{toaThuocPrint.partnerAddress}}
+                            {{toaThuocPrint.partner.address}}
                         </td>
                     </tr>
                 </tbody>
@@ -44,7 +44,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{toaThuocPrint.partnerGender}}
+                            {{toaThuocPrint.partner.displayGender}}
                         </td>
                     </tr>
                     <tr>
@@ -54,7 +54,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            {{toaThuocPrint.partnerAge}}
+                            {{toaThuocPrint.partner.age || ''}}
                         </td>
                     </tr>
                 </tbody>
@@ -103,8 +103,9 @@
                 </div>
             </div>
             <div class="col-sm">
-                <div class="text-center font-weight-bold">
-                    Bác sĩ
+                <div class="text-center">
+                    <strong>Bác sĩ</strong> <br/>
+                    <span>{{toaThuocPrint.employeeName}}</span>
                 </div>
             </div>
         </div>
