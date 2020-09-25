@@ -19,6 +19,7 @@ import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } fr
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { result } from 'lodash';
+import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
 
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -107,6 +108,20 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     this.formCampaign.patchValue({ scheduleStart });
     this.formCampaign.get('tagId').patchValue(this.campaign.tagId);
     this.load();
+  }
+
+  quickAddTagDialog() {
+    var modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: "sm", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false, });
+    modalRef.componentInstance.title = "Tạo mới nhãn";
+
+    modalRef.result.then(
+      result => {
+        if (result) {
+          this.loadTags();
+          this.formCampaign.get('tagId').setValue(result.id);
+        }
+      }
+    )
   }
 
   loadTags() {

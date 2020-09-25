@@ -31,14 +31,16 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet][CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
-        public async Task<IActionResult> Get([FromQuery]PartnerCategoryPaged val)
+        [HttpGet]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
+        public async Task<IActionResult> Get([FromQuery] PartnerCategoryPaged val)
         {
             var result = await _partnerCategoryService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var category = await _partnerCategoryService.SearchQuery(x => x.Id == id).Include(x => x.Parent).FirstOrDefaultAsync();
@@ -49,7 +51,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<PartnerCategoryDisplay>(category));
         }
 
-        [HttpPost][CheckAccess(Actions = "Catalog.PartnerCategory.Create")]
+        [HttpPost]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Create")]
         public async Task<IActionResult> Create(PartnerCategoryDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -57,13 +60,14 @@ namespace TMTDentalAPI.Controllers
 
             var category = _mapper.Map<PartnerCategory>(val);
             await _unitOfWork.BeginTransactionAsync();
-            await _partnerCategoryService.CreateAsync(category);
+            category = await _partnerCategoryService.CreateAsync(category);
             _unitOfWork.Commit();
 
-            return CreatedAtAction(nameof(Get), new { id = category.Id }, val);
+            return Ok(_mapper.Map<PartnerCategoryBasic>(category));
         }
 
-        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.PartnerCategory.Update")]
+        [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Update")]
         public async Task<IActionResult> Update(Guid id, PartnerCategoryDisplay val)
         {
             if (!ModelState.IsValid)
@@ -80,7 +84,8 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.PartnerCategory.Delete")]
+        [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var category = await _partnerCategoryService.GetByIdAsync(id);
@@ -91,14 +96,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("Autocomplete")][CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
+        [HttpPost("Autocomplete")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Read")]
         public async Task<IActionResult> Autocomplete(PartnerCategoryPaged val)
         {
             var result = await _partnerCategoryService.GetAutocompleteAsync(val);
             return Ok(result);
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.PartnerCategory.Create")]
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.PartnerCategory.Create")]
         public async Task<IActionResult> ActionImport(PartnerCategoryImportExcelViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
