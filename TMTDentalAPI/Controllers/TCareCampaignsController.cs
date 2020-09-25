@@ -30,7 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]TCareCampaignPaged val)
+        public async Task<IActionResult> Get([FromQuery] TCareCampaignPaged val)
         {
             var result = await _campaignService.GetPagedResultAsync(val);
             return Ok(result);
@@ -64,7 +64,7 @@ namespace TMTDentalAPI.Controllers
             campain.Name = val.Name;
             campain.GraphXml = val.GraphXml;
             campain.SheduleStart = val.SheduleStart;
-
+            campain.TagId = val.TagId;
             await _campaignService.UpdateAsync(campain);
             return NoContent();
         }

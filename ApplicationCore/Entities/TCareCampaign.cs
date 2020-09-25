@@ -53,5 +53,7 @@ namespace ApplicationCore.Entities
         /// </summary> 
         public bool Active { get; set; }
 
+        public Guid? TagId { get; set; }
+        public PartnerCategory Tag { get; set; }
     }
 }

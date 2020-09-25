@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Renderer2, Input, Output, EventEmitter, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, OnInit, Inject, Renderer2, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -15,6 +15,10 @@ import { IntlService, load } from "@progress/kendo-angular-intl";
 import * as xml2js from "xml2js";
 import { TcareCampaignStartDialogComponent } from "../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component";
 import { mxgraph } from 'src/mxgraph-types';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { result } from 'lodash';
 
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -41,9 +45,10 @@ declare var mxKeyHandler: any;
   styleUrls: ["./tcare-campaign-create-update.component.css"],
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
+  @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent;
   @Input() campaign: TCareCampaignDisplay;
   @Output('actionNext') actionNext = new EventEmitter<any>();
-
+  filterdTags: PartnerCategoryBasic[] = [];
   offsetY = 30;
   formCampaign: FormGroup;
   priority = null;
@@ -63,6 +68,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     private renderer2: Renderer2,
     private notificationService: NotificationService,
     private intlService: IntlService,
+    private tagService: PartnerCategoryService
   ) {
     this.editor = new mxEditor();
   }
@@ -70,27 +76,54 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.formCampaign = this.fb.group({
       // name: ["", Validators.required],
-      scheduleStart: null
+      scheduleStart: null,
+      tagId: null
+    });
+
+    this.tagCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.tagCbx.loading = true)),
+      switchMap(value => this.searchTags(value))
+    ).subscribe(result => {
+      this.filterdTags = result;
+      this.tagCbx.loading = false;
     });
 
     var scheduleStart = new Date(this.campaign.sheduleStart);
     this.formCampaign.patchValue({ scheduleStart });
+    this.formCampaign.get('tagId').patchValue(this.campaign.tagId);
     this.load();
-
-    console.log(this.campaign);
+    this.loadTags();
   }
 
   ngOnInit() {
     this.formCampaign = this.fb.group({
       // name: ["", Validators.required],
-      scheduleStart: null
+      scheduleStart: null,
+      tagId: null
     });
 
     var scheduleStart = new Date(this.campaign.sheduleStart);
     this.formCampaign.patchValue({ scheduleStart });
+    this.formCampaign.get('tagId').patchValue(this.campaign.tagId);
     this.load();
   }
 
+  loadTags() {
+    this.searchTags().subscribe(
+      result => {
+        this.filterdTags = result;
+      }
+    )
+  }
+
+  searchTags(q?: string) {
+    var paged = new PartnerCategoryPaged();
+    paged.limit = 20;
+    paged.offset = 0;
+    paged.search = q ? q : '';
+    return this.tagService.autocomplete(paged);
+  }
 
   main(container, sidebar_sequences, sidebar_goals, model) {
     var that = this;
@@ -339,7 +372,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   }
 
   load() {
-
     // this.formCampaign.get('name').patchValue(this.campaign.name);
     // this.formCampaign.get('sheduleStart').patchValue(new Date(this.campaign.sheduleStart));
     if (this.campaign.graphXml) {
@@ -889,9 +921,9 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
     var value = this.formCampaign.value;
     this.campaign.sheduleStart = value.scheduleStart ? this.intlService.formatDate(value.scheduleStart, "yyyy-MM-ddTHH:mm:ss") : null;
-
     var enc = new mxCodec(mxUtils.createXmlDocument());
     var node = enc.encode(this.editor.graph.getModel());
+    this.campaign.tagId = value.tagId;
     this.campaign.graphXml = mxUtils.getPrettyXml(node);
 
     this.tcareService.update(this.campaign.id, this.campaign).subscribe(() => {

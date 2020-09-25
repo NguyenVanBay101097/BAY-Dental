@@ -5,6 +5,8 @@ using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
 using Hangfire;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyERP.Utilities;
 using Newtonsoft.Json;
@@ -26,12 +28,14 @@ namespace Infrastructure.Services
     public class TCareJobService : ITCareJobService
     {
         private readonly ConnectionStrings _connectionStrings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFacebookMessageSender _fbMessageSender;
-        public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender)
+        public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender, IHttpContextAccessor httpContextAccessor)
         {
 
             _connectionStrings = connectionStrings?.Value;
             _fbMessageSender = fbMessageSender;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void Run(string db, Guid campaignId)
@@ -50,30 +54,11 @@ namespace Infrastructure.Services
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-
-                    //if (CampaignXML.Root.Sequence.MethodType == "interval")
-                    //{
-                    //    var intervalNumber = int.Parse(CampaignXML.Root.Sequence.IntervalNumber);
-                    //    if (CampaignXML.Root.Sequence.IntervalType == "hours")
-                    //        date = date.AddHours(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "minutes")
-                    //        date = date.AddMinutes(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "days")
-                    //        date = date.AddDays(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "months")
-                    //        date = date.AddMonths(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "weeks")
-                    //        date = date.AddDays((intervalNumber) * 7);
-                    //}
-                    //else
-                    //{
-                    //    if (!string.IsNullOrEmpty(CampaignXML.Root.Sequence.SheduleDate))
-                    //        date = DateTime.Parse(CampaignXML.Root.Sequence.SheduleDate).ToUniversalTime();
-                    //}
-
                     var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
                     foreach (var partner_id in partner_ids)
                         BackgroundJob.Enqueue(() => SendMessageSocial(campaignId, db, partner_id));
+                    if (campaign.TagId.HasValue && partner_ids != null)
+                        SetTagForPartner(partner_ids, campaign.TagId.Value, conn);
                 }
                 catch (Exception e)
                 {
@@ -83,6 +68,20 @@ namespace Infrastructure.Services
         }
 
 
+        public void SetTagForPartner(IEnumerable<Guid> partnerIds, Guid TagId, SqlConnection conn)
+        {
+            foreach (var id in partnerIds)
+            {
+                var model = conn.Query<PartnerPartnerCategoryRel>
+                    ("SELECT * FROM PartnerPartnerCategoryRel " +
+                    "WHERE PartnerId = @partnerId AND CategoryId = @categoryId", new { partnerId = id, categoryId = TagId });
+                if (model.Count() == 0)
+                    conn.Query<PartnerPartnerCategoryRel>
+                        ("INSERT INTO PartnerPartnerCategoryRel(PartnerId, CategoryId)" +
+                        " VALUES(CONVERT(uniqueidentifier, @partnerId) , CONVERT(uniqueidentifier, @tagId))", new { partnerId = id.ToString(), tagId = TagId.ToString() });
+            }
+
+        }
 
 
         // Xử lý nhiều rules

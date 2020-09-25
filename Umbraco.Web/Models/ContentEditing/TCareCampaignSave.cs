@@ -10,6 +10,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string GraphXml { get; set; }
 
+        public Guid? TagId { get; set; }
+
         public DateTime? SheduleStart { get; set; }
     }
 }
