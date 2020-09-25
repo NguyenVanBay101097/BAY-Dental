@@ -431,6 +431,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
   deleteLine(index: number) {
     this.orderLines.removeAt(index);
+    this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
     this.computeAmountCustomerPaymentTotal();
