@@ -126,7 +126,7 @@ namespace Infrastructure.Services
                         case "birthday":
                             // lấy ra danh sách khách dựa vào sinh nhật của khách hàng
                             var today = DateTime.Today;
-                            var date = today.AddDays(int.Parse(condition.Value));
+                            var date = today.AddDays(-int.Parse(condition.Value));
                             var birthdayPartnerIds = conn.Query<Guid>("" +
                                            "Select pn.Id " +
                                            "From Partners pn " +

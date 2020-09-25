@@ -75,7 +75,7 @@ namespace Infrastructure.Services
                 FacebookCover = null,
                 FacebookLink = null,
                 FacebookType = 2,
-                CallbackUrl = $"http://{host}.{_appSettings.Domain}/api/FacebookWebHook",
+                CallbackUrl = $"{_appSettings.Schema}://{host}.{_appSettings.Domain}/api/FacebookWebHook",
                 IsCallbackWithRaw = true
             };
 
