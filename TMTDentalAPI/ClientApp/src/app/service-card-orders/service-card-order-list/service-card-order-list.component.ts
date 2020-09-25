@@ -71,6 +71,10 @@ export class ServiceCardOrderListComponent implements OnInit {
     this.router.navigate(['/service-card-orders/form']);
   }
 
+  posItem() {
+    this.router.navigate(['/service-card-orders/pos']);
+  }
+
   editItem(item: any) {
     this.router.navigate(['/service-card-orders/form'], { queryParams: { id: item.id } });
   }

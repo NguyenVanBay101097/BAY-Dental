@@ -9,9 +9,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-create-update/service-card-order-create-update.component';
 import { SharedModule } from '../shared/shared.module';
 import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-dialog/service-card-order-line-dialog.component';
+import { ServiceCardOrderTypeListComponent } from './service-card-order-type-list/service-card-order-type-list.component';
+import { ServiceCardOrderPosComponent } from './service-card-order-pos/service-card-order-pos.component';
 
 @NgModule({
-  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent],
+  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent, ServiceCardOrderTypeListComponent, ServiceCardOrderPosComponent],
   imports: [
     CommonModule,
     ServiceCardOrdersRoutingModule,

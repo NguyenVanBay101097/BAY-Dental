@@ -43,6 +43,11 @@ namespace ApplicationCore.Entities
 
         public decimal? AmountResidual { get; set; }
 
+        /// <summary>
+        /// tiền hoàn trả khách hàng
+        /// </summary>
+        public decimal? AmountRefund { get; set; }
+
         public ICollection<ServiceCardOrderLine> OrderLines { get; set; } = new List<ServiceCardOrderLine>();
     }
 }

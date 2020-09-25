@@ -16,6 +16,8 @@
                 <div class="o_form_buttons_view">
                     <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
                     </button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="posItem()" accesskey="c">Thêm nhanh đơn bán thẻ
+                    </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -48,6 +50,11 @@
         <kendo-grid-column field="amountResidual" title="Còn nợ" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountResidual | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountRefund" title="Hoàn trả khách" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountRefund | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="120">

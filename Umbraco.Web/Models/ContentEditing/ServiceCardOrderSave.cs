@@ -23,6 +23,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid CompanyId { get; set; }
 
+        public decimal? AmountRefund { get; set; }
+
         public IEnumerable<ServiceCardOrderLineSave> OrderLines { get; set; } = new List<ServiceCardOrderLineSave>();
     }
 }
