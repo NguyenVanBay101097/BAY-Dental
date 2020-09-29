@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 
@@ -21,7 +21,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
   type: string;
   name: string;
   @Output() saveClick = new EventEmitter<any>();
-  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('categMst', { static: true }) categMst: MultiSelectComponent;
   data: any;
 
   constructor(private fb: FormBuilder, 
@@ -35,28 +35,25 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
 
     setTimeout(() => {
       if (this.data) {
-        var categ = {
-          id: this.data.value,
-          name: this.data.displayValue
-        };
+        var categ = this.data.list;
 
         this.formGroup.patchValue({
           op: this.data.op,
           categ: categ
         });
 
-        this.filteredCategs.push(categ);
+        this.filteredCategs = categ;
       }
 
       this.loadFilteredCategs();
 
-      this.categCbx.filterChange.asObservable().pipe(
+      this.categMst.filterChange.asObservable().pipe(
         debounceTime(300),
-        tap(() => (this.categCbx.loading = true)),
+        tap(() => (this.categMst.loading = true)),
         switchMap(value => this.searchCategories(value))
       ).subscribe((result: any) => {
         this.filteredCategs = result;
-        this.categCbx.loading = false;
+        this.categMst.loading = false;
       });
     });
   }
@@ -93,12 +90,10 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
 
     var value = this.formGroup.value;
     var res = {
-      op: value.op,
-      opDisplay: this.getOpDisplay(value.op),
-      value: value.categ.id,
-      displayValue: value.categ.name,
       type: this.type,
-      name: this.name
+      op: value.op,
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.categ.map(e => e.name).join(", "),
+      list: value.categ
     };
 
     this.saveClick.emit(res);

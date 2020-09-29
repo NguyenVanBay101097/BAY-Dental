@@ -50,7 +50,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
     }, 
     {
       type: 'categPartner',
-      name: 'Nhóm khách hàng',
+      name: 'Nhãn khách hàng',
       component: AudienceFilterPartnerCategoryComponent
     }, 
     {
@@ -71,7 +71,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       logic: 'and',
-      conditions: [[]]
+      conditions: []
     });
 
     if (this.audience_filter) {
@@ -184,7 +184,7 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       const componentRef = viewContainerRef.createComponent(componentFactory);
       (<any>componentRef.instance).data = Object.assign({}, condition);
       (<any>componentRef.instance).type = condition.type;
-      (<any>componentRef.instance).name = condition.name;
+      (<any>componentRef.instance).name = item.name;
 
       var saveClickObservable = (<any>componentRef.instance).saveClick as Observable<any>;
       if (saveClickObservable) {

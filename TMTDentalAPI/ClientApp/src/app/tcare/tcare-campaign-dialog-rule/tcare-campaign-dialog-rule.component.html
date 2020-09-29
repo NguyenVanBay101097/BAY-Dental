@@ -29,8 +29,8 @@
                                     <div>
                                         <div>
                                             <button type="button" class="btn btn-light btn-sm mr-2 mb-1" *ngFor="let condition of conditions; let i = index" (click)="conditionClick(i, $event)">
-                                                <span>{{condition.name}} {{condition.opDisplay}} {{condition.displayValue}} </span>
-                                                <i class="fas fa-times" (click)="removeCondition(i, $event)"></i>
+                                                <span>{{condition.name}}</span>
+                                                <i class="fas fa-times ml-2" (click)="removeCondition(i, $event)"></i>
                                             </button>
                                             <div ngbDropdown class="d-inline-block" id="conditionDropdown">
                                                 <button class="btn btn-outline-primary btn-sm mb-1" id="dropdownAddCondition" ngbDropdownToggle>Thêm điều kiện</button>

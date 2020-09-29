@@ -1325,9 +1325,9 @@ span.char-count {
     margin-top: 8px;
 }
 
-.show {
+/* .show {
     display: block !important;
-}
+} */
 
 .hide {
     display: none !important;
