@@ -665,7 +665,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
                       con[p].forEach(element => {
                         conElTag = doc.createElement("tag");
                         for (var key in element) {
-                          conElTag.setAttribute(key, element[key]);
+                          if (key != "completeName")
+                            conElTag.setAttribute(key, element[key]);
                         }
                         conEl.appendChild(conElTag);
                       });
