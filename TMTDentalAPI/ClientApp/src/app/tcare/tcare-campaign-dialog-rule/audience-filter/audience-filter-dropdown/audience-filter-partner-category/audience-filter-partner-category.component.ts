@@ -42,7 +42,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
           categ: categ
         });
 
-        this.filteredCategs.push(categ);
+        this.filteredCategs = categ;
       }
 
       this.loadFilteredCategs();
@@ -92,17 +92,9 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
     var res = {
       type: this.type,
       op: value.op,
-      name: this.name + " " + this.getOpDisplay(value.op) + " ",
-      list: []
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.categ.map(e => e.name).join(", "),
+      list: value.categ
     };
-    for (let i = 0; i < value.categ.length; i++) {
-      res.list.push({ id: value.categ[i].id, name: value.categ[i].name });
-      res.name += value.categ[i].name;
-      if (i != value.categ.length - 1)
-        res.name += ", ";
-      else 
-        res.name += ". ";
-    }
 
     this.saveClick.emit(res);
   }
