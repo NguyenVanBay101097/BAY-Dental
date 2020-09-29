@@ -101,7 +101,7 @@ export class AudienceFilterServiceComponent implements OnInit {
     var res = {
       type: this.type,
       op: value.op,
-      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.product.name + ". ",
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.product.name,
       value: { id: value.product.id, name: value.product.name }
     };
 
