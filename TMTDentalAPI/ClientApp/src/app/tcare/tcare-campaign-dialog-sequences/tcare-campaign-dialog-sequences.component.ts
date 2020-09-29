@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { TcareService, TCareMessageDisplay } from '../tcare.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -14,6 +14,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
   selector: 'app-tcare-campaign-dialog-sequences',
   templateUrl: './tcare-campaign-dialog-sequences.component.html',
   styleUrls: ['./tcare-campaign-dialog-sequences.component.css'],
+  host: {
+    '(document:keypress)': 'handleKeyboardEvent($event)'
+  }
 })
 export class TcareCampaignDialogSequencesComponent implements OnInit {
 
@@ -104,6 +107,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     this.selectArea_start = event.target.selectionStart;
     this.selectArea_end = event.target.selectionEnd;
   }
+
   getLimitText() {
     var limit = 640;
     var text = this.formGroup.get('content').value;
@@ -113,7 +117,8 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       return limit;
     }
   }
-  addContentPluginTextarea(value) {  
+
+  addContentPluginTextarea(value) {
     if (this.formGroup.value.content) {
       this.formGroup.patchValue({
         content: this.formGroup.value.content.slice(0, this.selectArea_start) + value + this.formGroup.value.content.slice(this.selectArea_end)

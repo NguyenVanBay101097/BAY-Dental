@@ -5,6 +5,8 @@ using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
 using Hangfire;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyERP.Utilities;
 using Newtonsoft.Json;
@@ -26,12 +28,14 @@ namespace Infrastructure.Services
     public class TCareJobService : ITCareJobService
     {
         private readonly ConnectionStrings _connectionStrings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFacebookMessageSender _fbMessageSender;
-        public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender)
+        public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender, IHttpContextAccessor httpContextAccessor)
         {
 
             _connectionStrings = connectionStrings?.Value;
             _fbMessageSender = fbMessageSender;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void Run(string db, Guid campaignId)
@@ -50,27 +54,6 @@ namespace Infrastructure.Services
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                     MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-
-                    //if (CampaignXML.Root.Sequence.MethodType == "interval")
-                    //{
-                    //    var intervalNumber = int.Parse(CampaignXML.Root.Sequence.IntervalNumber);
-                    //    if (CampaignXML.Root.Sequence.IntervalType == "hours")
-                    //        date = date.AddHours(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "minutes")
-                    //        date = date.AddMinutes(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "days")
-                    //        date = date.AddDays(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "months")
-                    //        date = date.AddMonths(intervalNumber);
-                    //    else if (CampaignXML.Root.Sequence.IntervalType == "weeks")
-                    //        date = date.AddDays((intervalNumber) * 7);
-                    //}
-                    //else
-                    //{
-                    //    if (!string.IsNullOrEmpty(CampaignXML.Root.Sequence.SheduleDate))
-                    //        date = DateTime.Parse(CampaignXML.Root.Sequence.SheduleDate).ToUniversalTime();
-                    //}
-
                     var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
                     foreach (var partner_id in partner_ids)
                         BackgroundJob.Enqueue(() => SendMessageSocial(campaignId, db, partner_id));
@@ -82,8 +65,18 @@ namespace Infrastructure.Services
             }
         }
 
+        public void SetTagForPartner(Guid partnerId, Guid TagId, SqlConnection conn)
+        {
 
+            var model = conn.Query<PartnerPartnerCategoryRel>
+                ("SELECT * FROM PartnerPartnerCategoryRel " +
+                "WHERE PartnerId = @partnerId AND CategoryId = @categoryId", new { partnerId = partnerId, categoryId = TagId });
+            if (model.Count() == 0)
+                conn.Query<PartnerPartnerCategoryRel>
+                    ("INSERT INTO PartnerPartnerCategoryRel(PartnerId, CategoryId)" +
+                    " VALUES(CONVERT(uniqueidentifier, @partnerId) , CONVERT(uniqueidentifier, @tagId))", new { partnerId = partnerId.ToString(), tagId = TagId.ToString() });
 
+        }
 
         // Xử lý nhiều rules
         //public IEnumerable<Guid> SearchPartnerIdsInRules(IEnumerable<Rule> rules, string typeRule, SqlConnection conn)
@@ -325,7 +318,7 @@ namespace Infrastructure.Services
 
                 if (string.IsNullOrEmpty(sequence.Content))
                     return;
-
+                // Kênh người dùng chọn 
                 var channelSocial = conn.Query<FacebookPage>("" +
                      "SELECT * " +
                      "FROM FacebookPages " +
@@ -345,133 +338,140 @@ namespace Infrastructure.Services
                 if (partner == null)
                     return;
 
-
-
+                var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(partner_id.Value, conn);
+                if (!facebookUserProfiles.Any())
+                    return;
+                FacebookUserProfile facebookUserProfile = null;
                 //Xử lý gửi tin              
-                if (sequence.ChannelType == "priority")
+                switch (sequence.ChannelType)
                 {
-
-                    var profiles = GetUserProfilesPriority(partner_id.Value, conn);
-                    if (!profiles.Any())
-                        return;
-
-                    var profile = profiles.First();
-
-                    var channelSocials = conn.Query<FacebookPage>("" +
-                         "SELECT * " +
-                         "FROM FacebookPages " +
-                         "where Id = @id" +
-                         "", new { id = profile.FbPageId }).FirstOrDefault();
-
-                    //Xử lý cá nhân hóa nội dung gửi tin
-                    var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
-                    if (messageContent.Contains("{{danh_xung_khach_hang}}"))
-                    {
-                        PartnerTitle partnerTitle = null;
-                        if (partner.TitleId.HasValue)
+                    case "priority":
+                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                        if (facebookUserProfile == null)
                         {
-                            partnerTitle = conn.Query<PartnerTitle>("" +
-                                "SELECT * " +
-                                "FROM PartnerTitles " +
-                                "where Id = @id" +
-                                "", new { id = partner.TitleId }).FirstOrDefault();
+                            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+                            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
                         }
+                        
+                        //Xử lý cá nhân hóa nội dung gửi tin
+                        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
+                        //Xu ly gui tin cho cac Page
+                        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+                        break;
+                    case "fixed":
+                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                        if (facebookUserProfile == null)
+                            return;
 
-                        messageContent = messageContent.Replace("{{danh_xung_khach_hang}}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
-                    }
-
-                    var now = DateTime.Now;
-                    var track_id = GuidComb.GenerateComb();
-                    var channelSocialId = channelSocials.Id;
-
-                    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)", new { Id = track_id, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = channelSocials.Type, ChannelSocialId = channelSocialId, DateCreated = now, LastUpdated = now });
-
-                    if (channelSocials.Type == "facebook")
-                    {
-                        var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocials.PageAccesstoken);
-                        if (!string.IsNullOrEmpty(sendResult.error))
-                        {
-                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
-                        }
-                        else
-                        {
-                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = track_id });
-                            BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, track_id, channelSocials.PageAccesstoken, sendResult.message_id));
-                        }
-                    }
-                    else if (channelSocials.Type == "zalo")
-                    {
-
-
-                        var sent = DateTime.Now;
-                        var zaloClient = new ZaloClient(channelSocials.PageAccesstoken);
-                        var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
-
-                        if (sendResult.error != 0)
-                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
-                        else
-                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = sent, id = track_id });
-                    }
-
-
+                        //Xử lý cá nhân hóa nội dung gửi tin
+                        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
+                        //Xu ly gui tin cho cac Page
+                        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
+                        break;
+                    default:
+                        break;
                 }
-                else if (sequence.ChannelType == "fixed")
-                {
-                    var profiles = GetUserProfilesFixed(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn);
-                    if (!profiles.Any())
-                        return;
 
-                    var profile = profiles.First();
-
-                    //Xử lý cá nhân hóa nội dung gửi tin
-                    var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
-                    if (messageContent.Contains("{{danh_xung_khach_hang}}"))
-                    {
-                        PartnerTitle partnerTitle = null;
-                        if (partner.TitleId.HasValue)
-                        {
-                            partnerTitle = conn.Query<PartnerTitle>("" +
-                                "SELECT * " +
-                                "FROM PartnerTitles " +
-                                "where Id = @id" +
-                                "", new { id = partner.TitleId }).FirstOrDefault();
-                        }
-
-                        messageContent = messageContent.Replace("{{danh_xung_khach_hang}}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
-                    }
-
-                    var now = DateTime.Now;
-                    var track_id = GuidComb.GenerateComb();
-                    var channelSocialId = Guid.Parse(sequence.ChannelSocialId);
-
-                    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)", new { Id = track_id, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = channelSocial.Type, ChannelSocialId = channelSocialId, DateCreated = now, LastUpdated = now });
-
-                    if (channelSocial.Type == "facebook")
-                    {
-                        var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
-                        if (!string.IsNullOrEmpty(sendResult.error))
-                        {
-                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
-                        }
-                        else
-                        {
-                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = track_id });
-                            BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, track_id, channelSocial.PageAccesstoken, sendResult.message_id));
-                        }
-                    }
-                    else if (channelSocial.Type == "zalo")
-                    {
-                        var sent = DateTime.Now;
-                        var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
-                        var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
-
-                        if (sendResult.error != 0)
-                            await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
-                        else
-                            await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = sent, id = track_id });
-                    }
-                }
             }
+        }
+
+        private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
+        {
+            var channelSocial = conn.Query<FacebookPage>("" +
+                            "SELECT * " +
+                            "FROM FacebookPages " +
+                            "where Id = @id" +
+                            "", new { id = id }).FirstOrDefault();
+            return channelSocial;
+        }
+
+        private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocial)
+        {
+            bool check = false;
+            await conn.ExecuteAsync("" +
+                "insert into TCareMessingTraces" +
+                "(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) " +
+                "Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)",
+                new
+                {
+                    Id = GuidComb.GenerateComb(),
+                    TCareCampaignId = campaign.Id,
+                    PSID = profile.PSID,
+                    PartnerId = profile.PartnerId,
+                    Type = channelSocial.Type,
+                    ChannelSocialId = channelSocial.Id,
+                    DateCreated = DateTime.Now,
+                    LastUpdated = DateTime.Now
+                });
+            switch (channelSocial.Type)
+            {
+                case "facebook":
+                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocial, conn);
+                    if (check && campaign.TagId.HasValue)
+                        SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
+                    break;
+                case "zalo":
+                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocial, conn);
+                    if (check && campaign.TagId.HasValue)
+                        SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async Task<bool> SendMessagePageZalo(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn)
+        {
+            var track_id = GuidComb.GenerateComb();
+            var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
+            if (sendResult.error != 0)
+            {
+                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                return false;
+            }
+            else
+            {
+                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = DateTime.Now, id = track_id });
+                return true;
+            }
+        }
+
+        private async Task<bool> SendMessagePageFacebook(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn)
+        {
+            var track_id = GuidComb.GenerateComb();
+            var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
+            if (!string.IsNullOrEmpty(sendResult.error))
+            {
+                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                return false;
+            }
+            else
+            {
+                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = track_id });
+                BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, track_id, channelSocial.PageAccesstoken, sendResult.message_id));
+                return true;
+            }
+        }
+
+        private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
+        {
+            var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
+            if (messageContent.Contains("{{danh_xung_khach_hang}}"))
+            {
+                PartnerTitle partnerTitle = null;
+                if (partner.TitleId.HasValue)
+                {
+                    partnerTitle = conn.Query<PartnerTitle>("" +
+                        "SELECT * " +
+                        "FROM PartnerTitles " +
+                        "where Id = @id" +
+                        "", new { id = partner.TitleId }).FirstOrDefault();
+                }
+
+                messageContent = messageContent.Replace("{{danh_xung_khach_hang}}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
+            }
+            return messageContent;
         }
 
         private static IEnumerable<FacebookUserProfile> GetUserProfilesFixed(Guid ChannelSocialId, Guid partner_id,
@@ -483,20 +483,13 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfilesPriority(Guid partId,
+        private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(Guid partId,
            SqlConnection conn = null)
         {
-            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
+            var userProfiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
                new { PartnerId = partId }).ToList();
-
-            return profiles;
-
+            return userProfiles;
         }
-
-
-
-
-
 
         //public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId , Guid channelSocialId)
         //{
@@ -568,7 +561,6 @@ namespace Infrastructure.Services
         }
 
         [AutomaticRetry]
-
         public async Task GetInfoMessageFBApi(string db, Guid track_id, string access_token, string message_id)
         {
             //lấy thông tin message từ facebook api rồi cập nhật cho message log
