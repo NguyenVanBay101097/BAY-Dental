@@ -22,7 +22,7 @@ export class AudienceFilterLastExaminationComponent implements OnInit {
     });
 
     if (this.data) {
-      var day = parseInt(this.data.value) || 0;
+      var day = parseInt(this.data.day) || 0;
       this.formGroup.get('day').setValue(day);
     }
   }
@@ -34,12 +34,9 @@ export class AudienceFilterLastExaminationComponent implements OnInit {
 
     var day = this.formGroup.get('day').value;
     var res = {
-      op: 'gte',
-      opDisplay: 'sau',
-      value: day + '',
-      displayValue: day + ' ngày',
       type: this.type,
-      name: this.name
+      name: this.name + " sau " + day + " ngày",
+      day: day
     };
 
     this.saveClick.emit(res);

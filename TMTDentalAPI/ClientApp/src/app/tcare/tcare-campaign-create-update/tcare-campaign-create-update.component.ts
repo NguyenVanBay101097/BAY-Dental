@@ -627,7 +627,19 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         a.conditions = [];
         if (rule.condition) {
           rule.condition.forEach((con) => {
-            a.conditions.push(Object.assign({}, con.$));
+            var obj = con.$;
+            if (con.tag) {
+              if (con.$.type == "categPartner") {
+                obj.list = [];
+                con.tag.forEach(element => {
+                  obj.list.push(Object.assign({}, element.$)); 
+                });
+              } else {
+                if (con.tag[0])
+                  obj.value = con.tag[0].$;
+              }
+            }
+            a.conditions.push(obj);
           });
         }
         let modalRef = that.modalService.open(TcareCampaignDialogRuleComponent, { size: "lg", windowClass: "o_technical_modal", backdrop: "static", keyboard: false, });
@@ -644,15 +656,33 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
                   userObject.setAttribute(p, result[p]);
                 }
               }
-
               result.conditions.forEach((con) => {
                 var conEl = doc.createElement("condition");
+                var conElTag = doc.createElement("tag");
                 for (var p in con) {
-                  conEl.setAttribute(p, con[p]);
+                  if (p == "value" || p == "list") {
+                    if (con.type == "categPartner") {
+                      con[p].forEach(element => {
+                        conElTag = doc.createElement("tag");
+                        for (var key in element) {
+                          conElTag.setAttribute(key, element[key]);
+                        }
+                        conEl.appendChild(conElTag);
+                      });
+                    } else {
+                      conElTag = doc.createElement("tag");
+                      for (var key in con[p]) {
+                        conElTag.setAttribute(key, con[p][key]);
+                      }
+                      conEl.appendChild(conElTag);
+                    }
+                  } else {
+                    conEl.setAttribute(p, con[p]);
+                  }
                 }
                 userObject.appendChild(conEl);
               });
-
+              console.log(userObject);
               graph.getModel().setValue(cell, userObject);
             }
             finally {

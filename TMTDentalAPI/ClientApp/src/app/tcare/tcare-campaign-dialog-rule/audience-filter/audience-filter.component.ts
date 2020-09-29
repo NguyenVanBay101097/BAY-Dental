@@ -44,7 +44,7 @@ export class AudienceFilterComponent implements OnInit {
       name: 'Lịch hẹn tiếp theo/gần đây'
     }, {
       type: 'categPartner',
-      name: 'Nhóm khách hàng'
+      name: 'Nhãn khách hàng'
     }, {
       type: 'usedService',
       name: 'Dịch vụ sử dụng'

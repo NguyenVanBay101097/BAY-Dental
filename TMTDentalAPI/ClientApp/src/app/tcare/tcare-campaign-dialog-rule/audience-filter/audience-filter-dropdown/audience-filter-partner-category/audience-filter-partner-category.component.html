@@ -13,10 +13,14 @@
                   </div>
             </div>
             <div class="form-group mb-2">
-                <kendo-combobox [data]="filteredCategs"
-                    [textField]="'name'" [filterable]="true" [placeholder]="'Chọn nhóm khách hàng'" #categCbx formControlName="categ"
-                    [valueField]="'id'">
-                </kendo-combobox>
+                <kendo-multiselect [data]="filteredCategs" 
+                    [placeholder]="'Chọn nhóm khách hàng'" 
+                    formControlName="categ"
+                    [textField]="'name'"
+                    [valueField]="'id'"
+                    [filterable]="true"
+                    #categMst>
+                </kendo-multiselect>
             </div>
             <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>
         </form>
