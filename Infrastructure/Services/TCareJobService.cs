@@ -339,51 +339,28 @@ namespace Infrastructure.Services
                     return;
 
                 var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(partner_id.Value, conn);
-                var facebookUserProfile = new FacebookUserProfile();
-                var channelSocialPriority = new FacebookPage();
+                if (!facebookUserProfiles.Any())
+                    return;
+                FacebookUserProfile facebookUserProfile = null;
                 //Xử lý gửi tin              
                 switch (sequence.ChannelType)
                 {
                     case "priority":
-
-
-                        if (facebookUserProfiles == null || !facebookUserProfiles.Any())
-                            return;
-                        // Nếu người dùng chỉ có 1 page duy nhất thì lấy luôn pageId để tim FacebookPage
-                        if (facebookUserProfiles.Count() == 1)
+                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                        if (facebookUserProfile == null)
                         {
                             facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-                            channelSocialPriority = getChannelSocial(facebookUserProfile.FbPageId, conn);
+                            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
                         }
-
-                        else
-                        {
-                            //Nếu người dùng có 2 Page trở lên thì check xem có trung với Page Ưu tiên hay không
-                            facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                            // Nếu không có thì sẽ lấy bất kỳ page nào của người dùng để gửi
-                            if (facebookUserProfile == null || facebookUserProfile.Id == null)
-                            {
-                                facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-                                channelSocialPriority = getChannelSocial(facebookUserProfile.FbPageId, conn);
-                            }
-                            // Nếu trùng thì lấy Page ưu tiên để gửi cho người dùng
-                            else
-                            {
-                                channelSocialPriority = channelSocial;
-                            }
-                        }
-                        //lấy 1 page mà khách hàng đã kết nối
-
+                        
                         //Xử lý cá nhân hóa nội dung gửi tin
-                        var messageContent = PersonalizedPartner(partner, channelSocialPriority, sequence, conn);
+                        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
                         //Xu ly gui tin cho cac Page
-                        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocialPriority);
+                        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
                         break;
                     case "fixed":
-                        if (facebookUserProfiles == null || !facebookUserProfiles.Any())
-                            return;
                         facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                        if (facebookUserProfile == null || facebookUserProfile.Id == null)
+                        if (facebookUserProfile == null)
                             return;
 
                         //Xử lý cá nhân hóa nội dung gửi tin
@@ -398,7 +375,7 @@ namespace Infrastructure.Services
             }
         }
 
-        private FacebookPage getChannelSocial(Guid id, SqlConnection conn)
+        private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
         {
             var channelSocial = conn.Query<FacebookPage>("" +
                             "SELECT * " +
