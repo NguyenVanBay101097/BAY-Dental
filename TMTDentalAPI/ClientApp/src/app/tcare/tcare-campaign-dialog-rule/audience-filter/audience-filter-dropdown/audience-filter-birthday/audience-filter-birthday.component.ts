@@ -23,7 +23,6 @@ export class AudienceFilterBirthdayComponent implements OnInit {
     });
 
     if (this.data) {
-      console.log(this.data);
       var day = parseInt(this.data.day) || 0;
       this.formGroup.get('day').setValue(day);
     }
