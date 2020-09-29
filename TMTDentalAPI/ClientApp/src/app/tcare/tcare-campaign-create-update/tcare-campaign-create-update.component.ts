@@ -49,6 +49,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent;
   @Input() campaign: TCareCampaignDisplay;
   @Output('actionNext') actionNext = new EventEmitter<any>();
+  @Output('timeChange') timeChange = new EventEmitter<any>();
   filterdTags: PartnerCategoryBasic[] = [];
   offsetY = 30;
   formCampaign: FormGroup;
@@ -130,6 +131,10 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         this.filterdTags = result;
       }
     )
+  }
+
+  onChange(event) {
+    this.timeChange.emit(event);
   }
 
   searchTags(q?: string) {
