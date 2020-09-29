@@ -68,11 +68,6 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     }
   }
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    console.log(event);
-  }
-
   loadSocialChannel() {
     this.searchSocialChannel().subscribe((result: any) => {
       this.filterdChannelSocials = result.items;

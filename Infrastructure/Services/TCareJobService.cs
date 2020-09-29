@@ -65,7 +65,6 @@ namespace Infrastructure.Services
             }
         }
 
-
         public void SetTagForPartner(Guid partnerId, Guid TagId, SqlConnection conn)
         {
 
@@ -78,7 +77,6 @@ namespace Infrastructure.Services
                     " VALUES(CONVERT(uniqueidentifier, @partnerId) , CONVERT(uniqueidentifier, @tagId))", new { partnerId = partnerId.ToString(), tagId = TagId.ToString() });
 
         }
-
 
         // Xử lý nhiều rules
         //public IEnumerable<Guid> SearchPartnerIdsInRules(IEnumerable<Rule> rules, string typeRule, SqlConnection conn)
@@ -320,7 +318,7 @@ namespace Infrastructure.Services
 
                 if (string.IsNullOrEmpty(sequence.Content))
                     return;
-
+                // Kênh người dùng chọn 
                 var channelSocial = conn.Query<FacebookPage>("" +
                      "SELECT * " +
                      "FROM FacebookPages " +
@@ -339,31 +337,59 @@ namespace Infrastructure.Services
 
                 if (partner == null)
                     return;
+
+                var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(partner_id.Value, conn);
+                var facebookUserProfile = new FacebookUserProfile();
+                var channelSocialPriority = new FacebookPage();
                 //Xử lý gửi tin              
                 switch (sequence.ChannelType)
                 {
                     case "priority":
-                        var profile = GetUserProfilesPriority(partner_id.Value, conn).Any() ? GetUserProfilesPriority(partner_id.Value, conn).FirstOrDefault() : null;
-                        if (profile == null)
+
+
+                        if (facebookUserProfiles == null || !facebookUserProfiles.Any())
                             return;
-                        var channelSocialAnother = conn.Query<FacebookPage>("" +
-                             "SELECT * " +
-                             "FROM FacebookPages " +
-                             "where Id = @id" +
-                             "", new { id = profile.FbPageId }).FirstOrDefault();
+                        // Nếu người dùng chỉ có 1 page duy nhất thì lấy luôn pageId để tim FacebookPage
+                        if (facebookUserProfiles.Count() == 1)
+                        {
+                            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+                            channelSocialPriority = getChannelSocial(facebookUserProfile.FbPageId, conn);
+                        }
+
+                        else
+                        {
+                            //Nếu người dùng có 2 Page trở lên thì check xem có trung với Page Ưu tiên hay không
+                            facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                            // Nếu không có thì sẽ lấy bất kỳ page nào của người dùng để gửi
+                            if (facebookUserProfile == null || facebookUserProfile.Id == null)
+                            {
+                                facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+                                channelSocialPriority = getChannelSocial(facebookUserProfile.FbPageId, conn);
+                            }
+                            // Nếu trùng thì lấy Page ưu tiên để gửi cho người dùng
+                            else
+                            {
+                                channelSocialPriority = channelSocial;
+                            }
+                        }
+                        //lấy 1 page mà khách hàng đã kết nối
+
                         //Xử lý cá nhân hóa nội dung gửi tin
-                        var messageContent = PersonalizedPartner(partner, channelSocialAnother, sequence, conn);
+                        var messageContent = PersonalizedPartner(partner, channelSocialPriority, sequence, conn);
                         //Xu ly gui tin cho cac Page
-                        await SendMessagePage(conn, campaign, messageContent, profile, db, channelSocialAnother);
+                        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocialPriority);
                         break;
                     case "fixed":
-                        var profile1 = GetUserProfilesFixed(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn).Any() ? GetUserProfilesFixed(Guid.Parse(sequence.ChannelSocialId), partner_id.Value, conn).FirstOrDefault() : null;
-                        if (profile1 == null)
+                        if (facebookUserProfiles == null || !facebookUserProfiles.Any())
                             return;
+                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                        if (facebookUserProfile == null || facebookUserProfile.Id == null)
+                            return;
+
                         //Xử lý cá nhân hóa nội dung gửi tin
                         var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
                         //Xu ly gui tin cho cac Page
-                        await SendMessagePage(conn, campaign, messageContent1, profile1, db, channelSocial);
+                        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
                         break;
                     default:
                         break;
@@ -372,9 +398,18 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocialAnother)
+        private FacebookPage getChannelSocial(Guid id, SqlConnection conn)
         {
-            var channelSocialId = channelSocialAnother.Id;
+            var channelSocial = conn.Query<FacebookPage>("" +
+                            "SELECT * " +
+                            "FROM FacebookPages " +
+                            "where Id = @id" +
+                            "", new { id = id }).FirstOrDefault();
+            return channelSocial;
+        }
+
+        private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocial)
+        {
             bool check = false;
             await conn.ExecuteAsync("" +
                 "insert into TCareMessingTraces" +
@@ -386,20 +421,20 @@ namespace Infrastructure.Services
                     TCareCampaignId = campaign.Id,
                     PSID = profile.PSID,
                     PartnerId = profile.PartnerId,
-                    Type = channelSocialAnother.Type,
-                    ChannelSocialId = channelSocialId,
+                    Type = channelSocial.Type,
+                    ChannelSocialId = channelSocial.Id,
                     DateCreated = DateTime.Now,
                     LastUpdated = DateTime.Now
                 });
-            switch (channelSocialAnother.Type)
+            switch (channelSocial.Type)
             {
                 case "facebook":
-                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocialAnother, conn);
+                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocial, conn);
                     if (check && campaign.TagId.HasValue)
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
                     break;
                 case "zalo":
-                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocialAnother, conn);
+                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocial, conn);
                     if (check && campaign.TagId.HasValue)
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
                     break;
@@ -471,18 +506,13 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfilesPriority(Guid partId,
+        private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(Guid partId,
            SqlConnection conn = null)
         {
-            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
+            var userProfiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
                new { PartnerId = partId }).ToList();
-            return profiles;
+            return userProfiles;
         }
-
-
-
-
-
 
         //public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId , Guid channelSocialId)
         //{
@@ -554,7 +584,6 @@ namespace Infrastructure.Services
         }
 
         [AutomaticRetry]
-
         public async Task GetInfoMessageFBApi(string db, Guid track_id, string access_token, string message_id)
         {
             //lấy thông tin message từ facebook api rồi cập nhật cho message log
