@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +20,7 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { ServiceCardOrderLineDialogComponent } from '../service-card-order-line-dialog/service-card-order-line-dialog.component';
 import { ServiceCardOrderLineService } from '../service-card-order-line.service';
+import { ServiceCardOrderPaymentsDialogComponent } from '../service-card-order-payments-dialog/service-card-order-payments-dialog.component';
 import { ServiceCardOrderService } from '../service-card-order.service';
 
 @Component({
@@ -38,6 +40,10 @@ export class ServiceCardOrderPosComponent implements OnInit {
   title = 'Đơn bán thẻ';
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
+
+  public keypressed;
+
+
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService, private userService: UserService,
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,
@@ -117,6 +123,16 @@ export class ServiceCardOrderPosComponent implements OnInit {
     });
   }
 
+  @HostListener('document:keydown.f9', ['$event'])
+  onKeydownHandler(event: KeyboardEvent) {
+    if (event.keyCode === 120) {
+      this.onKeyPressPayment();
+    }
+
+  }
+
+
+
   get orderLines() {
     return this.formGroup.get('orderLines') as FormArray;
   }
@@ -147,12 +163,12 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
   }
 
-  get amountPaymentTotal(){
+  get amountPaymentTotal() {
     let total = 0;
     if (this.cusPayments.controls.length > 0) {
       this.cusPayments.controls.forEach(line => {
         total += line.get('amount').value;
-      });     
+      });
     }
     return total;
   }
@@ -176,9 +192,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
       }
 
       let control = this.formGroup.get('orderLines') as FormArray;
-      let controlpayment = this.formGroup.get('cusPayments') as FormArray;
       control.clear();
-      controlpayment.clear();
 
       this.formGroup.markAsPristine();
     });
@@ -217,7 +231,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     var value = this.formGroup.value;
     value.partnerId = value.partner.id;
     value.userId = value.user ? value.user.id : null;
-    value.
       value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
 
     if (!this.id) {
@@ -438,13 +451,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     this.computeAmountRefund();
   }
 
-  deletePay(index: number) {
-    this.cusPayments.removeAt(index);
-    this.cusPayments.markAsDirty();
-    this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
-  }
+
 
   //---Payment--//
   loadJournals() {
@@ -461,44 +468,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
-  addPayment(val) {
 
-    let total = 0;
-    this.cusPayments.controls.forEach(line => {
-      total += line.get('amount').value;
-    });
-
-    var res = this.fb.group({
-      amount: total == 0 ? this.amountCustomerPaymentTotalValue : Math.abs(this.amountTotalValue - this.amountCustomerPaymentTotalValue),
-      paymentDate: this.intlService.formatDate(new Date(), 'd', 'en-US'),
-      communication: null,
-      journalId: val.id,
-      journal: val,
-    });
-
-    if (!this.cusPayments.controls.some(x => x.value.journalId === res.value.journalId)) {
-
-      if ((total - this.amountTotalValue) != 0 && total < this.amountTotalValue) {
-        this.cusPayments.push(res);
-      }
-
-    } else {
-      var pay = this.cusPayments.controls.find(x => x.value.journalId === res.value.journalId);
-      if (pay) {
-        
-        if (this.amountRefundTotalValue < 0) {
-          pay.value.amount += Math.abs(this.amountTotalValue - this.amountCustomerPaymentTotalValue);
-          pay.patchValue(pay.value);
-        }
-      }
-    }
-
-    this.getPriceSubTotal();
-    this.orderLines.markAsDirty();
-    this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
-  }
 
   actionPayment(id, val: any) {
     var pay = this.fb.group({
@@ -549,18 +519,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     }
   }
 
-  onChangePayment(pay: FormGroup) {
-    var payment = this.cusPayments.controls.find(x => x.value.journalId === pay.value.journalId);
-    if (payment) {
-      payment.patchValue(pay.value);
-    }
 
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
-
-  }
 
 
   resetForm() {
@@ -568,15 +527,73 @@ export class ServiceCardOrderPosComponent implements OnInit {
     this.formGroup.get('partner').patchValue(null);
     this.formGroup.get('dateOrderObj').patchValue(dateOrder);
     let control = this.formGroup.get('orderLines') as FormArray;
-    let controlpayment = this.formGroup.get('cusPayments') as FormArray;
     control.clear();
-    controlpayment.clear();
 
     this.getPriceSubTotal();
     this.computeAmountTotal();
     this.computeAmountCustomerPaymentTotal();
     this.computeAmountRefund();
     this.formGroup.markAsPristine();
+
+  }
+
+  onKeyPressPayment() {
+
+    if (this.formGroup.value.partner == null) {
+      this.notificationService.show({
+        content: 'Chọn khách hàng trước khi thanh toán',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+
+    if (!this.orderLines.length) {
+      this.notificationService.show({
+        content: 'Không tìm thấy loại thẻ trong đơn bán thẻ để thanh toán',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+
+
+    // 120 is the F9 key
+    let modalRef = this.modalService.open(ServiceCardOrderPaymentsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thanh toán';
+    modalRef.componentInstance.defaultVal = this.formGroup.value;
+    modalRef.result.then(res => {
+      debugger
+      console.log(res);
+      var value = this.formGroup.value;
+      value.partnerId = value.partner.id;
+      value.userId = value.user ? value.user.id : null;
+      value.amountRefund = Math.abs(res.controls[res.length - 1].value.amount);
+      value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+      this.cardOrderService.create(value)
+        .subscribe((result: any) => {
+          this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
+            // xử lý thanh toán
+            res.controls.forEach(pay => {
+              this.actionPayment(result.id, pay.value);
+            })
+            this.notificationService.show({
+              content: 'thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+            this.resetForm();
+          });
+
+        });
+    }, () => {
+    });
 
   }
 
