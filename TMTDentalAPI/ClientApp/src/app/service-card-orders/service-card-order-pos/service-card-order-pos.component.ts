@@ -554,8 +554,8 @@ export class ServiceCardOrderPosComponent implements OnInit {
       var value = this.formGroup.value;
       value.partnerId = value.partner.id;
       value.userId = value.user ? value.user.id : null;
-      var payResidual = res.controls.find(x => x.value.isResidual == true) === undefined ? 0 : res.controls.find(x => x.value.isResidual == true).value.amount;
-      value.amountRefund = Math.abs(payResidual);
+      var payResidualAmount = res.controls.find(x => x.value.isResidual == true) === undefined ? 0 : res.controls.find(x => x.value.isResidual == true).value.amount;
+      value.amountRefund = Math.abs(payResidualAmount);
       value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
       this.cardOrderService.create(value)
         .subscribe((result: any) => {
