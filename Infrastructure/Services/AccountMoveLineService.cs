@@ -141,6 +141,25 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<AccountMoveLine>> CreateAsync(IEnumerable<AccountMoveLine> entities)
         {
+            foreach (var vals in entities)
+            {
+                var move = vals.Move;
+                if (move != null)
+                {
+                    vals.MoveName = move.Name;
+                    vals.Date = move.Date;
+                    vals.Ref = move.Ref;
+                    vals.ParentState = move.State;
+                    vals.JournalId = move.JournalId;
+                    vals.CompanyId = move.CompanyId;
+                }
+
+                if (vals.Account != null)
+                    vals.AccountInternalType = vals.Account.InternalType;
+            }
+
+            _ComputeBalance(entities);
+            _AmountResidual(entities);
             return await base.CreateAsync(entities);
         }
 

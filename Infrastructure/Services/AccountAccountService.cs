@@ -23,7 +23,11 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-       
+        public async Task<AccountAccount> GetAccountIncomeCurrentCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "5111" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
 
         public async Task<AccountAccount> GetAccountPayableCurrentCompany()
         {

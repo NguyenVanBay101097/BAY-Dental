@@ -167,7 +167,7 @@ namespace Infrastructure.Services
 
         private void _AmountAll(IEnumerable<ServiceCardOrder> self)
         {
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 var totalAmountUntaxed = 0M;
 
@@ -277,30 +277,124 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines).Include("OrderLines.CardType").Include("OrderLines.CardType.Product")
+                .Include(x => x.OrderLines).Include(x => x.Payments)
                 .ToListAsync();
 
-            foreach (var order in self)
+            await _CreateAccountMove(self);
+        }
+
+        public async Task _CreateAccountMove(IEnumerable<ServiceCardOrder> self)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var moveObj = GetService<IAccountMoveService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var cardTypeObj = GetService<IServiceCardTypeService>();
+
+            var income_account = await accountObj.GetAccountIncomeCurrentCompany();
+            if (income_account == null)
+                throw new Exception("Không tìm thấy tài khoản doanh thu mặc định");
+
+            var order_account = await accountObj.GetAccountReceivableCurrentCompany();
+            if (order_account == null)
+                throw new Exception("Không tìm thấy tài khoản receivable mặc định");
+
+            var journal = await journalObj.SearchQuery(x => x.Type == "sale" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            if (journal == null)
+                throw new Exception("Vui lòng tạo nhật ký bán hàng cho công ty này.");
+
+            foreach (var order in self.Where(x => !x.AccountMoveId.HasValue))
             {
-                order.State = "sale";
+                var sub_total = order.OrderLines.Sum(x => x.PriceSubTotal);
+                if (sub_total == 0)
+                    continue;
+
+                var move = new AccountMove
+                {
+                    Ref = order.Name,
+                    Journal = journal,
+                    JournalId = journal.Id,
+                    Date = order.DateOrder,
+                    PartnerId = order.PartnerId,
+                    CompanyId = journal.CompanyId,
+                };
+
+                await moveObj.CreateAsync(move);
+
+                var amls = new List<AccountMoveLine>();
+                var card_type_ids = order.OrderLines.Select(x => x.CardTypeId).Distinct().ToList();
+                var card_types = await cardTypeObj.SearchQuery(x => card_type_ids.Contains(x.Id)).Include(x => x.Product).ToListAsync();
+                var card_type_dict = card_types.ToDictionary(x => x.Id, x => x);
                 foreach (var line in order.OrderLines)
                 {
-                    line.State = "sale";
+                    var amount = line.PriceSubTotal; //price sub total phải có cả chiết khấu tổng
+                    var cardType = card_type_dict[line.CardTypeId];
+                    //Create a move for the line for the order line
+                    amls.Add(new AccountMoveLine
+                    {
+                        Name = cardType.Name,
+                        Quantity = line.ProductUOMQty,
+                        ProductId = cardType.ProductId,
+                        ProductUoMId = cardType.Product.UOMId,
+                        AccountId = income_account.Id,
+                        Account = income_account,
+                        Credit = amount > 0 ? amount : 0,
+                        Debit = amount < 0 ? -amount : 0,
+                        PartnerId = order.PartnerId,
+                        Move = move,
+                    });
                 }
+
+                var journal_ids = order.Payments.Select(x => x.JournalId).Distinct().ToList();
+                var journals = await journalObj.SearchQuery(x => journal_ids.Contains(x.Id)).Include(x => x.DefaultCreditAccount)
+                    .Include(x => x.DefaultDebitAccount).ToListAsync();
+                var journal_dict = journals.ToDictionary(x => x.Id, x => x);
+
+                foreach (var payment in order.Payments)
+                {
+                    var amount = payment.Amount;
+                    var paymentJournal = journal_dict[payment.JournalId];
+                    amls.Add(new AccountMoveLine
+                    {
+                        AccountId = amount > 0 ? paymentJournal.DefaultDebitAccount.Id : paymentJournal.DefaultCreditAccount.Id,
+                        Account = amount > 0 ? paymentJournal.DefaultDebitAccount : paymentJournal.DefaultCreditAccount,
+                        Credit = amount < 0 ? -amount : 0,
+                        Debit = amount > 0 ? amount : 0,
+                        PartnerId = order.PartnerId,
+                        Move = move,
+                    });
+                }
+
+                await amlObj.CreateAsync(amls);
+
+                await moveObj.Write(new List<AccountMove>() { move });
+                await moveObj.ActionPost(new List<AccountMove>() { move });
+
+                order.State = "done";
+                order.AccountMove = move;
+                await UpdateAsync(order);
             }
+        }
 
-            var invoices = await _CreateInvoices(self);
+        public async Task<AccountMove> _CreateAccountMove(ServiceCardOrder self, DateTime dt, string mref, AccountJournal journal)
+        {
             var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
+            return await moveObj.CreateAsync(new AccountMove
+            {
+                Ref = mref,
+                Journal = journal,
+                JournalId = journal.Id,
+                Date = dt,
+                InvoiceUserId = self.UserId,
+                PartnerId = self.PartnerId,
+                CompanyId = journal.CompanyId,
+            });
+        }
 
-            var cards = await _CreateCards(self);
-            var cardObj = GetService<IServiceCardCardService>();
-            await cardObj.ButtonConfirm(cards);
-
-            _ComputeResidual(self);
-            await UpdateAsync(self);
+        private object _PrepareLine(ServiceCardOrderLine orderLine)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task UpdateResidual(IEnumerable<Guid> ids)
@@ -373,9 +467,9 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<IServiceCardOrderLineService>();
 
             var card_vals_list = new List<ServiceCardCard>();
-            foreach(var order in self)
+            foreach (var order in self)
             {
-                foreach(var line in order.OrderLines)
+                foreach (var line in order.OrderLines)
                 {
                     for (var i = 0; i < line.ProductUOMQty; i++)
                     {

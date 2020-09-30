@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AccountMove: BaseEntity
+    public class AccountMove : BaseEntity
     {
         public AccountMove()
         {
@@ -38,6 +38,9 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        /// <summary>
+        /// journal.CompanyId
+        /// </summary>
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
@@ -66,7 +69,7 @@ namespace ApplicationCore.Entities
 
         public decimal? AmountUntaxedSigned { get; set; }
 
-        public decimal? AmountTaxSigned{ get; set; }
+        public decimal? AmountTaxSigned { get; set; }
 
         public decimal? AmountTotalSigned { get; set; }
 

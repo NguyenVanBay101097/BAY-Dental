@@ -206,10 +206,8 @@ namespace Infrastructure.Data
         public DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
         public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
         public DbSet<HrSalaryConfig> HrSalaryConfigs { get; set; }
-
-
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
-
+        public DbSet<ServiceCardOrderPayment> ServiceCardOrderPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -375,6 +373,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
             builder.ApplyConfiguration(new HrPayslipRunConfiguration());
             builder.ApplyConfiguration(new HrSalaryConfiguration());
+            builder.ApplyConfiguration(new ServiceCardOrderPaymentConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
