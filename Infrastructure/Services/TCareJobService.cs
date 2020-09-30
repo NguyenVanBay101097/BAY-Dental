@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void Run(string db, Guid campaignId)
+        public async Task Run(string db, Guid campaignId)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -50,6 +50,8 @@ namespace Infrastructure.Services
                     conn.Open();
                     //var date = DateTime.UtcNow;
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+
+                    await SearchPartnerIdsV2(campaign.GraphXml);
 
                     XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                     MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
@@ -352,7 +354,7 @@ namespace Infrastructure.Services
                             facebookUserProfile = facebookUserProfiles.FirstOrDefault();
                             channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
                         }
-                        
+
                         //Xử lý cá nhân hóa nội dung gửi tin
                         var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
                         //Xu ly gui tin cho cac Page
@@ -585,6 +587,46 @@ namespace Infrastructure.Services
                 }
             }
         }
+
+        private async Task SearchPartnerIdsV2(string graphXml)
+        {
+            string logic = "";
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(graphXml)))
+            {
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.Async = true;
+                using (XmlReader reader = XmlReader.Create(stream, settings))
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                {
+                                    if (reader.Name == "rule")
+                                    {
+                                        logic = reader.GetAttribute("logic");
+                                    }
+                                    break;
+                                }
+
+                            case XmlNodeType.Text:
+                                Console.WriteLine("Text Node: {0}",
+                                         "");
+                                break;
+                            case XmlNodeType.EndElement:
+                                Console.WriteLine("End Element {0}", reader.Name);
+                                break;
+                            default:
+                                Console.WriteLine("Other node {0} with value {1}",
+                                                reader.NodeType, reader.Value);
+                                break;
+                        }
+                    }
+                }
+            }
+            Console.WriteLine(logic);
+        }
     }
 
 
@@ -613,6 +655,15 @@ namespace Infrastructure.Services
     public class RulePartnerIds
     {
         public List<Guid> Ids { get; set; }
+    }
+
+    public class XmlReadData
+    {
+    }
+
+    public class XmlReadRuleData
+    {
+
     }
 
 }
