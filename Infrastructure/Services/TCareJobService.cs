@@ -590,7 +590,8 @@ namespace Infrastructure.Services
 
         private async Task SearchPartnerIdsV2(string graphXml)
         {
-            string logic = "";
+            string logic = "and";
+            var conditions = new List<object>();
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(graphXml)))
             {
                 XmlReaderSettings settings = new XmlReaderSettings();
@@ -599,36 +600,71 @@ namespace Infrastructure.Services
                 {
                     while (await reader.ReadAsync())
                     {
-                        switch (reader.NodeType)
+                        if (reader.NodeType == XmlNodeType.Element)
                         {
-                            case XmlNodeType.Element:
-                                {
-                                    if (reader.Name == "rule")
+                            switch(reader.Name)
+                            {
+                                case "rule":
                                     {
                                         logic = reader.GetAttribute("logic");
-                                    }
-                                    break;
-                                }
+                                        var subReader = reader.ReadSubtree();
+                                        while (subReader.ReadToFollowing("condition"))
+                                        {
+                                            var type = subReader.GetAttribute("type");
+                                            var name = subReader.GetAttribute("name");
+                                            if (type == "categPartner")
+                                            {
+                                                var op = subReader.GetAttribute("op");
+                                                var conditionReader = subReader.ReadSubtree();
+                                                var cond = new PartnerCategoryCondition() { Name = name, Type = type, Op = op };
+                                                while (conditionReader.ReadToFollowing("tag"))
+                                                {
+                                                    var id = conditionReader.GetAttribute("id");
+                                                    Guid tagId;
+                                                    if (Guid.TryParse(id, out tagId))
+                                                        cond.TagIds.Add(tagId);
+                                                }
 
-                            case XmlNodeType.Text:
-                                Console.WriteLine("Text Node: {0}",
-                                         "");
-                                break;
-                            case XmlNodeType.EndElement:
-                                Console.WriteLine("End Element {0}", reader.Name);
-                                break;
-                            default:
-                                Console.WriteLine("Other node {0} with value {1}",
-                                                reader.NodeType, reader.Value);
-                                break;
+                                                conditions.Add(cond);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
             }
-            Console.WriteLine(logic);
+
+            foreach(var condition in conditions)
+            {
+                var type = condition.GetType().GetProperty("Type").GetValue(condition, null);
+                switch(type)
+                {
+                    case "categPartner":
+                        {
+                            var condi = (PartnerCategoryCondition)condition;
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
         }
     }
 
+    public class PartnerCategoryCondition
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string Op { get; set; }
+
+        public IList<Guid> TagIds { get; set; } = new List<Guid>();
+    }
 
 
     public class PartnerSendMessageResult
@@ -636,7 +672,6 @@ namespace Infrastructure.Services
         public string ZaloId { get; set; }
         public string Content { get; set; }
     }
-
 
 
     public class SendMessageZaloResponse

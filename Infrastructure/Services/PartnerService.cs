@@ -148,6 +148,10 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {
             var query = GetQueryPaged(val);
+            var tagIds = new List<Guid>();
+            tagIds.Add(new Guid("FDFEB0C7-0902-4283-2863-08D829340668"));
+            tagIds.Add(new Guid("2D6ED141-B947-4AA0-6FBA-08D8641A53F3"));
+            var test = SearchQuery(x => x.PartnerPartnerCategoryRels.All(s => tagIds.Contains(s.CategoryId))).ToListAsync();
 
             var items = await _mapper.ProjectTo<PartnerBasic>(query.Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
