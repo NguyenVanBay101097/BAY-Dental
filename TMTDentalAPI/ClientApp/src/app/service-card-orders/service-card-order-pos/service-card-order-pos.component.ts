@@ -86,9 +86,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
           orderLines: this.fb.array([]),
           cusPayments: this.fb.array([]),
           companyId: null,
-          amountTotal: 0,
-          custommerAmountPayment: 0,
-          amountRefund: 0,
+          amountTotal: 0
         });
 
         this.cardOrderService.defaultGet().subscribe((result: any) => {
@@ -130,15 +128,10 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
   }
 
-
-
   get orderLines() {
     return this.formGroup.get('orderLines') as FormArray;
   }
 
-  get cusPayments() {
-    return this.formGroup.get('cusPayments') as FormArray;
-  }
 
   computeAmountTotal() {
     let total = 0;
@@ -147,34 +140,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
       total += line.get('priceSubTotal').value;
     });
     this.formGroup.get('amountTotal').patchValue(total);
-  }
-
-  computeAmountCustomerPaymentTotal() {
-    let total = 0;
-    if (this.cusPayments.controls.length > 0) {
-      this.cusPayments.controls.forEach(line => {
-        total += line.get('amount').value;
-      });
-      this.formGroup.get('custommerAmountPayment').patchValue(total);
-    } else {
-      this.formGroup.get('custommerAmountPayment').patchValue(this.amountTotalValue);
-    }
-
-  }
-
-  get amountPaymentTotal() {
-    let total = 0;
-    if (this.cusPayments.controls.length > 0) {
-      this.cusPayments.controls.forEach(line => {
-        total += line.get('amount').value;
-      });
-    }
-    return total;
-  }
-
-  computeAmountRefund() {
-    var total = this.amountCustomerPaymentTotalValue - this.amountTotalValue;
-    this.formGroup.get('amountRefund').patchValue(total);
   }
 
   loadRecord() {
@@ -222,92 +187,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     return this.userService.autocompleteSimple(val);
   }
 
-  onSave() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
-    var value = this.formGroup.value;
-    value.partnerId = value.partner.id;
-    value.userId = value.user ? value.user.id : null;
-      value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-
-    if (!this.id) {
-      this.cardOrderService.create(value).subscribe((result: any) => {
-        this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
-          this.loadRecord();
-        });
-      });
-    }
-  }
-
-  onSaveConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
-    if (this.amountTotalValue > this.amountCustomerPaymentTotalValue) {
-      this.notificationService.show({
-        content: 'Số tiền khách thanh toán nhỏ hơn tổng tiền',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    }
-
-
-
-    var value = this.formGroup.value;
-    value.partnerId = value.partner.id;
-    value.userId = value.user ? value.user.id : null;
-    value.amountRefund = value.amountRefund;
-    value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-
-    if (!this.orderLines.length) {
-      this.notificationService.show({
-        content: 'Không tìm thấy loại thẻ nào',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    }
-
-    if (!this.cusPayments.length) {
-      this.notificationService.show({
-        content: 'Chọn phương thức thanh toán',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return false;
-    }
-
-
-    this.cardOrderService.create(value)
-      .subscribe((result: any) => {
-        this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
-          // xử lý thanh toán
-          this.cusPayments.controls.forEach(pay => {
-            this.actionPayment(result.id, pay.value);
-          })
-          this.notificationService.show({
-            content: 'thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-          this.resetForm();
-        });
-
-      });
-
-  }
 
   getDiscountNumber(line: FormGroup) {
     var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
@@ -350,8 +229,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     }
     this.getPriceSubTotal();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
+
   }
 
   onChangeDiscountFixed(line: FormGroup) {
@@ -361,8 +239,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     }
     this.getPriceSubTotal();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
+
   }
 
   onChangeDiscount(line: FormGroup) {
@@ -372,8 +249,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     }
     this.getPriceSubTotal();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
   }
 
   onChangeDiscountType(line: FormGroup) {
@@ -386,8 +261,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
     this.getPriceSubTotal();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
   }
 
   onChangeCustomerPaymentTotal(mount) {
@@ -395,7 +268,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     let controlpayment = this.formGroup.get('cusPayments') as FormArray;
     controlpayment.clear();
     this.computeAmountTotal();
-    this.computeAmountRefund();
   }
 
   addLineModal(val) {
@@ -423,8 +295,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
 
   }
 
@@ -446,8 +316,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
   }
 
 
@@ -515,8 +383,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
     this.getPriceSubTotal();
     this.computeAmountTotal();
-    this.computeAmountCustomerPaymentTotal();
-    this.computeAmountRefund();
     this.formGroup.markAsPristine();
 
   }

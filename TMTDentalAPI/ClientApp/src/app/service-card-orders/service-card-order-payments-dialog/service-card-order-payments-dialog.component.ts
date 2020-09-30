@@ -77,12 +77,11 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
   loadRecord() {
     if (this.defaultVal) {
-      let total = 0;
 
       var res = this.fb.group({
         amountResidual: this.defaultVal.amountTotal,
-        amount: total == 0 ? this.defaultVal.custommerAmountPayment : Math.abs(this.defaultVal.amountTotalValue - this.defaultVal.amountCustomerPaymentTotalValue),
-        amountRefund: this.defaultVal.amountRefund,
+        amount: this.defaultVal.amountTotal,
+        amountRefund: 0,
         paymentDate: this.intlService.formatDate(new Date(), 'd', 'en-US'),
         communication: null,
         journalId: this.getJournalDefault().id,
@@ -195,8 +194,8 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
     var res = this.fb.group({
       amountResidual: this.totalResidual === 0 ? this.defaultVal.amountTotal : this.totalResidual,
-      amount: this.totalResidual === 0 ? this.defaultVal.custommerAmountPayment : this.totalResidual,
-      amountRefund: this.defaultVal.amountRefund,
+      amount: this.totalResidual,
+      amountRefund: 0,
       paymentDate: this.intlService.formatDate(new Date(), 'd', 'en-US'),
       communication: null,
       journalId: val.id,
@@ -227,6 +226,14 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
     var amount = this.addCommas(pay.value.amount);
     pay.get('amount').setValue(this.price_to_number(amount.substring(0, amount.length - 1)));
     pay.patchValue(pay.value);
+    if((pay.get('amountResidual').value - pay.get('amount').value) > 0 && this.rowClicked != (this.cusPayments.length -1)){
+      var formRes = this.cusPayments.controls[this.cusPayments.length -1];
+      if(formRes.get('amountResidual').value >= 0){
+        formRes.get('amountResidual').setValue(pay.get('amountResidual').value - pay.get('amount').value);
+      }
+      formRes.patchValue(formRes.value);
+      this.computeRefund(this.cusPayments.length -1);
+    }
     this.computeRefund(this.rowClicked);
   }
 

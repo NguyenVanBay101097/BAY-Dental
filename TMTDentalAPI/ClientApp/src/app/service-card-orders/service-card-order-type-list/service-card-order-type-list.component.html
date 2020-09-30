@@ -1,14 +1,36 @@
 
     <div class="o_content" >
         <div class="o_cp_searchview_group" >
-            <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên" type="text" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)">
-            </div>
+
+                <input type="text" class="form-control" #search placeholder="Tìm kiếm theo tên loại thẻ [F2]" (keyup)="onChangeSearch($event.target.value)">
+                <!-- <input class="o_searchview_input" placeholder="Tìm kiếm theo tên" type="text"
+                    (keyup)="onChangeSearch($event.target.value)"> -->
         </div>
         <div class="hbox-left" class="mt-1">
-            <div *ngIf="typeCardList">
-                <div >
+            <div class="table-wrapper" *ngIf="typeCardList">
+                <table class="table table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Tên loại thẻ</th>
+                            <th>Giá</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr *ngFor="let payment of listFilter " (click)="onClickData(payment)">                             
+                                <td>
+                                        {{payment.name}}
+                                </td>
+                                <td>
+                                    <div class="from-control">
+                                        {{payment.price | number}} 
+                                    </div>
+                                </td>                                                                                        
+                            </tr>
+                                            
+                    </tbody>
+                </table>
+                <!-- <div>
                     <div class="list-group" style="min-height: 350px;">
                         <div  *ngFor="let item of typeCardList">
                             <a class="list-group-item rounded-0" 
@@ -22,7 +44,7 @@
                         <ngb-pagination [collectionSize]="total" [(page)]="page" [pageSize]="pageSize"
                             (pageChange)="pageChange($event)" aria-label="Default pagination"></ngb-pagination>
                     </div>
-                </div>
+                </div> -->
             </div>          
         </div>
     </div>

@@ -140,13 +140,13 @@
                                                                     [min]="0" [max]="100" formControlName="discount"
                                                                     [autoCorrect]="true"
                                                                     (valueChange)="onChangeDiscount(line)"
-                                                                    style="max-width: 200px;">
+                                                                    style="max-width: 170px;">
                                                                 </kendo-numerictextbox>
                                                                 <kendo-numerictextbox [format]="'n0'"
                                                                     [class.d-none]="line.get('discountType').value !== 'fixed'"
                                                                     (valueChange)="onChangeDiscountFixed(line)"
                                                                     formControlName="discountFixed"
-                                                                    style="max-width: 200px;">
+                                                                    style="max-width: 170px;">
                                                                 </kendo-numerictextbox>
                                                                 <select class="form-control" style="max-width: 70px;"
                                                                     (change)="onChangeDiscountType(line)"
@@ -195,36 +195,8 @@
                                                             class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{amountTotalValue | number}}</span>
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td colspan="1" class="o_td_label pb-0">
-                                                        <label
-                                                            class="o_form_label o_form_label_help oe_subtotal_footer_separator">
-                                                            Khách thanh toán
-                                                        </label>
-                                                    </td>
-                                                    <td colspan="1" class="text-right">  
-                                                        <!-- <kendo-numerictextbox [format]="'n0'"  (valueChange)="onChangeCustomerPaymentTotal($event)" class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget"
-                                                            [value]="amountCustomerPaymentTotalValue" >
-                                                        </kendo-numerictextbox>                                                      -->
-                                                        <span
-                                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{amountCustomerPaymentTotalValue | number}}</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="1" class="o_td_label pb-0">
-                                                        <label
-                                                            class="o_form_label o_form_label_help oe_subtotal_footer_separator">
-                                                            Tiền thừa trả khách
-                                                        </label>
-                                                    </td>
-                                                    <td colspan="1">
-                                                        <span
-                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{amountRefundTotalValue | number}}</span>
-                                                    </td>
-                                                </tr>
                                                 <tr>                                                  
-                                                    <td colspan="2" class="text-right">
-                                                        
+                                                    <td colspan="2" class="text-right">                                                       
                                                         <!-- <input type="text" class="btn btn-group-lg btn-success" (keyup.enter)="onKeyPressPayment($event)" (keypress)="onKeyPressPayment($event)" value="Thanh toán" /> -->
                                                        <button type="button" class="btn btn-group-lg btn-success" (click)="onKeyPressPayment()">Thanh toán [F9]</button>
                                                     </td>
