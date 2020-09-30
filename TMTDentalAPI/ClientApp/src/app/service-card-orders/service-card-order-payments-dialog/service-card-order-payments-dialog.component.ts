@@ -87,7 +87,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
         communication: null,
         journalId: this.getJournalDefault().id,
         journal: this.getJournalDefault(),
-        isResidual: false
+        isRefund: false
       });
 
       if (this.cusPayments.length == 0) {
@@ -201,7 +201,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
       communication: null,
       journalId: val.id,
       journal: val,
-      isResidual: false
+      isRefund: false
     });
 
     if (!this.cusPayments.controls.some(x => x.value.journalId === res.value.journalId)) {
@@ -279,7 +279,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
       communication: null,
       journalId: this.getJournalDefault().id,
       journal: this.getJournalDefault(),
-      isResidual: true
+      isRefund: true
     });
     this.cusPayments.push(res);
   }
