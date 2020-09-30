@@ -102,7 +102,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
     this.loadFilteredPartners();
     this.loadFilteredUsers();
-    this.loadJournals();
 
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -454,21 +453,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
 
 
   //---Payment--//
-  loadJournals() {
-    this.searchJournals().subscribe(result => {
-      this.filteredJournals = result;
-    })
-  }
-
-  searchJournals(search?: string) {
-    var val = new AccountJournalFilter();
-    val.type = 'bank,cash';
-    val.search = search || '';
-    val.companyId = this.authService.userInfo.companyId;
-    return this.accountJournalService.autocomplete(val);
-  }
-
-
 
   actionPayment(id, val: any) {
     var pay = this.fb.group({
@@ -567,12 +551,11 @@ export class ServiceCardOrderPosComponent implements OnInit {
     modalRef.componentInstance.title = 'Thanh toán';
     modalRef.componentInstance.defaultVal = this.formGroup.value;
     modalRef.result.then(res => {
-      debugger
-      console.log(res);
       var value = this.formGroup.value;
       value.partnerId = value.partner.id;
       value.userId = value.user ? value.user.id : null;
-      value.amountRefund = Math.abs(res.controls[res.length - 1].value.amount);
+      var payResidual = res.controls.find(x => x.value.isResidual == true) === undefined ? 0 : res.controls.find(x => x.value.isResidual == true).value.amount;
+      value.amountRefund = Math.abs(payResidual);
       value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
       this.cardOrderService.create(value)
         .subscribe((result: any) => {
