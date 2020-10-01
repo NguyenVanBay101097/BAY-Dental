@@ -15,7 +15,13 @@
             </div>
         </div>
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="mr-2">Nhãn chiến dịch</span>
+            <span class="mr-2">
+                Nhãn chiến dịch
+                <i class="fas fa-question-circle text-primary" placement="bottom"
+                triggers="mouseenter:mouseleave"
+                ngbPopover="Nhãn chiến dịch dùng để tự động gán nhãn cho khách hàng sau khi gửi tin thành công"
+                popoverTitle="Nhãn chiến dịch"></i>
+            </span>
             <div class="input-group">
                 <kendo-combobox class="form-control" [data]="filterdTags" [textField]="'name'" [filterable]="true"
                     #tagCbx formControlName="tagId" [valueField]="'id'" [valuePrimitive]="true"

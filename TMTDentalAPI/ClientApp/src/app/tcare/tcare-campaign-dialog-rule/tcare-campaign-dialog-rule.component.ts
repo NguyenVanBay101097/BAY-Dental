@@ -53,16 +53,16 @@ export class TcareCampaignDialogRuleComponent implements OnInit {
       name: 'Nhãn khách hàng',
       component: AudienceFilterPartnerCategoryComponent
     }, 
-    {
-      type: 'usedService',
-      name: 'Dịch vụ sử dụng',
-      component: AudienceFilterServiceComponent
-    }, 
-    {
-      type: 'usedCategService',
-      name: 'Nhóm dịch vụ sử dụng',
-      component: AudienceFilterServiceCategoryComponent
-    }
+    // {
+    //   type: 'usedService',
+    //   name: 'Dịch vụ sử dụng',
+    //   component: AudienceFilterServiceComponent
+    // }, 
+    // {
+    //   type: 'usedCategService',
+    //   name: 'Nhóm dịch vụ sử dụng',
+    //   component: AudienceFilterServiceCategoryComponent
+    // }
   ];
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
