@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 
@@ -21,7 +21,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
   type: string;
   name: string;
   @Output() saveClick = new EventEmitter<any>();
-  @ViewChild('categMst', { static: true }) categMst: MultiSelectComponent;
+  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   data: any;
 
   constructor(private fb: FormBuilder, 
@@ -30,44 +30,52 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       op: 'contains',
-      categ: [null, Validators.required]
+      tag: [null, Validators.required]
     });
 
     setTimeout(() => {
       if (this.data) {
-        var categ = this.data.list;
+        var tagId = this.data.tagId;
+        var val2 = new PartnerCategoryPaged();
+        val2.limit = 1;
+        val2.ids = [tagId];
+        this.partnerCategoryService.getPaged(val2).subscribe(result => {
+          var item = result.items.length ? result.items[0] : null;
+          var d = {
+            op: this.data.op,
+            tag: item
+          };
+          this.formGroup.patchValue(d);
 
-        this.formGroup.patchValue({
-          op: this.data.op,
-          categ: categ
+          if (item) {
+            this.filteredCategs = _.unionBy(this.filteredCategs, [item], 'id');
+          }
         });
-
-        this.filteredCategs = categ;
       }
 
       this.loadFilteredCategs();
 
-      this.categMst.filterChange.asObservable().pipe(
+      this.categCbx.filterChange.asObservable().pipe(
         debounceTime(300),
-        tap(() => (this.categMst.loading = true)),
+        tap(() => (this.categCbx.loading = true)),
         switchMap(value => this.searchCategories(value))
       ).subscribe((result: any) => {
-        this.filteredCategs = result;
-        this.categMst.loading = false;
+        this.filteredCategs = result.items;
+        this.categCbx.loading = false;
       });
     });
   }
 
   loadFilteredCategs() {
     this.searchCategories().subscribe(result => {
-      this.filteredCategs = _.unionBy(this.filteredCategs, result, 'id');
+      this.filteredCategs = _.unionBy(this.filteredCategs, result.items, 'id');
     });
   }
 
   searchCategories(q?: string) {
     var val = new PartnerCategoryPaged();
     val.search = q || '';
-    return this.partnerCategoryService.autocomplete(val);
+    return this.partnerCategoryService.getPaged(val);
   }
 
   getOpDisplay(op) {
@@ -92,8 +100,8 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
     var res = {
       type: this.type,
       op: value.op,
-      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.categ.map(e => e.name).join(", "),
-      list: value.categ
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.tag.name,
+      tagId: value.tag.id
     };
 
     this.saveClick.emit(res);

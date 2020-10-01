@@ -8,7 +8,7 @@ namespace Infrastructure.Services
 {
     public interface ITCareJobService
     {
-        void Run(string db, Guid campaignId);
+        Task Run(string db, Guid campaignId);
 
     }
 }

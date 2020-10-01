@@ -4,6 +4,7 @@ using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
 using Hangfire;
+using Hangfire.States;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void Run(string db, Guid campaignId)
+        public async Task Run(string db, Guid campaignId)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -51,10 +52,14 @@ namespace Infrastructure.Services
                     //var date = DateTime.UtcNow;
                     var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
 
-                    XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-                    var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
+                    var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                    if (partner_ids == null)
+                        return;
+
+                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
+                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
                     foreach (var partner_id in partner_ids)
                         BackgroundJob.Enqueue(() => SendMessageSocial(campaignId, db, partner_id));
                 }
@@ -352,7 +357,7 @@ namespace Infrastructure.Services
                             facebookUserProfile = facebookUserProfiles.FirstOrDefault();
                             channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
                         }
-                        
+
                         //Xử lý cá nhân hóa nội dung gửi tin
                         var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
                         //Xu ly gui tin cho cac Page
@@ -585,16 +590,222 @@ namespace Infrastructure.Services
                 }
             }
         }
+
+        private async Task<IEnumerable<Guid>> SearchPartnerIdsV2(string graphXml, SqlConnection conn)
+        {
+            string logic = "and";
+            var conditions = new List<object>();
+            var conditionPartnerIds = new List<IList<Guid>>();
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(graphXml)))
+            {
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.Async = true;
+                using (XmlReader reader = XmlReader.Create(stream, settings))
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                        {
+                            switch (reader.Name)
+                            {
+                                case "rule":
+                                    {
+                                        logic = reader.GetAttribute("logic");
+                                        var subReader = reader.ReadSubtree();
+                                        while (subReader.ReadToFollowing("condition"))
+                                        {
+                                            var type = subReader.GetAttribute("type");
+                                            var name = subReader.GetAttribute("name");
+                                            if (type == "categPartner")
+                                            {
+                                                var op = subReader.GetAttribute("op");
+                                                Guid tagId;
+                                                Guid.TryParse(subReader.GetAttribute("tagId"), out tagId);
+                                                var cond = new PartnerCategoryCondition() { Name = name, Type = type, Op = op, TagId = tagId };
+                                                conditions.Add(cond);
+                                            }
+                                            else if (type == "birthday")
+                                            {
+                                                int day = 0;
+                                                int.TryParse(subReader.GetAttribute("day"), out day);
+                                                var cond = new PartnerBirthdayCondition() { Name = name, Type = type, Day = day };
+                                                conditions.Add(cond);
+                                            } 
+                                            else if (type == "lastSaleOrder")
+                                            {
+                                                int day = 0;
+                                                int.TryParse(subReader.GetAttribute("day"), out day);
+                                                var cond = new LastSaleOrderCondition() { Name = name, Type = type, Day = day };
+                                                conditions.Add(cond);
+                                            }
+                                            else if (type == "lastExamination")
+                                            {
+                                                int day = 0;
+                                                int.TryParse(subReader.GetAttribute("day"), out day);
+                                                var cond = new LastDotKhamDateCondition() { Name = name, Type = type, Day = day };
+                                                conditions.Add(cond);
+                                            }
+                                            else if (type == "lastAppointment")
+                                            {
+                                                int day = 0;
+                                                int.TryParse(subReader.GetAttribute("day"), out day);
+                                                var cond = new LastAppointmentDateCondition() { Name = name, Type = type, Day = day };
+                                                conditions.Add(cond);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var condition in conditions)
+            {
+                var type = condition.GetType().GetProperty("Type").GetValue(condition, null);
+                switch (type)
+                {
+                    case "categPartner":
+                        {
+                            var cond = (PartnerCategoryCondition)condition;
+                            var sqlOp = cond.Op == "not_contains" ? "NOT EXISTS" : "EXISTS";
+                            var searchPartnerIds = conn.Query<Guid>("" +
+                                                       "select p.Id " +
+                                                       "from Partners p " +
+                                                       $"where p.Customer = 1 and {sqlOp} " +
+                                                       "(select 1 from PartnerPartnerCategoryRel p0 where p0.PartnerId = p.Id and p0.CategoryId = @categId)", new { categId = cond.TagId }).ToList();
+                            conditionPartnerIds.Add(searchPartnerIds);
+                            break;
+                        }
+                    case "birthday":
+                        {
+                            var today = DateTime.Today;
+                            var cond = (PartnerBirthdayCondition)condition;
+                            var date = today.AddDays(cond.Day);
+                            var searchPartnerIds = conn.Query<Guid>("" +
+                                           "Select pn.Id " +
+                                           "From Partners pn " +
+                                           "Where pn.Customer = 1 and pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month }
+                                           ).ToList();
+                            conditionPartnerIds.Add(searchPartnerIds);
+                            break;
+                        }
+                    case "lastSaleOrder":
+                        {
+                            var cond = (LastSaleOrderCondition)condition;
+                            var searchPartnerIds = conn.Query<Guid>("" +
+                                                    "Select pn.Id From Partners pn " +
+                                                    "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                                    "Where pn.Customer = 1 and sale.State in ('sale','done') " +
+                                                    "Group by pn.Id " +
+                                                    "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
+                            conditionPartnerIds.Add(searchPartnerIds);
+                            break;
+                        }
+                    case "lastExamination":
+                        {
+                            var cond = (LastDotKhamDateCondition)condition;
+                            var searchPartnerIds = conn.Query<Guid>("" +
+                                     "Select pn.Id From Partners pn " +
+                                     "Left join DotKhams dk ON dk.PartnerId = pn.Id " +
+                                     "Where pn.Customer = 1 " +
+                                     "Group by pn.Id " +
+                                     "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
+                            conditionPartnerIds.Add(searchPartnerIds);
+                            break;
+                        }
+                    case "lastAppointment":
+                        {
+                            var cond = (LastAppointmentDateCondition)condition;
+                            var searchPartnerIds = conn.Query<Guid>("" +
+                                 "Select pn.Id From Partners pn " +
+                                 "Left join Appointments am ON am.PartnerId = pn.Id " +
+                                 "Where pn.Customer = 1 " +
+                                 "Group by pn.Id " +
+                                 "Having (Max(CONVERT(date, am.Date)) = DATEADD(day, @number, CONVERT(date, GETDATE()))) ", new { number = cond.Day }).ToList();
+                            conditionPartnerIds.Add(searchPartnerIds);
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+
+
+            IEnumerable<Guid> result = null;
+            foreach (var item in conditionPartnerIds)
+            {
+                if (result == null)
+                {
+                    result = item;
+                    continue;
+                }
+
+                if (logic == "or")
+                    result = result.Union(item);
+                else
+                    result = result.Intersect(item);
+            }
+
+            return result;
+        }
     }
 
+    public class PartnerCategoryCondition
+    {
+        public string Name { get; set; }
 
+        public string Type { get; set; }
+
+        public string Op { get; set; }
+
+        public Guid TagId { get; set; }
+    }
+
+    public class PartnerBirthdayCondition
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public int Day { get; set; }
+    }
+
+    public class LastSaleOrderCondition
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public int Day { get; set; }
+    }
+
+    public class LastDotKhamDateCondition
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public int Day { get; set; }
+    }
+
+    public class LastAppointmentDateCondition
+    {
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public int Day { get; set; }
+    }
 
     public class PartnerSendMessageResult
     {
         public string ZaloId { get; set; }
         public string Content { get; set; }
     }
-
 
 
     public class SendMessageZaloResponse
@@ -613,6 +824,15 @@ namespace Infrastructure.Services
     public class RulePartnerIds
     {
         public List<Guid> Ids { get; set; }
+    }
+
+    public class XmlReadData
+    {
+    }
+
+    public class XmlReadRuleData
+    {
+
     }
 
 }

@@ -680,17 +680,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
         if (rule.condition) {
           rule.condition.forEach((con) => {
             var obj = con.$;
-            if (con.tag) {
-              if (con.$.type == "categPartner") {
-                obj.list = [];
-                con.tag.forEach(element => {
-                  obj.list.push(Object.assign({}, element.$)); 
-                });
-              } else {
-                if (con.tag[0])
-                  obj.value = con.tag[0].$;
-              }
-            }
+            // if (con.tag) {
+            //   if (con.$.type == "categPartner") {
+            //     obj.list = [];
+            //     con.tag.forEach(element => {
+            //       obj.list.push(Object.assign({}, element.$)); 
+            //     });
+            //   } else {
+            //     if (con.tag[0])
+            //       obj.value = con.tag[0].$;
+            //   }
+            // }
             a.conditions.push(obj);
           });
         }
@@ -704,38 +704,39 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
               var doc = mxUtils.createXmlDocument();
               var userObject = doc.createElement("rule");
               for (var p in result) {
-                if (p != "conditions") {
+                if (p == 'logic') {
                   userObject.setAttribute(p, result[p]);
                 }
               }
               result.conditions.forEach((con) => {
                 var conEl = doc.createElement("condition");
-                var conElTag = doc.createElement("tag");
+                // var conElTag = doc.createElement("tag");
                 for (var p in con) {
-                  if (p == "value" || p == "list") {
-                    if (con.type == "categPartner") {
-                      con[p].forEach(element => {
-                        conElTag = doc.createElement("tag");
-                        for (var key in element) {
-                          if (key != "completeName")
-                            conElTag.setAttribute(key, element[key]);
-                        }
-                        conEl.appendChild(conElTag);
-                      });
-                    } else {
-                      conElTag = doc.createElement("tag");
-                      for (var key in con[p]) {
-                        conElTag.setAttribute(key, con[p][key]);
-                      }
-                      conEl.appendChild(conElTag);
-                    }
-                  } else {
-                    conEl.setAttribute(p, con[p]);
-                  }
+                  conEl.setAttribute(p, con[p]);
+
+                  // if (p == "value" || p == "list") {
+                  //   if (con.type == "categPartner") {
+                  //     con[p].forEach(element => {
+                  //       conElTag = doc.createElement("tag");
+                  //       for (var key in element) {
+                  //         if (key != "completeName")
+                  //           conElTag.setAttribute(key, element[key]);
+                  //       }
+                  //       conEl.appendChild(conElTag);
+                  //     });
+                  //   } else {
+                  //     conElTag = doc.createElement("tag");
+                  //     for (var key in con[p]) {
+                  //       conElTag.setAttribute(key, con[p][key]);
+                  //     }
+                  //     conEl.appendChild(conElTag);
+                  //   }
+                  // } else {
+                  //   conEl.setAttribute(p, con[p]);
+                  // }
                 }
                 userObject.appendChild(conEl);
               });
-              console.log(userObject);
               graph.getModel().setValue(cell, userObject);
             }
             finally {
