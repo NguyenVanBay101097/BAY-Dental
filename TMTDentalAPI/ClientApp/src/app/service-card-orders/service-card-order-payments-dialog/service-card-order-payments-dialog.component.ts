@@ -114,6 +114,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
   setValueNumber(key) {
     var formRes = this.cusPayments.controls[this.rowClicked];
+    debugger
     formRes.get('amount').setValue(this.price_to_number(this.addCommas(key)));
     formRes.patchValue(formRes.value);
     if(this.totalResidual < 0 && this.rowClicked != (this.cusPayments.length -1)){
@@ -223,10 +224,11 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
 
   RemoveLength(){
+    debugger
     var pay = this.cusPayments.controls[this.rowClicked];
-    var amount = this.addCommas(pay.value.amount);
-    pay.get('amount').setValue(this.price_to_number(amount.substring(0, amount.length - 1)));
-    pay.patchValue(pay.value);
+    this.keyCode = this.addCommas(pay.value.amount);
+    pay.get('amount').setValue(this.price_to_number(this.keyCode.substring(0, this.keyCode.length - 1)));
+    pay.patchValue(pay.value);   
     if((pay.get('amountResidual').value - pay.get('amount').value) > 0 && this.rowClicked != (this.cusPayments.length -1)){
       var formRes = this.cusPayments.controls[this.cusPayments.length -1];
       if(formRes.get('amountResidual').value >= 0){
@@ -235,6 +237,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
       formRes.patchValue(formRes.value);
       this.computeRefund(this.cusPayments.length -1);
     }
+    this.keyCode = this.addCommas(pay.value.amount);
     this.computeRefund(this.rowClicked);
   }
 
