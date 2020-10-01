@@ -64,7 +64,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
       dateOrderObj: [null, Validators.required],
       user: null,
       orderLines: this.fb.array([]),
-      cusPayments: this.fb.array([]),
+      payments: this.fb.array([]),
       companyId: null,
       amountTotal: 0
     });
@@ -84,7 +84,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
           dateOrderObj: [null, Validators.required],
           user: null,
           orderLines: this.fb.array([]),
-          cusPayments: this.fb.array([]),
+          payments: this.fb.array([]),
           companyId: null,
           amountTotal: 0
         });
@@ -303,14 +303,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
     return this.formGroup.get('amountTotal').value;
   }
 
-  get amountCustomerPaymentTotalValue() {
-    return this.formGroup.get('custommerAmountPayment').value;
-  }
-
-  get amountRefundTotalValue() {
-    return this.formGroup.get('amountRefund').value;
-  }
-
   deleteLine(index: number) {
     this.orderLines.removeAt(index);
     this.getPriceSubTotal();
@@ -423,25 +415,19 @@ export class ServiceCardOrderPosComponent implements OnInit {
       var payRefundAmount = res.controls.find(x => x.value.isRefund == true) === undefined ? 0 : res.controls.find(x => x.value.isRefund == true).value.amount;
       value.amountRefund = Math.abs(payRefundAmount);
       value.dateOrder = this.intlService.formatDate(value.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-      this.cardOrderService.create(value)
-        .subscribe((result: any) => {
-          this.cardOrderService.actionConfirm([result.id]).subscribe(() => {
-            // xử lý thanh toán
-            res.controls.forEach(pay => {
-              this.actionPayment(result.id, pay.value);
-            })
-            this.notificationService.show({
-              content: 'thành công',
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'success', icon: true }
-            });
-            this.resetForm();
-          });
-
+      value.payments = res.value;
+      //xử lý api
+      this.cardOrderService.createAndPaymentCardOrder(value).subscribe(() => {
+        this.notificationService.show({
+          content: 'thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
         });
-    }, () => {
+
+        this.resetForm();
+      });
     });
 
   }

@@ -284,6 +284,73 @@ namespace Infrastructure.Services
             await _CreateAccountMove(self);
         }
 
+        public async Task CreateAndPaymentServiceCard(CreateAndPaymentServiceCardOrderVm val)
+        {
+            ///tạo mới ServiceCardOrder
+            var order = new ServiceCardOrder();
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            {
+                var seqObj = GetService<IIRSequenceService>();
+                order.Name = await seqObj.NextByCode("service.card.order");
+                if (string.IsNullOrEmpty(order.Name))
+                {
+                    await _CreateSequence();
+                    order.Name = await seqObj.NextByCode("service.card.order");
+                }
+            }
+
+            order.PartnerId = val.PartnerId;
+            order.UserId = val.UserId;
+            order.CompanyId = val.CompanyId;
+            order.AmountRefund = val.AmountRefund;
+            /// xử lý thêm orderlines vào servicecardorder
+            if (!val.OrderLines.Any())
+                throw new Exception("không tìm thấy danh sách thẻ trong đơn bán thẻ");
+
+            int sequence = 0;
+            foreach (var line in val.OrderLines)
+            {
+                
+                if (line.Id == Guid.Empty)
+                {
+                    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                    saleLine.Sequence = sequence++;
+                    saleLine.Order = order;
+                    order.OrderLines.Add(saleLine);
+                }             
+            }
+
+            ///xử lý thêm payments  vào servicecardorder
+            if (!val.Payments.Any())
+                throw new Exception("không tìm thấy thanh toán nào trong đơn bán thẻ");
+
+            foreach (var pay in val.Payments)
+            {
+                if (pay.Id == Guid.Empty)
+                {
+                    var payOrder = new ServiceCardOrderPayment();
+                    payOrder.Amount = pay.Amount;
+                    payOrder.JournalId = pay.JournalId;
+                    payOrder.Order = order;
+                    order.Payments.Add(payOrder);
+                }              
+            }
+
+
+            var lineObj = GetService<IServiceCardOrderLineService>();
+            lineObj.PrepareLines(order.OrderLines);
+
+            _ComputeResidual(new List<ServiceCardOrder>() { order });
+            _AmountAll(new List<ServiceCardOrder>() { order });
+
+            await CreateAsync(order);
+
+            // xử lý thanh toán
+
+            await _CreateAccountMove(new List<ServiceCardOrder>() { order });
+
+        }
+
         public async Task _CreateAccountMove(IEnumerable<ServiceCardOrder> self)
         {
             var accountObj = GetService<IAccountAccountService>();

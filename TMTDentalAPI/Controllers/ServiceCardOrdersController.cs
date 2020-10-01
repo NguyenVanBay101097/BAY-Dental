@@ -31,7 +31,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]ServiceCardOrderPaged val)
+        public async Task<IActionResult> Get([FromQuery] ServiceCardOrderPaged val)
         {
             var res = await _cardOrderService.GetPagedResultAsync(val);
             return Ok(res);
@@ -102,5 +102,16 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateAndPaymentServiceCardOrder(CreateAndPaymentServiceCardOrderVm val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardOrderService.CreateAndPaymentServiceCard(val);
+            _unitOfWork.Commit();
+
+            return NoContent(); 
+        }
+
     }
 }
