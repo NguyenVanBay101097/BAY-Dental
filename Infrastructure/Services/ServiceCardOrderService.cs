@@ -35,8 +35,7 @@ namespace Infrastructure.Services
                 x.Partner.Phone.Contains(val.Search)));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await _mapper.ProjectTo<ServiceCardOrderBasic>(query).ToListAsync();
+            var items = await _mapper.ProjectTo<ServiceCardOrderBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ServiceCardOrderBasic>(totalItems, val.Offset, val.Limit)
@@ -279,13 +278,31 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.OrderLines).Include(x => x.Payments)
+                .Include("OrderLines.CardType").Include("OrderLines.CardType.Product")
                 .ToListAsync();
+
+            foreach (var order in self)
+            {
+                order.State = "sale";
+                foreach (var line in order.OrderLines)
+                {
+                    line.State = "sale";
+                }
+            }
+
+            var cards = await _CreateCards(self);
+            var cardObj = GetService<IServiceCardCardService>();
+            await cardObj.ButtonConfirm(cards);
+
+            _ComputeResidual(self);
+            await UpdateAsync(self);
 
             await _CreateAccountMove(self);
         }
 
         public async Task CreateAndPaymentServiceCard(CreateAndPaymentServiceCardOrderVm val)
         {
+            var serviceCardObj = GetService<IServiceCardCardService>();
             ///tạo mới ServiceCardOrder
             var order = new ServiceCardOrder();
             if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
@@ -310,14 +327,14 @@ namespace Infrastructure.Services
             int sequence = 0;
             foreach (var line in val.OrderLines)
             {
-                
+
                 if (line.Id == Guid.Empty)
                 {
                     var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
                     saleLine.Sequence = sequence++;
                     saleLine.Order = order;
                     order.OrderLines.Add(saleLine);
-                }             
+                }
             }
 
             ///xử lý thêm payments  vào servicecardorder
@@ -333,7 +350,7 @@ namespace Infrastructure.Services
                     payOrder.JournalId = pay.JournalId;
                     payOrder.Order = order;
                     order.Payments.Add(payOrder);
-                }              
+                }
             }
 
 
@@ -343,11 +360,11 @@ namespace Infrastructure.Services
             _ComputeResidual(new List<ServiceCardOrder>() { order });
             _AmountAll(new List<ServiceCardOrder>() { order });
 
+           
+
             await CreateAsync(order);
 
-            // xử lý thanh toán
-
-            await _CreateAccountMove(new List<ServiceCardOrder>() { order });
+            await ActionConfirm(new List<Guid>() { order.Id });
 
         }
 

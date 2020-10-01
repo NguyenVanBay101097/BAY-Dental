@@ -29,8 +29,8 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    [loading]="loading">
         <kendo-grid-column field="name" title="Mã" width="100">
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
