@@ -40,7 +40,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
   title = 'Đơn bán thẻ';
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-
   public keypressed;
 
 
@@ -49,10 +48,7 @@ export class ServiceCardOrderPosComponent implements OnInit {
     private cardOrderService: ServiceCardOrderService, private route: ActivatedRoute,
     private intlService: IntlService, private router: Router,
     private notificationService: NotificationService, private modalService: NgbModal,
-    private paymentService: AccountPaymentService,
-    private accountJournalService: AccountJournalService,
-    private authService: AuthService,
-    private saleLineService: ServiceCardOrderLineService) { }
+    private paymentService: AccountPaymentService) { }
 
   ngOnInit() {
     this.cardOrder = {
@@ -120,12 +116,17 @@ export class ServiceCardOrderPosComponent implements OnInit {
     });
   }
 
-  @HostListener('document:keydown.f9', ['$event'])
-  onKeydownHandler(event: KeyboardEvent) {
-    if (event.keyCode === 120) {
-      this.onKeyPressPayment();
-    }
 
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    let charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode === 120) {
+      //check open modal
+      if(!this.modalService.hasOpenModals()){
+        this.onKeyPressPayment();
+      }
+      
+    }
   }
 
   get orderLines() {
@@ -403,7 +404,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
       return false;
     }
 
-
     // 120 is the F9 key
     let modalRef = this.modalService.open(ServiceCardOrderPaymentsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thanh toán';
@@ -425,7 +425,6 @@ export class ServiceCardOrderPosComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-
         this.resetForm();
       });
     });

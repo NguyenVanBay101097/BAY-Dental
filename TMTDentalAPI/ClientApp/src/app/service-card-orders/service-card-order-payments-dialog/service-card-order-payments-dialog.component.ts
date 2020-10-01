@@ -64,8 +64,9 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
       this.setPayments();
     } else if (charCode == 8) {
       this.RemoveLength();
-    } else if (charCode == 46) {
-      console.log('Delete Key Pressed');
+    } else if (charCode == 27) {
+      debugger
+      this.activeModal.dismiss();
     } 
 
   }
