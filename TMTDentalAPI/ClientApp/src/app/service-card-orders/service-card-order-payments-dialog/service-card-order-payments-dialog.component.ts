@@ -114,7 +114,6 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
   setValueNumber(key) {
     var formRes = this.cusPayments.controls[this.rowClicked];
-    debugger
     formRes.get('amount').setValue(this.price_to_number(this.addCommas(key)));
     formRes.patchValue(formRes.value);
     if(this.totalResidual < 0 && this.rowClicked != (this.cusPayments.length -1)){
@@ -196,7 +195,7 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
     var res = this.fb.group({
       amountResidual: this.totalResidual === 0 ? this.defaultVal.amountTotal : this.totalResidual,
-      amount: this.totalResidual,
+      amount: this.totalResidual === 0 ? this.defaultVal.amountTotal : this.totalResidual,
       amountRefund: 0,
       paymentDate: this.intlService.formatDate(new Date(), 'd', 'en-US'),
       communication: null,
@@ -224,7 +223,6 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
 
 
   RemoveLength(){
-    debugger
     var pay = this.cusPayments.controls[this.rowClicked];
     this.keyCode = this.addCommas(pay.value.amount);
     pay.get('amount').setValue(this.price_to_number(this.keyCode.substring(0, this.keyCode.length - 1)));
