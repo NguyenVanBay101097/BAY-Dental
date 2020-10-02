@@ -83,7 +83,13 @@ namespace Infrastructure.Services
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
-                var traces = await conn.QueryAsync<dynamic>("select trace.Id, trace.TCareCampaignId, trace.PartnerId from TCareMessingTraces trace left join FacebookPages p on trace.ChannelSocialId = p.Id where trace.MessageId is not null and trace.Delivery is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = psid, pageId = page_id, date = watermark });
+                var traces = await conn.QueryAsync<dynamic>("" +
+                    "select trace.Id, trace.TCareCampaignId, trace.PartnerId " +
+                    "from TCareMessingTraces trace " +
+                    "left join FacebookPages p " +
+                    "on trace.ChannelSocialId = p.Id " +
+                    "where " +
+                    "trace.MessageId is not null and trace.Delivery is null and trace.Sent <= @date and trace.PSID = @psid and p.PageId = @pageId", new { psid = psid, pageId = page_id, date = watermark });
                 var prams = traces.Select(x => new { delivery = watermark, id = x.Id }).ToArray();
                 await conn.ExecuteAsync("update TCareMessingTraces set Delivery=@delivery where @Id=id;", prams);
 

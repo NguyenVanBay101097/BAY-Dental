@@ -134,6 +134,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   showEmoji() {
     this.showPluginTextarea = true;
   }
+  
   hideEmoji() {
     this.showPluginTextarea = false;
   }

@@ -393,13 +393,14 @@ namespace Infrastructure.Services
         private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocial)
         {
             bool check = false;
+            var trace_Id = GuidComb.GenerateComb();
             await conn.ExecuteAsync("" +
                 "insert into TCareMessingTraces" +
                 "(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) " +
                 "Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)",
                 new
                 {
-                    Id = GuidComb.GenerateComb(),
+                    Id = trace_Id,
                     TCareCampaignId = campaign.Id,
                     PSID = profile.PSID,
                     PartnerId = profile.PartnerId,
@@ -411,12 +412,12 @@ namespace Infrastructure.Services
             switch (channelSocial.Type)
             {
                 case "facebook":
-                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocial, conn);
+                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocial, conn, trace_Id);
                     if (check && campaign.TagId.HasValue)
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
                     break;
                 case "zalo":
-                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocial, conn);
+                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocial, conn, trace_Id);
                     if (check && campaign.TagId.HasValue)
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
                     break;
@@ -425,36 +426,34 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task<bool> SendMessagePageZalo(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn)
+        private async Task<bool> SendMessagePageZalo(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn,Guid trace_Id)
         {
-            var track_id = GuidComb.GenerateComb();
             var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
             var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
             if (sendResult.error != 0)
             {
-                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = trace_Id });
                 return false;
             }
             else
             {
-                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = DateTime.Now, id = track_id });
+                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId, Sent=@sent where Id=@id", new { messageId = sendResult.data.message_id, sent = DateTime.Now, id = trace_Id });
                 return true;
             }
         }
 
-        private async Task<bool> SendMessagePageFacebook(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn)
+        private async Task<bool> SendMessagePageFacebook(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn,Guid trace_Id)
         {
-            var track_id = GuidComb.GenerateComb();
             var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
             if (!string.IsNullOrEmpty(sendResult.error))
             {
-                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = track_id });
+                await conn.ExecuteAsync("update TCareMessingTraces set Exception=@exception, Error=@error where Id=@id", new { exception = DateTime.Now, error = sendResult.error, id = trace_Id });
                 return false;
             }
             else
             {
-                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = track_id });
-                BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, track_id, channelSocial.PageAccesstoken, sendResult.message_id));
+                await conn.ExecuteAsync("update TCareMessingTraces set MessageId=@messageId where Id=@id", new { messageId = sendResult.message_id, id = trace_Id });
+                BackgroundJob.Enqueue(() => GetInfoMessageFBApi(db, trace_Id, channelSocial.PageAccesstoken, sendResult.message_id));
                 return true;
             }
         }
@@ -566,7 +565,7 @@ namespace Infrastructure.Services
         }
 
         [AutomaticRetry]
-        public async Task GetInfoMessageFBApi(string db, Guid track_id, string access_token, string message_id)
+        public async Task GetInfoMessageFBApi(string db, Guid trace_id, string access_token, string message_id)
         {
             //lấy thông tin message từ facebook api rồi cập nhật cho message log
             var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
@@ -586,7 +585,7 @@ namespace Infrastructure.Services
                 using (var conn = new SqlConnection(builder.ConnectionString))
                 {
                     conn.Open();
-                    await conn.ExecuteAsync("update TCareMessingTraces set Sent=@sent where Id=@id", new { Id = track_id, Sent = result.created_time.ToLocalTime() });
+                    await conn.ExecuteAsync("update TCareMessingTraces set Sent=@sent where Id=@id", new { Id = trace_id, Sent = result.created_time.ToLocalTime() });
                 }
             }
         }
@@ -630,7 +629,7 @@ namespace Infrastructure.Services
                                                 int.TryParse(subReader.GetAttribute("day"), out day);
                                                 var cond = new PartnerBirthdayCondition() { Name = name, Type = type, Day = day };
                                                 conditions.Add(cond);
-                                            } 
+                                            }
                                             else if (type == "lastSaleOrder")
                                             {
                                                 int day = 0;
