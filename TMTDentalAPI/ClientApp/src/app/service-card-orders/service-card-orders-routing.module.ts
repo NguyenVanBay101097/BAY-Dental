@@ -14,7 +14,7 @@ const routes: Routes = [
     component: ServiceCardOrderCreateUpdateComponent
   },
   {
-    path: 'pos',
+    path: 'create-card-order',
     component: ServiceCardOrderPosComponent
   }
 ];

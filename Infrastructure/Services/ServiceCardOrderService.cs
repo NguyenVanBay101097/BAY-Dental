@@ -158,8 +158,7 @@ namespace Infrastructure.Services
                 throw new Exception("Not found");
 
             var saleLineObj = GetService<IServiceCardOrderLineService>();
-            res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
-
+            res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync(); 
             res.CardCount = res.OrderLines.Sum(x => x.CardCount);
             return res;
         }
@@ -360,7 +359,7 @@ namespace Infrastructure.Services
             _ComputeResidual(new List<ServiceCardOrder>() { order });
             _AmountAll(new List<ServiceCardOrder>() { order });
 
-           
+
 
             await CreateAsync(order);
 
@@ -455,7 +454,7 @@ namespace Infrastructure.Services
                 await moveObj.Write(new List<AccountMove>() { move });
                 await moveObj.ActionPost(new List<AccountMove>() { move });
 
-                order.State = "done";
+                //order.State = "done";
                 order.AccountMove = move;
                 await UpdateAsync(order);
             }

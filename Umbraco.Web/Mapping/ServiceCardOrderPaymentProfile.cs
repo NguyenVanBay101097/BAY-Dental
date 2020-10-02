@@ -10,9 +10,13 @@ namespace Umbraco.Web.Mapping
     public class ServiceCardOrderPaymentProfile : Profile
     {
         public ServiceCardOrderPaymentProfile()
-        {
+        {           
             CreateMap<ServiceCardOrderPayment, ServiceCardOrderPaymentSave>();
-            CreateMap<ServiceCardOrderPaymentSave, ServiceCardOrderPayment>(); 
+            CreateMap<ServiceCardOrderPaymentSave, ServiceCardOrderPayment>();
+
+            CreateMap<ServiceCardOrderPayment, ServiceCardOrderPaymentDisplay>();
+
+            CreateMap<ServiceCardOrderPaymentDisplay, ServiceCardOrderPayment>();
         }
     }
 }
