@@ -34,10 +34,9 @@ namespace ApplicationCore.Entities
         ///  priority : ưu tiên
         ///  fixed : cố định
         /// </summary>
-        public string ChannelType { get; set; }
+        //public string ChannelType { get; set; }
 
-        public Guid? ChannelSocialId { get; set; }
-        public FacebookPage ChannelSocial { get; set; }
+
 
 
         public Guid TCareCampaignId { get; set; }

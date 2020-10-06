@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
         {
-            var result = await SearchQuery(x => x.Id == id).Include(x => x.Campaigns).FirstOrDefaultAsync();
+            var result = await SearchQuery(x => x.Id == id).Include(x => x.Campaigns).Include(x=>x.ChannelSocial).FirstOrDefaultAsync();
             var res = _mapper.Map<TCareScenarioDisplay>(result);
             return res;
         }

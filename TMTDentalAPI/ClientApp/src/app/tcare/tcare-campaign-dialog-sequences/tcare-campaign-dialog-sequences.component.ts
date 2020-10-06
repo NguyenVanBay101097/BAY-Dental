@@ -49,16 +49,16 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       channelType: ['fixed', Validators.required]
     });
 
-    this.channelSocialCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.channelSocialCbx.loading = true)),
-      switchMap(value => this.searchSocialChannel(value))
-    ).subscribe((result: any) => {
-      this.filterdChannelSocials = result.items;
-      this.channelSocialCbx.loading = false;
-    });
+    // this.channelSocialCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.channelSocialCbx.loading = true)),
+    //   switchMap(value => this.searchSocialChannel(value))
+    // ).subscribe((result: any) => {
+    //   this.filterdChannelSocials = result.items;
+    //   this.channelSocialCbx.loading = false;
+    // });
 
-    this.loadSocialChannel();
+    // this.loadSocialChannel();
 
     if (this.model) {
       var tmp = Object.assign({}, this.model);
@@ -68,11 +68,11 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     }
   }
 
-  loadSocialChannel() {
-    this.searchSocialChannel().subscribe((result: any) => {
-      this.filterdChannelSocials = result.items;
-    });
-  }
+  // loadSocialChannel() {
+  //   this.searchSocialChannel().subscribe((result: any) => {
+  //     this.filterdChannelSocials = result.items;
+  //   });
+  // }
 
   get methodTypeValue() {
     return this.formGroup.get('methodType').value;

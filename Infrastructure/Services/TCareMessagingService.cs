@@ -24,7 +24,6 @@ namespace Infrastructure.Services
         public async Task<TCareMessagingDisplay> GetDisplay(Guid id)
         {
             var mes = await SearchQuery(x => x.Id == id)
-                .Include(x => x.ChannelSocial)
                 .Include(x => x.TCareCampaign)
                 .Select(x => new TCareMessagingDisplay
                 {
@@ -34,8 +33,6 @@ namespace Infrastructure.Services
                     IntervalNumber = x.IntervalNumber,
                     SheduleDate = x.SheduleDate,
                     Content = x.Content,
-                    ChannelType = x.ChannelType,
-                    ChannelSocialId = x.ChannelSocialId.Value,
                     TCareCampaignId = x.TCareCampaignId,
                 })
                 .FirstOrDefaultAsync();

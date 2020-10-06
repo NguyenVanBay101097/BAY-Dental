@@ -4,7 +4,7 @@ import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenari
 import { TcareScenarioListComponent } from './tcare-scenario-list/tcare-scenario-list.component';
 
 const routes: Routes = [
-  { path: 'scenario/:id', component: TcareScenarioCrUpComponent },
+  { path: 'scenarios/form', component: TcareScenarioCrUpComponent },
   { path: 'scenarios', component: TcareScenarioListComponent }
 ];
 

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyERP.Utilities;
 using Newtonsoft.Json;
+using RestSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -312,6 +313,10 @@ namespace Infrastructure.Services
                 if (campaign == null)
                     return;
 
+                var scennario = conn.Query<TCareScenario>("SELECT * FROM TCareScenarios WHERE Id = @id", new { id = campaign.TCareScenarioId }).FirstOrDefault();
+                if (scennario == null)
+                    return;
+
                 XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                 MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                 MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
@@ -328,7 +333,7 @@ namespace Infrastructure.Services
                      "SELECT * " +
                      "FROM FacebookPages " +
                      "where Id = @id" +
-                     "", new { id = sequence.ChannelSocialId }).FirstOrDefault();
+                     "", new { id = scennario.ChannelSocialId.Value }).FirstOrDefault();
 
                 if (channelSocial == null)
                     return;
@@ -346,49 +351,60 @@ namespace Infrastructure.Services
                 var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(partner_id.Value, conn);
                 if (!facebookUserProfiles.Any())
                     return;
-                FacebookUserProfile facebookUserProfile = null;
-                //Xử lý gửi tin              
-                switch (sequence.ChannelType)
+
+                var facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                if (facebookUserProfile == null)
                 {
-                    case "priority":
-                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                        if (facebookUserProfile == null)
-                        {
-                            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-                            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
-                        }
-
-                        //Xử lý cá nhân hóa nội dung gửi tin
-                        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
-                        //Xu ly gui tin cho cac Page
-                        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
-                        break;
-                    case "fixed":
-                        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                        if (facebookUserProfile == null)
-                            return;
-
-                        //Xử lý cá nhân hóa nội dung gửi tin
-                        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
-                        //Xu ly gui tin cho cac Page
-                        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
-                        break;
-                    default:
-                        break;
+                    facebookUserProfile = facebookUserProfiles.FirstOrDefault();
                 }
+
+                //Xử lý cá nhân hóa nội dung gửi tin
+                var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
+                //Xu ly gui tin cho cac Page
+                await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+
+                ////Xử lý gửi tin              
+                //switch (channelSocial.Type)
+                //{
+                //    case "facebook":
+                //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                //        if (facebookUserProfile == null)
+                //        {
+                //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+                //            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
+                //        }
+
+                //        //Xử lý cá nhân hóa nội dung gửi tin
+                //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
+                //        //Xu ly gui tin cho cac Page
+                //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+                //        break;
+                //    case "zalo":
+                //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+                //        if (facebookUserProfile == null)
+                //            return;
+
+                //        //Xử lý cá nhân hóa nội dung gửi tin
+                //        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
+                //        //Xu ly gui tin cho cac Page
+                //        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
+                //        break;
+                //    default:
+                //        break;
+                //}
 
             }
         }
 
-        private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
-        {
-            var channelSocial = conn.Query<FacebookPage>("" +
-                            "SELECT * " +
-                            "FROM FacebookPages " +
-                            "where Id = @id" +
-                            "", new { id = id }).FirstOrDefault();
-            return channelSocial;
-        }
+        //private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
+        //{
+        //    var channelSocial = conn.Query<FacebookPage>("" +
+        //                    "SELECT * " +
+        //                    "FROM FacebookPages " +
+        //                    "where Id = @id" +
+        //                    "", new { id = id }).FirstOrDefault();
+        //    return channelSocial;
+        //}
 
         private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocial)
         {
@@ -490,9 +506,9 @@ namespace Infrastructure.Services
         private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(Guid partId,
            SqlConnection conn = null)
         {
-            var userProfiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
+            var userProfile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
                new { PartnerId = partId }).ToList();
-            return userProfiles;
+            return userProfile;
         }
 
         //public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId , Guid channelSocialId)

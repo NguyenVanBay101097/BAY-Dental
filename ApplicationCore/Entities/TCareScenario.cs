@@ -10,5 +10,9 @@ namespace ApplicationCore.Entities
 
         public ICollection<TCareCampaign> Campaigns { get; set; } = new List<TCareCampaign>();
 
+        // Kênh gửi
+        public Guid? ChannelSocialId { get; set; }
+        public FacebookPage ChannelSocial { get; set; }
+
     }
 }

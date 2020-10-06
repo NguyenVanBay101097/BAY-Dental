@@ -47,7 +47,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(TCareScenarioSave val)
         {
-            var model = _mapper.Map<TCareScenario>(val);
+            var model = new TCareScenario();
+            model.Name = val.Name;
+            model.ChannelSocialId = val.ChannelSocialId;
             var res = await _scenarioService.CreateAsync(model);
             var display = _mapper.Map<TCareScenarioDisplay>(res);
             return Ok(display);
@@ -58,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         {
             var model = await _scenarioService.GetByIdAsync(id);
             model.Name = val.Name;
+            model.ChannelSocialId = val.ChannelSocialId;
             await _scenarioService.UpdateAsync(model);
             return NoContent();
         }

@@ -1,3 +1,4 @@
+import { ChannelSocial } from './../socials-channel/facebook-page.service';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -33,6 +34,7 @@ export class TCareCampaignDisplay {
 export class TCareScenarioDisplay {
   id: string;
   name: string;
+  channelSocial: ChannelSocial;
   campaigns: TCareCampaignDisplay[];
 }
 
