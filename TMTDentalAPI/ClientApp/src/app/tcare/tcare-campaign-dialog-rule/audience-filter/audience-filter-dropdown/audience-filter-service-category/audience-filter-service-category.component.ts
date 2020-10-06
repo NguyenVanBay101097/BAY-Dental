@@ -32,10 +32,7 @@ export class AudienceFilterServiceCategoryComponent implements OnInit {
 
     setTimeout(() => {
       if (this.data) {
-        var categ = {
-          id: this.data.value,
-          name: this.data.displayValue
-        };
+        var categ = this.data.value;
 
         this.formGroup.patchValue({
           op: this.data.op,
@@ -90,13 +87,12 @@ export class AudienceFilterServiceCategoryComponent implements OnInit {
     }
 
     var value = this.formGroup.value;
+
     var res = {
-      op: value.op,
-      opDisplay: this.getOpDisplay(value.op),
-      value: value.categ.id,
-      displayValue: value.categ.name,
       type: this.type,
-      name: this.name
+      op: value.op,
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.categ.name,
+      value: { id: value.categ.id, name: value.categ.name }
     };
 
     this.saveClick.emit(res);

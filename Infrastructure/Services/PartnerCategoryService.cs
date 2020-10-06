@@ -121,7 +121,10 @@ namespace Infrastructure.Services
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == val.PartnerId));
 
-            query = query.OrderBy(s => s.ParentLeft);
+            if (val.Ids != null)
+                query = query.Where(x => val.Ids.Contains(x.Id));
+
+            query = query.OrderBy(s => s.Name);
             return query;
         }
 

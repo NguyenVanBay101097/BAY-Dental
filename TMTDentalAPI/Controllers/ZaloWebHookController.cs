@@ -49,8 +49,6 @@ namespace TMTDentalAPI.Controllers
                     var watermark = whzl.Timestamp.ToLocalTime();
                     var db = _tenant != null ? _tenant.Hostname : "localhost";
                     BackgroundJob.Enqueue(() => _webhookJobService.ProcessRead(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
-
-                   
                 }
 
             }
@@ -59,8 +57,6 @@ namespace TMTDentalAPI.Controllers
                 var watermark = whzl.Timestamp.ToLocalTime();
                 var db = _tenant != null ? _tenant.Hostname : "localhost";
                 BackgroundJob.Enqueue(() => _webhookJobService.ProcessDelivery(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
-
-               
             }
             else if (whzl.EventName == "user_send_text")
             {

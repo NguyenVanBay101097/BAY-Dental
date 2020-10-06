@@ -23,7 +23,7 @@ export class AudienceFilterBirthdayComponent implements OnInit {
     });
 
     if (this.data) {
-      var day = parseInt(this.data.value) || 0;
+      var day = parseInt(this.data.day) || 0;
       this.formGroup.get('day').setValue(day);
     }
   }
@@ -35,12 +35,9 @@ export class AudienceFilterBirthdayComponent implements OnInit {
 
     var day = this.formGroup.get('day').value;
     var res = {
-      op: 'lte',
-      opDisplay: 'trước',
-      value: day + '',
-      displayValue: day + ' ngày',
       type: this.type,
-      name: this.name
+      name: this.name + " trước " + day + " ngày",
+      day: day
     };
 
     this.saveClick.emit(res);

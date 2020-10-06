@@ -148,7 +148,6 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {
             var query = GetQueryPaged(val);
-
             var items = await _mapper.ProjectTo<PartnerBasic>(query.Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
             var totalItems = await query.CountAsync();

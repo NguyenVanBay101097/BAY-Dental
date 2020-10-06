@@ -13,9 +13,13 @@
                   </div>
             </div>
             <div class="form-group mb-2">
-                <kendo-combobox [data]="filteredCategs"
-                    [textField]="'name'" [filterable]="true" [placeholder]="'Chọn nhóm khách hàng'" #categCbx formControlName="categ"
-                    [valueField]="'id'">
+                <kendo-combobox [data]="filteredCategs" 
+                    [placeholder]="'Chọn nhóm khách hàng'" 
+                    formControlName="tag"
+                    [textField]="'name'"
+                    [valueField]="'id'"
+                    [filterable]="true"
+                    #categCbx>
                 </kendo-combobox>
             </div>
             <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>

@@ -14,6 +14,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string State { get; set; }
 
+        public Guid? TagId { get; set; }
+
         public Guid TCareScenarioId { get; set; }
 
         public DateTime? SheduleStart { get; set; }

@@ -24,6 +24,7 @@ export class TCareCampaignDisplay {
   name: string;
   graphXml: string;
   state: string;
+  tagId: string;
   sheduleStart: string;
   recurringJobId: string;
   active: boolean;

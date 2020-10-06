@@ -23,5 +23,6 @@ namespace ApplicationCore.Entities
         public int? ParentRight { get; set; }
 
         public ICollection<PartnerPartnerCategoryRel> PartnerPartnerCategoryRels { get; set; } = new List<PartnerPartnerCategoryRel>();
+
     }
 }
