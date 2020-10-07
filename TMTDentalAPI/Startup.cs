@@ -372,6 +372,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ServiceCardCardProfile());
                 mc.AddProfile(new SaleOrderServiceCardCardRelProfile());
                 mc.AddProfile(new ServiceCardOrderLineProfile());
+                mc.AddProfile(new ServiceCardOrderPaymentProfile());
                 mc.AddProfile(new TCareCampaignProfile());
                 mc.AddProfile(new TCareRuleProfile());
                 mc.AddProfile(new TCareMessagingProfile());

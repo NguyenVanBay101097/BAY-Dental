@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200930082001_AddServiceCardOrderPaymentTable")]
+    partial class AddServiceCardOrderPaymentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7591,9 +7593,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("TCareScenarioId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TagId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -7602,8 +7601,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("TCareScenarioId");
-
-                    b.HasIndex("TagId");
 
                     b.HasIndex("WriteById");
 
@@ -11635,10 +11632,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.TCareScenario", "TCareScenario")
                         .WithMany("Campaigns")
                         .HasForeignKey("TCareScenarioId");
-
-                    b.HasOne("ApplicationCore.Entities.PartnerCategory", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

@@ -6,8 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class ServiceCardOrderLineSave
     {
-        public Guid Id { get; set; }
-
         public decimal PriceUnit { get; set; }
 
         public decimal ProductUOMQty { get; set; }
@@ -15,8 +13,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Discount { get; set; }
 
         public Guid? CardTypeId { get; set; }
-
-        public int? Sequence { get; set; }
 
         public string DiscountType { get; set; }
 

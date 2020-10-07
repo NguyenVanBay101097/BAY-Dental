@@ -18,5 +18,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task<ServiceCardOrderDisplay> GetDisplay(Guid id);
         Task UpdateResidual(IEnumerable<Guid> ids);
+        Task CreateAndPaymentServiceCard(CreateAndPaymentServiceCardOrderVm val);
     }
 }

@@ -69,6 +69,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
       children: [
+        { name: 'Tạo đơn bán thẻ', link: '/service-card-orders/create-card-order' },
         { name: 'Đơn bán thẻ', link: '/service-card-orders' },
         { name: 'Loại thẻ', link: '/service-card-types' },
         { name: 'Danh sách thẻ', link: '/service-cards' },

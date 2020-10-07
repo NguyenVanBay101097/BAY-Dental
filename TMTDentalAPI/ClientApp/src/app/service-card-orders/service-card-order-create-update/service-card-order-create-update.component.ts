@@ -54,6 +54,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       dateOrderObj: [null, Validators.required],
       user: null,
       orderLines: this.fb.array([]),
+      payments: this.fb.array([]),
       companyId: null,
       amountTotal: 0
     });
@@ -72,6 +73,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
           dateOrderObj: [null, Validators.required],
           user: null,
           orderLines: this.fb.array([]),
+          payments: this.fb.array([]),
           companyId: null,
           amountTotal: 0
         });
@@ -111,6 +113,10 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('orderLines') as FormArray;
   }
 
+  get payments() {
+    return this.formGroup.get('payments') as FormArray;
+  }
+
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
@@ -122,6 +128,7 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     this.cardOrderService.get(this.id).subscribe((result: any) => {
+      debugger
       this.cardOrder = result;
       this.formGroup.patchValue(result);
 
@@ -138,6 +145,13 @@ export class ServiceCardOrderCreateUpdateComponent implements OnInit {
       result.orderLines.forEach(line => {
         var g = this.fb.group(line);
         control.push(g);
+      });
+
+      let controlPaments = this.formGroup.get('payments') as FormArray;
+      controlPaments.clear();
+      result.payments.forEach(pay => {
+        var g = this.fb.group(pay);
+        controlPaments.push(g);
       });
 
       this.formGroup.markAsPristine();

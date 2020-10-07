@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ServiceCardOrderLineDisplay> OrderLines { get; set; } = new List<ServiceCardOrderLineDisplay>();
 
+        public IEnumerable<ServiceCardOrderPaymentDisplay> Payments { get; set; } = new List<ServiceCardOrderPaymentDisplay>();
+
         public decimal? AmountTotal { get; set; }
 
         public decimal? AmountResidual { get; set; }

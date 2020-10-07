@@ -9,9 +9,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardOrderCreateUpdateComponent } from './service-card-order-create-update/service-card-order-create-update.component';
 import { SharedModule } from '../shared/shared.module';
 import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-dialog/service-card-order-line-dialog.component';
+import { ServiceCardOrderTypeListComponent } from './service-card-order-type-list/service-card-order-type-list.component';
+import { ServiceCardOrderPosComponent } from './service-card-order-pos/service-card-order-pos.component';
+import { ServiceCardOrderPaymentsDialogComponent } from './service-card-order-payments-dialog/service-card-order-payments-dialog.component';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 @NgModule({
-  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent],
+  declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent, ServiceCardOrderTypeListComponent, ServiceCardOrderPosComponent, ServiceCardOrderPaymentsDialogComponent],
   imports: [
     CommonModule,
     ServiceCardOrdersRoutingModule,
@@ -19,11 +23,13 @@ import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-d
     FormsModule,
     MyCustomKendoModule,
     NgbModule,
-    SharedModule
+    SharedModule,
+    Ng2SearchPipeModule,
   ],
   entryComponents: [
     ServiceCardOrderLineDialogComponent,
-    ServiceCardOrderCreateUpdateComponent
+    ServiceCardOrderCreateUpdateComponent,
+    ServiceCardOrderPaymentsDialogComponent
   ]
 })
 export class ServiceCardOrdersModule { }
