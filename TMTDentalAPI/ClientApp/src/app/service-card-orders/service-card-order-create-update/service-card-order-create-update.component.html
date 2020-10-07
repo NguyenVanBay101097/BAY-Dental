@@ -152,7 +152,7 @@
                         </li>
                         <li class="nav-item" *ngIf="cardOrder.state != 'draft'">
                             <a class="nav-link" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
-                                aria-controls="payment" aria-selected="false">Lịch sử thanh toán</a>
+                                aria-controls="payment" aria-selected="false">Thanh toán</a>
                         </li>
                     </ul>
 
@@ -223,7 +223,7 @@
                                                     class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{amountTotalValue | number}}</span>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="cardOrder.state != 'draft'">
+                                        <!-- <tr *ngIf="cardOrder.state != 'draft'">
                                             <td colspan="1" class="o_td_label pb-0">
                                                 <label
                                                     class="o_form_label o_form_label_help oe_subtotal_footer_separator">
@@ -234,7 +234,7 @@
                                                 <span
                                                     class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{cardOrder.amountResidual | number}}</span>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -245,7 +245,7 @@
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>Ngày thanh toán</th>
+                                    <!-- <th>Ngày thanh toán</th> -->
                                     <th>Phương thức</th>
                                     <th>Số tiền</th>
                                     <!-- <th>Tham chiếu</th> -->
@@ -255,7 +255,7 @@
                             <tbody formArrayName="payments">
                                 <ng-container *ngFor="let payment of payments.controls; let i = index">
                                     <tr [formGroupName]="i">
-                                        <td>{{ payment.get('dateCreated').value | date : 'shortDate' }}</td>
+                                        <!-- <td>{{ payment.get('dateCreated').value | date : 'shortDate' }}</td> -->
                                         <td>{{ payment.get('journal').value.name}}</td>
                                         <td>{{ payment.get('amount').value | number}}</td>
                                         <!-- <td>{{ payment.ref }}</td> -->

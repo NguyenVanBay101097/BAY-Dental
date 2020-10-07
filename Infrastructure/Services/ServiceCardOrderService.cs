@@ -158,7 +158,7 @@ namespace Infrastructure.Services
                 throw new Exception("Not found");
 
             var saleLineObj = GetService<IServiceCardOrderLineService>();
-            res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync(); 
+            res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             res.CardCount = res.OrderLines.Sum(x => x.CardCount);
             return res;
         }
@@ -301,7 +301,6 @@ namespace Infrastructure.Services
 
         public async Task CreateAndPaymentServiceCard(CreateAndPaymentServiceCardOrderVm val)
         {
-            var serviceCardObj = GetService<IServiceCardCardService>();
             ///tạo mới ServiceCardOrder
             var order = new ServiceCardOrder();
             if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
@@ -326,45 +325,33 @@ namespace Infrastructure.Services
             int sequence = 0;
             foreach (var line in val.OrderLines)
             {
-
-                if (line.Id == Guid.Empty)
-                {
-                    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
-                    saleLine.Sequence = sequence++;
-                    saleLine.Order = order;
-                    order.OrderLines.Add(saleLine);
-                }
+                var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                saleLine.Sequence = sequence++;
+                saleLine.Order = order;
+                order.OrderLines.Add(saleLine);
             }
 
-            ///xử lý thêm payments  vào servicecardorder
+            ///xử lý thêm payments vào servicecardorder
             if (!val.Payments.Any())
                 throw new Exception("không tìm thấy thanh toán nào trong đơn bán thẻ");
 
             foreach (var pay in val.Payments)
             {
-                if (pay.Id == Guid.Empty)
-                {
-                    var payOrder = new ServiceCardOrderPayment();
-                    payOrder.Amount = pay.Amount;
-                    payOrder.JournalId = pay.JournalId;
-                    payOrder.Order = order;
-                    order.Payments.Add(payOrder);
-                }
+                var payOrder = new ServiceCardOrderPayment();
+                payOrder.Amount = pay.Amount;
+                payOrder.JournalId = pay.JournalId;
+                payOrder.Order = order;
+                order.Payments.Add(payOrder);
             }
-
 
             var lineObj = GetService<IServiceCardOrderLineService>();
             lineObj.PrepareLines(order.OrderLines);
 
-            _ComputeResidual(new List<ServiceCardOrder>() { order });
             _AmountAll(new List<ServiceCardOrder>() { order });
-
-
 
             await CreateAsync(order);
 
             await ActionConfirm(new List<Guid>() { order.Id });
-
         }
 
         public async Task _CreateAccountMove(IEnumerable<ServiceCardOrder> self)
