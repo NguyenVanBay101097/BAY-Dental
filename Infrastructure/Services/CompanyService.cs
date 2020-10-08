@@ -329,7 +329,7 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal , salaryJournal });
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal });
 
             #endregion
         }
@@ -879,7 +879,16 @@ namespace Infrastructure.Services
 
         public async Task SetupTenant(CompanySetupTenant val)
         {
-            await SetupCompany(val.CompanyName, val.Username, val.Email, val.Password, name: val.Name);
+            try
+            {
+                await SetupCompany(val.CompanyName, val.Username, val.Email, val.Password, name: val.Name);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public async Task InsertSecurityData()

@@ -209,11 +209,13 @@ namespace Infrastructure.Data
 
 
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
+        public DbSet<TCareMessage> TCareMessages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
+            builder.ApplyConfiguration(new TCareMessageConfiguration());
             builder.ApplyConfiguration(new ProductCategoryConfiguration());
             builder.ApplyConfiguration(new CompanyConfiguration());
             builder.ApplyConfiguration(new PartnerConfiguration());

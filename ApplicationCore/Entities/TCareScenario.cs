@@ -13,6 +13,6 @@ namespace ApplicationCore.Entities
         // Kênh gửi
         public Guid? ChannelSocialId { get; set; }
         public FacebookPage ChannelSocial { get; set; }
-
+        public string ChannalType { get; set; }
     }
 }

@@ -50,12 +50,27 @@ namespace Infrastructure.Services
 
         public async Task<TCareCampaign> NameCreate(TCareCampaignNameCreateVM val)
         {
+            var jobService = GetService<ITCareJobService>();
+            List<RecurringJobDto> list;
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,
                 TCareScenarioId = val.TCareScenarioId,
                 State = "draft"
             };
+
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-scenario";
+            //using (var connection = JobStorage.Current.GetConnection())
+            //{
+            //    list = connection.GetRecurringJobs();
+            //}
+            //var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
+            RecurringJob.RemoveIfExists(jobId);
+            //if (job == null) 
+            RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), $"54 11 * * *", TimeZoneInfo.Local);
+
+
             return await CreateAsync(campaign);
         }
 
@@ -64,15 +79,15 @@ namespace Infrastructure.Services
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
             var campaign = await SearchQuery(x => x.Id == val.Id && x.Active == false).FirstOrDefaultAsync();
-         
+
             XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
             MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
             MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
             var sequence = resultingMessage.Root.Sequence;
             var rule = resultingMessage.Root.Rule;
             if (sequence == null || rule == null)
-                 throw new Exception("điều kiện hoặc nội dung trống");
-          
+                throw new Exception("điều kiện hoặc nội dung trống");
+
 
             var runAt = campaign.SheduleStart.HasValue ? campaign.SheduleStart.Value : DateTime.Today;
             campaign.State = "running";

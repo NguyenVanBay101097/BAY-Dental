@@ -34,13 +34,166 @@ namespace Infrastructure.Services
         private readonly IFacebookMessageSender _fbMessageSender;
         public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender, IHttpContextAccessor httpContextAccessor)
         {
-
             _connectionStrings = connectionStrings?.Value;
             _fbMessageSender = fbMessageSender;
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task TCareTakeMessage(string db)
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+            FacebookPage channel = null;
+            string channelType = "";
+            TCareMessage tcareMessage = null;
+            FacebookUserProfile facebookUserProfile = null;
+            List<TCareCampaign> listCampaigns = new List<TCareCampaign>();
+            Partner partner = null;
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    var listScenarios = await conn.QueryAsync<TCareScenario>("SELECT * FROM TCareScenarios");
+                    foreach (var scenario in listScenarios)
+                    {
+                        channelType = scenario.ChannalType;
+                        channel = await GetChannel(conn, scenario.ChannelSocialId.Value);
+                        if (channel == null)
+                            continue;
+                        listCampaigns = (await GetListCampaign(conn, scenario.Id)).ToList();
+                        foreach (var campaign in listCampaigns)
+                        {
+                            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+
+                            var sequence = resultingMessage.Root.Sequence;
+                            var rule = resultingMessage.Root.Rule;
+                            if (sequence == null || rule == null)
+                                continue;
+
+                            if (string.IsNullOrEmpty(sequence.Content))
+                                continue;
+
+
+                            var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                            if (partner_ids == null)
+                                continue;
+                            foreach (var partner_id in partner_ids)
+                            {
+                                var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id);
+                                if (facebookUserProfiles.Count() <= 0)
+                                    continue;
+                                partner = await GetPartner(conn, partner_id);
+                                var messageContent = PersonalizedPartner(partner, channel, sequence, conn);
+
+                                facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channel.Id).FirstOrDefault();
+                                if (facebookUserProfile == null)
+                                    continue;
+                                tcareMessage = new TCareMessage()
+                                {
+                                    ProfilePartnerId = facebookUserProfile.Id,
+                                    ChannelSocicalId = channel.Id,
+                                    CampaignId = campaign.Id,
+                                    PartnerId = partner_id,
+                                    MessageContent = messageContent,
+                                    State = "waiting"
+                                };
+                                CreateMessage(conn, tcareMessage);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+
+            }
+        }
+
+        public void CreateMessage(SqlConnection conn, TCareMessage tcareMessage)
+        {
+            var id = GuidComb.GenerateComb();
+            conn.Execute("insert into TCareMessages" +
+                "(Id,ProfilePartnerId, ChannelSocicalId, CampaignId, PartnerId, MessageContent ,State) " +
+                "Values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@State)",
+                new
+                {
+                    Id = id,
+                    ProfilePartnerId = tcareMessage.ProfilePartnerId,
+                    ChannelSocicalId = tcareMessage.ChannelSocicalId,
+                    CampaignId = tcareMessage.CampaignId,
+                    PartnerId = tcareMessage.PartnerId,
+                    MessageContent = tcareMessage.MessageContent,
+                    State = tcareMessage.State
+                });
+        }
+
+        public void UpdateMessage(SqlConnection conn, Guid id)
+        {
+            conn.Execute("UPDATE TCareMessages SET State='success' WHERE Id = @Id",
+                new
+                {
+                    Id = id,
+                });
+        }
+
+        public async Task<Partner> GetPartner(SqlConnection conn, Guid id)
+        {
+            return (await conn.QueryAsync<Partner>("SELECT * FROM Partners where Id = @id", new { id = id })).FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<TCareCampaign>> GetListCampaign(SqlConnection conn, Guid scenarioId)
+        {
+            return await conn.QueryAsync<TCareCampaign>("SELECT * FROM TCareCampaigns where TCareScenarioId = @ScenarioId AND State = 'running'", new { ScenarioId = scenarioId });
+        }
+
+        public async Task<FacebookPage> GetChannel(SqlConnection conn, Guid id)
+        {
+            return (await conn.QueryAsync<FacebookPage>("SELECT * FROM FacebookPages where Id = @id", new { id = id })).FirstOrDefault();
+        }
+
         public async Task Run(string db, Guid campaignId)
+        {
+            //await TCareTakeMessage(db);
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    var messages = await conn.QueryAsync<TCareMessage>("SELECT * FROM TCareMessages WHERE State = 'waiting'");
+                    if (messages.Count() == 0)
+                        return;
+
+                    //var date = DateTime.UtcNow;
+                    //var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+
+                    //var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                    //if (partner_ids == null)
+                    //    return;
+
+                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
+                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
+                    foreach (var message in messages)
+                        BackgroundJob.Enqueue(() => SendMessgeToPage(db, message));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        public async Task SendMessgeToPage(string db, TCareMessage mess)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
@@ -50,25 +203,29 @@ namespace Infrastructure.Services
                 try
                 {
                     conn.Open();
-                    //var date = DateTime.UtcNow;
-                    var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-
-                    var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
-                    if (partner_ids == null)
-                        return;
-
-                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
-                    foreach (var partner_id in partner_ids)
-                        BackgroundJob.Enqueue(() => SendMessageSocial(campaignId, db, partner_id));
+                    var partner = await GetPartner(conn, mess.PartnerId.Value);
+                    var partnerProfile = await GetPartnerProfile(conn, mess.ProfilePartnerId.Value);
+                    var campaign = await GetCampaign(conn, mess.CampaignId.Value);
+                    var channelSocial = await GetChannel(conn, mess.ChannelSocicalId.Value);
+                    await SendMessagePage(conn, campaign, mess, partnerProfile, db, channelSocial);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e);
+                    throw new Exception(ex.Message);
                 }
             }
+        }
+
+        public async Task<TCareCampaign> GetCampaign(SqlConnection conn, Guid id)
+        {
+            var campaign = (await conn.QueryAsync<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @Id", new { Id = id })).FirstOrDefault();
+            return campaign;
+        }
+
+        public async Task<FacebookUserProfile> GetPartnerProfile(SqlConnection conn, Guid id)
+        {
+            var partnerProfile = (await conn.QueryAsync<FacebookUserProfile>("SELECT * FROM FacebookUserProfiles WHERE Id = @Id", new { Id = id })).FirstOrDefault();
+            return partnerProfile;
         }
 
         public void SetTagForPartner(Guid partnerId, Guid TagId, SqlConnection conn)
@@ -297,104 +454,108 @@ namespace Infrastructure.Services
             return partner_ids;
         }
 
-        public async Task SendMessageSocial(Guid? campaignId = null,
-            string db = null, Guid? partner_id = null)
-        {
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            if (db != "localhost")
-                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+        //public async Task SendMessageSocial(Guid? campaignId = null,
+        //    string db = null, Guid? partner_id = null)
+        //{
+        //    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+        //    if (db != "localhost")
+        //        builder["Database"] = $"TMTDentalCatalogDb__{db}";
 
-            using (var conn = new SqlConnection(builder.ConnectionString))
-            {
-                conn.Open();
+        //    using (var conn = new SqlConnection(builder.ConnectionString))
+        //    {
+        //        conn.Open();
 
-                var partner_ids = new List<Guid>().AsEnumerable();
-                var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-                if (campaign == null)
-                    return;
 
-                var scennario = conn.Query<TCareScenario>("SELECT * FROM TCareScenarios WHERE Id = @id", new { id = campaign.TCareScenarioId }).FirstOrDefault();
-                if (scennario == null)
-                    return;
 
-                XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
 
-                var sequence = resultingMessage.Root.Sequence;
-                var rule = resultingMessage.Root.Rule;
-                if (sequence == null || rule == null)
-                    return;
 
-                if (string.IsNullOrEmpty(sequence.Content))
-                    return;
-                // Kênh người dùng chọn 
-                var channelSocial = conn.Query<FacebookPage>("" +
-                     "SELECT * " +
-                     "FROM FacebookPages " +
-                     "where Id = @id" +
-                     "", new { id = scennario.ChannelSocialId.Value }).FirstOrDefault();
+        //        var partner_ids = new List<Guid>().AsEnumerable();
+        //        var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+        //        if (campaign == null)
+        //            return;
 
-                if (channelSocial == null)
-                    return;
+        //        var scennario = conn.Query<TCareScenario>("SELECT * FROM TCareScenarios WHERE Id = @id", new { id = campaign.TCareScenarioId }).FirstOrDefault();
+        //        if (scennario == null)
+        //            return;
 
-                //khách hàng
-                var partner = conn.Query<Partner>("" +
-                             "SELECT * " +
-                             "FROM Partners " +
-                             "where Id = @id" +
-                             "", new { id = partner_id.Value }).FirstOrDefault();
+        //        XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+        //        MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+        //        MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
 
-                if (partner == null)
-                    return;
+        //        var sequence = resultingMessage.Root.Sequence;
+        //        var rule = resultingMessage.Root.Rule;
+        //        if (sequence == null || rule == null)
+        //            return;
 
-                var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(partner_id.Value, conn);
-                if (!facebookUserProfiles.Any())
-                    return;
+        //        if (string.IsNullOrEmpty(sequence.Content))
+        //            return;
+        //        // Kênh người dùng chọn 
+        //        var channelSocial = conn.Query<FacebookPage>("" +
+        //             "SELECT * " +
+        //             "FROM FacebookPages " +
+        //             "where Id = @id" +
+        //             "", new { id = scennario.ChannelSocialId.Value }).FirstOrDefault();
 
-                var facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                if (facebookUserProfile == null)
-                {
-                    facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-                }
+        //        if (channelSocial == null)
+        //            return;
 
-                //Xử lý cá nhân hóa nội dung gửi tin
-                var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
-                //Xu ly gui tin cho cac Page
-                await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+        //        //khách hàng
+        //        var partner = conn.Query<Partner>("" +
+        //                     "SELECT * " +
+        //                     "FROM Partners " +
+        //                     "where Id = @id" +
+        //                     "", new { id = partner_id.Value }).FirstOrDefault();
 
-                ////Xử lý gửi tin              
-                //switch (channelSocial.Type)
-                //{
-                //    case "facebook":
-                //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                //        if (facebookUserProfile == null)
-                //        {
-                //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-                //            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
-                //        }
+        //        if (partner == null)
+        //            return;
 
-                //        //Xử lý cá nhân hóa nội dung gửi tin
-                //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
-                //        //Xu ly gui tin cho cac Page
-                //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
-                //        break;
-                //    case "zalo":
-                //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-                //        if (facebookUserProfile == null)
-                //            return;
+        //        var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id.Value);
+        //        if (!facebookUserProfiles.Any())
+        //            return;
 
-                //        //Xử lý cá nhân hóa nội dung gửi tin
-                //        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
-                //        //Xu ly gui tin cho cac Page
-                //        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
-                //        break;
-                //    default:
-                //        break;
-                //}
+        //        var facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+        //        if (facebookUserProfile == null)
+        //        {
+        //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+        //        }
 
-            }
-        }
+        //        //Xử lý cá nhân hóa nội dung gửi tin
+        //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
+        //        //Xu ly gui tin cho cac Page
+        //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+
+        //        ////Xử lý gửi tin              
+        //        //switch (channelSocial.Type)
+        //        //{
+        //        //    case "facebook":
+        //        //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+        //        //        if (facebookUserProfile == null)
+        //        //        {
+        //        //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
+        //        //            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
+        //        //        }
+
+        //        //        //Xử lý cá nhân hóa nội dung gửi tin
+        //        //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
+        //        //        //Xu ly gui tin cho cac Page
+        //        //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
+        //        //        break;
+        //        //    case "zalo":
+        //        //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
+        //        //        if (facebookUserProfile == null)
+        //        //            return;
+
+        //        //        //Xử lý cá nhân hóa nội dung gửi tin
+        //        //        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
+        //        //        //Xu ly gui tin cho cac Page
+        //        //        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
+        //        //        break;
+        //        //    default:
+        //        //        break;
+        //        //}
+
+        //    }
+        //}
 
         //private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
         //{
@@ -406,7 +567,7 @@ namespace Infrastructure.Services
         //    return channelSocial;
         //}
 
-        private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, string messageContent, FacebookUserProfile profile, string db, FacebookPage channelSocial)
+        private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, TCareMessage mess, FacebookUserProfile profile, string db, FacebookPage channelSocial)
         {
             bool check = false;
             var trace_Id = GuidComb.GenerateComb();
@@ -428,21 +589,27 @@ namespace Infrastructure.Services
             switch (channelSocial.Type)
             {
                 case "facebook":
-                    check = await SendMessagePageFacebook(profile, messageContent, db, channelSocial, conn, trace_Id);
+                    check = await SendMessagePageFacebook(profile, mess.MessageContent, db, channelSocial, conn, trace_Id);
                     if (check && campaign.TagId.HasValue)
+                    {
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
+                        UpdateMessage(conn, mess.Id);
+                    }
                     break;
                 case "zalo":
-                    check = await SendMessagePageZalo(profile, messageContent, db, channelSocial, conn, trace_Id);
+                    check = await SendMessagePageZalo(profile, mess.MessageContent, db, channelSocial, conn, trace_Id);
                     if (check && campaign.TagId.HasValue)
+                    {
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
+                        UpdateMessage(conn, mess.Id);
+                    }
                     break;
                 default:
                     break;
             }
         }
 
-        private async Task<bool> SendMessagePageZalo(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn,Guid trace_Id)
+        private async Task<bool> SendMessagePageZalo(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn, Guid trace_Id)
         {
             var zaloClient = new ZaloClient(channelSocial.PageAccesstoken);
             var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, messageContent).ToObject<SendMessageZaloResponse>();
@@ -458,7 +625,7 @@ namespace Infrastructure.Services
             }
         }
 
-        private async Task<bool> SendMessagePageFacebook(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn,Guid trace_Id)
+        private async Task<bool> SendMessagePageFacebook(FacebookUserProfile profile, string messageContent, string db, FacebookPage channelSocial, SqlConnection conn, Guid trace_Id)
         {
             var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
             if (!string.IsNullOrEmpty(sendResult.error))
@@ -476,8 +643,8 @@ namespace Infrastructure.Services
 
         private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
         {
-            var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
-            if (messageContent.Contains("{{danh_xung_khach_hang}}"))
+            var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page}}", channelSocial.PageName);
+            if (messageContent.Contains("@danh_xung_khach_hang"))
             {
                 PartnerTitle partnerTitle = null;
                 if (partner.TitleId.HasValue)
@@ -489,7 +656,7 @@ namespace Infrastructure.Services
                         "", new { id = partner.TitleId }).FirstOrDefault();
                 }
 
-                messageContent = messageContent.Replace("{{danh_xung_khach_hang}}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
+                messageContent = messageContent.Replace("@danh_xung_khach_hang", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
             }
             return messageContent;
         }
@@ -503,8 +670,7 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(Guid partId,
-           SqlConnection conn = null)
+        private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(SqlConnection conn, Guid partId)
         {
             var userProfile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
                new { PartnerId = partId }).ToList();
@@ -821,7 +987,6 @@ namespace Infrastructure.Services
         public string ZaloId { get; set; }
         public string Content { get; set; }
     }
-
 
     public class SendMessageZaloResponse
     {

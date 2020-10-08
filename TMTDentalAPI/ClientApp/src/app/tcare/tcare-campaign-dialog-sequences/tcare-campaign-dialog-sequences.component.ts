@@ -40,13 +40,13 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      channelSocialId: ['', Validators.required],
+      // channelSocialId: ['', Validators.required],
       content: ['', Validators.required],
       methodType: ['interval', Validators.required],
       intervalNumber: [0],
       intervalType: ['minutes'],
       sheduleDate: null,
-      channelType: ['fixed', Validators.required]
+      // channelType: ['fixed', Validators.required]
     });
 
     // this.channelSocialCbx.filterChange.asObservable().pipe(
