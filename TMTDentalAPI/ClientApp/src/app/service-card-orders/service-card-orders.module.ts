@@ -12,7 +12,7 @@ import { ServiceCardOrderLineDialogComponent } from './service-card-order-line-d
 import { ServiceCardOrderTypeListComponent } from './service-card-order-type-list/service-card-order-type-list.component';
 import { ServiceCardOrderPosComponent } from './service-card-order-pos/service-card-order-pos.component';
 import { ServiceCardOrderPaymentsDialogComponent } from './service-card-order-payments-dialog/service-card-order-payments-dialog.component';
-import { Ng2SearchPipeModule } from 'ng2-search-filter';
+// import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 @NgModule({
   declarations: [ServiceCardOrderListComponent, ServiceCardOrderCreateUpdateComponent, ServiceCardOrderLineDialogComponent, ServiceCardOrderTypeListComponent, ServiceCardOrderPosComponent, ServiceCardOrderPaymentsDialogComponent],
@@ -24,7 +24,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     MyCustomKendoModule,
     NgbModule,
     SharedModule,
-    Ng2SearchPipeModule,
+    // Ng2SearchPipeModule,
   ],
   entryComponents: [
     ServiceCardOrderLineDialogComponent,
