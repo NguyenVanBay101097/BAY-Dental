@@ -68,7 +68,7 @@ namespace Infrastructure.Services
             //var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
             RecurringJob.RemoveIfExists(jobId);
             //if (job == null) 
-            RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), $"54 11 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), $"00 12 * * *", TimeZoneInfo.Local);
 
 
             return await CreateAsync(campaign);
