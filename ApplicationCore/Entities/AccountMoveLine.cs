@@ -14,6 +14,8 @@ namespace ApplicationCore.Entities
             Name = "/";
             DiscountType = "percentage";
             DiscountFixed = 0;
+            Reconciled = false;
+            AmountResidual = 0;
         }
 
         public string Name { get; set; }

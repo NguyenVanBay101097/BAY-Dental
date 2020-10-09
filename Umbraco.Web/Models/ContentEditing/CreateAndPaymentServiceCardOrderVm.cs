@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class ServiceCardOrderSave
+    public class CreateAndPaymentServiceCardOrderVm
     {
         /// <summary>
         /// Khách hàng sẽ ghi công nợ
@@ -26,5 +26,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountRefund { get; set; }
 
         public IEnumerable<ServiceCardOrderLineSave> OrderLines { get; set; } = new List<ServiceCardOrderLineSave>();
+        public IEnumerable<ServiceCardOrderPaymentSave> Payments { get; set; } = new List<ServiceCardOrderPaymentSave>();
     }
 }
