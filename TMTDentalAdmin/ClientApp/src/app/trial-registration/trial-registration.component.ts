@@ -53,8 +53,8 @@ export class TrialRegistrationComponent implements OnInit {
     this.tenantService.register(value).subscribe(() => {
       value.hostName = this.getHostName();
       this.router.navigate(['/register-success'], { state: value });
-    }, () => {
-      alert('Register fail.');
+    }, (err) => {
+      console.log(err);
     });
   }
 }
