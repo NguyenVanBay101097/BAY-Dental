@@ -36,9 +36,5 @@ namespace ApplicationCore.Entities
 
         public Guid? FacebookPageId { get; set; }
         public FacebookPage FacebookPage { get; set; }
-
-
-
-
     }
 }
