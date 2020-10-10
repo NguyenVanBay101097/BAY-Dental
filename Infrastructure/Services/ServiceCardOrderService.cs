@@ -209,11 +209,11 @@ namespace Infrastructure.Services
                 bool found = false;
                 foreach (var item in val.OrderLines)
                 {
-                    if (item.Id == existLine.Id)
-                    {
-                        found = true;
-                        break;
-                    }
+                    //if (item.Id == existLine.Id)
+                    //{
+                    //    found = true;
+                    //    break;
+                    //}
                 }
 
                 if (!found)
@@ -226,22 +226,22 @@ namespace Infrastructure.Services
             int sequence = 0;
             foreach (var line in val.OrderLines)
             {
-                if (line.Id == Guid.Empty)
-                {
-                    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
-                    saleLine.Sequence = sequence++;
-                    saleLine.Order = order;
-                    order.OrderLines.Add(saleLine);
-                }
-                else
-                {
-                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
-                    if (saleLine != null)
-                    {
-                        _mapper.Map(line, saleLine);
-                        saleLine.Sequence = sequence++;
-                    }
-                }
+                //if (line.Id == Guid.Empty)
+                //{
+                //    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                //    saleLine.Sequence = sequence++;
+                //    saleLine.Order = order;
+                //    order.OrderLines.Add(saleLine);
+                //}
+                //else
+                //{
+                //    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                //    if (saleLine != null)
+                //    {
+                //        _mapper.Map(line, saleLine);
+                //        saleLine.Sequence = sequence++;
+                //    }
+                //}
             }
         }
 
