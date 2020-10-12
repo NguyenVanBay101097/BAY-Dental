@@ -7,11 +7,13 @@ using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -81,9 +83,8 @@ namespace Infrastructure.Services
             var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
             if (job == null || string.IsNullOrEmpty(job.LastJobId))
             {
-                RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "49 16 * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "15 17 * * *", TimeZoneInfo.Local);
             }
-
             return await CreateAsync(campaign);
         }
 

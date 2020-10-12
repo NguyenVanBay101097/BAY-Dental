@@ -39,6 +39,43 @@ namespace Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task Run(string db, Guid campaignId)
+        {
+            //await TCareTakeMessage(db);
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+            if (db != "localhost")
+                builder["Database"] = $"TMTDentalCatalogDb__{db}";
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    var messages = await conn.QueryAsync<TCareMessage>("SELECT * FROM TCareMessages WHERE State = 'waiting'");
+                    if (messages.Count() == 0)
+                        return;
+
+                    //var date = DateTime.UtcNow;
+                    //var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
+
+                    //var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                    //if (partner_ids == null)
+                    //    return;
+
+                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
+                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
+                    foreach (var message in messages)
+                        BackgroundJob.Enqueue(() => SendMessgeToPage(db, message));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         public async Task TCareTakeMessage(string db)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
@@ -146,6 +183,7 @@ namespace Infrastructure.Services
                      CountPartner = countPartner
                  });
         }
+
         public void CreateMessage(SqlConnection conn, TCareMessage tcareMessage)
         {
             var id = GuidComb.GenerateComb();
@@ -188,43 +226,6 @@ namespace Infrastructure.Services
         public async Task<FacebookPage> GetChannel(SqlConnection conn, Guid id)
         {
             return (await conn.QueryAsync<FacebookPage>("SELECT * FROM FacebookPages where Id = @id", new { id = id })).FirstOrDefault();
-        }
-
-        public async Task Run(string db, Guid campaignId)
-        {
-            //await TCareTakeMessage(db);
-            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            if (db != "localhost")
-                builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            using (var conn = new SqlConnection(builder.ConnectionString))
-            {
-                try
-                {
-                    conn.Open();
-
-                    var messages = await conn.QueryAsync<TCareMessage>("SELECT * FROM TCareMessages WHERE State = 'waiting'");
-                    if (messages.Count() == 0)
-                        return;
-
-                    //var date = DateTime.UtcNow;
-                    //var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-
-                    //var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
-                    //if (partner_ids == null)
-                    //    return;
-
-                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
-                    foreach (var message in messages)
-                        BackgroundJob.Enqueue(() => SendMessgeToPage(db, message));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
         }
 
         public async Task SendMessgeToPage(string db, TCareMessage mess)
@@ -274,332 +275,6 @@ namespace Infrastructure.Services
                     " VALUES(CONVERT(uniqueidentifier, @partnerId) , CONVERT(uniqueidentifier, @tagId))", new { partnerId = partnerId.ToString(), tagId = TagId.ToString() });
 
         }
-
-        // Xử lý nhiều rules
-        //public IEnumerable<Guid> SearchPartnerIdsInRules(IEnumerable<Rule> rules, string typeRule, SqlConnection conn)
-        //{
-        //    var partnerIds = new List<Guid>();
-        //    foreach (var rule in rules)
-        //        partnerIds.AddRange(SearchPartnerIds(rule.Condition, typeRule, conn));
-
-        //    partnerIds = partnerIds.Distinct().ToList();
-
-        //    return partnerIds;
-        //}    
-
-        public IEnumerable<Guid> SearchPartnerIds(IEnumerable<Condition> conditions, string typeRule, SqlConnection conn)
-        {
-
-            var lstRule = new List<RulePartnerIds>();
-            var partner_ids = new List<Guid>();
-            var builder = new SqlBuilder();
-            var lst = new Dictionary<string, string>();
-            lst.Add("contains", "=");
-            lst.Add("not_contains", "!=");
-            //lst.Add("contains", "");
-            //lst.Add("not_contains", "");
-            lst.Add("lte", "<=");
-            lst.Add("gte", ">=");
-            var PartnerIds = conn.Query<Guid>("" +
-                                      "Select pn.Id " +
-                                      "From Partners pn " +
-                                      "Where pn.Customer = 1 "
-                                      ).ToList();
-
-            if (conditions.Count() > 0)
-            {
-                foreach (var condition in conditions)
-                {
-                    switch (condition.Type)
-                    {
-
-                        case "birthday":
-                            // lấy ra danh sách khách dựa vào sinh nhật của khách hàng
-                            var today = DateTime.Today;
-                            var date = today.AddDays(-int.Parse(condition.Value));
-                            var birthdayPartnerIds = conn.Query<Guid>("" +
-                                           "Select pn.Id " +
-                                           "From Partners pn " +
-                                           "Where pn.Customer = 1 and pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month }
-                                           ).ToList();
-                            lstRule.Add(new RulePartnerIds() { Ids = birthdayPartnerIds });
-                            break;
-                        case "lastSaleOrder":
-                            // lấy ra danh sách khách dựa vào phiểu điều trị cuối lấy ra ngày điều trị cuối của khách hàng
-                            var lastSaleOrderPartnerIds = conn.Query<Guid>("" +
-                                    "Select pn.Id From Partners pn " +
-                                    "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                    "Where pn.Customer = 1 and sale.State = @sale " +
-                                    "Group by pn.Id " +
-                                    "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value), sale = "('sale','done')" }).ToList();
-                            lstRule.Add(new RulePartnerIds() { Ids = lastSaleOrderPartnerIds });
-                            break;
-                        case "categPartner":
-                            // lấy ra danh sách khách dựa vào nhóm khách hàng
-                            foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                            {
-                                switch (kvp.Key)
-                                {
-                                    case "contains":
-                                        //danh sách khách hàng thuộc nhóm khách hàng
-                                        var categPartnerIds = conn.Query<Guid>("" +
-                                                       "Select pn.Id " +
-                                                       "From Partners pn " +
-                                                       "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                                       "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                                       $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value }).ToList();
-                                        lstRule.Add(new RulePartnerIds() { Ids = categPartnerIds });
-                                        break;
-                                    case "not_contains":
-                                        //danh sách khách hàng không thuộc nhóm khách hàng
-                                        var categNotPartnerIds = conn.Query<Guid>("" +
-                                                       "Select pn.Id " +
-                                                       "From Partners pn " +
-                                                       "Left join PartnerPartnerCategoryRel rel On rel.PartnerId = pn.Id " +
-                                                       "Left join PartnerCategories cpt On cpt.id = rel.CategoryId " +
-                                                       $"Where pn.Customer = 1 and cpt.Id {kvp.Value} @cateId ", new { cateId = condition.Value }).ToList();
-                                        lstRule.Add(new RulePartnerIds() { Ids = categNotPartnerIds });
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                                }
-                            }
-
-                            break;
-                        case "usedService":
-                            // lấy ra danh sách khách dựa vào dịch vụ khách hàng đã sử dụng
-                            foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                            {
-                                switch (kvp.Key)
-                                {
-                                    case "contains":
-                                        //danh sách khách hàng đã sử dụng dịch vụ
-                                        var usedServicePartnerIds = conn.Query<Guid>("" +
-                                        "Select pn.Id " +
-                                        "From Partners pn " +
-                                        "Where pn.Customer = 1 and EXISTS (Select orlines.OrderPartnerId " +
-                                        "From SaleOrderLines orlines " +
-                                        "Left join Products sp On sp.Id = orlines.ProductId " +
-                                        $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
-                                            .ToList();
-                                        lstRule.Add(new RulePartnerIds() { Ids = usedServicePartnerIds });
-                                        break;
-                                    case "not_contains":
-                                        //danh sách khách hàng chưa sử dụng dịch vụ 
-                                        var usedServiceNotPartnerIds = conn.Query<Guid>("" +
-                                       "Select pn.Id " +
-                                       "From Partners pn " +
-                                       "Where pn.Customer = 1 and NOT EXISTS (Select orlines.OrderPartnerId From SaleOrderLines orlines " +
-                                       "Left join Products sp On sp.Id = orlines.ProductId " +
-                                      $"Where sp.id = @serviceId And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { serviceId = condition.Value })
-                                           .ToList();
-                                        lstRule.Add(new RulePartnerIds() { Ids = usedServiceNotPartnerIds });
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                                }
-                            }
-                            break;
-                        case "usedCategService":
-                            //lấy ra danh sách khách dựa vào nhóm dịch vụ khách hàng đã sử dụng
-                            foreach (var kvp in lst.Where(x => x.Key == condition.Op))
-                            {
-                                switch (kvp.Key)
-                                {
-                                    case "contains":
-                                        //danh sách khách hàng đã sử dụng nhóm dịch vụ
-                                        var usedCategServicePartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
-                                            "From Partners pn " +
-                                            "Where pn.Customer = 1 and EXISTS(Select orlines.OrderPartnerId " +
-                                            "From SaleOrderLines orlines " +
-                                            "Left join Products sp On sp.Id = orlines.ProductId " +
-                                            "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                            "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
-                                            .ToList();
-
-                                        lstRule.Add(new RulePartnerIds() { Ids = usedCategServicePartnerIds });
-                                        break;
-                                    case "not_contains":
-                                        //danh sách khách hàng chưa sử dụng nhóm dịch vụ
-                                        var usedCategServiceNotPartnerIds = conn.Query<Guid>("" + "Select pn.Id " +
-                                            "From Partners pn " +
-                                           "Where pn.Customer = 1 and NOT EXISTS(Select orlines.OrderPartnerId " +
-                                           "From SaleOrderLines orlines " +
-                                           "Left join Products sp On sp.Id = orlines.ProductId " +
-                                           "Left join ProductCategories csp On csp.Id = sp.CategId " +
-                                           "Where csp.Id = @categService And sp.Type2 = 'service' AND orlines.State in ('sale','done') AND orlines.OrderPartnerId = pn.Id Group by orlines.OrderPartnerId) ", new { categService = condition.Value })
-                                            .ToList();
-                                        lstRule.Add(new RulePartnerIds() { Ids = usedCategServiceNotPartnerIds });
-                                        break;
-                                    default:
-                                        throw new NotSupportedException(string.Format("Not support Operator {0}!", condition.Value));
-                                }
-                            }
-
-                            break;
-                        case "lastExamination":
-                            //ngày khám cuối cùng sau bao nhiêu ngày 
-                            var lastExaminationPartnerIds = conn.Query<Guid>("" +
-                                   "Select pn.Id From Partners pn " +
-                                   "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                   "Left join DotKhams dk ON dk.SaleOrderId = sale.Id " +
-                                   "Where pn.Customer = 1 and sale.State in ('sale','done') " +
-                                   "Group by pn.Id " +
-                                   "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
-                            lstRule.Add(new RulePartnerIds() { Ids = lastExaminationPartnerIds });
-                            break;
-                        case "lastAppointment":
-                            //lịch hẹn tiếp theo/gần đây trước bao nhiêu ngày
-                            var lastAppointmentPartnerIds = conn.Query<Guid>("" +
-                                    "Select pn.Id From Partners pn " +
-                                    "Left join Appointments am ON am.PartnerId = pn.Id " +
-                                    "Where pn.Customer = 1 " +
-                                    "Group by pn.Id " +
-                                    "Having (Max(am.Date) >= DATEADD(day, -@number, GETDATE())) ", new { number = int.Parse(condition.Value) }).ToList();
-                            lstRule.Add(new RulePartnerIds() { Ids = lastAppointmentPartnerIds });
-                            break;
-                    }
-
-                }
-
-                if (typeRule == "and")
-                {
-                    foreach (var rule in lstRule)
-                        partner_ids = PartnerIds.Intersect(rule.Ids).Distinct().ToList();
-
-                }
-                else if (typeRule == "or")
-                {
-                    foreach (var rule in lstRule)
-                        partner_ids = PartnerIds.Union(rule.Ids).Distinct().ToList();
-                }
-
-
-                partner_ids = partner_ids.Distinct().ToList();
-            }
-            else
-            {
-                partner_ids = PartnerIds;
-            }
-
-
-
-            //var partner_ids = conn.Query<Guid>(sqltemplate.RawSql, sqltemplate.Parameters).Distinct().ToList();
-            return partner_ids;
-        }
-
-        //public async Task SendMessageSocial(Guid? campaignId = null,
-        //    string db = null, Guid? partner_id = null)
-        //{
-        //    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-        //    if (db != "localhost")
-        //        builder["Database"] = $"TMTDentalCatalogDb__{db}";
-
-        //    using (var conn = new SqlConnection(builder.ConnectionString))
-        //    {
-        //        conn.Open();
-
-
-
-
-
-        //        var partner_ids = new List<Guid>().AsEnumerable();
-        //        var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-        //        if (campaign == null)
-        //            return;
-
-        //        var scennario = conn.Query<TCareScenario>("SELECT * FROM TCareScenarios WHERE Id = @id", new { id = campaign.TCareScenarioId }).FirstOrDefault();
-        //        if (scennario == null)
-        //            return;
-
-        //        XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-        //        MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-        //        MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-
-        //        var sequence = resultingMessage.Root.Sequence;
-        //        var rule = resultingMessage.Root.Rule;
-        //        if (sequence == null || rule == null)
-        //            return;
-
-        //        if (string.IsNullOrEmpty(sequence.Content))
-        //            return;
-        //        // Kênh người dùng chọn 
-        //        var channelSocial = conn.Query<FacebookPage>("" +
-        //             "SELECT * " +
-        //             "FROM FacebookPages " +
-        //             "where Id = @id" +
-        //             "", new { id = scennario.ChannelSocialId.Value }).FirstOrDefault();
-
-        //        if (channelSocial == null)
-        //            return;
-
-        //        //khách hàng
-        //        var partner = conn.Query<Partner>("" +
-        //                     "SELECT * " +
-        //                     "FROM Partners " +
-        //                     "where Id = @id" +
-        //                     "", new { id = partner_id.Value }).FirstOrDefault();
-
-        //        if (partner == null)
-        //            return;
-
-        //        var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id.Value);
-        //        if (!facebookUserProfiles.Any())
-        //            return;
-
-        //        var facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-        //        if (facebookUserProfile == null)
-        //        {
-        //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-        //        }
-
-        //        //Xử lý cá nhân hóa nội dung gửi tin
-        //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
-        //        //Xu ly gui tin cho cac Page
-        //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
-
-        //        ////Xử lý gửi tin              
-        //        //switch (channelSocial.Type)
-        //        //{
-        //        //    case "facebook":
-        //        //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-        //        //        if (facebookUserProfile == null)
-        //        //        {
-        //        //            facebookUserProfile = facebookUserProfiles.FirstOrDefault();
-        //        //            channelSocial = GetChannelSocial(facebookUserProfile.FbPageId, conn);
-        //        //        }
-
-        //        //        //Xử lý cá nhân hóa nội dung gửi tin
-        //        //        var messageContent = PersonalizedPartner(partner, channelSocial, sequence, conn);
-        //        //        //Xu ly gui tin cho cac Page
-        //        //        await SendMessagePage(conn, campaign, messageContent, facebookUserProfile, db, channelSocial);
-        //        //        break;
-        //        //    case "zalo":
-        //        //        facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channelSocial.Id).FirstOrDefault();
-        //        //        if (facebookUserProfile == null)
-        //        //            return;
-
-        //        //        //Xử lý cá nhân hóa nội dung gửi tin
-        //        //        var messageContent1 = PersonalizedPartner(partner, channelSocial, sequence, conn);
-        //        //        //Xu ly gui tin cho cac Page
-        //        //        await SendMessagePage(conn, campaign, messageContent1, facebookUserProfile, db, channelSocial);
-        //        //        break;
-        //        //    default:
-        //        //        break;
-        //        //}
-
-        //    }
-        //}
-
-        //private FacebookPage GetChannelSocial(Guid id, SqlConnection conn)
-        //{
-        //    var channelSocial = conn.Query<FacebookPage>("" +
-        //                    "SELECT * " +
-        //                    "FROM FacebookPages " +
-        //                    "where Id = @id" +
-        //                    "", new { id = id }).FirstOrDefault();
-        //    return channelSocial;
-        //}
 
         private async Task SendMessagePage(SqlConnection conn, TCareCampaign campaign, TCareMessage mess, FacebookUserProfile profile, string db, FacebookPage channelSocial)
         {
@@ -679,7 +354,7 @@ namespace Infrastructure.Services
 
         private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
         {
-            var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page}}", channelSocial.PageName);
+            var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page", channelSocial.PageName);
             if (messageContent.Contains("@danh_xung_khach_hang"))
             {
                 PartnerTitle partnerTitle = null;
@@ -697,89 +372,31 @@ namespace Infrastructure.Services
             return messageContent;
         }
 
-        private static IEnumerable<FacebookUserProfile> GetUserProfilesFixed(Guid ChannelSocialId, Guid partner_id,
-           SqlConnection conn = null)
-        {
-            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where FbPageId = @PageId and PartnerId = @PartnerId",
-                new { PageId = ChannelSocialId, PartnerId = partner_id }).ToList();
+        //private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
+        //{
+        //    var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page", channelSocial.PageName);
+        //    if (messageContent.Contains("@danh_xung_khach_hang"))
+        //    {
+        //        PartnerTitle partnerTitle = null;
+        //        if (partner.TitleId.HasValue)
+        //        {
+        //            partnerTitle = conn.Query<PartnerTitle>("" +
+        //                "SELECT * " +
+        //                "FROM PartnerTitles " +
+        //                "where Id = @id" +
+        //                "", new { id = partner.TitleId }).FirstOrDefault();
+        //        }
 
-            return profiles;
-        }
+        //        messageContent = messageContent.Replace("@danh_xung_khach_hang", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
+        //    }
+        //    return messageContent;
+        //}
 
         private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(SqlConnection conn, Guid partId)
         {
             var userProfile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",
                new { PartnerId = partId }).ToList();
             return userProfile;
-        }
-
-        //public async Task SendMessageAndTrace(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId , Guid channelSocialId)
-        //{
-        //    //var now = DateTime.Now;
-        //    //var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-        //    //date = date.AddSeconds(-1);
-
-        //    ////khách hàng
-        //    //var partner = conn.Query<Partner>("" +
-        //    //             "SELECT * " +
-        //    //             "FROM Partners " +
-        //    //             "where Id = @id" +
-        //    //             "", new { id = profile.PartnerId }).FirstOrDefault();
-
-        //    //if (partner == null)
-        //    //    return;
-
-        //    /////chi nhánh
-        //    //var company = conn.Query<Company>("" +
-        //    //            "SELECT * " +
-        //    //            "FROM Companies " +
-        //    //            "where Id = @id" +
-        //    //            "", new { id = partner.CompanyId }).FirstOrDefault();
-
-        //    //if (company == null)
-        //    //    return;
-
-        //    //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name), profile.PSID, access_token);
-        //    //var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(text, profile.PSID, access_token);
-        //    //if (sendResult == null)
-        //    //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook" , ChannelSocialId = channelSocialId });
-        //    //else
-        //    //    await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "facebook", ChannelSocialId = channelSocialId });
-        //}
-
-        public async Task SendMessageAndTraceZalo(SqlConnection conn, string text, FacebookUserProfile profile, string access_token, Guid campaignId, Guid channelSocialId)
-        {
-            var now = DateTime.Now;
-            var date = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            date = date.AddSeconds(-1);
-            //khách hàng
-            var partner = conn.Query<Partner>("" +
-                         "SELECT * " +
-                         "FROM Partners " +
-                         "where Id = @id" +
-                         "", new { id = profile.PartnerId }).FirstOrDefault();
-
-            if (partner == null)
-                return;
-
-            ///chi nhánh
-            var company = conn.Query<Company>("" +
-                        "SELECT * " +
-                        "FROM Companies " +
-                        "where Id = @id" +
-                        "", new { id = partner.CompanyId }).FirstOrDefault();
-
-            if (company == null)
-                return;
-
-            var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name)).Root.ToObject<SendMessageZaloResponse>().data;
-            if (sendResult == null)
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
-            else
-                await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Sent,TCareCampaignId,MessageId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Sent,@TCareCampaignId,@MessageId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Sent = date, TCareCampaignId = campaignId, MessageId = sendResult.message_id, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
-
-
         }
 
         [AutomaticRetry]
