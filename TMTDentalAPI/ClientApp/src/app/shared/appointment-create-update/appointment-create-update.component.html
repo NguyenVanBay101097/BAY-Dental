@@ -68,8 +68,17 @@
                                     <label class="o_form_label">Ngày hẹn</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                    <kendo-datetimepicker [steps]="{hour: 1, minute: 5}" formControlName="dateObj">
-                                    </kendo-datetimepicker>
+                                    <div class="d-flex align-items-center">
+                                        <kendo-datepicker formControlName="apptDate">
+                                        </kendo-datepicker>
+                                        <select class="form-control w-fit-content" formControlName="apptHour">
+                                            <option *ngFor="let item of hourList" [value]="item">{{item | number:'2.0-0'}}</option>
+                                        </select>
+                                        :
+                                        <select class="form-control w-fit-content" formControlName="apptMinute">
+                                            <option *ngFor="let item of minuteList" [value]="item">{{item | number:'2.0-0'}}</option>
+                                        </select>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>

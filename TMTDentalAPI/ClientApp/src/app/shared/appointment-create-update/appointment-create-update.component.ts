@@ -35,6 +35,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   defaultVal: any;
   formGroup: FormGroup;
   partnerSend: any;
+
+  hourList: number[] = [];
+  minuteList: number[] = [0, 30];
+
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -51,7 +55,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       name: null,
       partner: [null, Validators.required],
       user: [null],
-      dateObj: [null, Validators.required],
+      apptDate: [null, Validators.required],
+      apptHour: 0,
+      apptMinute: 0,
       note: null,
       companyId: null,
       doctor: null,
@@ -59,6 +65,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     })
 
     setTimeout(() => {
+      this.hourList = _.range(0, 24);
+      // this.minuteList = _.range(0, 60, 5);
+
       if (this.appointId) {
         this.loadAppointmentToForm();
       } else {
@@ -93,8 +102,12 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appoint = this.formGroup.value;
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-    appoint.date = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-
+    var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
+    if (appoint.apptHour < 10)
+      appoint.apptHour = "0" + appoint.apptHour;
+    if (appoint.apptMinute < 10)
+      appoint.apptMinute = "0" + appoint.apptMinute;
+    appoint.date= `${apptDate}T${appoint.apptHour}:${appoint.apptMinute}:00`;
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
@@ -216,7 +229,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         (rs: any) => {
           this.formGroup.patchValue(rs);
           let date = new Date(rs.date);
-          this.formGroup.get('dateObj').patchValue(date);
+
+          this.formGroup.get('apptDate').patchValue(date);
+          this.formGroup.get('apptHour').patchValue(date.getHours());
+          this.formGroup.get('apptMinute').patchValue(date.getMinutes());
+
+          var appoint = this.formGroup.value;
+          console.log(appoint);
 
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
@@ -274,7 +293,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
-        this.formGroup.get('dateObj').patchValue(date);
+
+        this.formGroup.get('apptDate').patchValue(date);
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
