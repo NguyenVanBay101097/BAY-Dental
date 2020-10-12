@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
-import { PartnerService } from '../partner.service';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { PartnerAddRemoveTags, PartnerService } from '../partner.service';
+import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
@@ -28,12 +28,20 @@ export class PartnerCustomerListComponent implements OnInit {
   skip = 0;
   loading = false;
   opened = false;
+  rowPartnerId: any;
+  search_partnerCategory: string;
 
   search: string;
   searchCateg: PartnerCategoryBasic;
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
+  searchUpdatePopOver = new Subject<string>();
+
+  value_partnerCategoryPopOver : any;
+  partnerCategoriesPopover: any;
+
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService) { }
@@ -44,6 +52,13 @@ export class PartnerCustomerListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(() => {
         this.loadDataFromApi();
+      });
+
+    this.searchUpdatePopOver.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadPartnerCategoryPopOver();
       });
 
     this.categCbx.filterChange
@@ -60,6 +75,27 @@ export class PartnerCustomerListComponent implements OnInit {
 
     this.loadDataFromApi();
     this.loadFilteredCategs();
+    this.loadPartnerCategoryPopOver();
+
+  }
+
+  loadPartnerCategoryPopOver() {
+    const val = new PartnerCategoryPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.search = this.search_partnerCategory || '';
+
+    this.partnerCategoryService.getPaged(val).subscribe(res => {
+      this.partnerCategoriesPopover = res.items;
+      // if (this.popover && this.popover.isOpen()) {
+      //   console.log(this.popover);
+      //   this.popover.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
+      // } else if (this.popover) {
+      //   this.popover.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
+      // }
+    }, err => {
+      console.log(err);
+    });
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -174,5 +210,44 @@ export class PartnerCustomerListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  onToggleCategory(popOver, id) {
+    if (popOver.isOpen()) {
+      popOver.close();
+    } else {
+      this.rowPartnerId = id;
+      const val = new PartnerCategoryPaged();
+      val.limit = 20;
+      val.offset = 0;
+      val.partnerId = id;
+      this.partnerCategoryService.getPaged(val).subscribe((res) => {
+          this.value_partnerCategoryPopOver = res.items;
+      });
+      popOver.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
+      this.popover = popOver;
+    }
+  }
+
+  handleFilterCategoryPopOver(value) {
+    this.search_partnerCategory = value;
+  }
+
+  SavePartnerCategories() {
+    console.log(this.value_partnerCategoryPopOver);
+    const val = new PartnerAddRemoveTags();
+    val.id = this.rowPartnerId;
+    val.tagIds = [];
+    this.value_partnerCategoryPopOver.forEach(element => {
+      val.tagIds.push(element.id);
+    });
+    this.partnerService.updateTags(val).subscribe(() => {
+      this.loadDataFromApi();
+      this.value_partnerCategoryPopOver = [];
+    });
+  }
+
+  ClosePopover() {
+    this.popover.close();
   }
 }

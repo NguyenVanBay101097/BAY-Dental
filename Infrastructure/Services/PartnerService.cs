@@ -147,18 +147,31 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {
+            var cateObj = GetService<IPartnerCategoryService>();
+
             var query = GetQueryPaged(val);
             var items = await _mapper.ProjectTo<PartnerBasic>(query.Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s=> items.Select(i=>i.Id).Contains(s.PartnerId)))
+                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+
             if (val.ComputeCreditDebit)
             {
+
                 var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
                 foreach (var item in items)
                 {
                     item.Credit = creditDebitDict[item.Id].Credit;
                     item.Debit = creditDebitDict[item.Id].Debit;
+                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+                }
+            } else
+            {
+                foreach (var item in items)
+                {
+                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
                 }
             }
 
@@ -225,6 +238,24 @@ namespace Infrastructure.Services
                     if (rel != null)
                         partner.PartnerPartnerCategoryRels.Remove(rel);
                 }
+            }
+
+            await UpdateAsync(partner);
+        }
+
+        public async Task UpdateTags(PartnerAddRemoveTagsVM val)
+        {
+            var partner = await SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.PartnerPartnerCategoryRels)
+                .FirstOrDefaultAsync();
+
+            if (partner == null)
+                return;
+
+            partner.PartnerPartnerCategoryRels.Clear();
+            foreach (var tagId in val.TagIds)
+            {
+                    partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
             }
 
             await UpdateAsync(partner);
@@ -465,7 +496,7 @@ namespace Infrastructure.Services
             if (val.CategoryId.HasValue)
                 query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
-            query = query.OrderByDescending(s => s.DateCreated);
+            query = query.Include(x=>x.Company).Include(x=>x.Source).OrderByDescending(s => s.DateCreated);
             return query;
         }
 

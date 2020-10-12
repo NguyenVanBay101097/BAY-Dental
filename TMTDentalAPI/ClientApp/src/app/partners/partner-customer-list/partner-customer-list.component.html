@@ -31,12 +31,15 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
-        [loading]="loading">
-        <kendo-grid-column field="name" title="Họ tên" width="200">
+    <kendo-grid [data]="gridData" [resizable]="true" [pageable]="true" [pageSize]="limit" [skip]="skip"
+        (pageChange)="pageChange($event)" [loading]="loading">
+        <kendo-grid-column field="companyName" title="Tên chi nhánh" width="130" [locked]="true">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Họ tên" width="200" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
                         {{dataItem.name}}
                     </a>
@@ -46,8 +49,77 @@
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="age" title="Tuổi" width="50"></kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="60"></kendo-grid-column>
+        <kendo-grid-column field="gender" title="Giới tính" width="90">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.gender == 'male' ? 'Nam' : 'Nữ'}}
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+        <kendo-grid-column title="Nhóm" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div *ngIf="dataItem.categories.length ; else editcate">
+                    <button title="sửa nhóm" class="btn btn-xs btn-info mr-1" *ngFor="let item of dataItem.categories"
+                        title="Thay đổi nhãn" [ngbPopover]="popContent" [popoverTitle]="popTitle" #popOver="ngbPopover"
+                        triggers="manual" [autoClose]="false" placement="left"
+                        (click)="onToggleCategory(popOver,dataItem.id)">
+                        {{item.name}}
+                    </button>
+                </div>
+                <ng-template #editcate>
+                    <button title="sửa nhóm" class="btn btn-xs btn-info" [ngbPopover]="popContent"
+                        [popoverTitle]="popTitle" #popOver="ngbPopover" triggers="manual" [autoClose]="false"
+                        placement="left" (click)="onToggleCategory(popOver,dataItem.id)"><i
+                            class="fa fa-tags"></i></button>
+                </ng-template>
+
+
+                <ng-template #popTitle>
+                    <div class="d-flex">
+                        <label> Nhóm khách hàng</label>
+                        <button type="button" class="ml-auto btn btn-dark btn-sm"
+                           (click)="ClosePopover()">X</button>
+                    </div>
+                </ng-template>
+                <ng-template #popContent let-partnerCategoriesPopOver="partnerCategoriesPopOver">
+                    <div>
+                        <kendo-multiselect class="mr-1" [data]="partnerCategoriesPopOver"
+                            [(ngModel)]="value_partnerCategoryPopOver" [filterable]="true"
+                            (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
+                            textField="name" valueField="id" placeholder="Thêm nhãn cho khách hàng">
+                        </kendo-multiselect>
+                        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()"
+                            accesskey="c">
+                            Lưu
+                        </button>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày sinh" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.birthDay}}/{{dataItem.birthMonth}}/{{dataItem.birthYear}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateCreated | date : 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="source" title="Nguồn" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.source?.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="jobTitle" title="Nghề nghiệp" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="email" title="Email" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span title="dataItem.email">{{dataItem.email}}</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="comment" title="Ghi chú" width="150">
+        </kendo-grid-column>
         <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
