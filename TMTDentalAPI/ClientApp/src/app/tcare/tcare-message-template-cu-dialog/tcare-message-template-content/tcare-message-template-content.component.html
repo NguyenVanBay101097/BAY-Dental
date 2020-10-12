@@ -1,0 +1,16 @@
+<div  [formGroup]="formGroup">
+    <!-- <textarea (change)="onTextChange($event)" formControlName="text" class="form-control" rows="5"></textarea> -->
+    <div class="position-relative" (clickOutside)=hideEmoji()>
+        <textarea type="text" my-autosize class="form-control" id="textarea_mass"
+                formControlName="text" 
+                (click)="selectArea($event)" 
+                (keyup)="selectArea($event)" (change)="onTextChange($event)"
+                (focus)="showEmoji()">
+        </textarea>
+        <app-tcare-scenario-message-textarea *ngIf="showPluginTextarea" [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-tcare-scenario-message-textarea>
+    </div>
+    <!-- <div
+        *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
+        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi không được để trống !</label>
+    </div> -->
+</div>

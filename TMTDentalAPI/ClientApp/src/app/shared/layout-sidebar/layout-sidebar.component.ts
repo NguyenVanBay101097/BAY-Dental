@@ -101,6 +101,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết nối Zalo', link: '/zalo-config' },
         { name: 'Danh sách kênh', link: '/socials/channels' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
+        { name: 'Mẫu tin nhắn', link: '/tcare/message-templates' },
       ],
       groups: 'tcare.group_tcare',
     },

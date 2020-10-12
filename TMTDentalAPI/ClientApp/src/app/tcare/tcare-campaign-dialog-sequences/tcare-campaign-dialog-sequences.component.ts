@@ -9,6 +9,7 @@ import { FacebookPageService, ChannelSocial } from 'src/app/socials-channel/face
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DatePipe } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-sequences',
@@ -21,6 +22,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
+  @ViewChild('cbxMess', { static: true }) cbxMess: ComboBoxComponent;
   model: any;
   formGroup: FormGroup;
   filterdChannelSocials: ChannelSocial[] = [];
@@ -31,11 +33,14 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   selectArea_end: number;
   audience_filter: any;
   showAudienceFilter: boolean = false;
+  messageTemplates: any[];
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private facebookPageService: FacebookPageService,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private templateService: TCareMessageTemplateService,
   ) { }
 
   ngOnInit() {
@@ -66,6 +71,17 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       tmp.sheduleDate = this.model.sheduleDate ? new Date(this.model.sheduleDate) : null;
       this.formGroup.patchValue(tmp);
     }
+
+    this.cbxMess.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxMess.loading = true)),
+      switchMap(value => this.searchMess(value))
+    ).subscribe((result: any) => {
+      this.messageTemplates = result.items;
+      this.cbxMess.loading = false;
+    });
+
+    this.loadMessageTemplate();
   }
 
   loadSocialChannel() {
@@ -93,6 +109,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onSave() {
+    debugger;
     this.submited = true;
     if (!this.formGroup.valid) {
       return false;
@@ -134,8 +151,26 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   showEmoji() {
     this.showPluginTextarea = true;
   }
-  
+
   hideEmoji() {
     this.showPluginTextarea = false;
+  }
+
+  onMessageTemplateSelect(e) {
+    if (!e) { return; }
+
+    const templates = JSON.parse(e.content);
+    this.formGroup.get('content').setValue(templates[0].text);
+  }
+
+  searchMess(q?: string) {
+    const val = new TCareMessageTemplatePaged();
+    val.search = q || '';
+    return this.templateService.getPaged(val);
+  }
+  loadMessageTemplate() {
+    this.searchMess().subscribe((res) => {
+      this.messageTemplates = res.items;
+    });
   }
 }
