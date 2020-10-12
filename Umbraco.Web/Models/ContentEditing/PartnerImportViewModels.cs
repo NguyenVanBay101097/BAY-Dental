@@ -12,7 +12,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
         public string DateOfBirth { get; set; }
         public string Phone { get; set; }
-        public string Address { get; set; }
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+        public string Street { get; set; }
+        public string WardName { get; set; }
+        public string DistrictName { get; set; }
+        public string CityName { get; set; }
         public string MedicalHistory { get; set; }
         public string Job { get; set; }
         public string Email { get; set; }

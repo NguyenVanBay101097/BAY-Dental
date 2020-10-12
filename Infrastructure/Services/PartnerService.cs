@@ -460,14 +460,19 @@ namespace Infrastructure.Services
             if (val.Supplier.HasValue)
                 query = query.Where(x => x.Supplier == val.Supplier);
             if (!string.IsNullOrEmpty(val.Search))
+            {
+
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+               || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+            }
             if (val.CategoryId.HasValue)
                 query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
             query = query.OrderByDescending(s => s.DateCreated);
             return query;
         }
+
+
 
         /// <summary>
         /// Search Phone 
@@ -922,7 +927,7 @@ namespace Infrastructure.Services
 
                         if (val.Type == "customer")
                         {
-                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 8].Value);
+                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 11].Value);
                             if (!string.IsNullOrWhiteSpace(medicalHistory))
                             {
                                 var medicalHistoryTmp = medicalHistory.Split(",");
@@ -950,10 +955,11 @@ namespace Infrastructure.Services
                                     DateOfBirth = Convert.ToString(worksheet.Cells[row, 5].Value),
                                     Phone = Convert.ToString(worksheet.Cells[row, 6].Value),
                                     Address = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                    WardName = Convert.ToString(worksheet.Cells[row, 8].Value),
                                     MedicalHistory = medicalHistory,
-                                    Job = Convert.ToString(worksheet.Cells[row, 9].Value),
-                                    Email = Convert.ToString(worksheet.Cells[row, 10].Value),
-                                    Note = Convert.ToString(worksheet.Cells[row, 11].Value),
+                                    Job = Convert.ToString(worksheet.Cells[row, 12].Value),
+                                    Email = Convert.ToString(worksheet.Cells[row, 13].Value),
+                                    Note = Convert.ToString(worksheet.Cells[row, 14].Value),
                                 });
                             }
                             catch (Exception e)
@@ -1014,7 +1020,7 @@ namespace Infrastructure.Services
             {
                 var historyObj = GetService<IHistoryService>();
                 var histories = await historyObj.SearchQuery(x => partner_history_list.Contains(x.Name)).ToListAsync();
-                foreach(var history in histories)
+                foreach (var history in histories)
                 {
                     if (!medical_history_dict.ContainsKey(history.Name))
                         medical_history_dict.Add(history.Name, history);
@@ -1030,7 +1036,7 @@ namespace Infrastructure.Services
                         medical_history_dict.Add(history.Name, history);
                 }
             }
-           
+
             var gender_dict = new Dictionary<string, string>()
             {
                 { "name", "male" },
@@ -1045,12 +1051,17 @@ namespace Infrastructure.Services
             {
                 var isUpdate = !string.IsNullOrWhiteSpace(item.Ref) && partner_update_dict.ContainsKey(item.Ref) ? true : false;
                 var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();
+                var ward = CheckWard(item.WardName);
                 partner.CompanyId = CompanyId;
                 partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
                 partner.Ref = item.Ref;
                 partner.Phone = item.Phone;
                 partner.Comment = item.Note;
                 partner.Email = item.Email;
+                partner.WardName = ward.Result.name;
+                partner.WardCode = ward.Result.code;
+
 
                 if (val.Type == "customer")
                 {
@@ -1205,6 +1216,28 @@ namespace Infrastructure.Services
             }
 
             return new PartnerImportResponse { Success = true };
+        }
+
+        public async Task<Ward> CheckWard(string wardName)
+        {
+            HttpResponseMessage response = null;
+            var request = new AshipRequest();
+
+            var data = new Data();
+            request.data = data;
+            var res = new List<Ward>();
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                var result = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", request);
+                var abc = result.Content.ReadAsStringAsync();
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var rs = await response.Content.ReadAsStringAsync();
+                //    res = JsonConvert.DeserializeObject<List<Ward>>(rs);
+                //};
+
+            }
+            return res.Where(x => x.name.Contains(wardName)).FirstOrDefault();
         }
 
         public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
@@ -1387,7 +1420,7 @@ namespace Infrastructure.Services
                 JournalName = x.Journal.Name,
                 Amount = x.Amount
             }).ToList();
-            
+
             result.Company = companyPrint;
             result.Partner = partnerPrint;
             result.ServiceList = saleOrderLines;
@@ -1849,6 +1882,35 @@ namespace Infrastructure.Services
     {
         public string Phone { get; set; }
         public GetProfileOfFollowerResponse Profile { get; set; }
+    }
+
+    public class Ward
+    {
+        public string cityCode { get; set; }
+        public string cityName { get; set; }
+        public string districtCode { get; set; }
+        public string districtName { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+    }
+
+    public class AshipRequest
+    {
+        public AshipRequest()
+        {
+            provider = "Undefined";
+        }
+
+        public Data data { get; set; }
+        public string provider { get; set; }
+    }
+    public class Data
+    {
+        public Data()
+        {
+            code = "";
+        }
+        public string code { get; set; }
     }
 
 

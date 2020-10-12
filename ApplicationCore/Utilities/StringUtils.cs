@@ -85,6 +85,7 @@ namespace ApplicationCore.Utilities
             return regex.Replace(input, string.Empty).Replace(Convert.ToChar(273), 'd').Replace(Convert.ToChar(272), 'D');
         }
 
+       
         /// <summary>
         /// Checks whether the string is Null Or Empty
         /// </summary>

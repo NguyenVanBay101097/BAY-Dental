@@ -228,6 +228,7 @@ export class PartnerService {
     }
 
     getWardAship(request): Observable<Ward[]> {
+        debugger
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
