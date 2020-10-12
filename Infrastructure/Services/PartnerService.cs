@@ -1221,24 +1221,57 @@ namespace Infrastructure.Services
         public async Task<Ward> CheckWard(string wardName)
         {
             HttpResponseMessage response = null;
-            var request = new AshipRequest();
-
-            var data = new Data();
-            request.data = data;
+ 
             var res = new List<Ward>();
             using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
             {
-                var result = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", request);
-                var abc = result.Content.ReadAsStringAsync();
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    var rs = await response.Content.ReadAsStringAsync();
-                //    res = JsonConvert.DeserializeObject<List<Ward>>(rs);
-                //};
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new AshipRequest() { Data = new Data() { Code = "" }, Provider = "Undefined" });
+                if (response.IsSuccessStatusCode)
+                {
+                    var rs = await response.Content.ReadAsStringAsync();
+                    res = JsonConvert.DeserializeObject<List<Ward>>(rs);
+                };
 
             }
             return res.Where(x => x.name.Contains(wardName)).FirstOrDefault();
         }
+
+        public async Task<District> CheckDistrict(string districtName)
+        {
+            HttpResponseMessage response = null;
+
+            var res = new List<District>();
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new AshipRequest() { Data = new Data() { Code = ""}, Provider = "Undefined" } );
+                if (response.IsSuccessStatusCode)
+                {
+                    var rs = await response.Content.ReadAsStringAsync();
+                    res = JsonConvert.DeserializeObject<List<District>>(rs);
+                };
+
+            }
+            return res.Where(x => x.Name.Contains(districtName)).FirstOrDefault();
+        }
+
+        public async Task<City> CheckCity(string cityName)
+        {
+            HttpResponseMessage response = null;
+            var res = new List<City>();
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingCity/GetCities", new AshipRequest { Provider = "Undefined" });
+                if (response.IsSuccessStatusCode)
+                {
+                    var rs = await response.Content.ReadAsStringAsync();
+                    res = JsonConvert.DeserializeObject<List<City>>(rs);
+                };
+
+            }
+            return res.Where(x => x.Name.Contains(cityName)).FirstOrDefault();
+        }
+
+
 
         public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
         {
@@ -1896,22 +1929,28 @@ namespace Infrastructure.Services
 
     public class AshipRequest
     {
-        public AshipRequest()
-        {
-            provider = "Undefined";
-        }
-
-        public Data data { get; set; }
-        public string provider { get; set; }
+        public Data Data { get; set; }
+        public string Provider { get; set; }
     }
     public class Data
     {
-        public Data()
-        {
-            code = "";
-        }
-        public string code { get; set; }
+        public string Code { get; set; }
     }
 
+    public class District
+    {
+        public string CityCode { get; set; }
+        public string CityName { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
 
+    }
+
+    public class City
+    {
+       
+        public string Code { get; set; }
+        public string Name { get; set; }
+
+    }
 }
