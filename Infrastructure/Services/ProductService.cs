@@ -949,6 +949,25 @@ namespace Infrastructure.Services
                 domain_move_out_loc = move_domain.And(move_loc_domain).And(neg_move_dest_loc_domain)
             };
         }
+
+        public async Task<IEnumerable<ProductProductExportExcel>> GetProductExportExcel(ProductPaged val)
+        {
+            var query = SearchQuery(x => x.Active && x.Type2 == "product");
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
+            if (val.CategId.HasValue)
+                query = query.Where(x => x.CategId == val.CategId);
+            var res = await query.OrderBy(x => x.Name).Select(x => new ProductProductExportExcel
+            {
+                CategName = x.Categ.Name,
+                DefaultCode = x.DefaultCode,
+                Name = x.Name,
+                PurchasePrice = x.PurchasePrice,
+                Type = x.Type
+            }).ToListAsync();
+
+            return res;
+        }
     }
 
     public class ProductAvailableRes

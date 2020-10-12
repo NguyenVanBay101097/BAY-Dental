@@ -214,6 +214,10 @@ export class ProductService {
     );
   }
 
+  excelProductExport(data) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ExportProductExcel", data, { responseType: "blob" });
+  }
+
   //==============================PHẦN CÔNG ĐOẠN - STEP=====================================//
 
   getStepByProductId(id): Observable<ProductStepDisplay[]> {
