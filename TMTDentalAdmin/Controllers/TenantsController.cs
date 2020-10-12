@@ -88,24 +88,32 @@ namespace TMTDentalAdmin.Controllers
             tenant = _mapper.Map<AppTenant>(val);
             await _tenantService.CreateAsync(tenant);
 
-            using (HttpClient client = new HttpClient())
+            try
             {
-                client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.PostAsJsonAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                using (HttpClient client = new HttpClient())
                 {
-                    CompanyName = val.CompanyName,
-                    Name = val.Name,
-                    Username = val.Username,
-                    Password = val.Password,
-                    Phone = val.Phone,
-                    Email = val.Email
-                });
+                    client.Timeout = new TimeSpan(0, 30, 0);
+                    HttpResponseMessage response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                    {
+                        CompanyName = val.CompanyName,
+                        Name = val.Name,
+                        Username = val.Username,
+                        Password = val.Password,
+                        Phone = val.Phone,
+                        Email = val.Email
+                    });
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    await _tenantService.DeleteAsync(tenant);
-                    throw new Exception("Register fail, try later");
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var result = response.Content.ReadAsAsync<dynamic>().Result;
+                        throw new Exception("Có lỗi xảy ra: " + result.message);
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+                await _tenantService.DeleteAsync(tenant);
+                throw new Exception(e.Message);
             }
 
             return NoContent();
