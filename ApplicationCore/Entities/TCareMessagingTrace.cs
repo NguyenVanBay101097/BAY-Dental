@@ -37,5 +37,8 @@ namespace ApplicationCore.Entities
         public string Type { get; set; }
 
         public string Error { get; set; }
+
+        public Guid? TCareMessagingId { get; set; }
+        public TCareMessaging TCareMessaging { get; set; }
     }
 }

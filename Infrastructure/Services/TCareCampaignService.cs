@@ -23,12 +23,14 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
+        private readonly IIrConfigParameterService _irConfigParameterService;
         public TCareCampaignService(IAsyncRepository<TCareCampaign> repository, IHttpContextAccessor httpContextAccessor, ITenant<AppTenant> tenant,
-            IMapper mapper)
+            IMapper mapper, IIrConfigParameterService irConfigParameterService)
             : base(repository, httpContextAccessor)
         {
             _tenant = tenant?.Value;
             _mapper = mapper;
+            _irConfigParameterService = irConfigParameterService;
         }
 
         public async Task<PagedResult2<TCareCampaignBasic>> GetPagedResultAsync(TCareCampaignPaged val)
@@ -58,18 +60,29 @@ namespace Infrastructure.Services
                 TCareScenarioId = val.TCareScenarioId,
                 State = "draft"
             };
+            //Cach 1:
+            //var value = await _irConfigParameterService.GetParam("setup_first_time_create_campaign");
+            //if (string.IsNullOrEmpty(value) || !value.Contains("True"))
+            //{
+            //    var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            //    var jobId = $"{tenant}-tcare-scenario-{DateTime.Now.ToShortDateString()}";
+            //    RecurringJob.RemoveIfExists(jobId);
+            //    RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "10 16 * * *", TimeZoneInfo.Local);
+            //    await _irConfigParameterService.SetParam("setup_first_time_create_campaign", "True");
+            //}
 
+            //Cach 2:
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             var jobId = $"{tenant}-tcare-scenario";
-            //using (var connection = JobStorage.Current.GetConnection())
-            //{
-            //    list = connection.GetRecurringJobs();
-            //}
-            //var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
-            RecurringJob.RemoveIfExists(jobId);
-            //if (job == null) 
-            RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), $"00 12 * * *", TimeZoneInfo.Local);
-
+            using (var connection = JobStorage.Current.GetConnection())
+            {
+                list = connection.GetRecurringJobs();
+            }
+            var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
+            if (job == null || string.IsNullOrEmpty(job.LastJobId))
+            {
+                RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "49 16 * * *", TimeZoneInfo.Local);
+            }
 
             return await CreateAsync(campaign);
         }

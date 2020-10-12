@@ -28,10 +28,10 @@ namespace Infrastructure.Services
                 .Select(x => new TCareMessagingDisplay
                 {
                     Id = x.Id,
-                    MethodType = x.MethodType,
-                    IntervalType = x.IntervalType,
-                    IntervalNumber = x.IntervalNumber,
-                    SheduleDate = x.SheduleDate,
+                    //MethodType = x.MethodType,
+                    //IntervalType = x.IntervalType,
+                    //IntervalNumber = x.IntervalNumber,
+                    //SheduleDate = x.SheduleDate,
                     Content = x.Content,
                     TCareCampaignId = x.TCareCampaignId,
                 })

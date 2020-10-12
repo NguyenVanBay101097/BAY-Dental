@@ -46,7 +46,6 @@ namespace Infrastructure.Services
                 builder["Database"] = $"TMTDentalCatalogDb__{db}";
             FacebookPage channel = null;
             string channelType = "";
-            TCareMessage tcareMessage = null;
             FacebookUserProfile facebookUserProfile = null;
             List<TCareCampaign> listCampaigns = new List<TCareCampaign>();
             Partner partner = null;
@@ -68,7 +67,7 @@ namespace Infrastructure.Services
                             XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
                             MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
                             MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-
+                            TCareMessaging messaging = new TCareMessaging();
                             var sequence = resultingMessage.Root.Sequence;
                             var rule = resultingMessage.Root.Rule;
                             if (sequence == null || rule == null)
@@ -81,6 +80,13 @@ namespace Infrastructure.Services
                             var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
                             if (partner_ids == null)
                                 continue;
+                            messaging.Id = GuidComb.GenerateComb();
+                            messaging.Date = DateTime.Now;
+                            messaging.TCareCampaignId = campaign.Id;
+                            messaging.Content = sequence.Content;
+                            await CreateMessaging(conn, messaging);
+
+                            int number = 0;
                             foreach (var partner_id in partner_ids)
                             {
                                 var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id);
@@ -88,21 +94,23 @@ namespace Infrastructure.Services
                                     continue;
                                 partner = await GetPartner(conn, partner_id);
                                 var messageContent = PersonalizedPartner(partner, channel, sequence, conn);
-
                                 facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channel.Id).FirstOrDefault();
                                 if (facebookUserProfile == null)
                                     continue;
-                                tcareMessage = new TCareMessage()
+                                TCareMessage tcareMessage = new TCareMessage()
                                 {
                                     ProfilePartnerId = facebookUserProfile.Id,
                                     ChannelSocicalId = channel.Id,
                                     CampaignId = campaign.Id,
                                     PartnerId = partner_id,
                                     MessageContent = messageContent,
+                                    TCareMessagingId = messaging.Id,
                                     State = "waiting"
                                 };
                                 CreateMessage(conn, tcareMessage);
+                                number++;
                             }
+                            await UpdateNumberPartner(conn, messaging.Id, number);
                         }
                     }
                 }
@@ -114,12 +122,36 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task CreateMessaging(SqlConnection conn, TCareMessaging tcareMessaging)
+        {
+            await conn.ExecuteAsync("insert into TCareMessagings" +
+                 "(Id ,Content , TCareCampaignId, CountPartner, Date) " +
+                 "Values (@Id, @Content, @TCareCampaignId, @CountPartner, @Date)",
+                 new
+                 {
+                     Id = tcareMessaging.Id,
+                     Content = tcareMessaging.Content,
+                     TCareCampaignId = tcareMessaging.TCareCampaignId,
+                     CountPartner = tcareMessaging.CountPartner,
+                     Date = tcareMessaging.Date,
+                 });
+        }
+
+        public async Task UpdateNumberPartner(SqlConnection conn, Guid id, int countPartner)
+        {
+            await conn.ExecuteAsync("UPDATE TCareMessagings SET CountPartner = @CountPartner WHERE Id = @Id",
+                 new
+                 {
+                     Id = id,
+                     CountPartner = countPartner
+                 });
+        }
         public void CreateMessage(SqlConnection conn, TCareMessage tcareMessage)
         {
             var id = GuidComb.GenerateComb();
             conn.Execute("insert into TCareMessages" +
-                "(Id,ProfilePartnerId, ChannelSocicalId, CampaignId, PartnerId, MessageContent ,State) " +
-                "Values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@State)",
+                "(Id,ProfilePartnerId, ChannelSocicalId, CampaignId, PartnerId, MessageContent ,State ,TCareMessagingId) " +
+                "Values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@State,@TCareMessagingId)",
                 new
                 {
                     Id = id,
@@ -128,16 +160,18 @@ namespace Infrastructure.Services
                     CampaignId = tcareMessage.CampaignId,
                     PartnerId = tcareMessage.PartnerId,
                     MessageContent = tcareMessage.MessageContent,
-                    State = tcareMessage.State
+                    State = tcareMessage.State,
+                    TCareMessagingId = tcareMessage.TCareMessagingId
                 });
         }
 
-        public void UpdateMessage(SqlConnection conn, Guid id)
+        public void UpdateMessage(SqlConnection conn, Guid id, Guid? messagingTraceId)
         {
-            conn.Execute("UPDATE TCareMessages SET State='success' WHERE Id = @Id",
+            conn.Execute("UPDATE TCareMessages SET State='success', TCareMessagingTraceId = @TCareMessagingTraceId WHERE Id = @Id",
                 new
                 {
                     Id = id,
+                    TCareMessagingTraceId = messagingTraceId
                 });
         }
 
@@ -573,8 +607,8 @@ namespace Infrastructure.Services
             var trace_Id = GuidComb.GenerateComb();
             await conn.ExecuteAsync("" +
                 "insert into TCareMessingTraces" +
-                "(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated) " +
-                "Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated)",
+                "(Id,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId,DateCreated,LastUpdated,TCareMessagingId) " +
+                "Values (@Id,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId,@DateCreated,@LastUpdated,@TCareMessagingId)",
                 new
                 {
                     Id = trace_Id,
@@ -584,7 +618,9 @@ namespace Infrastructure.Services
                     Type = channelSocial.Type,
                     ChannelSocialId = channelSocial.Id,
                     DateCreated = DateTime.Now,
-                    LastUpdated = DateTime.Now
+                    LastUpdated = DateTime.Now,
+                    TCareMessagingId = mess.TCareMessagingId
+
                 });
             switch (channelSocial.Type)
             {
@@ -593,7 +629,7 @@ namespace Infrastructure.Services
                     if (check && campaign.TagId.HasValue)
                     {
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
-                        UpdateMessage(conn, mess.Id);
+                        UpdateMessage(conn, mess.Id, trace_Id);
                     }
                     break;
                 case "zalo":
@@ -601,7 +637,7 @@ namespace Infrastructure.Services
                     if (check && campaign.TagId.HasValue)
                     {
                         SetTagForPartner(profile.PartnerId.Value, campaign.TagId.Value, conn);
-                        UpdateMessage(conn, mess.Id);
+                        UpdateMessage(conn, mess.Id, trace_Id);
                     }
                     break;
                 default:

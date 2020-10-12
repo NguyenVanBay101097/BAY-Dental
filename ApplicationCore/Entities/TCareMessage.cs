@@ -32,6 +32,12 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        public Guid? TCareMessagingId { get; set; }
+        public TCareMessaging TCareMessaging { get; set; }
+
+        public Guid? TCareMessagingTraceId { get; set; }
+        public TCareMessagingTrace TCareMessagingTrace { get; set; }
+
         /// <summary>
         /// Nội dung của tin nhắn gửi cho khánh hàng
         /// </summary>

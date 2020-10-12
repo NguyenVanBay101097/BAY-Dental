@@ -32,6 +32,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.TCareMessaging)
+                .WithMany(x => x.TCareMessagingTraces)
+                .HasForeignKey(x => x.TCareMessagingId);
         }
     }
 }

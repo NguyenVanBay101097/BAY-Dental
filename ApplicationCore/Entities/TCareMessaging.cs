@@ -6,27 +6,17 @@ namespace ApplicationCore.Entities
 {
     public class TCareMessaging : BaseEntity
     {
-        /// <summary>
-        /// phương thức :
-        /// interval : trước thời gian
-        /// shedule : lên lịch ngày giờ cụ thể
-        /// </summary>
-        public string MethodType { get; set; }
+        public DateTime? Date { get; set; }
 
         /// <summary>
-        /// MethodType : interval
-        /// "minutes" , "hours" , "weeks", "months"
+        /// Nội dung tổng quát gửi cho khách hàng
         /// </summary>
-        public string IntervalType { get; set; }
-
-        public int? IntervalNumber { get; set; }
-
-        /// <summary>
-        /// MethodType : shedule
-        /// </summary>
-        public DateTime? SheduleDate { get; set; }
-
         public string Content { get; set; }
+
+        /// <summary>
+        /// Số lượng khách hàng được gửi trong ngày 
+        /// </summary>
+        public int CountPartner { get; set; }
 
         //--Kenh gui ---//
 
@@ -36,8 +26,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         //public string ChannelType { get; set; }
 
-
-
+        public ICollection<TCareMessagingTrace> TCareMessagingTraces { get; set; } = new List<TCareMessagingTrace>();
+        public ICollection<TCareMessage> TCareMessages { get; set; } = new List<TCareMessage>();
 
         public Guid TCareCampaignId { get; set; }
         public TCareCampaign TCareCampaign { get; set; }
