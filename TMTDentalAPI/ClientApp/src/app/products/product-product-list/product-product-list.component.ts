@@ -161,6 +161,29 @@ export class ProductProductListComponent implements OnInit {
     }, () => {
     });
   }
+
+  exportExcelFile() {
+    var paged = new ProductPaged();
+
+    paged.search = this.search || "";
+    paged.categId = this.searchCateg ? this.searchCateg.id : "";
+    this.productService.excelProductExport(paged).subscribe((rs) => {
+      let filename = "danh_sach_vat_tu";
+      let newBlob = new Blob([rs], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 }
 
 

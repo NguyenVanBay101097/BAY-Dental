@@ -255,59 +255,84 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportService(ProductImportExcelBaseViewModel val)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductServiceImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
             var errors = new List<string>();
-            await _unitOfWork.BeginTransactionAsync();
 
-            using (var stream = new MemoryStream(fileData))
+            try
             {
-                using (ExcelPackage package = new ExcelPackage(stream))
+                using (var stream = new MemoryStream(fileData))
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-
-                        if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên sản phẩm là bắt buộc");
-                        if (string.IsNullOrEmpty(categName))
-                            errs.Add("Nhóm sản phẩm là bắt buộc");
-
-                        if (errs.Any())
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên sản phẩm là bắt buộc");
+                            if (string.IsNullOrEmpty(categName))
+                                errs.Add("Nhóm sản phẩm là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new ProductServiceImportExcelRow
+                            {
+                                Name = name,
+                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
+                                CategName = categName,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                            };
+                            data.Add(item);
                         }
-
-                        if (!categDict.ContainsKey(categName))
-                        {
-                            var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == "service").FirstOrDefaultAsync();
-                            if (categ == null)
-                                categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "service" });
-                            categDict.Add(categName, categ);
-                        }
-
-                        var item = new ProductServiceImportExcelRow
-                        {
-                            Name = name,
-                            IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
-                            CategName = categName,
-                            DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
-                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                            Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
-                            LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
-                        };
-                        data.Add(item);
                     }
+                }
+
+            }
+            catch(Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+            }
+
+            var categNames = data.Select(x => x.CategName).Distinct().ToList();
+            if (categNames.Any())
+            {
+                var categs = await _productCategoryService.SearchQuery(x => categNames.Contains(x.Name) && x.Type == "service").ToListAsync();
+                foreach (var categName in categNames)
+                {
+                    if (categDict.ContainsKey(categName))
+                        continue;
+
+                    var categ = categs.FirstOrDefault(x => x.Name == categName);
+                    if (categ == null)
+                        categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "service" });
+                    categDict.Add(categName, categ);
+                }
+            }
+
+            var productDict = new Dictionary<string, Product>();
+            var productCodes = data.Where(x => !string.IsNullOrEmpty(x.DefaultCode))
+               .Select(x => x.DefaultCode).Distinct().ToList();
+            if (productCodes.Any())
+            {
+                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type == "service")
+                    .Include(x => x.Steps).ToListAsync();
+                foreach (var product in products)
+                {
+                    if (string.IsNullOrEmpty(product.DefaultCode) || productDict.ContainsKey(product.DefaultCode))
+                        continue;
+                    productDict.Add(product.DefaultCode, product);
                 }
             }
 
@@ -315,25 +340,28 @@ namespace TMTDentalAPI.Controllers
                 return Ok(new { success = false, errors });
 
             var uom = await _uomService.DefaultUOM();
+            var productsCreate = new List<Product>();
+            var productsUpdate = new List<Product>();
+
             foreach (var item in data)
             {
-                var product = !string.IsNullOrEmpty(item.DefaultCode) ? await _productService.SearchQuery(x => x.DefaultCode == item.DefaultCode && x.Type == "service").FirstOrDefaultAsync() : null;
-                if (product != null)
+                var product = !string.IsNullOrEmpty(item.DefaultCode) && productDict.ContainsKey(item.DefaultCode) ?
+                    productDict[item.DefaultCode] : null;
+                if (product == null)
                 {
-                    var res = new ProductSave();
-                    res.ListPrice = item.ListPrice ?? 0;
-                    res.IsLabo = item.IsLabo ?? false;
-                    res.CategId = categDict[item.CategName].Id;
-                    res.LaboPrice = item.LaboPrice ?? 0;
-                    res.UOMId = product.UOMId;
-                    res.UOMPOId = product.UOMPOId;
-                    res.Name = item.Name;                   
-                    res.SaleOK = product.SaleOK;
-                    res.PurchaseOK = product.PurchaseOK;
-                    res.Type = product.Type;
-                    res.Type2 = product.Type2;                  
-                    res.DefaultCode = product.DefaultCode;                  
-                    res.PurchasePrice = product.PurchasePrice;
+                    product = new Product();
+                    product.ListPrice = item.ListPrice ?? 0;
+                    product.IsLabo = item.IsLabo ?? false;
+                    product.CategId = categDict[item.CategName].Id;
+                    product.LaboPrice = item.LaboPrice ?? 0;
+                    product.UOMId = uom.Id;
+                    product.UOMPOId = uom.Id;
+                    product.Name = item.Name;
+                    product.SaleOK = true;
+                    product.PurchaseOK = false;
+                    product.Type = "service";
+                    product.Type2 = "service";
+                    product.DefaultCode = item.DefaultCode;                  
                     if (!string.IsNullOrWhiteSpace(item.Steps))
                     {
                         var stepsArr = item.Steps.Split(";");
@@ -342,33 +370,27 @@ namespace TMTDentalAPI.Controllers
                         {
                             if (string.IsNullOrWhiteSpace(st))
                                 continue;
-                            res.StepList.ToList().Add(new ProductStepDisplay
+                            product.Steps.Add(new ProductStep
                             {
                                 Name = st,
                                 Order = order++
                             });
                         }
                     }
-                    await _productService.UpdateProduct(product.Id,res);
+
+                    productsCreate.Add(product);
                 }
                 else
                 {
-                    var pd = new ProductSave();
-                    pd.CompanyId = CompanyId;
-                    pd.UOMId = uom.Id;
-                    pd.UOMPOId = uom.Id;
-                    pd.Name = item.Name;                   
-                    pd.SaleOK = true;
-                    pd.PurchaseOK = false;
-                    pd.IsLabo = item.IsLabo ?? false;
-                    pd.Type = "service";
-                    pd.Type2 = "service";
-                    pd.CategId = categDict[item.CategName].Id;
-                    pd.DefaultCode = item.DefaultCode;
-                    pd.ListPrice = item.ListPrice ?? 0;
-                    pd.LaboPrice = item.LaboPrice ?? 0;
-                    pd.PurchasePrice = 0;                  
-
+                    product.Name = item.Name;
+                    product.SaleOK = true;
+                    product.PurchaseOK = false;
+                    product.IsLabo = item.IsLabo ?? false;
+                    product.CategId = categDict[item.CategName].Id;
+                    product.DefaultCode = item.DefaultCode;
+                    product.ListPrice = item.ListPrice ?? 0;
+                    product.LaboPrice = item.LaboPrice ?? 0;
+                    product.Steps.Clear();
                     if (!string.IsNullOrWhiteSpace(item.Steps))
                     {
                         var stepsArr = item.Steps.Split(";");
@@ -377,18 +399,31 @@ namespace TMTDentalAPI.Controllers
                         {
                             if (string.IsNullOrWhiteSpace(st))
                                 continue;
-                            pd.StepList.ToList().Add(new ProductStepDisplay
+                            product.Steps.Add(new ProductStep
                             {
                                 Name = st,
                                 Order = order++
                             });
                         }
                     }
-                    await _productService.CreateProduct(pd);
+
+                    productsUpdate.Add(product);
                 }
             }
 
-            _unitOfWork.Commit();
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                await _productService.CreateAsync(productsCreate);
+                await _productService.UpdateAsync(productsUpdate);
+
+                _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lưu thất bại: {e.Message}" } });
+            }
 
             return Ok(new { success = true });
         }
@@ -481,16 +516,11 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
         public async Task<IActionResult> ImportProduct(ProductImportExcelBaseViewModel val)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductProductImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
+            var productDict = new Dictionary<string, Product>();
             var errors = new List<string>();
-            await _unitOfWork.BeginTransactionAsync();
 
             var typeDict = new Dictionary<string, string>()
             {
@@ -498,79 +528,134 @@ namespace TMTDentalAPI.Controllers
                 { "Không quản lý tồn kho", "consu" }
             };
 
-            using (var stream = new MemoryStream(fileData))
+            try
             {
-                using (ExcelPackage package = new ExcelPackage(stream))
+                using (var stream = new MemoryStream(fileData))
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-                        var type = Convert.ToString(worksheet.Cells[row, 2].Value);
-
-                        if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên vật tư là bắt buộc");
-                        if (string.IsNullOrEmpty(type))
-                            errs.Add("Loại là bắt buộc");
-                        if (!string.IsNullOrEmpty(type) && !typeDict.ContainsKey(type))
-                            errs.Add($"Loại không hợp lệ. Giá trị cho phép là {string.Join(", ", typeDict.Keys.ToArray())}");
-                        if (string.IsNullOrEmpty(categName))
-                            errs.Add("Nhóm vật tư là bắt buộc");
-
-                        if (errs.Any())
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var type = Convert.ToString(worksheet.Cells[row, 2].Value);
+
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên vật tư là bắt buộc");
+                            if (string.IsNullOrEmpty(type))
+                                errs.Add("Loại là bắt buộc");
+                            if (!string.IsNullOrEmpty(type) && !typeDict.ContainsKey(type))
+                                errs.Add($"Loại không hợp lệ. Giá trị cho phép là {string.Join(", ", typeDict.Keys.ToArray())}");
+                            if (string.IsNullOrEmpty(categName))
+                                errs.Add("Nhóm vật tư là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new ProductProductImportExcelRow
+                            {
+                                Name = name,
+                                Type = type,
+                                CategName = categName,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                            };
+                            data.Add(item);
                         }
-
-                        if (!categDict.ContainsKey(categName))
-                        {
-                            var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == "product").FirstOrDefaultAsync();
-                            if (categ == null)
-                                categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "product" });
-                            categDict.Add(categName, categ);
-                        }
-
-                        var item = new ProductProductImportExcelRow
-                        {
-                            Name = name,
-                            Type = type,
-                            CategName = categName,
-                            DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
-                            PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                        };
-                        data.Add(item);
                     }
                 }
+            }
+            catch(Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
             }
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
 
-            var vals = new List<Product>();
-            var uom = await _uomService.DefaultUOM();
-            foreach (var item in data)
+            var categNames = data.Select(x => x.CategName).Distinct().ToList();
+            if (categNames.Any())
             {
-                var pd = new Product();
-                pd.CompanyId = CompanyId;
-                pd.UOMId = uom.Id;
-                pd.UOMPOId = uom.Id;
-                pd.Name = item.Name;
-                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
-                pd.SaleOK = false;
-                pd.Type = typeDict[item.Type];
-                pd.Type2 = "product";
-                pd.CategId = categDict[item.CategName].Id;
-                pd.DefaultCode = item.DefaultCode;
-                pd.PurchasePrice = item.PurchasePrice ?? 0;
-                vals.Add(pd);
+                var categs = await _productCategoryService.SearchQuery(x => categNames.Contains(x.Name) && x.Type == "product").ToListAsync();
+                foreach (var categName in categNames)
+                {
+                    if (categDict.ContainsKey(categName))
+                        continue;
+
+                    var categ = categs.FirstOrDefault(x => x.Name == categName);
+                    if (categ == null)
+                        categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "product" });
+                    categDict.Add(categName, categ);
+                }
             }
 
-            await _productService.CreateAsync(vals);
+            var productCodes = data.Where(x => !string.IsNullOrEmpty(x.DefaultCode))
+                .Select(x => x.DefaultCode).Distinct().ToList();
+            if (productCodes.Any())
+            {
+                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type == "product").ToListAsync();
+                foreach (var product in products)
+                {
+                    if (string.IsNullOrEmpty(product.DefaultCode) || productDict.ContainsKey(product.DefaultCode))
+                        continue;
+                    productDict.Add(product.DefaultCode, product);
+                }
+            }
 
-            _unitOfWork.Commit();
+            var uom = await _uomService.DefaultUOM();
+            var productsCreate = new List<Product>();
+            var productsUpdate = new List<Product>();
+            foreach (var item in data)
+            {
+                var product = !string.IsNullOrEmpty(item.DefaultCode) && productDict.ContainsKey(item.DefaultCode) ?
+                    productDict[item.DefaultCode] : null;
+                if (product == null)
+                {
+                    product = new Product();
+                    product.CompanyId = CompanyId;
+                    product.UOMId = uom.Id;
+                    product.UOMPOId = uom.Id;
+                    product.Name = item.Name;
+                    product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                    product.SaleOK = false;
+                    product.Type = typeDict[item.Type];
+                    product.Type2 = "product";
+                    product.CategId = categDict[item.CategName].Id;
+                    product.DefaultCode = item.DefaultCode;
+                    product.PurchasePrice = item.PurchasePrice ?? 0;
+
+                    productsCreate.Add(product);
+                }
+                else
+                {
+                    product.Name = item.Name;
+                    product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                    product.CategId = categDict[item.CategName].Id;
+                    product.DefaultCode = item.DefaultCode;
+                    product.PurchasePrice = item.PurchasePrice ?? 0;
+
+                    productsUpdate.Add(product);
+                }
+            }
+
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                await _productService.CreateAsync(productsCreate);
+                await _productService.UpdateAsync(productsUpdate);
+
+                _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lưu thất bại: {e.Message}" } });
+            }
 
             return Ok(new { success = true });
         }
@@ -614,11 +699,9 @@ namespace TMTDentalAPI.Controllers
             val.Limit = int.MaxValue;
             val.Offset = 0;
             var services = await _productService.GetServiceExportExcel(val);
-            //var categDict = new Dictionary<Guid, ProductCategory>();
-            var sheetName = "Thông tin dịch vụ ";
+            var sheetName = "Dịch vụ";
             byte[] fileContent;
 
-           
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
@@ -642,6 +725,59 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x=>x.Name).ToList());
                     worksheet.Cells[row, 7].Value = item.PurchasePrice ?? 0;
                 }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Product.Read")]
+        public async Task<IActionResult> ExportProductExcel(ProductPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var products = await _productService.GetProductExportExcel(val);
+            var sheetName = "Vật tư";
+            byte[] fileContent;
+            var type_dict = new Dictionary<string, string>()
+            {
+                { "product", "Có quản lý tồn kho" },
+                { "consu", "Không quản lý tồn kho" }
+            };
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Tên vật tư";
+                worksheet.Cells[1, 2].Value = "Loại";
+                worksheet.Cells[1, 3].Value = "Nhóm vật tư";
+                worksheet.Cells[1, 4].Value = "Mã vật tư";
+                worksheet.Cells[1, 5].Value = "Giá nhập";
+
+                var row = 2;
+                foreach (var item in products)
+                {
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = type_dict[item.Type];
+                    worksheet.Cells[row, 3].Value = item.CategName;
+                    worksheet.Cells[row, 4].Value = item.DefaultCode;
+                    worksheet.Cells[row, 5].Value = item.PurchasePrice ?? 0;
+
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
 
                 package.Save();
 
