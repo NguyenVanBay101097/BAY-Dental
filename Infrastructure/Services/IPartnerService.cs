@@ -52,5 +52,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerPaged val);
         Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd);
+
+        Task<IQueryable<PartnerViewModel>> GetViewModelsAsync();
     }
 }

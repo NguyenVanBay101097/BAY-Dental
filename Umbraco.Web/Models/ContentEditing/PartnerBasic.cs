@@ -223,4 +223,109 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string CityName { get; set; }
     }
+
+    public class PartnerViewModel
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string NameNoSign { get; set; }
+
+        public string Ref { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public int? BirthMonth { get; set; }
+
+        public int? BirthDay { get; set; }
+
+        public int? BirthYear { get; set; }
+
+        public string DateOfBirth
+        {
+            get
+            {
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
+            }
+            set { }
+        }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+
+        public string Gender { get; set; }
+
+        public string Comment { get; set; }
+  
+        public string Email { get; set; }
+
+        public string JobTitle { get; set; }
+
+        public string GenderDisplay 
+        {
+            get
+            {
+                switch(Gender)
+                {
+                    case "female":
+                        return "Nữ";
+                    case "other":
+                        return "Khác";
+                    default:
+                        return "Nam";
+                }
+            }
+            set
+            {
+            }
+        }
+
+        public DateTime? Date { get; set; }
+
+        public PartnerSourceViewModel Source { get; set; }
+
+        public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
+    }
 }
