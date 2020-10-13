@@ -103,11 +103,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    if (appoint.apptHour < 10)
+    
+    if (appoint.apptHour < 10) {
       appoint.apptHour = "0" + appoint.apptHour;
-    if (appoint.apptMinute < 10)
+    }
+     
+    if (appoint.apptMinute < 10) {
       appoint.apptMinute = "0" + appoint.apptMinute;
-    appoint.date= `${apptDate}T${appoint.apptHour}:${appoint.apptMinute}:00`;
+    }
+   
+    appoint.date = `${apptDate}T${appoint.apptHour}:${appoint.apptMinute}:00`;
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {

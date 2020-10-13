@@ -69,12 +69,12 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;" class="o_td_control_right">
                                     <div class="d-flex align-items-center">
-                                        <kendo-datepicker formControlName="apptDate">
+                                        <kendo-datepicker formControlName="apptDate" class="mr-2">
                                         </kendo-datepicker>
-                                        <select class="form-control w-fit-content" formControlName="apptHour">
+                                        <select class="form-control w-fit-content " formControlName="apptHour">
                                             <option *ngFor="let item of hourList" [value]="item">{{item | number:'2.0-0'}}</option>
                                         </select>
-                                        :
+                                        <span class="mx-1">:</span>
                                         <select class="form-control w-fit-content" formControlName="apptMinute">
                                             <option *ngFor="let item of minuteList" [value]="item">{{item | number:'2.0-0'}}</option>
                                         </select>
