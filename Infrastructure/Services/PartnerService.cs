@@ -1070,15 +1070,7 @@ namespace Infrastructure.Services
             foreach (var item in data)
             {
                 var isUpdate = !string.IsNullOrWhiteSpace(item.Ref) && partner_update_dict.ContainsKey(item.Ref) ? true : false;
-                var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();
-                if (item.City != null)
-                {
-                    partner.CityName = item.City.Name;
-                    partner.CityCode = item.City.Code;
-                }
-
-
-
+                var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();              
 
                 partner.CompanyId = CompanyId;
                 partner.Name = item.Name;
