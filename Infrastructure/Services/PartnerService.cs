@@ -898,8 +898,12 @@ namespace Infrastructure.Services
             var partner_code_list = new List<string>();
             var partner_history_list = new List<string>();
             var city = new CityVm();
+            var cities = new List<CityVm>();
             var distrist = new DistrictVm();
+            var distrists = new List<DistrictVm>();
             var ward = new WardVm();
+            var wards = new List<WardVm>();
+
             var title_dict = new Dictionary<string, string>()
             {
                 { "customer", "KH" },
@@ -957,13 +961,34 @@ namespace Infrastructure.Services
                                     date = DateTime.FromOADate(dateLong);
 
                                 if (!string.IsNullOrEmpty(cityName))
-                                    city = await CheckCity(cityName);
+                                {
+                                    city = cities.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(cityName))).FirstOrDefault();
+                                    if (city == null)
+                                    {
+                                        city = await CheckCity(cityName);
+                                        cities.Add(city);
+                                    }
+                                }
 
                                 if (city != null && !string.IsNullOrEmpty(districtName))
-                                    distrist = await CheckDistrict(city.Code, districtName);
+                                {
+                                    distrist = distrists.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(districtName)) && x.CityCode == city.Code).FirstOrDefault();
+                                    if (distrist == null)
+                                    {
+                                        distrist = await CheckDistrict(city.Code, districtName);
+                                        distrists.Add(distrist);
+                                    }
+                                }                                
 
                                 if (distrist != null && !string.IsNullOrEmpty(wardName))
-                                    ward = await CheckWard(distrist.Code, wardName);
+                                {
+                                    ward = wards.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(wardName)) && x.DistrictCode == distrist.Code).FirstOrDefault();
+                                    if (ward == null)
+                                    {
+                                        ward = await CheckWard(distrist.Code, wardName);
+                                        wards.Add(ward);
+                                    }
+                                }                                 
 
                                 data.Add(new PartnerImportRowExcel
                                 {
@@ -996,13 +1021,34 @@ namespace Infrastructure.Services
                             var wardName = Convert.ToString(worksheet.Cells[row, 8].Value);
 
                             if (!string.IsNullOrEmpty(cityName))
-                                city = await CheckCity(cityName);
+                            {
+                                city = cities.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(cityName))).FirstOrDefault();
+                                if (city == null)
+                                {
+                                    city = await CheckCity(cityName);
+                                    cities.Add(city);
+                                }
+                            }
 
                             if (city != null && !string.IsNullOrEmpty(districtName))
-                                distrist = await CheckDistrict(city.Code, districtName);
+                            {
+                                distrist = distrists.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(districtName)) && x.CityCode == city.Code).FirstOrDefault();
+                                if (distrist == null)
+                                {
+                                    distrist = await CheckDistrict(city.Code, districtName);
+                                    distrists.Add(distrist);
+                                }
+                            }
 
                             if (distrist != null && !string.IsNullOrEmpty(wardName))
-                                ward = await CheckWard(distrist.Code, wardName);
+                            {
+                                ward = wards.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(wardName)) && x.DistrictCode == distrist.Code).FirstOrDefault();
+                                if (ward == null)
+                                {
+                                    ward = await CheckWard(distrist.Code, wardName);
+                                    wards.Add(ward);
+                                }
+                            }
 
                             try
                             {
