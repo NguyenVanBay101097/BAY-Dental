@@ -1028,12 +1028,12 @@ namespace Infrastructure.Services
 
             var partner_update_dict = await GetPartnerDictByRefs(partner_code_list);
 
-            var address_check_dict = new Dictionary<string, AddressCheckApi>();
-            if (val.CheckAddress)
-            {
-                var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
-                address_check_dict = await CheckAddressAsync(address_list);
-            }
+            //var address_check_dict = new Dictionary<string, AddressCheckApi>();
+            //if (val.CheckAddress)
+            //{
+            //    var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
+            //    address_check_dict = await CheckAddressAsync(address_list);
+            //}
 
             var medical_history_dict = new Dictionary<string, History>();
             if (partner_history_list.Any())
@@ -1187,15 +1187,7 @@ namespace Infrastructure.Services
                     partner.Customer = false;
                     partner.Supplier = true;
                 }
-
-                if (!string.IsNullOrEmpty(item.Address))
-                {
-                    if (val.CheckAddress)
-                    {
-                        var addResult = address_check_dict.ContainsKey(item.Address) ? address_check_dict[item.Address] : null;
-                        partner.Street = addResult.ShortAddress;
-                    }                  
-                }              
+         
 
                 if (isUpdate)
                     partners_to_update.Add(partner);
