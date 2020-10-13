@@ -379,7 +379,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   handleDistrictChange(value) {
-    debugger
     this.formGroup.get("district").setValue(value);
     this.formGroup.get("ward").setValue(null);
 

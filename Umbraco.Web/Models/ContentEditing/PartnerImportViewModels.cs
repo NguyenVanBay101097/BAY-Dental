@@ -12,6 +12,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
         public string DateOfBirth { get; set; }
         public string Phone { get; set; }
+        public string Street { get; set; }
+        public CityVm City { get; set; }
+        public DistrictVm District { get; set; }
+        public WardVm Ward { get; set; }
+           
         public string Address
         {
             get
@@ -19,20 +24,17 @@ namespace Umbraco.Web.Models.ContentEditing
                 var list = new List<string>();
                 if (!string.IsNullOrEmpty(Street))
                     list.Add(Street);
-                if (!string.IsNullOrEmpty(WardName))
-                    list.Add(WardName);
-                if (!string.IsNullOrEmpty(DistrictName))
-                    list.Add(DistrictName);
-                if (!string.IsNullOrEmpty(CityName))
-                    list.Add(CityName);
+                if (!string.IsNullOrEmpty(Ward.Name))
+                    list.Add(Ward.Name);
+                if (!string.IsNullOrEmpty(District.Name))
+                    list.Add(District.Name);
+                if (!string.IsNullOrEmpty(City.Name))
+                    list.Add(City.Name);
                 return string.Join(", ", list);
             }
             set { }
         }
-        public string Street { get; set; }
-        public string WardName { get; set; }
-        public string DistrictName { get; set; }
-        public string CityName { get; set; }
+      
         public string MedicalHistory { get; set; }
         public string Job { get; set; }
         public string Email { get; set; }
@@ -131,5 +133,35 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
+    }
+
+    public class WardVm
+    {
+        public string CityCode { get; set; }
+        public string CityName { get; set; }
+        public string DistrictCode { get; set; }
+        public string DistrictName { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string NameNoSign { get; set; }
+    }
+
+    public class DistrictVm
+    {
+        public string CityCode { get; set; }
+        public string CityName { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string NameNoSign { get; set; }
+
+    }
+
+    public class CityVm
+    {
+
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string NameNoSign { get;set; }
+
     }
 }

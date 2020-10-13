@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -25,6 +26,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyERP.Utilities;
 using Newtonsoft.Json;
 using NPOI.XSSF.UserModel;
@@ -925,6 +927,10 @@ namespace Infrastructure.Services
                                 partner_code_list.Add(reference);
                         }
 
+                        var cityName = Convert.ToString(worksheet.Cells[row, 8].Value);
+                        var districtName = Convert.ToString(worksheet.Cells[row, 9].Value);
+                        var wardName = Convert.ToString(worksheet.Cells[row, 10].Value);
+
                         if (val.Type == "customer")
                         {
                             var medicalHistory = Convert.ToString(worksheet.Cells[row, 11].Value);
@@ -941,10 +947,22 @@ namespace Infrastructure.Services
                             try
                             {
                                 DateTime? date = null;
+                                var city = new CityVm();
+                                var distrist = new DistrictVm();
+                                var ward = new WardVm();
                                 var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
                                 long dateLong;
                                 if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
                                     date = DateTime.FromOADate(dateLong);
+
+                                if (!string.IsNullOrEmpty(cityName))
+                                    city = await CheckCity(cityName);
+
+                                if (city != null && !string.IsNullOrEmpty(districtName))
+                                    distrist = await CheckDistrict(city.Code, Convert.ToString(worksheet.Cells[row, 9].Value));
+
+                                if (distrist != null && !string.IsNullOrEmpty(wardName))
+                                    ward = await CheckWard(distrist.Code, Convert.ToString(worksheet.Cells[row, 10].Value));
 
                                 data.Add(new PartnerImportRowExcel
                                 {
@@ -954,8 +972,10 @@ namespace Infrastructure.Services
                                     Gender = Convert.ToString(worksheet.Cells[row, 4].Value),
                                     DateOfBirth = Convert.ToString(worksheet.Cells[row, 5].Value),
                                     Phone = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                    Address = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                    WardName = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                    Street = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                    City = city,
+                                    District = distrist,
+                                    Ward = ward,
                                     MedicalHistory = medicalHistory,
                                     Job = Convert.ToString(worksheet.Cells[row, 12].Value),
                                     Email = Convert.ToString(worksheet.Cells[row, 13].Value),
@@ -1051,7 +1071,15 @@ namespace Infrastructure.Services
             {
                 var isUpdate = !string.IsNullOrWhiteSpace(item.Ref) && partner_update_dict.ContainsKey(item.Ref) ? true : false;
                 var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();
-                var ward = CheckWard(item.WardName);
+                if (item.City != null)
+                {
+                    partner.CityName = item.City.Name;
+                    partner.CityCode = item.City.Code;
+                }
+
+
+
+
                 partner.CompanyId = CompanyId;
                 partner.Name = item.Name;
                 partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
@@ -1059,8 +1087,15 @@ namespace Infrastructure.Services
                 partner.Phone = item.Phone;
                 partner.Comment = item.Note;
                 partner.Email = item.Email;
-                partner.WardName = ward.Result.name;
-                partner.WardCode = ward.Result.code;
+                partner.CityName = item.City != null ? item.City.Name : null;
+                partner.CityCode = item.City != null ? item.City.Code : null;
+                partner.DistrictName = item.District != null ? item.District.Name : null;
+                partner.DistrictCode = item.District != null ? item.District.Code : null;
+                partner.WardName = item.Ward != null ? item.Ward.Name : null;
+                partner.WardCode = item.Ward != null ? item.Ward.Code : null;
+                partner.Street = item.Street;
+
+
 
 
                 if (val.Type == "customer")
@@ -1158,38 +1193,9 @@ namespace Infrastructure.Services
                     if (val.CheckAddress)
                     {
                         var addResult = address_check_dict.ContainsKey(item.Address) ? address_check_dict[item.Address] : null;
-                        if (addResult != null)
-                        {
-                            partner.Street = addResult.ShortAddress;
-                            partner.WardCode = addResult.WardCode;
-                            partner.WardName = addResult.WardName;
-                            partner.DistrictCode = addResult.DistrictCode;
-                            partner.DistrictName = addResult.DistrictName;
-                            partner.CityCode = addResult.CityCode;
-                            partner.CityName = addResult.CityName;
-                        }
-                    }
-                    else
-                    {
-                        partner.Street = item.Address;
-                        partner.WardCode = null;
-                        partner.WardName = null;
-                        partner.DistrictCode = null;
-                        partner.DistrictName = null;
-                        partner.CityCode = null;
-                        partner.CityName = null;
-                    }
-                }
-                else
-                {
-                    partner.Street = null;
-                    partner.WardCode = null;
-                    partner.WardName = null;
-                    partner.DistrictCode = null;
-                    partner.DistrictName = null;
-                    partner.CityCode = null;
-                    partner.CityName = null;
-                }
+                        partner.Street = addResult.ShortAddress;
+                    }                  
+                }              
 
                 if (isUpdate)
                     partners_to_update.Add(partner);
@@ -1218,58 +1224,92 @@ namespace Infrastructure.Services
             return new PartnerImportResponse { Success = true };
         }
 
-        public async Task<Ward> CheckWard(string wardName)
-        {
-            HttpResponseMessage response = null;
- 
-            var res = new List<Ward>();
-            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
-            {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new AshipRequest() { Data = new Data() { Code = "" }, Provider = "Undefined" });
-                if (response.IsSuccessStatusCode)
-                {
-                    var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<Ward>>(rs);
-                };
-
-            }
-            return res.Where(x => x.name.Contains(wardName)).FirstOrDefault();
-        }
-
-        public async Task<District> CheckDistrict(string districtName)
+        public async Task<WardVm> CheckWard(string districtCode, string wardName)
         {
             HttpResponseMessage response = null;
 
-            var res = new List<District>();
+            var res = new List<WardVm>();
             using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
             {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new AshipRequest() { Data = new Data() { Code = ""}, Provider = "Undefined" } );
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new { data = new { code = districtCode }, provider = "Undefined" });
                 if (response.IsSuccessStatusCode)
                 {
                     var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<District>>(rs);
+                    res = JsonConvert.DeserializeObject<List<WardVm>>(rs);
+                    foreach (var item in res)
+                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
                 };
 
             }
-            return res.Where(x => x.Name.Contains(districtName)).FirstOrDefault();
+
+            var ward = res.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(wardName))).FirstOrDefault();
+            if (ward == null)
+                throw new Exception($"không tìm thấy Phường/Xã {wardName}");
+
+            return ward;
         }
 
-        public async Task<City> CheckCity(string cityName)
+        public async Task<DistrictVm> CheckDistrict(string cityCode, string districtName)
         {
             HttpResponseMessage response = null;
-            var res = new List<City>();
+
+            var res = new List<DistrictVm>();
             using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
             {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingCity/GetCities", new AshipRequest { Provider = "Undefined" });
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts", new { data = new { code = cityCode }, provider = "Undefined" });
                 if (response.IsSuccessStatusCode)
                 {
                     var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<City>>(rs);
+                    res = JsonConvert.DeserializeObject<List<DistrictVm>>(rs);
+                    foreach (var item in res)
+                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
                 };
 
             }
-            return res.Where(x => x.Name.Contains(cityName)).FirstOrDefault();
+
+            var district = res.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(districtName))).FirstOrDefault();
+            if (district == null)
+                throw new Exception($"không tìm thấy Quận/Huyện {districtName}");
+
+            return district;
         }
+
+        public async Task<CityVm> CheckCity(string cityName)
+        {
+
+            var city_dict = new Dictionary<string, string>()
+            {
+                {"HCM", "Thành phố Hồ Chí Minh" },
+                {"hcm", "Thành phố Hồ Chí Minh" },
+                {"HN", "Thành phố Hà Nội" },
+                {"hn", "Thành phố Hà Nội" },
+                {"DN", "Thành phố Đà Nẵng" },
+                {"dn", "Thành phố Đà Nẵng" },
+            };
+
+            HttpResponseMessage response = null;
+            var res = new List<CityVm>();
+            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
+            {
+                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingCity/GetCities", new { provider = "Undefined" });
+                if (response.IsSuccessStatusCode)
+                {
+                    var rs = await response.Content.ReadAsStringAsync();
+                    res = JsonConvert.DeserializeObject<List<CityVm>>(rs);
+                    foreach (var item in res)
+                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
+                };
+
+            }
+
+            var city = res.Where(x => x.NameNoSign.Contains(city_dict.ContainsKey(cityName) == true ? StringUtils.RemoveVietnamese(city_dict[cityName]) : StringUtils.RemoveVietnamese(cityName))).FirstOrDefault();
+            if (city == null)
+                throw new Exception($"không tìm thấy Tỉnh/Thành {cityName}");
+
+            return city;
+        }
+
+       
 
 
 
@@ -1917,40 +1957,5 @@ namespace Infrastructure.Services
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
 
-    public class Ward
-    {
-        public string cityCode { get; set; }
-        public string cityName { get; set; }
-        public string districtCode { get; set; }
-        public string districtName { get; set; }
-        public string code { get; set; }
-        public string name { get; set; }
-    }
 
-    public class AshipRequest
-    {
-        public Data Data { get; set; }
-        public string Provider { get; set; }
-    }
-    public class Data
-    {
-        public string Code { get; set; }
-    }
-
-    public class District
-    {
-        public string CityCode { get; set; }
-        public string CityName { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
-
-    public class City
-    {
-       
-        public string Code { get; set; }
-        public string Name { get; set; }
-
-    }
 }

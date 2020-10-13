@@ -30,8 +30,6 @@
     <Compile Remove="Data\Migrations\20200814070310_UpdateSaleOrderLineListCommission.Designer.cs" />
     <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.cs" />
     <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
-    <Compile Remove="Services\IWardService.cs" />
-    <Compile Remove="Services\WardService.cs" />
   </ItemGroup>
 
   <ItemGroup>
