@@ -930,12 +930,13 @@ namespace Infrastructure.Services
                                 partner_code_list.Add(reference);
                         }
 
-                        var cityName = Convert.ToString(worksheet.Cells[row, 8].Value);
-                        var districtName = Convert.ToString(worksheet.Cells[row, 9].Value);
-                        var wardName = Convert.ToString(worksheet.Cells[row, 10].Value);
+                       
 
                         if (val.Type == "customer")
                         {
+                            var cityName = Convert.ToString(worksheet.Cells[row, 8].Value);
+                            var districtName = Convert.ToString(worksheet.Cells[row, 9].Value);
+                            var wardName = Convert.ToString(worksheet.Cells[row, 10].Value);
                             var medicalHistory = Convert.ToString(worksheet.Cells[row, 11].Value);
                             if (!string.IsNullOrWhiteSpace(medicalHistory))
                             {
@@ -959,10 +960,10 @@ namespace Infrastructure.Services
                                     city = await CheckCity(cityName);
 
                                 if (city != null && !string.IsNullOrEmpty(districtName))
-                                    distrist = await CheckDistrict(city.Code, Convert.ToString(worksheet.Cells[row, 9].Value));
+                                    distrist = await CheckDistrict(city.Code, districtName);
 
                                 if (distrist != null && !string.IsNullOrEmpty(wardName))
-                                    ward = await CheckWard(distrist.Code, Convert.ToString(worksheet.Cells[row, 10].Value));
+                                    ward = await CheckWard(distrist.Code, wardName);
 
                                 data.Add(new PartnerImportRowExcel
                                 {
@@ -990,6 +991,19 @@ namespace Infrastructure.Services
                         }
                         else if (val.Type == "supplier")
                         {
+                            var cityName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var districtName = Convert.ToString(worksheet.Cells[row, 7].Value);
+                            var wardName = Convert.ToString(worksheet.Cells[row, 8].Value);
+
+                            if (!string.IsNullOrEmpty(cityName))
+                                city = await CheckCity(cityName);
+
+                            if (city != null && !string.IsNullOrEmpty(districtName))
+                                distrist = await CheckDistrict(city.Code, districtName);
+
+                            if (distrist != null && !string.IsNullOrEmpty(wardName))
+                                ward = await CheckWard(distrist.Code, wardName);
+
                             try
                             {
                                 data.Add(new PartnerImportRowExcel
@@ -998,9 +1012,12 @@ namespace Infrastructure.Services
                                     Ref = reference,
                                     Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
                                     Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                    Address = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                    Email = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                    Note = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                    Street = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                    City = city,
+                                    District = distrist,
+                                    Ward = ward,
+                                    Email = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                    Note = Convert.ToString(worksheet.Cells[row, 10].Value),
                                 });
                             }
                             catch (Exception e)
