@@ -36,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerCategoryService _partnerCategoryService;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IIRSequenceService _iRSequenceService;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IAccountInvoiceService _accountInvoiceService;
         private readonly IAccountPaymentService _paymentService;
@@ -51,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
             IServiceCardCardService serviceCardService,
-            IPartnerSourceService partnerSourceService)
+            IPartnerSourceService partnerSourceService,
+            IIRSequenceService iRSequenceService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -64,11 +66,13 @@ namespace TMTDentalAPI.Controllers
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
+            _iRSequenceService = iRSequenceService;
         }
+
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
+        public async Task<IActionResult> Get([FromQuery] PartnerPaged val)
         {
             var result = await _partnerService.GetPagedResultAsync(val);
 
@@ -330,7 +334,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -388,7 +392,7 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -396,7 +400,7 @@ namespace TMTDentalAPI.Controllers
 
         //Check địa chỉ 
         [HttpGet("CheckAddress")]
-        public async Task<IActionResult> CheckAddress([FromQuery]string text)
+        public async Task<IActionResult> CheckAddress([FromQuery] string text)
         {
             //HttpClient client = new HttpClient();
             HttpResponseMessage response = null;
@@ -413,7 +417,7 @@ namespace TMTDentalAPI.Controllers
                     return Ok(new List<AddressCheckApi>());
                 }
             }
-            
+
         }
 
         [HttpGet("{id}/[action]")]

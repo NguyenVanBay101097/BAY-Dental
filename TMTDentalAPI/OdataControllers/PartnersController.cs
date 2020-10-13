@@ -32,5 +32,7 @@ namespace TMTDentalAPI.OdataControllers
             var results = await _partnerService.GetViewModelsAsync();
             return Ok(results);
         }
+
+       
     }
 }

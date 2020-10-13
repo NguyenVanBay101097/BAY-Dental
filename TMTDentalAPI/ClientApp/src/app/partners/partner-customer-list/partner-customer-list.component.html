@@ -20,12 +20,21 @@
         <div class="o_cp_sidebar">
         </div>
     </div>
-    <div class="o_cp_right">
-        <div>
+    <div class="o_cp_right" style="display: inline-table !important">
+        <div class="float-left">
             <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
                 (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
                 [valueField]="'id'" [popupSettings]="{width: 'auto'}">
             </kendo-combobox>
+        </div>
+        <div class="float-right mt-2">
+            <div ngbDropdown>
+                <i id="dropdownBasic1"  ngbDropdownToggle
+                    class="fas fa-user-cog"></i>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                    <button (click)="setupAutoCodeCustomer()" ngbDropdownItem>Mã tự sinh của khách hàng</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -36,7 +45,8 @@
         <kendo-grid-column field="name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
                         {{dataItem.name}}
                     </a>

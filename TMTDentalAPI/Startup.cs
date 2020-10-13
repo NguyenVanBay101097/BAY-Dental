@@ -294,6 +294,7 @@ namespace TMTDentalAPI
             {
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
+                mc.AddProfile(new IRSequenceProfile());
                 mc.AddProfile(new UoMProfile());
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
@@ -604,6 +605,7 @@ namespace TMTDentalAPI
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();
         }
 

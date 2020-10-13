@@ -12,6 +12,8 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -35,8 +37,12 @@ export class PartnerCustomerListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
 
-  constructor(private partnerService: PartnerService, private modalService: NgbModal,
-    private partnerCategoryService: PartnerCategoryService) { }
+  constructor(
+    private partnerService: PartnerService,
+    private modalService: NgbModal,
+    private partnerCategoryService: PartnerCategoryService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -76,6 +82,31 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
+  setupAutoCodeCustomer() {
+    const modalRef = this.modalService.open(PartnerCustomerAutoGenerateCodeDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.code = "customer";
+    modalRef.result.then(res => {
+      if (res) {
+        this.notificationService.show({
+          content: 'Cài đặt thành công!',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+      else {
+        this.notificationService.show({
+          content: 'Lỗi hệ thống',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      }
+    }, () => {
+    });
+  }
 
   loadDataFromApi() {
     var val = new PartnerPaged();
