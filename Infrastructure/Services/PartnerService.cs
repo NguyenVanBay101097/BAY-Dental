@@ -897,6 +897,9 @@ namespace Infrastructure.Services
             var errors = new List<string>();
             var partner_code_list = new List<string>();
             var partner_history_list = new List<string>();
+            var city = new CityVm();
+            var distrist = new DistrictVm();
+            var ward = new WardVm();
             var title_dict = new Dictionary<string, string>()
             {
                 { "customer", "KH" },
@@ -946,10 +949,7 @@ namespace Infrastructure.Services
 
                             try
                             {
-                                DateTime? date = null;
-                                var city = new CityVm();
-                                var distrist = new DistrictVm();
-                                var ward = new WardVm();
+                                DateTime? date = null;                              
                                 var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
                                 long dateLong;
                                 if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
@@ -1070,7 +1070,8 @@ namespace Infrastructure.Services
             foreach (var item in data)
             {
                 var isUpdate = !string.IsNullOrWhiteSpace(item.Ref) && partner_update_dict.ContainsKey(item.Ref) ? true : false;
-                var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();              
+                var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();
+              
 
                 partner.CompanyId = CompanyId;
                 partner.Name = item.Name;
@@ -1236,6 +1237,21 @@ namespace Infrastructure.Services
         public async Task<DistrictVm> CheckDistrict(string cityCode, string districtName)
         {
             HttpResponseMessage response = null;
+            var district_dict = new Dictionary<string, string>()
+            {
+                {"q1", "Quận 1" },
+                {"q2", "Quận 2" },
+                {"q3", "Quận 3" },
+                {"q4", "Quận 4" },
+                {"q5", "Quận 5" },
+                {"q6", "Quận 6" },
+                {"q7", "Quận 7" },
+                {"q8", "Quận 8" },
+                {"q9", "Quận 9" },
+                {"q10","Quận 10" },
+                {"q11","Quận 11" },
+                {"q12","Quận 12" },
+            };
 
             var res = new List<DistrictVm>();
             using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
@@ -1251,7 +1267,7 @@ namespace Infrastructure.Services
 
             }
 
-            var district = res.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(districtName))).FirstOrDefault();
+            var district = res.Where(x => x.NameNoSign.Contains(district_dict.ContainsKey(districtName) == true ? StringUtils.RemoveVietnamese(district_dict[districtName]) : StringUtils.RemoveVietnamese(districtName))).FirstOrDefault();
             if (district == null)
                 throw new Exception($"không tìm thấy Quận/Huyện {districtName}");
 
@@ -1265,8 +1281,12 @@ namespace Infrastructure.Services
             {
                 {"HCM", "Thành phố Hồ Chí Minh" },
                 {"hcm", "Thành phố Hồ Chí Minh" },
+                {"TPHCM", "Thành phố Hồ Chí Minh" },
+                {"tphcm", "Thành phố Hồ Chí Minh" },
                 {"HN", "Thành phố Hà Nội" },
                 {"hn", "Thành phố Hà Nội" },
+                {"TPHN", "Thành phố Hà Nội" },
+                {"tphn", "Thành phố Hà Nội" },
                 {"DN", "Thành phố Đà Nẵng" },
                 {"dn", "Thành phố Đà Nẵng" },
             };
