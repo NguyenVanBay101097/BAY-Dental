@@ -59,41 +59,16 @@
         <kendo-grid-column title="Nhóm" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div *ngIf="dataItem.categories.length ; else editcate">
-                    <button title="sửa nhóm" class="btn btn-xs btn-info mr-1" *ngFor="let item of dataItem.categories"
-                        title="Thay đổi nhãn" [ngbPopover]="popContent" [popoverTitle]="popTitle" #popOver="ngbPopover"
-                        triggers="manual" [autoClose]="false" placement="left"
-                        (click)="onToggleCategory(popOver,dataItem.id)">
+                    <app-partner-category-popover [otherInput] = "this.popover" (otherOutput)="closePopOver($event)" (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.id" *ngFor="let item of dataItem.categories">
                         {{item.name}}
-                    </button>
+                    </app-partner-category-popover>
                 </div>
                 <ng-template #editcate>
-                    <button title="sửa nhóm" class="btn btn-xs btn-info" [ngbPopover]="popContent"
-                        [popoverTitle]="popTitle" #popOver="ngbPopover" triggers="manual" [autoClose]="false"
-                        placement="left" (click)="onToggleCategory(popOver,dataItem.id)"><i
-                            class="fa fa-tags"></i></button>
+                            <app-partner-category-popover [otherInput] = "this.popover" (otherOutput)="closePopOver($event)" (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.id">
+                                <i class="fa fa-tags"></i>
+                            </app-partner-category-popover>
                 </ng-template>
 
-
-                <ng-template #popTitle>
-                    <div class="d-flex">
-                        <label> Nhóm khách hàng</label>
-                        <button type="button" class="ml-auto btn btn-dark btn-sm"
-                           (click)="ClosePopover()">X</button>
-                    </div>
-                </ng-template>
-                <ng-template #popContent let-partnerCategoriesPopOver="partnerCategoriesPopOver">
-                    <div>
-                        <kendo-multiselect class="mr-1" [data]="partnerCategoriesPopOver"
-                            [(ngModel)]="value_partnerCategoryPopOver" [filterable]="true"
-                            (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
-                            textField="name" valueField="id" placeholder="Thêm nhãn cho khách hàng">
-                        </kendo-multiselect>
-                        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()"
-                            accesskey="c">
-                            Lưu
-                        </button>
-                    </div>
-                </ng-template>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Ngày sinh" width="120">

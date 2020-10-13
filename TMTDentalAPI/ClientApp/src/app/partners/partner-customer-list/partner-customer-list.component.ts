@@ -28,17 +28,11 @@ export class PartnerCustomerListComponent implements OnInit {
   skip = 0;
   loading = false;
   opened = false;
-  rowPartnerId: any;
-  search_partnerCategory: string;
 
   search: string;
   searchCateg: PartnerCategoryBasic;
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
-  searchUpdatePopOver = new Subject<string>();
-
-  value_partnerCategoryPopOver : any;
-  partnerCategoriesPopover: any;
 
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
@@ -52,13 +46,6 @@ export class PartnerCustomerListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(() => {
         this.loadDataFromApi();
-      });
-
-    this.searchUpdatePopOver.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(() => {
-        this.loadPartnerCategoryPopOver();
       });
 
     this.categCbx.filterChange
@@ -75,27 +62,6 @@ export class PartnerCustomerListComponent implements OnInit {
 
     this.loadDataFromApi();
     this.loadFilteredCategs();
-    this.loadPartnerCategoryPopOver();
-
-  }
-
-  loadPartnerCategoryPopOver() {
-    const val = new PartnerCategoryPaged();
-    val.limit = 20;
-    val.offset = 0;
-    val.search = this.search_partnerCategory || '';
-
-    this.partnerCategoryService.getPaged(val).subscribe(res => {
-      this.partnerCategoriesPopover = res.items;
-      // if (this.popover && this.popover.isOpen()) {
-      //   console.log(this.popover);
-      //   this.popover.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
-      // } else if (this.popover) {
-      //   this.popover.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
-      // }
-    }, err => {
-      console.log(err);
-    });
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -112,6 +78,9 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
+  popOverSave(e) {
+    this.loadDataFromApi();
+  }
 
   loadDataFromApi() {
     var val = new PartnerPaged();
@@ -155,6 +124,10 @@ export class PartnerCustomerListComponent implements OnInit {
 
   onPaymentChange() {
     this.loadDataFromApi();
+  }
+
+  closePopOver(e){
+this.popover = e;
   }
 
   exportPartnerExcelFile() {
@@ -212,42 +185,4 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
-  onToggleCategory(popOver, id) {
-    if (popOver.isOpen()) {
-      popOver.close();
-    } else {
-      this.rowPartnerId = id;
-      const val = new PartnerCategoryPaged();
-      val.limit = 20;
-      val.offset = 0;
-      val.partnerId = id;
-      this.partnerCategoryService.getPaged(val).subscribe((res) => {
-          this.value_partnerCategoryPopOver = res.items;
-      });
-      popOver.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
-      this.popover = popOver;
-    }
-  }
-
-  handleFilterCategoryPopOver(value) {
-    this.search_partnerCategory = value;
-  }
-
-  SavePartnerCategories() {
-    console.log(this.value_partnerCategoryPopOver);
-    const val = new PartnerAddRemoveTags();
-    val.id = this.rowPartnerId;
-    val.tagIds = [];
-    this.value_partnerCategoryPopOver.forEach(element => {
-      val.tagIds.push(element.id);
-    });
-    this.partnerService.updateTags(val).subscribe(() => {
-      this.loadDataFromApi();
-      this.value_partnerCategoryPopOver = [];
-    });
-  }
-
-  ClosePopover() {
-    this.popover.close();
-  }
 }

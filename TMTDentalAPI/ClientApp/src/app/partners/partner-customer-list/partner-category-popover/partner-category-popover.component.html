@@ -1,0 +1,29 @@
+<button title="sửa nhóm" class="btn btn-xs btn-info mr-1" [ngbPopover]="popContent"
+[popoverTitle]="popTitle" #popOver="ngbPopover" triggers="manual" [autoClose]="false"
+placement="left" (click)="onToggleCategory(popOver)">
+<ng-content></ng-content>
+</button>
+<ng-template #popTitle>
+    <div class="d-flex">
+        <label> Nhóm khách hàng</label>
+        <button type="button" class="ml-auto btn btn-dark btn-sm"
+           (click)="popOver.close()">X</button>
+    </div>
+</ng-template>
+<ng-template #popContent let-partnerCategoriesPopOver="partnerCategoriesPopOver">
+    <div>
+        <kendo-multiselect class="mr-1" [data]="partnerCategoriesPopOver"
+            [(ngModel)]="value_partnerCategoryPopOver" [filterable]="true"
+            (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
+            [textField]="'name'"  [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng"
+            [allowCustom]="true"
+            
+            [valueNormalizer]="valueNormalizer"
+            >
+        </kendo-multiselect>
+        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()"
+            accesskey="c">
+            Lưu
+        </button>
+    </div>
+</ng-template>
