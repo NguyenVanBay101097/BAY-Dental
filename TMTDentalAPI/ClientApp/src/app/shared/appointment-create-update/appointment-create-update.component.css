@@ -9,3 +9,7 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
 .k-alert-error {
   color: red;
 }
+
+.w-fit-content {
+  width: fit-content;
+}
