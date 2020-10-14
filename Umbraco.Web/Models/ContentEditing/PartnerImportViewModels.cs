@@ -13,23 +13,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DateOfBirth { get; set; }
         public string Phone { get; set; }
         public string Street { get; set; }
-        public CityVm City { get; set; }
-        public DistrictVm District { get; set; }
-        public WardVm Ward { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
            
         public string Address
         {
             get
             {
-                var list = new List<string>();
-                if (!string.IsNullOrEmpty(Street))
-                    list.Add(Street);
-                if (!string.IsNullOrEmpty(Ward.Name))
-                    list.Add(Ward.Name);
-                if (!string.IsNullOrEmpty(District.Name))
-                    list.Add(District.Name);
-                if (!string.IsNullOrEmpty(City.Name))
-                    list.Add(City.Name);
+                var list = new List<string>();              
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
                 return string.Join(", ", list);
             }
             set { }

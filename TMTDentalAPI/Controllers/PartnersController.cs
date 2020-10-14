@@ -357,34 +357,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
-        {
-            int offset = 0;
-            var dict = new Dictionary<string, AddressCheckApi>();
-            while (offset < strs.Count)
-            {
-                var subStrs = strs.Skip(offset).Take(limit);
-                var allTasks = subStrs.Select(x => AddressHandleAsync(x));
-                var res = await Task.WhenAll(allTasks);
-                foreach (var item in res)
-                {
-                    dict.Add(item.Key, item.Value);
-                }
 
-                offset += limit;
-            }
-
-            return dict;
-        }
-
-        private async Task<KeyValuePair<string, AddressCheckApi>> AddressHandleAsync(string text)
-        {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
-            var res = response.Content.ReadAsAsync<AddressCheckApi[]>().Result.ToList().FirstOrDefault();
-            var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
-            return pair;
-        }
 
         [AllowAnonymous]
         [HttpPost("[action]")]

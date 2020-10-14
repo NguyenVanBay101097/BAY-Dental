@@ -570,7 +570,8 @@ namespace Infrastructure.Services
 
         private string GetDateOfBirthDisplay(Partner partner)
         {
-            return string.Format("{0}/{1}/{2}", partner.BirthDay.HasValue ? partner.BirthDay.Value.ToString() : "",
+            return string.Format("{0}/{1}/{2}", partner.BirthDay.HasValue ?
+                partner.BirthDay.Value.ToString() : "",
                 partner.BirthMonth.HasValue ? partner.BirthMonth.Value.ToString() : "",
                 partner.BirthYear.HasValue ? partner.BirthYear.Value.ToString() : "");
         }
@@ -897,9 +898,6 @@ namespace Infrastructure.Services
             var errors = new List<string>();
             var partner_code_list = new List<string>();
             var partner_history_list = new List<string>();
-            var city = new CityVm();
-            var distrist = new DistrictVm();
-            var ward = new WardVm();
             var title_dict = new Dictionary<string, string>()
             {
                 { "customer", "KH" },
@@ -930,13 +928,10 @@ namespace Infrastructure.Services
                                 partner_code_list.Add(reference);
                         }
 
-                       
+
 
                         if (val.Type == "customer")
                         {
-                            var cityName = Convert.ToString(worksheet.Cells[row, 8].Value);
-                            var districtName = Convert.ToString(worksheet.Cells[row, 9].Value);
-                            var wardName = Convert.ToString(worksheet.Cells[row, 10].Value);
                             var medicalHistory = Convert.ToString(worksheet.Cells[row, 11].Value);
                             if (!string.IsNullOrWhiteSpace(medicalHistory))
                             {
@@ -950,20 +945,11 @@ namespace Infrastructure.Services
 
                             try
                             {
-                                DateTime? date = null;                              
+                                DateTime? date = null;
                                 var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
                                 long dateLong;
                                 if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
                                     date = DateTime.FromOADate(dateLong);
-
-                                if (!string.IsNullOrEmpty(cityName))
-                                    city = await CheckCity(cityName);
-
-                                if (city != null && !string.IsNullOrEmpty(districtName))
-                                    distrist = await CheckDistrict(city.Code, districtName);
-
-                                if (distrist != null && !string.IsNullOrEmpty(wardName))
-                                    ward = await CheckWard(distrist.Code, wardName);
 
                                 data.Add(new PartnerImportRowExcel
                                 {
@@ -974,9 +960,9 @@ namespace Infrastructure.Services
                                     DateOfBirth = Convert.ToString(worksheet.Cells[row, 5].Value),
                                     Phone = Convert.ToString(worksheet.Cells[row, 6].Value),
                                     Street = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                    City = city,
-                                    District = distrist,
-                                    Ward = ward,
+                                    WardName = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                    DistrictName = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                    CityName = Convert.ToString(worksheet.Cells[row, 10].Value),
                                     MedicalHistory = medicalHistory,
                                     Job = Convert.ToString(worksheet.Cells[row, 12].Value),
                                     Email = Convert.ToString(worksheet.Cells[row, 13].Value),
@@ -991,18 +977,6 @@ namespace Infrastructure.Services
                         }
                         else if (val.Type == "supplier")
                         {
-                            var cityName = Convert.ToString(worksheet.Cells[row, 6].Value);
-                            var districtName = Convert.ToString(worksheet.Cells[row, 7].Value);
-                            var wardName = Convert.ToString(worksheet.Cells[row, 8].Value);
-
-                            if (!string.IsNullOrEmpty(cityName))
-                                city = await CheckCity(cityName);
-
-                            if (city != null && !string.IsNullOrEmpty(districtName))
-                                distrist = await CheckDistrict(city.Code, districtName);
-
-                            if (distrist != null && !string.IsNullOrEmpty(wardName))
-                                ward = await CheckWard(distrist.Code, wardName);
 
                             try
                             {
@@ -1013,9 +987,9 @@ namespace Infrastructure.Services
                                     Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
                                     Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
                                     Street = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                    City = city,
-                                    District = distrist,
-                                    Ward = ward,
+                                    WardName = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                    DistrictName = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                    CityName = Convert.ToString(worksheet.Cells[row, 8].Value),
                                     Email = Convert.ToString(worksheet.Cells[row, 9].Value),
                                     Note = Convert.ToString(worksheet.Cells[row, 10].Value),
                                 });
@@ -1043,14 +1017,15 @@ namespace Infrastructure.Services
             if (errors.Any())
                 return new PartnerImportResponse { Success = false, Errors = errors };
 
-            var partner_update_dict = await GetPartnerDictByRefs(partner_code_list);
+            //Get list partner ref
+            var partner_dict = await GetPartnerDictByRefs(partner_code_list);
 
-            //var address_check_dict = new Dictionary<string, AddressCheckApi>();
-            //if (val.CheckAddress)
-            //{
-            //    var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
-            //    address_check_dict = await CheckAddressAsync(address_list);
-            //}
+
+            var address_check_dict = new Dictionary<string, AddressCheckApi>();
+            var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
+            //Get list Api check address distionary
+            address_check_dict = await CheckAddressAsync(address_list);
+
 
             var medical_history_dict = new Dictionary<string, History>();
             if (partner_history_list.Any())
@@ -1074,6 +1049,197 @@ namespace Infrastructure.Services
                 }
             }
 
+
+
+            var partnersCreate = new List<Partner>();
+            var partnersUpdate = new List<Partner>();
+            foreach (var item in data)
+            {
+                var partner = !string.IsNullOrEmpty(item.Ref) && partner_dict.ContainsKey(item.Ref) ? partner_dict[item.Ref] : null;
+                var addResult = address_check_dict.ContainsKey(item.Address) ? address_check_dict[item.Address] : null;
+                if (partner == null)
+                {
+                    partner = new Partner();
+                    partner.CompanyId = CompanyId;
+                    partner.Name = item.Name;
+                    partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+                    partner.Ref = item.Ref;
+                    partner.Phone = item.Phone;
+                    partner.Comment = item.Note;
+                    partner.Email = item.Email;
+                    partner.Street = item.Street;
+                   
+                    if (addResult != null)
+                    {
+
+                        partner.WardCode = addResult.WardCode != null ? addResult.WardCode : null;
+                        partner.WardName = addResult.WardName != null ? addResult.WardName : null;
+                        partner.DistrictCode = addResult.DistrictCode != null ? addResult.DistrictCode : null;
+                        partner.DistrictName = addResult.DistrictName != null ? addResult.DistrictName : null;
+                        partner.CityCode = addResult.CityCode != null ? addResult.CityCode : null;
+                        partner.CityName = addResult.CityName != null ? addResult.CityName : null;
+                    }
+                    if (val.Type == "customer")
+                    {
+                        partner.Customer = true;
+                        partner.JobTitle = item.Job;
+                        GetGenderPartner(partner, item);
+                        GetDateOfBirthdayPartner(partner, item);
+                        partner.Date = item.Date ?? DateTime.Today;
+                        partner.PartnerHistoryRels.Clear();
+                        if (!string.IsNullOrEmpty(item.MedicalHistory))
+                        {
+                            var medical_history_list = item.MedicalHistory.Split(",");
+                            foreach (var mh in medical_history_list)
+                            {
+                                if (!medical_history_dict.ContainsKey(mh))
+                                    continue;
+
+                                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
+                            }
+                        }
+                    }
+                    else if (val.Type == "supplier")
+                    {
+                        partner.Customer = false;
+                        partner.Supplier = true;
+                    }
+                    partnersCreate.Add(partner);
+
+                }
+                else
+                {
+                    partner.Name = item.Name;
+                    partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+                    partner.Ref = item.Ref;
+                    partner.Phone = item.Phone;
+                    partner.Comment = item.Note;
+                    partner.Email = item.Email;
+                    partner.Street = item.Street;               
+                    if (addResult != null)
+                    {
+
+                        partner.WardCode = addResult.WardCode != null ? addResult.WardCode : null;
+                        partner.WardName = addResult.WardName != null ? addResult.WardName : null;
+                        partner.DistrictCode = addResult.DistrictCode != null ? addResult.DistrictCode : null;
+                        partner.DistrictName = addResult.DistrictName != null ? addResult.DistrictName : null;
+                        partner.CityCode = addResult.CityCode != null ? addResult.CityCode : null;
+                        partner.CityName = addResult.CityName != null ? addResult.CityName : null;
+                    }
+
+                    if (val.Type == "customer")
+                    {
+                        partner.Customer = true;
+                        partner.JobTitle = item.Job;
+                        GetGenderPartner(partner, item);
+                        GetDateOfBirthdayPartner(partner, item);
+                        partner.Date = item.Date ?? DateTime.Today;
+                        partner.PartnerHistoryRels.Clear();
+                        if (!string.IsNullOrEmpty(item.MedicalHistory))
+                        {
+                            var medical_history_list = item.MedicalHistory.Split(",");
+                            foreach (var mh in medical_history_list)
+                            {
+                                if (!medical_history_dict.ContainsKey(mh))
+                                    continue;
+
+                                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
+                            }
+                        }
+                    }
+                    else if (val.Type == "supplier")
+                    {
+                        partner.Customer = false;
+                        partner.Supplier = true;
+                    }
+
+
+                    partnersUpdate.Add(partner);
+                }                   
+
+            }
+
+
+            if (partnersCreate.Any())
+                await CreateAsync(partnersCreate);
+
+            if (partnersUpdate.Any())
+                await UpdateAsync(partnersUpdate);
+
+
+
+            return new PartnerImportResponse { Success = true };
+        }
+
+
+    
+        public void GetDateOfBirthdayPartner(Partner partner, PartnerImportRowExcel val)
+        {
+            if (!string.IsNullOrEmpty(val.DateOfBirth))
+            {
+                var bdTmp = val.DateOfBirth.Split("/");
+                if (bdTmp.Length > 0)
+                {
+                    if (bdTmp.Length == 1)
+                    {
+                        var year = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
+                        if (year >= 1900 && year <= DateTime.Today.Year)
+                            partner.BirthYear = year;
+                        else
+                            partner.BirthYear = null;
+                    }
+                    else if (bdTmp.Length == 2)
+                    {
+                        var month = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
+                        if (month >= 1 && month <= 12)
+                            partner.BirthMonth = month;
+                        else
+                            partner.BirthMonth = null;
+
+                        var year = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
+                        if (year >= 1900 && year <= DateTime.Today.Year)
+                            partner.BirthYear = year;
+                        else
+                            partner.BirthYear = null;
+                    }
+                    else if (bdTmp.Length == 3)
+                    {
+                        var day = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
+                        if (day >= 1 && day <= 31)
+                            partner.BirthDay = day;
+                        else
+                            partner.BirthDay = null;
+
+                        var month = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
+                        if (month >= 1 && month <= 12)
+                            partner.BirthMonth = month;
+                        else
+                            partner.BirthMonth = null;
+
+                        var year = !string.IsNullOrEmpty(bdTmp[2]) ? Convert.ToInt32(bdTmp[2]) : 0;
+                        if (year >= 1900 && year <= DateTime.Today.Year)
+                            partner.BirthYear = year;
+                        else
+                            partner.BirthYear = null;
+                    }
+                    else
+                    {
+                        partner.BirthDay = null;
+                        partner.BirthMonth = null;
+                        partner.BirthYear = null;
+                    }
+                }
+                else
+                {
+                    partner.BirthDay = null;
+                    partner.BirthMonth = null;
+                    partner.BirthYear = null;
+                }
+            }
+        }
+
+        public void GetGenderPartner(Partner partner, PartnerImportRowExcel val)
+        {
             var gender_dict = new Dictionary<string, string>()
             {
                 { "name", "male" },
@@ -1081,258 +1247,9 @@ namespace Infrastructure.Services
                 { "khác", "other" }
             };
 
-            var partners_to_insert = new List<Partner>();
-            var partners_to_update = new List<Partner>();
-
-            foreach (var item in data)
-            {
-                var isUpdate = !string.IsNullOrWhiteSpace(item.Ref) && partner_update_dict.ContainsKey(item.Ref) ? true : false;
-                var partner = isUpdate ? partner_update_dict[item.Ref] : new Partner();
-              
-
-                partner.CompanyId = CompanyId;
-                partner.Name = item.Name;
-                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-                partner.Ref = item.Ref;
-                partner.Phone = item.Phone;
-                partner.Comment = item.Note;
-                partner.Email = item.Email;
-                partner.CityName = item.City != null ? item.City.Name : null;
-                partner.CityCode = item.City != null ? item.City.Code : null;
-                partner.DistrictName = item.District != null ? item.District.Name : null;
-                partner.DistrictCode = item.District != null ? item.District.Code : null;
-                partner.WardName = item.Ward != null ? item.Ward.Name : null;
-                partner.WardCode = item.Ward != null ? item.Ward.Code : null;
-                partner.Street = item.Street;
-
-
-
-
-                if (val.Type == "customer")
-                {
-                    partner.Customer = true;
-                    partner.Gender = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender.ToLower()) ?
-                        gender_dict[item.Gender.ToLower()] : "male";
-                    partner.JobTitle = item.Job;
-
-                    if (!string.IsNullOrEmpty(item.DateOfBirth))
-                    {
-                        var bdTmp = item.DateOfBirth.Split("/");
-                        if (bdTmp.Length > 0)
-                        {
-                            if (bdTmp.Length == 1)
-                            {
-                                var year = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                                if (year >= 1900 && year <= DateTime.Today.Year)
-                                    partner.BirthYear = year;
-                                else
-                                    partner.BirthYear = null;
-                            }
-                            else if (bdTmp.Length == 2)
-                            {
-                                var month = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                                if (month >= 1 && month <= 12)
-                                    partner.BirthMonth = month;
-                                else
-                                    partner.BirthMonth = null;
-
-                                var year = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
-                                if (year >= 1900 && year <= DateTime.Today.Year)
-                                    partner.BirthYear = year;
-                                else
-                                    partner.BirthYear = null;
-                            }
-                            else if (bdTmp.Length == 3)
-                            {
-                                var day = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                                if (day >= 1 && day <= 31)
-                                    partner.BirthDay = day;
-                                else
-                                    partner.BirthDay = null;
-
-                                var month = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
-                                if (month >= 1 && month <= 12)
-                                    partner.BirthMonth = month;
-                                else
-                                    partner.BirthMonth = null;
-
-                                var year = !string.IsNullOrEmpty(bdTmp[2]) ? Convert.ToInt32(bdTmp[2]) : 0;
-                                if (year >= 1900 && year <= DateTime.Today.Year)
-                                    partner.BirthYear = year;
-                                else
-                                    partner.BirthYear = null;
-                            }
-                            else
-                            {
-                                partner.BirthDay = null;
-                                partner.BirthMonth = null;
-                                partner.BirthYear = null;
-                            }
-                        }
-                        else
-                        {
-                            partner.BirthDay = null;
-                            partner.BirthMonth = null;
-                            partner.BirthYear = null;
-                        }
-                    }
-
-                    partner.Date = item.Date ?? DateTime.Today;
-
-                    partner.PartnerHistoryRels.Clear();
-                    if (!string.IsNullOrEmpty(item.MedicalHistory))
-                    {
-                        var medical_history_list = item.MedicalHistory.Split(",");
-                        foreach (var mh in medical_history_list)
-                        {
-                            if (!medical_history_dict.ContainsKey(mh))
-                                continue;
-
-                            partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
-                        }
-                    }
-                }
-                else if (val.Type == "supplier")
-                {
-                    partner.Customer = false;
-                    partner.Supplier = true;
-                }
-         
-
-                if (isUpdate)
-                    partners_to_update.Add(partner);
-                else
-                    partners_to_insert.Add(partner);
-            }
-
-            try
-            {
-                await CreateAsync(partners_to_insert);
-            }
-            catch (Exception e)
-            {
-                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
-            }
-
-            try
-            {
-                await UpdateAsync(partners_to_update);
-            }
-            catch (Exception e)
-            {
-                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
-            }
-
-            return new PartnerImportResponse { Success = true };
+            partner.Gender = !string.IsNullOrEmpty(val.Gender) && gender_dict.ContainsKey(val.Gender.ToLower()) ?
+                       gender_dict[val.Gender.ToLower()] : "male";
         }
-
-        public async Task<WardVm> CheckWard(string districtCode, string wardName)
-        {
-            HttpResponseMessage response = null;
-
-            var res = new List<WardVm>();
-            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
-            {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingWard/GetWards", new { data = new { code = districtCode }, provider = "Undefined" });
-                if (response.IsSuccessStatusCode)
-                {
-                    var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<WardVm>>(rs);
-                    foreach (var item in res)
-                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
-                };
-
-            }
-
-            var ward = res.Where(x => x.NameNoSign.Contains(StringUtils.RemoveVietnamese(wardName))).FirstOrDefault();
-            if (ward == null)
-                throw new Exception($"không tìm thấy Phường/Xã {wardName}");
-
-            return ward;
-        }
-
-        public async Task<DistrictVm> CheckDistrict(string cityCode, string districtName)
-        {
-            HttpResponseMessage response = null;
-            var district_dict = new Dictionary<string, string>()
-            {
-                {"q1", "Quận 1" },
-                {"q2", "Quận 2" },
-                {"q3", "Quận 3" },
-                {"q4", "Quận 4" },
-                {"q5", "Quận 5" },
-                {"q6", "Quận 6" },
-                {"q7", "Quận 7" },
-                {"q8", "Quận 8" },
-                {"q9", "Quận 9" },
-                {"q10","Quận 10" },
-                {"q11","Quận 11" },
-                {"q12","Quận 12" },
-            };
-
-            var res = new List<DistrictVm>();
-            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
-            {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts", new { data = new { code = cityCode }, provider = "Undefined" });
-                if (response.IsSuccessStatusCode)
-                {
-                    var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<DistrictVm>>(rs);
-                    foreach (var item in res)
-                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
-                };
-
-            }
-
-            var district = res.Where(x => x.NameNoSign.Contains(district_dict.ContainsKey(districtName) == true ? StringUtils.RemoveVietnamese(district_dict[districtName]) : StringUtils.RemoveVietnamese(districtName))).FirstOrDefault();
-            if (district == null)
-                throw new Exception($"không tìm thấy Quận/Huyện {districtName}");
-
-            return district;
-        }
-
-        public async Task<CityVm> CheckCity(string cityName)
-        {
-
-            var city_dict = new Dictionary<string, string>()
-            {
-                {"HCM", "Thành phố Hồ Chí Minh" },
-                {"hcm", "Thành phố Hồ Chí Minh" },
-                {"TPHCM", "Thành phố Hồ Chí Minh" },
-                {"tphcm", "Thành phố Hồ Chí Minh" },
-                {"HN", "Thành phố Hà Nội" },
-                {"hn", "Thành phố Hà Nội" },
-                {"TPHN", "Thành phố Hà Nội" },
-                {"tphn", "Thành phố Hà Nội" },
-                {"DN", "Thành phố Đà Nẵng" },
-                {"dn", "Thành phố Đà Nẵng" },
-            };
-
-            HttpResponseMessage response = null;
-            var res = new List<CityVm>();
-            using (var client = new HttpClient(new RetryHandler(new HttpClientHandler())))
-            {
-                response = await client.PostAsJsonAsync("https://aship.skyit.vn/api/ApiShippingCity/GetCities", new { provider = "Undefined" });
-                if (response.IsSuccessStatusCode)
-                {
-                    var rs = await response.Content.ReadAsStringAsync();
-                    res = JsonConvert.DeserializeObject<List<CityVm>>(rs);
-                    foreach (var item in res)
-                        item.NameNoSign = StringUtils.RemoveVietnamese(item.Name);
-                };
-
-            }
-
-            var city = res.Where(x => x.NameNoSign.Contains(city_dict.ContainsKey(cityName) == true ? StringUtils.RemoveVietnamese(city_dict[cityName]) : StringUtils.RemoveVietnamese(cityName))).FirstOrDefault();
-            if (city == null)
-                throw new Exception($"không tìm thấy Tỉnh/Thành {cityName}");
-
-            return city;
-        }
-
-       
-
-
 
         public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
         {
@@ -1570,7 +1487,8 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
+
+        private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
         {
             int offset = 0;
             var dict = new Dictionary<string, AddressCheckApi>();
