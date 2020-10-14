@@ -1,3 +1,4 @@
+import { GenderPartner } from './../../partners/partner.service';
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
@@ -31,7 +32,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("sourceCbx", { static: true }) sourceCbx: ComboBoxComponent;
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("titleCbx", { static: true }) titleCbx: ComboBoxComponent;
-  
+
   id: string;
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
@@ -98,9 +99,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
     private intlService: IntlService,
-    private userService: UserService, 
+    private userService: UserService,
     private partnerTitleService: PartnerTitleService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -127,11 +128,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       histories: this.fb.array([]),
       companyId: null,
       dateObj: null,
-      addressCheckDetail: 0, 
+      addressCheckDetail: 0,
       title: null
     });
 
-    
+   
+
 
     setTimeout(() => {
       if (this.id) {
@@ -180,11 +182,18 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           }
 
           if (result.title) {
+            
             this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
           }
+
         });
       } else {
-        this.formGroup.get("dateObj").setValue(new Date());
+        this.partnerService.defaultGet().subscribe((result) => {
+          debugger
+          this.formGroup.patchValue(result);
+          this.formGroup.get("dateObj").setValue(new Date());
+        });
+          
       }
 
       this.dayList = _.range(1, 32);
@@ -196,6 +205,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadSourceList();
       this.loadReferralUserList();
       this.loadTitleList();
+   
 
       this.sourceCbx.filterChange
         .asObservable()
@@ -206,7 +216,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         )
         .subscribe((result) => {
           this.filteredSources = result;
-          this.sourceCbx.loading = false;       
+          this.sourceCbx.loading = false;
         });
     });
 
@@ -219,8 +229,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       )
       .subscribe((result) => {
         this.filteredTitles = result;
-        this.titleCbx.loading = false;       
+        this.titleCbx.loading = false;
       });
+
+     
   }
 
   get sourceValue() {
@@ -228,7 +240,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   loadHistoriesList() {
-    this.partnerService.getHistories().subscribe((result) => {
+    this.partnerService.getHistories().subscribe((result) => {     
       this.historiesList = result;
     });
   }
@@ -261,7 +273,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
   }
 
-  handleAddress(adr: AddressCheckApi){
+  handleAddress(adr: AddressCheckApi) {
     var city = { code: adr.cityCode, name: adr.cityName };
     var district = { code: adr.districtCode, name: adr.districtName };
     var ward = { code: adr.wardCode, name: adr.wardName };
@@ -415,8 +427,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadTitleList() {
     this.searchTitles().subscribe((result) => {
-      this.filteredTitles = _.unionBy(this.filteredTitles, result, 'id');
-    });
+      this.filteredTitles = _.unionBy(this.filteredTitles, result, 'id');       
+    });    
   }
 
   quickCreatePartnerCategory() {
@@ -432,7 +444,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       () => {
         this.loadCategoriesList();
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -477,7 +489,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     val.sourceId = val.source ? val.source.id : null;
     val.referralUserId = val.referralUser ? val.referralUser.id : null;
     val.titleId = val.title ? val.title.id : null;
-    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd"): null;
+    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
     val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
     val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
     val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
@@ -499,6 +511,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
   }
 
+  onChangeGender(gender) { 
+    var rs = new GenderPartner();
+    rs.name = gender;
+    this.partnerService.onChangeGenderPartner(rs).subscribe((result) => {
+      this.formGroup.patchValue(result);
+      this.formGroup.get("dateObj").setValue(new Date());
+    });
+  }
 
 
   onCancel() {

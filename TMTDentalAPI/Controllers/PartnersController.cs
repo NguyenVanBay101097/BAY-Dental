@@ -41,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
+        private readonly IIRModelDataService _iRModelDataService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -51,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
             IServiceCardCardService serviceCardService,
-            IPartnerSourceService partnerSourceService)
+            IPartnerSourceService partnerSourceService,
+            IIRModelDataService iRModelDataService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -64,6 +66,7 @@ namespace TMTDentalAPI.Controllers
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
+            _iRModelDataService = iRModelDataService;
         }
 
         [HttpGet]
@@ -96,9 +99,46 @@ namespace TMTDentalAPI.Controllers
         public IActionResult DefaultGet(PartnerDefaultGet val)
         {
             var res = new PartnerDisplay();
+            var maleTitle = _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man").Result;
+            if (maleTitle != null)
+            {
+                res.Title = _mapper.Map<PartnerTitleBasic>(maleTitle);
+                res.TitleId = maleTitle.Id;
+            }
+
             res.CompanyId = CompanyId;
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public IActionResult OnChangeGenderPartner(GenderPartner val)
+        {
+            var modelname = "";
+            var res = new PartnerDisplay();
+            if(val.Name == "male") {
+                modelname = "man";
+            }
+            else if (val.Name == "female")
+            {
+                modelname = "woman";
+            }
+            else if (val.Name == "other")
+            {
+                modelname = "other";
+            }
+
+            var title = _iRModelDataService.GetRef<PartnerTitle>($"base.partner_title_{modelname}").Result;
+            if (title != null)
+            {
+                res.Title = _mapper.Map<PartnerTitleBasic>(title);
+                res.TitleId = title.Id;
+            }
+
+            res.Gender = val.Name;
+            res.CompanyId = CompanyId;
+            return Ok(res);
+        }
+
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
@@ -271,6 +311,9 @@ namespace TMTDentalAPI.Controllers
             var cards = await _mapper.ProjectTo<ServiceCardCardBasic>(_serviceCardService.SearchQuery(x => x.PartnerId == id && x.Residual > 0)).ToListAsync();
             return Ok(cards);
         }
+
+
+
 
         private void SaveCategories(PartnerDisplay val, Partner partner)
         {
