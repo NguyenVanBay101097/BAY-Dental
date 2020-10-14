@@ -1070,7 +1070,7 @@ namespace Infrastructure.Services
                     partner.Comment = item.Note;
                     partner.Email = item.Email;
                     partner.Street = item.Street;
-                   
+
                     if (addResult != null)
                     {
 
@@ -1117,7 +1117,7 @@ namespace Infrastructure.Services
                     partner.Phone = item.Phone;
                     partner.Comment = item.Note;
                     partner.Email = item.Email;
-                    partner.Street = item.Street;               
+                    partner.Street = item.Street;
                     if (addResult != null)
                     {
 
@@ -1128,36 +1128,26 @@ namespace Infrastructure.Services
                         partner.CityCode = addResult.CityCode != null ? addResult.CityCode : null;
                         partner.CityName = addResult.CityName != null ? addResult.CityName : null;
                     }
-
-                    if (val.Type == "customer")
+                    partner.Customer = true;
+                    partner.JobTitle = item.Job;
+                    GetGenderPartner(partner, item);
+                    GetDateOfBirthdayPartner(partner, item);
+                    partner.Date = item.Date ?? DateTime.Today;
+                    partner.PartnerHistoryRels.Clear();
+                    if (!string.IsNullOrEmpty(item.MedicalHistory))
                     {
-                        partner.Customer = true;
-                        partner.JobTitle = item.Job;
-                        GetGenderPartner(partner, item);
-                        GetDateOfBirthdayPartner(partner, item);
-                        partner.Date = item.Date ?? DateTime.Today;
-                        partner.PartnerHistoryRels.Clear();
-                        if (!string.IsNullOrEmpty(item.MedicalHistory))
+                        var medical_history_list = item.MedicalHistory.Split(",");
+                        foreach (var mh in medical_history_list)
                         {
-                            var medical_history_list = item.MedicalHistory.Split(",");
-                            foreach (var mh in medical_history_list)
-                            {
-                                if (!medical_history_dict.ContainsKey(mh))
-                                    continue;
+                            if (!medical_history_dict.ContainsKey(mh))
+                                continue;
 
-                                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
-                            }
+                            partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
                         }
                     }
-                    else if (val.Type == "supplier")
-                    {
-                        partner.Customer = false;
-                        partner.Supplier = true;
-                    }
-
 
                     partnersUpdate.Add(partner);
-                }                   
+                }
 
             }
 
@@ -1174,7 +1164,7 @@ namespace Infrastructure.Services
         }
 
 
-    
+
         public void GetDateOfBirthdayPartner(Partner partner, PartnerImportRowExcel val)
         {
             if (!string.IsNullOrEmpty(val.DateOfBirth))
