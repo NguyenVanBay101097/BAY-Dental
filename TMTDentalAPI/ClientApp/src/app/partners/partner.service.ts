@@ -379,6 +379,10 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + '/RemoveTags', val);
     }
 
+    updateTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateTags', val);
+    }
+
     getPrint(id: string): Observable<PartnerPrint> {
         return this.http.get<PartnerPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
     }

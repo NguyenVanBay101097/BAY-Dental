@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
@@ -34,7 +34,9 @@ export class PartnerCustomerListComponent implements OnInit {
   searchCateg: PartnerCategoryBasic;
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
+
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   gridFilter: CompositeFilterDescriptor;
   advanceFilter: any = {};
@@ -67,6 +69,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   updateFilter() {
+    this.skip = 0;
     this.gridFilter = this.generateFilter();
   }
 
@@ -103,7 +106,33 @@ export class PartnerCustomerListComponent implements OnInit {
     }, () => {
     });
   }
- 
+
+  popOverSave(e) {
+    this.loadDataFromApi();
+  }
+
+  loadDataFromApi() {
+    var val = new PartnerPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.customer = true;
+    val.search = this.search || '';
+    val.categoryId = this.searchCateg ? this.searchCateg.id : "";
+
+    this.loading = true;
+    this.partnerService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
+  }
 
   loadFilteredCategs() {
     this.searchCategories().subscribe(
@@ -129,6 +158,10 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onPaymentChange() {
+  }
+
+  closePopOver(e){
+this.popover = e;
   }
 
   exportPartnerExcelFile() {
@@ -182,4 +215,5 @@ export class PartnerCustomerListComponent implements OnInit {
     }, () => {
     });
   }
+
 }

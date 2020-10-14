@@ -79,6 +79,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Debit { get; set; }
 
         public decimal Credit { get; set; }
+
+        public string CompanyName { get; set; }
+        public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
+        public DateTime? DateCreated { get; set; }
+        public PartnerSourceBasic Source { get; set; }
+        public string JobTitle { get; set; }
+        public string Email { get; set; }
+        public string comment { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
     }
 
     public class PartnerPaged
