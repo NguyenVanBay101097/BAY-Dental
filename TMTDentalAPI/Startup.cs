@@ -575,11 +575,13 @@ namespace TMTDentalAPI
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
 
+                endpoints.MapControllers();
+
                 endpoints.Select()
                    .Expand()
                    .Filter()
                    .OrderBy()
-                   .MaxTop(null)
+                   .MaxTop(20)
                    .Count();
 
                 endpoints.MapODataRoute("odata", "odata", GetEdmModel());

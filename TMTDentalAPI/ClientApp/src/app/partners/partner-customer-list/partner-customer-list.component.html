@@ -31,29 +31,28 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
-        [loading]="loading">
-        <kendo-grid-column field="name" title="Họ tên" width="200">
+    <kendo-grid partnersBinding [advanceFilter]="advanceFilter" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
+        <kendo-grid-column field="Name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
                     <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
-                        <span *ngIf="dataItem.ref">[{{dataItem.ref}}] </span>
-                        {{dataItem.name}}
+                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
+                        {{dataItem.Name}}
                     </a>
                 </div>
-                <div *ngIf="dataItem.address">
-                    <small>{{dataItem.address}}</small>
+                <div *ngIf="dataItem.Address">
+                    <small>{{dataItem.Address}}</small>
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="age" title="Tuổi" width="50"></kendo-grid-column>
-        <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
+        <kendo-grid-column field="Age" title="Tuổi" width="50"></kendo-grid-column>
+        <kendo-grid-column field="Phone" title="Điện thoại" width="120"></kendo-grid-column>
         <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="80">
+        <kendo-grid-column field="Id" width="80">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

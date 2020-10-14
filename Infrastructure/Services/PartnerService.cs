@@ -1846,6 +1846,8 @@ namespace Infrastructure.Services
                 BirthYear = x.BirthYear,
                 BirthMonth = x.BirthMonth,
                 BirthDay = x.BirthDay,
+                Customer = x.Customer,
+                Supplier = x.Supplier,
                 Ref = x.Ref,
                 Date = x.Date,
                 Source = x.Source != null ? new PartnerSourceViewModel
