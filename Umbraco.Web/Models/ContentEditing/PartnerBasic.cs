@@ -7,12 +7,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PartnerBasic
     {
-   
-
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-       
+
+        public string DisplayName { get; set; }
 
         public string Phone { get; set; }
 
@@ -55,8 +54,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Công nợ
         /// </summary>
         public decimal Debt { get; set; }
-
-        public string DisplayName { get; set; }
 
         public string Age
         {
@@ -243,6 +240,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public string DisplayName { get; set; }
 
         public string NameNoSign { get; set; }
 

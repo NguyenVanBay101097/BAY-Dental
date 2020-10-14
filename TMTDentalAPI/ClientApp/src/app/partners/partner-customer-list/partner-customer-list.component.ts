@@ -40,6 +40,9 @@ export class PartnerCustomerListComponent implements OnInit {
 
   gridFilter: CompositeFilterDescriptor;
   advanceFilter: any = {};
+  gridSort = [
+    { field: 'DisplayName', dir: 'asc' }
+  ];
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService) { }

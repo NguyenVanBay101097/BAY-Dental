@@ -1843,6 +1843,7 @@ namespace Infrastructure.Services
                 CityName = x.CityName,
                 DistrictName = x.DistrictName,
                 Street = x.Street,
+                DisplayName = x.DisplayName,
                 Name = x.Name,
                 NameNoSign = x.NameNoSign,
                 Phone = x.Phone,
