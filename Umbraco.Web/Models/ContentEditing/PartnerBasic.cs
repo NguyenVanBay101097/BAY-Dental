@@ -254,6 +254,10 @@ namespace Umbraco.Web.Models.ContentEditing
             set { }
         }
 
+        public bool Customer { get; set; }
+
+        public bool Supplier { get; set; }
+
         public string Street { get; set; }
 
         public string WardName { get; set; }
