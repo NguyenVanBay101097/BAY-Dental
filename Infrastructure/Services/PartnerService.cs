@@ -1240,7 +1240,7 @@ namespace Infrastructure.Services
             };
 
             partner.Gender = !string.IsNullOrEmpty(val.Gender) && gender_dict.ContainsKey(val.Gender.ToLower()) ?
-                       gender_dict[val.Gender.ToLower()] : "male";
+                       gender_dict[val.Gender.ToLower()] : null;
         }
 
         public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
