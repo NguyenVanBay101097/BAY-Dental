@@ -132,6 +132,7 @@ namespace Infrastructure.Services
 
         public string GetGenderDisplay(Partner partner)
         {
+
             switch (partner.Gender)
             {
                 case "female":
@@ -144,6 +145,7 @@ namespace Infrastructure.Services
                     return string.Empty;
             }
         }
+
 
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {

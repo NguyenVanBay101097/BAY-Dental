@@ -115,17 +115,13 @@ namespace TMTDentalAPI.Controllers
         {
             var modelname = "";
             var res = new PartnerDisplay();
-            if(val.Name == "male") {
+
+            if (val.Name == "male")
                 modelname = "man";
-            }
             else if (val.Name == "female")
-            {
                 modelname = "woman";
-            }
             else if (val.Name == "other")
-            {
-                modelname = "other";
-            }
+                modelname = string.Empty;
 
             var title = _iRModelDataService.GetRef<PartnerTitle>($"base.partner_title_{modelname}").Result;
             if (title != null)
@@ -456,7 +452,7 @@ namespace TMTDentalAPI.Controllers
                     return Ok(new List<AddressCheckApi>());
                 }
             }
-            
+
         }
 
         [HttpGet("{id}/[action]")]
