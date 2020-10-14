@@ -6,6 +6,7 @@ using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -29,16 +30,24 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
-        public async Task<IActionResult> Get(string code)
+        public async Task<IActionResult> Get()
         {
             var results = await _iRSequenceService.GetViewModelsAsync();
             return Ok(results);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, IRSequenceSave val)
+
+        [HttpGet]
+        public async Task<IActionResult> GetByIdAsync([FromODataUri] Guid key)
         {
-            var model = await _iRSequenceService.GetByIdAsync(id);
+            var results = await _iRSequenceService.GetByIdAsync(key);
+            return Ok(results);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromODataUri] Guid key, IRSequenceSave val)
+        {
+            var model = await _iRSequenceService.GetByIdAsync(key);
             if (model == null || val == null || !ModelState.IsValid)
                 return BadRequest();
             model.Prefix = val.Prefix;

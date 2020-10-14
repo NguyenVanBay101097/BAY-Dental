@@ -32,12 +32,19 @@ export class PartnerCustomerAutoGenerateCodeDialogComponent implements OnInit {
   }
 
   loadFormApi() {
-    this.irSequenceService.get(this.code).subscribe(
+    // this.irSequenceService.get(this.code).subscribe(
+    //   result => {
+    //     this.id = result.value[0].Id;
+    //     this.formGroup.patchValue(result.value[0]);
+    //   }
+    // )
+
+    this.irSequenceService.getByCode(this.code).subscribe(
       result => {
         this.id = result.value[0].Id;
         this.formGroup.patchValue(result.value[0]);
       }
-    )
+    );
   }
 
   onSave() {
@@ -45,7 +52,7 @@ export class PartnerCustomerAutoGenerateCodeDialogComponent implements OnInit {
       return;
     }
     var value = this.formGroup.value;
-    this.irSequenceService.update(this.id, value).subscribe(
+    this.irSequenceService.updateAny(this.id, value).then(
       () => {
         this.activeModal.close(true);
       }, err => {

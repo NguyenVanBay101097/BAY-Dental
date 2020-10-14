@@ -2,10 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { inject } from '@angular/core/testing';
 import { Observable } from 'rxjs';
+import { ODataService } from '../odata.service';
 
-export class OdataIRSequence {
-  value: IrSequenceDisplay[]
-}
+
 
 export class IrSequenceDisplay {
   Id: string;
@@ -19,17 +18,47 @@ export class IrSequenceDisplay {
 @Injectable({
   providedIn: 'root'
 })
-export class IrsequenceService {
+export class IrsequenceService extends ODataService {
 
-  constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
-  apiUrl = "odata/IrSequences"
-
-  get(code): Observable<OdataIRSequence> {
-    return this.http.get<OdataIRSequence>(this.base_api + this.apiUrl + `?$filter=Code eq '${code}'`);
+  constructor(private httpClient: HttpClient, @Inject("BASE_API") private base_api: string) {
+    super(httpClient, base_api, "IRSequences")
   }
 
-  update(id, val) {
-    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  getByCode(code?: string, state?: any) {
+    return this.query2(Object.assign({}, state, {
+      filter: {
+        filters: [
+          {
+            field: "Code", operator: "eq", value: code
+          }
+        ],
+        logic: "and"
+      }
+    }));
   }
+  updateAny(id, value) {
+    return this.update(id, value);
+  }
+
+  // getById(id: any, state?: any) {
+  //   return this.query2(Object.assign({}, state, {
+  //     filter: {
+  //       filters: [
+  //         {
+  //           field: "Id", operator: "eq", value: id
+  //         }
+  //       ],
+  //       logic: "and"
+  //     }
+  //   }));
+  // }
+
+  // get(code): Observable<OdataIRSequence> {
+  //   return this.http.get<OdataIRSequence>(this.base_api + this.apiUrl + `?$filter=Code eq '${code}'`);
+  // }
+
+  // update(id, val) {
+  //   return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  // }
 
 }
