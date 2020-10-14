@@ -20,6 +20,7 @@ export class PartnerCategoryPaged {
     limit: number;
     search: string;
     partnerId: string;
+    ids: string[];
 }
 
 export class PartnerCategoryPaging {
@@ -35,7 +36,7 @@ export class PartnerCategoryService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PartnerCategoryPaging> {
-        return this.http.get<PartnerCategoryPaging>(this.baseApi + this.apiUrl, { params: val });
+        return this.http.get<PartnerCategoryPaging>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     create(category: PartnerCategoryDisplay) {

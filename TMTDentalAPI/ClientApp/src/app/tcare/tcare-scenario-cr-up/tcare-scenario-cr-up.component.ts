@@ -19,6 +19,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   title = "Kịch bản"
   campaign: TCareCampaignDisplay;
   campaignId: string;
+  dateStartCampaign: Date;
   scenario: TCareScenarioDisplay;
   submitted = false;
   constructor(
@@ -92,6 +93,10 @@ export class TcareScenarioCrUpComponent implements OnInit {
     }
   }
 
+  timeChangeCampaign(event) {
+    this.dateStartCampaign = event;
+  }
+
   changeCheckedCampaign(e, campaign) {
     e.stopPropagation();
     if (campaign.active) {
@@ -113,7 +118,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
     } else {
       var val = {
         id: campaign.id,
-        sheduleStart: this.intlService.formatDate(campaign.sheduleStart, "yyyy-MM-ddTHH:mm:ss")
+        sheduleStart: this.dateStartCampaign ? this.intlService.formatDate(this.dateStartCampaign, "yyyy-MM-ddTHH:mm:ss") : this.intlService.formatDate(campaign.sheduleStart, "yyyy-MM-ddTHH:mm:ss") 
       }
       this.tcareService.actionStartCampaign(val).subscribe(
         () => {

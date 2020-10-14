@@ -68,6 +68,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(result => {
       if (result) {
+        debugger
         this.activeModal.close(result);
       } else {
         this.activeModal.close(true);

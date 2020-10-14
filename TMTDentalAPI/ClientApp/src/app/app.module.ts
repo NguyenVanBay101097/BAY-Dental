@@ -24,7 +24,6 @@ import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 
 
-
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }

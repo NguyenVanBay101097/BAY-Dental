@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
 
@@ -30,22 +30,27 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       op: 'contains',
-      categ: [null, Validators.required]
+      tag: [null, Validators.required]
     });
 
     setTimeout(() => {
       if (this.data) {
-        var categ = {
-          id: this.data.value,
-          name: this.data.displayValue
-        };
+        var tagId = this.data.tagId;
+        var val2 = new PartnerCategoryPaged();
+        val2.limit = 1;
+        val2.ids = [tagId];
+        this.partnerCategoryService.getPaged(val2).subscribe(result => {
+          var item = result.items.length ? result.items[0] : null;
+          var d = {
+            op: this.data.op,
+            tag: item
+          };
+          this.formGroup.patchValue(d);
 
-        this.formGroup.patchValue({
-          op: this.data.op,
-          categ: categ
+          if (item) {
+            this.filteredCategs = _.unionBy(this.filteredCategs, [item], 'id');
+          }
         });
-
-        this.filteredCategs.push(categ);
       }
 
       this.loadFilteredCategs();
@@ -55,7 +60,7 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
         tap(() => (this.categCbx.loading = true)),
         switchMap(value => this.searchCategories(value))
       ).subscribe((result: any) => {
-        this.filteredCategs = result;
+        this.filteredCategs = result.items;
         this.categCbx.loading = false;
       });
     });
@@ -63,14 +68,14 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
 
   loadFilteredCategs() {
     this.searchCategories().subscribe(result => {
-      this.filteredCategs = _.unionBy(this.filteredCategs, result, 'id');
+      this.filteredCategs = _.unionBy(this.filteredCategs, result.items, 'id');
     });
   }
 
   searchCategories(q?: string) {
     var val = new PartnerCategoryPaged();
     val.search = q || '';
-    return this.partnerCategoryService.autocomplete(val);
+    return this.partnerCategoryService.getPaged(val);
   }
 
   getOpDisplay(op) {
@@ -93,12 +98,10 @@ export class AudienceFilterPartnerCategoryComponent implements OnInit {
 
     var value = this.formGroup.value;
     var res = {
-      op: value.op,
-      opDisplay: this.getOpDisplay(value.op),
-      value: value.categ.id,
-      displayValue: value.categ.name,
       type: this.type,
-      name: this.name
+      op: value.op,
+      name: this.name + " " + this.getOpDisplay(value.op) + " " + value.tag.name,
+      tagId: value.tag.id
     };
 
     this.saveClick.emit(res);

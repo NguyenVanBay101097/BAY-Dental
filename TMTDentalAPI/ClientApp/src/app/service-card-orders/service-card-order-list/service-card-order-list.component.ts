@@ -31,23 +31,25 @@ export class ServiceCardOrderListComponent implements OnInit {
     private modalService: NgbModal, private router: Router) { }
 
   ngOnInit() {
-    this.loadDataFromApi();
-
+    
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
         this.loadDataFromApi();
       });
+
+      this.loadDataFromApi();
   }
 
   loadDataFromApi() {
-    this.loading = true;
+   
     var val = new ServiceCardOrderPaged();
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-
+    this.loading = true;
+    
     this.cardOrderService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -69,6 +71,10 @@ export class ServiceCardOrderListComponent implements OnInit {
 
   createItem() {
     this.router.navigate(['/service-card-orders/form']);
+  }
+
+  posItem() {
+    this.router.navigate(['/service-card-orders/pos']);
   }
 
   editItem(item: any) {

@@ -23,5 +23,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public string Search { get; set; }
         public Guid? PartnerId { get; set; }
+        public IEnumerable<Guid> Ids { get; set; }
+    }
+
+    public class PartnerCategoryViewModel
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

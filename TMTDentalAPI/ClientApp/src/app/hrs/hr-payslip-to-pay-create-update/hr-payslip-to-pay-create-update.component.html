@@ -27,15 +27,15 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="this.state.value == 'verify'" accesskey="1"
+                    <button type="button" *ngIf="this.state.value == 'verify'" accesskey="q"
                         class="btn btn-primary btn-sm" (click)="ConfirmSalary()">
                         Xác nhận
                     </button>
-                    <button type="button" *ngIf="this.state.value == 'draft' || this.state.value == 'verify'" accesskey="1"
+                    <button type="button" *ngIf="this.state.value == 'draft' || this.state.value == 'verify'" accesskey="w"
                         class="btn btn-primary btn-sm" (click)="ComputeSalary()">
                         Tính toán lương
                     </button>
-                    <button type="button" *ngIf="this.state.value !== 'draft'" accesskey="1" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                    <button type="button" *ngIf="this.state.value !== 'draft'" accesskey="e" class="btn btn-danger btn-sm" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
                 </div>

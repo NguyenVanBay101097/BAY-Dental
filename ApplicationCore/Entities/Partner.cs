@@ -14,6 +14,7 @@ namespace ApplicationCore.Entities
             Customer = true;
             Active = true;
             Date = DateTime.Today;
+            Gender = "male";
         }
 
         public string DisplayName { get; set; }

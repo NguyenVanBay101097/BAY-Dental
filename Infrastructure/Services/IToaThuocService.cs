@@ -11,7 +11,7 @@ namespace Infrastructure.Services
     public interface IToaThuocService: IBaseService<ToaThuoc>
     {
         Task<PagedResult2<ToaThuocBasic>> GetPagedResultAsync(ToaThuocPaged val);
-        Task<ToaThuoc> GetToaThuocForDisplayAsync(Guid id);
+        Task<ToaThuocDisplay> GetToaThuocForDisplayAsync(Guid id);
         Task<ToaThuocDisplay> DefaultGet(ToaThuocDefaultGet val);
         Task<ToaThuocLineDisplay> LineDefaultGet(ToaThuocLineDefaultGet val);
         Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId);

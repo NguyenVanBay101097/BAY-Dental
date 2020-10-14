@@ -35,8 +35,7 @@ namespace Infrastructure.Services
                 x.Partner.Phone.Contains(val.Search)));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await _mapper.ProjectTo<ServiceCardOrderBasic>(query).ToListAsync();
+            var items = await _mapper.ProjectTo<ServiceCardOrderBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ServiceCardOrderBasic>(totalItems, val.Offset, val.Limit)
@@ -160,14 +159,13 @@ namespace Infrastructure.Services
 
             var saleLineObj = GetService<IServiceCardOrderLineService>();
             res.OrderLines = await _mapper.ProjectTo<ServiceCardOrderLineDisplay>(saleLineObj.SearchQuery(x => x.OrderId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
-
             res.CardCount = res.OrderLines.Sum(x => x.CardCount);
             return res;
         }
 
         private void _AmountAll(IEnumerable<ServiceCardOrder> self)
         {
-            foreach(var order in self)
+            foreach (var order in self)
             {
                 var totalAmountUntaxed = 0M;
 
@@ -211,11 +209,11 @@ namespace Infrastructure.Services
                 bool found = false;
                 foreach (var item in val.OrderLines)
                 {
-                    if (item.Id == existLine.Id)
-                    {
-                        found = true;
-                        break;
-                    }
+                    //if (item.Id == existLine.Id)
+                    //{
+                    //    found = true;
+                    //    break;
+                    //}
                 }
 
                 if (!found)
@@ -228,22 +226,22 @@ namespace Infrastructure.Services
             int sequence = 0;
             foreach (var line in val.OrderLines)
             {
-                if (line.Id == Guid.Empty)
-                {
-                    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
-                    saleLine.Sequence = sequence++;
-                    saleLine.Order = order;
-                    order.OrderLines.Add(saleLine);
-                }
-                else
-                {
-                    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
-                    if (saleLine != null)
-                    {
-                        _mapper.Map(line, saleLine);
-                        saleLine.Sequence = sequence++;
-                    }
-                }
+                //if (line.Id == Guid.Empty)
+                //{
+                //    var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                //    saleLine.Sequence = sequence++;
+                //    saleLine.Order = order;
+                //    order.OrderLines.Add(saleLine);
+                //}
+                //else
+                //{
+                //    var saleLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+                //    if (saleLine != null)
+                //    {
+                //        _mapper.Map(line, saleLine);
+                //        saleLine.Sequence = sequence++;
+                //    }
+                //}
             }
         }
 
@@ -277,9 +275,9 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var saleLineObj = GetService<ISaleOrderLineService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines).Include("OrderLines.CardType").Include("OrderLines.CardType.Product")
+                .Include(x => x.OrderLines).Include(x => x.Payments)
+                .Include("OrderLines.CardType").Include("OrderLines.CardType.Product")
                 .ToListAsync();
 
             foreach (var order in self)
@@ -291,16 +289,182 @@ namespace Infrastructure.Services
                 }
             }
 
-            var invoices = await _CreateInvoices(self);
-            var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
-
             var cards = await _CreateCards(self);
             var cardObj = GetService<IServiceCardCardService>();
             await cardObj.ButtonConfirm(cards);
 
             _ComputeResidual(self);
             await UpdateAsync(self);
+
+            await _CreateAccountMove(self);
+        }
+
+        public async Task CreateAndPaymentServiceCard(CreateAndPaymentServiceCardOrderVm val)
+        {
+            ///tạo mới ServiceCardOrder
+            var order = new ServiceCardOrder();
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            {
+                var seqObj = GetService<IIRSequenceService>();
+                order.Name = await seqObj.NextByCode("service.card.order");
+                if (string.IsNullOrEmpty(order.Name))
+                {
+                    await _CreateSequence();
+                    order.Name = await seqObj.NextByCode("service.card.order");
+                }
+            }
+
+            order.PartnerId = val.PartnerId;
+            order.UserId = val.UserId;
+            order.CompanyId = val.CompanyId;
+            order.AmountRefund = val.AmountRefund;
+            /// xử lý thêm orderlines vào servicecardorder
+            if (!val.OrderLines.Any())
+                throw new Exception("không tìm thấy danh sách thẻ trong đơn bán thẻ");
+
+            int sequence = 0;
+            foreach (var line in val.OrderLines)
+            {
+                var saleLine = _mapper.Map<ServiceCardOrderLine>(line);
+                saleLine.Sequence = sequence++;
+                saleLine.Order = order;
+                order.OrderLines.Add(saleLine);
+            }
+
+            ///xử lý thêm payments vào servicecardorder
+            if (!val.Payments.Any())
+                throw new Exception("không tìm thấy thanh toán nào trong đơn bán thẻ");
+
+            foreach (var pay in val.Payments)
+            {
+                var payOrder = new ServiceCardOrderPayment();
+                payOrder.Amount = pay.Amount;
+                payOrder.JournalId = pay.JournalId;
+                payOrder.Order = order;
+                order.Payments.Add(payOrder);
+            }
+
+            var lineObj = GetService<IServiceCardOrderLineService>();
+            lineObj.PrepareLines(order.OrderLines);
+
+            _AmountAll(new List<ServiceCardOrder>() { order });
+
+            await CreateAsync(order);
+
+            await ActionConfirm(new List<Guid>() { order.Id });
+        }
+
+        public async Task _CreateAccountMove(IEnumerable<ServiceCardOrder> self)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var moveObj = GetService<IAccountMoveService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var journalObj = GetService<IAccountJournalService>();
+            var cardTypeObj = GetService<IServiceCardTypeService>();
+
+            var income_account = await accountObj.GetAccountIncomeCurrentCompany();
+            if (income_account == null)
+                throw new Exception("Không tìm thấy tài khoản doanh thu mặc định");
+
+            var order_account = await accountObj.GetAccountReceivableCurrentCompany();
+            if (order_account == null)
+                throw new Exception("Không tìm thấy tài khoản receivable mặc định");
+
+            var journal = await journalObj.SearchQuery(x => x.Type == "sale" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            if (journal == null)
+                throw new Exception("Vui lòng tạo nhật ký bán hàng cho công ty này.");
+
+            foreach (var order in self.Where(x => !x.AccountMoveId.HasValue))
+            {
+                var sub_total = order.OrderLines.Sum(x => x.PriceSubTotal);
+                if (sub_total == 0)
+                    continue;
+
+                var move = new AccountMove
+                {
+                    Ref = order.Name,
+                    Journal = journal,
+                    JournalId = journal.Id,
+                    Date = order.DateOrder,
+                    PartnerId = order.PartnerId,
+                    CompanyId = journal.CompanyId,
+                };
+
+                await moveObj.CreateAsync(move);
+
+                var amls = new List<AccountMoveLine>();
+                var card_type_ids = order.OrderLines.Select(x => x.CardTypeId).Distinct().ToList();
+                var card_types = await cardTypeObj.SearchQuery(x => card_type_ids.Contains(x.Id)).Include(x => x.Product).ToListAsync();
+                var card_type_dict = card_types.ToDictionary(x => x.Id, x => x);
+                foreach (var line in order.OrderLines)
+                {
+                    var amount = line.PriceSubTotal; //price sub total phải có cả chiết khấu tổng
+                    var cardType = card_type_dict[line.CardTypeId];
+                    //Create a move for the line for the order line
+                    amls.Add(new AccountMoveLine
+                    {
+                        Name = cardType.Name,
+                        Quantity = line.ProductUOMQty,
+                        ProductId = cardType.ProductId,
+                        ProductUoMId = cardType.Product.UOMId,
+                        AccountId = income_account.Id,
+                        Account = income_account,
+                        Credit = amount > 0 ? amount : 0,
+                        Debit = amount < 0 ? -amount : 0,
+                        PartnerId = order.PartnerId,
+                        Move = move,
+                    });
+                }
+
+                var journal_ids = order.Payments.Select(x => x.JournalId).Distinct().ToList();
+                var journals = await journalObj.SearchQuery(x => journal_ids.Contains(x.Id)).Include(x => x.DefaultCreditAccount)
+                    .Include(x => x.DefaultDebitAccount).ToListAsync();
+                var journal_dict = journals.ToDictionary(x => x.Id, x => x);
+
+                foreach (var payment in order.Payments)
+                {
+                    var amount = payment.Amount;
+                    var paymentJournal = journal_dict[payment.JournalId];
+                    amls.Add(new AccountMoveLine
+                    {
+                        AccountId = amount > 0 ? paymentJournal.DefaultDebitAccount.Id : paymentJournal.DefaultCreditAccount.Id,
+                        Account = amount > 0 ? paymentJournal.DefaultDebitAccount : paymentJournal.DefaultCreditAccount,
+                        Credit = amount < 0 ? -amount : 0,
+                        Debit = amount > 0 ? amount : 0,
+                        PartnerId = order.PartnerId,
+                        Move = move,
+                    });
+                }
+
+                await amlObj.CreateAsync(amls);
+
+                await moveObj.Write(new List<AccountMove>() { move });
+                await moveObj.ActionPost(new List<AccountMove>() { move });
+
+                //order.State = "done";
+                order.AccountMove = move;
+                await UpdateAsync(order);
+            }
+        }
+
+        public async Task<AccountMove> _CreateAccountMove(ServiceCardOrder self, DateTime dt, string mref, AccountJournal journal)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            return await moveObj.CreateAsync(new AccountMove
+            {
+                Ref = mref,
+                Journal = journal,
+                JournalId = journal.Id,
+                Date = dt,
+                InvoiceUserId = self.UserId,
+                PartnerId = self.PartnerId,
+                CompanyId = journal.CompanyId,
+            });
+        }
+
+        private object _PrepareLine(ServiceCardOrderLine orderLine)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task UpdateResidual(IEnumerable<Guid> ids)
@@ -373,9 +537,9 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<IServiceCardOrderLineService>();
 
             var card_vals_list = new List<ServiceCardCard>();
-            foreach(var order in self)
+            foreach (var order in self)
             {
-                foreach(var line in order.OrderLines)
+                foreach (var line in order.OrderLines)
                 {
                     for (var i = 0; i < line.ProductUOMQty; i++)
                     {

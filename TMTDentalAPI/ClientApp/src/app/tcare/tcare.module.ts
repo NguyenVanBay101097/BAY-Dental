@@ -32,6 +32,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
 import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
+import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
 
 @NgModule({
   declarations: [
@@ -56,8 +57,7 @@ import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-
     TcareScenarioCrDialogComponent,
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
-    TcareScenarioMessageTextareaComponent
-    
+    TcareScenarioMessageTextareaComponent,
   ],
   imports: [
     CommonModule,
@@ -69,7 +69,8 @@ import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-
     NgbModule,
     SharedModule, 
     PickerModule,
-    EmojiModule
+    EmojiModule,
+    PartnerCategoriesModule
   ],
 
   providers: [TcareService],

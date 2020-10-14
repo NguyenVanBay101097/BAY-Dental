@@ -409,5 +409,21 @@
       <field name="number_next">1</field>
       <field name="number_increment">1</field>
     </record>
+   <record id="seq_customer" model="ir.sequence">
+      <field name="name">Customer Sequence</field>
+      <field name="code">customer</field>
+      <field name="prefix">KH</field>
+      <field name="padding">4</field>
+      <field name="number_next">1</field>
+      <field name="number_increment">1</field>
+    </record>
+    <record id="seq_supplier" model="ir.sequence">
+        <field name="name">Supplier Sequence</field>
+        <field name="code">supplier</field>
+        <field name="prefix">NCC</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+      </record>
   </data>
 </odoo>

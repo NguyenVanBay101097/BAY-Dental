@@ -6786,6 +6786,12 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AccountMoveId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("AmountRefund")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal?>("AmountResidual")
                         .HasColumnType("decimal(18,2)");
 
@@ -6824,6 +6830,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountMoveId");
 
                     b.HasIndex("CompanyId");
 
@@ -6930,6 +6938,46 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("InvoiceLineId");
 
                     b.ToTable("ServiceCardOrderLineInvoiceRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("JournalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("ServiceCardOrderPayments");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPaymentRel", b =>
@@ -7543,6 +7591,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("TCareScenarioId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -7551,6 +7602,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("TCareScenarioId");
+
+                    b.HasIndex("TagId");
 
                     b.HasIndex("WriteById");
 
@@ -7825,6 +7878,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("DotKhamId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -7851,6 +7907,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DotKhamId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("PartnerId");
 
@@ -11174,6 +11232,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrder", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.AccountMove", "AccountMove")
+                        .WithMany()
+                        .HasForeignKey("AccountMoveId");
+
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
@@ -11247,6 +11309,29 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("OrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPayment", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ServiceCardOrder", "Order")
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ServiceCardOrderPaymentRel", b =>
@@ -11551,6 +11636,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("Campaigns")
                         .HasForeignKey("TCareScenarioId");
 
+                    b.HasOne("ApplicationCore.Entities.PartnerCategory", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -11664,6 +11753,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.DotKham", "DotKham")
                         .WithMany()
                         .HasForeignKey("DotKhamId");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()

@@ -228,6 +228,7 @@ export class PartnerService {
     }
 
     getWardAship(request): Observable<Ward[]> {
+        debugger
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
@@ -376,6 +377,10 @@ export class PartnerService {
 
     removeTags(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/RemoveTags', val);
+    }
+
+    updateTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateTags', val);
     }
 
     getPrint(id: string): Observable<PartnerPrint> {
