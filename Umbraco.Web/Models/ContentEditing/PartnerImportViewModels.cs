@@ -21,7 +21,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                var list = new List<string>();              
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
                 if (!string.IsNullOrEmpty(WardName))
                     list.Add(WardName);
                 if (!string.IsNullOrEmpty(DistrictName))
