@@ -476,14 +476,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 3].Value = "Ngày tạo";
                 worksheet.Cells[1, 4].Value = "Giới tính";
                 worksheet.Cells[1, 5].Value = "Ngày sinh";
-                worksheet.Cells[1, 6].Value = "SĐT";
-                worksheet.Cells[1, 7].Value = "Địa chỉ";
-                worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
-                worksheet.Cells[1, 9].Value = "Nghề nghiệp";
-                worksheet.Cells[1, 10].Value = "Email";
-                worksheet.Cells[1, 11].Value = "Ghi chú";
+                worksheet.Cells[1, 6].Value = "Tháng sinh";
+                worksheet.Cells[1, 7].Value = "Năm sinh";
+                worksheet.Cells[1, 8].Value = "SĐT";
+                worksheet.Cells[1, 9].Value = "Đường";
+                worksheet.Cells[1, 10].Value = "Phường/Xã";
+                worksheet.Cells[1, 11].Value = "Quận/Huyện";
+                worksheet.Cells[1, 12].Value = "Tỉnh/Thành";
+                worksheet.Cells[1, 13].Value = "Tiểu sử bệnh";
+                worksheet.Cells[1, 14].Value = "Nghề nghiệp";
+                worksheet.Cells[1, 15].Value = "Email";
+                worksheet.Cells[1, 16].Value = "Ghi chú";
 
-                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in data)
@@ -493,19 +498,24 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.Date;
                     worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
-                    worksheet.Cells[row, 5].Value = item.DateOfBirth;
-                    worksheet.Cells[row, 6].Value = item.Phone;
-                    worksheet.Cells[row, 7].Value = item.Address;
-                    worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
-                    worksheet.Cells[row, 9].Value = item.Job;
-                    worksheet.Cells[row, 10].Value = item.Email;
-                    worksheet.Cells[row, 11].Value = item.Note;
+                    worksheet.Cells[row, 5].Value = item.BirthDay;
+                    worksheet.Cells[row, 6].Value = item.BirthMonth;
+                    worksheet.Cells[row, 7].Value = item.BirthYear;
+                    worksheet.Cells[row, 8].Value = item.Phone;
+                    worksheet.Cells[row, 9].Value = item.Street;
+                    worksheet.Cells[row, 10].Value = item.WardName;
+                    worksheet.Cells[row, 11].Value = item.DistrictName;
+                    worksheet.Cells[row, 12].Value = item.CityName;
+                    worksheet.Cells[row, 13].Value = string.Join(",", item.MedicalHistories);
+                    worksheet.Cells[row, 14].Value = item.Job;
+                    worksheet.Cells[row, 15].Value = item.Email;
+                    worksheet.Cells[row, 16].Value = item.Note;
 
                     row++;
                 }
 
-                worksheet.Column(4).Style.Numberformat.Format = "@";
-                worksheet.Column(5).Style.Numberformat.Format = "@";
+                worksheet.Column(8).Style.Numberformat.Format = "@";
+                worksheet.Cells.AutoFitColumns();
 
                 package.Save();
 

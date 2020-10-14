@@ -491,11 +491,12 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerPaged val)
         {
             var query = GetQueryPaged(val);
-            var res = await query.Select(x => new PartnerCustomerExportExcelVM
+            var res = await query.OrderBy(x => x.DisplayName).Select(x => new PartnerCustomerExportExcelVM
             {
                 Name = x.Name,
                 Ref = x.Ref,
                 Date = x.Date,
+                Gender = x.Gender,
                 BirthDay = x.BirthDay,
                 BirthMonth = x.BirthMonth,
                 BirthYear = x.BirthYear,
@@ -953,22 +954,28 @@ namespace Infrastructure.Services
                                 if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
                                     date = DateTime.FromOADate(dateLong);
 
+                                var birthDayStr = Convert.ToString(worksheet.Cells[row, 5].Value);
+                                var birthMonthStr = Convert.ToString(worksheet.Cells[row, 6].Value);
+                                var birthYearStr = Convert.ToString(worksheet.Cells[row, 7].Value);
+
                                 data.Add(new PartnerImportRowExcel
                                 {
                                     Name = name,
                                     Ref = reference,
                                     Date = date,
                                     Gender = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                    DateOfBirth = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                    Phone = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                    Street = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                    WardName = Convert.ToString(worksheet.Cells[row, 8].Value),
-                                    DistrictName = Convert.ToString(worksheet.Cells[row, 9].Value),
-                                    CityName = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                    BirthDay = !string.IsNullOrWhiteSpace(birthDayStr) ? Convert.ToInt32(birthDayStr) : (int?)null,
+                                    BirthMonth = !string.IsNullOrWhiteSpace(birthMonthStr) ? Convert.ToInt32(birthMonthStr) : (int?)null,
+                                    BirthYear = !string.IsNullOrWhiteSpace(birthYearStr) ? Convert.ToInt32(birthYearStr) : (int?)null,
+                                    Phone = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                    Street = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                    WardName = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                    DistrictName = Convert.ToString(worksheet.Cells[row, 11].Value),
+                                    CityName = Convert.ToString(worksheet.Cells[row, 12].Value),
                                     MedicalHistory = medicalHistory,
-                                    Job = Convert.ToString(worksheet.Cells[row, 12].Value),
-                                    Email = Convert.ToString(worksheet.Cells[row, 13].Value),
-                                    Note = Convert.ToString(worksheet.Cells[row, 14].Value),
+                                    Job = Convert.ToString(worksheet.Cells[row, 14].Value),
+                                    Email = Convert.ToString(worksheet.Cells[row, 15].Value),
+                                    Note = Convert.ToString(worksheet.Cells[row, 16].Value),
                                 });
                             }
                             catch (Exception e)
@@ -1085,8 +1092,10 @@ namespace Infrastructure.Services
                     {
                         partner.Customer = true;
                         partner.JobTitle = item.Job;
+                        partner.BirthDay = item.BirthDay;
+                        partner.BirthMonth = item.BirthMonth;
+                        partner.BirthYear = item.BirthYear;
                         GetGenderPartner(partner, item);
-                        GetDateOfBirthdayPartner(partner, item);
                         partner.Date = item.Date ?? DateTime.Today;
                         partner.PartnerHistoryRels.Clear();
                         if (!string.IsNullOrEmpty(item.MedicalHistory))
@@ -1120,7 +1129,6 @@ namespace Infrastructure.Services
                     partner.Street = item.Street;
                     if (addResult != null)
                     {
-
                         partner.WardCode = addResult.WardCode != null ? addResult.WardCode : null;
                         partner.WardName = addResult.WardName != null ? addResult.WardName : null;
                         partner.DistrictCode = addResult.DistrictCode != null ? addResult.DistrictCode : null;
@@ -1131,7 +1139,6 @@ namespace Infrastructure.Services
                     partner.Customer = true;
                     partner.JobTitle = item.Job;
                     GetGenderPartner(partner, item);
-                    GetDateOfBirthdayPartner(partner, item);
                     partner.Date = item.Date ?? DateTime.Today;
                     partner.PartnerHistoryRels.Clear();
                     if (!string.IsNullOrEmpty(item.MedicalHistory))
@@ -1148,7 +1155,6 @@ namespace Infrastructure.Services
 
                     partnersUpdate.Add(partner);
                 }
-
             }
 
 
@@ -1158,89 +1164,20 @@ namespace Infrastructure.Services
             if (partnersUpdate.Any())
                 await UpdateAsync(partnersUpdate);
 
-
-
             return new PartnerImportResponse { Success = true };
-        }
-
-
-
-        public void GetDateOfBirthdayPartner(Partner partner, PartnerImportRowExcel val)
-        {
-            if (!string.IsNullOrEmpty(val.DateOfBirth))
-            {
-                var bdTmp = val.DateOfBirth.Split("/");
-                if (bdTmp.Length > 0)
-                {
-                    if (bdTmp.Length == 1)
-                    {
-                        var year = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                        if (year >= 1900 && year <= DateTime.Today.Year)
-                            partner.BirthYear = year;
-                        else
-                            partner.BirthYear = null;
-                    }
-                    else if (bdTmp.Length == 2)
-                    {
-                        var month = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                        if (month >= 1 && month <= 12)
-                            partner.BirthMonth = month;
-                        else
-                            partner.BirthMonth = null;
-
-                        var year = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
-                        if (year >= 1900 && year <= DateTime.Today.Year)
-                            partner.BirthYear = year;
-                        else
-                            partner.BirthYear = null;
-                    }
-                    else if (bdTmp.Length == 3)
-                    {
-                        var day = !string.IsNullOrEmpty(bdTmp[0]) ? Convert.ToInt32(bdTmp[0]) : 0;
-                        if (day >= 1 && day <= 31)
-                            partner.BirthDay = day;
-                        else
-                            partner.BirthDay = null;
-
-                        var month = !string.IsNullOrEmpty(bdTmp[1]) ? Convert.ToInt32(bdTmp[1]) : 0;
-                        if (month >= 1 && month <= 12)
-                            partner.BirthMonth = month;
-                        else
-                            partner.BirthMonth = null;
-
-                        var year = !string.IsNullOrEmpty(bdTmp[2]) ? Convert.ToInt32(bdTmp[2]) : 0;
-                        if (year >= 1900 && year <= DateTime.Today.Year)
-                            partner.BirthYear = year;
-                        else
-                            partner.BirthYear = null;
-                    }
-                    else
-                    {
-                        partner.BirthDay = null;
-                        partner.BirthMonth = null;
-                        partner.BirthYear = null;
-                    }
-                }
-                else
-                {
-                    partner.BirthDay = null;
-                    partner.BirthMonth = null;
-                    partner.BirthYear = null;
-                }
-            }
         }
 
         public void GetGenderPartner(Partner partner, PartnerImportRowExcel val)
         {
             var gender_dict = new Dictionary<string, string>()
             {
-                { "name", "male" },
+                { "nam", "male" },
                 { "nữ", "female" },
                 { "khác", "other" }
             };
 
             partner.Gender = !string.IsNullOrEmpty(val.Gender) && gender_dict.ContainsKey(val.Gender.ToLower()) ?
-                       gender_dict[val.Gender.ToLower()] : null;
+                       gender_dict[val.Gender.ToLower()] : "male";
         }
 
         public async Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val)
@@ -1455,10 +1392,11 @@ namespace Infrastructure.Services
         {
             var limit = 200;
             var offset = 0;
-            var sub_ids = refs.Skip(offset).Take(limit).ToList();
+           
             var res = new Dictionary<string, Partner>();
-            while (sub_ids.Count > 0)
+            while (offset < refs.Count())
             {
+                var sub_ids = refs.Skip(offset).Take(limit).ToList();
                 var query = SearchQuery(x => sub_ids.Contains(x.Ref));
                 if (type == "supplier")
                     query = query.Where(x => x.Supplier);
@@ -1473,7 +1411,6 @@ namespace Infrastructure.Services
                 }
 
                 offset += limit;
-                sub_ids = sub_ids.Skip(offset).Take(limit).ToList();
             }
 
             return res;
