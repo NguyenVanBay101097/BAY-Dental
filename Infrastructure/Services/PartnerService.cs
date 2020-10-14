@@ -898,6 +898,8 @@ namespace Infrastructure.Services
             var errors = new List<string>();
             var partner_code_list = new List<string>();
             var partner_history_list = new List<string>();
+            var wards = new List<WardVm>();
+
             var title_dict = new Dictionary<string, string>()
             {
                 { "customer", "KH" },
