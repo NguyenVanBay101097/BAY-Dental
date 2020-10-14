@@ -42,6 +42,10 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Umbraco.Web.Models.ContentEditing;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.OData.Edm;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.Net.Http.Headers;
 
 namespace TMTDentalAPI
 {
@@ -494,6 +498,21 @@ namespace TMTDentalAPI
             services.AddHttpContextAccessor();
 
             services.AddSignalR();
+
+            services.AddOData();
+
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+
+                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -555,6 +574,16 @@ namespace TMTDentalAPI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+
+                endpoints.Select()
+                   .Expand()
+                   .Filter()
+                   .OrderBy()
+                   .MaxTop(null)
+                   .Count();
+
+                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.EnableDependencyInjection();
             });
 
             app.UseSpa(spa =>
@@ -569,6 +598,13 @@ namespace TMTDentalAPI
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+        }
+
+        private static IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+            builder.EntitySet<PartnerViewModel>("Partners");
+            return builder.GetEdmModel();
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
