@@ -1861,6 +1861,46 @@ namespace Infrastructure.Services
 
         //}
 
+        public IQueryable<PartnerViewModel> GetViewModels()
+        {
+            return SearchQuery().Select(x => new PartnerViewModel
+            {
+                Id = x.Id,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                Street = x.Street,
+                Name = x.Name,
+                NameNoSign = x.NameNoSign,
+                Phone = x.Phone,
+                WardName = x.WardName,
+                Gender = x.Gender,
+                BirthYear = x.BirthYear,
+                BirthMonth = x.BirthMonth,
+                BirthDay = x.BirthDay,
+                Customer = x.Customer,
+                Supplier = x.Supplier,
+                Ref = x.Ref,
+                Date = x.Date,
+                Source = x.Source != null ? new PartnerSourceViewModel
+                {
+                    Id = x.Source.Id,
+                    Name = x.Source.Name
+                } : null,
+                Comment = x.Comment,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
+            });
+        }
+
+        public Task<IQueryable<PartnerViewModel>> GetViewModelsAsync()
+        {
+            return Task.Run(() => GetViewModels());
+        }
     }
 
     public class PartnerCreditDebitItem

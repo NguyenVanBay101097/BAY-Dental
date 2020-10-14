@@ -34,4 +34,17 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ProductStepSimple> StepList { get; set; } = new List<ProductStepSimple>();
     }
+
+    public class ProductProductExportExcel
+    {
+        public string Name { get; set; }
+
+        public string DefaultCode { get; set; }
+
+        public string Type { get; set; }
+
+        public string CategName { get; set; }
+
+        public decimal? PurchasePrice { get; set; }
+    }
 }
