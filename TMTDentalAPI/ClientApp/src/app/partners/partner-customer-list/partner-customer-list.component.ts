@@ -39,10 +39,10 @@ export class PartnerCustomerListComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   gridFilter: CompositeFilterDescriptor;
+  gridSort = [{ field: 'DisplayName', dir: 'asc' }];
   advanceFilter: any = {
     expand: 'Tags,Source',
-    params: {},
-    orders: 'Date desc'
+    params: {}
   };
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
@@ -98,7 +98,7 @@ export class PartnerCustomerListComponent implements OnInit {
     }
 
     return filter;
-    
+
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -167,8 +167,8 @@ export class PartnerCustomerListComponent implements OnInit {
   onPaymentChange() {
   }
 
-  closePopOver(e){
-this.popover = e;
+  closePopOver(e) {
+    this.popover = e;
   }
 
   exportPartnerExcelFile() {

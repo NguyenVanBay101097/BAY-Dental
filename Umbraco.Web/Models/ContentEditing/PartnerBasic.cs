@@ -312,17 +312,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
 
         public string Comment { get; set; }
-  
+
         public string Email { get; set; }
 
         public string JobTitle { get; set; }
         public DateTime? LastAppointmentDate { get; set; }
+        public string DisplayName { get; set; }
 
-        public string GenderDisplay 
+        public string GenderDisplay
         {
             get
             {
-                switch(Gender)
+                switch (Gender)
                 {
                     case "female":
                         return "Nữ";
