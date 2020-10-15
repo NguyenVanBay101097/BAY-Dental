@@ -6,6 +6,9 @@ namespace ApplicationCore.Entities
 {
     public class TCareMessaging : BaseEntity
     {
+        /// <summary>
+        /// Ngày lên lịch gửi
+        /// </summary>
         public DateTime? Date { get; set; }
 
         /// <summary>
@@ -31,5 +34,14 @@ namespace ApplicationCore.Entities
 
         public Guid TCareCampaignId { get; set; }
         public TCareCampaign TCareCampaign { get; set; }
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
+
+        /// <summary>
+        /// in_queue: Chờ gửi
+        /// done: Hoàn thành
+        /// </summary>
+        public string State { get; set; }
     }
 }

@@ -7,7 +7,6 @@ namespace ApplicationCore.Entities
 {
     public class TCareMessage : BaseEntity
     {
-
         /// <summary>
         /// Thông tin của khách hàng trên fan page
         /// </summary>
@@ -44,11 +43,13 @@ namespace ApplicationCore.Entities
         public string MessageContent { get; set; }
 
         /// <summary>
-        /// wating: Chờ gửi tin nhắn
-        /// success: Gửi thành công
-        /// fail: Gửi thất bại
+        /// waiting: Chờ gửi tin nhắn
+        /// done: Hoàn thành
+        /// exception: Gửi lỗi
         /// </summary>
         public string State { get; set; }
+
+        public DateTime? ScheduledDate { get; set; }
     }
 }
 
