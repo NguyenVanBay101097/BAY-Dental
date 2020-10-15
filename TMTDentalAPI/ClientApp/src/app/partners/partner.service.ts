@@ -89,6 +89,7 @@ export class PartnerImageBasic {
 }
 
 export class GenderPartner{
+    id: string;
     name: string;
 }
 
@@ -412,6 +413,7 @@ export class PartnerService {
     deleteParnerImage(id) {
         return this.http.delete(this.baseApi + this.apiPartnerImage + '/' + id);
     }
+    
     onChangeGenderPartner(val){
         return this.http.post(this.baseApi + this.apiUrl + '/OnChangeGenderPartner', val)
     }

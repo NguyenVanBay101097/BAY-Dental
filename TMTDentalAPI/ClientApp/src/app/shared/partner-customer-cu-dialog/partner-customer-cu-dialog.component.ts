@@ -132,7 +132,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       title: null
     });
 
-   
+
 
 
     setTimeout(() => {
@@ -182,7 +182,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           }
 
           if (result.title) {
-            
+
             this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
           }
 
@@ -193,7 +193,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
           this.formGroup.patchValue(result);
           this.formGroup.get("dateObj").setValue(new Date());
         });
-          
+
       }
 
       this.dayList = _.range(1, 32);
@@ -205,7 +205,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadSourceList();
       this.loadReferralUserList();
       this.loadTitleList();
-   
+
 
       this.sourceCbx.filterChange
         .asObservable()
@@ -232,7 +232,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         this.titleCbx.loading = false;
       });
 
-     
+
   }
 
   get sourceValue() {
@@ -240,7 +240,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   loadHistoriesList() {
-    this.partnerService.getHistories().subscribe((result) => {     
+    this.partnerService.getHistories().subscribe((result) => {
       this.historiesList = result;
     });
   }
@@ -427,8 +427,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadTitleList() {
     this.searchTitles().subscribe((result) => {
-      this.filteredTitles = _.unionBy(this.filteredTitles, result, 'id');       
-    });    
+      this.filteredTitles = _.unionBy(this.filteredTitles, result, 'id');
+    });
   }
 
   quickCreatePartnerCategory() {
@@ -511,13 +511,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
   }
 
-  onChangeGender(gender) { 
+  onChangeGender(gender) {
     var rs = new GenderPartner();
     rs.name = gender;
-    this.partnerService.onChangeGenderPartner(rs).subscribe((result) => {
-      this.formGroup.patchValue(result);
-      this.formGroup.get("dateObj").setValue(new Date());
-    });
+    rs.id = !this.id ? null : this.id;
+    debugger
+      this.partnerService.onChangeGenderPartner(rs).subscribe((result) => {
+        this.formGroup.patchValue(result);
+        this.formGroup.get("dateObj").setValue(new Date());
+      });
+    
   }
 
 

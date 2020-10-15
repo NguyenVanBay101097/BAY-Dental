@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
+        public async Task<IActionResult> Get([FromQuery] PartnerPaged val)
         {
             var result = await _partnerService.GetPagedResultAsync(val);
 
@@ -111,27 +111,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult OnChangeGenderPartner(GenderPartner val)
+        public async Task<IActionResult> OnChangeGenderPartnerAsync(GenderPartner val)
         {
-            var modelname = "";
-            var res = new PartnerDisplay();
-
-            if (val.Name == "male")
-                modelname = "man";
-            else if (val.Name == "female")
-                modelname = "woman";
-            else if (val.Name == "other")
-                modelname = string.Empty;
-
-            var title = _iRModelDataService.GetRef<PartnerTitle>($"base.partner_title_{modelname}").Result;
-            if (title != null)
-            {
-                res.Title = _mapper.Map<PartnerTitleBasic>(title);
-                res.TitleId = title.Id;
-            }
-
-            res.Gender = val.Name;
-            res.CompanyId = CompanyId;
+            var res = await _partnerService.GetOnChangeGenderPartner(val);
             return Ok(res);
         }
 
@@ -369,7 +351,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -427,7 +409,7 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -435,7 +417,7 @@ namespace TMTDentalAPI.Controllers
 
         //Check địa chỉ 
         [HttpGet("CheckAddress")]
-        public async Task<IActionResult> CheckAddress([FromQuery]string text)
+        public async Task<IActionResult> CheckAddress([FromQuery] string text)
         {
             //HttpClient client = new HttpClient();
             HttpResponseMessage response = null;
