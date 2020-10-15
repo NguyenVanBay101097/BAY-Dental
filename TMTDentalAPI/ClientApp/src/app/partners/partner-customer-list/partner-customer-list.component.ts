@@ -73,6 +73,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   updateFilter() {
+    this.skip = 0;
     this.gridFilter = this.generateFilter();
   }
 

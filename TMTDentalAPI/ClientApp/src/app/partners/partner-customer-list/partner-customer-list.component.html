@@ -31,11 +31,11 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [resizable]="true" partnersBinding [advanceFilter]="advanceFilter" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
+    <kendo-grid partnersBinding [resizable]="true" [advanceFilter]="advanceFilter" [skip]="skip" (pageChange)="pageChange($event)" [height]="550" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
         <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.Id]">
                         <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
                         {{dataItem.Name}}
                     </a>
