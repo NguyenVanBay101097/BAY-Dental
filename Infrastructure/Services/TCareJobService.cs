@@ -205,7 +205,7 @@ namespace Infrastructure.Services
 
         public void UpdateMessage(SqlConnection conn, Guid id, Guid? messagingTraceId)
         {
-            conn.Execute("UPDATE TCareMessages SET State='success', TCareMessagingTraceId = @TCareMessagingTraceId WHERE Id = @Id",
+            conn.Execute("UPDATE TCareMessages SET State = 'success', TCareMessagingTraceId = @TCareMessagingTraceId WHERE Id = @Id",
                 new
                 {
                     Id = id,
