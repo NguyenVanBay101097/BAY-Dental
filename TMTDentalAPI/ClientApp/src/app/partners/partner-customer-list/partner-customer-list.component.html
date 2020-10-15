@@ -27,11 +27,13 @@
                 [valueField]="'id'" [popupSettings]="{width: 'auto'}">
             </kendo-combobox>
         </div>
-        <div class="float-right mt-2">
+        <div class="float-right mt-1">
             <div ngbDropdown>
-                <i id="dropdownBasic1" ngbDropdownToggle class="fas fa-user-cog"></i>
+                <button type="button" id="dropdownBasic1" ngbDropdownToggle
+                    class="btn btn-secondary btn-sm">Cầu hình</button>
                 <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                    <button (click)="setupAutoCodeCustomer()" ngbDropdownItem>Mã tự sinh của khách hàng</button>
+                    <button (click)="setupAutoCodeCustomer()" ngbDropdownItem>Mã tự động của khách
+                        hàng</button>
                 </div>
             </div>
         </div>
@@ -39,12 +41,14 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [advanceFilter]="advanceFilter" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
+    <kendo-grid partnersBinding [advanceFilter]="advanceFilter" [filter]="gridFilter" [sort]="gridSort" #grid [pageable]="true"
+        [pageSize]="10">
         <kendo-grid-column field="Name" title="Họ tên" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.id]">
-                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.Id]">
+                        <span *ngIf="dataItem.Ref">[{{dataItem.Ref}}] </span>
                         {{dataItem.Name}}
                     </a>
                 </div>
@@ -55,9 +59,9 @@
         </kendo-grid-column>
         <kendo-grid-column field="Age" title="Tuổi" width="50"></kendo-grid-column>
         <kendo-grid-column field="Phone" title="Điện thoại" width="120"></kendo-grid-column>
-        <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
+        <kendo-grid-column field="LastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
+                {{dataItem.LastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Id" width="80">

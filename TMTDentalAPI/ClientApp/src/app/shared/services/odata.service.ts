@@ -17,15 +17,15 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
         this.BASE_URL = baseUrl + 'odata/';
     }
 
-    public query(state: any, advanceFilter?: any): void {
-        this.fetch(this.tableName, state, advanceFilter)
+    public query(state: any, options?: any): void {
+        this.fetch(this.tableName, state, options || {})
             .subscribe(x => super.next(x));
     }
 
-    public fetch(tableName: string, state: any | null, advanceFilter?: any): Observable<GridDataResult> {
+    public fetch(tableName: string, state: any | null, options?: any): Observable<GridDataResult> {
         var queryStr = `${toODataString(state)}&$count=true`;
-        if (advanceFilter) {
-            queryStr = queryStr + '&' + (new HttpParams({fromObject: advanceFilter}).toString());
+        if (options && options.params) {
+            queryStr = queryStr + '&' + (new HttpParams({ fromObject: options.params }).toString());
         }
 
         this.loading = true;
@@ -42,8 +42,12 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
             );
     }
 
-    public get(id: any, obj: any | null): Observable<any> {
-        return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
+    public get(id: any, expand?: any | null): Observable<any> {
+        if (expand) {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: expand }) });
+        } else {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`);
+        }
     }
 
     public create(value: any) {
@@ -51,7 +55,7 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     }
 
     public update(id: any, value: any) {
-        return this.http.put(`${this.BASE_URL}${this.tableName}`, value);
+        return this.http.put(`${this.BASE_URL}${this.tableName}(${id})`, value);
     }
 
     public delete(id: any) {

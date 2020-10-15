@@ -37,13 +37,6 @@ namespace TMTDentalAPI.OdataControllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> GetByIdAsync([FromODataUri] Guid key)
-        {
-            var results = await _iRSequenceService.GetByIdAsync(key);
-            return Ok(results);
-        }
-
         [HttpPut]
         public async Task<IActionResult> Put([FromODataUri] Guid key, IRSequenceSave val)
         {
@@ -53,7 +46,6 @@ namespace TMTDentalAPI.OdataControllers
             model.Prefix = val.Prefix;
             model.NumberNext = val.NumberNext;
             model.Padding = val.Padding;
-            model.NumberIncrement = val.NumberIncrement;
             await _iRSequenceService.UpdateAsync(model);
             return NoContent();
         }

@@ -40,8 +40,11 @@ export class PartnerCustomerListComponent implements OnInit {
 
     gridFilter: CompositeFilterDescriptor;
     advanceFilter: any = {};
+    gridSort = [
+        { field: 'Name', dir: 'asc' }
+    ];
 
-    constructor
+    constructor(
         private partnerService: PartnerService,
         private modalService: NgbModal,
         private partnerCategoryService: PartnerCategoryService,
@@ -110,54 +113,54 @@ export class PartnerCustomerListComponent implements OnInit {
         });
     }
 
-  setupAutoCodeCustomer() {
-    const modalRef = this.modalService.open(PartnerCustomerAutoGenerateCodeDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.code = "customer";
-    modalRef.result.then(res => {
-      if (res) {
-        this.notificationService.show({
-          content: 'Cài đặt thành công!',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
+    setupAutoCodeCustomer() {
+        const modalRef = this.modalService.open(PartnerCustomerAutoGenerateCodeDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.code = "customer";
+        modalRef.result.then(res => {
+            if (res) {
+                this.notificationService.show({
+                    content: 'Cài đặt thành công!',
+                    hideAfter: 3000,
+                    position: { horizontal: 'center', vertical: 'top' },
+                    animation: { type: 'fade', duration: 400 },
+                    type: { style: 'success', icon: true }
+                });
+            }
+            else {
+                this.notificationService.show({
+                    content: 'Lỗi hệ thống',
+                    hideAfter: 3000,
+                    position: { horizontal: 'center', vertical: 'top' },
+                    animation: { type: 'fade', duration: 400 },
+                    type: { style: 'error', icon: true }
+                });
+            }
+        }, () => {
         });
-      }
-      else {
-        this.notificationService.show({
-          content: 'Lỗi hệ thống',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
-      }
-    }, () => {
-    });
-  }
+    }
 
-  loadDataFromApi() {
-    var val = new PartnerPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.customer = true;
-    val.search = this.search || '';
-    val.categoryId = this.searchCateg ? this.searchCateg.id : "";
+    loadDataFromApi() {
+        var val = new PartnerPaged();
+        val.limit = this.limit;
+        val.offset = this.skip;
+        val.customer = true;
+        val.search = this.search || '';
+        val.categoryId = this.searchCateg ? this.searchCateg.id : "";
 
-    this.loading = true;
-    this.partnerService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.gridData = res;
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
-  }
+        this.loading = true;
+        this.partnerService.getPaged(val).pipe(
+            map(response => (<GridDataResult>{
+                data: response.items,
+                total: response.totalItems
+            }))
+        ).subscribe(res => {
+            this.gridData = res;
+            this.loading = false;
+        }, err => {
+            console.log(err);
+            this.loading = false;
+        })
+    }
 
     loadFilteredCategs() {
         this.searchCategories().subscribe(
@@ -216,21 +219,22 @@ export class PartnerCustomerListComponent implements OnInit {
         }, er => { })
     }
 
-    editItem(item: PartnerBasic) {
+    editItem(item: any) {
+        debugger
         const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Sửa khách hàng';
-        modalRef.componentInstance.id = item.id;
+        modalRef.componentInstance.id = item.Id;
         modalRef.result.then(() => {
         }, () => {
         })
     }
 
-    deleteItem(item: PartnerBasic) {
+    deleteItem(item: any) {
         let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Xóa khách hàng';
 
         modalRef.result.then(() => {
-            this.partnerService.delete(item.id).subscribe(() => {
+            this.partnerService.delete(item.Id).subscribe(() => {
             }, () => {
             });
         }, () => {
