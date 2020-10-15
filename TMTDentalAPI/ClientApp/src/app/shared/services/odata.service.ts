@@ -17,15 +17,28 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
         this.BASE_URL = baseUrl + 'odata/';
     }
 
-    public query(state: any, advanceFilter?: any): void {
-        this.fetch(this.tableName, state, advanceFilter)
-            .subscribe(x => super.next(x));
+    public query(state: any, options?: any): void {
+        this.fetch(this.tableName, state, options || {})
+            .subscribe(
+               (x:any) => {
+                super.next(x);
+                console.log(x);
+               }
+                );
     }
 
-    public fetch(tableName: string, state: any | null, advanceFilter?: any): Observable<GridDataResult> {
+    public fetch(tableName: string, state: any | null, options?: any): Observable<GridDataResult> {
         var queryStr = `${toODataString(state)}&$count=true`;
-        if (advanceFilter) {
-            queryStr = queryStr + '&' + (new HttpParams({fromObject: advanceFilter}).toString());
+        if (options.params) {
+            queryStr = queryStr + '&' + (new HttpParams({fromObject: options.params}).toString());
+        }
+
+        if (options.expand) {
+            queryStr = queryStr + '&$expand=' + options.expand;
+        }
+
+        if(options.orders) {
+            queryStr = queryStr + '&$orderby=' + options.orders;
         }
 
         this.loading = true;

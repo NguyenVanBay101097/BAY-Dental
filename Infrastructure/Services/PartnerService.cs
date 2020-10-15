@@ -1880,6 +1880,7 @@ namespace Infrastructure.Services
                 Customer = x.Customer,
                 Supplier = x.Supplier,
                 Ref = x.Ref,
+                LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
                 Date = x.Date,
                 Source = x.Source != null ? new PartnerSourceViewModel
                 {

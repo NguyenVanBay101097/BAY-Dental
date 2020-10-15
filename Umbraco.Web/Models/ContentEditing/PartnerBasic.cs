@@ -316,6 +316,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
 
         public string JobTitle { get; set; }
+        public DateTime? LastAppointmentDate { get; set; }
 
         public string GenderDisplay 
         {
