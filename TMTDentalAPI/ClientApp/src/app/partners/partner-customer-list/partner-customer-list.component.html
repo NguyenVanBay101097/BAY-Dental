@@ -31,7 +31,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [resizable]="true" [advanceFilter]="advanceFilter" [skip]="skip" (pageChange)="pageChange($event)" [height]="550" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
+    <kendo-grid partnersBinding [resizable]="true" [advanceFilter]="advanceFilter" [skip]="skip" (pageChange)="pageChange($event)"  style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
         <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
