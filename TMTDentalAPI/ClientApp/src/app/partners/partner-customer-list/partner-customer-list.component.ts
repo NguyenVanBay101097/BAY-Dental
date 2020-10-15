@@ -90,7 +90,9 @@ export class PartnerCustomerListComponent implements OnInit {
         logic: "or",
         filters: [
           { field: "Name", operator: "contains", value: this.search },
-          { field: "NameNoSign", operator: "contains", value: this.search }
+          { field: "NameNoSign", operator: "contains", value: this.search },
+          { field: "Ref", operator: "contains", value: this.search },
+          { field: "Phone", operator: "contains", value: this.search }
         ]
       });
     }
