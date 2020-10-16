@@ -25,11 +25,10 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                <app-tcare-message-template-content
+                                <app-tcare-message-template-content #textTemp
                                 *ngFor="let template of templates; index as i" 
                                 [template]="template"
-                                [index] = "i"
-                                (valueChange) = "TemplateValueChange($event)">
+                                [index] = "i">
 
                                 </app-tcare-message-template-content>
                                 </td>

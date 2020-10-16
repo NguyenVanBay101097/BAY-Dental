@@ -1,0 +1,6 @@
+.btn-tab {
+    color: white !important;
+}
+.btn-tab:hover {
+    opacity: 0.5;
+}

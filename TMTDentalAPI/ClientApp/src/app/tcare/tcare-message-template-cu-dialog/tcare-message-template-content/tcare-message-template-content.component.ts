@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { validator } from 'fast-json-patch';
 
@@ -13,10 +13,17 @@ export class TcareMessageTemplateContentComponent implements OnInit {
   @Input() template: any;
   @Input() index: any;
   @Output() valueChange = new EventEmitter();
+
   //cá nhân hóa
+  tabs = [
+    { name: 'Tên khách hàng', value: '{{ten_khach_hang}}', color: 'BurlyWood' },
+    { name: 'Họ và tên khách hàng', value: '{{fullname_khach_hang}}', color: 'Brown' },
+    { name: 'Tên trang', value: '{{ten_page}}', color: 'cadetblue' },
+    { name: 'Danh xưng khách hàng', value: '{{danh_xung_khach_hang}}', color: 'Chartreuse' },
+  ];
   showPluginTextarea: boolean = false;
-  selectArea_start: number;
-  selectArea_end: number;
+  selectArea_start: number = 0;
+  selectArea_end: number = 0;
   constructor(
     private fb: FormBuilder
   ) { }
@@ -34,15 +41,16 @@ export class TcareMessageTemplateContentComponent implements OnInit {
 
   onTextChange(e) {
     this.textControl.setValue(e.target.value);
-    this.dataChange();
+    // this.dataChange();
   }
 
-  dataChange() {
+  onSave() {
     if (this.formGroup.invalid) { return; }
     const val = this.formGroup.value;
-    this.valueChange.emit({index: this.index, template: val});
+    // this.valueChange.emit({ index: this.index, template: val });
+    return { index: this.index, template: val };
   }
-//cá nhân hóa
+  //cá nhân hóa
   hideEmoji() {
     this.showPluginTextarea = false;
   }
@@ -66,19 +74,20 @@ export class TcareMessageTemplateContentComponent implements OnInit {
     }
   }
 
-  addContentPluginTextarea(value) {
+  addToContent(value) {
+
     if (this.formGroup.value.text) {
       this.formGroup.patchValue({
         text: this.formGroup.value.text.slice(0, this.selectArea_start) + value + this.formGroup.value.text.slice(this.selectArea_end)
       });
-      this.selectArea_start = this.selectArea_start + value.length;
-      this.selectArea_end = this.selectArea_start;
+
     } else {
       this.formGroup.patchValue({
         text: value
       });
     }
-    this.dataChange();
+    this.selectArea_start = this.selectArea_start + value.length;
+    this.selectArea_end = this.selectArea_start;
   }
 
 }

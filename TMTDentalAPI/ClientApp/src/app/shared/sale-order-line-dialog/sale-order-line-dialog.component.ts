@@ -219,7 +219,10 @@ export class SaleOrderLineDialogComponent implements OnInit {
   loadTeethMap(categ: ToothCategoryBasic) {
     var val = new ToothFilter();
     val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+    return this.toothService.getAllBasic(val).subscribe(result =>{ this.processTeeth(result);
+    this.teethSelected = result;
+    this.saleLineForm.get('productUOMQty').setValue(result.length);
+    });
   }
 
   loadFilteredProducts() {

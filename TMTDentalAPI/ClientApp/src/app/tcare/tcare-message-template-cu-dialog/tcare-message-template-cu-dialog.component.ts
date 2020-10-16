@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { validate } from 'fast-json-patch';
 import { stringify } from 'querystring';
 import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
+import { TcareMessageTemplateContentComponent } from './tcare-message-template-content/tcare-message-template-content.component';
 
 @Component({
   selector: 'app-tcare-message-template-cu-dialog',
@@ -21,6 +22,9 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
       templateType: 'text'
     }
   ];
+
+  @ViewChild('textTemp', {static: false}) textTemp: TcareMessageTemplateContentComponent;
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -63,6 +67,8 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.updateValue();
+
     if (this.formGroup.invalid) { return false; }
     const val = this.formGroup.value;
     val.content = JSON.stringify(this.templates);
@@ -82,8 +88,11 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
     }
   }
 
-  TemplateValueChange(e) {
-    this.templates[e.index] = e.template;
+  updateValue() {
+    if (this.textTemp) {
+      const val = this.textTemp.onSave();
+      this.templates[val.index] = val.template;
+    }
   }
 
 }
