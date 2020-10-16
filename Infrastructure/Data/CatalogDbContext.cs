@@ -39,6 +39,7 @@ namespace Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<PartnerSource> PartnerSources { get; set; }
+        public DbSet<PartnerPartnerCategoryRel> PartnerPartnerCategoryRels { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<UoM> UoMs { get; set; }
         public DbSet<UoMCategory> UoMCategories { get; set; }
