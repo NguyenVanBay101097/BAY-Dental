@@ -9,7 +9,12 @@
             <span style="color:red" *ngIf="textControl.errors?.maxlength">
                 số kí tự đã vượt quá cho phép !
             </span>
-            <i class="fa fa-hand-point-down ml-auto"></i>
+            <i popoverClass="popover-d-contents" data-container="body" [autoClose]="'outside'" [ngbPopover]="popContent" class="fa fa-smile ml-auto"></i>
+            <ng-template #popContent>
+                <emoji-mart class="d-flex"
+                (emojiClick)="emotionClick($event)" title="Pick your emoji…" emoji="point_up"></emoji-mart>
+            </ng-template>
+            <!-- <i class="fa fa-hand-point-down"></i> -->
             <span class="px-1">{{getLimitText()}}</span>
         </div>
         <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)"

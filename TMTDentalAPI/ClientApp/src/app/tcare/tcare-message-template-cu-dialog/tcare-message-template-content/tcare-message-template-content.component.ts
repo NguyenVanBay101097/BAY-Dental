@@ -90,4 +90,8 @@ export class TcareMessageTemplateContentComponent implements OnInit {
     this.selectArea_end = this.selectArea_start;
   }
 
+  emotionClick(e) {
+this.addToContent(e.emoji.native);
+  }
+
 }

@@ -4,3 +4,10 @@
 .btn-tab:hover {
     opacity: 0.5;
 }
+
+.popover-d-contents{
+    border: none !important;
+}
+.popover-d-contents .popover-body{
+    display: contents !important;
+}
