@@ -95,6 +95,7 @@ namespace Infrastructure.Services
 
                     foreach (var messaging in messagings)
                     {
+                        
                         //get all message in messaging check state = 'waiting' send message 
                         var messages = await conn.QueryAsync<TCareMessage>("Select * from TCareMessages " +
                             "where TCareMessagingId = @id And State = 'waiting' ", new { id = messaging.Id });
@@ -109,7 +110,9 @@ namespace Infrastructure.Services
                             await Task.WhenAll(subTasks);
                             offset += limit;
                             subTasks = tasks.Skip(offset).Take(limit).ToList();
-                        }                     
+                        }
+
+                        UpdateStateMessaging(conn, messaging.Id);
                     }
 
                 }
@@ -369,6 +372,15 @@ namespace Infrastructure.Services
         public void UpdateErrorMessage(SqlConnection conn, Guid id)
         {
             conn.Execute("UPDATE TCareMessages SET State = 'exception', TCareMessagingTraceId = @TCareMessagingTraceId WHERE Id = @Id ",
+                new
+                {
+                    Id = id,
+                });
+        }
+
+        public void UpdateStateMessaging(SqlConnection conn, Guid id)
+        {
+            conn.Execute("UPDATE TCareMessagings SET State = 'done' WHERE Id = @Id ",
                 new
                 {
                     Id = id,
