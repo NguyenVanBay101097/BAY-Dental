@@ -100,16 +100,8 @@ namespace Infrastructure.Services
             var rule = resultingMessage.Root.Rule;
             if (sequence == null || rule == null)
                 throw new Exception("điều kiện hoặc nội dung trống");
-
-
-            var runAt = campaign.SheduleStart.HasValue ? campaign.SheduleStart.Value : DateTime.Today;
             campaign.State = "running";
-            campaign.Active = true;
-            campaign.SheduleStart = runAt;
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-tcare-campaign-{campaign.Id}";
-            campaign.RecurringJobId = jobId;
-            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(tenant, campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+            campaign.Active = true;                    
             await UpdateAsync(campaign);
         }
 
@@ -121,9 +113,6 @@ namespace Infrastructure.Services
             {
                 campaign.State = "stopped";
                 campaign.Active = false;
-                if (!string.IsNullOrEmpty(campaign.RecurringJobId))
-                    RecurringJob.RemoveIfExists(campaign.RecurringJobId);
-                campaign.RecurringJobId = null;
             }
 
             await UpdateAsync(campaigns);

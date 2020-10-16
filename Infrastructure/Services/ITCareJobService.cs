@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task Run(string db, Guid campaignId);
         Task TCareTakeMessage(string db);
+        Task RunJob2Messages(string db);
     }
 }
