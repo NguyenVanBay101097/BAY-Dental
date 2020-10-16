@@ -75,6 +75,7 @@ namespace TMTDentalAPI
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
 
+            services.AddSingleton(new TCareCampaignJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -119,7 +120,7 @@ namespace TMTDentalAPI
                 });
 
             services.AddDbContext<IDbContext, CatalogDbContext>();
-            services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
+            //services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductService, ProductService>();

@@ -84,11 +84,12 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public IActionResult AddJob()
         {
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-tcare-scenario-Job";
-            RecurringJob.RemoveIfExists(jobId);
-            var now = DateTime.Now.AddMinutes(1);
-            RecurringJob.AddOrUpdate(jobId, () => _tcareJobService.TCareTakeMessage(tenant), $"40 18 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<TCareCampaignJobService>(x => x.CreateTodoItem("localhost"), "* * * * *");
+            //var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            //var jobId = $"{tenant}-tcare-scenario-Job";
+            //RecurringJob.RemoveIfExists(jobId);
+            //var now = DateTime.Now.AddMinutes(1);
+            //RecurringJob.AddOrUpdate(jobId, () => _tcareJobService.TCareTakeMessage(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
             return NoContent();
         }
 

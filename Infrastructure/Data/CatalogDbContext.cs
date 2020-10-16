@@ -426,19 +426,22 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (_tenant != null)
+            if (!optionsBuilder.IsConfigured)
             {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+                if (_tenant != null)
+                {
+                    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
 
-                if (_tenant.Hostname != "localhost")
-                    builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
+                    if (_tenant.Hostname != "localhost")
+                        builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
-                optionsBuilder.UseSqlServer(builder.ConnectionString);
-            }
-            else
-            {
-                var defaultConnectionString = _connectionStrings.CatalogConnection;
-                optionsBuilder.UseSqlServer(defaultConnectionString);
+                    optionsBuilder.UseSqlServer(builder.ConnectionString);
+                }
+                else
+                {
+                    var defaultConnectionString = _connectionStrings.CatalogConnection;
+                    optionsBuilder.UseSqlServer(defaultConnectionString);
+                }
             }
 
             base.OnConfiguring(optionsBuilder);

@@ -286,9 +286,8 @@ namespace Infrastructure.Services
                 messages.Add(message);
             }
 
-            foreach(var message in messages)
             await conn.ExecuteAsync("insert into TCareMessages(Id,ProfilePartnerId,ChannelSocicalId,CampaignId,PartnerId,MessageContent,TCareMessagingId,State,SchduledDate) " +
-                    "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@SchduledDate) ", new { Id = message.Id, ProfilePartnerId = message.ProfilePartnerId, ChannelSocicalId = message.ChannelSocicalId, CampaignId = message.CampaignId, PartnerId = message.PartnerId, MessageContent = message.MessageContent, TCareMessagingId = message.TCareMessagingId , State = message.State , SchduledDate = message.ScheduledDate });
+                    "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@SchduledDate) ", messages.ToArray());
         }
 
         private DateTime GetScheduleDateCampaign(TCareCampaign campaign)
@@ -316,15 +315,9 @@ namespace Infrastructure.Services
         public async Task CreateMessaging(SqlConnection conn, TCareMessaging messaging)
         {
             await conn.ExecuteAsync("insert into TCareMessagings " +
-                  "(Id,Content,TCareCampaignId, Date) " +
-                  "Values (@Id, @Content, @TCareCampaignId, @Date)",
-                  new
-                  {
-                      Id = messaging.Id,
-                      Content = messaging.Content,
-                      TCareCampaignId = messaging.TCareCampaignId,
-                      Date = messaging.Date,
-                  });
+                  "(Id,Content,TCareCampaignId,Date,State,FacebookPageId,DateCreated,LastUpdated) " +
+                  "Values (@Id,@Content,@TCareCampaignId,@Date,@State,@FacebookPageId,@DateCreated,@)LastUpdated",
+                  messaging);
         }
 
         public async Task UpdateNumberPartner(SqlConnection conn, Guid id, int countPartner)
