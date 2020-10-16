@@ -18,21 +18,23 @@ namespace TMTDentalAPI.Controllers
     public class TCareScenariosController : ControllerBase
     {
         private readonly ITCareScenarioService _scenarioService;
+        private readonly ITCareCampaignService _tcareCampaignService;
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
         private readonly ITCareJobService _tcareJobService;
 
         public TCareScenariosController(ITCareScenarioService scenarioService, IMapper mapper,
-            ITenant<AppTenant> tenant, ITCareJobService tcareJobService)
+            ITenant<AppTenant> tenant, ITCareJobService tcareJobService, ITCareCampaignService tcareCampaignService)
         {
             _scenarioService = scenarioService;
             _mapper = mapper;
             _tenant = tenant?.Value;
             _tcareJobService = tcareJobService;
+            _tcareCampaignService = tcareCampaignService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]TCareScenarioPaged paged)
+        public async Task<IActionResult> Get([FromQuery] TCareScenarioPaged paged)
         {
             var res = await _scenarioService.GetPagedResultAsync(paged);
             return Ok(res);
@@ -70,6 +72,8 @@ namespace TMTDentalAPI.Controllers
             model.Name = val.Name;
             model.ChannelSocialId = val.ChannelSocialId;
             await _scenarioService.UpdateAsync(model);
+
+
             return NoContent();
         }
 
