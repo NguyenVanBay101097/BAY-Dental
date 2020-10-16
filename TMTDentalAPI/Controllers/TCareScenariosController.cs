@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Hangfire;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -17,10 +19,16 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ITCareScenarioService _scenarioService;
         private readonly IMapper _mapper;
-        public TCareScenariosController(ITCareScenarioService scenarioService, IMapper mapper)
+        private readonly AppTenant _tenant;
+        private readonly ITCareJobService _tcareJobService;
+
+        public TCareScenariosController(ITCareScenarioService scenarioService, IMapper mapper,
+            ITenant<AppTenant> tenant, ITCareJobService tcareJobService)
         {
             _scenarioService = scenarioService;
             _mapper = mapper;
+            _tenant = tenant?.Value;
+            _tcareJobService = tcareJobService;
         }
 
         [HttpGet]
@@ -70,6 +78,17 @@ namespace TMTDentalAPI.Controllers
         {
             var model = await _scenarioService.GetByIdAsync(id);
             await _scenarioService.DeleteAsync(model);
+            return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult AddJob()
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-scenario";
+            RecurringJob.RemoveIfExists(jobId);
+            var now = DateTime.Now.AddMinutes(1);
+            RecurringJob.AddOrUpdate(jobId, () => _tcareJobService.TCareTakeMessage(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
             return NoContent();
         }
     }

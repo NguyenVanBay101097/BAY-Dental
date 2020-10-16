@@ -55,5 +55,8 @@ namespace ApplicationCore.Entities
 
         public Guid? TagId { get; set; }
         public PartnerCategory Tag { get; set; }
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
     }
 }

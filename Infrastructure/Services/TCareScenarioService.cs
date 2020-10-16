@@ -70,8 +70,6 @@ namespace Infrastructure.Services
 
             return items;
         }
-
-
     }
     public class ReportTCareCampaign
     {

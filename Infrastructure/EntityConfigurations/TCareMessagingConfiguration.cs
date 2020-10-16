@@ -11,7 +11,9 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<TCareMessaging> builder)
         {
-          
+            builder.HasOne(x => x.FacebookPage)
+                .WithMany()
+                .HasForeignKey(x => x.FacebookPageId);
 
             builder.HasOne(x => x.TCareCampaign)
            .WithMany()

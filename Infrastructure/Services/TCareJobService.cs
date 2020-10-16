@@ -81,75 +81,109 @@ namespace Infrastructure.Services
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
             if (db != "localhost")
                 builder["Database"] = $"TMTDentalCatalogDb__{db}";
-            FacebookPage channel = null;
-            string channelType = "";
-            FacebookUserProfile facebookUserProfile = null;
-            List<TCareCampaign> listCampaigns = new List<TCareCampaign>();
-            Partner partner = null;
+
+            //FacebookPage channel = null;
+            //string channelType = "";
+            //FacebookUserProfile facebookUserProfile = null;
+            //List<TCareCampaign> listCampaigns = new List<TCareCampaign>();
+            //Partner partner = null;
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
                 try
                 {
                     conn.Open();
-                    var listScenarios = await conn.QueryAsync<TCareScenario>("SELECT * FROM TCareScenarios");
-                    foreach (var scenario in listScenarios)
+
+                    //tìm danh sách các chiến dịch đang active
+                    var activeCampaigns = await conn.QueryAsync<TCareCampaign>("SELECT * FROM TCareCampaigns" +
+                        " where Active=1");
+
+                    foreach(var campaign in activeCampaigns)
                     {
-                        channelType = scenario.ChannalType;
-                        channel = await GetChannel(conn, scenario.ChannelSocialId.Value);
-                        if (channel == null)
+                        //với mỗi chiến dịch lọc danh sách khách hàng
+                        var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                        if (partner_ids == null || !partner_ids.Any())
                             continue;
-                        listCampaigns = (await GetListCampaign(conn, scenario.Id)).ToList();
-                        foreach (var campaign in listCampaigns)
+
+                        var content = GetCampaignContent(campaign.GraphXml);
+                        if (string.IsNullOrEmpty(content))
+                            continue;
+
+                        //tạo tin nhắn gửi hàng loạt đưa vào hàng đợi
+                        var scheduleDate = GetScheduleDateCampaign(campaign);
+                        var messaging = new TCareMessaging()
                         {
-                            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-                            TCareMessaging messaging = new TCareMessaging();
-                            var sequence = resultingMessage.Root.Sequence;
-                            var rule = resultingMessage.Root.Rule;
-                            if (sequence == null || rule == null)
-                                continue;
+                            Date = scheduleDate,
+                            State = "in_queue",
+                            Content = content,
+                            TCareCampaignId = campaign.Id,
+                            FacebookPageId = campaign.FacebookPageId
+                        };
 
-                            if (string.IsNullOrEmpty(sequence.Content))
-                                continue;
+                        await CreateMessaging(conn, messaging);
 
-
-                            var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
-                            if (partner_ids == null)
-                                continue;
-                            messaging.Id = GuidComb.GenerateComb();
-                            messaging.Date = DateTime.Now;
-                            messaging.TCareCampaignId = campaign.Id;
-                            messaging.Content = sequence.Content;
-                            await CreateMessaging(conn, messaging);
-
-                            int number = 0;
-                            foreach (var partner_id in partner_ids)
-                            {
-                                var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id);
-                                if (facebookUserProfiles.Count() <= 0)
-                                    continue;
-                                partner = await GetPartner(conn, partner_id);
-                                var messageContent = PersonalizedPartner(partner, channel, sequence, conn);
-                                facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channel.Id).FirstOrDefault();
-                                if (facebookUserProfile == null)
-                                    continue;
-                                TCareMessage tcareMessage = new TCareMessage()
-                                {
-                                    ProfilePartnerId = facebookUserProfile.Id,
-                                    ChannelSocicalId = channel.Id,
-                                    CampaignId = campaign.Id,
-                                    PartnerId = partner_id,
-                                    MessageContent = messageContent,
-                                    TCareMessagingId = messaging.Id,
-                                    State = "waiting"
-                                };
-                                CreateMessage(conn, tcareMessage);
-                                number++;
-                            }
-                            await UpdateNumberPartner(conn, messaging.Id, number);
-                        }
+                        //Gửi tin nhắn hàng loạt
+                        await SendMessaging(conn, messaging, partner_ids);
                     }
+
+                    //var listScenarios = await conn.QueryAsync<TCareScenario>("SELECT * FROM TCareScenarios");
+                    //foreach (var scenario in listScenarios)
+                    //{
+                    //    channelType = scenario.ChannalType;
+                    //    channel = await GetChannel(conn, scenario.ChannelSocialId.Value);
+                    //    if (channel == null)
+                    //        continue;
+                    //    listCampaigns = (await GetListCampaign(conn, scenario.Id)).ToList();
+                    //    foreach (var campaign in listCampaigns)
+                    //    {
+                    //        XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+                    //        MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+                    //        MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+                    //        TCareMessaging messaging = new TCareMessaging();
+                    //        var sequence = resultingMessage.Root.Sequence;
+                    //        var rule = resultingMessage.Root.Rule;
+                    //        if (sequence == null || rule == null)
+                    //            continue;
+
+                    //        if (string.IsNullOrEmpty(sequence.Content))
+                    //            continue;
+
+
+                    //        var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
+                    //        if (partner_ids == null)
+                    //            continue;
+                    //        messaging.Id = GuidComb.GenerateComb();
+                    //        messaging.Date = DateTime.Now;
+                    //        messaging.TCareCampaignId = campaign.Id;
+                    //        messaging.Content = sequence.Content;
+                    //        await CreateMessaging(conn, messaging);
+
+                    //        int number = 0;
+                    //        foreach (var partner_id in partner_ids)
+                    //        {
+                    //            var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id);
+                    //            if (facebookUserProfiles.Count() <= 0)
+                    //                continue;
+                    //            partner = await GetPartner(conn, partner_id);
+                    //            var messageContent = PersonalizedPartner(partner, channel, sequence, conn);
+                    //            facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channel.Id).FirstOrDefault();
+                    //            if (facebookUserProfile == null)
+                    //                continue;
+                    //            TCareMessage tcareMessage = new TCareMessage()
+                    //            {
+                    //                ProfilePartnerId = facebookUserProfile.Id,
+                    //                ChannelSocicalId = channel.Id,
+                    //                CampaignId = campaign.Id,
+                    //                PartnerId = partner_id,
+                    //                MessageContent = messageContent,
+                    //                TCareMessagingId = messaging.Id,
+                    //                State = "waiting"
+                    //            };
+                    //            CreateMessage(conn, tcareMessage);
+                    //            number++;
+                    //        }
+                    //        await UpdateNumberPartner(conn, messaging.Id, number);
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -159,18 +193,83 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task CreateMessaging(SqlConnection conn, TCareMessaging tcareMessaging)
+        private async Task SendMessaging(SqlConnection conn, TCareMessaging messaging, IEnumerable<Guid> partnerIds)
         {
-            await conn.ExecuteAsync("insert into TCareMessagings" +
-                 "(Id ,Content , TCareCampaignId, CountPartner, Date) " +
-                 "Values (@Id, @Content, @TCareCampaignId, @CountPartner, @Date)",
+            //Tìm profiles sẽ gửi cho list partnerIds
+            var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles p " +
+                "where p.PartnerId in ('@partnerIds') and p.FbPageId = @pageId", new { partnerIds = string.Join(",", partnerIds), pageId = messaging.FacebookPageId }).ToList();
+            var profileDict = profiles.ToDictionary(x => x.PartnerId, x => x);
+
+            var partners = conn.Query<PartnerDataPersonalize>("select p.Id, p.Name, p0.Name from Partners p " +
+                    "left join PartnerTitles p0 on p.TitleId = p0.Id " +
+                    "where p.Id in (@ids)", new { ids = string.Join(",", partnerIds) }).ToList();
+            var partnerDict = partners.ToDictionary(x => x.Id, x => x);
+
+            var channel = conn.Query<FacebookPage>("select p.Id, p.Name from FacebookPages p where Id = @id", new { id = messaging.FacebookPageId }).FirstOrDefault();
+
+            var messages = new List<TCareMessage>();
+            foreach (var partnerId in partnerIds)
+            {
+                if (!profileDict.ContainsKey(partnerId))
+                    continue;
+                var profile = profileDict[partnerId];
+                var partner = partnerDict[partnerId];
+
+                var messageContent = PersonalizedContent(partner, channel, messaging.Content);
+
+                var message = new TCareMessage()
+                {
+                    ProfilePartnerId = profile.Id,
+                    ChannelSocicalId = messaging.FacebookPageId,
+                    CampaignId = messaging.TCareCampaignId,
+                    PartnerId = partnerId,
+                    MessageContent = messageContent,
+                    TCareMessagingId = messaging.Id,
+                    State = "waiting",
+                    ScheduledDate = messaging.Date
+                };
+
+                messages.Add(message);
+            }
+
+            await conn.ExecuteAsync("insert into TCareMessages " +
+                    "(Id,ProfilePartnerId,ChannelSocicalId,CampaignId,PartnerId,MessageContent,TCareMessagingId,State,SchduledDate) " +
+                    "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@SchduledDate)", messages.ToArray());
+        }
+
+        private DateTime GetScheduleDateCampaign(TCareCampaign campaign)
+        {
+            //xác định thời điểm gửi tin của chiến dịch
+            var date = DateTime.Now;
+            if (campaign.SheduleStart.HasValue)
+                date = date.AddHours(campaign.SheduleStart.Value.Hour).AddMinutes(campaign.SheduleStart.Value.Minute);
+            return date;
+        }
+
+        private string GetCampaignContent(string graphXml)
+        {
+            if (string.IsNullOrEmpty(graphXml))
+                return string.Empty;
+            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(graphXml));
+            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+            var sequence = resultingMessage.Root != null ? resultingMessage.Root.Sequence : null;
+            if (sequence != null)
+                return sequence.Content;
+            return string.Empty;
+        }
+
+        public async Task CreateMessaging(SqlConnection conn, TCareMessaging messaging)
+        {
+            await conn.ExecuteAsync("insert into TCareMessagings " +
+                 "(Id,Content,TCareCampaignId, Date) " +
+                 "Values (@Id, @Content, @TCareCampaignId, @Date)",
                  new
                  {
-                     Id = tcareMessaging.Id,
-                     Content = tcareMessaging.Content,
-                     TCareCampaignId = tcareMessaging.TCareCampaignId,
-                     CountPartner = tcareMessaging.CountPartner,
-                     Date = tcareMessaging.Date,
+                     Id = messaging.Id,
+                     Content = messaging.Content,
+                     TCareCampaignId = messaging.TCareCampaignId,
+                     Date = messaging.Date,
                  });
         }
 
@@ -352,23 +451,12 @@ namespace Infrastructure.Services
             }
         }
 
-        private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
+        private string PersonalizedContent(PartnerDataPersonalize partner, FacebookPage channelSocial, string content)
         {
-            var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page", channelSocial.PageName);
-            if (messageContent.Contains("@danh_xung_khach_hang"))
-            {
-                PartnerTitle partnerTitle = null;
-                if (partner.TitleId.HasValue)
-                {
-                    partnerTitle = conn.Query<PartnerTitle>("" +
-                        "SELECT * " +
-                        "FROM PartnerTitles " +
-                        "where Id = @id" +
-                        "", new { id = partner.TitleId }).FirstOrDefault();
-                }
-
-                messageContent = messageContent.Replace("@danh_xung_khach_hang", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
-            }
+            var messageContent = content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last())
+                .Replace("@fullname_khach_hang", partner.Name)
+                .Replace("@ten_page", channelSocial.PageName)
+                .Replace("@danh_xung_khach_hang", partner.Title ?? "");
             return messageContent;
         }
 
@@ -427,6 +515,9 @@ namespace Infrastructure.Services
 
         private async Task<IEnumerable<Guid>> SearchPartnerIdsV2(string graphXml, SqlConnection conn)
         {
+            if (string.IsNullOrEmpty(graphXml))
+                return null;
+
             string logic = "and";
             var conditions = new List<object>();
             var conditionPartnerIds = new List<IList<Guid>>();
@@ -497,94 +588,103 @@ namespace Infrastructure.Services
                 }
             }
 
-            foreach (var condition in conditions)
+            //nếu không có condition nào thì gửi tất cả khách hàng
+            if (conditions.Any())
             {
-                var type = condition.GetType().GetProperty("Type").GetValue(condition, null);
-                switch (type)
+                foreach (var condition in conditions)
                 {
-                    case "categPartner":
-                        {
-                            var cond = (PartnerCategoryCondition)condition;
-                            var sqlOp = cond.Op == "not_contains" ? "NOT EXISTS" : "EXISTS";
-                            var searchPartnerIds = conn.Query<Guid>("" +
-                                                       "select p.Id " +
-                                                       "from Partners p " +
-                                                       $"where p.Customer = 1 and {sqlOp} " +
-                                                       "(select 1 from PartnerPartnerCategoryRel p0 where p0.PartnerId = p.Id and p0.CategoryId = @categId)", new { categId = cond.TagId }).ToList();
-                            conditionPartnerIds.Add(searchPartnerIds);
-                            break;
-                        }
-                    case "birthday":
-                        {
-                            var today = DateTime.Today;
-                            var cond = (PartnerBirthdayCondition)condition;
-                            var date = today.AddDays(cond.Day);
-                            var searchPartnerIds = conn.Query<Guid>("" +
-                                           "Select pn.Id " +
-                                           "From Partners pn " +
-                                           "Where pn.Customer = 1 and pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month }
-                                           ).ToList();
-                            conditionPartnerIds.Add(searchPartnerIds);
-                            break;
-                        }
-                    case "lastSaleOrder":
-                        {
-                            var cond = (LastSaleOrderCondition)condition;
-                            var searchPartnerIds = conn.Query<Guid>("" +
-                                                    "Select pn.Id From Partners pn " +
-                                                    "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
-                                                    "Where pn.Customer = 1 and sale.State in ('sale','done') " +
-                                                    "Group by pn.Id " +
-                                                    "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
-                            conditionPartnerIds.Add(searchPartnerIds);
-                            break;
-                        }
-                    case "lastExamination":
-                        {
-                            var cond = (LastDotKhamDateCondition)condition;
-                            var searchPartnerIds = conn.Query<Guid>("" +
+                    var type = condition.GetType().GetProperty("Type").GetValue(condition, null);
+                    switch (type)
+                    {
+                        case "categPartner":
+                            {
+                                var cond = (PartnerCategoryCondition)condition;
+                                var sqlOp = cond.Op == "not_contains" ? "NOT EXISTS" : "EXISTS";
+                                var searchPartnerIds = conn.Query<Guid>("" +
+                                                           "select p.Id " +
+                                                           "from Partners p " +
+                                                           $"where p.Customer = 1 and {sqlOp} " +
+                                                           "(select 1 from PartnerPartnerCategoryRel p0 where p0.PartnerId = p.Id and p0.CategoryId = @categId)", new { categId = cond.TagId }).ToList();
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        case "birthday":
+                            {
+                                var today = DateTime.Today;
+                                var cond = (PartnerBirthdayCondition)condition;
+                                var date = today.AddDays(cond.Day);
+                                var searchPartnerIds = conn.Query<Guid>("" +
+                                               "Select pn.Id " +
+                                               "From Partners pn " +
+                                               "Where pn.Customer = 1 and pn.BirthDay = @day AND pn.BirthMonth = @month ", new { day = date.Day, month = date.Month }
+                                               ).ToList();
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        case "lastSaleOrder":
+                            {
+                                var cond = (LastSaleOrderCondition)condition;
+                                var searchPartnerIds = conn.Query<Guid>("" +
+                                                        "Select pn.Id From Partners pn " +
+                                                        "Left join SaleOrders sale ON sale.PartnerId = pn.Id " +
+                                                        "Where pn.Customer = 1 and sale.State in ('sale','done') " +
+                                                        "Group by pn.Id " +
+                                                        "Having (Max(sale.DateOrder) < DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        case "lastExamination":
+                            {
+                                var cond = (LastDotKhamDateCondition)condition;
+                                var searchPartnerIds = conn.Query<Guid>("" +
+                                         "Select pn.Id From Partners pn " +
+                                         "Left join DotKhams dk ON dk.PartnerId = pn.Id " +
+                                         "Where pn.Customer = 1 " +
+                                         "Group by pn.Id " +
+                                         "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        case "lastAppointment":
+                            {
+                                var cond = (LastAppointmentDateCondition)condition;
+                                var searchPartnerIds = conn.Query<Guid>("" +
                                      "Select pn.Id From Partners pn " +
-                                     "Left join DotKhams dk ON dk.PartnerId = pn.Id " +
+                                     "Left join Appointments am ON am.PartnerId = pn.Id " +
                                      "Where pn.Customer = 1 " +
                                      "Group by pn.Id " +
-                                     "Having (Max(dk.Date) <= DATEADD(day, -@number, GETDATE())) ", new { number = cond.Day }).ToList();
-                            conditionPartnerIds.Add(searchPartnerIds);
+                                     "Having (Max(CONVERT(date, am.Date)) = DATEADD(day, @number, CONVERT(date, GETDATE()))) ", new { number = cond.Day }).ToList();
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        default:
                             break;
-                        }
-                    case "lastAppointment":
-                        {
-                            var cond = (LastAppointmentDateCondition)condition;
-                            var searchPartnerIds = conn.Query<Guid>("" +
-                                 "Select pn.Id From Partners pn " +
-                                 "Left join Appointments am ON am.PartnerId = pn.Id " +
-                                 "Where pn.Customer = 1 " +
-                                 "Group by pn.Id " +
-                                 "Having (Max(CONVERT(date, am.Date)) = DATEADD(day, @number, CONVERT(date, GETDATE()))) ", new { number = cond.Day }).ToList();
-                            conditionPartnerIds.Add(searchPartnerIds);
-                            break;
-                        }
-                    default:
-                        break;
+                    }
                 }
-            }
 
-
-            IEnumerable<Guid> result = null;
-            foreach (var item in conditionPartnerIds)
-            {
-                if (result == null)
+                IEnumerable<Guid> result = null;
+                foreach (var item in conditionPartnerIds)
                 {
-                    result = item;
-                    continue;
+                    if (result == null)
+                    {
+                        result = item;
+                        continue;
+                    }
+
+                    if (logic == "or")
+                        result = result.Union(item);
+                    else
+                        result = result.Intersect(item);
                 }
 
-                if (logic == "or")
-                    result = result.Union(item);
-                else
-                    result = result.Intersect(item);
+                return result;
             }
-
-            return result;
+            else
+            {
+                return conn.Query<Guid>("select p.Id " +
+                        "from Partners p " +
+                        $"where p.Customer = 1").ToList();
+            }
         }
     }
 
@@ -659,13 +759,16 @@ namespace Infrastructure.Services
         public List<Guid> Ids { get; set; }
     }
 
-    public class XmlReadData
+    public class PartnerDataPersonalize
     {
-    }
+        public Guid Id { get; set; }
 
-    public class XmlReadRuleData
-    {
+        public string Name { get; set; }
 
-    }
+        /// <summary>
+        /// Danh xưng
+        /// </summary>
+        public string Title { get; set; }
+    } 
 
 }
