@@ -130,9 +130,7 @@ namespace Infrastructure.Services
                 {
                     conn.Open();
 
-
-                    
-                   
+                 
                         //tìm danh sách các chiến dịch đang active
                         var activeCampaigns = await conn.QueryAsync<TCareCampaign>("SELECT * FROM TCareCampaigns" +
                             " where Active = 1 ");

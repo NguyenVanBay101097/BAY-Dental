@@ -78,6 +78,8 @@ namespace TMTDentalAPI
             services.AddSingleton(new TCareCampaignJobService(Configuration));
             services.AddSingleton(new TCareMessageJobService(Configuration));
 
+            services.AddSingleton(new TCareMessagingJobService(Configuration));
+
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
                 config.Password.RequireLowercase = false;
