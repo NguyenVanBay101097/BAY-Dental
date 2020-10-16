@@ -20,17 +20,15 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMarketingTraceService _marketingTraceService;
         private readonly IFacebookMessagingTraceService _messagingTraceService;
-        private readonly ITCareMessagingTraceService _tCareMessagingTraceService;
         private readonly IFacebookWebhookJobService _fbWebhookJobService;
         private readonly AppTenant _tenant;
 
         public FacebookWebHookController(IMarketingTraceService marketingTraceService,
-            IFacebookMessagingTraceService messagingTraceService, ITCareMessagingTraceService tCareMessagingTraceService,
+            IFacebookMessagingTraceService messagingTraceService,
             IFacebookWebhookJobService fbWebhookJobService, ITenant<AppTenant> tenant)
         {
             _marketingTraceService = marketingTraceService;
             _messagingTraceService = messagingTraceService;
-            _tCareMessagingTraceService = tCareMessagingTraceService;
             _fbWebhookJobService = fbWebhookJobService;
             _tenant = tenant?.Value;
         }
@@ -88,7 +86,5 @@ namespace TMTDentalAPI.Controllers
             }
             return Ok();
         }
-
-
     }
 }

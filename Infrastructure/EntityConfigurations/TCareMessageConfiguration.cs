@@ -36,12 +36,8 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.ChannelSocicalId);
 
             builder.HasOne(x => x.TCareMessaging)
-               .WithMany(x=>x.TCareMessages)
+               .WithMany(x => x.TCareMessages)
                .HasForeignKey(x => x.TCareMessagingId);
-
-            builder.HasOne(x => x.TCareMessagingTrace)
-                .WithMany()
-                .HasForeignKey(x => x.TCareMessagingTraceId);
         }
     }
 }

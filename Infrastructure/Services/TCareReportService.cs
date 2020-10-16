@@ -30,60 +30,61 @@ namespace Infrastructure.Services
         {
             //SearchQuery
 
-            var campaigns = _context.TCareCampaigns.AsQueryable();
+            //var campaigns = _context.TCareCampaigns.AsQueryable();
 
-            if (val.TCareScenarioId.HasValue)
-                campaigns = campaigns.Where(x => x.TCareScenarioId == val.TCareScenarioId.Value);
-            if (val.DateFrom.HasValue)
-            {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+            //if (val.TCareScenarioId.HasValue)
+            //    campaigns = campaigns.Where(x => x.TCareScenarioId == val.TCareScenarioId.Value);
+            //if (val.DateFrom.HasValue)
+            //{
+            //    var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
 
-                campaigns = campaigns.Where(x => x.DateCreated.Value >= dateFrom);
-            }
-            if (val.DateTo.HasValue)
-            {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+            //    campaigns = campaigns.Where(x => x.DateCreated.Value >= dateFrom);
+            //}
+            //if (val.DateTo.HasValue)
+            //{
+            //    var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
 
-                campaigns = campaigns.Where(x => x.DateCreated.Value <= dateTo);
-            }
+            //    campaigns = campaigns.Where(x => x.DateCreated.Value <= dateTo);
+            //}
 
-            var list = await campaigns.Include(x => x.TCareScenario).Include(x => x.Traces).ToListAsync();
+            //var list = await campaigns.Include(x => x.TCareScenario).Include(x => x.Traces).ToListAsync();
 
-            var query2 = list.GroupBy(x => new
-            {
-                x.TCareScenario.Id,
-                x.TCareScenario.Name,
-            }).Select(x => new TCareReports
-            {
-                Id = x.Key.Id,
-                Name = x.Key.Name,
-                Items = x.Count(),
-                MessageTotal = x.Sum(s => s.Traces.Count),
-                DeliveryTotal = x.Sum(s => s.Traces.Where(s => s.Delivery.HasValue).Count()),
-                ReadTotal = x.Sum(s => s.Traces.Where(s => s.Opened.HasValue).Count())
+            //var query2 = list.GroupBy(x => new
+            //{
+            //    x.TCareScenario.Id,
+            //    x.TCareScenario.Name,
+            //}).Select(x => new TCareReports
+            //{
+            //    Id = x.Key.Id,
+            //    Name = x.Key.Name,
+            //    Items = x.Count(),
+            //    MessageTotal = x.Sum(s => s.Traces.Count),
+            //    DeliveryTotal = x.Sum(s => s.Traces.Where(s => s.Delivery.HasValue).Count()),
+            //    ReadTotal = x.Sum(s => s.Traces.Where(s => s.Opened.HasValue).Count())
 
-            }).ToList();
+            //}).ToList();
 
 
-            return query2;
+            //return query2;
+            return null;
         }
 
         public async Task<List<TCareReportsItem>> GetReportTCareDetail(TCareReports val)
         {
-            var traceObj = (ITCareMessagingTraceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ITCareMessagingTraceService));
-            var campaigns =  _context.TCareCampaigns.Where(x => x.TCareScenarioId == val.Id).Include(x => x.Traces);
-            var reportItems = await campaigns.Select(x => new TCareReportsItem
-            {
-                Id = x.Id,
-                Name = x.Name,
-                MessageTotal = x.Traces.Count(),
-                DeliveryTotal = x.Traces.Where(s => s.Delivery.HasValue).Count(),
-                ReadTotal = x.Traces.Where(s => s.Opened.HasValue).Count(),
-                Active = x.Active
-            }).ToListAsync();
+            //var traceObj = (ITCareMessagingTraceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ITCareMessagingTraceService));
+            //var campaigns =  _context.TCareCampaigns.Where(x => x.TCareScenarioId == val.Id).Include(x => x.Traces);
+            //var reportItems = await campaigns.Select(x => new TCareReportsItem
+            //{
+            //    Id = x.Id,
+            //    Name = x.Name,
+            //    MessageTotal = x.Traces.Count(),
+            //    DeliveryTotal = x.Traces.Where(s => s.Delivery.HasValue).Count(),
+            //    ReadTotal = x.Traces.Where(s => s.Opened.HasValue).Count(),
+            //    Active = x.Active
+            //}).ToListAsync();
 
-            return reportItems;
-
+            //return reportItems;
+            return null;
         }
     }
 }

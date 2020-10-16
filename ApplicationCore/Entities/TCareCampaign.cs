@@ -30,7 +30,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Lịch sử chạy của 1 message (để sau khi gán tag có thể tìm lại đúng user đó) 
         /// </summary>
-        public ICollection<TCareMessagingTrace> Traces { get; set; } = new List<TCareMessagingTrace>();
 
         /// <summary>
         /// draft : mới 

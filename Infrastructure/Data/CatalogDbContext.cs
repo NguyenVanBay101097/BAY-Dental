@@ -161,8 +161,6 @@ namespace Infrastructure.Data
         public DbSet<TCareRule> TCareRules { get; set; }
         public DbSet<TCareProperty> TCareProperties { get; set; }
         public DbSet<TCareMessaging> TCareMessagings { get; set; }
-        public DbSet<TCareMessagingTrace> TCareMessingTraces { get; set; }
-
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
@@ -352,7 +350,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCareRuleConfiguration());
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
-            builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
             builder.ApplyConfiguration(new PartnerImageConfiguration());
             builder.ApplyConfiguration(new LoaiThuChiConfiguration());
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());

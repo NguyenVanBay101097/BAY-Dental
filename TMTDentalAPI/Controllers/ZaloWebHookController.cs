@@ -21,16 +21,14 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class ZaloWebHookController : ControllerBase
     {
-        private readonly ITCareMessagingTraceService _tCareMessagingTraceService;
         private readonly TenantDbContext _tenantContext;
         private readonly AppSettings _appSettings;
         private readonly IFacebookWebhookJobService _webhookJobService;
         private readonly AppTenant _tenant;
 
-        public ZaloWebHookController(ITCareMessagingTraceService tCareMessagingTraceService, TenantDbContext tenantContext, IOptions<AppSettings> appSettings,
+        public ZaloWebHookController(TenantDbContext tenantContext, IOptions<AppSettings> appSettings,
             IFacebookWebhookJobService webhookJobService, ITenant<AppTenant> tenant)
         {
-            _tCareMessagingTraceService = tCareMessagingTraceService;
             _tenantContext = tenantContext;
             _appSettings = appSettings?.Value;
             _webhookJobService = webhookJobService;

@@ -76,6 +76,7 @@ namespace TMTDentalAPI
             var appSettings = appSettingsSection.Get<AppSettings>();
 
             services.AddSingleton(new TCareCampaignJobService(Configuration));
+            services.AddSingleton(new TCareMessageJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -248,7 +249,6 @@ namespace TMTDentalAPI
             services.AddScoped<ITCarePropertyService, TCarePropertyService>();
             services.AddScoped<ITCareMessagingService, TCareMessagingService>();
             services.AddScoped<ITCareJobService, TCareJobService>();
-            services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
             services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();

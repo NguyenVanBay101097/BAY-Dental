@@ -35,6 +35,34 @@ namespace Infrastructure.Services
             _irConfigParameterService = irConfigParameterService;
         }
 
+        public override async Task<IEnumerable<TCareCampaign>> CreateAsync(IEnumerable<TCareCampaign> entities)
+        {
+            await _SetFacebookPage(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<TCareCampaign> entities)
+        {
+            await _SetFacebookPage(entities);
+            await base.UpdateAsync(entities);
+        }
+
+        private async Task _SetFacebookPage(IEnumerable<TCareCampaign> self)
+        {
+            var scenarioObj = GetService<ITCareScenarioService>();
+            foreach(var campaign in self)
+            {
+                if (!campaign.FacebookPageId.HasValue)
+                {
+                    if (campaign.TCareScenarioId.HasValue)
+                    {
+                        var scenario = await scenarioObj.GetByIdAsync(campaign.TCareScenarioId.Value);
+                        campaign.FacebookPageId = scenario.ChannelSocialId;
+                    }
+                }    
+            }
+        }
+
         public async Task<PagedResult2<TCareCampaignBasic>> GetPagedResultAsync(TCareCampaignPaged val)
         {
             ISpecification<TCareCampaign> spec = new InitialSpecification<TCareCampaign>(x => true);
@@ -54,8 +82,6 @@ namespace Infrastructure.Services
 
         public async Task<TCareCampaign> NameCreate(TCareCampaignNameCreateVM val)
         {
-            var jobService = GetService<ITCareJobService>();
-            List<RecurringJobDto> list;
             var campaign = new TCareCampaign()
             {
                 Name = val.Name,

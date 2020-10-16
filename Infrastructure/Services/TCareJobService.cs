@@ -222,7 +222,6 @@ namespace Infrastructure.Services
                 messages.Add(message);
             }
 
-            await UpdateNumberPartner(conn, messaging.Id, messages.Count());
             await conn.ExecuteAsync("insert into TCareMessages " +
                     "(Id,ProfilePartnerId,ChannelSocicalId,CampaignId,PartnerId,MessageContent,TCareMessagingId,State,ScheduledDate) " +
                     "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@ScheduledDate)", messages.ToArray());

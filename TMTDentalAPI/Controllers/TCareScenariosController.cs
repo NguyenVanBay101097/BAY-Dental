@@ -88,12 +88,11 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public IActionResult AddJob()
         {
-            RecurringJob.AddOrUpdate<TCareCampaignJobService>(x => x.CreateTodoItem("localhost"), "* * * * *");
-            //var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            //var jobId = $"{tenant}-tcare-scenario-Job";
-            //RecurringJob.RemoveIfExists(jobId);
-            //var now = DateTime.Now.AddMinutes(1);
-            //RecurringJob.AddOrUpdate(jobId, () => _tcareJobService.TCareTakeMessage(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-campaign-job";
+            RecurringJob.RemoveIfExists(jobId);
+            var now = DateTime.Now.AddMinutes(1);
+            RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
             return NoContent();
         }
 
@@ -105,9 +104,9 @@ namespace TMTDentalAPI.Controllers
         public IActionResult AddJob2()
         {
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-tcare-scenario-Job2";
+            var jobId = $"{tenant}-tcare-message-job";
             RecurringJob.RemoveIfExists(jobId);
-            RecurringJob.AddOrUpdate(jobId, () => _tcareJobService.RunJob2Messages(tenant), $"* */1 * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<TCareMessageJobService>(jobId, x => x.Run(tenant), $"* * * * *", TimeZoneInfo.Local);
             return NoContent();
         }
     }

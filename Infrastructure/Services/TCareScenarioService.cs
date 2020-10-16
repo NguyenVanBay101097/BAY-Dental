@@ -100,7 +100,6 @@ namespace Infrastructure.Services
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<TCareMessagingTrace> MessageTotal { get; set; } = new List<TCareMessagingTrace>();
         public int DeliveryTotal { get; set; }
         public int ReadTotal { get; set; }
     }

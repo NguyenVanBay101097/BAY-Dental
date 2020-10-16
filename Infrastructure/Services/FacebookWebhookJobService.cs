@@ -3,8 +3,11 @@ using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MyERP.Utilities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -14,17 +17,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Umbraco.Web.Models.ContentEditing;
+using Umbraco.Web.Models.Webhooks;
 using ZaloDotNetSDK;
 using ZaloDotNetSDK.oa;
 
 namespace Infrastructure.Services
 {
+    /// <summary>
+    /// Handle facebook webhook
+    /// </summary>
     public class FacebookWebhookJobService : IFacebookWebhookJobService
     {
         private readonly ConnectionStrings _connectionStrings;
-        public FacebookWebhookJobService(IOptions<ConnectionStrings> connectionStrings)
+        private readonly IConfiguration _configuration;
+
+        public FacebookWebhookJobService(IOptions<ConnectionStrings> connectionStrings,
+            IConfiguration configuration)
         {
             _connectionStrings = connectionStrings?.Value;
+            _configuration = configuration;
         }
 
         public async Task ProcessRead(string db, DateTime watermark, string psid, string page_id)
@@ -171,6 +182,60 @@ namespace Infrastructure.Services
 
 
             }
+        }
+
+        public async Task Process(string db, JObject data)
+        {
+            var wh = data.ToObject<FacebookWebHook>();
+            foreach (var entry in wh.Entry)
+            {
+                if (entry.Messaging != null)
+                {
+                    foreach (var messaging in entry.Messaging)
+                    {
+                        await _Process(db, messaging);
+                    }
+                }
+            }
+        }
+
+        public async Task _Process(string db, FacebookWebHookEntryMessaging messaging)
+        {
+            var section = _configuration.GetSection("ConnectionStrings");
+            var catalogConnection = section["CatalogConnection"];
+            if (db != "localhost")
+                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
+
+            DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
+            builder.UseSqlServer(catalogConnection);
+
+            await using var context = new CatalogDbContext(builder.Options, null, null);
+
+            var watermark = messaging.Read.Watermark.ToLocalTime();
+            var psid = messaging.Sender.Id;
+            var page_id = messaging.Recipient.Id;
+
+            if (messaging.Read != null)
+            {
+                var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == psid && x.ChannelSocical.PageId == page_id &&
+                    x.Sent.HasValue && x.Sent <= watermark && !x.Opened.HasValue).ToListAsync();
+
+                foreach (var message in messages)
+                    message.Opened = watermark;
+            }
+            else if (messaging.Delivery != null)
+            {
+                var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == psid && x.ChannelSocical.PageId == page_id &&
+                    x.Sent.HasValue && x.Sent <= watermark && !x.Delivery.HasValue).ToListAsync();
+
+                foreach (var message in messages)
+                    message.Delivery = watermark;
+            }
+            else if (messaging.Message != null)
+            {
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }

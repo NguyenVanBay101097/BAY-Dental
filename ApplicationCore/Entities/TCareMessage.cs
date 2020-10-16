@@ -34,9 +34,6 @@ namespace ApplicationCore.Entities
         public Guid? TCareMessagingId { get; set; }
         public TCareMessaging TCareMessaging { get; set; }
 
-        public Guid? TCareMessagingTraceId { get; set; }
-        public TCareMessagingTrace TCareMessagingTrace { get; set; }
-
         /// <summary>
         /// Nội dung của tin nhắn gửi cho khánh hàng
         /// </summary>
@@ -44,12 +41,25 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// waiting: Chờ gửi tin nhắn
-        /// done: Hoàn thành
+        /// sent: Đã gửi
         /// exception: Gửi lỗi
         /// </summary>
         public string State { get; set; }
 
         public DateTime? ScheduledDate { get; set; }
+
+        public DateTime? Sent { get; set; }
+
+        public DateTime? Opened { get; set; }
+
+        public DateTime? Delivery { get; set; }
+
+        /// <summary>
+        /// Lý do exception
+        /// </summary>
+        public string FailureReason { get; set; }
+
+        public string MessageId { get; set; }
     }
 }
 
