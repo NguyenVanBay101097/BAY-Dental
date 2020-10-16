@@ -22,16 +22,41 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         public TCareScenarioService(IAsyncRepository<TCareScenario> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper 
+            IMapper mapper
             ) : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
-       
+
         }
 
         public Task<TCareScenario> GetDefault()
         {
             throw new NotImplementedException();
+        }
+
+        public override async Task UpdateAsync(TCareScenario entity)
+        {
+            var campaignObj = GetService<ITCareCampaignService>();
+            await base.UpdateAsync(entity);
+            var campaigns = await campaignObj.SearchQuery(x => x.TCareScenarioId == entity.Id).ToListAsync();
+            foreach (var item in campaigns)
+            {
+                item.FacebookPageId = entity.ChannelSocialId;
+            }
+            await campaignObj.UpdateAsync(campaigns);
+        }
+
+        public override async Task<TCareScenario> CreateAsync(TCareScenario entity)
+        {
+            var model = await base.CreateAsync(entity);
+            var campaignObj = GetService<ITCareCampaignService>();
+            var campaigns = await campaignObj.SearchQuery(x => x.TCareScenarioId == entity.Id).ToListAsync();
+            foreach (var item in campaigns)
+            {
+                item.FacebookPageId = entity.ChannelSocialId;
+            }
+            await campaignObj.UpdateAsync(campaigns);
+            return model;
         }
 
         public async Task<PagedResult2<TCareScenarioBasic>> GetPagedResultAsync(TCareScenarioPaged val)
@@ -52,7 +77,7 @@ namespace Infrastructure.Services
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
         {
-            var result = await SearchQuery(x => x.Id == id).Include(x => x.Campaigns).Include(x=>x.ChannelSocial).FirstOrDefaultAsync();
+            var result = await SearchQuery(x => x.Id == id).Include(x => x.Campaigns).Include(x => x.ChannelSocial).FirstOrDefaultAsync();
             var res = _mapper.Map<TCareScenarioDisplay>(result);
             return res;
         }

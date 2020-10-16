@@ -15,8 +15,5 @@ namespace Infrastructure.Services
         Task<TCareScenarioDisplay> GetDisplay(Guid id);
 
         Task<IEnumerable<TCareScenarioBasic>> GetAutocompleteAsync(TCareScenarioPaged val);
-
-
-
     }
 }

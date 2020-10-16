@@ -51,21 +51,10 @@ namespace Infrastructure.Services
                 {
                     conn.Open();
 
-                    var messages = await conn.QueryAsync<TCareMessage>("SELECT * FROM TCareMessages WHERE State = 'waiting'");
+                    var messages = await conn.QueryAsync<TCareMessage>("SELECT * FROM TCareMessages WHERE State = 'waiting' AND CampaignId = @campaignId", new { campaignId = campaignId });
                     if (messages.Count() == 0)
                         return;
 
-                    //var date = DateTime.UtcNow;
-                    //var campaign = conn.Query<TCareCampaign>("SELECT * FROM TCareCampaigns WHERE Id = @id", new { id = campaignId }).FirstOrDefault();
-
-                    //var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
-                    //if (partner_ids == null)
-                    //    return;
-
-                    //XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    //MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    //MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
-                    //var partner_ids = SearchPartnerIds(CampaignXML.Root.Rule.Condition, CampaignXML.Root.Rule.Logic, conn);
                     foreach (var message in messages)
                         BackgroundJob.Enqueue(() => SendMessgeToPage(db, message));
                 }
@@ -97,7 +86,7 @@ namespace Infrastructure.Services
                     var activeCampaigns = await conn.QueryAsync<TCareCampaign>("SELECT * FROM TCareCampaigns" +
                         " where Active=1");
 
-                    foreach(var campaign in activeCampaigns)
+                    foreach (var campaign in activeCampaigns)
                     {
                         //với mỗi chiến dịch lọc danh sách khách hàng
                         var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
@@ -112,6 +101,7 @@ namespace Infrastructure.Services
                         var scheduleDate = GetScheduleDateCampaign(campaign);
                         var messaging = new TCareMessaging()
                         {
+                            Id = GuidComb.GenerateComb(),
                             Date = scheduleDate,
                             State = "in_queue",
                             Content = content,
@@ -124,66 +114,6 @@ namespace Infrastructure.Services
                         //Gửi tin nhắn hàng loạt
                         await SendMessaging(conn, messaging, partner_ids);
                     }
-
-                    //var listScenarios = await conn.QueryAsync<TCareScenario>("SELECT * FROM TCareScenarios");
-                    //foreach (var scenario in listScenarios)
-                    //{
-                    //    channelType = scenario.ChannalType;
-                    //    channel = await GetChannel(conn, scenario.ChannelSocialId.Value);
-                    //    if (channel == null)
-                    //        continue;
-                    //    listCampaigns = (await GetListCampaign(conn, scenario.Id)).ToList();
-                    //    foreach (var campaign in listCampaigns)
-                    //    {
-                    //        XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
-                    //        MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
-                    //        MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
-                    //        TCareMessaging messaging = new TCareMessaging();
-                    //        var sequence = resultingMessage.Root.Sequence;
-                    //        var rule = resultingMessage.Root.Rule;
-                    //        if (sequence == null || rule == null)
-                    //            continue;
-
-                    //        if (string.IsNullOrEmpty(sequence.Content))
-                    //            continue;
-
-
-                    //        var partner_ids = await SearchPartnerIdsV2(campaign.GraphXml, conn);
-                    //        if (partner_ids == null)
-                    //            continue;
-                    //        messaging.Id = GuidComb.GenerateComb();
-                    //        messaging.Date = DateTime.Now;
-                    //        messaging.TCareCampaignId = campaign.Id;
-                    //        messaging.Content = sequence.Content;
-                    //        await CreateMessaging(conn, messaging);
-
-                    //        int number = 0;
-                    //        foreach (var partner_id in partner_ids)
-                    //        {
-                    //            var facebookUserProfiles = GetFacebookUserProfilesByPartnerId(conn, partner_id);
-                    //            if (facebookUserProfiles.Count() <= 0)
-                    //                continue;
-                    //            partner = await GetPartner(conn, partner_id);
-                    //            var messageContent = PersonalizedPartner(partner, channel, sequence, conn);
-                    //            facebookUserProfile = facebookUserProfiles.Where(x => x.FbPageId == channel.Id).FirstOrDefault();
-                    //            if (facebookUserProfile == null)
-                    //                continue;
-                    //            TCareMessage tcareMessage = new TCareMessage()
-                    //            {
-                    //                ProfilePartnerId = facebookUserProfile.Id,
-                    //                ChannelSocicalId = channel.Id,
-                    //                CampaignId = campaign.Id,
-                    //                PartnerId = partner_id,
-                    //                MessageContent = messageContent,
-                    //                TCareMessagingId = messaging.Id,
-                    //                State = "waiting"
-                    //            };
-                    //            CreateMessage(conn, tcareMessage);
-                    //            number++;
-                    //        }
-                    //        await UpdateNumberPartner(conn, messaging.Id, number);
-                    //    }
-                    //}
                 }
                 catch (Exception ex)
                 {
@@ -197,28 +127,37 @@ namespace Infrastructure.Services
         {
             //Tìm profiles sẽ gửi cho list partnerIds
             var profiles = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles p " +
-                "where p.PartnerId in ('@partnerIds') and p.FbPageId = @pageId", new { partnerIds = string.Join(",", partnerIds), pageId = messaging.FacebookPageId }).ToList();
+               "where p.PartnerId in @partnerIds and p.FbPageId = @pageId ", new { partnerIds = partnerIds, pageId = messaging.FacebookPageId }).ToList();
+
             var profileDict = profiles.ToDictionary(x => x.PartnerId, x => x);
 
             var partners = conn.Query<PartnerDataPersonalize>("select p.Id, p.Name, p0.Name from Partners p " +
                     "left join PartnerTitles p0 on p.TitleId = p0.Id " +
-                    "where p.Id in (@ids)", new { ids = string.Join(",", partnerIds) }).ToList();
+                    "where p.Id in @ids", new { ids = partnerIds }).ToList();
+
             var partnerDict = partners.ToDictionary(x => x.Id, x => x);
 
-            var channel = conn.Query<FacebookPage>("select p.Id, p.Name from FacebookPages p where Id = @id", new { id = messaging.FacebookPageId }).FirstOrDefault();
+            var channel = conn.Query<FacebookPage>("select Id, PageName from FacebookPages where Id = @id", new { id = messaging.FacebookPageId }).FirstOrDefault();
 
             var messages = new List<TCareMessage>();
+
             foreach (var partnerId in partnerIds)
             {
                 if (!profileDict.ContainsKey(partnerId))
                     continue;
+
                 var profile = profileDict[partnerId];
+
+                if (!partnerDict.ContainsKey(partnerId))
+                    continue;
+
                 var partner = partnerDict[partnerId];
 
                 var messageContent = PersonalizedContent(partner, channel, messaging.Content);
 
                 var message = new TCareMessage()
                 {
+                    Id = GuidComb.GenerateComb(),
                     ProfilePartnerId = profile.Id,
                     ChannelSocicalId = messaging.FacebookPageId,
                     CampaignId = messaging.TCareCampaignId,
@@ -232,9 +171,10 @@ namespace Infrastructure.Services
                 messages.Add(message);
             }
 
+            await UpdateNumberPartner(conn, messaging.Id, messages.Count());
             await conn.ExecuteAsync("insert into TCareMessages " +
-                    "(Id,ProfilePartnerId,ChannelSocicalId,CampaignId,PartnerId,MessageContent,TCareMessagingId,State,SchduledDate) " +
-                    "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@SchduledDate)", messages.ToArray());
+                    "(Id,ProfilePartnerId,ChannelSocicalId,CampaignId,PartnerId,MessageContent,TCareMessagingId,State,ScheduledDate) " +
+                    "values (@Id,@ProfilePartnerId,@ChannelSocicalId,@CampaignId,@PartnerId,@MessageContent,@TCareMessagingId,@State,@ScheduledDate)", messages.ToArray());
         }
 
         private DateTime GetScheduleDateCampaign(TCareCampaign campaign)
@@ -262,14 +202,16 @@ namespace Infrastructure.Services
         public async Task CreateMessaging(SqlConnection conn, TCareMessaging messaging)
         {
             await conn.ExecuteAsync("insert into TCareMessagings " +
-                 "(Id,Content,TCareCampaignId, Date) " +
-                 "Values (@Id, @Content, @TCareCampaignId, @Date)",
+                 "(Id,Content,TCareCampaignId, Date,State,FacebookPageId) " +
+                 "Values (@Id, @Content, @TCareCampaignId, @Date,@State,@FacebookPageId)",
                  new
                  {
                      Id = messaging.Id,
                      Content = messaging.Content,
                      TCareCampaignId = messaging.TCareCampaignId,
                      Date = messaging.Date,
+                     State = "in_queue",
+                     FacebookPageId = messaging.FacebookPageId
                  });
         }
 
@@ -769,6 +711,6 @@ namespace Infrastructure.Services
         /// Danh xưng
         /// </summary>
         public string Title { get; set; }
-    } 
+    }
 
 }

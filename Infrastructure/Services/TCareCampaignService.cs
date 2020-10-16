@@ -62,28 +62,6 @@ namespace Infrastructure.Services
                 TCareScenarioId = val.TCareScenarioId,
                 State = "draft"
             };
-            //Cach 1:
-            //var value = await _irConfigParameterService.GetParam("setup_first_time_create_campaign");
-            //if (string.IsNullOrEmpty(value) || !value.Contains("True"))
-            //{
-            //    var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            //    var jobId = $"{tenant}-tcare-scenario-{DateTime.Now.ToShortDateString()}";
-            //    RecurringJob.RemoveIfExists(jobId);
-            //    RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "10 16 * * *", TimeZoneInfo.Local);
-            //    await _irConfigParameterService.SetParam("setup_first_time_create_campaign", "True");
-            //}
-            //Cach 2:
-            //var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            //var jobId = $"{tenant}-tcare-scenario";
-            //using (var connection = JobStorage.Current.GetConnection())
-            //{
-            //    list = connection.GetRecurringJobs();
-            //}
-            //var job = list?.FirstOrDefault(j => j.Id == jobId);  // jobId is the recurring job ID, whatever that is
-            //if (job == null || string.IsNullOrEmpty(job.LastJobId))
-            //{
-            //    RecurringJob.AddOrUpdate(jobId, () => jobService.TCareTakeMessage(tenant), "15 17 * * *", TimeZoneInfo.Local);
-            //}
             return await CreateAsync(campaign);
         }
 
