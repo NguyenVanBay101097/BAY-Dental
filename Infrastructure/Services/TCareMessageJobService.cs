@@ -71,10 +71,12 @@ namespace Infrastructure.Services
                 var channel = message.ChannelSocical;
                 var profile = message.ProfilePartner;
 
+                var now = DateTime.Now;
+                var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
                 if (channel.Type == "facebook")
                 {
                     //có cách nào lấy đúng Sent???
-                    message.Sent = DateTime.Now.AddSeconds(-2);
+                    message.Sent = now2.AddSeconds(-2);
                     var sendResult = await _fbMessageSender.SendMessageTCareTextAsync(message.MessageContent, profile.PSID, channel.PageAccesstoken);
                     if (!string.IsNullOrEmpty(sendResult.error))
                     {
@@ -92,7 +94,7 @@ namespace Infrastructure.Services
                 }
                 else if (channel.Type == "zalo")
                 {
-                    message.Sent = DateTime.Now.AddSeconds(-2);
+                    message.Sent = now2.AddSeconds(-2);
                     var sendResult = _zaloMessageSender.SendText(message.MessageContent, channel.PageAccesstoken, profile.PSID);
                     if (sendResult.error != 0)
                     {

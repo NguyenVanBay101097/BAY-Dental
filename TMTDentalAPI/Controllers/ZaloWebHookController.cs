@@ -36,31 +36,33 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]JObject data)
+        public IActionResult Post([FromBody]JObject data)
         {
+            var db = _tenant != null ? _tenant.Hostname : "localhost";
+            BackgroundJob.Enqueue<FacebookWebhookJobService>(x => x.ProcessZalo(db, data));
 
-            var whzl = data.ToObject<ZaloWebHook>();
-            if (whzl.EventName == "user_seen_message")
-            {
-                foreach (var mgsId in whzl.Message.mgsIds)
-                {
-                    var watermark = whzl.Timestamp.ToLocalTime();
-                    var db = _tenant != null ? _tenant.Hostname : "localhost";
-                    BackgroundJob.Enqueue(() => _webhookJobService.ProcessRead(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
-                }
+            //var whzl = data.ToObject<ZaloWebHook>();
+            //if (whzl.EventName == "user_seen_message")
+            //{
+            //    foreach (var mgsId in whzl.Message.mgsIds)
+            //    {
+            //        var watermark = whzl.Timestamp.ToLocalTime();
+            //        var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //        BackgroundJob.Enqueue(() => _webhookJobService.ProcessRead(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
+            //    }
 
-            }
-            else if (whzl.EventName == "user_received_message")
-            {
-                var watermark = whzl.Timestamp.ToLocalTime();
-                var db = _tenant != null ? _tenant.Hostname : "localhost";
-                BackgroundJob.Enqueue(() => _webhookJobService.ProcessDelivery(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
-            }
-            else if (whzl.EventName == "user_send_text")
-            {
-                var db = _tenant != null ? _tenant.Hostname : "localhost";
-                BackgroundJob.Enqueue(() => _webhookJobService.ProcessAddUserProfile(db, whzl.Sender.Id, whzl.Recipient.Id));
-            }
+            //}
+            //else if (whzl.EventName == "user_received_message")
+            //{
+            //    var watermark = whzl.Timestamp.ToLocalTime();
+            //    var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //    BackgroundJob.Enqueue(() => _webhookJobService.ProcessDelivery(db, watermark, whzl.Recipient.Id, whzl.Sender.Id));
+            //}
+            //else if (whzl.EventName == "user_send_text")
+            //{
+            //    var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //    BackgroundJob.Enqueue(() => _webhookJobService.ProcessAddUserProfile(db, whzl.Sender.Id, whzl.Recipient.Id));
+            //}
 
             return Ok();
         }

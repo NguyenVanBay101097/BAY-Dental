@@ -42,10 +42,15 @@ namespace Infrastructure.Services
                 var activeCampaigns = await context.TCareCampaigns.Where(x => x.Active).ToListAsync();
                 foreach (var campaign in activeCampaigns)
                 {
+                    if (!campaign.FacebookPageId.HasValue)
+                        continue;
+
                     //với mỗi chiến dịch lọc danh sách khách hàng
                     var partner_ids = await SearchPartnerIds(campaign.GraphXml, context);
                     if (partner_ids == null || !partner_ids.Any())
                         continue;
+
+                    var profiles = await GetProfiles(partner_ids, campaign.FacebookPageId.Value, context);
 
                     var content = GetCampaignContent(campaign.GraphXml);
                     if (string.IsNullOrEmpty(content))
@@ -55,18 +60,26 @@ namespace Infrastructure.Services
                     var scheduleDate = GetScheduleDateCampaign(campaign);
                     var messaging = new TCareMessaging()
                     {
-                        Date = scheduleDate,
+                        ScheduleDate = scheduleDate,
                         State = "in_queue",
                         Content = content,
                         TCareCampaignId = campaign.Id,
                         FacebookPageId = campaign.FacebookPageId
                     };
 
+                    foreach (var profile in profiles)
+                    {
+                        messaging.PartnerRecipients.Add(new TCareMessagingPartnerRel
+                        {
+                            PartnerId = profile.PartnerId.Value
+                        });
+                    }
+
                     await context.TCareMessagings.AddAsync(messaging);
                     await context.SaveChangesAsync();
 
                     //Gửi tin nhắn hàng loạt
-                    await CreateMessages(context, messaging, partner_ids);
+                    //await CreateMessages(context, messaging, partner_ids);
                 }
 
                 await transaction.CommitAsync();
@@ -78,6 +91,24 @@ namespace Infrastructure.Services
                 await transaction.RollbackAsync();
             }
         }
+
+        private async Task<IEnumerable<FacebookUserProfile>> GetProfiles(IEnumerable<Guid> partnerIds, Guid? fbFageId, CatalogDbContext context)
+        {
+            var limit = 1000;
+            var offset = 0;
+            var result = new List<FacebookUserProfile>().AsEnumerable();
+            while (offset < partnerIds.Count())
+            {
+                var ids = partnerIds.Skip(offset).Take(limit);
+                var items = await context.FacebookUserProfiles.Where(x => x.PartnerId.HasValue && ids.Contains(x.Partner.Id) && x.FbPageId == fbFageId).ToListAsync();
+
+                result = result.Union(items);
+                offset += limit;
+            }
+
+            return result;
+        }
+
 
         private async Task<IEnumerable<Guid>> SearchPartnerIds(string graphXml, CatalogDbContext context)
         {
@@ -168,7 +199,7 @@ namespace Infrastructure.Services
                                 var cond = (PartnerCategoryCondition)condition;
                                 if (cond.Op == "not_contains")
                                 {
-                                    var searchPartnerIds = await query.Where(x =>  x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == cond.TagId))
+                                    var searchPartnerIds = await query.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.CategoryId == cond.TagId))
                                         .Select(x => x.Id).ToListAsync();
                                     conditionPartnerIds.Add(searchPartnerIds);
                                 }
@@ -307,7 +338,7 @@ namespace Infrastructure.Services
                     MessageContent = messageContent,
                     TCareMessagingId = messaging.Id,
                     State = "waiting",
-                    ScheduledDate = messaging.Date,
+                    ScheduledDate = messaging.ScheduleDate,
                 };
 
                 messages.Add(message);
@@ -322,7 +353,7 @@ namespace Infrastructure.Services
             var limit = 1000;
             var offset = 0;
             var result = new List<TCareCampaignJobPartnerProfile>();
-            while(offset < partnerIds.Count())
+            while (offset < partnerIds.Count())
             {
                 var ids = partnerIds.Skip(offset).Take(limit);
                 var items = await context.FacebookUserProfiles.Where(x => x.PartnerId.HasValue && ids.Contains(x.Partner.Id) && x.FbPageId == fbFageId)

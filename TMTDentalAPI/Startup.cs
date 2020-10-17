@@ -77,8 +77,8 @@ namespace TMTDentalAPI
 
             services.AddSingleton(new TCareCampaignJobService(Configuration));
             services.AddSingleton(new TCareMessageJobService(Configuration));
-
             services.AddSingleton(new TCareMessagingJobService(Configuration));
+            services.AddSingleton(new FacebookWebhookJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -499,7 +499,7 @@ namespace TMTDentalAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CatalogDbContext context)
         {
             if (env.IsDevelopment())
             {

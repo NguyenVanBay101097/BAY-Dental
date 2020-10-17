@@ -151,7 +151,7 @@ namespace Infrastructure.Services
                         var messaging = new TCareMessaging()
                         {
                             Id = GuidComb.GenerateComb(),
-                            Date = scheduleDate,
+                            ScheduleDate = scheduleDate,
                             State = "in_queue",
                             Content = content,
                             TCareCampaignId = campaign.Id,
@@ -214,7 +214,7 @@ namespace Infrastructure.Services
                     MessageContent = messageContent,
                     TCareMessagingId = messaging.Id,
                     State = "waiting",
-                    ScheduledDate = messaging.Date
+                    ScheduledDate = messaging.ScheduleDate
                 };
 
                 messages.Add(message);
@@ -257,7 +257,7 @@ namespace Infrastructure.Services
                      Id = messaging.Id,
                      Content = messaging.Content,
                      TCareCampaignId = messaging.TCareCampaignId,
-                     Date = messaging.Date,
+                     Date = messaging.ScheduleDate,
                      State = "in_queue",
                      FacebookPageId = messaging.FacebookPageId
                  });

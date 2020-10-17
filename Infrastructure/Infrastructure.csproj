@@ -49,6 +49,7 @@
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
     <PackageReference Include="Sendgrid" Version="9.11.0" />
+    <PackageReference Include="StringTemplate4" Version="4.0.8" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.23" />
   </ItemGroup>

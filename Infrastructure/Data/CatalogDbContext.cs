@@ -209,6 +209,7 @@ namespace Infrastructure.Data
 
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
         public DbSet<TCareMessage> TCareMessages { get; set; }
+        public DbSet<TCareMessagingPartnerRel> TCareMessagingPartnerRels { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -375,6 +376,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
             builder.ApplyConfiguration(new HrPayslipRunConfiguration());
             builder.ApplyConfiguration(new HrSalaryConfiguration());
+            builder.ApplyConfiguration(new TCareMessagingPartnerRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
