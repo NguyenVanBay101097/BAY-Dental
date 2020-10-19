@@ -967,7 +967,7 @@ namespace Infrastructure.Services
 
                         if (val.Type == "customer")
                         {
-                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 11].Value);
+                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 13].Value);
                             if (!string.IsNullOrWhiteSpace(medicalHistory))
                             {
                                 var medicalHistoryTmp = medicalHistory.Split(",");

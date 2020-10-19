@@ -26,24 +26,29 @@ namespace TMTDentalAPI.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             //nen check version de han che viec migrate hay ko?
-            var tenant = context.GetTenant<AppTenant>();
-            if (tenant != null)
-            {
-                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                //{
-                //    var now = DateTime.Now;
-                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                //    {
-                //        //await HandleExpiredAsync(context);
-                //    }
-                //}
+            //var tenant = context.GetTenant<AppTenant>();
+            //if (tenant != null)
+            //{
+            //    //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
+            //    //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
+            //    //{
+            //    //    var now = DateTime.Now;
+            //    //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
+            //    //    {
+            //    //        //await HandleExpiredAsync(context);
+            //    //    }
+            //    //}
 
-                var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-                var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                    await dbContext.Database.MigrateAsync();
-            }
+            //    var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+            //    var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+            //    if (pendingMigrations.Any())
+            //        await dbContext.Database.MigrateAsync();
+            //}
+
+            var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+                await dbContext.Database.MigrateAsync();
 
             // Call the next delegate/middleware in the pipeline
             await _next(context);
