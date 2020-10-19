@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { of } from 'rxjs/internal/observable/of';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 
@@ -12,7 +12,7 @@ import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 })
 export class PartnerCategoryPopoverComponent implements OnInit {
   value_partnerCategoryPopOver: any;
-  partnerCategoriesPopover: any;
+  dataPopOver = [];
   search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
 
@@ -22,7 +22,8 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   @Output() otherOutput = new EventEmitter();
   @Input() otherInput: any;
 
-  @ViewChild('popOver', { static: true }) public popover: NgbPopover;
+  @ViewChild('popOver', { static: true }) public popover: any;
+
 
   constructor(
     private partnerCategoryService: PartnerCategoryService,
@@ -30,13 +31,14 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // this.loadPartnerCategoryPopOver();
+
     this.searchUpdatePopOver.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
         this.loadPartnerCategoryPopOver();
       });
-    this.loadPartnerCategoryPopOver();
   }
 
   loadPartnerCategoryPopOver() {
@@ -45,35 +47,40 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     val.offset = 0;
     val.search = this.search_partnerCategory || '';
 
-    this.partnerCategoryService.getPaged(val).subscribe(res => {
-      this.partnerCategoriesPopover = res.items;
-      if (this.popover && this.popover.isOpen()) {
-        this.popover.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
-      }
+    this.partnerCategoryService.getPaged(val).subscribe((res: any) => {
+      this.dataPopOver = res.items;
     }, err => {
       console.log(err);
     });
   }
 
   onToggleCategory(popOver) {
-    if (this.otherInput) {
+    if (this.otherInput && this.otherInput !== popOver) {
       this.otherInput.close();
+      this.value_partnerCategoryPopOver = [];
     }
 
     if (popOver.isOpen()) {
       popOver.close();
+      this.value_partnerCategoryPopOver = [];
+
     } else {
-      const val = new PartnerCategoryPaged();
-      val.limit = 20;
-      val.offset = 0;
-      val.partnerId = this.rowPartnerId;
-      this.partnerCategoryService.getPaged(val).subscribe((res) => {
-        this.value_partnerCategoryPopOver = res.items;
-      });
-      popOver.open({ partnerCategoriesPopOver: this.partnerCategoriesPopover });
+      this.getValueDefault();
+      this.loadPartnerCategoryPopOver();
+      popOver.open();
       this.popover = popOver;
       this.otherOutput.emit(popOver);
     }
+  }
+
+  getValueDefault() {
+    const val = new PartnerCategoryPaged();
+    val.limit = 20;
+    val.offset = 0;
+    val.partnerId = this.rowPartnerId;
+    this.partnerCategoryService.getPaged(val).subscribe((res) => {
+      this.value_partnerCategoryPopOver = res.items;
+    });
   }
 
   SavePartnerCategories() {
@@ -87,6 +94,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     this.partnerService.updateTags(val).subscribe(() => {
       // this.loadDataFromApi();
       this.value_partnerCategoryPopOver = [];
+      this.onToggleCategory(this.popover);
       this.onSave.emit(val);
     });
   }
@@ -95,44 +103,35 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     this.search_partnerCategory = value;
   }
 
-  public onSizeChange(value) {
-    console.log(value);
-    console.log(this.value_partnerCategoryPopOver);
-  }
-
-  public valueNormalizer = (text$: Observable<string>) => text$.pipe(map((name: string) => {
-    // search for matching item to avoid duplicates
-
-    // search in values
-    const matchingValue: any = this.value_partnerCategoryPopOver.find((item: any) => {
-      return item['name'].toLowerCase() === name.toLowerCase();
-    });
-
-    if (matchingValue) {
-      return matchingValue; // return the already selected matching value and the component will remove it
-    }
-
-    // search in data
-    const matchingItem: any = this.partnerCategoriesPopover.find((item: any) => {
-      return item['name'].toLowerCase() === name.toLowerCase();
-    });
-
-    if (matchingItem) {
-      return matchingItem;
-    } else {
-      const val = new PartnerCategoryDisplay();
-      val.name = name;
-      this.partnerCategoryService.create(val).subscribe((res: any) => {
-        const val2 = new PartnerAddRemoveTags();
-        val2.id = this.rowPartnerId;
-        val2.tagIds = [];
-        val2.tagIds.push(res.id);
-        this.value_partnerCategoryPopOver.push(res);
+  public valueNormalizer = (text$: Observable<string>): any => text$.pipe(
+    switchMap((text: string) => {
+      // Search in values
+      const matchingValue: any = this.value_partnerCategoryPopOver.find((item: any) => {
+        // Search for matching item to avoid duplicates
+        return item['name'].toLowerCase() === text.toLowerCase();
       });
-      // return {
-      //     id: Math.random(), //generate unique value for the custom item
-      //     name: name
-      // };
-    }
-  }))
+
+      if (matchingValue) {
+        // Return the already selected matching value and the component will remove it
+        return of(matchingValue);
+      }
+
+      // Search in data
+      const matchingItem: any = this.dataPopOver.find((item: any) => {
+        return item['name'].toLowerCase() === text.toLowerCase();
+      });
+
+      if (matchingItem) {
+        return of(matchingItem);
+      } else {
+        return of(text).pipe(switchMap(this.service$));
+      }
+    })
+  )
+
+  public service$ = (text: string): any => {
+    const val = new PartnerCategoryDisplay();
+    val.name = text;
+    return this.partnerCategoryService.create(val);
+  }
 }

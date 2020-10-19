@@ -31,37 +31,10 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [advanceFilter]="advanceFilter" [skip]="skip" [sort]="gridSort" (pageChange)="pageChange($event)" [height]="550" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
-        <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.Id]">
-                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
-                        {{dataItem.Name}}
-                    </a>
-                </div>
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="Ref" title="Mã KH" width="150" [locked]="true"></kendo-grid-column>
-        <kendo-grid-column field="Phone" title="Điện thoại" width="150" [locked]="true"></kendo-grid-column>
-        <!-- <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="250" [locked]="true">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.lastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
-            </ng-template>
-        </kendo-grid-column> -->
-        <kendo-grid-column field="Age" title="Tuổi" width="70"></kendo-grid-column>
-        <kendo-grid-column field="GenderDisplay" title="Giới tính" width="120"></kendo-grid-column>
-        <kendo-grid-column field="Address" title="Địa chỉ" width="400"></kendo-grid-column>
-        <kendo-grid-column field="DateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
-        <kendo-grid-column field="Date" title="Ngày tạo" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date: 'shortDate'}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="JobTitle" title="Nghề nghiệp" width="150"></kendo-grid-column>
-        <kendo-grid-column field="Email" title="Email" width="250"></kendo-grid-column>
-        <kendo-grid-column field="Comment" title="Ghi chú" width="250"></kendo-grid-column>
-        <kendo-grid-column field="Id" width="100">
+    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort"
+        [advanceFilter]="advanceFilter" [skip]="skip" (pageChange)="pageChange($event)" style="max-height: 550px;"
+        [filter]="gridFilter" #grid [pageable]="true" [pageSize]="10">
+        <kendo-grid-column field="Id" width="100" [locked]="true">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
@@ -74,6 +47,66 @@
                     <i class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.Id]">
+                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
+                        {{dataItem.Name}}
+                    </a>
+                </div>
+                <!-- <div *ngIf="dataItem.Address">
+                    <small>{{dataItem.Address}}</small>
+                </div> -->
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Ref" title="Mã KH" width="120" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column field="Phone" title="Điện thoại" width="120" [locked]="true"></kendo-grid-column>
+        <kendo-grid-column field="Age" title="Tuổi" width="60"></kendo-grid-column>
+        <kendo-grid-column field="GenderDisplay" title="Giới tính" width="90">
+        </kendo-grid-column>
+        <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
+        <kendo-grid-column title="Nhãn" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div *ngIf="dataItem.Tags.length ; else editcate">
+                    <app-partner-category-popover [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
+                        (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id" *ngFor="let item of dataItem.Tags">
+                        {{item.Name}}
+                    </app-partner-category-popover>
+                </div>
+                <ng-template #editcate>
+                    <app-partner-category-popover [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
+                        (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id">
+                        <i class="fa fa-tags"></i>
+                    </app-partner-category-popover>
+                </ng-template>
+
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="DateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>
+        <kendo-grid-column field="Date" title="Ngày tạo" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.Date | date : 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Source" title="Nguồn" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.Source?.Name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="JobTitle" title="Nghề nghiệp" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="Email" title="Email" width="200">
+        </kendo-grid-column>
+        <kendo-grid-column field="Comment" title="Ghi chú" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.LastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
+            </ng-template>
+        </kendo-grid-column>
+       
         <!-- <div *kendoGridDetailTemplate="let dataItem">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">

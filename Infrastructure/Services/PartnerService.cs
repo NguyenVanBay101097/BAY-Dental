@@ -157,7 +157,7 @@ namespace Infrastructure.Services
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s=> items.Select(i=>i.Id).Contains(s.PartnerId)))
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
                                                                                         .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
 
             if (val.ComputeCreditDebit)
@@ -170,7 +170,8 @@ namespace Infrastructure.Services
                     item.Debit = creditDebitDict[item.Id].Debit;
                     item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
                 }
-            } else
+            }
+            else
             {
                 foreach (var item in items)
                 {
@@ -258,7 +259,7 @@ namespace Infrastructure.Services
             partner.PartnerPartnerCategoryRels.Clear();
             foreach (var tagId in val.TagIds)
             {
-                    partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
+                partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
             }
 
             await UpdateAsync(partner);
@@ -502,7 +503,7 @@ namespace Infrastructure.Services
             if (val.CategoryId.HasValue)
                 query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
-            query = query.Include(x=>x.Company).Include(x=>x.Source).OrderByDescending(s => s.DateCreated);
+            query = query.Include(x => x.Company).Include(x => x.Source).OrderByDescending(s => s.DateCreated);
             return query;
         }
 
@@ -1856,7 +1857,9 @@ namespace Infrastructure.Services
                 Customer = x.Customer,
                 Supplier = x.Supplier,
                 Ref = x.Ref,
+                LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
                 Date = x.Date,
+                DisplayName = x.DisplayName,
                 Source = x.Source != null ? new PartnerSourceViewModel
                 {
                     Id = x.Source.Id,

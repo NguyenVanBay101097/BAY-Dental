@@ -39,10 +39,11 @@ export class PartnerCustomerListComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   gridFilter: CompositeFilterDescriptor;
-  advanceFilter: any = {};
-  gridSort = [
-    { field: 'DisplayName', dir: 'asc' }
-  ];
+  gridSort = [{ field: 'DisplayName', dir: 'asc' }];
+  advanceFilter: any = {
+    expand: 'Tags,Source',
+    params: {}
+  };
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService) { }
@@ -89,13 +90,15 @@ export class PartnerCustomerListComponent implements OnInit {
         logic: "or",
         filters: [
           { field: "Name", operator: "contains", value: this.search },
-          { field: "NameNoSign", operator: "contains", value: this.search }
+          { field: "NameNoSign", operator: "contains", value: this.search },
+          { field: "Ref", operator: "contains", value: this.search },
+          { field: "Phone", operator: "contains", value: this.search }
         ]
       });
     }
 
     return filter;
-    
+
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -111,7 +114,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   popOverSave(e) {
-    this.loadDataFromApi();
+    // this.loadDataFromApi();
+    this.updateFilter();
   }
 
   loadDataFromApi() {
@@ -146,9 +150,9 @@ export class PartnerCustomerListComponent implements OnInit {
   onCategChange(value) {
     this.searchCateg = value;
     if (this.searchCateg) {
-      this.advanceFilter.tagIds = [this.searchCateg.id];
+      this.advanceFilter.params.tagIds = [this.searchCateg.id];
     } else {
-      delete this.advanceFilter.tagIds;
+      delete this.advanceFilter.params.tagIds;
     }
 
     this.updateFilter();
@@ -163,8 +167,8 @@ export class PartnerCustomerListComponent implements OnInit {
   onPaymentChange() {
   }
 
-  closePopOver(e){
-this.popover = e;
+  closePopOver(e) {
+    this.popover = e;
   }
 
   exportPartnerExcelFile() {
@@ -195,24 +199,28 @@ this.popover = e;
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then(() => {
+      this.updateFilter();
     }, er => { })
   }
 
-  editItem(item: PartnerBasic) {
+  editItem(item: any) {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';
-    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.id = item.Id;
     modalRef.result.then(() => {
+      this.updateFilter();
+
     }, () => {
     })
   }
 
-  deleteItem(item: PartnerBasic) {
+  deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa khách hàng';
 
     modalRef.result.then(() => {
-      this.partnerService.delete(item.id).subscribe(() => {
+      this.partnerService.delete(item.Id).subscribe(() => {
+        this.updateFilter();
       }, () => {
       });
     }, () => {
