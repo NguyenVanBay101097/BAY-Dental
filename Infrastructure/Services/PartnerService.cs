@@ -154,7 +154,7 @@ namespace Infrastructure.Services
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s=> items.Select(i=>i.Id).Contains(s.PartnerId)))
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
                                                                                         .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
 
             if (val.ComputeCreditDebit)
@@ -167,7 +167,8 @@ namespace Infrastructure.Services
                     item.Debit = creditDebitDict[item.Id].Debit;
                     item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
                 }
-            } else
+            }
+            else
             {
                 foreach (var item in items)
                 {
@@ -255,7 +256,7 @@ namespace Infrastructure.Services
             partner.PartnerPartnerCategoryRels.Clear();
             foreach (var tagId in val.TagIds)
             {
-                    partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
+                partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { CategoryId = tagId });
             }
 
             await UpdateAsync(partner);
@@ -496,7 +497,7 @@ namespace Infrastructure.Services
             if (val.CategoryId.HasValue)
                 query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
-            query = query.Include(x=>x.Company).Include(x=>x.Source).OrderByDescending(s => s.DateCreated);
+            query = query.Include(x => x.Company).Include(x => x.Source).OrderByDescending(s => s.DateCreated);
             return query;
         }
 
@@ -1045,7 +1046,7 @@ namespace Infrastructure.Services
             {
                 var historyObj = GetService<IHistoryService>();
                 var histories = await historyObj.SearchQuery(x => partner_history_list.Contains(x.Name)).ToListAsync();
-                foreach(var history in histories)
+                foreach (var history in histories)
                 {
                     if (!medical_history_dict.ContainsKey(history.Name))
                         medical_history_dict.Add(history.Name, history);
@@ -1061,7 +1062,7 @@ namespace Infrastructure.Services
                         medical_history_dict.Add(history.Name, history);
                 }
             }
-           
+
             var gender_dict = new Dictionary<string, string>()
             {
                 { "name", "male" },
@@ -1418,7 +1419,7 @@ namespace Infrastructure.Services
                 JournalName = x.Journal.Name,
                 Amount = x.Amount
             }).ToList();
-            
+
             result.Company = companyPrint;
             result.Partner = partnerPrint;
             result.ServiceList = saleOrderLines;
