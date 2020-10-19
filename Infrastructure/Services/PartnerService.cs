@@ -1857,21 +1857,21 @@ namespace Infrastructure.Services
                 Customer = x.Customer,
                 Supplier = x.Supplier,
                 Ref = x.Ref,
-                LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
+                //LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
                 Date = x.Date,
-                Source = x.Source != null ? new PartnerSourceViewModel
-                {
-                    Id = x.Source.Id,
-                    Name = x.Source.Name
-                } : null,
+                //Source = x.Source != null ? new PartnerSourceViewModel
+                //{
+                //    Id = x.Source.Id,
+                //    Name = x.Source.Name
+                //} : null,
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                {
-                    Id = s.CategoryId,
-                    Name = s.Category.Name,
-                })
+                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                //{
+                //    Id = s.CategoryId,
+                //    Name = s.Category.Name,
+                //})
             });
         }
 

@@ -41,7 +41,7 @@ export class PartnerCustomerListComponent implements OnInit {
   gridFilter: CompositeFilterDescriptor;
   gridSort = [{ field: 'DisplayName', dir: 'asc' }];
   advanceFilter: any = {
-    expand: 'Tags,Source',
+    // expand: 'Tags,Source',
     params: {}
   };
 
