@@ -77,6 +77,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         [XmlAttribute(AttributeName = "id")]
         public string Id { get; set; }
+        [XmlAttribute(AttributeName = "couponProgramId")]
+        public string CouponProgramId { get; set; }
     }
 
     [XmlRoot(ElementName = "tag")]

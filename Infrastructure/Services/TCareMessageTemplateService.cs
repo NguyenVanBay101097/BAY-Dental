@@ -25,7 +25,7 @@ namespace Infrastructure.Services
 
         public async Task<TCareMessageTemplateDisplay> GetDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<TCareMessageTemplateDisplay>(SearchQuery(x=>x.Id == id)).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<TCareMessageTemplateDisplay>(SearchQuery(x=>x.Id == id).Include(x=>x.CouponProgram)).FirstOrDefaultAsync();
             return res;
         }
 

@@ -76,7 +76,7 @@ export class TcareMessageTemplateListComponent implements OnInit {
     this.loadDataFromApi();
   }
   createItem() {
-    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.result.then((val) => {
         this.loadDataFromApi();
@@ -84,10 +84,9 @@ export class TcareMessageTemplateListComponent implements OnInit {
   }
 
   editItem(dataitem) {
-    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Sửa mẫu tin';
     modalRef.componentInstance.id = dataitem.id;
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
         this.loadDataFromApi();
     });

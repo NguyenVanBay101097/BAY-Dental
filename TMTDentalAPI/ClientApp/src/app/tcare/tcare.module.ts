@@ -36,6 +36,7 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
 import { TcareMessageTemplateListComponent } from './tcare-message-template-list/tcare-message-template-list.component';
 import { TcareMessageTemplateCuDialogComponent } from './tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
 import { TcareMessageTemplateContentComponent } from './tcare-message-template-cu-dialog/tcare-message-template-content/tcare-message-template-content.component';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,7 @@ import { TcareMessageTemplateContentComponent } from './tcare-message-template-c
     PartnerCategoriesModule
   ],
 
-  providers: [TcareService],
+  providers: [TcareService, SaleCouponProgramService],
   entryComponents: [
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,

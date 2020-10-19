@@ -8,5 +8,8 @@ namespace ApplicationCore.Entities
     {
         public string Name { get; set; }
         public string Content { get; set; }
+        public string Type { get; set; }
+        public Guid? CouponProgramId{ get; set; }
+        public SaleCouponProgram CouponProgram{ get; set; }
     }
 }

@@ -20,17 +20,24 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
+        public string Type { get; set; }
+
     }
 
     public class TCareMessageTemplateSave
     {
         public string Name { get; set; }
         public string Content { get; set; }
+        public string Type { get; set; }
+        public Guid? CouponProgramId { get; set; }
     }
     public class TCareMessageTemplateDisplay
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
+        public string Type { get; set; }
+        public Guid? CouponProgramId { get; set; }
+        public SaleCouponProgramBasic CouponProgram { get; set; }
     }
 }

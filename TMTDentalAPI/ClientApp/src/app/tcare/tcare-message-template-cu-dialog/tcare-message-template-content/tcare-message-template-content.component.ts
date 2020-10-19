@@ -12,14 +12,15 @@ export class TcareMessageTemplateContentComponent implements OnInit {
   formGroup: FormGroup;
   @Input() template: any;
   @Input() index: any;
-  @Output() valueChange = new EventEmitter();
+  @Input() textareaLength: any;
 
   //cá nhân hóa
   tabs = [
-    { name: 'Tên khách hàng', value: '{{ten_khach_hang}}', color: 'BurlyWood' },
-    { name: 'Họ và tên khách hàng', value: '{{fullname_khach_hang}}', color: 'Brown' },
-    { name: 'Tên trang', value: '{{ten_page}}', color: 'cadetblue' },
-    { name: 'Danh xưng khách hàng', value: '{{danh_xung_khach_hang}}', color: 'Chartreuse' },
+    { name: 'Tên khách hàng', value: '{ten_khach_hang}'},
+    { name: 'Họ và tên khách hàng', value: '{ho_ten_khach_hang}'},
+    { name: 'Tên trang', value: '{ten_page}'},
+    { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}'},
+    { name: 'mã khuyến mãi', value: '{ma_khuyen_mai}'},
   ];
   showPluginTextarea: boolean = false;
   selectArea_start: number = 0;
@@ -47,7 +48,6 @@ export class TcareMessageTemplateContentComponent implements OnInit {
   onSave() {
     if (this.formGroup.invalid) { return; }
     const val = this.formGroup.value;
-    // this.valueChange.emit({ index: this.index, template: val });
     return { index: this.index, template: val };
   }
   //cá nhân hóa
@@ -65,12 +65,12 @@ export class TcareMessageTemplateContentComponent implements OnInit {
   }
 
   getLimitText() {
-    var limit = 640;
+    // var limit = 640;
     var text = this.formGroup.get('text').value;
     if (text) {
-      return limit - text.length;
+      return this.textareaLength - text.length;
     } else {
-      return limit;
+      return this.textareaLength;
     }
   }
 

@@ -22,10 +22,21 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Loại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="type">
+                                        <option value="facebook">Facebook</option>
+                                        <option value="zalo">Zalo</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                <app-tcare-message-template-content #textTemp
+                                <app-tcare-message-template-content #textTemp [textareaLength] = "getTextareaLength()"
                                 *ngFor="let template of templates; index as i" 
                                 [template]="template"
                                 [index] = "i">
@@ -33,6 +44,17 @@
                                 </app-tcare-message-template-content>
                                 </td>
                             </tr>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Khuyến mãi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listCoupon" [textField]="'name'"  [placeholder]="'chọn khuyến mãi...'"
+                                        [filterable]="true" #couponCbx formControlName="couponProgram"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

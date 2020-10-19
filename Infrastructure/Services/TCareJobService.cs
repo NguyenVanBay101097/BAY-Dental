@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
@@ -460,8 +461,8 @@ namespace Infrastructure.Services
 
         private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
         {
-            var messageContent = sequence.Content.Replace("{{ten_khach_hang}}", partner.Name.Split(' ').Last()).Replace("{{fullname_khach_hang}}", partner.Name).Replace("{{ten_page}}", channelSocial.PageName);
-            if (messageContent.Contains("{{danh_xung_khach_hang}}"))
+            var messageContent = sequence.Content.Replace("{ten_khach_hang}", partner.Name.Split(' ').Last()).Replace("{ho_ten_khach_hang}", partner.Name).Replace("{ten_page}", channelSocial.PageName);
+            if (messageContent.Contains("{danh_xung_khach_hang}"))
             {
                 PartnerTitle partnerTitle = null;
                 if (partner.TitleId.HasValue)
@@ -473,9 +474,52 @@ namespace Infrastructure.Services
                         "", new { id = partner.TitleId }).FirstOrDefault();
                 }
 
-                messageContent = messageContent.Replace("{{danh_xung_khach_hang}}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
+                messageContent = messageContent.Replace("{danh_xung_khach_hang}", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
+            }
+
+            if (messageContent.Contains("{ma_khuyen_mai}") && sequence.CouponProgramId != "null")
+            {
+                var programId = Guid.Parse(sequence.CouponProgramId);
+                var program = conn.Query<SaleCouponProgram>("select * from SaleCouponPrograms where Id = @Id", new { Id = programId }).FirstOrDefault();
+                var coupon = new SaleCoupon
+                {
+                    Id = GuidComb.GenerateComb(),
+                    Code = StringUtils.RandomStringDigit(13),
+                    ProgramId = programId,
+                    DateCreated = DateTime.Now,
+                    LastUpdated = DateTime.Now,
+                    State = "new",
+                    Program = program
+                };
+                CheckCodeCoupon(coupon,conn);
+                ComputeDateExpireCoupon(coupon,conn);
+                conn.Execute("insert into SaleCoupons(Id,Code, ProgramId,DateCreated,LastUpdated,State,DateExpired) " +
+                                "values(@Id,@Code, @ProgramId,@DateCreated,@LastUpdated,@State,@DateExpired)", coupon);
+                messageContent = messageContent.Replace("{ma_khuyen_mai}", coupon.Code);
             }
             return messageContent;
+        }
+
+        public void CheckCodeCoupon(SaleCoupon self, SqlConnection conn, int count = 1)
+        {
+            var exist = conn.Query<PartnerTitle>("select Id from SaleCoupons where Code = @Code", new { Code = self.Code }).FirstOrDefault();
+            if (exist == null)
+                return;
+            if (count > 3)
+                throw new Exception("Phát sinh mã coupon không thành công, thử lại sau");
+            self.Code = StringUtils.RandomStringDigit(13);
+            CheckCodeCoupon(self, conn, count + 1);
+        }
+
+
+        public void ComputeDateExpireCoupon(SaleCoupon self, SqlConnection conn)
+        {
+                var date = (self.DateCreated ?? DateTime.Today).Date;
+                var validity_duration = self.Program.ValidityDuration ?? 0;
+                if (validity_duration > 0)
+                self.DateExpired = date.AddDays(validity_duration);
+                else
+                self.DateExpired = null;
         }
 
         private static IEnumerable<FacebookUserProfile> GetUserProfilesFixed(Guid ChannelSocialId, Guid partner_id,
@@ -555,7 +599,7 @@ namespace Infrastructure.Services
                 return;
 
             var zaloClient = new ZaloClient(access_token);
-            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{{ten_khach_hang}}", partner.Name).Replace("{{gioi_tinh}}", partner.Gender == "male" ? "anh" : "chị").Replace("{{ten_chi_nhanh}}", company.Name)).Root.ToObject<SendMessageZaloResponse>().data;
+            var sendResult = zaloClient.sendTextMessageToUserId(profile.PSID, text.Replace("{ten_khach_hang}", partner.Name).Replace("{gioi_tinh}", partner.Gender == "male" ? "anh" : "chị").Replace("{ten_chi_nhanh}", company.Name)).Root.ToObject<SendMessageZaloResponse>().data;
             if (sendResult == null)
                 await conn.ExecuteAsync("insert into TCareMessingTraces(Id,Exception,TCareCampaignId,PSID,PartnerId,Type,ChannelSocialId) Values (@Id,@Exception,@TCareCampaignId,@PSID,@PartnerId,@Type,@ChannelSocialId)", new { Id = GuidComb.GenerateComb(), Exception = date, TCareCampaignId = campaignId, PSID = profile.PSID, PartnerId = profile.PartnerId, Type = "zalo", ChannelSocialId = channelSocialId });
             else
