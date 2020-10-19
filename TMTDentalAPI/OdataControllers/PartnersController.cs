@@ -27,10 +27,23 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] IEnumerable<Guid> tagIds)
         {
             var results = await _partnerService.GetViewModelsAsync();
+            if (tagIds != null && tagIds.Any())
+                results = results.Where(x => x.Tags.Any(s => tagIds.Contains(s.Id)));
             return Ok(results);
+        }
+
+        [HttpPut]
+        public IActionResult Put([FromODataUri]Guid key, PartnerViewModel value)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(value);
+            }
+           
+            return NoContent();
         }
     }
 }

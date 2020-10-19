@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public string DisplayName { get; set; }
 
         public string Phone { get; set; }
 
@@ -52,8 +55,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal Debt { get; set; }
 
-        public string DisplayName { get; set; }
-
         public string Age
         {
             get
@@ -75,6 +76,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Debit { get; set; }
 
         public decimal Credit { get; set; }
+
+        public string CompanyName { get; set; }
+        public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
+        public DateTime? DateCreated { get; set; }
+        public PartnerSourceBasic Source { get; set; }
+        public string JobTitle { get; set; }
+        public string Email { get; set; }
+        public string comment { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
     }
 
     public class PartnerPaged
@@ -230,6 +241,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public string DisplayName { get; set; }
+
         public string NameNoSign { get; set; }
 
         public string Ref { get; set; }
@@ -253,6 +266,10 @@ namespace Umbraco.Web.Models.ContentEditing
             }
             set { }
         }
+
+        public bool Customer { get; set; }
+
+        public bool Supplier { get; set; }
 
         public string Street { get; set; }
 

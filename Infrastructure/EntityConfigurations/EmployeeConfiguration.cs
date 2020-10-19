@@ -18,24 +18,24 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.CategoryId);
 
             builder.HasOne(x => x.Commission)
-             .WithMany()
-             .HasForeignKey(x => x.CommissionId);
+                 .WithMany()
+                 .HasForeignKey(x => x.CommissionId);
 
             builder.HasOne(x => x.User)
-             .WithMany()
-             .HasForeignKey(x => x.UserId);
+                 .WithMany()
+                 .HasForeignKey(x => x.UserId);
 
             builder.HasOne(x => x.StructureType)
-              .WithMany()
-              .HasForeignKey(x => x.StructureTypeId);
+                  .WithMany()
+                  .HasForeignKey(x => x.StructureTypeId);
 
             builder.HasOne(x => x.Company)
-            .WithMany()
-            .HasForeignKey(x => x.CompanyId);
+                .WithMany()
+                .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.CreatedBy)
-          .WithMany()
-          .HasForeignKey(x => x.CreatedById);
+                .WithMany()
+                .HasForeignKey(x => x.CreatedById);
 
             builder.HasOne(x => x.WriteBy)
                 .WithMany()

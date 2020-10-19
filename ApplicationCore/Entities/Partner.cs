@@ -14,6 +14,7 @@ namespace ApplicationCore.Entities
             Customer = true;
             Active = true;
             Date = DateTime.Today;
+            Gender = "male";
         }
 
         public string DisplayName { get; set; }
@@ -179,5 +180,11 @@ namespace ApplicationCore.Entities
 
         public Guid? TitleId { get; set; }
         public PartnerTitle Title { get; set; }
+
+        /// <summary>
+        /// Nhan vien tu van 
+        /// </summary>
+        public Guid? ConsultantId { get; set; }
+        public Employee Consultant { get; set; }
     }
 }

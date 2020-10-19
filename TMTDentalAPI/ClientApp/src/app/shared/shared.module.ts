@@ -57,6 +57,7 @@ import { ProductCategoryDialogComponent } from './product-category-dialog/produc
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
+import { PartnersBindingDirective } from './directives/partners-binding.directive';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
-    PartnerTitleCuDialogComponent
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective
   ],
   exports: [
     ConfirmDialogComponent,
@@ -151,7 +153,8 @@ import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
-    PartnerTitleCuDialogComponent
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective
   ],
   imports: [
     CommonModule,

@@ -2,16 +2,17 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
-import { PartnerService } from '../partner.service';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerService } from '../partner.service';
+import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -33,17 +34,26 @@ export class PartnerCustomerListComponent implements OnInit {
   searchCateg: PartnerCategoryBasic;
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
+
   @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('popOver', { static: true }) public popover: NgbPopover;
+
+  gridFilter: CompositeFilterDescriptor;
+  advanceFilter: any = {};
+  gridSort = [
+    { field: 'DisplayName', dir: 'asc' }
+  ];
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService) { }
 
   ngOnInit() {
+    this.updateFilter();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.loadDataFromApi();
+        this.updateFilter();
       });
 
     this.categCbx.filterChange
@@ -58,24 +68,51 @@ export class PartnerCustomerListComponent implements OnInit {
         this.categCbx.loading = false;
       });
 
-    this.loadDataFromApi();
     this.loadFilteredCategs();
+  }
+
+  updateFilter() {
+    this.skip = 0;
+    this.gridFilter = this.generateFilter();
+  }
+
+  generateFilter() {
+    var filter: CompositeFilterDescriptor = {
+      logic: "and",
+      filters: [
+        { field: "Customer", operator: "eq", value: true },
+      ]
+    };
+
+    if (this.search) {
+      filter.filters.push({
+        logic: "or",
+        filters: [
+          { field: "Name", operator: "contains", value: this.search },
+          { field: "NameNoSign", operator: "contains", value: this.search }
+        ]
+      });
+    }
+
+    return filter;
+    
   }
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
   }
 
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = 'customer';
     modalRef.result.then(() => {
-      this.loadDataFromApi();
     }, () => {
     });
   }
 
+  popOverSave(e) {
+    this.loadDataFromApi();
+  }
 
   loadDataFromApi() {
     var val = new PartnerPaged();
@@ -108,7 +145,13 @@ export class PartnerCustomerListComponent implements OnInit {
 
   onCategChange(value) {
     this.searchCateg = value;
-    this.loadDataFromApi();
+    if (this.searchCateg) {
+      this.advanceFilter.tagIds = [this.searchCateg.id];
+    } else {
+      delete this.advanceFilter.tagIds;
+    }
+
+    this.updateFilter();
   }
 
   searchCategories(search?: string) {
@@ -118,7 +161,10 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onPaymentChange() {
-    this.loadDataFromApi();
+  }
+
+  closePopOver(e){
+this.popover = e;
   }
 
   exportPartnerExcelFile() {
@@ -149,7 +195,6 @@ export class PartnerCustomerListComponent implements OnInit {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then(() => {
-      this.loadDataFromApi();
     }, er => { })
   }
 
@@ -158,7 +203,6 @@ export class PartnerCustomerListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa khách hàng';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
-      this.loadDataFromApi();
     }, () => {
     })
   }
@@ -169,10 +213,10 @@ export class PartnerCustomerListComponent implements OnInit {
 
     modalRef.result.then(() => {
       this.partnerService.delete(item.id).subscribe(() => {
-        this.loadDataFromApi();
       }, () => {
       });
     }, () => {
     });
   }
+
 }
