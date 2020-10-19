@@ -39,7 +39,7 @@ namespace Infrastructure.Services
 
             //giới hạn 10000 tin nhắn
             var now = DateTime.Now;
-            var messageIds = await context.TCareMessages.Where(x => x.State == "waiting" && (!x.ScheduledDate.HasValue || x.ScheduledDate.Value < now))
+            var messageIds = await context.TCareMessages.Where(x => x.State == "waiting" && (x.ScheduledDate.HasValue || x.ScheduledDate.Value < now))
                 .OrderBy(x => x.DateCreated).Take(10000).Select(x => x.Id).ToListAsync();
 
             foreach (var messageId in messageIds)

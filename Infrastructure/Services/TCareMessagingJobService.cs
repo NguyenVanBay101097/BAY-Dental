@@ -47,7 +47,7 @@ namespace Infrastructure.Services
                 DateTime now = DateTime.Now;
                 //tìm danh sách các chiến dịch đang active
                 var states = new string[] { "in_queue", "sending" };
-                var messagings = await context.TCareMessagings.Where(x => states.Contains(x.State) && (!x.ScheduleDate.HasValue || x.ScheduleDate < now)).ToListAsync();
+                var messagings = await context.TCareMessagings.Where(x => states.Contains(x.State) && (x.ScheduleDate.HasValue || x.ScheduleDate.Value < now)).ToListAsync();
 
                 foreach (var messaging in messagings)
                 {

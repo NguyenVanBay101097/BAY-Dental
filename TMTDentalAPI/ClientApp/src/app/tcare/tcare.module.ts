@@ -33,6 +33,7 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
 import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
+import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messaging-list.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
     TcareScenarioMessageTextareaComponent,
+    TcareMessagingListComponent,
   ],
   imports: [
     CommonModule,
