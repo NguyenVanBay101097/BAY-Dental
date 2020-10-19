@@ -296,7 +296,28 @@ export class SaleOrderLineDialogComponent implements OnInit {
     val.employeeId = val.employee ? val.employee.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    this.activeModal.close(val);
+    var result = {
+      value: val, 
+      work: 'Save'
+    }
+    this.activeModal.close(result);
+  }
+
+  onSaveACreate() {
+    if (!this.saleLineForm.valid) {
+      return;
+    }
+    var val = this.saleLineForm.value;
+    val.productId = val.product ? val.product.id : null;
+    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
+    val.employeeId = val.employee ? val.employee.id : null;
+    val.priceSubTotal = this.getPriceSubTotal();
+    val.teeth = this.teethSelected;
+    var result = {
+      value: val, 
+      work: 'SaveACreate'
+    }
+    this.activeModal.close(result);
   }
 
   onCancel() {

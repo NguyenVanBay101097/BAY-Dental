@@ -885,7 +885,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      let line = result as any;
+      let line = result.value as any;
       line.teeth = this.fb.array(line.teeth);
       this.orderLines.push(this.fb.group(line));
       this.orderLines.markAsDirty();
@@ -904,6 +904,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
           this.loadRecord();
+          if (result.work == 'SaveACreate') {
+            this.showAddLineModal();
+          }
         }, () => {
           this.loadRecord();
         });
@@ -930,9 +933,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      debugger;
-      var a = result as any;
-      line.patchValue(result);
+      var a = result.value as any;
+      line.patchValue(a);
       line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
       this.orderLines.markAsDirty();
@@ -949,6 +951,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
           this.loadRecord();
+          if (result.work == 'SaveACreate') {
+            this.showAddLineModal();
+          }
         }, () => {
           this.loadRecord();
         });
