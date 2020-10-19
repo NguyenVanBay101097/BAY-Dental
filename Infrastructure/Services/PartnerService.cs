@@ -1859,7 +1859,6 @@ namespace Infrastructure.Services
                 Ref = x.Ref,
                 LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
                 Date = x.Date,
-                DisplayName = x.DisplayName,
                 Source = x.Source != null ? new PartnerSourceViewModel
                 {
                     Id = x.Source.Id,

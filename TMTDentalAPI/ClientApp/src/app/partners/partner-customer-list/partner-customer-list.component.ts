@@ -101,10 +101,6 @@ export class PartnerCustomerListComponent implements OnInit {
 
   }
 
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-  }
-
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = 'customer';

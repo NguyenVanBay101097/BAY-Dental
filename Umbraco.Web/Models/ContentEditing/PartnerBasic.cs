@@ -320,7 +320,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string JobTitle { get; set; }
         public DateTime? LastAppointmentDate { get; set; }
-        public string DisplayName { get; set; }
 
         public string GenderDisplay
         {

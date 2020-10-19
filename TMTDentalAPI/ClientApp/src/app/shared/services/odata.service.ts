@@ -37,10 +37,6 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
             queryStr = queryStr + '&$expand=' + options.expand;
         }
 
-        if(options.orders) {
-            queryStr = queryStr + '&$orderby=' + options.orders;
-        }
-
         this.loading = true;
 
         return this.http
