@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -44,6 +45,13 @@ namespace TMTDentalAPI.OdataControllers
             }
            
             return NoContent();
+        }
+
+        [EnableQuery]
+        [HttpGet("[action]")]
+        public IActionResult GetView()
+        {
+            return Ok(true);
         }
     }
 }

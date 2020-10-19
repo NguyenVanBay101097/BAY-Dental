@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    [Route("odata/[controller]")]
+    //[Route("odata/[controller]")]
     //[Authorize]
     [ApiController]
-    public class BaseController : ControllerBase
+    public class BaseController : ODataController
     {
         protected string UserId
         {
