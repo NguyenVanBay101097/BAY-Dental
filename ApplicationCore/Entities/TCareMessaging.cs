@@ -6,41 +6,44 @@ namespace ApplicationCore.Entities
 {
     public class TCareMessaging : BaseEntity
     {
-        /// <summary>
-        /// phương thức :
-        /// interval : trước thời gian
-        /// shedule : lên lịch ngày giờ cụ thể
-        /// </summary>
-        public string MethodType { get; set; }
+        public TCareMessaging()
+        {
+            MessagingModel = "partner";
+            State = "draft";
+        }
 
         /// <summary>
-        /// MethodType : interval
-        /// "minutes" , "hours" , "weeks", "months"
+        /// Ngày lên lịch gửi
         /// </summary>
-        public string IntervalType { get; set; }
-
-        public int? IntervalNumber { get; set; }
+        public DateTime? ScheduleDate { get; set; }
 
         /// <summary>
-        /// MethodType : shedule
+        /// Nội dung tổng quát gửi cho khách hàng
         /// </summary>
-        public DateTime? SheduleDate { get; set; }
-
         public string Content { get; set; }
 
-        //--Kenh gui ---//
-
-        /// <summary>
-        ///  priority : ưu tiên
-        ///  fixed : cố định
-        /// </summary>
-        public string ChannelType { get; set; }
-
-        public Guid? ChannelSocialId { get; set; }
-        public FacebookPage ChannelSocial { get; set; }
-
+        public ICollection<TCareMessage> TCareMessages { get; set; } = new List<TCareMessage>();
 
         public Guid TCareCampaignId { get; set; }
         public TCareCampaign TCareCampaign { get; set; }
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
+
+        /// <summary>
+        /// draft: Mới
+        /// in_queue: Chờ gửi
+        /// sending: Đang gửi
+        /// done: Hoàn thành
+        /// </summary>
+        public string State { get; set; }
+
+        /// <summary>
+        /// Đối tượng nhận tin
+        /// partner: Partner
+        /// </summary>
+        public string MessagingModel { get; set; }
+
+        public ICollection<TCareMessagingPartnerRel> PartnerRecipients { get; set; } = new List<TCareMessagingPartnerRel>();
     }
 }

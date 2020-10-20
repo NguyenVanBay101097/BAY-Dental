@@ -8,5 +8,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
 
+        public Guid? ChannelSocialId { get; set; }
+        public FacebookPageSimple ChannelSocial { get; set; }
+
     }
 }

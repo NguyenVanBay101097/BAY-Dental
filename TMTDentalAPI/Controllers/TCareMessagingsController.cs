@@ -26,6 +26,13 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] TCareMessagingPaged val)
+        {
+            var result = await _tCareMessagingService.GetPagedResultAsync(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

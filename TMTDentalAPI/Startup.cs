@@ -75,6 +75,10 @@ namespace TMTDentalAPI
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
 
+            services.AddSingleton(new TCareCampaignJobService(Configuration));
+            services.AddSingleton(new TCareMessageJobService(Configuration));
+            services.AddSingleton(new TCareMessagingJobService(Configuration));
+            services.AddSingleton(new FacebookWebhookJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -119,7 +123,7 @@ namespace TMTDentalAPI
                 });
 
             services.AddDbContext<IDbContext, CatalogDbContext>();
-            services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
+            //services.AddScoped<IDbContext>(sp => sp.GetRequiredService<CatalogDbContext>());
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductService, ProductService>();
@@ -247,7 +251,6 @@ namespace TMTDentalAPI
             services.AddScoped<ITCarePropertyService, TCarePropertyService>();
             services.AddScoped<ITCareMessagingService, TCareMessagingService>();
             services.AddScoped<ITCareJobService, TCareJobService>();
-            services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
             services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();
@@ -499,7 +502,7 @@ namespace TMTDentalAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CatalogDbContext context)
         {
             if (env.IsDevelopment())
             {

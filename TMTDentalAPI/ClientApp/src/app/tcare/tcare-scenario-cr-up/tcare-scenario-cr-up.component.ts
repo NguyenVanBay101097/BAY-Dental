@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { TCareScenarioDisplay, TcareService, TCareCampaignDisplay } from '../tcare.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,11 @@ import { TcareCampaignCreateDialogComponent } from '../tcare-campaign-create-dia
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { load, IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ChannelSocial, FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
+import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-tcare-scenario-cr-up',
@@ -14,6 +19,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
   styleUrls: ['./tcare-scenario-cr-up.component.css']
 })
 export class TcareScenarioCrUpComponent implements OnInit {
+  @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
   id: string;
   formGroup: FormGroup;
   title = "Kịch bản"
@@ -21,6 +27,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   campaignId: string;
   dateStartCampaign: Date;
   scenario: TCareScenarioDisplay;
+  filterdChannelSocials: any[] ;
   submitted = false;
   constructor(
     private fb: FormBuilder,
@@ -29,18 +36,41 @@ export class TcareScenarioCrUpComponent implements OnInit {
     private modalService: NgbModal,
     private intlService: IntlService,
     private notificationService: NotificationService,
-    private router: Router
+    private facebookPageService: FacebookPageService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.id = this.activeRoute.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.loadData();
-    }
     this.scenario = new TCareScenarioDisplay();
+    this.route.queryParamMap.subscribe(params => {
+      this.id = params.get('id');
+      debugger
+      if (!this.id) {
+        this.loadData();
+      } else {
+        this.loadData();
+      }
+
+      this.channelSocialCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.channelSocialCbx.loading = true)),
+        switchMap(value => this.searchSocialChannel(value))
+      ).subscribe((result: any) => {
+        this.filterdChannelSocials = result.items;
+        this.channelSocialCbx.loading = false;
+      });
+  
+      this.loadSocialChannel();
+    });
+    
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
+      channelSocialId: null,
+      channelSocial: [null, Validators.required],
     });
+
+   
 
 
   }
@@ -49,24 +79,47 @@ export class TcareScenarioCrUpComponent implements OnInit {
     return this.formGroup.get('name');
   }
 
+  get channelSocialControl() {
+    return this.formGroup.get('channelSocial');
+  }
+
   loadData() {
-    this.tcareService.getScenario(this.id).subscribe(
-      result => {
-        this.scenario = result;
-        this.formGroup.patchValue(this.scenario);
-        console.log(this.scenario);
-        // if (this.scenario && this.scenario.campaigns && !this.campaign && this.scenario.campaigns.length > 0)
-        //   this.campaign = this.scenario.campaigns[0];
-      }
-    )
+    if (this.id) {
+      this.tcareService.getScenario(this.id).subscribe(
+        (result: any) => {
+          this.scenario = result;
+          this.formGroup.patchValue(this.scenario);
+          if (result.channelSocial) {
+            this.filterdChannelSocials = _.unionBy(this.filterdChannelSocials, result.channelSocial, 'id');
+          }
+        }
+      )
+    }
+
+  }
+
+  loadSocialChannel() {
+    this.searchSocialChannel().subscribe((result: any) => {
+      this.filterdChannelSocials = result.items;
+    });
+    
+  }
+
+  searchSocialChannel(q?: string) {
+    var val = new FacebookPagePaged();
+    val.search = q || '';
+    return this.facebookPageService.getPaged(val);
   }
 
 
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid)
       return false;
+    
     var value = this.formGroup.value;
+    value.channelSocialId = value.channelSocial ? value.channelSocial.id : null;
     this.tcareService.updateScenario(this.scenario.id, value).subscribe(
       () => {
         this.notificationService.show({
@@ -83,7 +136,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
   }
 
   actionNext(data) {
-    debugger
     if (data.graphXml) {
       this.campaign.graphXml = data.graphXml;
     }
@@ -118,7 +170,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
     } else {
       var val = {
         id: campaign.id,
-        sheduleStart: this.dateStartCampaign ? this.intlService.formatDate(this.dateStartCampaign, "yyyy-MM-ddTHH:mm:ss") : this.intlService.formatDate(campaign.sheduleStart, "yyyy-MM-ddTHH:mm:ss") 
+        sheduleStart: this.dateStartCampaign ? this.intlService.formatDate(this.dateStartCampaign, "yyyy-MM-ddTHH:mm:ss") : this.intlService.formatDate(campaign.sheduleStart, "yyyy-MM-ddTHH:mm:ss")
       }
       this.tcareService.actionStartCampaign(val).subscribe(
         () => {
@@ -143,17 +195,43 @@ export class TcareScenarioCrUpComponent implements OnInit {
   }
 
   addCampaign() {
+    if(!this.id){
+
+      this.submitted = true;
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
+      var value = this.formGroup.value;
+      value.channelSocialId = value.channelSocial ? value.channelSocial.id : null;
+      this.tcareService.createScenario(value).subscribe(
+        (result: any) => {          
+          this.router.navigate(['tcare/scenarios/form'], {
+            queryParams: {
+              id: result['id']
+            },
+          });         
+          this.openCreateCampaignDialog(result.id);
+        }
+      )
+    }else{
+      this.openCreateCampaignDialog(this.id);
+    }
+
+  
+  }
+
+  openCreateCampaignDialog(id){
     let modalRef = this.modalService.open(TcareCampaignCreateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm chiến dịch mới';
-    modalRef.componentInstance.scenarioId = this.id;
+    modalRef.componentInstance.scenarioId = id;
     modalRef.result.then(result => {
       if (result) {
         this.campaign = result
         this.scenario.campaigns.push(this.campaign);
       }
     }, () => {
-    });
-
+    }); 
   }
 
   removeCampaign(item) {

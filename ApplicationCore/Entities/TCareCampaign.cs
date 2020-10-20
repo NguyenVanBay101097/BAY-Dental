@@ -30,7 +30,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Lịch sử chạy của 1 message (để sau khi gán tag có thể tìm lại đúng user đó) 
         /// </summary>
-        public ICollection<TCareMessagingTrace> Traces { get; set; } = new List<TCareMessagingTrace>();
 
         /// <summary>
         /// draft : mới 
@@ -55,5 +54,8 @@ namespace ApplicationCore.Entities
 
         public Guid? TagId { get; set; }
         public PartnerCategory Tag { get; set; }
+
+        public Guid? FacebookPageId { get; set; }
+        public FacebookPage FacebookPage { get; set; }
     }
 }

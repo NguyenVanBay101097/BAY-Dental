@@ -100,6 +100,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết nối facebook page', link: '/socials/facebook-connect' },
         { name: 'Kết nối Zalo', link: '/zalo-config' },
         { name: 'Danh sách kênh', link: '/socials/channels' },
+        { name: 'Lịch gửi tin', link: '/tcare/messagings' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
         { name: 'Mẫu tin nhắn', link: '/tcare/message-templates' },
       ],

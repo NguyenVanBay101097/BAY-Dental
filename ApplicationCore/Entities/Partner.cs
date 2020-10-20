@@ -179,5 +179,9 @@ namespace ApplicationCore.Entities
 
         public Guid? TitleId { get; set; }
         public PartnerTitle Title { get; set; }
+
+        public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
+        public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
     }
 }

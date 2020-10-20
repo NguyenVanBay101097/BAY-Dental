@@ -20,75 +20,73 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMarketingTraceService _marketingTraceService;
         private readonly IFacebookMessagingTraceService _messagingTraceService;
-        private readonly ITCareMessagingTraceService _tCareMessagingTraceService;
         private readonly IFacebookWebhookJobService _fbWebhookJobService;
         private readonly AppTenant _tenant;
 
         public FacebookWebHookController(IMarketingTraceService marketingTraceService,
-            IFacebookMessagingTraceService messagingTraceService, ITCareMessagingTraceService tCareMessagingTraceService,
+            IFacebookMessagingTraceService messagingTraceService,
             IFacebookWebhookJobService fbWebhookJobService, ITenant<AppTenant> tenant)
         {
             _marketingTraceService = marketingTraceService;
             _messagingTraceService = messagingTraceService;
-            _tCareMessagingTraceService = tCareMessagingTraceService;
             _fbWebhookJobService = fbWebhookJobService;
             _tenant = tenant?.Value;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]JObject data)
+        public IActionResult Post([FromBody]JObject data)
         {
-            var wh = data.ToObject<FacebookWebHook>();
-            foreach (var entry in wh.Entry)
-            {
-                if (entry.Messaging != null)
-                {
-                    foreach (var messaging in entry.Messaging)
-                    {
+            var db = _tenant != null ? _tenant.Hostname : "localhost";
+            BackgroundJob.Enqueue<FacebookWebhookJobService>(x => x.ProcessFacebook(db, data));
+            //var wh = data.ToObject<FacebookWebHook>();
+            //foreach (var entry in wh.Entry)
+            //{
+            //    if (entry.Messaging != null)
+            //    {
+            //        foreach (var messaging in entry.Messaging)
+            //        {
 
-                        if (messaging.Read != null)
-                        {
-                            var db = _tenant != null ? _tenant.Hostname : "localhost";
-                            BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessRead(db, messaging.Read.Watermark.ToLocalTime(), messaging.Sender.Id, messaging.Recipient.Id));
+            //            if (messaging.Read != null)
+            //            {
+            //                var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //                BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessRead(db, messaging.Read.Watermark.ToLocalTime(), messaging.Sender.Id, messaging.Recipient.Id));
 
-                            //var watermark = messaging.Read.Watermark.ToLocalTime();
-                            //var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();
-                            ////var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();  
-                            //foreach(var trace in traces)                            
-                            //    trace.Read = watermark;
+            //                //var watermark = messaging.Read.Watermark.ToLocalTime();
+            //                //var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Read.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();
+            //                ////var traces = await _messagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Opened.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.UserProfile.PSID == messaging.Sender.Id).ToListAsync();  
+            //                //foreach(var trace in traces)                            
+            //                //    trace.Read = watermark;
 
-                            //await _tCareMessagingTraceService.UpdateAsync(traces);
-                            //await _tCareMessagingTraceService.AddTagWebhook(traces, "read");        
+            //                //await _tCareMessagingTraceService.UpdateAsync(traces);
+            //                //await _tCareMessagingTraceService.AddTagWebhook(traces, "read");        
 
-                        }
+            //            }
 
-                        if (messaging.Delivery != null)
-                        {
-                            var db = _tenant != null ? _tenant.Hostname : "localhost";
-                            BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessDelivery(db, messaging.Delivery.Watermark.ToLocalTime(), messaging.Sender.Id, messaging.Recipient.Id));
+            //            if (messaging.Delivery != null)
+            //            {
+            //                var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //                BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessDelivery(db, messaging.Delivery.Watermark.ToLocalTime(), messaging.Sender.Id, messaging.Recipient.Id));
 
-                            //var watermark = messaging.Delivery.Watermark.ToLocalTime();
-                            //var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();
+            //                //var watermark = messaging.Delivery.Watermark.ToLocalTime();
+            //                //var traces = await _tCareMessagingTraceService.SearchQuery(x => !string.IsNullOrEmpty(x.MessageId) && !x.Delivery.HasValue && x.Sent.HasValue && x.Sent <= watermark && x.PSID == messaging.Sender.Id && x.Type == "facebook" && x.ChannelSocial.PageId == messaging.Recipient.Id).ToListAsync();
 
 
-                            //foreach (var trace in traces)
-                            //    trace.Delivery = watermark;
+            //                //foreach (var trace in traces)
+            //                //    trace.Delivery = watermark;
 
-                            //await _tCareMessagingTraceService.UpdateAsync(traces);
-                            //await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
-                        }
+            //                //await _tCareMessagingTraceService.UpdateAsync(traces);
+            //                //await _tCareMessagingTraceService.AddTagWebhook(traces, "unread");
+            //            }
 
-                        if (messaging.Message != null)
-                        {
-                            var db = _tenant != null ? _tenant.Hostname : "localhost";
-                            BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessAddUserProfile(db, messaging.Sender.Id, messaging.Recipient.Id));
-                        }
-                    }
-                }
-            }
+            //            if (messaging.Message != null)
+            //            {
+            //                var db = _tenant != null ? _tenant.Hostname : "localhost";
+            //                BackgroundJob.Enqueue(() => _fbWebhookJobService.ProcessAddUserProfile(db, messaging.Sender.Id, messaging.Recipient.Id));
+            //            }
+            //        }
+            //    }
+            //}
             return Ok();
         }
-
-
     }
 }

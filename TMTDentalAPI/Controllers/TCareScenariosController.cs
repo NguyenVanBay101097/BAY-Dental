@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Hangfire;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -16,15 +18,23 @@ namespace TMTDentalAPI.Controllers
     public class TCareScenariosController : ControllerBase
     {
         private readonly ITCareScenarioService _scenarioService;
+        private readonly ITCareCampaignService _tcareCampaignService;
         private readonly IMapper _mapper;
-        public TCareScenariosController(ITCareScenarioService scenarioService, IMapper mapper)
+        private readonly AppTenant _tenant;
+        private readonly ITCareJobService _tcareJobService;
+
+        public TCareScenariosController(ITCareScenarioService scenarioService, IMapper mapper,
+            ITenant<AppTenant> tenant, ITCareJobService tcareJobService, ITCareCampaignService tcareCampaignService)
         {
             _scenarioService = scenarioService;
             _mapper = mapper;
+            _tenant = tenant?.Value;
+            _tcareJobService = tcareJobService;
+            _tcareCampaignService = tcareCampaignService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]TCareScenarioPaged paged)
+        public async Task<IActionResult> Get([FromQuery] TCareScenarioPaged paged)
         {
             var res = await _scenarioService.GetPagedResultAsync(paged);
             return Ok(res);
@@ -47,7 +57,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(TCareScenarioSave val)
         {
-            var model = _mapper.Map<TCareScenario>(val);
+            var model = new TCareScenario();
+            model.Name = val.Name;
+            model.ChannelSocialId = val.ChannelSocialId;
             var res = await _scenarioService.CreateAsync(model);
             var display = _mapper.Map<TCareScenarioDisplay>(res);
             return Ok(display);
@@ -58,7 +70,10 @@ namespace TMTDentalAPI.Controllers
         {
             var model = await _scenarioService.GetByIdAsync(id);
             model.Name = val.Name;
+            model.ChannelSocialId = val.ChannelSocialId;
             await _scenarioService.UpdateAsync(model);
+
+
             return NoContent();
         }
 
@@ -67,6 +82,41 @@ namespace TMTDentalAPI.Controllers
         {
             var model = await _scenarioService.GetByIdAsync(id);
             await _scenarioService.DeleteAsync(model);
+            return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult AddJob()
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-campaign-job";
+            RecurringJob.RemoveIfExists(jobId);
+            var now = DateTime.Now.AddMinutes(1);
+            RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// config : Cron Run once a "*/{Minute} */{Hour} */{day of month} */{month} *{day of week}"
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public IActionResult AddJob2()
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-messaging-job";
+            RecurringJob.RemoveIfExists(jobId);
+            RecurringJob.AddOrUpdate<TCareMessagingJobService>(jobId, x => x.ProcessQueue(tenant), $"* * * * *", TimeZoneInfo.Local);
+            return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult AddJob3()
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-message-job";
+            RecurringJob.RemoveIfExists(jobId);
+            RecurringJob.AddOrUpdate<TCareMessageJobService>(jobId, x => x.Run(tenant), $"* * * * *", TimeZoneInfo.Local);
             return NoContent();
         }
     }
