@@ -1,5 +1,8 @@
 <div class="px-3 py-2 d-flex justify-content-between">
-    <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
+    <div>
+        <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
+        <button class="btn btn-sm btn-primary ml-1" (click)="syncNumberPhoneUsers()">Đồng bộ SĐT người tương tác</button>
+    </div>  
     <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
         (ngModelChange)="this.searchUpdate.next($event)">
 </div>
@@ -13,6 +16,8 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Tên" width="200">
+        </kendo-grid-column>
+        <kendo-grid-column field="phone" title="Số điện thoại" width="200">
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Khách hàng liên kết" width="150">
         </kendo-grid-column>

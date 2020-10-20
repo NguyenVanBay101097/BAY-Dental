@@ -22,6 +22,8 @@ namespace Infrastructure.Services
         Task SaveAutoConfig(FacebookScheduleAppointmentConfigSave val);
         Task SyncUsers(IEnumerable<Guid> ids);
 
+        Task SyncNumberPhoneUsers(IEnumerable<Guid> ids);
+
         Task RefreshSocial(FacebookPageSimple val);
     }
 }

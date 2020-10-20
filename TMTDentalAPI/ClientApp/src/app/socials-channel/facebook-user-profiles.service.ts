@@ -26,6 +26,8 @@ export class FacebookUserProfilesService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConnectPartner', val);
   }
 
+  
+
   removePartner(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/RemovePartner', val);
   }

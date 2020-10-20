@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         Task<FacebookUserProfileBasic> GetFacebookUserProfile(Guid id);
         Task<FacebookUserProfileBasic> UpdateUserProfile(Guid id, FacebookUserProfileSave val);
         Task RemoveUserProfile(IEnumerable<Guid> ids);
+
+    
     }
 }

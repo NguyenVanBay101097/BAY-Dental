@@ -79,6 +79,17 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     }
   }
 
+  syncNumberPhoneUsers() {
+    if (this.pageId) {
+      debugger
+      this.facebookPageService.syncNumberPhoneUsers([this.pageId]).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }
+  }
+
   editItem(item: any) {
     let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.customerId = item.id;

@@ -50,6 +50,10 @@ export class FacebookPageService {
         return this.http.post(this.baseApi + this.apiUrl + '/SyncUsers', ids);
     }
 
+    syncNumberPhoneUsers(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SyncNumberPhoneUsers', ids);
+    }
+
     refreshPage(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/RefreshSocialChannel', val);
     }

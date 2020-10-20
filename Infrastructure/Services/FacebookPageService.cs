@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
+using RestSharp.Deserializers;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
@@ -309,14 +311,159 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
-            if (self.Where(x=>x.Type == "facebook").Any())
+            if (self.Where(x => x.Type == "facebook").Any())
                 await SyncFacebookUsers(self);
-            else if(self.Where(x => x.Type == "zalo").Any())
+            else if (self.Where(x => x.Type == "zalo").Any())
                 await SyncZaloUsers(self);
             //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
             //if (zl_pages.Any())
-               
+
         }
+
+        public async Task SyncNumberPhoneUsers(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (self.Where(x => x.Type == "facebook").Any())
+                await GetAllUserProfileOfThePage(self);
+            //else if (self.Where(x => x.Type == "zalo").Any())
+            //    await SyncZaloUsers(self);
+            //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
+            //if (zl_pages.Any())
+
+        }
+
+        /// <summary>
+        /// lấy ra tất cả userprofile của page
+        /// </summary>
+        /// <param name="PageId"></param>
+        /// <returns></returns>
+        public async Task GetAllUserProfileOfThePage(IEnumerable<FacebookPage> self)
+        {
+            foreach (var page in self)
+            {
+                var userProfileObj = GetService<IFacebookUserProfileService>();
+
+                var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == page.Id)
+                    .Include(x => x.TagRels)
+                    .Include("TagRels.Tag")
+                    .ToListAsync();
+
+                var tasks = profiles.Select(x => UpdateNumberPhoneUserProfile(x, page)).ToList();
+                var limit = 200;
+                var offset = 0;
+                var subTasks = tasks.Skip(offset).Take(limit).ToList();
+                while (subTasks.Any())
+                {
+                    await Task.WhenAll(subTasks);
+                    offset += limit;
+                    subTasks = tasks.Skip(offset).Take(limit).ToList();
+                }
+
+                //foreach (var profile in profiles)
+                //{
+                //    await UpdateNumberPhoneUserProfile(profile, page);
+                //}
+                //BackgroundJob.Enqueue<FacebookPageService>(x => x.UpdateNumberPhoneUserProfile(profile, page));
+
+            }
+        }
+
+        public async Task UpdateNumberPhoneUserProfile(FacebookUserProfile user, FacebookPage page)
+        {
+
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            /// lấy ra  danh sách  sdt user inbox page
+            var phones = await _LoadMessageUserProfile(user, page);
+            if (phones.Count > 0)
+            {
+                user.Phone = string.Join(",", phones);
+                await userProfileObj.UpdateAsync(user);
+            }
+        }
+
+        public async Task<List<string>> _LoadMessageUserProfile(FacebookUserProfile user, FacebookPage page)
+        {
+            List<string> list = new List<string>();
+            var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
+            var pagedRequestUrl = $"{page.PageId}" + "/conversations?fields=messages{from,message}";
+            var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
+            pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
+            pagedRequest.AddPageLimit(25);
+            var errorMaessage = "";
+            var res = new List<ApiPagedConversationsData>();
+            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsData>();
+            if (pagedRequestResponse.GetExceptions().Any())
+            {
+                errorMaessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
+                throw new Exception(errorMaessage);
+            }
+            else
+            {
+                if (pagedRequestResponse.IsDataAvailable())
+                {
+                    res.AddRange(pagedRequestResponse.GetResultData());
+                    //kiểm tra nếu có phân trang
+                    while (pagedRequestResponse.IsNextPageDataAvailable())
+                    {
+                        //lấy dữ liệu lần lượt các trang kế
+                        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+                        //add vào data
+                        res.AddRange(pagedRequestResponse.GetResultData());
+                    }
+
+
+                }
+
+                var result = res.Where(x => x.Messages.Data.Any(s => s.From.Id == user.PSID)).Select(x => x.Messages).ToList();
+                foreach (var item in result)
+                {
+                    foreach (var dataitem in item.Data)
+                    {
+                        if (dataitem.From.Id != user.PSID)
+                            continue;
+
+                        var num = GetNumberPhone(dataitem.Message);
+                        if (num.Count > 0)
+                        {
+                            list.AddRange(num);
+                        }
+                    }
+
+                }             
+                return list;
+            }
+        }
+
+        private List<string> GetNumberPhone(string text)
+        {
+            var listphone = new List<string>();
+            string MatchPhonePattern = @"(^[0-9]{10}$)|(^\+[0-9]{2}\s+[0-9]{2}[0-9]{8}$)|(^[0-9]{3}-[0-9]{4}-[0-9]{4}$)";
+
+            Regex rx = new Regex(MatchPhonePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            string[] parts = text.Split(' ');
+            foreach (string part in parts)
+            {
+                // Find matches.
+                MatchCollection matches = rx.Matches(part);
+
+                // Report the number of matches found.
+                int noOfMatches = matches.Count;
+
+                //Do something with the matches
+
+                foreach (System.Text.RegularExpressions.Match match in matches)
+                {
+                    //Do something with the matches
+                    listphone.Add(match.Value.ToString());
+                }
+            }
+            return listphone;
+        }
+
+
+
 
         private async Task SyncZaloUsers(IEnumerable<FacebookPage> self)
         {
@@ -394,7 +541,7 @@ namespace Infrastructure.Services
             var list = new List<string>().AsEnumerable();
             while (res.data != null && res.data.followers.Any())
             {
-                 list = res.data.followers.Select(x => x.user_id);
+                list = res.data.followers.Select(x => x.user_id);
                 //list = list.Union(tmp_ids);
 
                 offset += count;
@@ -472,7 +619,7 @@ namespace Infrastructure.Services
             var psids = new List<string>().AsEnumerable();
             var UserProfileObj = GetService<IFacebookUserProfileService>();
             var apiClient = new ApiClient(self.PageAccesstoken, FacebookApiVersions.V6_0);
-            var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";         
+            var pagedRequestUrl = $"{self.PageId}/conversations?fields=participants";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
             pagedRequest.AddPageLimit(25);
@@ -506,41 +653,6 @@ namespace Infrastructure.Services
 
                 return await Task.WhenAll(user_infos);
             }
-            //var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
-            //pagedRequest.AddQueryParameter("access_token", self.PageAccesstoken);
-            //pagedRequest.AddPageLimit(1);
-
-            //var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsDataItem>();
-
-            //if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
-            //{
-            //    var tmp = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
-            //    psids = psids.Union(tmp);
-
-            //    //kiểm tra nếu có phân trang
-            //    while (pagedRequestResponse.IsNextPageDataAvailable())
-            //    {
-            //        //lấy dữ liệu lần lượt các trang kế
-            //        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
-
-            //        if (!pagedRequestResponse.GetExceptions().Any() && pagedRequestResponse.IsDataAvailable())
-            //        {
-            //            var tmp2 = _GetPSIDsFromApiConversationsResponse(self, pagedRequestResponse.GetResultData());
-            //            psids = psids.Union(tmp2);
-            //        }
-            //    }
-            //}
-
-            //psids = psids.Except(UserProfileObj.SearchQuery(x => x.FbPageId == self.Id).Select(x => x.PSID)).ToList();
-
-            //var user_infos = psids.Select(id => _LoadUserProfile(id, self.PageAccesstoken));
-
-            //return await Task.WhenAll(user_infos);
-
-            //var user_infos = await _GetUserInfosFromPSIDs(self, psids);
-
-            ////return psids;
-            //return user_infos;
         }
 
         private IEnumerable<string> _GetPSIDsFromApiConversationsResponse(FacebookPage self, IEnumerable<ApiPagedConversationsDataItem> items)
@@ -793,7 +905,7 @@ namespace Infrastructure.Services
             var socialChannel = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
 
 
-            if(socialChannel.Type == "facebook")
+            if (socialChannel.Type == "facebook")
             {
                 var account = await connectObj.GetUserAccounts(socialChannel.UserAccesstoken, socialChannel.UserId);
                 var page = account.Accounts.Data.Where(x => x.Id == socialChannel.PageId).SingleOrDefault();
@@ -845,5 +957,116 @@ namespace Infrastructure.Services
 
             return true;
         }
+
+        /// <summary>
+        /// gửi tin nhắn lấy số điện thoại khách hàng (event webhook)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> UserPhoneNumberQuickReply()
+        {
+            var fbPage = await SearchQuery(x => x.PageId == "106476610953590").FirstOrDefaultAsync();
+            var apiClient = new ApiClient(fbPage.PageAccesstoken, FacebookApiVersions.V6_0);
+            var url = $"/me/messages";
+
+            var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
+            request.AddParameter("message_type", "RESPONSE");
+            request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = "2338458422920740" }));
+            request.AddParameter("message", JsonConvert.SerializeObject(new Message { Text = "Hãy để lại số điện thoại của bạn , chúng tôi sẽ liên hệ lại", QuickReplies = new List<QuickReply>() { new QuickReply { ContentType = "user_phone_number" } } }));
+
+            try
+            {
+                var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
+                if (response.GetExceptions().Any())
+                {
+                    var error = new SendFacebookMessageReponse
+                    {
+                        error = string.Join(";", response.GetExceptions().Select(x => x.Message))
+                    };
+                    return false;
+                }
+                else
+                {
+                    var result = response.GetResult();
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+
+
+        }
+
+
+
+
     }
+
+
+
+    public class Message
+    {
+        [JsonProperty("text")]
+        public string Text { get; set; }
+
+        [JsonProperty("quick_replies")]
+        public List<QuickReply> QuickReplies { get; set; }
+    }
+
+    public class QuickReply
+    {
+        [JsonProperty("content_type")]
+        public string ContentType { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("payload")]
+        public string Payload { get; set; }
+
+        [JsonProperty("image_url")]
+        public string ImageUrl { get; set; }
+    }
+
+    public class ApiPagedConversationsData
+    {
+        [DeserializeAs(Name = "id")]
+        public string Id { get; set; }
+
+        [DeserializeAs(Name = "messages")]
+        public ApiPagedConversationMessages Messages { get; set; }
+    }
+
+    public class ApiPagedConversationMessages
+    {
+        [DeserializeAs(Name = "data")]
+        public List<ApiPagedConversationData> Data { get; set; } = new List<ApiPagedConversationData>();
+    }
+
+    public class ApiPagedConversationData
+    {
+        [JsonProperty("from")]
+        public ApiPagedConversationDataFrom From { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+    }
+
+    public class ApiPagedConversationDataFrom
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+    }
+
 }

@@ -89,6 +89,16 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> SyncNumberPhoneUsers(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _facebookPageService.SyncNumberPhoneUsers(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateFacebookUser()
         {
             if (!ModelState.IsValid)

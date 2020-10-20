@@ -62,6 +62,8 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+      
+
         [HttpPost("[action]")]
         public async Task<IActionResult> RemovePartner(IEnumerable<Guid> ids)
         {
