@@ -9,6 +9,9 @@ import { FacebookPageService, ChannelSocial } from 'src/app/socials-channel/face
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { DatePipe } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
+import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
+import { validate } from 'fast-json-patch';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-sequences',
@@ -21,6 +24,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 export class TcareCampaignDialogSequencesComponent implements OnInit {
 
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
+  @ViewChild('cbxMess', { static: true }) cbxMess: ComboBoxComponent;
+  @ViewChild('couponCbx', { static: true }) couponCbx: ComboBoxComponent;
+
   model: any;
   formGroup: FormGroup;
   filterdChannelSocials: ChannelSocial[] = [];
@@ -31,11 +37,27 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   selectArea_end: number;
   audience_filter: any;
   showAudienceFilter: boolean = false;
+  messageTemplates: any[];
+  listCoupon: any;
+  textareaLength = 640;
+
+  //cá nhân hóa
+  tabs = [
+    { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
+    { name: 'Họ và tên khách hàng', value: '{ho_ten_khach_hang}' },
+    { name: 'Tên trang', value: '{ten_page}' },
+    { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
+    { name: 'mã khuyến mãi', value: '{ma_khuyen_mai}' },
+  ];
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private facebookPageService: FacebookPageService,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private templateService: TCareMessageTemplateService,
+    private saleCouponService: SaleCouponProgramService
+
   ) { }
 
   ngOnInit() {
@@ -46,7 +68,9 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       intervalNumber: [0],
       intervalType: ['minutes'],
       sheduleDate: null,
-      // channelType: ['fixed', Validators.required]
+      channelType: ['fixed', Validators.required],
+      isCoupon: false,
+      couponProgramId: null
     });
 
     // this.channelSocialCbx.filterChange.asObservable().pipe(
@@ -64,8 +88,45 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
       var tmp = Object.assign({}, this.model);
       tmp.intervalNumber = parseInt(this.model.intervalNumber) || 0;
       tmp.sheduleDate = this.model.sheduleDate ? new Date(this.model.sheduleDate) : null;
+      tmp.isCoupon = Boolean(tmp.isCoupon);
       this.formGroup.patchValue(tmp);
     }
+
+    this.cbxMess.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxMess.loading = true)),
+      switchMap(value => this.searchMess(value))
+    ).subscribe((result: any) => {
+      this.messageTemplates = result.items;
+      this.cbxMess.loading = false;
+    });
+
+    this.loadMessageTemplate();
+
+    this.couponCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.couponCbx.loading = true)),
+      switchMap(value => this.searchCoupon(value))
+    ).subscribe((result: any) => {
+      this.listCoupon = result.items;
+      console.log(result.items);
+      this.couponCbx.loading = false;
+    });
+
+    this.loadCoupon();
+
+  }
+  searchCoupon(q?: string) {
+    const val = new SaleCouponProgramPaged();
+    val.search = q || '';
+    val.programType = 'coupon_program';
+    return this.saleCouponService.getPaged(val);
+  }
+
+  loadCoupon() {
+    this.searchCoupon().subscribe((result: any) => {
+      this.listCoupon = result.items;
+    });
   }
 
   // loadSocialChannel() {
@@ -86,6 +147,9 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     return this.formGroup.get('channelSocialId');
   }
 
+  get isCouponControl() { return this.formGroup.get('isCoupon'); }
+  get couponProgramIdControl() { return this.formGroup.get('couponProgramId'); }
+
   searchSocialChannel(q?: string) {
     var val = new FacebookPagePaged();
     val.search = q || '';
@@ -93,6 +157,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onSave() {
+    debugger;
     this.submited = true;
     if (!this.formGroup.valid) {
       return false;
@@ -100,6 +165,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     var value = this.formGroup.value;
     value.intervalNumber = value.intervalNumber ? value.intervalNumber + '' : 0;
     value.sheduleDate = value.sheduleDate ? this.intlService.formatDate(value.sheduleDate, 'yyyy-MM-ddTHH:mm:ss') : '';
+    value.couponProgramId = value.couponProgramId ? value.couponProgramId : null;
     this.activeModal.close(value);
   }
 
@@ -109,12 +175,11 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   getLimitText() {
-    var limit = 640;
-    var text = this.formGroup.get('content').value;
+    const text = this.formGroup.get('content').value;
     if (text) {
-      return limit - text.length;
+      return this.textareaLength - text.length;
     } else {
-      return limit;
+      return this.textareaLength;
     }
   }
 
@@ -134,8 +199,62 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   showEmoji() {
     this.showPluginTextarea = true;
   }
-  
+
   hideEmoji() {
     this.showPluginTextarea = false;
+  }
+
+  onMessageTemplateSelect(e) {
+    if (!e) { return; }
+
+    const templates = JSON.parse(e.content);
+    this.formGroup.get('content').setValue(templates[0].text);
+  }
+
+  searchMess(q?: string) {
+    const val = new TCareMessageTemplatePaged();
+    val.search = q || '';
+    return this.templateService.getPaged(val);
+  }
+  loadMessageTemplate() {
+    this.searchMess().subscribe((res) => {
+      this.messageTemplates = res.items;
+    });
+  }
+
+  addToContent(value) {
+
+    if (this.formGroup.value.content) {
+      this.formGroup.patchValue({
+        content: this.formGroup.value.content.slice(0, this.selectArea_start) + value + this.formGroup.value.content.slice(this.selectArea_end)
+      });
+
+    } else {
+      this.formGroup.patchValue({
+        content: value
+      });
+    }
+    this.selectArea_start = this.selectArea_start + value.length;
+    this.selectArea_end = this.selectArea_start;
+  }
+
+  emotionClick(e) {
+    this.addToContent(e.emoji.native);
+  }
+
+  onChangeCheckboxCoupon(e) {
+    if (this.isCouponControl.value !== true) {
+      this.couponProgramIdControl.setValue(null);
+    }
+  }
+
+  onSelectChangeChannel(e) {
+    if (e) {
+      if (e.type === 'facebook') {
+        this.textareaLength = 640;
+      } else if (e.type === 'zalo') {
+        this.textareaLength = 2000;
+      }
+    }
   }
 }

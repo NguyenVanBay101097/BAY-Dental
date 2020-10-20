@@ -474,26 +474,6 @@ namespace Infrastructure.Services
             return messageContent;
         }
 
-        private string PersonalizedPartner(Partner partner, FacebookPage channelSocial, Sequence sequence, SqlConnection conn)
-        {
-            var messageContent = sequence.Content.Replace("@ten_khach_hang", partner.Name.Split(' ').Last()).Replace("@fullname_khach_hang", partner.Name).Replace("@ten_page", channelSocial.PageName);
-            if (messageContent.Contains("@danh_xung_khach_hang"))
-            {
-                PartnerTitle partnerTitle = null;
-                if (partner.TitleId.HasValue)
-                {
-                    partnerTitle = conn.Query<PartnerTitle>("" +
-                        "SELECT * " +
-                        "FROM PartnerTitles " +
-                        "where Id = @id" +
-                        "", new { id = partner.TitleId }).FirstOrDefault();
-                }
-
-                messageContent = messageContent.Replace("@danh_xung_khach_hang", partnerTitle != null ? partnerTitle.Name.ToLower() : "");
-            }
-            return messageContent;
-        }
-
         private static IEnumerable<FacebookUserProfile> GetFacebookUserProfilesByPartnerId(SqlConnection conn, Guid partId)
         {
             var userProfile = conn.Query<FacebookUserProfile>("select * from FacebookUserProfiles where PartnerId = @PartnerId",

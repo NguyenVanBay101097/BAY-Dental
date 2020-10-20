@@ -34,6 +34,9 @@ namespace ApplicationCore.Entities
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
+        /// <summary>
+        /// draft: Mới, done: Hoàn thành, cancel: Hủy bỏ
+        /// </summary>
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
@@ -43,6 +46,16 @@ namespace ApplicationCore.Entities
 
         public decimal? AmountResidual { get; set; }
 
+        /// <summary>
+        /// tiền hoàn trả khách hàng
+        /// </summary>
+        public decimal? AmountRefund { get; set; }
+
         public ICollection<ServiceCardOrderLine> OrderLines { get; set; } = new List<ServiceCardOrderLine>();
+
+        public Guid? AccountMoveId { get; set; }
+        public AccountMove AccountMove { get; set; }
+
+        public ICollection<ServiceCardOrderPayment> Payments { get; set; } = new List<ServiceCardOrderPayment>();
     }
 }

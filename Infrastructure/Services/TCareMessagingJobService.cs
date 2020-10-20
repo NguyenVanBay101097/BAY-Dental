@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using ZaloDotNetSDK;
 using Antlr4.StringTemplate;
 using Antlr4;
+using ApplicationCore.Utilities;
 
 namespace Infrastructure.Services
 {
@@ -129,6 +130,11 @@ namespace Infrastructure.Services
                             template.Add("ten_khach_hang", personalized.Name.Split(' ').Last());
                             template.Add("ten_page", channel.PageName);
                             template.Add("danh_xung_khach_hang", personalized.Title);
+
+                            if (messaging.Content.Contains("{ma_khuyen_mai}") && messaging.CouponProgramId.HasValue)
+                            {
+                                template.Add("ma_khuyen_mai", await CreateNewCoupon(messaging.CouponProgramId.Value, context));
+                            }
                             var messageContent = template.Render();
 
                             var message = new TCareMessage()
@@ -162,6 +168,48 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<string> CreateNewCoupon(Guid programId, CatalogDbContext context)
+        {
+            var program = await context.SaleCouponPrograms.Where(x => x.Id == programId).FirstOrDefaultAsync();
+            if (program == null) return "";
+            var coupon = new SaleCoupon
+            {
+                Code = StringUtils.RandomStringDigit(13),
+                ProgramId = programId,
+                DateCreated = DateTime.Now,
+                LastUpdated = DateTime.Now,
+                State = "new",
+                Program = program
+            };
+            // check và tính expire date
+            var check= await CheckCodeCoupon(coupon, context);
+            if (!check) return "";
+
+            ComputeDateExpireCoupon(coupon, context);
+            await context.SaleCoupons.AddAsync(coupon);
+            await context.SaveChangesAsync();
+            return coupon.Code;
+        }
+        public async Task<bool> CheckCodeCoupon(SaleCoupon self, CatalogDbContext context, int count = 1)
+        {
+            var exist = await context.SaleCoupons.AnyAsync(x => x.Code == self.Code);
+            if (!exist)
+                return true;
+            if (count > 3)
+                return false;
+            self.Code = StringUtils.RandomStringDigit(13);
+           return await CheckCodeCoupon(self, context, count + 1);
+        }
+
+        public void ComputeDateExpireCoupon(SaleCoupon self, CatalogDbContext context)
+        {
+            var date = (self.DateCreated ?? DateTime.Today).Date;
+            var validity_duration = self.Program.ValidityDuration ?? 0;
+            if (validity_duration > 0)
+                self.DateExpired = date.AddDays(validity_duration);
+            else
+                self.DateExpired = null;
+        }
         private async Task<IEnumerable<TCareMessagingJobPartnerDataPersonalized>> GetDataPersonalized(IEnumerable<Guid> partner_ids, CatalogDbContext context)
         {
             var limit = 1000;

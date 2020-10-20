@@ -69,6 +69,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'far fa-credit-card',
       groups: 'sale.group_service_card',
       children: [
+        { name: 'Tạo đơn bán thẻ', link: '/service-card-orders/create-card-order' },
         { name: 'Đơn bán thẻ', link: '/service-card-orders' },
         { name: 'Loại thẻ', link: '/service-card-types' },
         { name: 'Danh sách thẻ', link: '/service-cards' },
@@ -101,6 +102,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Danh sách kênh', link: '/socials/channels' },
         { name: 'Lịch gửi tin', link: '/tcare/messagings' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
+        { name: 'Mẫu tin nhắn', link: '/tcare/message-templates' },
       ],
       groups: 'tcare.group_tcare',
     },

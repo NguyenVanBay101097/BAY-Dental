@@ -24,5 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountTotal { get; set; }
 
         public decimal? AmountResidual { get; set; }
+
+        public decimal? AmountRefund { get; set; }
     }
 }

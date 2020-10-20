@@ -49,4 +49,8 @@ export class ServiceCardOrderService {
     actionCancel(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/ActionCancel", ids);
     }
+
+    createAndPaymentCardOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/CreateAndPaymentServiceCardOrder", val);
+    }
 }

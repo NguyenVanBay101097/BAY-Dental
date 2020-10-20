@@ -33,6 +33,10 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
 import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
+import { TcareMessageTemplateListComponent } from './tcare-message-template-list/tcare-message-template-list.component';
+import { TcareMessageTemplateCuDialogComponent } from './tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
+import { TcareMessageTemplateContentComponent } from './tcare-message-template-cu-dialog/tcare-message-template-content/tcare-message-template-content.component';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messaging-list.component';
 
 @NgModule({
@@ -59,6 +63,9 @@ import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messag
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
     TcareScenarioMessageTextareaComponent,
+    TcareMessageTemplateListComponent,
+    TcareMessageTemplateCuDialogComponent,
+    TcareMessageTemplateContentComponent,
     TcareMessagingListComponent,
   ],
   imports: [
@@ -75,7 +82,7 @@ import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messag
     PartnerCategoriesModule
   ],
 
-  providers: [TcareService],
+  providers: [TcareService, SaleCouponProgramService],
   entryComponents: [
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
@@ -89,8 +96,8 @@ import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messag
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
     TcareCampaignStartDialogComponent,
-    TcareScenarioCrDialogComponent
-    
+    TcareScenarioCrDialogComponent,
+    TcareMessageTemplateCuDialogComponent
   ]
 })
 export class TcareModule { }
