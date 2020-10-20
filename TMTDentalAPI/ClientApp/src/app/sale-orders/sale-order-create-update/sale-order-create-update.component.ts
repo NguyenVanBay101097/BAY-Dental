@@ -883,16 +883,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.partnerId = this.partnerId;
     var pricelist = this.formGroup.get('pricelist').value;
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
+    if (this.formGroup.get('state').value == "draft") {
+      modalRef.componentInstance.showSaveACreate = true;
+    }
 
     modalRef.result.then(result => {
-      let line = result.value as any;
-      line.teeth = this.fb.array(line.teeth);
-      this.orderLines.push(this.fb.group(line));
-      this.orderLines.markAsDirty();
-      this.computeAmountTotal();
+      for (let i = 0; i < result.length; i++) {
+        let line = result[i] as any;
+        line.teeth = this.fb.array(line.teeth);
+        this.orderLines.push(this.fb.group(line));
+        this.orderLines.markAsDirty();
+        this.computeAmountTotal();
+      }
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
         this.saleOrderService.update(this.id, val).subscribe(() => {
@@ -904,9 +908,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
           this.loadRecord();
-          if (result.work == 'SaveACreate') {
-            this.showAddLineModal();
-          }
         }, () => {
           this.loadRecord();
         });
@@ -933,7 +934,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      var a = result.value as any;
+      var a = result[0] as any;
       line.patchValue(a);
       line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
@@ -951,9 +952,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             type: { style: 'success', icon: true }
           });
           this.loadRecord();
-          if (result.work == 'SaveACreate') {
-            this.showAddLineModal();
-          }
         }, () => {
           this.loadRecord();
         });
