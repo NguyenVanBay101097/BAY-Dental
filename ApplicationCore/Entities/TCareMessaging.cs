@@ -45,5 +45,10 @@ namespace ApplicationCore.Entities
         public string MessagingModel { get; set; }
 
         public ICollection<TCareMessagingPartnerRel> PartnerRecipients { get; set; } = new List<TCareMessagingPartnerRel>();
+        /// <summary>
+        /// một tin nhắn có thể có 1 coupon
+        /// </summary>
+        public Guid? CouponProgramId { get; set; }
+        public SaleCouponProgram CouponProgram { get; set; }
     }
 }

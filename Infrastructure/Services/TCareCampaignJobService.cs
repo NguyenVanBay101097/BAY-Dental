@@ -64,8 +64,11 @@ namespace Infrastructure.Services
                         State = "in_queue",
                         Content = content,
                         TCareCampaignId = campaign.Id,
-                        FacebookPageId = campaign.FacebookPageId
+                        FacebookPageId = campaign.FacebookPageId,
                     };
+
+                    var outCouponId = Guid.NewGuid();
+                    if (Guid.TryParse(GetCampaignCouponId(campaign.GraphXml), out outCouponId)) messaging.CouponProgramId = outCouponId;
 
                     foreach (var profile in profiles)
                     {
@@ -295,6 +298,19 @@ namespace Infrastructure.Services
             var sequence = resultingMessage.Root != null ? resultingMessage.Root.Sequence : null;
             if (sequence != null)
                 return sequence.Content;
+            return string.Empty;
+        }
+
+        private string GetCampaignCouponId(string graphXml)
+        {
+            if (string.IsNullOrEmpty(graphXml))
+                return string.Empty;
+            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(graphXml));
+            MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
+            var sequence = resultingMessage.Root != null ? resultingMessage.Root.Sequence : null;
+            if (sequence != null)
+                return sequence.CouponProgramId;
             return string.Empty;
         }
 
