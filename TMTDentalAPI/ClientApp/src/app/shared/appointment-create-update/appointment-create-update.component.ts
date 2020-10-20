@@ -34,7 +34,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   appointId: string;
   defaultVal: any;
   formGroup: FormGroup;
-  partnerSend: any;
+  dotKhamId: any;
 
   hourList: number[] = [];
   minuteList: number[] = [0, 30];
@@ -291,10 +291,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   defaultGet() {
     var val = this.defaultVal || {};
+    if (this.dotKhamId) {
+      val.DotKhamId = this.dotKhamId;
+    }
     this.appointmentService.defaultGet(val).subscribe(
       (rs: any) => {
-        if (this.partnerSend)
-          rs.partner = this.partnerSend;
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
