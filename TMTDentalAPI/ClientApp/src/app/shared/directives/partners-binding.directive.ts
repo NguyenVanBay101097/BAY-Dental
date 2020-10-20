@@ -35,6 +35,6 @@ export class PartnersBindingDirective extends DataBindingDirective implements On
 
     public rebind(): void {
         this.grid.loading = true;
-        this.partnersService.query(this.state, this.advanceFilter);
+        this.partnersService.getView(this.state, this.advanceFilter);
     }
 }

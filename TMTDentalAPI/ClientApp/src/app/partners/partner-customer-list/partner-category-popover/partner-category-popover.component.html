@@ -1,8 +1,17 @@
-<button title="sửa nhóm" class="btn btn-xs btn-info mr-1" [ngbPopover]="popContent" popoverClass="popover-xl"
+<!-- <button title="sửa nhóm" class="btn btn-xs btn-info mr-1" [ngbPopover]="popContent" popoverClass="popover-xl"
     [popoverTitle]="popTitle" #popOver="ngbPopover" triggers="manual" [autoClose]="false" placement="left"
     (click)="onToggleCategory(popOver)" data-container="body">
     <ng-content></ng-content>
-</button>
+</button> -->
+
+<a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="false" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body">
+    <span *ngFor="let tag of tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
+    <span *ngIf="!tags.length" class="badge badge-info">
+        <i class="fa fa-tags"></i>
+    </span>
+</a>
+
 <ng-template #popTitle>
     <div class="d-flex align-items-center">
         <span>Nhãn khách hàng</span>
@@ -12,10 +21,8 @@
 
 <ng-template #popContent>
     <div>
-        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="value_partnerCategoryPopOver"
-            [filterable]="true"
-            (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
-            [textField]="'name'" [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
+        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags" #list [filterable]="true"
+            [textField]="'Name'" [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
             [valueNormalizer]="valueNormalizer">
         </kendo-multiselect>
         <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">

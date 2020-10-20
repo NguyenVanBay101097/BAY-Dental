@@ -101,6 +101,14 @@ export class PartnerCustomerListComponent implements OnInit {
 
   }
 
+  toggleTagsPopOver(popover: any, dataItem: any) {
+    if (popover.isOpen()) {
+      popover.close();
+    } else {
+      popover.open({ dataItem });
+    }
+  }
+
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = 'customer';

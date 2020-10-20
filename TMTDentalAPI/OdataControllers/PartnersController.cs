@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -51,17 +52,9 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> Get(ODataQueryOptions<PartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
         {
             var results = await _partnerService.GetViewModelsAsync();
-            var a = options.ApplyTo(results) as IQueryable<PartnerViewModel>;
-            var b = a.ToList();
-
-            //timf nhan cua 10 phan tu trong a
-            foreach(var item in b)
-            {
-            }
-
             if (tagIds != null && tagIds.Any())
                 results = results.Where(x => x.Tags.Any(s => tagIds.Contains(s.Id)));
-            return Ok(a);
+            return Ok(results);
         }
 
         [HttpPut]
@@ -75,13 +68,12 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [EnableQuery]
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetView(ODataQueryOptions<PartnerViewModel> options)
+        public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options)
         {
-            var results = await _partnerService.GetViewModelsAsync();
+            var results = await _partnerService.GetGridViewModelsAsync();
 
-            var partnerVM = options.ApplyTo(results) as IQueryable<PartnerViewModel>;
+            var partnerVM = options.ApplyTo(results) as IQueryable<GridPartnerViewModel>;
             var partnerVMList = partnerVM.ToList();
 
             var partnerIds = partnerVMList.Select(x => x.Id).ToList();
@@ -92,7 +84,8 @@ namespace TMTDentalAPI.OdataControllers
                 CategoryName = x.Category.Name
             }).ToListAsync();
 
-            var tagDict = partnerCategRels.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => new PartnerCategoryViewModel { 
+            var tagDict = partnerCategRels.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => new TagModel
+            { 
                 Id = s.CategoryId,
                 Name = s.CategoryName
             }).ToList());
@@ -101,41 +94,8 @@ namespace TMTDentalAPI.OdataControllers
             {
                 if (!tagDict.ContainsKey(item.Id))
                     continue;
-                item.Tags = tagDict[item.Id];
+                item.Tags = JsonConvert.SerializeObject(tagDict[item.Id]);
             }
-
-            //timf nhan cua 10 phan tu trong a
-            //var cateObj = GetService<IPartnerCategoryService>();
-            //var cateObj  = await _partnerCategoryService.SearchQuery(x => x.Id == id).Include(x => x.Parent).FirstOrDefaultAsync();
-
-            //var db = _tenant != null ? _tenant.Hostname : "localhost";
-            //SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
-            //if (db != "localhost")
-            //    builder["Database"] = $"TMTDentalCatalogDb__{db}";
-
-            //using (var conn = new SqlConnection(builder.ConnectionString))
-            //{
-            //    try
-            //    {
-            //        conn.Open();
-            //        foreach (var item in partnerVMList)
-            //        {
-            //            var tag = conn.Query<PartnerCategoryViewModel>(
-            //                "SELECT pc.Id, pc.Name " + 
-            //                "FROM PartnerCategories pc " + 
-            //                $"WHERE pc.Id IN (" + 
-            //                    "SELECT ppcr.CategoryId " + 
-            //                    "FROM PartnerPartnerCategoryRel ppcr " + 
-            //                    $"WHERE ppcr.PartnerId = '{item.Id}' " + 
-            //                ") ").ToList();
-            //            item.Tags = tag;
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Console.WriteLine(e);
-            //    }
-            //}
 
             return Ok(partnerVMList);
         }

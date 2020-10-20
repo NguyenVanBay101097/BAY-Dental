@@ -1875,9 +1875,42 @@ namespace Infrastructure.Services
             });
         }
 
+        public IQueryable<GridPartnerViewModel> GetGridViewModels()
+        {
+            return SearchQuery().Select(x => new GridPartnerViewModel
+            {
+                Id = x.Id,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                Street = x.Street,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                NameNoSign = x.NameNoSign,
+                Phone = x.Phone,
+                WardName = x.WardName,
+                Gender = x.Gender,
+                BirthYear = x.BirthYear,
+                BirthMonth = x.BirthMonth,
+                BirthDay = x.BirthDay,
+                Customer = x.Customer,
+                Supplier = x.Supplier,
+                Ref = x.Ref,
+                Date = x.Date,
+                Comment = x.Comment,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                SourceName = x.Source.Name
+            });
+        }
+
         public Task<IQueryable<PartnerViewModel>> GetViewModelsAsync()
         {
             return Task.Run(() => GetViewModels());
+        }
+
+        public Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync()
+        {
+            return Task.Run(() => GetGridViewModels());
         }
     }
 
