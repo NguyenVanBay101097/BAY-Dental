@@ -6,6 +6,7 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Dapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNet.OData;
@@ -76,8 +77,11 @@ namespace TMTDentalAPI.OdataControllers
         {
             var results = await _partnerService.GetViewModelsAsync();
 
-            var a = options.ApplyTo(results) as IQueryable<PartnerViewModel>;
-            var b = a.ToList();
+            var partnerVM = options.ApplyTo(results) as IQueryable<PartnerViewModel>;
+            var partnerVMList = partnerVM.ToList();
+
+            var partnerIds = partnerVMList.Select(x => x.Id).ToList();
+
 
             //timf nhan cua 10 phan tu trong a
             //var cateObj = GetService<IPartnerCategoryService>();
@@ -93,10 +97,18 @@ namespace TMTDentalAPI.OdataControllers
                 try
                 {
                     conn.Open();
-                    var listTagId = conn.Query<Guid>(
-                        "SELECT ppcr.CategoryId" +
-                        "FROM PartnerPartnerCategoryRel ppcr"
-                        ).ToList();
+                    foreach (var item in partnerVMList)
+                    {
+                        var tag = conn.Query<PartnerCategoryViewModel>(
+                            "SELECT pc.Id, pc.Name " + 
+                            "FROM PartnerCategories pc " + 
+                            $"WHERE pc.Id IN (" + 
+                                "SELECT ppcr.CategoryId " + 
+                                "FROM PartnerPartnerCategoryRel ppcr " + 
+                                $"WHERE ppcr.PartnerId = '{item.Id}' " + 
+                            ") ").ToList();
+                        item.Tags = tag;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -104,13 +116,7 @@ namespace TMTDentalAPI.OdataControllers
                 }
             }
 
-                foreach (var item in b)
-            {
-                //item.Tags 
-                
-            }
-
-            return Ok(b);
+            return Ok(partnerVMList);
         }
     }
 }
