@@ -5,6 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Helpers;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
@@ -13,6 +16,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Umbraco.Web.Models.ContentEditing;
@@ -28,9 +33,10 @@ namespace TMTDentalAdmin.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly UserManager<ApplicationAdminUser> _userManager;
         private readonly AdminAppSettings _appSettings;
+        private readonly IConfiguration _configuration;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            UserManager<ApplicationAdminUser> userManager,
+            UserManager<ApplicationAdminUser> userManager, IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings)
         {
             _tenantService = tenantService;
@@ -38,6 +44,7 @@ namespace TMTDentalAdmin.Controllers
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _appSettings = appSettings?.Value;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -88,10 +95,19 @@ namespace TMTDentalAdmin.Controllers
             tenant = _mapper.Map<AppTenant>(val);
             await _tenantService.CreateAsync(tenant);
 
-            using (HttpClient client = new HttpClient())
+            //tạo database ở đây
+            var db = val.Hostname;
+            CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db,_configuration);
+            await context.Database.MigrateAsync();
+
+            //chạy api setuptenant -> fail
+            HttpResponseMessage response = null;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+            using (var client = new HttpClient(new RetryHandler(clientHandler)))
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.PostAsJsonAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
                 {
                     CompanyName = val.CompanyName,
                     Name = val.Name,
@@ -100,12 +116,12 @@ namespace TMTDentalAdmin.Controllers
                     Phone = val.Phone,
                     Email = val.Email
                 });
+            }
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    await _tenantService.DeleteAsync(tenant);
-                    throw new Exception("Register fail, try later");
-                }
+            if (!response.IsSuccessStatusCode)
+            {
+                await _tenantService.DeleteAsync(tenant);
+                throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
             }
 
             return NoContent();

@@ -8,5 +8,6 @@ namespace ApplicationCore.Entities
     {
         public string CatalogDomain { get; set; }
         public string Secret { get; set; }
+        public string Schema { get; set; }
     }
 }
