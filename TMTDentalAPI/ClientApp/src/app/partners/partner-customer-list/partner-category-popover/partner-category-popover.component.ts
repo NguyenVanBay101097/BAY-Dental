@@ -16,6 +16,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   value_partnerCategoryPopOver: any;
   @Input() tags = [];
   @Input() dataPopOver = [];
+  tags_temp;
   search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
 
@@ -37,6 +38,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   ngOnInit() {
     this.loadPartnerCategoryPopOver();
 
+    this.tags_temp = this.tags;
     // this.searchUpdatePopOver.pipe(
     //   debounceTime(300),
     //   distinctUntilChanged())
@@ -87,6 +89,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
     val.tagIds = [];
+    this.tags = this.tags_temp;
     this.tags.forEach(element => {
       val.tagIds.push(element.Id);
     });

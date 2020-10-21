@@ -21,12 +21,17 @@
         </div>
     </div>
     <div class="o_cp_right">
-        <div>
-            <kendo-combobox [data]="filteredCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
-                (valueChange)="onCategChange($event)" [textField]="'name'" #categCbx [(ngModel)]="searchCateg"
-                [valueField]="'id'" [popupSettings]="{width: 'auto'}">
-            </kendo-combobox>
-        </div>
+        <kendo-multiselect
+            [data]="filteredCategs"
+            [valueField]="'id'"
+            [textField]="'name'"
+            [(ngModel)]="searchCateg"
+            [placeholder]="'Nhóm khách hàng'" 
+            [filterable]="true"
+            (valueChange)="onCategChange($event)"
+            #categMst
+        >
+        </kendo-multiselect>
     </div>
 </div>
 

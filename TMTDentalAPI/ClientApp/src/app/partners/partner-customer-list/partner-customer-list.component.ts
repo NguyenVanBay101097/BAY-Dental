@@ -9,7 +9,7 @@ import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerImportComponent } from '../partner-import/partner-import.component';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
@@ -35,7 +35,7 @@ export class PartnerCustomerListComponent implements OnInit {
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
 
-  @ViewChild("categCbx", { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   gridFilter: CompositeFilterDescriptor;
@@ -57,16 +57,16 @@ export class PartnerCustomerListComponent implements OnInit {
         this.updateFilter();
       });
 
-    this.categCbx.filterChange
+    this.categMst.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
-        tap(() => (this.categCbx.loading = true)),
+        tap(() => (this.categMst.loading = true)),
         switchMap((value) => this.searchCategories(value))
       )
       .subscribe((result) => {
         this.filteredCategs = result;
-        this.categCbx.loading = false;
+        this.categMst.loading = false;
       });
 
     this.loadFilteredCategs();

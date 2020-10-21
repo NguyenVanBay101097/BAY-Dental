@@ -21,7 +21,7 @@
 
 <ng-template #popContent>
     <div>
-        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags" #list [filterable]="true"
+        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags_temp" #list [filterable]="true"
             [textField]="'Name'" [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
             [valueNormalizer]="valueNormalizer">
         </kendo-multiselect>
