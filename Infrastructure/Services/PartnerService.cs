@@ -146,33 +146,6 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<PartnerDisplay> GetOnChangeGenderPartner(GenderPartner val)
-        {
-            var modelname = "";
-            var modelDataObj = GetService<IIRModelDataService>();
-            var partner = !val.Id.HasValue ? new Partner() : await GetPartnerForDisplayAsync(val.Id.Value);                   
-            if (val.Name == "male")
-                modelname = "man";
-            else if (val.Name == "female")
-                modelname = "woman";
-            else if (val.Name == "other")
-                modelname = string.Empty;
-          
-            var partnerTitle = modelDataObj.GetRef<PartnerTitle>($"base.partner_title_{modelname}").Result;
-            if (partnerTitle != null)
-            {
-                partner.Title = partnerTitle;
-                partner.TitleId = partnerTitle.Id;
-            }
-
-            partner.Gender = val.Name;
-
-            var res = _mapper.Map<PartnerDisplay>(partner);
-
-            return res;
-        }
-
-
         public async Task<PagedResult2<PartnerBasic>> GetPagedResultAsync(PartnerPaged val)
         {
             var query = GetQueryPaged(val);

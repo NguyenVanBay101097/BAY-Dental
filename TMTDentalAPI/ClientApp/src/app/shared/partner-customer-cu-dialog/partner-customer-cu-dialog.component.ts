@@ -512,15 +512,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   onChangeGender(gender) {
-    var rs = new GenderPartner();
-    rs.name = gender;
-    rs.id = !this.id ? null : this.id;
-    debugger
-      this.partnerService.onChangeGenderPartner(rs).subscribe((result) => {
-        this.formGroup.patchValue(result);
-        this.formGroup.get("dateObj").setValue(new Date());
-      });
-    
+    this.partnerService.getDefaultTitle({ gender: gender }).subscribe((result: any) => {
+      this.formGroup.get('title').setValue(result);
+    });
   }
 
 

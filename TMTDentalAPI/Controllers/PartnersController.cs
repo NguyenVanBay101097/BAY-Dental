@@ -110,13 +110,18 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> OnChangeGenderPartnerAsync(GenderPartner val)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultTitle(string gender)
         {
-            var res = await _partnerService.GetOnChangeGenderPartner(val);
-            return Ok(res);
-        }
+            PartnerTitle title = null;
+            if (gender == "male")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man");
+            else if (gender == "female")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_woman");
 
+            var basic = title != null ? _mapper.Map<PartnerTitleBasic>(title) : null;
+            return Ok(basic);
+        }
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]

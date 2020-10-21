@@ -88,7 +88,7 @@ export class PartnerImageBasic {
     uploadId: string;
 }
 
-export class GenderPartner{
+export class GenderPartner {
     id: string;
     name: string;
 }
@@ -413,9 +413,9 @@ export class PartnerService {
     deleteParnerImage(id) {
         return this.http.delete(this.baseApi + this.apiPartnerImage + '/' + id);
     }
-    
-    onChangeGenderPartner(val){
-        return this.http.post(this.baseApi + this.apiUrl + '/OnChangeGenderPartner', val)
+
+    getDefaultTitle(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetDefaultTitle', { params: new HttpParams({ fromObject: val }) });
     }
 }
 
