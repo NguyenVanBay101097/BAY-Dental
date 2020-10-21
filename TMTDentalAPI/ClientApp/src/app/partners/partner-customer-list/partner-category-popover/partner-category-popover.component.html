@@ -21,9 +21,9 @@
 
 <ng-template #popContent>
     <div>
-        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags_temp" #list [filterable]="true"
-            [textField]="'Name'" [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
-            [valueNormalizer]="valueNormalizer">
+        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags_temp"
+            (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'Name'" [valueField]="'Id'"
+            placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true" [valueNormalizer]="valueNormalizer">
         </kendo-multiselect>
         <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">
             Lưu

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
@@ -39,12 +39,17 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     this.loadPartnerCategoryPopOver();
 
     this.tags_temp = this.tags;
-    // this.searchUpdatePopOver.pipe(
-    //   debounceTime(300),
-    //   distinctUntilChanged())
-    //   .subscribe((value) => {
-    //     this.loadPartnerCategoryPopOver(value);
-    //   });
+
+    this.searchUpdatePopOver.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
+        this.loadPartnerCategoryPopOver(value);
+      });
+  }
+
+  handleFilter(value) {
+    this.loadPartnerCategoryPopOver(value);
   }
 
   loadPartnerCategoryPopOver(q?: string) {

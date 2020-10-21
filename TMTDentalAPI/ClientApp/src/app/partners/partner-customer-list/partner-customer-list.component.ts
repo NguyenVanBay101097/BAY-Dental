@@ -31,7 +31,7 @@ export class PartnerCustomerListComponent implements OnInit {
   opened = false;
 
   search: string;
-  searchCateg: PartnerCategoryBasic;
+  searchCategs: PartnerCategoryBasic[];
   filteredCategs: PartnerCategoryBasic[];
   searchUpdate = new Subject<string>();
 
@@ -122,29 +122,6 @@ export class PartnerCustomerListComponent implements OnInit {
     this.updateFilter();
   }
 
-  loadDataFromApi() {
-    var val = new PartnerPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.customer = true;
-    val.search = this.search || '';
-    val.categoryId = this.searchCateg ? this.searchCateg.id : "";
-
-    this.loading = true;
-    this.partnerService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.gridData = res;
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
-  }
-
   loadFilteredCategs() {
     this.searchCategories().subscribe(
       (result) => (this.filteredCategs = result)
@@ -152,9 +129,10 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onCategChange(value) {
-    this.searchCateg = value;
-    if (this.searchCateg) {
-      this.advanceFilter.params.tagIds = [this.searchCateg.id];
+    this.searchCategs = value;
+    var tagIds = this.searchCategs.map(x => x.id);
+    if (tagIds.length) {
+      this.advanceFilter.params.tagIds = tagIds;
     } else {
       delete this.advanceFilter.params.tagIds;
     }
@@ -179,7 +157,7 @@ export class PartnerCustomerListComponent implements OnInit {
     var paged = new PartnerPaged();
     paged.customer = true;
     paged.search = this.search || "";
-    paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
+    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
     this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
       let filename = "danh_sach_khach_hang";
       let newBlob = new Blob([rs], {

@@ -69,9 +69,15 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options)
+        public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
         {
             var results = await _partnerService.GetGridViewModelsAsync();
+            if (tagIds != null && tagIds.Any())
+            {
+                //filter query
+                var filterPartnerIds = await _partnerCategoryRelService.SearchQuery(x => tagIds.Contains(x.CategoryId)).Select(x => x.PartnerId).Distinct().ToListAsync();
+                results = results.Where(x => filterPartnerIds.Contains(x.Id));
+            }
 
             var partnerVM = options.ApplyTo(results) as IQueryable<GridPartnerViewModel>;
             var partnerVMList = partnerVM.ToList();

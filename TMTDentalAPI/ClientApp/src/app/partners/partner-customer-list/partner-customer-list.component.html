@@ -21,17 +21,12 @@
         </div>
     </div>
     <div class="o_cp_right">
-        <kendo-multiselect
-            [data]="filteredCategs"
-            [valueField]="'id'"
-            [textField]="'name'"
-            [(ngModel)]="searchCateg"
-            [placeholder]="'Nhóm khách hàng'" 
-            [filterable]="true"
-            (valueChange)="onCategChange($event)"
-            #categMst
-        >
-        </kendo-multiselect>
+        <div>
+            <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'"
+                [(ngModel)]="searchCategs" [placeholder]="'Nhóm khách hàng'" [filterable]="true"
+                (valueChange)="onCategChange($event)" #categMst>
+            </kendo-multiselect>
+        </div>
     </div>
 </div>
 
@@ -80,8 +75,8 @@
                         <i class="fa fa-tags"></i>
                     </span>
                 </a> -->
-                <app-partner-category-popover [tags]="dataItem.Tags" [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
-                    (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.Tags" [otherInput]="this.popover"
+                    (otherOutput)="closePopOver($event)" (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id">
                 </app-partner-category-popover>
                 <!-- <div *ngIf="dataItem.Tags && dataItem.Tags.length ; else editcate">
                     <app-partner-category-popover [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
