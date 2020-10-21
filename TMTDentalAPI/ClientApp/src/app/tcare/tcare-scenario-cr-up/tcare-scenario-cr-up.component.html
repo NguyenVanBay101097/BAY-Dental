@@ -48,7 +48,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <label class="o_form_label oe_edit_only">Kênh gửi</label>
                                     <div>
-                                        <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
+                                        <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'" (selectionChange)="onSelectChannel($event)"
                                             [filterable]="true" #channelSocialCbx formControlName="channelSocial"
                                             [valueField]="'id'">
                                             <ng-template kendoComboBoxItemTemplate let-dataItem>
@@ -131,7 +131,7 @@
                     </div>
                     <div class="col-8">
                         <app-tcare-campaign-create-update *ngIf="campaign" (timeChange)="timeChangeCampaign($event)"
-                            (actionNext)="actionNext($event)" [campaign]="campaign">
+                            (actionNext)="actionNext($event)" [campaign]="campaign" [textareaLength]="textareaLength">
                         </app-tcare-campaign-create-update>
                     </div>
 
