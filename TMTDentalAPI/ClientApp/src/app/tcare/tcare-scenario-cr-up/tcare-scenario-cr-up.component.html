@@ -5,8 +5,8 @@
                 <a routerLink="/tcare/scenarios">{{title}}</a>
             </li>
             <li class="active">
-                    <span *ngIf="id">{{scenario.name}}</span>
-                    <span *ngIf="!id">Mới</span>
+                <span *ngIf="id">{{scenario.name}}</span>
+                <span *ngIf="!id">Mới</span>
 
             </li>
         </ol>
@@ -42,56 +42,34 @@
                     </div>
                 </div>
                 <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_4">
+                    <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Kênh gửi
+                                    </label>
+                                </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <label class="o_form_label oe_edit_only">Kênh gửi</label>
-                                    <div>
-                                        <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
-                                            [filterable]="true" #channelSocialCbx formControlName="channelSocial"
-                                            [valueField]="'id'">
-                                            <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                                <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
-                                            </ng-template>
-                                        </kendo-combobox>
-                                        <div
-                                            *ngIf="channelSocialControl.invalid && (channelSocialControl.dirty || channelSocialControl.touched || submitted)">
-                                            <label *ngIf="channelSocialControl.errors.required" style="color: red;">Kênh
-                                                gửi không được để trống !</label>
-                                        </div>
+                                    <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
+                                        [filterable]="true" #channelSocialCbx formControlName="channelSocial"
+                                        [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
+                                        </ng-template>
+                                    </kendo-combobox>
+                                    <div
+                                        *ngIf="channelSocialControl.invalid && (channelSocialControl.dirty || channelSocialControl.touched || submitted)">
+                                        <label *ngIf="channelSocialControl.errors.required" style="color: red;">Kênh
+                                            gửi không được để trống !</label>
                                     </div>
-
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_8">
-                      
+                    <table class="o_group o_inner_group o_group_col_6">
                     </table>
                 </div>
-                <!-- <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Tên kịch bản</label>
-                    <h1>
-                        <input type="text" name="name" class="form-control" formControlName="name">
-                    </h1>
-                    <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submitted)">
-                        <label *ngIf="nameControl.errors.required">Nhập tên kịch bản</label>
-                    </div>
-                </div>
-                <div>
-                    <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'" [filterable]="true"
-                        #channelSocialCbx formControlName="channelSocial" [valueField]="'id'" [valuePrimitive]="true">
-                        <ng-template kendoComboBoxItemTemplate let-dataItem>
-                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
-                        </ng-template>
-                    </kendo-combobox>
-                    <div
-                        *ngIf="channelSocialControl.invalid && (channelSocialControl.dirty || channelSocialControl.touched || submitted)">
-                        <label *ngIf="channelSocialControl.errors.required" style="color: red;">Kênh
-                            gửi không được để trống !</label>
-                    </div>
-                </div> -->
                 <div class="mb-2">
                     <button type="button" (click)="addCampaign()" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Thêm chiến dịch
