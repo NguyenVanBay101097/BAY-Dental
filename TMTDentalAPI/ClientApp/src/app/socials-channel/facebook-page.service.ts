@@ -17,6 +17,11 @@ export class ChannelSocialPaging {
     items: ChannelSocial[];
 }
 
+export class MultiUserProfilesVm{
+    pageId: string;
+    userIds: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class FacebookPageService {
     apiUrl = 'api/FacebookPages';
@@ -52,6 +57,14 @@ export class FacebookPageService {
 
     syncNumberPhoneUsers(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SyncNumberPhoneUsers', ids);
+    }
+
+    syncPartners(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SyncPartnersForNumberPhone', ids);
+    }
+
+    syncPartnerForMultiUsers(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SyncPartnersForMultiUser', val);
     }
 
     refreshPage(val: any) {

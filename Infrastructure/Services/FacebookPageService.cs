@@ -333,6 +333,17 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task SyncPartnersForMultiUsers(MultiUserProfilesVm val)
+        {
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var page = await SearchQuery(x => x.Id == val.PageId).FirstOrDefaultAsync();
+         
+            var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id ).ToListAsync();
+
+            foreach (var user in users)
+                await UpdatePartnerIdOfUserProfile(user);
+        }
+
         public async Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -346,19 +357,49 @@ namespace Infrastructure.Services
 
         }
 
+
+
         public async Task ProcessSyncPartners(IEnumerable<FacebookPage> self)
         {
             ///get list facebook page
             foreach(var page in self)
             {
                 ///get list facebook user profile 
-                var profiles = await GetAllUserProfileOfThePage(page.Id);
+                var profiles = await GetAllUserProfileOfPage(page.Id);
+                //get list had condition
+                var users = profiles.Where(x => !string.IsNullOrEmpty(x.Phone) &&  x.PartnerId == null).ToList();
+                foreach (var user in users)
+                    await UpdatePartnerIdOfUserProfile(user);
+
             }
         }
 
-        public async Task UpdatePartnerIdOfUserProfile(FacebookUserProfile user, FacebookPage page)
+        public async Task UpdatePartnerIdOfUserProfile(FacebookUserProfile user)
         {
+            var partnerObj = GetService<IPartnerService>();
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var partnes = await partnerObj.SearchQuery(x=> !string.IsNullOrEmpty(x.Phone)).ToListAsync();
+            var partnerdict = partnes.GroupBy(x => x.Phone).ToDictionary(x => x.Key, x => x.ToList());
+            var listPartnerId = new List<Guid>();
 
+            if (user == null)
+                return;
+
+            var listPhone = user.Phone == null ? null : user.Phone.Split(",");
+            if (listPhone == null)
+                return;
+            foreach(var phone in listPhone)
+            {
+                var isUpdate = !string.IsNullOrWhiteSpace(phone) && partnerdict.ContainsKey(phone) ? true : false;
+                var partnerId = isUpdate ? partnerdict[phone]?[0].Id : null;
+                if (partnerId.HasValue)
+                    listPartnerId.Add(partnerId.Value);
+            }
+
+            if (listPartnerId.Any())
+                user.PartnerId = listPartnerId.FirstOrDefault();
+
+            await userProfileObj.UpdateAsync(user);
         }
 
         /// <summary>
@@ -370,7 +411,7 @@ namespace Infrastructure.Services
         {
             foreach (var page in self)
             {             
-                var profiles = await GetAllUserProfileOfThePage(page.Id);
+                var profiles = await GetAllUserProfileOfPage(page.Id);
 
                 var tasks = profiles.Select(x => UpdateNumberPhoneUserProfile(x, page)).ToList();
                 var limit = 200;
@@ -384,21 +425,18 @@ namespace Infrastructure.Services
                 }
 
                 //foreach (var profile in profiles)
-                //{
                 //    await UpdateNumberPhoneUserProfile(profile, page);
-                //}
+
                 //BackgroundJob.Enqueue<FacebookPageService>(x => x.UpdateNumberPhoneUserProfile(profile, page));
 
             }
         }
 
-        public async Task<IEnumerable<FacebookUserProfile>> GetAllUserProfileOfThePage(Guid pageId)
+        public async Task<IEnumerable<FacebookUserProfile>> GetAllUserProfileOfPage(Guid pageId)
         {
             var userProfileObj = GetService<IFacebookUserProfileService>();
-
             var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == pageId).ToListAsync();
             return profiles;
-
         }
 
 
@@ -1112,6 +1150,12 @@ namespace Infrastructure.Services
 
         [JsonProperty("id")]
         public string Id { get; set; }
+    }
+
+    public class MultiUserProfilesVm
+    {
+        public Guid PageId { get; set; }
+        public IEnumerable<Guid> UserIds { get; set; } = new List<Guid>();
     }
 
 }
