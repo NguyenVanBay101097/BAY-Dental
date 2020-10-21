@@ -14,7 +14,7 @@ namespace Infrastructure.Helpers
             var section = configuration.GetSection("ConnectionStrings");
             var catalogConnection = section["CatalogConnection"];
             if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
+                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf("TMTDentalCatalogDb")) + "TMTDentalCatalogDb__" + db;
 
             DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
             builder.UseSqlServer(catalogConnection);
