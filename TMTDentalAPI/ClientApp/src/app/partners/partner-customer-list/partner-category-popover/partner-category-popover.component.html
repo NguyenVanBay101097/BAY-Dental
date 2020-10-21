@@ -5,7 +5,7 @@
 </button> -->
 
 <a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="false" [popoverTitle]="popTitle"
-    #popOver="ngbPopover" placement="left" data-container="body">
+    #popOver="ngbPopover" placement="left" data-container="body" (click)="onToggleTag(popOver)" triggers="manual" (shown)="onShown()">
     <span *ngFor="let tag of tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
     <span *ngIf="!tags.length" class="badge badge-info">
         <i class="fa fa-tags"></i>
@@ -22,8 +22,9 @@
 <ng-template #popContent>
     <div>
         <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags_temp"
-            (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'Name'" [valueField]="'Id'"
-            placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true" [valueNormalizer]="valueNormalizer">
+            (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'Name'"
+            [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
+            [valueNormalizer]="valueNormalizer">
         </kendo-multiselect>
         <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">
             Lưu

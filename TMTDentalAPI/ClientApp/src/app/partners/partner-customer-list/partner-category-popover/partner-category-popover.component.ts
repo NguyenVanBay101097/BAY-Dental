@@ -22,6 +22,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
 
   @Input() rowPartnerId: string;
   @Output() onSave = new EventEmitter();
+  @Output() shown = new EventEmitter();
 
   @Output() otherOutput = new EventEmitter();
   @Input() otherInput: any;
@@ -36,8 +37,6 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadPartnerCategoryPopOver();
-
     this.tags_temp = this.tags;
 
     this.searchUpdatePopOver.pipe(
@@ -46,6 +45,14 @@ export class PartnerCategoryPopoverComponent implements OnInit {
       .subscribe(value => {
         this.loadPartnerCategoryPopOver(value);
       });
+  }
+
+  onShown() {
+    this.shown.emit(null);
+  }
+
+  close() {
+    this.popover.close();
   }
 
   handleFilter(value) {
@@ -60,22 +67,13 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     });
   }
 
-  onToggleCategory(popOver) {
-    if (this.otherInput && this.otherInput !== popOver) {
-      this.otherInput.close();
-      this.value_partnerCategoryPopOver = [];
-    }
-
+  onToggleTag(popOver) {
     if (popOver.isOpen()) {
       popOver.close();
       this.value_partnerCategoryPopOver = [];
-
     } else {
-      // this.getValueDefault();
       this.loadPartnerCategoryPopOver();
       popOver.open();
-      this.popover = popOver;
-      this.otherOutput.emit(popOver);
     }
   }
 
@@ -90,19 +88,12 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   // }
 
   SavePartnerCategories() {
-    console.log(this.value_partnerCategoryPopOver);
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
-    val.tagIds = [];
-    this.tags = this.tags_temp;
-    this.tags.forEach(element => {
-      val.tagIds.push(element.Id);
-    });
+    val.tagIds = this.tags_temp.map(x => x.Id);
     this.partnerService.updateTags(val).subscribe(() => {
-      // this.loadDataFromApi();
-      this.value_partnerCategoryPopOver = [];
-      this.onToggleCategory(this.popover);
-      // this.onSave.emit(val);
+      this.popover.close();
+      this.onSave.emit(this.tags_temp);
     });
   }
 

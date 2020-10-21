@@ -10,7 +10,7 @@ export class PartnerCategoriesService extends ODataService {
 
     public searchCombobox(q?: string) {
         var state: any = {
-            $top: 10
+            take: 10
         };
 
         if (q) {

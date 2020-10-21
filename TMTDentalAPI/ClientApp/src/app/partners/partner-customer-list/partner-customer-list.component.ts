@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
@@ -13,6 +13,7 @@ import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
+import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -37,6 +38,7 @@ export class PartnerCustomerListComponent implements OnInit {
 
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
+  @ViewChildren(PartnerCategoryPopoverComponent) tagPopovers: QueryList<PartnerCategoryPopoverComponent>;
 
   gridFilter: CompositeFilterDescriptor;
   gridSort = [{ field: 'DisplayName', dir: 'asc' }];
@@ -70,6 +72,13 @@ export class PartnerCustomerListComponent implements OnInit {
       });
 
     this.loadFilteredCategs();
+  }
+
+  onTagPopoverShown(popover) {
+    var anothers = this.tagPopovers.filter(x => x != popover);
+    anothers.forEach(com => {
+      com.close();
+    });
   }
 
   updateFilter() {
