@@ -382,6 +382,12 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// danh sách các số điện thoại của các textbox
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
         public async Task<List<string>> _LoadMessageUserProfile(FacebookUserProfile user, FacebookPage page)
         {
             List<string> list = new List<string>();
@@ -431,10 +437,16 @@ namespace Infrastructure.Services
                     }
 
                 }             
-                return list;
+                return list.Distinct().ToList();
             }
         }
 
+
+        /// <summary>
+        /// lấy ra các số điện thoại trong 1 textbox
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private List<string> GetNumberPhone(string text)
         {
             var listphone = new List<string>();
@@ -459,7 +471,7 @@ namespace Infrastructure.Services
                     listphone.Add(match.Value.ToString());
                 }
             }
-            return listphone;
+            return listphone.Distinct().ToList();
         }
 
 
