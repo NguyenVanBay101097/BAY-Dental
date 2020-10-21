@@ -213,7 +213,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<string>> GetListPSId(Guid FBpageId)
         {
             var facebookpage = GetService<IFacebookPageService>();
-            var page = facebookpage.SearchQuery(x => x.Id == FBpageId).FirstOrDefault();
+            var page = await facebookpage.SearchQuery(x => x.Id == FBpageId).FirstOrDefaultAsync();
             if (page == null)
                 throw new Exception($"trang {page.PageName} vui lòng kiểm tra lại !");
             var errorMaessage = "";
@@ -325,11 +325,39 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
             if (self.Where(x => x.Type == "facebook").Any())
-                await GetAllUserProfileOfThePage(self);
+                await ProcessUpdateNumberPhone(self);
             //else if (self.Where(x => x.Type == "zalo").Any())
             //    await SyncZaloUsers(self);
             //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
             //if (zl_pages.Any())
+
+        }
+
+        public async Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (self.Where(x => x.Type == "facebook").Any())
+                await ProcessSyncPartners(self);
+            //else if (self.Where(x => x.Type == "zalo").Any())
+            //    await SyncZaloUsers(self);
+            //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
+            //if (zl_pages.Any())
+
+        }
+
+        public async Task ProcessSyncPartners(IEnumerable<FacebookPage> self)
+        {
+            ///get list facebook page
+            foreach(var page in self)
+            {
+                ///get list facebook user profile 
+                var profiles = await GetAllUserProfileOfThePage(page.Id);
+            }
+        }
+
+        public async Task UpdatePartnerIdOfUserProfile(FacebookUserProfile user, FacebookPage page)
+        {
 
         }
 
@@ -338,16 +366,11 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="PageId"></param>
         /// <returns></returns>
-        public async Task GetAllUserProfileOfThePage(IEnumerable<FacebookPage> self)
+        public async Task ProcessUpdateNumberPhone(IEnumerable<FacebookPage> self)
         {
             foreach (var page in self)
-            {
-                var userProfileObj = GetService<IFacebookUserProfileService>();
-
-                var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == page.Id)
-                    .Include(x => x.TagRels)
-                    .Include("TagRels.Tag")
-                    .ToListAsync();
+            {             
+                var profiles = await GetAllUserProfileOfThePage(page.Id);
 
                 var tasks = profiles.Select(x => UpdateNumberPhoneUserProfile(x, page)).ToList();
                 var limit = 200;
@@ -368,6 +391,16 @@ namespace Infrastructure.Services
 
             }
         }
+
+        public async Task<IEnumerable<FacebookUserProfile>> GetAllUserProfileOfThePage(Guid pageId)
+        {
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+
+            var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == pageId).ToListAsync();
+            return profiles;
+
+        }
+
 
         public async Task UpdateNumberPhoneUserProfile(FacebookUserProfile user, FacebookPage page)
         {
@@ -436,7 +469,7 @@ namespace Infrastructure.Services
                         }
                     }
 
-                }             
+                }
                 return list.Distinct().ToList();
             }
         }
