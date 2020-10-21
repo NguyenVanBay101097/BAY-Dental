@@ -4572,7 +4572,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("PartnerId");
 
-                    b.ToTable("PartnerPartnerCategoryRels");
+                    b.ToTable("PartnerPartnerCategoryRel");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>

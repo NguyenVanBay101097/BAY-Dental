@@ -26,7 +26,7 @@ namespace TMTDentalAPI.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             //nen check version de han che viec migrate hay ko?
-            var tenant = context.GetTenant<AppTenant>();
+            //var tenant = context.GetTenant<AppTenant>();
             //if (tenant != null)
             //{
             //    //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
@@ -45,10 +45,10 @@ namespace TMTDentalAPI.Middlewares
             //        await dbContext.Database.MigrateAsync();
             //}
 
-            var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-            if (pendingMigrations.Any())
-                await dbContext.Database.MigrateAsync();
+            //var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+            //var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+            //if (pendingMigrations.Any())
+            //    await dbContext.Database.MigrateAsync();
 
             // Call the next delegate/middleware in the pipeline
             await _next(context);

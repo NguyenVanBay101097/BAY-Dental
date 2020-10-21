@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20201021031900_AddColumnPhoneInFacebookUserProfile")]
-    partial class AddColumnPhoneInFacebookUserProfile
+    [Migration("20201021033343_UpdateTCareTablesV1")]
+    partial class UpdateTCareTablesV1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4574,7 +4574,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("PartnerId");
 
-                    b.ToTable("PartnerPartnerCategoryRels");
+                    b.ToTable("PartnerPartnerCategoryRel");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.PartnerSource", b =>
