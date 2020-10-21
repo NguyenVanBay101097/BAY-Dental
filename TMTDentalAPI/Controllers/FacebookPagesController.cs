@@ -99,6 +99,26 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _facebookPageService.SyncPartnersForNumberPhone(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SyncPartnersForMultiUser(MultiUserProfilesVm val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _facebookPageService.SyncPartnersForMultiUsers(val);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateFacebookUser()
         {
             if (!ModelState.IsValid)

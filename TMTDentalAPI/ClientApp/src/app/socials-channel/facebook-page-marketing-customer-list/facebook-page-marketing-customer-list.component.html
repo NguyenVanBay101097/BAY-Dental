@@ -2,14 +2,18 @@
     <div>
         <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
         <button class="btn btn-sm btn-primary ml-1" (click)="syncNumberPhoneUsers()">Đồng bộ SĐT người tương tác</button>
+        <button class="btn btn-sm btn-success ml-1" [class.d-none]="isSelected" (click)="syncPartners()">Đồng bộ khách hàng</button>
+        <button class="btn btn-sm btn-success ml-1" [class.d-none]="!isSelected" (click)="syncPartnersMutilUser()">Đồng bộ khách hàng</button>
     </div>  
-    <input class="px-2" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+    <input class="px-2 form-control" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
         (ngModelChange)="this.searchUpdate.next($event)">
 </div>
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }" [kendoGridSelectBy]="'id'" (selectedKeysChange)="selectedKeysChange($event)">
+        <kendo-grid-checkbox-column showSelectAll="true" width="30">              
+        </kendo-grid-checkbox-column>
         <kendo-grid-column title="Hình đại diện" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <img class="rounded-circle" [src]="dataItem.avatar" height="50" width="50">

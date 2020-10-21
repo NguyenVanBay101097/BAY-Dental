@@ -25,5 +25,9 @@ namespace Infrastructure.Services
         Task SyncNumberPhoneUsers(IEnumerable<Guid> ids);
 
         Task RefreshSocial(FacebookPageSimple val);
+
+        Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids);
+
+        Task SyncPartnersForMultiUsers(MultiUserProfilesVm val);
     }
 }
