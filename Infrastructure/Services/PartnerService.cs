@@ -135,6 +135,7 @@ namespace Infrastructure.Services
 
         public string GetGenderDisplay(Partner partner)
         {
+
             switch (partner.Gender)
             {
                 case "female":
