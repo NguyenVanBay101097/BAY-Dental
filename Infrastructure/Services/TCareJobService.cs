@@ -729,6 +729,17 @@ namespace Infrastructure.Services
         public int Day { get; set; }
     }
 
+    public class LastUsedServiceDate
+    {
+        public string Type { get; set; }
+
+        public int NumberInterval { get; set; }
+
+        public string Interval { get; set; }
+
+        public Guid? ProductId { get; set; }
+    }
+
     public class PartnerSendMessageResult
     {
         public string ZaloId { get; set; }
