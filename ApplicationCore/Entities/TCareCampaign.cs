@@ -12,7 +12,6 @@ namespace ApplicationCore.Entities
         public TCareCampaign()
         {
             Active = false;
-            SheduleStart = DateTime.Today;
         }
 
         public string Name { get; set; }
@@ -23,9 +22,13 @@ namespace ApplicationCore.Entities
         public string GraphXml { get; set; }
 
         /// <summary>
-        /// Thời gian chạy (DateTime)
+        /// gửu sau bao nhiêu
         /// </summary>
-        public DateTime? SheduleStart { get; set; }
+        public decimal SheduleStartNumber { get; set; }
+        /// <summary>
+        /// giờ hay là phút: hour , minute
+        /// </summary>
+        public string SheduleStartType { get; set; }
 
         /// <summary>
         /// Lịch sử chạy của 1 message (để sau khi gán tag có thể tìm lại đúng user đó) 

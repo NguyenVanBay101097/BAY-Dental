@@ -17,7 +17,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class TCareCampaignJobService
+    public class TCareCampaignJobService: ITCareCampaignJobService
     {
         private readonly IConfiguration _configuration;
         public TCareCampaignJobService(IConfiguration configuration)
@@ -25,14 +25,14 @@ namespace Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task Run(string db)
+        public async Task Run(string db, IEnumerable<TCareCampaign> camps = null)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                var activeCampaigns = await context.TCareCampaigns.Where(x => x.Active).ToListAsync();
+                var activeCampaigns = camps != null? camps: await context.TCareCampaigns.Where(x => x.Active).ToListAsync();
                 foreach (var campaign in activeCampaigns)
                 {
                     if (!campaign.FacebookPageId.HasValue)
@@ -61,7 +61,8 @@ namespace Infrastructure.Services
                     };
 
                     var outCouponId = Guid.NewGuid();
-                    if (Guid.TryParse(GetCampaignCouponId(campaign.GraphXml), out outCouponId)) messaging.CouponProgramId = outCouponId;
+                    if (Guid.TryParse(GetCampaignCouponId(campaign.GraphXml), out outCouponId))
+                        messaging.CouponProgramId = outCouponId;
 
                     foreach (var profile in profiles)
                     {
@@ -311,8 +312,14 @@ namespace Infrastructure.Services
         {
             //xác định thời điểm gửi tin của chiến dịch
             var date = DateTime.Now;
-            if (campaign.SheduleStart.HasValue)
-                date = date.AddHours(campaign.SheduleStart.Value.Hour).AddMinutes(campaign.SheduleStart.Value.Minute);
+            if (campaign.SheduleStartType == "hour")
+            {
+                date = date.AddHours((double)campaign.SheduleStartNumber);
+            }
+            else if (campaign.SheduleStartType == "minute")
+            {
+                date = date.AddMinutes((double)campaign.SheduleStartNumber);
+            }
             return date;
         }
 

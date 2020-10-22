@@ -144,8 +144,9 @@ export class TcareScenarioCrUpComponent implements OnInit {
       this.campaign.graphXml = data.graphXml;
     }
 
-    if (data.sheduleStart) {
-      this.campaign.sheduleStart = data.sheduleStart;
+    if (data.sheduleStartType) {
+      this.campaign.sheduleStartType = data.sheduleStartType;
+      this.campaign.sheduleStartNumber = data.sheduleStartNumber;
     }
   }
 

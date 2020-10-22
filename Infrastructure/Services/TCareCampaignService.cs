@@ -127,7 +127,8 @@ namespace Infrastructure.Services
             var campaign = await GetByIdAsync(val.Id);
             if (campaign != null)
             {
-                campaign.SheduleStart = val.SheduleStart.HasValue ? val.SheduleStart.Value : DateTime.Today;
+                campaign.SheduleStartType = val.ScheduleStartType;
+                campaign.SheduleStartNumber = val.ScheduleStartNumber;
                 await UpdateAsync(campaign);
             }
         }
