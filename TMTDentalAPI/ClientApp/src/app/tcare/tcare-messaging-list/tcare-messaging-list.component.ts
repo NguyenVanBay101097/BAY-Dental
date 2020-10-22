@@ -30,9 +30,9 @@ export class TcareMessagingListComponent implements OnInit {
   constructor(private tcareScenarioService: TCareScenarioService, private tcareMessagingService: TcareMessagingService, private intlService: IntlService) { }
 
   ngOnInit() {
-    var today = new Date(new Date().toDateString());
-    this.dateFrom = today;
-    this.dateTo = today;
+    // var today = new Date(new Date().toDateString());
+    // this.dateFrom = today;
+    // this.dateTo = today;
 
     this.loadDataFromApi();
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace Infrastructure.Helpers
@@ -13,11 +14,13 @@ namespace Infrastructure.Helpers
         {
             var section = configuration.GetSection("ConnectionStrings");
             var catalogConnection = section["CatalogConnection"];
+
+            SqlConnectionStringBuilder connectionStringbuilder = new SqlConnectionStringBuilder(catalogConnection);
             if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf("TMTDentalCatalogDb")) + "TMTDentalCatalogDb__" + db;
+                connectionStringbuilder["Database"] = $"TMTDentalCatalogDb__{db}";
 
             DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
-            builder.UseSqlServer(catalogConnection);
+            builder.UseSqlServer(connectionStringbuilder.ConnectionString);
 
             return new CatalogDbContext(builder.Options, null, null);
         }
