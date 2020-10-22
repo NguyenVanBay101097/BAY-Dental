@@ -143,7 +143,7 @@ namespace TMTDentalAdmin.Controllers
             using (HttpClient client = new HttpClient(clientHandler))
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.GetAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
+                HttpResponseMessage response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Something fail");
 
