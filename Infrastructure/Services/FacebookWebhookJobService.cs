@@ -269,6 +269,11 @@ namespace Infrastructure.Services
             }
             else if (messaging.Message != null)
             {
+                //check quickreply exist
+                if(messaging.Message.QuickReply.Payload == "")
+                {
+
+                }
             }
 
             await context.SaveChangesAsync();

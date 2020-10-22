@@ -8,6 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { TcareQuickreplyDialogComponent } from 'src/app/tcare/tcare-quickreply-dialog/tcare-quickreply-dialog.component';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -82,7 +83,25 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   }
 
   syncNumberPhoneUsers() {
+    // const modalRef = this.modalService.open(TcareQuickreplyDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    // modalRef.componentInstance.title = 'Tạo nội dung gửi';
+    // modalRef.result.then((val) => {
+    //   if (this.pageId) {
+    //     var res = new MultiUserProfilesVm();
+    //     res.pageId = this.pageId;
+    //     res.userIds = this.rowsSelected;
+    //     res.content = val;
+
+    //     this.facebookPageService.syncPartners(res).subscribe(() => {
+    //       this.loadDataFromApi();
+    //     }, err => {
+    //       console.log(err);
+    //     });
+    //   }
+    //   this.loadDataFromApi();
+    // });
     if (this.pageId) {
+      debugger
       this.facebookPageService.syncNumberPhoneUsers([this.pageId]).subscribe(() => {
         this.loadDataFromApi();
       }, err => {

@@ -323,13 +323,10 @@ namespace Infrastructure.Services
         public async Task SyncNumberPhoneUsers(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
-            if (self.Where(x => x.Type == "facebook").Any())
-                await ProcessUpdateNumberPhone(self);
-            //else if (self.Where(x => x.Type == "zalo").Any())
-            //    await SyncZaloUsers(self);
-            //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
-            //if (zl_pages.Any())
+            var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (fb_pages.Any())
+                await ProcessUpdateNumberPhone(fb_pages);
+
 
         }
 
@@ -337,8 +334,8 @@ namespace Infrastructure.Services
         {
             var userProfileObj = GetService<IFacebookUserProfileService>();
             var page = await SearchQuery(x => x.Id == val.PageId).FirstOrDefaultAsync();
-         
-            var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id ).ToListAsync();
+
+            var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id).ToListAsync();
 
             foreach (var user in users)
                 await UpdatePartnerIdOfUserProfile(user);
@@ -347,9 +344,9 @@ namespace Infrastructure.Services
         public async Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            //var fb_pages = self.Where(x => x.Type == "facebook").ToList();
-            if (self.Where(x => x.Type == "facebook").Any())
-                await ProcessSyncPartners(self);
+            var fb_pages = self.Where(x => x.Type == "facebook").ToList();
+            if (fb_pages.Any())
+                await ProcessSyncPartners(fb_pages);
             //else if (self.Where(x => x.Type == "zalo").Any())
             //    await SyncZaloUsers(self);
             //var zl_pages = self.Where(x => x.Type == "zalo").ToList();
@@ -362,12 +359,12 @@ namespace Infrastructure.Services
         public async Task ProcessSyncPartners(IEnumerable<FacebookPage> self)
         {
             ///get list facebook page
-            foreach(var page in self)
+            foreach (var page in self)
             {
                 ///get list facebook user profile 
                 var profiles = await GetAllUserProfileOfPage(page.Id);
                 //get list had condition
-                var users = profiles.Where(x => !string.IsNullOrEmpty(x.Phone) &&  x.PartnerId == null).ToList();
+                var users = profiles.Where(x => !string.IsNullOrEmpty(x.Phone) && x.PartnerId == null).ToList();
                 foreach (var user in users)
                     await UpdatePartnerIdOfUserProfile(user);
 
@@ -378,7 +375,7 @@ namespace Infrastructure.Services
         {
             var partnerObj = GetService<IPartnerService>();
             var userProfileObj = GetService<IFacebookUserProfileService>();
-            var partnes = await partnerObj.SearchQuery(x=> !string.IsNullOrEmpty(x.Phone)).ToListAsync();
+            var partnes = await partnerObj.SearchQuery(x => !string.IsNullOrEmpty(x.Phone)).ToListAsync();
             var partnerdict = partnes.GroupBy(x => x.Phone).ToDictionary(x => x.Key, x => x.ToList());
             var listPartnerId = new List<Guid>();
 
@@ -388,7 +385,7 @@ namespace Infrastructure.Services
             var listPhone = user.Phone == null ? null : user.Phone.Split(",");
             if (listPhone == null)
                 return;
-            foreach(var phone in listPhone)
+            foreach (var phone in listPhone)
             {
                 var isUpdate = !string.IsNullOrWhiteSpace(phone) && partnerdict.ContainsKey(phone) ? true : false;
                 var partnerId = isUpdate ? partnerdict[phone]?[0].Id : null;
@@ -409,26 +406,48 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task ProcessUpdateNumberPhone(IEnumerable<FacebookPage> self)
         {
-            foreach (var page in self)
-            {             
-                var profiles = await GetAllUserProfileOfPage(page.Id);
 
-                var tasks = profiles.Select(x => UpdateNumberPhoneUserProfile(x, page)).ToList();
-                var limit = 200;
-                var offset = 0;
-                var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                while (subTasks.Any())
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            foreach (var page in self)
+            {
+                var conversations = await LoadConversations(page);
+                //task whenall
+                var allMessages = new List<ApiPagedConversationMessages>();
+                foreach (var conversation in conversations)
                 {
-                    await Task.WhenAll(subTasks);
-                    offset += limit;
-                    subTasks = tasks.Skip(offset).Take(limit).ToList();
+                    var messages = await LoadMessagesOfConversation(page, conversation.Id);
+                    allMessages.AddRange(messages);
                 }
 
-                //foreach (var profile in profiles)
-                //    await UpdateNumberPhoneUserProfile(profile, page);
+                IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
+                foreach (var message in allMessages)
+                {
+                    var psid = message.From.Id;
+                    if (psid == page.PageId)
+                        continue;
 
-                //BackgroundJob.Enqueue<FacebookPageService>(x => x.UpdateNumberPhoneUserProfile(profile, page));
+                    var phones = GetPhonesFromText(message.Message);
+                    if (!psidPhoneDict.ContainsKey(psid))
+                        psidPhoneDict.Add(psid, new List<string>());
 
+                    psidPhoneDict[psid].AddRange(phones);
+                }
+
+                var psids = psidPhoneDict.Keys.ToArray();
+                var profiles = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID)).ToListAsync();
+                var profileDict = profiles.ToDictionary(x => x.PSID, x => x);
+
+                foreach (var item in psidPhoneDict)
+                {
+                    if (!profileDict.ContainsKey(item.Key))
+                        continue;
+                    var profile = profileDict[item.Key];
+                    var phones = item.Value;
+                    profile.Phone = string.Join(",", phones.Distinct().ToList());
+                }
+
+
+                await userProfileObj.UpdateAsync(profiles);
             }
         }
 
@@ -439,41 +458,20 @@ namespace Infrastructure.Services
             return profiles;
         }
 
-
-        public async Task UpdateNumberPhoneUserProfile(FacebookUserProfile user, FacebookPage page)
+        public async Task<List<ApiPagedConversationsData>> LoadConversations(FacebookPage page)
         {
-
-            var userProfileObj = GetService<IFacebookUserProfileService>();
-            /// lấy ra  danh sách  sdt user inbox page
-            var phones = await _LoadMessageUserProfile(user, page);
-            if (phones.Count > 0)
-            {
-                user.Phone = string.Join(",", phones);
-                await userProfileObj.UpdateAsync(user);
-            }
-        }
-
-        /// <summary>
-        /// danh sách các số điện thoại của các textbox
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="page"></param>
-        /// <returns></returns>
-        public async Task<List<string>> _LoadMessageUserProfile(FacebookUserProfile user, FacebookPage page)
-        {
-            List<string> list = new List<string>();
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
-            var pagedRequestUrl = $"{page.PageId}" + "/conversations?fields=messages{from,message}";
+            var pagedRequestUrl = $"{page.PageId}" + "/conversations";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
             pagedRequest.AddPageLimit(25);
-            var errorMaessage = "";
+            var errorMessage = "";
             var res = new List<ApiPagedConversationsData>();
             var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsData>();
             if (pagedRequestResponse.GetExceptions().Any())
             {
-                errorMaessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
-                throw new Exception(errorMaessage);
+                errorMessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
+                throw new Exception(errorMessage);
             }
             else
             {
@@ -488,28 +486,45 @@ namespace Infrastructure.Services
                         //add vào data
                         res.AddRange(pagedRequestResponse.GetResultData());
                     }
-
-
                 }
-
-                var result = res.Where(x => x.Messages.Data.Any(s => s.From.Id == user.PSID)).Select(x => x.Messages).ToList();
-                foreach (var item in result)
-                {
-                    foreach (var dataitem in item.Data)
-                    {
-                        if (dataitem.From.Id != user.PSID)
-                            continue;
-
-                        var num = GetNumberPhone(dataitem.Message);
-                        if (num.Count > 0)
-                        {
-                            list.AddRange(num);
-                        }
-                    }
-
-                }
-                return list.Distinct().ToList();
             }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ApiPagedConversationMessages>> LoadMessagesOfConversation(FacebookPage page, string conversationId)
+        {
+            //List<string> list = new List<string>();
+            var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
+            var pagedRequestUrl = $"{conversationId}" + "/messages?fields=from,message";
+            var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
+            pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
+            pagedRequest.AddPageLimit(25);
+            var errorMessage = "";
+            var res = new List<ApiPagedConversationMessages>();
+            var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationMessages>();
+            if (pagedRequestResponse.GetExceptions().Any())
+            {
+                errorMessage = string.Join("; ", pagedRequestResponse.GetExceptions().Select(x => x.Message));
+                return res;
+            }
+            else
+            {
+                if (pagedRequestResponse.IsDataAvailable())
+                {
+                    res.AddRange(pagedRequestResponse.GetResultData());
+                    //kiểm tra nếu có phân trang
+                    while (pagedRequestResponse.IsNextPageDataAvailable())
+                    {
+                        //lấy dữ liệu lần lượt các trang kế
+                        pagedRequestResponse = pagedRequestResponse.GetNextPageData();
+                        //add vào data
+                        res.AddRange(pagedRequestResponse.GetResultData());
+                    }
+                }
+            }
+
+            return res;
         }
 
 
@@ -518,30 +533,25 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        private List<string> GetNumberPhone(string text)
+        private IEnumerable<string> GetPhonesFromText(string text)
         {
             var listphone = new List<string>();
-            string MatchPhonePattern = @"(^[0-9]{10}$)|(^\+[0-9]{2}\s+[0-9]{2}[0-9]{8}$)|(^[0-9]{3}-[0-9]{4}-[0-9]{4}$)";
+            string MatchPhonePattern = @"((09|03|07|08|05)+([0-9]{8})\b)";
 
             Regex rx = new Regex(MatchPhonePattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            // Find matches.
+            MatchCollection matches = rx.Matches(text);
 
-            string[] parts = text.Split(' ');
-            foreach (string part in parts)
-            {
-                // Find matches.
-                MatchCollection matches = rx.Matches(part);
+            // Report the number of matches found.
+            //int noOfMatches = matches.Count;
 
-                // Report the number of matches found.
-                int noOfMatches = matches.Count;
+            //Do something with the matches
 
+            foreach (System.Text.RegularExpressions.Match match in matches)
                 //Do something with the matches
+                listphone.Add(match.Value.ToString());
 
-                foreach (System.Text.RegularExpressions.Match match in matches)
-                {
-                    //Do something with the matches
-                    listphone.Add(match.Value.ToString());
-                }
-            }
+
             return listphone.Distinct().ToList();
         }
 
@@ -1041,46 +1051,7 @@ namespace Infrastructure.Services
             return true;
         }
 
-        /// <summary>
-        /// gửi tin nhắn lấy số điện thoại khách hàng (event webhook)
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> UserPhoneNumberQuickReply()
-        {
-            var fbPage = await SearchQuery(x => x.PageId == "106476610953590").FirstOrDefaultAsync();
-            var apiClient = new ApiClient(fbPage.PageAccesstoken, FacebookApiVersions.V6_0);
-            var url = $"/me/messages";
 
-            var request = (IPostRequest)ApiRequest.Create(ApiRequest.RequestType.Post, url, apiClient);
-            request.AddParameter("message_type", "RESPONSE");
-            request.AddParameter("recipient", JsonConvert.SerializeObject(new { id = "2338458422920740" }));
-            request.AddParameter("message", JsonConvert.SerializeObject(new Message { Text = "Hãy để lại số điện thoại của bạn , chúng tôi sẽ liên hệ lại", QuickReplies = new List<QuickReply>() { new QuickReply { ContentType = "user_phone_number" } } }));
-
-            try
-            {
-                var response = await request.ExecuteAsync<SendFacebookMessageReponse>();
-                if (response.GetExceptions().Any())
-                {
-                    var error = new SendFacebookMessageReponse
-                    {
-                        error = string.Join(";", response.GetExceptions().Select(x => x.Message))
-                    };
-                    return false;
-                }
-                else
-                {
-                    var result = response.GetResult();
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-
-
-        }
 
 
 
@@ -1089,55 +1060,42 @@ namespace Infrastructure.Services
 
 
 
-    public class Message
-    {
-        [JsonProperty("text")]
-        public string Text { get; set; }
 
-        [JsonProperty("quick_replies")]
-        public List<QuickReply> QuickReplies { get; set; }
-    }
-
-    public class QuickReply
-    {
-        [JsonProperty("content_type")]
-        public string ContentType { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        [JsonProperty("payload")]
-        public string Payload { get; set; }
-
-        [JsonProperty("image_url")]
-        public string ImageUrl { get; set; }
-    }
 
     public class ApiPagedConversationsData
     {
         [DeserializeAs(Name = "id")]
         public string Id { get; set; }
 
-        [DeserializeAs(Name = "messages")]
-        public ApiPagedConversationMessages Messages { get; set; }
+        //[DeserializeAs(Name = "data")]
+        //public List<ApiPagedConversationData> Data { get; set; } = new List<ApiPagedConversationData>();
     }
 
     public class ApiPagedConversationMessages
     {
-        [DeserializeAs(Name = "data")]
-        public List<ApiPagedConversationData> Data { get; set; } = new List<ApiPagedConversationData>();
-    }
+        [DeserializeAs(Name = "id")]
+        public string Id { get; set; }
 
-    public class ApiPagedConversationData
-    {
         [JsonProperty("from")]
         public ApiPagedConversationDataFrom From { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
 
+        //[DeserializeAs(Name = "data")]
+        //public List<ApiPagedConversationDataFroms> Data { get; set; } = new List<ApiPagedConversationDataFroms>();
+    }
+
+    public class ApiPagedConversationData
+    {
         [JsonProperty("id")]
         public string Id { get; set; }
+
+        [JsonProperty("link")]
+        public string Link { get; set; }
+
+        [JsonProperty("updated_time")]
+        public DateTime UpdatedTime { get; set; }
     }
 
     public class ApiPagedConversationDataFrom
@@ -1156,6 +1114,13 @@ namespace Infrastructure.Services
     {
         public Guid PageId { get; set; }
         public IEnumerable<Guid> UserIds { get; set; } = new List<Guid>();
+        public string Content { get; set; }
+    }
+
+    public class objUserPhone
+    {
+        public string PSID { get; set; }
+        public string Phone { get; set; }
     }
 
 }
