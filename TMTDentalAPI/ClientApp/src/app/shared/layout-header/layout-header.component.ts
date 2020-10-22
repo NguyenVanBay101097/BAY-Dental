@@ -47,7 +47,9 @@ export class LayoutHeaderComponent implements OnInit {
 
   loadExpire() {
     this.webService.getExpire().subscribe((res: any) => {
-      this.expire = res.expireText;
+      if(res && res.expireText) {
+        this.expire = res.expireText;
+      }
     });
   }
 

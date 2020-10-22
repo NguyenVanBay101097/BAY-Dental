@@ -218,7 +218,7 @@ namespace TMTDentalAPI.Controllers
         [AllowAnonymous]
         public IActionResult GetExpire()
         {
-            if (_tenant == null) return Ok();
+            if (_tenant == null || !_tenant.DateExpired.HasValue) return Ok();
             TimeSpan diff = _tenant.DateExpired.Value - DateTime.Now;
             string res = string.Format(
                                    "{0} ngày {1} giờ {2} phút",
