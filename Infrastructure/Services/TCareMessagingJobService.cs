@@ -33,16 +33,7 @@ namespace Infrastructure.Services
 
         public async Task ProcessQueue(string db)
         {
-            var section = _configuration.GetSection("ConnectionStrings");
-            var catalogConnection = section["CatalogConnection"];
-            if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
-
-            DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
-            builder.UseSqlServer(catalogConnection);
-
-            await using var context = new CatalogDbContext(builder.Options, null, null);
-            //await using var transaction = await context.Database.BeginTransactionAsync();
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
 
             try
             {
@@ -95,73 +86,86 @@ namespace Infrastructure.Services
                 //làm sao để gửi tin?
                 //điều kiện cần: kênh gửi, danh sách người nhận, nội dung
                 var messaging = await context.TCareMessagings.Where(x => x.Id == messagingId).Include(x => x.FacebookPage)
-                    .Include(x => x.PartnerRecipients).FirstOrDefaultAsync();
+                    .Include(x => x.PartnerRecipients).Include(x => x.TCareCampaign).FirstOrDefaultAsync();
                 if (messaging == null)
                     return;
 
                 var channel = messaging.FacebookPage;
                 if (channel.Type == "facebook" || channel.Type == "zalo")
                 {
-                    //cả 2 đều dựa vào profiles để gửi
-                    if (messaging.MessagingModel == "partner")
+                    var partnerIds = messaging.PartnerRecipients.Select(x => x.PartnerId).ToList();
+                    var profileDict = await GetProfileDict(partnerIds, channel.Id, context);
+
+                    //lấy data để cá nhân hóa nội dung tin nhắn
+                    var send_partner_ids = profileDict.Select(x => x.Key).ToList();
+                    var dataPersonalized = await GetDataPersonalized(send_partner_ids, context);
+                    var dataPersonalizedDict = dataPersonalized.ToDictionary(x => x.Id, x => x);
+
+                    var messages = new List<TCareMessage>();
+                    foreach (var item in profileDict)
                     {
-                        var partnerIds = messaging.PartnerRecipients.Select(x => x.PartnerId).ToList();
-                        var profileDict = await GetProfileDict(partnerIds, channel.Id, context);
+                        var personalized = dataPersonalizedDict[item.Key];
 
-                        //lấy data để cá nhân hóa nội dung tin nhắn
-                        var send_partner_ids = profileDict.Select(x => x.Key).ToList();
-                        var dataPersonalized = await GetDataPersonalized(send_partner_ids, context);
-                        var dataPersonalizedDict = dataPersonalized.ToDictionary(x => x.Id, x => x);
+                        //render nội dung tin nhắn
+                        var template = new Template(messaging.Content, '{', '}');
+                        template.Add("ten_khach_hang", personalized.Name.Split(' ').Last());
+                        template.Add("ten_page", channel.PageName);
+                        template.Add("danh_xung_khach_hang", personalized.Title);
 
-                        var messages = new List<TCareMessage>();
-                        foreach (var item in profileDict)
+                        if (messaging.Content.Contains("{ma_khuyen_mai}") && messaging.CouponProgramId.HasValue)
                         {
-                            var personalized = dataPersonalizedDict[item.Key];
-
-                            //render nội dung tin nhắn
-                            var template = new Template(messaging.Content, '{', '}');
-                            template.Add("ten_khach_hang", personalized.Name.Split(' ').Last());
-                            template.Add("ten_page", channel.PageName);
-                            template.Add("danh_xung_khach_hang", personalized.Title);
-
-                            if (messaging.Content.Contains("{ma_khuyen_mai}") && messaging.CouponProgramId.HasValue)
-                            {
-                                template.Add("ma_khuyen_mai", await CreateNewCoupon(messaging.CouponProgramId.Value, context));
-                            }
-                            var messageContent = template.Render();
-
-                            var message = new TCareMessage()
-                            {
-                                ProfilePartnerId = item.Value,
-                                ChannelSocicalId = messaging.FacebookPageId,
-                                CampaignId = messaging.TCareCampaignId,
-                                PartnerId = item.Key,
-                                MessageContent = messageContent,
-                                TCareMessagingId = messaging.Id,
-                                State = "waiting",
-                                ScheduledDate = messaging.ScheduleDate,
-                            };
-
-                            messages.Add(message);
+                            template.Add("ma_khuyen_mai", await CreateNewCoupon(messaging.CouponProgramId.Value, item.Key, context));
                         }
 
-                        await context.AddRangeAsync(messages);
-                        await context.SaveChangesAsync();
+                        var messageContent = template.Render();
+
+                        var message = new TCareMessage()
+                        {
+                            ProfilePartnerId = item.Value,
+                            ChannelSocicalId = messaging.FacebookPageId,
+                            CampaignId = messaging.TCareCampaignId,
+                            PartnerId = item.Key,
+                            MessageContent = messageContent,
+                            TCareMessagingId = messaging.Id,
+                            State = "waiting",
+                            ScheduledDate = messaging.ScheduleDate,
+                        };
+
+                        messages.Add(message);
                     }
+
+                    await context.AddRangeAsync(messages);
+                    await context.SaveChangesAsync();
                 }
 
                 messaging.State = "done";
                 await context.SaveChangesAsync();
 
+                //xử lý gán nhãn cho những người sẽ gửi
+                if (messaging.TCareCampaign != null && messaging.TCareCampaign.TagId.HasValue)
+                {
+                    var partnerIds = messaging.PartnerRecipients.Select(x => x.PartnerId).ToList();
+                    var tagId = messaging.TCareCampaign.TagId.Value;
+                    var hasTagPartnerIds = await context.PartnerPartnerCategoryRel.Where(x => x.CategoryId == tagId && partnerIds.Contains(x.PartnerId)).Select(x => x.PartnerId).ToListAsync();
+                    var addTagPartnerIds = partnerIds.Except(hasTagPartnerIds).ToList();
+
+                    await context.PartnerPartnerCategoryRel.AddRangeAsync(addTagPartnerIds.Select(x => new PartnerPartnerCategoryRel
+                    {
+                        CategoryId = tagId,
+                        PartnerId = x
+                    }));
+                    await context.SaveChangesAsync();
+                }
+
                 await transaction.CommitAsync();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
         }
 
-        public async Task<string> CreateNewCoupon(Guid programId, CatalogDbContext context)
+        public async Task<string> CreateNewCoupon(Guid programId, Guid partnerId, CatalogDbContext context)
         {
             var program = await context.SaleCouponPrograms.Where(x => x.Id == programId).FirstOrDefaultAsync();
             if (program == null) return "";
@@ -169,13 +173,12 @@ namespace Infrastructure.Services
             {
                 Code = StringUtils.RandomStringDigit(13),
                 ProgramId = programId,
-                DateCreated = DateTime.Now,
-                LastUpdated = DateTime.Now,
-                State = "new",
-                Program = program
+                State = "reserved",
+                Program = program,
+                PartnerId = partnerId
             };
             // check và tính expire date
-            var check= await CheckCodeCoupon(coupon, context);
+            var check = await CheckCodeCoupon(coupon, context);
             if (!check) return "";
 
             ComputeDateExpireCoupon(coupon, context);
@@ -191,7 +194,7 @@ namespace Infrastructure.Services
             if (count > 3)
                 return false;
             self.Code = StringUtils.RandomStringDigit(13);
-           return await CheckCodeCoupon(self, context, count + 1);
+            return await CheckCodeCoupon(self, context, count + 1);
         }
 
         public void ComputeDateExpireCoupon(SaleCoupon self, CatalogDbContext context)
@@ -235,13 +238,13 @@ namespace Infrastructure.Services
             {
                 var ids = partnerIds.Skip(offset).Take(limit);
                 var items = await context.FacebookUserProfiles.Where(x => x.PartnerId.HasValue && ids.Contains(x.Partner.Id) && x.FbPageId == fbFageId)
-                .Select(x => new 
+                .Select(x => new
                 {
                     Id = x.Id,
                     PartnerId = x.PartnerId.Value
                 }).ToListAsync();
 
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     if (!result.ContainsKey(item.PartnerId))
                         result.Add(item.PartnerId, item.Id);
@@ -278,7 +281,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-          
+
 
         //    return await context.Partners.Where(x => x.Id == id && x.Customer == true).FirstOrDefaultAsync();
         //}
@@ -289,7 +292,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-           
+
         //    var partnerProfile = await context.FacebookUserProfiles.Where(x => x.Id == id).FirstOrDefaultAsync();
         //    return partnerProfile;
         //}
@@ -300,7 +303,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-          
+
         //    var campaign = await context.TCareCampaigns.Where(x => x.Id == campId).FirstOrDefaultAsync();
         //    return campaign;
         //}
@@ -311,7 +314,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-          
+
         //    return await context.FacebookPages.Where(x => x.Id == id).FirstOrDefaultAsync();
         //}
 
@@ -321,7 +324,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-          
+
         //    bool check = false;
 
         //    //Create TCareMessageTrace
@@ -373,7 +376,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-           
+
 
         //    var sendResult = await SendMessageTCareTextAsync(messageContent, profile.PSID, channelSocial.PageAccesstoken);
         //    //var trace = await context.TCareMessingTraces.Where(x => x.Id == trace_Id).FirstOrDefaultAsync();
@@ -451,7 +454,7 @@ namespace Infrastructure.Services
         //    var catalogConnection = section["CatalogConnection"];
         //    builder.UseSqlServer(catalogConnection);
         //    await using var context = new CatalogDbContext(builder.Options, null, null);
-           
+
         //    //lấy thông tin message từ facebook api rồi cập nhật cho message log
         //    var apiClient = new ApiClient(access_token, FacebookApiVersions.V6_0);
         //    var url = $"/{message_id}";
@@ -470,7 +473,7 @@ namespace Infrastructure.Services
         //        //    await context.SaveChangesAsync();
         //        //}
 
-                
+
 
         //    }
         //}
@@ -489,7 +492,7 @@ namespace Infrastructure.Services
 
         //        await context.SaveChangesAsync();
         //    }
-           
+
         //}
 
         //public async Task SetTagForPartner(Guid partnerId, Guid TagId)
@@ -530,7 +533,7 @@ namespace Infrastructure.Services
         //    //    await context.SaveChangesAsync();
         //    //}
 
-            
+
         //}
 
         //public async Task UpdateErrorMessage(Guid id)
@@ -547,7 +550,7 @@ namespace Infrastructure.Services
         //        await context.SaveChangesAsync();
         //    }
 
-           
+
         //}
 
         public async Task<SendFacebookMessageReponse> SendMessageTCareTextAsync(string message, string psid, string access_token, string tag = "ACCOUNT_UPDATE")
