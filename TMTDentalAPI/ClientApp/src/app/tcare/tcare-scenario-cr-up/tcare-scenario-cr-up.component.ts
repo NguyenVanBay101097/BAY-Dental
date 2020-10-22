@@ -29,6 +29,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   scenario: TCareScenarioDisplay;
   filterdChannelSocials: any[] ;
   submitted = false;
+  textareaLength = 640;
   constructor(
     private fb: FormBuilder,
     private activeRoute: ActivatedRoute,
@@ -91,6 +92,9 @@ export class TcareScenarioCrUpComponent implements OnInit {
           this.formGroup.patchValue(this.scenario);
           if (result.channelSocial) {
             this.filterdChannelSocials = _.unionBy(this.filterdChannelSocials, result.channelSocial, 'id');
+            if(result.channelSocial.type === 'zalo') {
+              this.textareaLength = 2000;
+            }
           }
         }
       )
@@ -257,6 +261,16 @@ export class TcareScenarioCrUpComponent implements OnInit {
       });
     }
 
+  }
+
+  onSelectChannel(e) {
+    if (e) {
+      if (e.type === 'facebook') {
+        this.textareaLength = 640;
+      } else if (e.type === 'zalo') {
+        this.textareaLength = 2000;
+      }
+    }
   }
 
 }

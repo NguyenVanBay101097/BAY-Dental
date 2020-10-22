@@ -1,6 +1,6 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { TcareService, TCareMessageDisplay } from '../tcare.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { validate } from 'fast-json-patch';
+import { TcareMessageTemplateCuDialogComponent } from '../tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-sequences',
@@ -39,7 +40,8 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   showAudienceFilter: boolean = false;
   messageTemplates: any[];
   listCoupon: any;
-  textareaLength = 640;
+  @Input()textareaLength = 640;
+  mau: any;
 
   //cá nhân hóa
   tabs = [
@@ -56,7 +58,8 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     private facebookPageService: FacebookPageService,
     private intlService: IntlService,
     private templateService: TCareMessageTemplateService,
-    private saleCouponService: SaleCouponProgramService
+    private saleCouponService: SaleCouponProgramService,
+    private modalService : NgbModal
 
   ) { }
 
@@ -205,8 +208,9 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   }
 
   onMessageTemplateSelect(e) {
+    this.mau = e;
     if (!e) { return; }
-
+    this.cbxMess.value = e;
     const templates = JSON.parse(e.content);
     this.formGroup.get('content').setValue(templates[0].text);
   }
@@ -256,5 +260,25 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
         this.textareaLength = 2000;
       }
     }
+  }
+
+  quickCreateMessageTemplateModal() {
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Tạo mẫu tin';
+    modalRef.result.then((val) => {
+      debugger;
+      this.loadMessageTemplate();
+      this.onMessageTemplateSelect(val);
+    });
+  }
+
+  quickUpdateMessageTemplateModal() {
+    const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Sửa mẫu tin';
+    modalRef.componentInstance.id = this.mau.id;
+    modalRef.result.then((val) => {
+      this.loadMessageTemplate();
+      this.onMessageTemplateSelect(val);
+    });
   }
 }

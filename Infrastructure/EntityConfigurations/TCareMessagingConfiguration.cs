@@ -19,6 +19,10 @@ namespace Infrastructure.EntityConfigurations
            .WithMany()
            .HasForeignKey(x => x.TCareCampaignId);
 
+            builder.HasOne(x => x.CouponProgram)
+               .WithMany()
+               .HasForeignKey(x => x.TCareCampaignId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

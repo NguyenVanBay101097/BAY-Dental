@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { FacebookPageService } from '../facebook-page.service';
+import { FacebookPageService, MultiUserProfilesVm } from '../facebook-page.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -28,6 +28,8 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   search: string;
   loading = false;
   searchUpdate = new Subject<string>();
+  rowsSelected: any[];
+  isSelected = false;
 
   pageId: string;
 
@@ -81,8 +83,30 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
   syncNumberPhoneUsers() {
     if (this.pageId) {
-      debugger
       this.facebookPageService.syncNumberPhoneUsers([this.pageId]).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }
+  }
+
+  syncPartners() {
+    if (this.pageId) {
+      this.facebookPageService.syncPartners([this.pageId]).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }
+  }
+
+  syncPartnersMutilUser() {
+    if (this.pageId) {
+      var res = new MultiUserProfilesVm();
+      res.pageId = this.pageId;
+      res.userIds = this.rowsSelected;
+      this.facebookPageService.syncPartnerForMultiUsers(res).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
         console.log(err);
@@ -103,6 +127,16 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  selectedKeysChange(rows: any) {
+    this.rowsSelected = rows;
+    if (this.rowsSelected.length > 0) {
+      this.isSelected = true;
+    } else {
+      this.isSelected = false;
+    }
+
   }
 
   removePartner(dataItem: any, rowIndex) {

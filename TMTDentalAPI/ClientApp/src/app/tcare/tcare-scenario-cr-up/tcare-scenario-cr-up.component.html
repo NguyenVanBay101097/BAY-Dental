@@ -109,7 +109,7 @@
                     </div>
                     <div class="col-8">
                         <app-tcare-campaign-create-update *ngIf="campaign" (timeChange)="timeChangeCampaign($event)"
-                            (actionNext)="actionNext($event)" [campaign]="campaign">
+                            (actionNext)="actionNext($event)" [campaign]="campaign" [textareaLength]="textareaLength">
                         </app-tcare-campaign-create-update>
                     </div>
 

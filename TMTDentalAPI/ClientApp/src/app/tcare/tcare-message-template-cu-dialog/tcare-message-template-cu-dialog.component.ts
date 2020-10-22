@@ -112,13 +112,14 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
       this.templateService.update(this.id, val).subscribe(
         (res) => {
           this.notify('thành công', true);
+          val.id = this.id;
           this.activeModal.close(val);
         }
       );
     } else {
       this.templateService.create(val).subscribe((res) => {
         this.notify('thành công', true);
-        this.activeModal.close(val);
+        this.activeModal.close(res);
       });
     }
   }
