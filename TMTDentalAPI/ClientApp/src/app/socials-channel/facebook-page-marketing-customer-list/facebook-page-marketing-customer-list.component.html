@@ -1,7 +1,7 @@
 <div class="px-3 py-2 d-flex justify-content-between">
     <div>
         <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
-        <button class="btn btn-sm btn-primary ml-1" (click)="syncNumberPhoneUsers()">Đồng bộ SĐT người tương tác</button>
+        <button class="btn btn-sm btn-primary ml-1"  (click)="syncNumberPhoneUsers()">Đồng bộ SĐT người tương tác</button>
         <button class="btn btn-sm btn-success ml-1" [class.d-none]="isSelected" (click)="syncPartners()">Đồng bộ khách hàng</button>
         <button class="btn btn-sm btn-success ml-1" [class.d-none]="!isSelected" (click)="syncPartnersMutilUser()">Đồng bộ khách hàng</button>
     </div>  

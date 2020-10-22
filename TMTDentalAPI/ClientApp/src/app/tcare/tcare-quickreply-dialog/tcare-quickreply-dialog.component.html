@@ -1,0 +1,48 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="position-relative" (clickOutside)=hideEmoji()>
+                                        <textarea type="text" my-autosize class="form-control" id="textarea_mass"
+                                                formControlName="content" [maxlength]="textareaLength"
+                                                (click)="selectArea($event)"  (paste)="selectArea($event)"
+                                                (keyup)="selectArea($event)"
+                                                (focus)="showEmoji()">
+                                        </textarea>
+                                      <!-- <app-tcare-scenario-message-textarea *ngIf="showPluginTextarea" [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-tcare-scenario-message-textarea> -->
+
+                                    </div>
+                                    <div
+                                        *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
+                                        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi không được để trống !</label>
+                                    </div>                                 
+                                </td>
+                            </tr>
+                         
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSend()" accesskey="s">Gửi</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

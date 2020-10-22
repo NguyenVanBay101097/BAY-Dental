@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using Umbraco.Web.Models.ContentEditing;
+using ZaloCSharpSDK;
 
 namespace Infrastructure.Services
 {
@@ -171,6 +172,16 @@ namespace Infrastructure.Services
                                                 var cond = new LastAppointmentDateCondition() { Name = name, Type = type, Day = day };
                                                 conditions.Add(cond);
                                             }
+                                            //lần cuối sử dụng dịch vụ sau bao nhiêu ngày/tuần/tháng
+                                            else if (type == "lastUsedServiceDate")
+                                            {
+                                                int intervalNumber = 0;
+                                                int.TryParse(subReader.GetAttribute("intervalNumber"), out intervalNumber);
+                                                var interval = subReader.GetAttribute("interval");
+
+                                                var cond = new LastUsedServiceDate() { Type = type, NumberInterval = intervalNumber, Interval = interval };
+                                                conditions.Add(cond);
+                                            }
                                         }
                                         break;
                                     }
@@ -251,6 +262,32 @@ namespace Infrastructure.Services
                                 var searchPartnerIds = await query.Where(x => x.Appointments.Max(s => s.Date.Date) == date)
                                    .Select(x => x.Id).ToListAsync();
 
+                                conditionPartnerIds.Add(searchPartnerIds);
+                                break;
+                            }
+                        case "lastUsedServiceDate":
+                            {
+                                var cond = (LastUsedServiceDate)condition;
+                                var date = DateTime.Today;
+                                var numberInterval = cond.NumberInterval;
+                                var interval = cond.Interval;
+                                if (interval == "month")
+                                    date = date.AddMonths(-numberInterval);
+                                else if (interval == "week")
+                                    date = date.AddDays(-numberInterval * 7);
+                                else
+                                    date = date.AddDays(-numberInterval);
+
+                                var states = new string[] { "sale", "done" };
+
+                                var data = await context.SaleOrderLines.Where(x => x.OrderPartnerId.HasValue && states.Contains(x.Order.State))
+                                    .GroupBy(x => x.OrderPartnerId.Value).Select(x => new {
+                                        PartnerId = x.Key,
+                                        LastDate = x.Max(s => s.Order.DateOrder)
+                                    }).ToListAsync();
+
+                                data = data.Where(x => x.LastDate.Date == date).ToList();
+                                var searchPartnerIds = data.Select(x => x.PartnerId).ToList();
                                 conditionPartnerIds.Add(searchPartnerIds);
                                 break;
                             }
@@ -416,6 +453,47 @@ namespace Infrastructure.Services
                 .Replace("@ten_page", channelSocial.PageName)
                 .Replace("@danh_xung_khach_hang", partner.Title);
             return messageContent;
+        }
+
+        public async Task ProcessTag(Guid id, string psid, string db, string type)
+        {
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
+            var campaign = await context.TCareCampaigns.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (campaign == null)
+                return;
+
+            var profile = await context.FacebookUserProfiles.Where(x => x.PSID == psid && x.FbPageId == campaign.FacebookPageId).FirstOrDefaultAsync();
+            if (profile == null || !profile.PartnerId.HasValue)
+                return;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
+            MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
+            MxGraphModel CampaignXML = (MxGraphModel)serializer.Deserialize(memStream);
+
+            if (CampaignXML.Root.AddTag.Any())
+            {
+                var readAddTags = CampaignXML.Root.AddTag.Where(x => x.MxCell.Style == type).FirstOrDefault();
+
+                if (readAddTags != null && readAddTags.Tag.Count > 0)
+                {
+                    var tagIds = readAddTags.Tag.Select(x => x.Id);
+                    var tags = await context.PartnerCategories.Where(x => tagIds.Contains(x.Id)).ToListAsync(); //tránh trường hợp tag đã bị xóa nhưng tồn tại id trong xml
+                    var partner = await context.Partners.Where(x => x.Id == profile.PartnerId).Include(x => x.PartnerPartnerCategoryRels).FirstOrDefaultAsync();
+                    if (partner != null)
+                    {
+                        var tagsToAdd = tags.Where(x => !partner.PartnerPartnerCategoryRels.Any(s => s.CategoryId == x.Id));
+                        foreach (var tag in tagsToAdd)
+                        {
+                            partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel
+                            {
+                                CategoryId = tag.Id,
+                            });
+                        }
+
+                        await context.SaveChangesAsync();
+                    }
+                }
+            }
         }
     }
 

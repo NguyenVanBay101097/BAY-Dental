@@ -49,7 +49,8 @@ namespace Infrastructure.Services
             try
             {
                 var message = await context.TCareMessages.Where(x => x.Id == id)
-                    .Include(x => x.ChannelSocical).Include(x => x.ProfilePartner).FirstOrDefaultAsync();
+                    .Include(x => x.ChannelSocical).Include(x => x.ProfilePartner)
+                    .Include(x => x.Campaign).FirstOrDefaultAsync();
                 if (message == null)
                     return;
 
@@ -73,6 +74,8 @@ namespace Infrastructure.Services
                     {
                         message.State = "sent";
                         message.MessageId = sendResult.message_id;
+
+                        await ProcessAfterSent(message, context);
                     }
 
                     await context.SaveChangesAsync();
@@ -91,6 +94,8 @@ namespace Infrastructure.Services
                     {
                         message.State = "sent";
                         message.MessageId = sendResult.data.message_id;
+
+                        await ProcessAfterSent(message, context);
                     }
                 }
 
@@ -102,6 +107,37 @@ namespace Infrastructure.Services
                 // TODO: Handle failure
                 await transaction.RollbackAsync();
             }
+        }
+
+        public async Task ProcessAfterSent(TCareMessage message, CatalogDbContext context)
+        {
+            //xử lý gán nhãn cho những người sẽ gửi
+            if (message.Campaign != null && message.Campaign.TagId.HasValue)
+            {
+                if (message.PartnerId.HasValue)
+                {
+                    var partnerId = message.PartnerId.Value;
+                    var partner = await context.Partners.Where(x => x.Id == partnerId).Include(x => x.PartnerPartnerCategoryRels).FirstOrDefaultAsync();
+                    if (partner != null)
+                    {
+                        var tagId = message.Campaign.TagId.Value;
+                        var tag = await context.PartnerCategories.Where(x => x.Id == tagId).FirstOrDefaultAsync();
+                        if (tag != null)
+                        {
+                            if (!partner.PartnerPartnerCategoryRels.Any(x => x.CategoryId == tagId))
+                            {
+                                partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel
+                                {
+                                    CategoryId = tagId,
+                                });
+                            }
+
+                            await context.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

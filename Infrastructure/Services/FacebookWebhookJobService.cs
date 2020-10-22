@@ -2,6 +2,7 @@
 using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
+using Hangfire;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -211,6 +212,11 @@ namespace Infrastructure.Services
                 var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == uid && x.ChannelSocical.PageId == pageId &&
                     x.Sent.HasValue && x.Sent <= watermark && !x.Opened.HasValue).ToListAsync();
 
+                var campaignIds = new List<Guid>().AsEnumerable();
+                campaignIds = campaignIds.Union(messages.Where(x => x.CampaignId.HasValue).Select(x => x.CampaignId.Value));
+                foreach (var campaignId in campaignIds)
+                    BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.ProcessTag(campaignId, uid, db, "read"));
+
                 foreach (var message in messages)
                     message.Opened = watermark;
 
@@ -226,6 +232,11 @@ namespace Infrastructure.Services
                 var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == uid && x.ChannelSocical.PageId == pageId &&
                     x.Sent.HasValue && x.Sent <= watermark && !x.Delivery.HasValue).ToListAsync();
 
+                var campaignIds = new List<Guid>().AsEnumerable();
+                campaignIds = campaignIds.Union(messages.Where(x => x.CampaignId.HasValue).Select(x => x.CampaignId.Value));
+                foreach (var campaignId in campaignIds)
+                    BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.ProcessTag(campaignId, uid, db, "unread"));
+
                 foreach (var message in messages)
                     message.Delivery = watermark;
             }
@@ -234,41 +245,49 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task _ProcessFacebook(string db, FacebookWebHookEntryMessaging messaging)
+        public async Task _ProcessFacebook(string db, FacebookWebHookEntryMessaging wh)
         {
-            var section = _configuration.GetSection("ConnectionStrings");
-            var catalogConnection = section["CatalogConnection"];
-            if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
 
-            DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
-            builder.UseSqlServer(catalogConnection);
+            var psid = wh.Sender.Id;
+            var page_id = wh.Recipient.Id;
 
-            await using var context = new CatalogDbContext(builder.Options, null, null);
-
-            var psid = messaging.Sender.Id;
-            var page_id = messaging.Recipient.Id;
-
-            if (messaging.Read != null)
+          
+            if (wh.Read != null)
             {
-                var watermark = messaging.Read.Watermark.ToLocalTime();
+                var watermark = wh.Read.Watermark.ToLocalTime();
                 var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == psid && x.ChannelSocical.PageId == page_id &&
                     x.Sent.HasValue && x.Sent <= watermark && !x.Opened.HasValue).ToListAsync();
+
+                var campaignIds = new List<Guid>().AsEnumerable();
+                campaignIds = campaignIds.Union(messages.Where(x => x.CampaignId.HasValue).Select(x => x.CampaignId.Value));
+                foreach (var campaignId in campaignIds)
+                    BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.ProcessTag(campaignId, psid, db, "read"));
 
                 foreach (var message in messages)
                     message.Opened = watermark;
             }
-            else if (messaging.Delivery != null)
+            else if (wh.Delivery != null)
             {
-                var watermark = messaging.Delivery.Watermark.ToLocalTime();
+                var watermark = wh.Delivery.Watermark.ToLocalTime();
                 var messages = await context.TCareMessages.Where(x => x.ProfilePartner.PSID == psid && x.ChannelSocical.PageId == page_id &&
                     x.Sent.HasValue && x.Sent <= watermark && !x.Delivery.HasValue).ToListAsync();
+
+                var campaignIds = new List<Guid>().AsEnumerable();
+                campaignIds = campaignIds.Union(messages.Where(x => x.CampaignId.HasValue).Select(x => x.CampaignId.Value));
+                foreach (var campaignId in campaignIds)
+                    BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.ProcessTag(campaignId, psid, db, "unread"));
 
                 foreach (var message in messages)
                     message.Delivery = watermark;
             }
-            else if (messaging.Message != null)
+            else if (wh.Message != null)
             {
+                //check quickreply exist
+                if(messaging.Message.QuickReply.Payload == "")
+                {
+
+                }
             }
 
             await context.SaveChangesAsync();

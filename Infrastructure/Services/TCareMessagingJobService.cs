@@ -19,6 +19,9 @@ using Antlr4.StringTemplate;
 using Antlr4;
 using ApplicationCore.Utilities;
 using Infrastructure.Helpers;
+using System.Xml.Serialization;
+using System.IO;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -140,22 +143,6 @@ namespace Infrastructure.Services
 
                 messaging.State = "done";
                 await context.SaveChangesAsync();
-
-                //xử lý gán nhãn cho những người sẽ gửi
-                if (messaging.TCareCampaign != null && messaging.TCareCampaign.TagId.HasValue)
-                {
-                    var partnerIds = messaging.PartnerRecipients.Select(x => x.PartnerId).ToList();
-                    var tagId = messaging.TCareCampaign.TagId.Value;
-                    var hasTagPartnerIds = await context.PartnerPartnerCategoryRel.Where(x => x.CategoryId == tagId && partnerIds.Contains(x.PartnerId)).Select(x => x.PartnerId).ToListAsync();
-                    var addTagPartnerIds = partnerIds.Except(hasTagPartnerIds).ToList();
-
-                    await context.PartnerPartnerCategoryRel.AddRangeAsync(addTagPartnerIds.Select(x => new PartnerPartnerCategoryRel
-                    {
-                        CategoryId = tagId,
-                        PartnerId = x
-                    }));
-                    await context.SaveChangesAsync();
-                }
 
                 await transaction.CommitAsync();
             }
@@ -578,7 +565,6 @@ namespace Infrastructure.Services
                 return result;
             }
         }
-
     }
 
     public class TCareMessagingJobPartnerDataPersonalized
