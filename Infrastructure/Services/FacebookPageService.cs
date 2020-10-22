@@ -406,52 +406,49 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task ProcessUpdateNumberPhone(IEnumerable<FacebookPage> self)
         {
-
-           
+            var userProfileObj = GetService<IFacebookUserProfileService>();
             foreach (var page in self)
             {
                 var conversations = await LoadConversations(page);
                 //task whenall
-                var tasks = conversations.Select(x => updatePhoneUserprofile(page,x.Id)).ToList();
-                var limit = 200;
-                var offset = 0;
-                var subTasks = tasks.Skip(offset).Take(limit).ToList();
-                while (subTasks.Any())
+                var tasks = conversations.Select(x => LoadMessagesOfConversation(page, x.Id)).ToList();
+                var results = await Task.WhenAll(tasks);
+
+                var allMessages = new List<ApiPagedConversationMessages>();
+                foreach(var item in results)
                 {
-                    await Task.WhenAll(subTasks);
-                    offset += limit;
-                    subTasks = tasks.Skip(offset).Take(limit).ToList();
+                    if (item != null)
+                        allMessages.AddRange(item);
                 }
 
-                //IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
-                //foreach (var message in allMessages)
-                //{
-                //    var psid = message.From.Id;
-                //    if (psid == page.PageId)
-                //        continue;
+                IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
+                foreach (var message in allMessages)
+                {
+                    var psid = message.From.Id;
+                    if (psid == page.PageId)
+                        continue;
 
-                //    var phones = GetPhonesFromText(message.Message);
-                //    if (!psidPhoneDict.ContainsKey(psid))
-                //        psidPhoneDict.Add(psid, new List<string>());
+                    var phones = GetPhonesFromText(message.Message);
+                    if (!psidPhoneDict.ContainsKey(psid))
+                        psidPhoneDict.Add(psid, new List<string>());
 
-                //    psidPhoneDict[psid].AddRange(phones);
-                //}
+                    psidPhoneDict[psid].AddRange(phones);
+                }
 
-                //var psids = psidPhoneDict.Keys.ToArray();
-                //var profiles = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID)).ToListAsync();
-                //var profileDict = profiles.ToDictionary(x => x.PSID, x => x);
+                var psids = psidPhoneDict.Keys.ToArray();
+                var profiles = await userProfileObj.SearchQuery(x => psids.Contains(x.PSID)).ToListAsync();
+                var profileDict = profiles.ToDictionary(x => x.PSID, x => x);
 
-                //foreach (var item in psidPhoneDict)
-                //{
-                //    if (!profileDict.ContainsKey(item.Key))
-                //        continue;
-                //    var profile = profileDict[item.Key];
-                //    var phones = item.Value;
-                //    profile.Phone = string.Join(",", phones.Distinct().ToList());
-                //}
+                foreach (var item in psidPhoneDict)
+                {
+                    if (!profileDict.ContainsKey(item.Key))
+                        continue;
+                    var profile = profileDict[item.Key];
+                    var phones = item.Value;
+                    profile.Phone = string.Join(",", phones.Distinct().ToList());
+                }
 
-
-                //await userProfileObj.UpdateAsync(profiles);
+                await userProfileObj.UpdateAsync(profiles);
             }
         }
 
@@ -504,7 +501,7 @@ namespace Infrastructure.Services
             var pagedRequestUrl = $"{page.PageId}" + "/conversations";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
-            pagedRequest.AddPageLimit(25);
+            pagedRequest.AddPageLimit(100);
             var errorMessage = "";
             var res = new List<ApiPagedConversationsData>();
             var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationsData>();
@@ -539,7 +536,7 @@ namespace Infrastructure.Services
             var pagedRequestUrl = $"{conversationId}" + "/messages?fields=from,message";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
-            pagedRequest.AddPageLimit(25);
+            pagedRequest.AddPageLimit(100);
             var errorMessage = "";
             var res = new List<ApiPagedConversationMessages>();
             var pagedRequestResponse = await pagedRequest.ExecutePageAsync<ApiPagedConversationMessages>();
