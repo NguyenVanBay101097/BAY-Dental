@@ -41,7 +41,13 @@ export class PartnerCustomerListComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
   @ViewChild(PartnersBindingDirective, { static: true }) dataBinding: PartnersBindingDirective;
 
-  gridFilter: CompositeFilterDescriptor;
+  gridFilter: CompositeFilterDescriptor = {
+    logic: "and",
+    filters: [
+      { field: "Customer", operator: "eq", value: true },
+    ]
+  };
+  
   gridSort = [{ field: 'DisplayName', dir: 'asc' }];
   advanceFilter: any = {
     // expand: 'Tags,Source',
