@@ -32,7 +32,7 @@
 
 <div class="o_content">
     <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip"
-        style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="2">
+        style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Id" width="100" [locked]="true">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
@@ -68,27 +68,8 @@
         <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
         <kendo-grid-column title="Nhãn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <!-- <a [ngbPopover]="popContent" popoverClass="popover-xl" [popoverTitle]="popTitle" #popOver="ngbPopover"
-                    placement="left" data-container="body">
-                    <span *ngFor="let tag of dataItem.Tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
-                    <span *ngIf="!dataItem.Tags.length" class="badge badge-info">
-                        <i class="fa fa-tags"></i>
-                    </span>
-                </a> -->
-                <app-partner-category-popover #tagPopover (shown)="onTagPopoverShown(tagPopover)" [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
                 </app-partner-category-popover>
-                <!-- <div *ngIf="dataItem.Tags && dataItem.Tags.length ; else editcate">
-                    <app-partner-category-popover [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
-                        (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id" *ngFor="let item of dataItem.Tags">
-                        {{item.Name}}
-                    </app-partner-category-popover>
-                </div>
-                <ng-template #editcate>
-                    <app-partner-category-popover [otherInput]="this.popover" (otherOutput)="closePopOver($event)"
-                        (onSave)="popOverSave($event)" [rowPartnerId]="dataItem.Id">
-                        <i class="fa fa-tags"></i>
-                    </app-partner-category-popover>
-                </ng-template> -->
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="DateOfBirth" title="Ngày sinh" width="120"></kendo-grid-column>

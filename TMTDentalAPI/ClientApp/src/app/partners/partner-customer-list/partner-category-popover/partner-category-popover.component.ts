@@ -22,7 +22,6 @@ export class PartnerCategoryPopoverComponent implements OnInit {
 
   @Input() rowPartnerId: string;
   @Output() onSave = new EventEmitter();
-  @Output() shown = new EventEmitter();
 
   @Output() otherOutput = new EventEmitter();
   @Input() otherInput: any;
@@ -47,16 +46,13 @@ export class PartnerCategoryPopoverComponent implements OnInit {
       });
   }
 
-  onShown() {
-    this.shown.emit(null);
-  }
-
-  close() {
-    this.popover.close();
-  }
-
-  handleFilter(value) {
-    this.loadPartnerCategoryPopOver(value);
+  toggleWithTags(popover, mytags) {
+    if (popover.isOpen()) {
+      popover.close();
+    } else {
+      this.loadPartnerCategoryPopOver();
+      popover.open({ mytags });
+    }
   }
 
   loadPartnerCategoryPopOver(q?: string) {
@@ -65,16 +61,6 @@ export class PartnerCategoryPopoverComponent implements OnInit {
     }, err => {
       console.log(err);
     });
-  }
-
-  onToggleTag(popOver) {
-    if (popOver.isOpen()) {
-      popOver.close();
-      this.value_partnerCategoryPopOver = [];
-    } else {
-      this.loadPartnerCategoryPopOver();
-      popOver.open();
-    }
   }
 
   // getValueDefault() {
@@ -87,13 +73,15 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   //   });
   // }
 
-  SavePartnerCategories() {
+  SavePartnerCategories(tags) {
+    debugger;
+    tags = tags || [];
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
-    val.tagIds = this.tags_temp.map(x => x.Id);
+    val.tagIds = tags.map(x => x.Id);
     this.partnerService.updateTags(val).subscribe(() => {
       this.popover.close();
-      this.onSave.emit(this.tags_temp);
+      this.onSave.emit(tags);
     });
   }
 

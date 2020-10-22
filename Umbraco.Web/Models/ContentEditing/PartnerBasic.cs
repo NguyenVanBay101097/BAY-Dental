@@ -107,7 +107,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Supplier { get; set; }
 
-        public Guid? CategoryId { get; set; }
+        public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
 
         public bool ComputeCreditDebit { get; set; }
     }
