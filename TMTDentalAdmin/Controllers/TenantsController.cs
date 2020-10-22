@@ -138,10 +138,12 @@ namespace TMTDentalAdmin.Controllers
             tenant.DateExpired = val.DateExpired;
             await _tenantService.UpdateAsync(tenant);
 
-            using (HttpClient client = new HttpClient())
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+            using (HttpClient client = new HttpClient(clientHandler))
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.GetAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
+                HttpResponseMessage response = await client.GetAsync($"https://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Something fail");
 
