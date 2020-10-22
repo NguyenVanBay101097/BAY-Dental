@@ -20,17 +20,17 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     public query(state: any, options?: any): void {
         this.fetch(this.tableName, state, options || {})
             .subscribe(
-               (x:any) => {
-                super.next(x);
-                console.log(x);
-               }
-                );
+                (x: any) => {
+                    super.next(x);
+                }
+            );
     }
 
     public fetch(tableName: string, state: any | null, options?: any): Observable<GridDataResult> {
+        options = options || {};
         var queryStr = `${toODataString(state)}&$count=true`;
         if (options.params) {
-            queryStr = queryStr + '&' + (new HttpParams({fromObject: options.params}).toString());
+            queryStr = queryStr + '&' + (new HttpParams({ fromObject: options.params }).toString());
         }
 
         if (options.expand) {
@@ -41,7 +41,6 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
 
         return this.http
             .get(`${this.BASE_URL}${tableName}?${queryStr}`)
-            .pipe(map(response => response))
             .pipe(
                 map((response: any) => (<GridDataResult>{
                     data: response.value,

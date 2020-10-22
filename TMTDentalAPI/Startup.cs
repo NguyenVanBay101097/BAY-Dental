@@ -282,6 +282,8 @@ namespace TMTDentalAPI
             services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
             services.AddScoped<IHrSalaryConfigService, HrSalaryConfigService>();
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
+            services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -606,11 +608,12 @@ namespace TMTDentalAPI
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
-            //builder.EntityType<PartnerViewModel>()
-            //    .Collection
-            //    .Function("GetView")
-            //    .ReturnsCollectionFromEntitySet<PartnerViewModel>("Partners");
+            builder.EntityType<PartnerViewModel>()
+               .Collection
+               .Function("GetView")
+               .ReturnsCollection<GridPartnerViewModel>();
 
             return builder.GetEdmModel();
         }

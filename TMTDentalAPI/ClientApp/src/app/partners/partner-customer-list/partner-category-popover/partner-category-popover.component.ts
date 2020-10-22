@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { PartnerCategoryDisplay, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 
 @Component({
@@ -12,7 +14,9 @@ import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
 })
 export class PartnerCategoryPopoverComponent implements OnInit {
   value_partnerCategoryPopOver: any;
-  dataPopOver = [];
+  @Input() tags = [];
+  @Input() dataPopOver = [];
+  tags_temp;
   search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
 
@@ -23,79 +27,61 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   @Input() otherInput: any;
 
   @ViewChild('popOver', { static: true }) public popover: any;
-
+  @ViewChild("list", { static: true }) public list: MultiSelectComponent;
 
   constructor(
+    private partnerCategoriesService: PartnerCategoriesService,
     private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService
   ) { }
 
   ngOnInit() {
-    // this.loadPartnerCategoryPopOver();
+    this.tags_temp = this.tags;
 
     this.searchUpdatePopOver.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
-        this.loadPartnerCategoryPopOver();
+      .subscribe(value => {
+        this.loadPartnerCategoryPopOver(value);
       });
   }
 
-  loadPartnerCategoryPopOver() {
-    const val = new PartnerCategoryPaged();
-    val.limit = 20;
-    val.offset = 0;
-    val.search = this.search_partnerCategory || '';
+  toggleWithTags(popover, mytags) {
+    if (popover.isOpen()) {
+      popover.close();
+    } else {
+      this.loadPartnerCategoryPopOver();
+      popover.open({ mytags });
+    }
+  }
 
-    this.partnerCategoryService.getPaged(val).subscribe((res: any) => {
-      this.dataPopOver = res.items;
+  loadPartnerCategoryPopOver(q?: string) {
+    this.partnerCategoriesService.searchCombobox(q).subscribe((res: any) => {
+      this.dataPopOver = res;
     }, err => {
       console.log(err);
     });
   }
 
-  onToggleCategory(popOver) {
-    if (this.otherInput && this.otherInput !== popOver) {
-      this.otherInput.close();
-      this.value_partnerCategoryPopOver = [];
-    }
+  // getValueDefault() {
+  //   const val = new PartnerCategoryPaged();
+  //   val.limit = 20;
+  //   val.offset = 0;
+  //   val.partnerId = this.rowPartnerId;
+  //   this.partnerCategoryService.getPaged(val).subscribe((res) => {
+  //     this.value_partnerCategoryPopOver = res.items;
+  //   });
+  // }
 
-    if (popOver.isOpen()) {
-      popOver.close();
-      this.value_partnerCategoryPopOver = [];
-
-    } else {
-      this.getValueDefault();
-      this.loadPartnerCategoryPopOver();
-      popOver.open();
-      this.popover = popOver;
-      this.otherOutput.emit(popOver);
-    }
-  }
-
-  getValueDefault() {
-    const val = new PartnerCategoryPaged();
-    val.limit = 20;
-    val.offset = 0;
-    val.partnerId = this.rowPartnerId;
-    this.partnerCategoryService.getPaged(val).subscribe((res) => {
-      this.value_partnerCategoryPopOver = res.items;
-    });
-  }
-
-  SavePartnerCategories() {
-    console.log(this.value_partnerCategoryPopOver);
+  SavePartnerCategories(tags) {
+    debugger;
+    tags = tags || [];
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
-    val.tagIds = [];
-    this.value_partnerCategoryPopOver.forEach(element => {
-      val.tagIds.push(element.id);
-    });
+    val.tagIds = tags.map(x => x.Id);
     this.partnerService.updateTags(val).subscribe(() => {
-      // this.loadDataFromApi();
-      this.value_partnerCategoryPopOver = [];
-      this.onToggleCategory(this.popover);
-      this.onSave.emit(val);
+      this.popover.close();
+      this.onSave.emit(tags);
     });
   }
 
@@ -106,9 +92,9 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   public valueNormalizer = (text$: Observable<string>): any => text$.pipe(
     switchMap((text: string) => {
       // Search in values
-      const matchingValue: any = this.value_partnerCategoryPopOver.find((item: any) => {
+      const matchingValue: any = this.tags.find((item: any) => {
         // Search for matching item to avoid duplicates
-        return item['name'].toLowerCase() === text.toLowerCase();
+        return item['Name'].toLowerCase() === text.toLowerCase();
       });
 
       if (matchingValue) {
@@ -118,7 +104,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
 
       // Search in data
       const matchingItem: any = this.dataPopOver.find((item: any) => {
-        return item['name'].toLowerCase() === text.toLowerCase();
+        return item['Name'].toLowerCase() === text.toLowerCase();
       });
 
       if (matchingItem) {
@@ -132,6 +118,14 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   public service$ = (text: string): any => {
     const val = new PartnerCategoryDisplay();
     val.name = text;
-    return this.partnerCategoryService.create(val);
+    return this.partnerCategoryService.create(val)
+      .pipe(
+        map((result: any) => {
+          return {
+            Id: result.id,
+            Name: result.name
+          }
+        })
+      );
   }
 }

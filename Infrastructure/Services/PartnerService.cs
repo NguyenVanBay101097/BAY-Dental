@@ -29,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyERP.Utilities;
 using Newtonsoft.Json;
+using NPOI.HSSF.Record.Chart;
 using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Umbraco.Web.Models.ContentEditing;
@@ -501,10 +502,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
             }
-            if (val.CategoryId.HasValue)
-                query = query.Where(x => x.PartnerPartnerCategoryRels.Any(y => y.CategoryId == val.CategoryId));
 
-            query = query.Include(x => x.Company).Include(x => x.Source).OrderByDescending(s => s.DateCreated);
+            query = query.OrderBy(s => s.DisplayName);
             return query;
         }
 
@@ -525,6 +524,14 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerPaged val)
         {
             var query = GetQueryPaged(val);
+            if (val.TagIds.Any())
+            {
+                //filter query
+                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
+                var filterPartnerIds = await partnerCategoryRelService.SearchQuery(x => val.TagIds.Contains(x.CategoryId)).Select(x => x.PartnerId).Distinct().ToListAsync();
+                query = query.Where(x => filterPartnerIds.Contains(x.Id));
+            }
+
             var res = await query.OrderBy(x => x.DisplayName).Select(x => new PartnerCustomerExportExcelVM
             {
                 Name = x.Name,
@@ -1170,20 +1177,26 @@ namespace Infrastructure.Services
                         partner.CityCode = addResult.CityCode != null ? addResult.CityCode : null;
                         partner.CityName = addResult.CityName != null ? addResult.CityName : null;
                     }
-                    partner.Customer = true;
-                    partner.JobTitle = item.Job;
-                    GetGenderPartner(partner, item);
-                    partner.Date = item.Date ?? DateTime.Today;
-                    partner.PartnerHistoryRels.Clear();
-                    if (!string.IsNullOrEmpty(item.MedicalHistory))
-                    {
-                        var medical_history_list = item.MedicalHistory.Split(",");
-                        foreach (var mh in medical_history_list)
-                        {
-                            if (!medical_history_dict.ContainsKey(mh))
-                                continue;
 
-                            partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
+                    if (val.Type == "customer")
+                    {
+                        partner.JobTitle = item.Job;
+                        partner.BirthDay = item.BirthDay;
+                        partner.BirthMonth = item.BirthMonth;
+                        partner.BirthYear = item.BirthYear;
+                        GetGenderPartner(partner, item);
+                        partner.Date = item.Date ?? DateTime.Today;
+                        partner.PartnerHistoryRels.Clear();
+                        if (!string.IsNullOrEmpty(item.MedicalHistory))
+                        {
+                            var medical_history_list = item.MedicalHistory.Split(",");
+                            foreach (var mh in medical_history_list)
+                            {
+                                if (!medical_history_dict.ContainsKey(mh))
+                                    continue;
+
+                                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
+                            }
                         }
                     }
 
@@ -1858,27 +1871,60 @@ namespace Infrastructure.Services
                 Customer = x.Customer,
                 Supplier = x.Supplier,
                 Ref = x.Ref,
-                LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
+                //LastAppointmentDate = x.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date,
                 Date = x.Date,
-                Source = x.Source != null ? new PartnerSourceViewModel
-                {
-                    Id = x.Source.Id,
-                    Name = x.Source.Name
-                } : null,
+                //Source = x.Source != null ? new PartnerSourceViewModel
+                //{
+                //    Id = x.Source.Id,
+                //    Name = x.Source.Name
+                //} : null,
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                {
-                    Id = s.CategoryId,
-                    Name = s.Category.Name,
-                })
+                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                //{
+                //    Id = s.CategoryId,
+                //    Name = s.Category.Name,
+                //})
+            });
+        }
+
+        public IQueryable<GridPartnerViewModel> GetGridViewModels()
+        {
+            return SearchQuery().Select(x => new GridPartnerViewModel
+            {
+                Id = x.Id,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                Street = x.Street,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                NameNoSign = x.NameNoSign,
+                Phone = x.Phone,
+                WardName = x.WardName,
+                Gender = x.Gender,
+                BirthYear = x.BirthYear,
+                BirthMonth = x.BirthMonth,
+                BirthDay = x.BirthDay,
+                Customer = x.Customer,
+                Supplier = x.Supplier,
+                Ref = x.Ref,
+                Date = x.Date,
+                Comment = x.Comment,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                SourceName = x.Source.Name
             });
         }
 
         public Task<IQueryable<PartnerViewModel>> GetViewModelsAsync()
         {
             return Task.Run(() => GetViewModels());
+        }
+
+        public Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync()
+        {
+            return Task.Run(() => GetGridViewModels());
         }
     }
 
