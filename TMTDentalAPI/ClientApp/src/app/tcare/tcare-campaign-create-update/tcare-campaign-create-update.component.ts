@@ -47,6 +47,7 @@ declare var mxKeyHandler: any;
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent;
+  @Input() textareaLength = 640;
   @Input() campaign: TCareCampaignDisplay;
   @Output('actionNext') actionNext = new EventEmitter<any>();
   @Output('timeChange') timeChange = new EventEmitter<any>();
@@ -760,6 +761,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false });
     modalRef.componentInstance.title = "Cài đặt gửi tin";
     modalRef.componentInstance.model = objx;
+    modalRef.componentInstance.textareaLength = this.textareaLength;
 
     modalRef.result.then(
       (result: any) => {

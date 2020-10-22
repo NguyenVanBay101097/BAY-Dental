@@ -1,7 +1,7 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <li class="active">Lịch gửi tin</li>
+            <li class="active">Thống kê gửi tin</li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
@@ -12,18 +12,18 @@
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">  
+            <div class="o_cp_buttons">
                 <div class="d-flex">
                     <kendo-combobox [placeholder]="'Lọc theo kịch bản'" (valueChange)="onCategChange($event)"
                         class="kendo-combobox-sm" [filterable]="true" [data]="filteredCategs" #categCbx
                         [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox>
-                    <div class="btn-group o_search_options ml-1">              
+                    <div class="btn-group o_search_options ml-1">
                         <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo"
                             (searchChange)="onSearchDateChange($event)" title="Thời gian">
                         </app-tai-date-range-filter-dropdown>
                     </div>
-                </div>          
+                </div>
             </div>
             <div class="o_cp_sidebar">
                 <!-- <div>
@@ -47,49 +47,43 @@
 <div class="bg-white">
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div>
-            <kendo-grid [data]="gridData" 
-                [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                (pageChange)="pageChange($event)">                
-                <kendo-grid-column field="scenarioName" title="Kịch bản"  >
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                (pageChange)="pageChange($event)">
+                <kendo-grid-column field="scenarioName" title="Kịch bản" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.scenarioName}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="campaignName" title="Chiến dịch" >
+                <kendo-grid-column field="campaignName" title="Chiến dịch" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.campaignName}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="scheduleDate" title="Ngày gửi"  >
+                <kendo-grid-column field="scheduleDate" title="Gửi lúc" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.scheduleDate | date: 'dd/MM/yyyy hh:mm'}}
+                        {{dataItem.scheduleDate | date: 'short'}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="partnerTotal" title="Khách hàng" class="text-right" >
+                <kendo-grid-column field="partnerTotal" title="Số người nhận" class="text-right" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.partnerTotal | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="messageTotal" title="Tin nhắn" class="text-right">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.messageTotal | number}} 
-                    </ng-template>
-                </kendo-grid-column>
-                <kendo-grid-column field="messageSentTotal" title="Tin đã gửi" class="text-right">
+                <kendo-grid-column field="messageSentTotal" title="Gửi thành công" class="text-right" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.messageSentTotal | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="messageExceptionTotal" title="Tin gửi thất bại" class="text-right">
+                <kendo-grid-column field="messageExceptionTotal" title="Gửi thất bại" class="text-right" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.messageExceptionTotal | number}}
                     </ng-template>
-                </kendo-grid-column> 
-                <kendo-grid-column field="state" title="Trạng thái" class="text-right">
+                </kendo-grid-column>
+                <kendo-grid-column field="state" title="Trạng thái" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{getState(dataItem.state)}}
                     </ng-template>
-                </kendo-grid-column>               
+                </kendo-grid-column>
             </kendo-grid>
         </div>
     </div>

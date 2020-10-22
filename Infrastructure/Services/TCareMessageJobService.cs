@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using Hangfire;
 using Infrastructure.Data;
+using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -27,15 +28,7 @@ namespace Infrastructure.Services
 
         public async Task Run(string db)
         {
-            var section = _configuration.GetSection("ConnectionStrings");
-            var catalogConnection = section["CatalogConnection"];
-            if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
-
-            DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
-            builder.UseSqlServer(catalogConnection);
-
-            await using var context = new CatalogDbContext(builder.Options, null, null);
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
 
             //giới hạn 10000 tin nhắn
             var now = DateTime.Now;
@@ -50,15 +43,7 @@ namespace Infrastructure.Services
 
         public async Task Send(Guid id, string db)
         {
-            var section = _configuration.GetSection("ConnectionStrings");
-            var catalogConnection = section["CatalogConnection"];
-            if (db != "localhost")
-                catalogConnection = catalogConnection.Substring(0, catalogConnection.LastIndexOf('_')) + db;
-
-            DbContextOptionsBuilder<CatalogDbContext> builder = new DbContextOptionsBuilder<CatalogDbContext>();
-            builder.UseSqlServer(catalogConnection);
-
-            await using var context = new CatalogDbContext(builder.Options, null, null);
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
 
             try
