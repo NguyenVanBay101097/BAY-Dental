@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SaasKit.Multitenancy;
 using TMTDentalAPI.ViewModels;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -39,6 +40,7 @@ namespace TMTDentalAPI.Controllers
         private readonly CatalogDbContext _dbContext;
         private readonly IResGroupService _groupService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly AppTenant _tenant;
 
         public WebController(
             IIrAttachmentService attachmentService,
@@ -50,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             IUserService userService,
             ICompanyService companyService,
              CatalogDbContext dbContext,
-             IResGroupService groupService, IWebHostEnvironment webHostEnvironment)
+             IResGroupService groupService, IWebHostEnvironment webHostEnvironment,
+             ITenant<AppTenant> tenant)
         {
             _attachmentService = attachmentService;
             _mapper = mapper;
@@ -63,6 +66,7 @@ namespace TMTDentalAPI.Controllers
             _dbContext = dbContext;
             _groupService = groupService;
             _webHostEnvironment = webHostEnvironment;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet("[action]")]
@@ -208,6 +212,20 @@ namespace TMTDentalAPI.Controllers
 
                 return Ok(features);
             }
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public IActionResult GetExpire()
+        {
+            if (_tenant == null) return Ok();
+            TimeSpan diff = _tenant.DateExpired.Value - DateTime.Now;
+            string res = string.Format(
+                                   "{0} ngày {1} giờ {2} phút",
+                                   diff.Days,
+                                   Math.Abs(diff.Hours),
+                                   Math.Abs(diff.Minutes));
+            return Ok(new { ExpireText = res, ExpireDate = _tenant.DateExpired.Value });
         }
     }
 }

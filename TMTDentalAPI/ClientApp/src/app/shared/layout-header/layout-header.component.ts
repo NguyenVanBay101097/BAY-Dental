@@ -21,6 +21,7 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 export class LayoutHeaderComponent implements OnInit {
 
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
+  expire = '';
   constructor(
     private sidebarService: NavSidebarService,
     private modalService: NgbModal,
@@ -39,6 +40,14 @@ export class LayoutHeaderComponent implements OnInit {
       if (result) {
         this.loadChangeCurrentCompany();
       }
+    });
+
+    this.loadExpire();
+  }
+
+  loadExpire() {
+    this.webService.getExpire().subscribe((res: any) => {
+      this.expire = res.expireText;
     });
   }
 
