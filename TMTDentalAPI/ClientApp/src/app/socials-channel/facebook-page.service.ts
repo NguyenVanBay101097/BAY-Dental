@@ -20,6 +20,7 @@ export class ChannelSocialPaging {
 export class MultiUserProfilesVm{
     pageId: string;
     userIds: string[];
+    content: string;
 }
 
 @Injectable({ providedIn: 'root' })

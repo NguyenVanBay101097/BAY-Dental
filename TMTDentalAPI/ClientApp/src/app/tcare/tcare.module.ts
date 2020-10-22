@@ -38,6 +38,7 @@ import { TcareMessageTemplateCuDialogComponent } from './tcare-message-template-
 import { TcareMessageTemplateContentComponent } from './tcare-message-template-cu-dialog/tcare-message-template-content/tcare-message-template-content.component';
 import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messaging-list.component';
+import { TcareQuickreplyDialogComponent } from './tcare-quickreply-dialog/tcare-quickreply-dialog.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messag
     TcareMessageTemplateCuDialogComponent,
     TcareMessageTemplateContentComponent,
     TcareMessagingListComponent,
+    TcareQuickreplyDialogComponent,
   ],
   imports: [
     CommonModule,
