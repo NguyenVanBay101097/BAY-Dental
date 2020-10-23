@@ -29,5 +29,6 @@ namespace Infrastructure.Services
         Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids);
 
         Task SyncPartnersForMultiUsers(MultiUserProfilesVm val);
+        Task SyncPhoneForMultiUsers(MultiUserProfilesVm val);
     }
 }

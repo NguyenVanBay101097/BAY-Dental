@@ -20,7 +20,6 @@ export class ChannelSocialPaging {
 export class MultiUserProfilesVm{
     pageId: string;
     userIds: string[];
-    content: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -58,6 +57,10 @@ export class FacebookPageService {
 
     syncNumberPhoneUsers(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SyncNumberPhoneUsers', ids);
+    }
+
+    syncPhoneForMultiUsers(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/SyncPhoneForMultiUsers', val);
     }
 
     syncPartners(ids: any) {
