@@ -11,7 +11,7 @@
         <div class="d-flex">
             <div>
                 <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)"
-            style="background-color:#5dd3e6; border-radius: 90px;" class="btn-tab btn btn-sm mt-1">{{tab.name}}</a>
+            style="background-color:#5dd3e6; border-radius: 90px;" class="btn-tab btn btn-sm mt-1 mr-1">{{tab.name}}</a>
             </div>
             <div style="min-width: 50px;" class="ml-auto">
                 <i popoverClass="popover-d-contents" data-container="body" [autoClose]="'outside'" [ngbPopover]="popContent" class="fa fa-smile ml-auto"></i>

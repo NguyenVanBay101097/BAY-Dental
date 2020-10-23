@@ -211,6 +211,7 @@ namespace Infrastructure.Data
 
         public DbSet<ServiceCardOrderPayment> ServiceCardOrderPayments { get; set; }
         public DbSet<TCareMessageTemplate> TCareMessageTemplates { get; set; }
+        public DbSet<TCareConfig> TCareConfigs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -379,6 +380,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCareMessagingPartnerRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardOrderPaymentConfiguration());
             builder.ApplyConfiguration(new TCareMessageTemplateConfiguration());
+            builder.ApplyConfiguration(new TCareConfigConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

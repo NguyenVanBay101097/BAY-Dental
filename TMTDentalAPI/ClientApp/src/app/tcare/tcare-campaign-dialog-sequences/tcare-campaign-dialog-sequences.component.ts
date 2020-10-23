@@ -46,10 +46,10 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   //cá nhân hóa
   tabs = [
     { name: 'Tên khách hàng', value: '{ten_khach_hang}' },
-    { name: 'Họ và tên khách hàng', value: '{ho_ten_khach_hang}' },
+    { name: 'Họ tên khách hàng', value: '{ho_ten_khach_hang}' },
     { name: 'Tên trang', value: '{ten_page}' },
     { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
-    { name: 'mã khuyến mãi', value: '{ma_khuyen_mai}' },
+    { name: 'mã coupon', value: '{ma_coupon}' },
   ];
 
   constructor(

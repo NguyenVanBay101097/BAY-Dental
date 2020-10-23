@@ -115,9 +115,9 @@ namespace Infrastructure.Services
                         template.Add("ten_page", channel.PageName);
                         template.Add("danh_xung_khach_hang", personalized.Title);
 
-                        if (messaging.Content.Contains("{ma_khuyen_mai}") && messaging.CouponProgramId.HasValue)
+                        if (messaging.Content.Contains("{ma_coupon}") && messaging.CouponProgramId.HasValue)
                         {
-                            template.Add("ma_khuyen_mai", await CreateNewCoupon(messaging.CouponProgramId.Value, item.Key, context));
+                            template.Add("ma_coupon", await CreateNewCoupon(messaging.CouponProgramId.Value, item.Key, context));
                         }
 
                         var messageContent = template.Render();

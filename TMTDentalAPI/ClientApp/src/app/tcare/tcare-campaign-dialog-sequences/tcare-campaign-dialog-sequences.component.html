@@ -47,12 +47,18 @@
                                     </div>
                                 </td>
                             </tr> --->
+                           
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Chọn mẫu tin</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <kendo-combobox [placeholder]="'chọn tin nhắn mẫu'" [data]="messageTemplates"
+                                        <kendo-combobox [placeholder]="'chọn mẫu tin'" [data]="messageTemplates"
                                             [textField]="'name'" [filterable]="true" #cbxMess
                                             (selectionChange)="onMessageTemplateSelect($event)" [valueField]="'id'">
                                         </kendo-combobox>
@@ -67,10 +73,6 @@
                                     </div>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group">
-                        <tbody>
                             <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">Nội dung</label>
@@ -94,7 +96,7 @@
                                         <div>
                                             <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)"
                                                 style="background-color:#5dd3e6; border-radius: 90px;"
-                                                class="btn-tab btn btn-sm mt-1">{{tab.name}}</a>
+                                                class="btn-tab btn btn-sm mt-1 mr-1">{{tab.name}}</a>
                                         </div>
                                         <div style="min-width: 50px;" class="ml-auto">
                                             <i popoverClass="popover-d-contents" data-container="body"
@@ -109,14 +111,14 @@
                                         </div>
 
                                     </div>
-                                    <div>
+                                    <div hasGroups [groups]="'sale.group_sale_coupon_promotion'" >
                                         <input (change)="onChangeCheckboxCoupon($event)" formControlName="isCoupon"
                                             class="mr-2" id="isCoupon" type="checkbox">
                                         <label for="isCoupon">Kèm mã coupon</label>
                                     </div>
                                 </td>
                             </tr>
-                            <tr [hidden]="this.isCouponControl?.value !== true">
+                            <tr hasGroups [groups]="'sale.group_sale_coupon_promotion'" [hidden]="this.isCouponControl?.value !== true">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Chương trình coupon</label>
                                 </td>
