@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201023034331_UpdateTCareTablesV2")]
+    partial class UpdateTCareTablesV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7621,45 +7623,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("TCareCampaigns");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.TCareConfig", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("JobCampaignHour")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobCampaignMinute")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobMessageMinute")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JobMessagingMinute")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("TCareConfigs");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.TCareMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -11788,17 +11751,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.PartnerCategory", "Tag")
                         .WithMany()
                         .HasForeignKey("TagId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.TCareConfig", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
