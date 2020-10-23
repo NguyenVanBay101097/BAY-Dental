@@ -1,5 +1,5 @@
 <button #popover="ngbPopover" type="button" class="btn btn-info btn-sm" title="Liên kết khách hàng"
-    [ngbPopover]="popContent" popoverClass="popover-xl" autoClose="false" [popoverTitle]="popTitle"
+    [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle"
     placement="right" data-container="body" triggers="manual" (click)="togglePopover()">
     <span class="fas fa-pen"></span>
 </button>
