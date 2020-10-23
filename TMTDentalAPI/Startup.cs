@@ -251,6 +251,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCarePropertyService, TCarePropertyService>();
             services.AddScoped<ITCareMessagingService, TCareMessagingService>();
             services.AddScoped<ITCareJobService, TCareJobService>();
+            services.AddScoped<ITCareCampaignJobService, TCareCampaignJobService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
             services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();

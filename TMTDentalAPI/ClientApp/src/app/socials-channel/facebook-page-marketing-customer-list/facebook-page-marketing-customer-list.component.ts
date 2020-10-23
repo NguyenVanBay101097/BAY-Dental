@@ -133,6 +133,19 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     }
   }
 
+  syncPhoneOfMutilUser() {
+    if (this.pageId) {
+      var res = new MultiUserProfilesVm();
+      res.pageId = this.pageId;
+      res.userIds = this.rowsSelected;
+      this.facebookPageService.syncPhoneForMultiUsers(res).subscribe(() => {
+        this.loadDataFromApi();
+      }, err => {
+        console.log(err);
+      });
+    }
+  }
+
   editItem(item: any) {
     let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.customerId = item.id;
