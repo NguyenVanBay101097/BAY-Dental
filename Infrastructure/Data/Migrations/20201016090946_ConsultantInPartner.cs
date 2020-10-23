@@ -3,24 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddEmployeeToaThuoc : Migration
+    public partial class ConsultantInPartner : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "EmployeeId",
-                table: "ToaThuocs",
+                name: "ConsultantId",
+                table: "Partners",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ToaThuocs_EmployeeId",
-                table: "ToaThuocs",
-                column: "EmployeeId");
+                name: "IX_Partners_ConsultantId",
+                table: "Partners",
+                column: "ConsultantId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ToaThuocs_Employees_EmployeeId",
-                table: "ToaThuocs",
-                column: "EmployeeId",
+                name: "FK_Partners_Employees_ConsultantId",
+                table: "Partners",
+                column: "ConsultantId",
                 principalTable: "Employees",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
@@ -29,16 +29,16 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_ToaThuocs_Employees_EmployeeId",
-                table: "ToaThuocs");
+                name: "FK_Partners_Employees_ConsultantId",
+                table: "Partners");
 
             migrationBuilder.DropIndex(
-                name: "IX_ToaThuocs_EmployeeId",
-                table: "ToaThuocs");
+                name: "IX_Partners_ConsultantId",
+                table: "Partners");
 
             migrationBuilder.DropColumn(
-                name: "EmployeeId",
-                table: "ToaThuocs");
+                name: "ConsultantId",
+                table: "Partners");
         }
     }
 }

@@ -54,5 +54,7 @@ namespace Infrastructure.Services
         Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd);
 
         Task<IQueryable<PartnerViewModel>> GetViewModelsAsync();
+        Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync();
+        Task UpdateTags(PartnerAddRemoveTagsVM val);
     }
 }

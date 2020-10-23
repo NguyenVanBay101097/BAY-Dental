@@ -19,7 +19,7 @@
                         </app-binary-file-input>
                     </td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <td colspan="1" class="o_td_label">
                         <label class="o_form_label">
                             Kiểm tra địa chỉ
@@ -36,7 +36,7 @@
                             </label>
                         </div>
                     </td>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
         <div class="text-danger" *ngFor="let error of errors">
@@ -48,10 +48,10 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm" (click)="import()" [disabled]="!formGroup.valid">
         Import</button>
-    <a *ngIf="type == 'customer'" href="assets/files/Mau_File_KH.xlsx" class="btn btn-info btn-sm">
+    <a *ngIf="type == 'customer'" href="assets/files/Mau_File_KH_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC.xlsx" class="btn btn-info btn-sm">
+    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
     <button type="button" class="btn btn-secondary btn-sm" (click)="activeModal.dismiss()">

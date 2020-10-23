@@ -361,7 +361,6 @@ export class PartnerCreateUpdateComponent implements OnInit {
       this.getDistrict.disable();
       this.getWard.disable();
     }
-
     var request = new AshipRequest();
     this.service.getProvinceAship(request).subscribe(
       rs => {
@@ -390,11 +389,12 @@ export class PartnerCreateUpdateComponent implements OnInit {
   }
 
   getWardList(parentCode) {
+    
     var request = new AshipRequest();
     request.data = new AshipData();
     request.data.code = parentCode;
     this.service.getWardAship(request).subscribe(
-      rs => {
+      rs => {       
         this.wardsList = rs;
         this.wardsFilter = rs;
       },

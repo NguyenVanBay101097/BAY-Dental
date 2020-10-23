@@ -4303,6 +4303,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ConsultantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -4391,6 +4394,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConsultantId");
 
                     b.HasIndex("CreatedById");
 
@@ -10133,6 +10138,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Consultant")
+                        .WithMany()
+                        .HasForeignKey("ConsultantId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()

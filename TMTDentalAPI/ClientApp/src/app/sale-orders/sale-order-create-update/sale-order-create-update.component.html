@@ -346,7 +346,7 @@
                                 </table>
                             </div>
                             <div class="oe_right">
-                                <!-- <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog> -->
+                                <app-sale-order-apply-discount-default-dialog *ngIf="['draft', 'sent'].indexOf(saleOrder.state) !== -1" (discountFormGroup)="onApplyDiscount($event)" ></app-sale-order-apply-discount-default-dialog>
                                 <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                     class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
                                     *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">

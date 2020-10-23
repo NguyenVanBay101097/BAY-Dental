@@ -36,6 +36,7 @@ import { PartnerCustomerCategoriesComponent } from './partner-customer-categorie
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
 import { PartnerInfoComponent } from './partner-info/partner-info.component';
+import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner-category-popover/partner-category-popover.component';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
 
 @NgModule({
@@ -68,6 +69,7 @@ import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-custom
     PartnerCustomerUploadImageComponent,
     PartnerCustomerQuotationsComponent,
     PartnerInfoComponent,
+    PartnerCategoryPopoverComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent
   ],
   imports: [

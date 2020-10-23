@@ -18,6 +18,8 @@ namespace ApplicationCore.Entities
             Sequence = 10;
             QtyToInvoice = 0;
             QtyInvoiced = 0;
+            AmountPaid = 0;
+            AmountResidual = 0;
         }
 
         public SaleOrderLine(SaleOrderLine line)
@@ -46,6 +48,8 @@ namespace ApplicationCore.Entities
             Sequence = 10;
             QtyToInvoice = 0;
             QtyInvoiced = 0;
+            AmountPaid = 0;
+            AmountResidual = 0;
         }
 
         public decimal PriceUnit { get; set; }

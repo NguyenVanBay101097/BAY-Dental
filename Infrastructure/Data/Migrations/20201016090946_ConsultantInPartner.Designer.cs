@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20200930082001_AddServiceCardOrderPaymentTable")]
-    partial class AddServiceCardOrderPaymentTable
+    [Migration("20201016090946_ConsultantInPartner")]
+    partial class ConsultantInPartner
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4305,6 +4305,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ConsultantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -4393,6 +4396,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConsultantId");
 
                     b.HasIndex("CreatedById");
 
@@ -7593,6 +7598,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("TCareScenarioId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -7601,6 +7609,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("TCareScenarioId");
+
+                    b.HasIndex("TagId");
 
                     b.HasIndex("WriteById");
 
@@ -10131,6 +10141,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CompanyId");
 
+                    b.HasOne("ApplicationCore.Entities.Employee", "Consultant")
+                        .WithMany()
+                        .HasForeignKey("ConsultantId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -11632,6 +11646,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.TCareScenario", "TCareScenario")
                         .WithMany("Campaigns")
                         .HasForeignKey("TCareScenarioId");
+
+                    b.HasOne("ApplicationCore.Entities.PartnerCategory", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
