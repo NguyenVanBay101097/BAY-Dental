@@ -1,14 +1,8 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { GridDataResult } from "@progress/kendo-angular-grid";
 import { NotificationService } from "@progress/kendo-angular-notification";
-import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { PartnerSimple } from "src/app/partners/partner-simple";
-import {
-  PartnerFilter,
-  PartnerService,
-} from "src/app/partners/partner.service";
+import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
 import { FacebookUserProfilesService } from "src/app/socials-channel/facebook-user-profiles.service";
 import { PartnerCustomerCuDialogComponent } from "../partner-customer-cu-dialog/partner-customer-cu-dialog.component";
 
@@ -20,6 +14,8 @@ import { PartnerCustomerCuDialogComponent } from "../partner-customer-cu-dialog/
 export class PartnerPhonePopoverComponent implements OnInit {
   @Input() phones;
   @Input() customerId;
+  @Output() reloadCustomerList = new EventEmitter();
+  @ViewChild('popover', { static: true }) public popover: any;
   phones_List: string[] = [];
   phoneSearch: string = "";
   loading: boolean = false;
@@ -57,9 +53,9 @@ export class PartnerPhonePopoverComponent implements OnInit {
     );
   }
 
-  togglePopover(popover) {
-    if (popover.isOpen()) {
-      popover.close();
+  togglePopover() {
+    if (this.popover.isOpen()) {
+      this.popover.close();
     } else {
       if (this.phones) {
         this.phones_List = this.phones.split(",");
@@ -68,7 +64,7 @@ export class PartnerPhonePopoverComponent implements OnInit {
         this.phoneSearch = this.phones_List[0];
         this.loadDataFromApi();
       }
-      popover.open();
+      this.popover.open();
     }
   }
 
@@ -78,8 +74,8 @@ export class PartnerPhonePopoverComponent implements OnInit {
     }
   }
 
-  createPartner(popover) {
-    popover.close();
+  createPartner() {
+    this.popover.close();
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
       scrollable: true,
       size: "xl",
@@ -91,7 +87,7 @@ export class PartnerPhonePopoverComponent implements OnInit {
     modalRef.result.then(
       () => {
         this.loadDataFromApi();
-        popover.open();
+        this.popover.open();
       },
       (err) => {}
     );
@@ -108,6 +104,8 @@ export class PartnerPhonePopoverComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
+          this.popover.close();
+          this.reloadCustomerList.emit();
         },
         (err) => {}
       );
