@@ -86,9 +86,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult ActionStart(IEnumerable<Guid> ids)
+        public async Task<IActionResult> ActionStart(IEnumerable<Guid> ids)
         {
-            _scenarioService.ActionStart(ids);
+            await _scenarioService.ActionStart(ids);
             return NoContent();
         }
 

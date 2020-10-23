@@ -283,7 +283,6 @@ namespace Infrastructure.Services
             }
             else if (wh.Message != null)
             {
-  
             }
 
             await context.SaveChangesAsync();
