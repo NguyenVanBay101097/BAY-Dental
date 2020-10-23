@@ -63,7 +63,8 @@ namespace TMTDentalAPI.Controllers
 
             campain.Name = val.Name;
             campain.GraphXml = val.GraphXml;
-            campain.SheduleStart = val.SheduleStart;
+            campain.SheduleStartType = val.SheduleStartType;
+            campain.SheduleStartNumber = val.SheduleStartNumber;
             campain.TagId = val.TagId;
             await _campaignService.UpdateAsync(campain);
             return NoContent();

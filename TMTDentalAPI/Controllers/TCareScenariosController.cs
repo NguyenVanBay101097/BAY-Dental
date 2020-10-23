@@ -85,6 +85,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public IActionResult ActionStart(IEnumerable<Guid> ids)
+        {
+            _scenarioService.ActionStart(ids);
+            return NoContent();
+        }
+
         [HttpGet("[action]")]
         public IActionResult AddJob()
         {
@@ -92,7 +99,7 @@ namespace TMTDentalAPI.Controllers
             var jobId = $"{tenant}-tcare-campaign-job";
             RecurringJob.RemoveIfExists(jobId);
             var now = DateTime.Now.AddMinutes(1);
-            RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
+            RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, null), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
             return NoContent();
         }
 

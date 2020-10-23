@@ -26,7 +26,8 @@ export class TCareCampaignDisplay {
   graphXml: string;
   state: string;
   tagId: string;
-  sheduleStart: string;
+  sheduleStartType: string;
+  sheduleStartNumber: number;
   recurringJobId: string;
   active: boolean;
 }
@@ -177,5 +178,9 @@ export class TcareService {
 
   updateScenario(id, val) {
     return this.http.put(this.base_api + this.apiUrlScenario + "/" + id, val);
+  }
+
+  actionStartScenario(val: any[]) {
+    return this.http.post(this.base_api + this.apiUrlScenario + "/ActionStart", val)
   }
 }

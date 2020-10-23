@@ -229,8 +229,13 @@ namespace Infrastructure.Services
         {
             //xác định thời điểm gửi tin của chiến dịch
             var date = DateTime.Now;
-            if (campaign.SheduleStart.HasValue)
-                date = date.AddHours(campaign.SheduleStart.Value.Hour).AddMinutes(campaign.SheduleStart.Value.Minute);
+            if(campaign.SheduleStartType == "hour")
+            {
+                date = date.AddHours((double)campaign.SheduleStartNumber);
+            } else if(campaign.SheduleStartType == "minute")
+            {
+                date = date.AddMinutes((double)campaign.SheduleStartNumber);
+            }
             return date;
         }
 
@@ -727,6 +732,17 @@ namespace Infrastructure.Services
         public string Type { get; set; }
 
         public int Day { get; set; }
+    }
+
+    public class LastUsedServiceDate
+    {
+        public string Type { get; set; }
+
+        public int NumberInterval { get; set; }
+
+        public string Interval { get; set; }
+
+        public Guid? ProductId { get; set; }
     }
 
     public class PartnerSendMessageResult

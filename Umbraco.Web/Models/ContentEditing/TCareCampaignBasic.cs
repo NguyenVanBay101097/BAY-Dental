@@ -18,7 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid TCareScenarioId { get; set; }
 
-        public DateTime? SheduleStart { get; set; }
+        public string SheduleStartType { get; set; }
+        public decimal SheduleStartNumber { get; set; }
 
         public bool Active { get; set; }
     }

@@ -63,4 +63,5 @@ export class TCareScenarioService {
   actionStopCampaign(val) {
     return this.http.post(this.base_api + this.apiUrl + "/ActionStopCampaign", val)
   }
+
 }

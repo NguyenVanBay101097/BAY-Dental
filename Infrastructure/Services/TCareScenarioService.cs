@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,13 @@ namespace Infrastructure.Services
     public class TCareScenarioService : BaseService<TCareScenario>, ITCareScenarioService
     {
         private readonly IMapper _mapper;
+        private readonly AppTenant _tenant;
         public TCareScenarioService(IAsyncRepository<TCareScenario> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper
+            IMapper mapper, ITenant<AppTenant> tenant
             ) : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _tenant = tenant?.Value;
 
         }
 
@@ -73,6 +76,17 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        public async Task ActionStart(IEnumerable<Guid> ids)
+        {
+            var camObj = GetService<ITCareCampaignService>();
+            var campaignJobObj = GetService<TCareCampaignJobService>();
+            // ds chiến dịch
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
+            //foreach => run()
+            await campaignJobObj.Run(tenant,campaigns);
         }
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
