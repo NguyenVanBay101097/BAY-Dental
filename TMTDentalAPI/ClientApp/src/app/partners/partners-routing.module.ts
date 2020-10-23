@@ -23,7 +23,7 @@ const routes: Routes = [
     path: 'customer/:id',
     component: PartnerCustomerDetailComponent,
     children: [
-      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: '', redirectTo: 'treatment-payment', pathMatch: 'full' },
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },

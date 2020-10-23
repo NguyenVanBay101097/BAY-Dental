@@ -15,6 +15,8 @@ import { PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
+import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -55,7 +57,7 @@ export class PartnerCustomerListComponent implements OnInit {
   };
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
-    private partnerCategoryService: PartnerCategoryService) { }
+    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -214,4 +216,19 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
+  setupAutoCodeCustomer() {
+    let modalRef = this.modalService.open(PartnerCustomerAutoGenerateCodeDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.code = 'customer';
+
+    modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+    }, () => {
+    });
+  }
 }

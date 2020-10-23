@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IRSequencesService } from 'src/app/shared/services/ir-sequences.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { IrSequenceDisplay, IrsequenceService } from '../irsequence.service';
 
 @Component({
@@ -10,14 +11,15 @@ import { IrSequenceDisplay, IrsequenceService } from '../irsequence.service';
   styleUrls: ['./partner-customer-auto-generate-code-dialog.component.css']
 })
 export class PartnerCustomerAutoGenerateCodeDialogComponent implements OnInit {
-  title = "Cấu hình mã sinh tự động";
+  title = "Cập nhật mã tự động";
   formGroup: FormGroup;
   id: string;
   code: string;
   constructor(
     private activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private irSequencesService: IRSequencesService
+    private irSequencesService: IRSequencesService,
+    private errorService: AppSharedShowErrorService
   ) { }
 
   ngOnInit() {
@@ -50,8 +52,7 @@ export class PartnerCustomerAutoGenerateCodeDialogComponent implements OnInit {
       () => {
         this.activeModal.close(true);
       }, err => {
-        this.activeModal.close(false);
-        console.log(err);
+        this.errorService.show(err);
       }
     )
   }

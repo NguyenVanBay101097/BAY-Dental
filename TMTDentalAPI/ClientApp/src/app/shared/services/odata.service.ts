@@ -59,7 +59,7 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     }
 
     public update(id: any, value: any) {
-        return this.http.put(`${this.BASE_URL}${this.tableName}`, value);
+        return this.http.put(`${this.BASE_URL}${this.tableName}(${id})`, value);
     }
 
     public delete(id: any) {

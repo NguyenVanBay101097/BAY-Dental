@@ -21,8 +21,7 @@ namespace TMTDentalAPI.OdataControllers
         private readonly IMapper _mapper;
         public IRSequencesController(
             IIRSequenceService iRSequenceService,
-            IMapper mapper
-            )
+            IMapper mapper)
         {
             _iRSequenceService = iRSequenceService;
             _mapper = mapper;
@@ -36,17 +35,20 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(results);
         }
 
-
         [HttpPut]
         public async Task<IActionResult> Put([FromODataUri] Guid key, IRSequenceSave val)
         {
-            var model = await _iRSequenceService.GetByIdAsync(key);
-            if (model == null || val == null || !ModelState.IsValid)
+            if (val == null || !ModelState.IsValid)
                 return BadRequest();
-            model.Prefix = val.Prefix;
-            model.NumberNext = val.NumberNext;
-            model.Padding = val.Padding;
-            await _iRSequenceService.UpdateAsync(model);
+
+            var sequence = await _iRSequenceService.GetByIdAsync(key);
+            if (sequence == null)
+                return NotFound();
+
+            sequence.Prefix = val.Prefix;
+            sequence.NumberNext = val.NumberNext;
+            sequence.Padding = val.Padding;
+            await _iRSequenceService.UpdateAsync(sequence);
             return NoContent();
         }
     }

@@ -21,19 +21,23 @@
         </div>
     </div>
     <div class="o_cp_right">
-        <div>
-            <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs" [valueField]="'id'"
-                [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'" [filterable]="true"
-                (valueChange)="onCategChange($event)" #categMst>
-            </kendo-multiselect>
-        </div>
-        <div class="float-right mt-1">
-            <div ngbDropdown>
-                <button type="button" id="dropdownBasic1" ngbDropdownToggle
-                    class="btn btn-secondary btn-sm">Cầu hình</button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                    <button (click)="setupAutoCodeCustomer()" ngbDropdownItem>Mã tự động của khách
-                        hàng</button>
+        <div class="d-flex align-items-center">
+            <div class="mr-1">
+                <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs"
+                    [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'"
+                    [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                </kendo-multiselect>
+            </div>
+            <div>
+                <div ngbDropdown>
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary btn-sm">
+                        Mở rộng
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <button type="button" (click)="setupAutoCodeCustomer()" ngbDropdownItem>
+                            Cập nhật mã tự động
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,7 +82,8 @@
         <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
         <kendo-grid-column title="Nhãn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event"
+                    [rowPartnerId]="dataItem.Id">
                 </app-partner-category-popover>
             </ng-template>
         </kendo-grid-column>
