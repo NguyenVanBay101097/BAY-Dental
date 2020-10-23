@@ -347,9 +347,11 @@ namespace Infrastructure.Services
             var page = await SearchQuery(x => x.Id == val.PageId).FirstOrDefaultAsync();
 
             var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id).ToListAsync();
+            var psIds = users.Select(x => x.PSID).ToList();
             var conversations = await LoadConversations(page);
             //task whenall
-            var tasks = conversations.Select(x => LoadMessagesOfConversation(page, x.Id)).ToList();
+            var conversationsOfMultiUser = conversations.Where(x => x.Sender.Data.Any(s => psIds.Contains(s.Id))).ToList();
+            var tasks = conversationsOfMultiUser.Select(x => LoadMessagesOfConversation(page, x.Id)).ToList();
             var results = await Task.WhenAll(tasks);
 
             var allMessages = new List<ApiPagedConversationMessages>();
@@ -465,7 +467,7 @@ namespace Infrastructure.Services
                 var results = await Task.WhenAll(tasks);
 
                 var allMessages = new List<ApiPagedConversationMessages>();
-                foreach(var item in results)
+                foreach (var item in results)
                 {
                     if (item != null)
                         allMessages.AddRange(item);
@@ -513,7 +515,7 @@ namespace Infrastructure.Services
         public async Task<List<ApiPagedConversationsData>> LoadConversations(FacebookPage page)
         {
             var apiClient = new ApiClient(page.PageAccesstoken, FacebookApiVersions.V6_0);
-            var pagedRequestUrl = $"{page.PageId}" + "/conversations";
+            var pagedRequestUrl = $"{page.PageId}" + "/conversations?fields=senders";
             var pagedRequest = (IPagedRequest)ApiRequest.Create(ApiRequest.RequestType.Paged, pagedRequestUrl, apiClient);
             pagedRequest.AddQueryParameter("access_token", page.PageAccesstoken);
             pagedRequest.AddPageLimit(100);
@@ -1121,8 +1123,8 @@ namespace Infrastructure.Services
         [DeserializeAs(Name = "id")]
         public string Id { get; set; }
 
-        //[DeserializeAs(Name = "data")]
-        //public List<ApiPagedConversationData> Data { get; set; } = new List<ApiPagedConversationData>();
+        [DeserializeAs(Name = "senders")]
+        public ApiPagedConversationSender Sender { get; set; }
     }
 
     public class ApiPagedConversationMessages
@@ -1136,20 +1138,27 @@ namespace Infrastructure.Services
         [JsonProperty("message")]
         public string Message { get; set; }
 
-        //[DeserializeAs(Name = "data")]
-        //public List<ApiPagedConversationDataFroms> Data { get; set; } = new List<ApiPagedConversationDataFroms>();
+
     }
 
-    public class ApiPagedConversationData
+    public class ApiPagedConversationSender
     {
+        [DeserializeAs(Name = "data")]
+        public List<ApiPagedConversationSenderItem> Data { get; set; } = new List<ApiPagedConversationSenderItem>();
+
+    }
+
+    public class ApiPagedConversationSenderItem
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        [JsonProperty("link")]
-        public string Link { get; set; }
-
-        [JsonProperty("updated_time")]
-        public DateTime UpdatedTime { get; set; }
     }
 
     public class ApiPagedConversationDataFrom
@@ -1167,7 +1176,7 @@ namespace Infrastructure.Services
     public class MultiUserProfilesVm
     {
         public Guid PageId { get; set; }
-        public IEnumerable<Guid> UserIds { get; set; } = new List<Guid>();     
+        public IEnumerable<Guid> UserIds { get; set; } = new List<Guid>();
     }
 
     public class objUserPhone

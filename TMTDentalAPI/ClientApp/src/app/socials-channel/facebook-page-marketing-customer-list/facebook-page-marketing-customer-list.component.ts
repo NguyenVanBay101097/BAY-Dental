@@ -29,7 +29,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   search: string;
   loading = false;
   searchUpdate = new Subject<string>();
-  rowsSelected: any[];
+  rowsSelected: any[] = [];
   isSelected = false;
 
   pageId: string;
@@ -56,6 +56,9 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       search: this.search || '',
       fbPageId: this.pageId
     };
+
+    this.rowsSelected = [];
+    
 
     this.facebookUserProfilesService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -126,7 +129,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       res.pageId = this.pageId;
       res.userIds = this.rowsSelected;
       this.facebookPageService.syncPartnerForMultiUsers(res).subscribe(() => {
-        this.loadDataFromApi();
+        this.loadDataFromApi();    
       }, err => {
         console.log(err);
       });
@@ -139,7 +142,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       res.pageId = this.pageId;
       res.userIds = this.rowsSelected;
       this.facebookPageService.syncPhoneForMultiUsers(res).subscribe(() => {
-        this.loadDataFromApi();
+        this.loadDataFromApi();        
       }, err => {
         console.log(err);
       });
