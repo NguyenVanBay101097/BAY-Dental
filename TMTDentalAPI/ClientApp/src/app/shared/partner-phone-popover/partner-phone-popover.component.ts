@@ -14,12 +14,15 @@ import { PartnerCustomerCuDialogComponent } from "../partner-customer-cu-dialog/
 export class PartnerPhonePopoverComponent implements OnInit {
   @Input() phones;
   @Input() customerId;
+  @Input() partnerName;
   @Output() reloadCustomerList = new EventEmitter();
   @ViewChild('popover', { static: true }) public popover: any;
-  phones_List: string[] = [];
   phoneSearch: string = "";
-  loading: boolean = false;
+  phoneSearch_invalid: boolean = false;
+  phones_List: string[] = [];
   partners_List: PartnerSimple[] = [];
+  show_partners_List: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private partnerService: PartnerService,
@@ -33,9 +36,13 @@ export class PartnerPhonePopoverComponent implements OnInit {
   loadDataFromApi() {
     this.phoneSearch = this.phoneSearch.replace(/\s/g, "");
     if (this.phoneSearch.length != 10 || isNaN(Number(this.phoneSearch))) {
+      this.show_partners_List = false;
+      this.phoneSearch_invalid = true;
       return;
     }
-
+    this.show_partners_List = true;
+    this.phoneSearch_invalid = false;
+    
     var val = new PartnerFilter();
     val.customer = true;
     val.search = this.phoneSearch || "";
@@ -55,6 +62,7 @@ export class PartnerPhonePopoverComponent implements OnInit {
 
   togglePopover() {
     if (this.popover.isOpen()) {
+      this.show_partners_List = false;
       this.popover.close();
     } else {
       if (this.phones) {
@@ -62,7 +70,6 @@ export class PartnerPhonePopoverComponent implements OnInit {
       }
       if (this.phones_List.length) {
         this.phoneSearch = this.phones_List[0];
-        this.loadDataFromApi();
       }
       this.popover.open();
     }
@@ -75,6 +82,7 @@ export class PartnerPhonePopoverComponent implements OnInit {
   }
 
   createPartner() {
+    this.show_partners_List = false;
     this.popover.close();
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
       scrollable: true,
@@ -104,6 +112,7 @@ export class PartnerPhonePopoverComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
+          this.show_partners_List = false;
           this.popover.close();
           this.reloadCustomerList.emit();
         },
