@@ -65,11 +65,86 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Kiểu kịch bản
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="type" (change)="onChangeType($event.target.value)">
+                                        <option value="auto_everyday">Chạy tự động hằng ngày</option>
+                                        <option value="auto_custom">Thiết lập chạy tự động</option>
+                                        <option value="manual">Chạy thủ công</option>
+                                    </select>
+                                    <div
+                                        *ngIf="typeControl.invalid && (typeControl.dirty || typeControl.touched || submitted)">
+                                        <label *ngIf="typeControl.errors.required" style="color: red;">Kiểu kịch bản
+                                            không được để trống !</label>
+                                    </div>
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr *ngIf="typeControl.value == 'auto_custom'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chạy tự động
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="autoCustomType">
+                                        <option value="custom1">Vào một ngày cụ thể</option>
+                                        <option value="custom2">Vào một ngày trong tháng</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="customTypeControl.value !== null && typeControl.value == 'auto_custom'">
+                                <td colspan="1" class="o_td_label">
+
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Ngày</label>
+                                            <select class="form-control-select mr-1" formControlName="customDay">
+                                                <option *ngFor="let i of dayList">
+                                                    {{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="o_group" *ngIf="customTypeControl.value !== 'custom2'">
+                                            <label class="o_form_label oe_edit_only">Tháng</label>
+                                            <select class="form-control-select mr-1" formControlName="customMonth">
+                                                <option *ngFor="let i of monthList">
+                                                    {{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Giờ</label>
+                                            <select class="form-control-select mr-1" formControlName="customHour">
+                                                <option *ngFor="let i of hourList">
+                                                    {{i | number:'2.0'}} </option>
+                                            </select>                                          
+                                        </div>                                       
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Phút</label>
+                                            <select class="form-control-select mr-1" formControlName="customMinute">
+                                                <option *ngFor="let i of minuteList">
+                                                    {{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
+
                 <div class="mb-2">
                     <button type="button" (click)="addCampaign()" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Thêm chiến dịch

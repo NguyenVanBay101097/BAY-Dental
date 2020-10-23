@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Hangfire;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -47,19 +48,47 @@ namespace Infrastructure.Services
                 item.FacebookPageId = entity.ChannelSocialId;
             }
             await campaignObj.UpdateAsync(campaigns);
+            AddOrUpdateRunningJob(entity);
         }
 
         public override async Task<TCareScenario> CreateAsync(TCareScenario entity)
         {
             var model = await base.CreateAsync(entity);
+
             var campaignObj = GetService<ITCareCampaignService>();
             var campaigns = await campaignObj.SearchQuery(x => x.TCareScenarioId == entity.Id).ToListAsync();
             foreach (var item in campaigns)
             {
                 item.FacebookPageId = entity.ChannelSocialId;
             }
+
             await campaignObj.UpdateAsync(campaigns);
+            AddOrUpdateRunningJob(entity);
+
             return model;
+        }
+
+        public void AddOrUpdateRunningJob(TCareScenario entity)
+        {
+            
+            if (!entity.Campaigns.Any())
+                return;
+
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-scenario-{entity.Id}-custom";
+            entity.JobId = jobId;
+
+            if (entity.Type == "auto_everyday")
+            {
+                RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Campaigns), $"* 0 * * *", TimeZoneInfo.Local);
+            }
+            else if (entity.Type == "auto_custom")
+            {
+                if (entity.AutoCustomType == "custom1")
+                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Campaigns), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
+                else if (entity.AutoCustomType == "custom2")
+                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Campaigns), $"{entity.CustomMinute} {entity.CustomHour} */{entity.CustomDay} * *", TimeZoneInfo.Local);
+            }
         }
 
         public async Task<PagedResult2<TCareScenarioBasic>> GetPagedResultAsync(TCareScenarioPaged val)
@@ -86,7 +115,7 @@ namespace Infrastructure.Services
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
             //foreach => run()
-            await campaignJobObj.Run(tenant,campaigns);
+            await campaignJobObj.Run(tenant, campaigns);
         }
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
