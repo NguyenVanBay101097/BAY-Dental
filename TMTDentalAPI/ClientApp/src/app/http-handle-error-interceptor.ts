@@ -20,6 +20,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
                 let message;
+                debugger;
                 if (error.status === 410 && error.error.url) {
                     this.authService.logout();
                     this.router.navigate([error.error.url]);

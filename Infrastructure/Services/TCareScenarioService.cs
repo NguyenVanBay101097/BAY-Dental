@@ -4,6 +4,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Hangfire;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -81,12 +82,9 @@ namespace Infrastructure.Services
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
             var camObj = GetService<ITCareCampaignService>();
-            var campaignJobObj = GetService<TCareCampaignJobService>();
-            // ds chiến dịch
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
-            //foreach => run()
-            await campaignJobObj.Run(tenant,campaigns);
+            var campaignIds = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).Select(x => x.Id).ToListAsync();
+            BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.Run(tenant, campaignIds));
         }
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)

@@ -8,6 +8,6 @@ namespace Infrastructure.Services
 {
     public interface ITCareConfigService:IBaseService<TCareConfig>
     {
-        Task<TCareConfig> GetFirst();
+        Task<TCareConfig> GetConfig();
     }
 }

@@ -26,9 +26,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFirst()
+        public async Task<IActionResult> GetConfig()
         {
-            var res = await _tcareConfigService.GetFirst();
+            var res = await _tcareConfigService.GetConfig();
             return Ok(res);
         }
 
