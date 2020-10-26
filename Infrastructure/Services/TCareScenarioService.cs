@@ -76,7 +76,7 @@ namespace Infrastructure.Services
             entity.JobId = jobId;
             if (entity.Type == "auto_everyday")
             {
-                RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"* 0 * * *", TimeZoneInfo.Local);
+                RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"0 0 * * *", TimeZoneInfo.Local);
             }
             else if (entity.Type == "auto_custom")
             {
