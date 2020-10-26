@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { TcareService, TCareMessageDisplay } from '../tcare.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,6 +27,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
   @ViewChild('cbxMess', { static: true }) cbxMess: ComboBoxComponent;
   @ViewChild('couponCbx', { static: true }) couponCbx: ComboBoxComponent;
+  @ViewChild('content', { static: false }) content: ElementRef;
 
   model: any;
   formGroup: FormGroup;
@@ -34,8 +35,8 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   submited = false;
   title: string;
   showPluginTextarea: boolean = false;
-  selectArea_start: number;
-  selectArea_end: number;
+  selectArea_start: number = 0;
+  selectArea_end: number = 0;
   audience_filter: any;
   showAudienceFilter: boolean = false;
   messageTemplates: any[];
@@ -122,6 +123,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   searchCoupon(q?: string) {
     const val = new SaleCouponProgramPaged();
     val.search = q || '';
+    val.active = true;
     val.programType = 'coupon_program';
     return this.saleCouponService.getPaged(val);
   }
@@ -240,6 +242,10 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     }
     this.selectArea_start = this.selectArea_start + value.length;
     this.selectArea_end = this.selectArea_start;
+
+    this.content.nativeElement.focus();
+    this.content.nativeElement.selectionEnd = this.selectArea_end;
+    this.content.nativeElement.selectionStart = this.selectArea_start;
   }
 
   emotionClick(e) {

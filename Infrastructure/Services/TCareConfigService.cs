@@ -35,18 +35,9 @@ namespace Infrastructure.Services
             {
                 // add jobs and new record config
                 var newConfig = new TCareConfig();
-                var tenant = _tenant != null ? _tenant.Hostname : "localhost";
                 try
                 {
-                    RecurringJob.AddOrUpdate<TCareCampaignJobService>($"{tenant}-tcare-campaign-job", x => x.Run(tenant, null), $"{newConfig.JobCampaignMinute} {newConfig.JobCampaignHour} * * *", TimeZoneInfo.Local);
-
-                    var messagingMinute = newConfig.JobMessagingMinute ?? 60;
-                    var messagingTimeSpan = TimeSpan.FromMinutes(messagingMinute);
-                    RecurringJob.AddOrUpdate<TCareMessagingJobService>($"{tenant}-tcare-messaging-job", x => x.ProcessQueue(tenant), $"{(messagingTimeSpan.Minutes > 0 ? "*/" + messagingTimeSpan.Minutes : "*")} {(messagingTimeSpan.Hours > 0 ? "*/" + messagingTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
-
-                    var messageMinute = newConfig.JobMessageMinute ?? 60;
-                    var messageTimeSpan = TimeSpan.FromMinutes(messageMinute);
-                    RecurringJob.AddOrUpdate<TCareMessageJobService>($"{tenant}-tcare-message-job", x => x.Run(tenant), $"{(messageTimeSpan.Minutes > 0 ? "*/" + messageTimeSpan.Minutes : "*")} {(messageTimeSpan.Hours > 0 ? "*/" + messageTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
+                    UpdateTCareJobs(newConfig);
                 }
                 catch(Exception e)
                 {
@@ -56,6 +47,27 @@ namespace Infrastructure.Services
                 res = await CreateAsync(newConfig);
             }
             return res;
+        }
+
+        public void UpdateTCareJobs(TCareConfig config)
+        {
+
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            RecurringJob.AddOrUpdate<TCareCampaignJobService>($"{tenant}-tcare-campaign-job", x => x.Run(tenant, null), $"{config.JobCampaignMinute} {config.JobCampaignHour} * * *", TimeZoneInfo.Local);
+
+            var messagingMinute = config.JobMessagingMinute ?? 60;
+            var messagingTimeSpan = TimeSpan.FromMinutes(messagingMinute);
+            RecurringJob.AddOrUpdate<TCareMessagingJobService>($"{tenant}-tcare-messaging-job", x => x.ProcessQueue(tenant), $"{(messagingTimeSpan.Minutes > 0 ? "*/" + messagingTimeSpan.Minutes : "*")} {(messagingTimeSpan.Hours > 0 ? "*/" + messagingTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
+
+            var messageMinute = config.JobMessageMinute ?? 60;
+            var messageTimeSpan = TimeSpan.FromMinutes(messageMinute);
+            RecurringJob.AddOrUpdate<TCareMessageJobService>($"{tenant}-tcare-message-job", x => x.Run(tenant), $"{(messageTimeSpan.Minutes > 0 ? "*/" + messageTimeSpan.Minutes : "*")} {(messageTimeSpan.Hours > 0 ? "*/" + messageTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
+        }
+
+        public async override Task UpdateAsync(TCareConfig entity)
+        {
+            UpdateTCareJobs(entity);
+            await base.UpdateAsync(entity);
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { validator } from 'fast-json-patch';
 
@@ -9,6 +9,7 @@ import { validator } from 'fast-json-patch';
 })
 export class TcareMessageTemplateContentComponent implements OnInit {
 
+  @ViewChild('content', { static: true }) content: ElementRef;
   formGroup: FormGroup;
   @Input() template: any;
   @Input() index: any;
@@ -88,6 +89,9 @@ export class TcareMessageTemplateContentComponent implements OnInit {
     }
     this.selectArea_start = this.selectArea_start + value.length;
     this.selectArea_end = this.selectArea_start;
+    this.content.nativeElement.focus();
+    this.content.nativeElement.selectionEnd = this.selectArea_end;
+    this.content.nativeElement.selectionStart = this.selectArea_start;
   }
 
   emotionClick(e) {
