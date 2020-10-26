@@ -8,6 +8,8 @@ import { PermissionService } from './permission.service';
 })
 export class HasGroupsDirective implements OnInit {
     @Input() groups: string;
+    @Input() item: any;
+    @Input() child: any;
     constructor(private elementRef: ElementRef, private renderer: Renderer2,
         private permissionService: PermissionService) {
 
@@ -27,6 +29,7 @@ export class HasGroupsDirective implements OnInit {
         }
         var permissions = this.groups.split(',');
         let hasDefined = this.permissionService.hasOneDefined(permissions);
+console.log(this.elementRef.nativeElement);
 
         if (!hasDefined) {
             this.renderer.setStyle(

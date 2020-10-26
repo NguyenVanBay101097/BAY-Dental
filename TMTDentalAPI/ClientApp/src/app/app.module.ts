@@ -22,6 +22,7 @@ import 'moment/locale/vi';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
+import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 
 
 export function tokenGetter() {
@@ -64,6 +65,7 @@ registerLocaleData(localeVi, "vi");
       useExisting: JwtInterceptor,
       multi: true,
     },
+    { provide: HTTP_INTERCEPTORS, useClass: NoCacheInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     {
       provide: HTTP_INTERCEPTORS,

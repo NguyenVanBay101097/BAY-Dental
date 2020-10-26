@@ -114,8 +114,6 @@ namespace Infrastructure.Services
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
             var camObj = GetService<ITCareCampaignService>();
-            var campaignJobObj = GetService<TCareCampaignJobService>();
-            // ds chiến dịch
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
             //foreach => run()

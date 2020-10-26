@@ -39,10 +39,9 @@ export class LayoutHeaderComponent implements OnInit {
     this.authService.currentUser.subscribe(result => {
       if (result) {
         this.loadChangeCurrentCompany();
+        this.loadExpire();
       }
     });
-
-    this.loadExpire();
   }
 
   loadExpire() {

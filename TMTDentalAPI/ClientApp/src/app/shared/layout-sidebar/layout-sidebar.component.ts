@@ -103,6 +103,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thống kê gửi tin', link: '/tcare/messagings' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
         { name: 'Mẫu tin nhắn', link: '/tcare/message-templates' },
+        { name: 'Thiết lập tự động', link: '/tcare/config' },
       ],
       groups: 'tcare.group_tcare',
     },

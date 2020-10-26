@@ -283,6 +283,7 @@ namespace TMTDentalAPI
             services.AddScoped<IHrSalaryConfigService, HrSalaryConfigService>();
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
+            services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -405,6 +406,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrSalaryConfigProfile());
                 mc.AddProfile(new ResourceCalendarLeaveProfile());
                 mc.AddProfile(new TCareMessageTemplateProfile());
+                mc.AddProfile(new TCareConfigProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

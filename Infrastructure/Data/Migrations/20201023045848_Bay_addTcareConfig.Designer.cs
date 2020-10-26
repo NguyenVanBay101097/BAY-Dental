@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201023045848_Bay_addTcareConfig")]
+    partial class Bay_addTcareConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7946,9 +7948,6 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AutoCustomType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ChannalType")
                         .HasColumnType("nvarchar(max)");
 
@@ -7958,31 +7957,13 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("CustomDay")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CustomHour")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CustomMinute")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CustomMonth")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("JobId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WriteById")
