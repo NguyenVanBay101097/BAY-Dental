@@ -55,8 +55,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
   ngOnInit() {
     this.scenario = new TCareScenarioDisplay();
     this.route.queryParamMap.subscribe(params => {
-      this.id = params.get('id');
-      debugger
+      this.id = params.get('id');      
       if (!this.id) {
         this.loadData();
       } else {
@@ -128,9 +127,25 @@ export class TcareScenarioCrUpComponent implements OnInit {
   onChangeType() {
     if (this.typeControl.value == "auto_custom") {
       this.formGroup.controls['autoCustomType'].setValue("custom1");
+      this.formGroup.controls['customDay'].setValue(1);
+      this.formGroup.controls['customMonth'].setValue(1);
+      this.formGroup.controls['customHour'].setValue(0);
+      this.formGroup.controls['customMinute'].setValue(0);
     } else {
       this.formGroup.controls['autoCustomType'].setValue(null);
+      this.formGroup.controls['customDay'].setValue(null);
+      this.formGroup.controls['customMonth'].setValue(null);
+      this.formGroup.controls['customHour'].setValue(null);
+      this.formGroup.controls['customMinute'].setValue(null);
     }
+  }
+
+  onChangeCustomType(){
+
+      this.formGroup.controls['customDay'].setValue(1);
+      this.formGroup.controls['customMonth'].setValue(1);
+      this.formGroup.controls['customHour'].setValue(0);
+      this.formGroup.controls['customMinute'].setValue(0);    
   }
 
   dobPrepare() {
@@ -172,6 +187,21 @@ export class TcareScenarioCrUpComponent implements OnInit {
               this.textareaLength = 2000;
             }
           }
+          if (result.customDay) {
+            this.formGroup.get("customDay").setValue(result.customDay);
+          }
+
+          if (result.customMonth) {
+            this.formGroup.get("customMonth").setValue(result.customMonth);
+          }
+
+          if (result.customHour) {
+            this.formGroup.get("customHour").setValue(result.customHour);
+          }
+
+          if (result.customMinute) {
+            this.formGroup.get("customMinute").setValue(result.customMinute);
+          }
 
           
         }
@@ -199,28 +229,43 @@ export class TcareScenarioCrUpComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.invalid)
       return false;
-
+    debugger
     var value = this.formGroup.value;
     value.channelSocialId = value.channelSocial ? value.channelSocial.id : null;
     value.type = value.type;
     value.autoCustomType = this.typeControl.value != "auto_custom" ? null : value.autoCustomType;
-    value.customDay = this.typeControl.value != "auto_custom" ? null : value.customDay;
-    value.customMonth = this.typeControl.value != "auto_custom" ? null : value.customMonth;
-    value.customHour = this.typeControl.value != "auto_custom" ? null : value.customHour;
-    value.customMinute = this.typeControl.value != "auto_custom" ? null : value.customMinute;
-    this.tcareService.updateScenario(this.scenario.id, value).subscribe(
-      () => {
-        this.notificationService.show({
-          content: "Lưu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+    value.customDay = this.typeControl.value != "auto_custom" ? null : parseInt(value.customDay);
+    value.customMonth = this.typeControl.value != "auto_custom" ? null : parseInt(value.customMonth);
+    value.customHour = this.typeControl.value != "auto_custom" ? null : parseInt(value.customHour);
+    value.customMinute = this.typeControl.value != "auto_custom" ? null : parseInt(value.customMinute);
 
-        this.loadData();
-      }
-    )
+    if(this.id){
+      this.tcareService.updateScenario(this.scenario.id, value).subscribe(
+        () => {
+          this.notificationService.show({
+            content: "Lưu thành công",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+  
+         
+        }
+      )
+    }else{
+      this.tcareService.createScenario(value).subscribe(
+        (result: any) => {
+          this.router.navigate(['tcare/scenarios/form'], {
+            queryParams: {
+              id: result['id']
+            },
+          });
+          this.loadData();
+        }
+      )
+    }
+
   }
 
   actionNext(data) {
@@ -295,10 +340,10 @@ export class TcareScenarioCrUpComponent implements OnInit {
       value.channelSocialId = value.channelSocial ? value.channelSocial.id : null;
       value.type = value.type;
       value.autoCustomType = this.typeControl.value != "auto_custom" ? null : value.autoCustomType;
-      value.customDay = this.typeControl.value != "auto_custom" ? null : value.customDay;
-      value.customMonth = this.typeControl.value != "auto_custom" ? null : value.customMonth;
-      value.customHour = this.typeControl.value != "auto_custom" ? null : value.customHour;
-      value.customMinute = this.typeControl.value != "auto_custom" ? null : value.customMinute;
+      value.customDay = this.typeControl.value != "auto_custom" ? null : parseInt(value.customDay);
+      value.customMonth = this.typeControl.value != "auto_custom" ? null : parseInt(value.customMonth);
+      value.customHour = this.typeControl.value != "auto_custom" ? null : parseInt(value.customHour);
+      value.customMinute = this.typeControl.value != "auto_custom" ? null : parseInt(value.customMinute);
       this.tcareService.createScenario(value).subscribe(
         (result: any) => {
           this.router.navigate(['tcare/scenarios/form'], {

@@ -29,5 +29,6 @@ namespace Umbraco.Web.Models.ContentEditing
       
         public int? CustomMinute { get; set; }
 
+
     }
 }

@@ -67,9 +67,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> UpdateAsync(Guid id, TCareScenarioSave val)
         {
             var model = await _scenarioService.GetByIdAsync(id);
-            model.Name = val.Name;
-            model.ChannelSocialId = val.ChannelSocialId;
-            await _scenarioService.UpdateAsync(model);
+            var res = _mapper.Map(val,model);
+            await _scenarioService.UpdateAsync(res);
 
 
             return NoContent();
@@ -79,6 +78,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var model = await _scenarioService.GetByIdAsync(id);
+            if(model.JobId != null)
+            RecurringJob.RemoveIfExists(model.JobId);
+
             await _scenarioService.DeleteAsync(model);
             return NoContent();
         }
@@ -90,19 +92,19 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]")]
-        public IActionResult AddJob()
-        {
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-tcare-campaign-job";
-            RecurringJob.RemoveIfExists(jobId);
-            var now = DateTime.Now.AddMinutes(1);
-            RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, null), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
-            return NoContent();
-        }
+        //[HttpGet("[action]")]
+        //public IActionResult AddJob()
+        //{
+        //    var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+        //    var jobId = $"{tenant}-tcare-campaign-job";
+        //    RecurringJob.RemoveIfExists(jobId);
+        //    var now = DateTime.Now.AddMinutes(1);
+        //    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, null), $"{now.Minute} {now.Hour} * * *", TimeZoneInfo.Local);
+        //    return NoContent();
+        //}
 
         /// <summary>
-        /// config : Cron Run once a "*/{Minute} */{Hour} */{day of month} */{month} *{day of week}"
+        /// config : Cron Run once a "*/{Minute} */{Hour} {day of month} */{month} *{day of week}"
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
