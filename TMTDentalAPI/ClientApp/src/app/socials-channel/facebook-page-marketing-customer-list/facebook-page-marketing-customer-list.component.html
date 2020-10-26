@@ -1,8 +1,8 @@
 <div class="px-3 py-2 d-flex justify-content-between">
     <div>
-        <button class="btn btn-sm btn-primary" (click)="syncUsers()">Đồng bộ danh sách người tương tác</button>
-        <button class="btn btn-sm btn-primary ml-1"  (click)="syncNumberPhoneUsers()">Đồng bộ SĐT người tương tác</button>
-        <button class="btn btn-sm btn-success ml-1"  (click)="syncPartners()">Đồng bộ khách hàng</button>  
+        <button class="btn btn-sm btn-primary" (click)="syncUsers()">Tải người tương tác</button>
+        <button class="btn btn-sm btn-primary ml-1"  (click)="syncNumberPhoneUsers()">Cập nhật SĐT người tương tác</button>
+        <button class="btn btn-sm btn-success ml-1"  (click)="syncPartners()">Đồng bộ khách hàng tự động</button>  
     </div>  
     <div>
         <div class="o_cp_sidebar">
@@ -13,8 +13,8 @@
                         Thao tác
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button class="dropdown-item" (click)="syncPartnersMutilUser()">Đồng bộ khách hàng được chọn </button>
-                        <button class="dropdown-item" (click)="syncPhoneOfMutilUser()">Đồng bộ SĐT khách hàng được chọn</button>
+                        <button class="dropdown-item" (click)="syncPartnersMutilUser()">Đồng bộ khách hàng</button>
+                        <button class="dropdown-item" (click)="syncPhoneOfMutilUser()">Cập nhật SĐT </button>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }" [kendoGridSelectBy]="'id'" (selectedKeysChange)="selectedKeysChange($event)">
+        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }" [selectedKeys]="rowsSelected" [kendoGridSelectBy]="'id'" (selectedKeysChange)="selectedKeysChange($event)">
         <kendo-grid-checkbox-column showSelectAll="true" width="30">              
         </kendo-grid-checkbox-column>
         <kendo-grid-column title="Hình đại diện" width="120">

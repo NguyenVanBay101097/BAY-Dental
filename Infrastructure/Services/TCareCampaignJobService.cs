@@ -26,16 +26,15 @@ namespace Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task Run(string db, IEnumerable<Guid> ids)
+        public async Task Run(string db, Guid? ScenarioId)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                var campaigns = ids != null? await context.TCareCampaigns.Where(x => x.Active && ids.Contains(x.Id)).ToListAsync() :
-                    await context.TCareCampaigns.Where(x => x.Active).ToListAsync();
-                foreach (var campaign in campaigns)
+                var activeCampaigns = !ScenarioId.HasValue ? null : await context.TCareCampaigns.Where(x => x.TCareScenarioId.Value == ScenarioId.Value && x.Active).ToListAsync();
+                foreach (var campaign in activeCampaigns)
                 {
                     if (!campaign.FacebookPageId.HasValue)
                         continue;

@@ -8,6 +8,6 @@ namespace Infrastructure.Services
 {
     public interface ITCareCampaignJobService
     {
-        Task Run(string db, IEnumerable<Guid> ids);
+        Task Run(string db, Guid? ScenarioId);
     }
 }

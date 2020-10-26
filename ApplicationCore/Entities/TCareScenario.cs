@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class TCareScenario : BaseEntity
     {
+        public TCareScenario()
+        {
+            Type = "auto_everyday";
+        }
+
         public string Name { get; set; }
 
         public ICollection<TCareCampaign> Campaigns { get; set; } = new List<TCareCampaign>();
@@ -28,12 +33,24 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string AutoCustomType { get; set; }
 
+        /// <summary>
+        /// gia tri tu 1-31
+        /// </summary>
         public int? CustomDay { get; set; }
 
+        /// <summary>
+        /// gia tri tu 1-12
+        /// </summary>
         public int? CustomMonth { get; set; }
 
+        /// <summary>
+        /// gia tri tu 0-23
+        /// </summary>
         public int? CustomHour { get; set; }
 
+        /// <summary>
+        /// gia tri tu 0-59
+        /// </summary>
         public int? CustomMinute { get; set; }
 
         /// <summary>

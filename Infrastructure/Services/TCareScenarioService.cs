@@ -48,19 +48,51 @@ namespace Infrastructure.Services
                 item.FacebookPageId = entity.ChannelSocialId;
             }
             await campaignObj.UpdateAsync(campaigns);
+           await AddOrUpdateRunningJob(entity);
         }
 
         public override async Task<TCareScenario> CreateAsync(TCareScenario entity)
         {
             var model = await base.CreateAsync(entity);
+
             var campaignObj = GetService<ITCareCampaignService>();
             var campaigns = await campaignObj.SearchQuery(x => x.TCareScenarioId == entity.Id).ToListAsync();
             foreach (var item in campaigns)
             {
                 item.FacebookPageId = entity.ChannelSocialId;
             }
+
             await campaignObj.UpdateAsync(campaigns);
+            await AddOrUpdateRunningJob(entity);
+
             return model;
+        }
+
+        public async Task AddOrUpdateRunningJob(TCareScenario entity)
+        {
+            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
+            var jobId = $"{tenant}-tcare-scenario-{entity.Id}-custom";
+
+            entity.JobId = jobId;
+            if (entity.Type == "auto_everyday")
+            {
+                RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"0 0 * * *", TimeZoneInfo.Local);
+            }
+            else if (entity.Type == "auto_custom")
+            {
+                if (entity.AutoCustomType == "custom1")
+                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
+                else if (entity.AutoCustomType == "custom2")
+                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} * *", TimeZoneInfo.Local);               
+            }else if (entity.Type == "manual")
+            {
+                if (entity.JobId != null)
+                    RecurringJob.RemoveIfExists(entity.JobId);
+
+                entity.JobId = null;
+            }
+
+            await base.UpdateAsync(entity);
         }
 
         public async Task<PagedResult2<TCareScenarioBasic>> GetPagedResultAsync(TCareScenarioPaged val)
@@ -81,10 +113,12 @@ namespace Infrastructure.Services
 
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
+            var campaignJobObj = GetService<ITCareCampaignJobService>();
             var camObj = GetService<ITCareCampaignService>();
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var campaignIds = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).Select(x => x.Id).ToListAsync();
-            BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.Run(tenant, campaignIds));
+            var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
+            //foreach => run()
+            await campaignJobObj.Run(tenant, ids.FirstOrDefault());
         }
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
