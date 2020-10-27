@@ -44,6 +44,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
         public string PartnerPhone { get; set; }
 
+        public string PartnerDisplayName { get; set; }
+
         public string Note { get; set; }
     }
 
