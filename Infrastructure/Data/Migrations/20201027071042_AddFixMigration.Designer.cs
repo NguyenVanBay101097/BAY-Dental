@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20201016090946_ConsultantInPartner")]
-    partial class ConsultantInPartner
+    [Migration("20201027071042_AddFixMigration")]
+    partial class AddFixMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
