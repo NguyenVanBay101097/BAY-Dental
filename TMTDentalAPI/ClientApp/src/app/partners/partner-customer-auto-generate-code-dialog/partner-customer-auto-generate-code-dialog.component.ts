@@ -16,7 +16,7 @@ export class PartnerCustomerAutoGenerateCodeDialogComponent implements OnInit {
   id: string;
   code: string;
   constructor(
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private irSequencesService: IRSequencesService,
     private errorService: AppSharedShowErrorService
