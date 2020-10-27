@@ -30,7 +30,7 @@
         border-left: 1px solid #dee2e6;
         border-right: 1px solid #dee2e6;
         overflow: auto;
-        background: navajowhite;
+        background: white;
         table {
             position: absolute;
             min-width: 100%;
@@ -141,6 +141,7 @@
 }
 
 .t-tPagination {
+    font-weight: 600;
     span.active {
         color: #007bff;
     }

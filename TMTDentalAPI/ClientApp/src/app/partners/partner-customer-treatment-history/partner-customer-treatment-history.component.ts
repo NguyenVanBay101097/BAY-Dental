@@ -83,7 +83,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
 
   date: Date = new Date();
   thTable_payments = [
-    { name: 'Dịch vụ' },
+    { name: 'Dịch vụ', minWidth: '200px' },
     { name: 'Răng' }, 
     { name: 'Chuẩn đoán' }, 
     { name: 'Số lượng' }, 
@@ -105,7 +105,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
       pay: "this is pay", 
       owe: "this is owe", 
     }, {
-      service: "this is service name aaaaaaaaaaaaaa", 
+      service: "this is service name aaaaaaa aaaaaaa bbbbb nnnnn", 
       teeth: "this is teeth",
       chuandoan: "this is chuandoan",
       count: "this is count",
