@@ -743,7 +743,7 @@ namespace Infrastructure.Services
                         Name = user_info.Name,
                         FirstName = user_info.FirstName,
                         LastName = user_info.LastName,
-                        Avatar = user_info.ProfilePic,
+                        Avatar = $"https://graph.facebook.com/{user_info.PSId}/picture?access_token={self.PageAccesstoken}",
                         FbPageId = self.Id,
                         PSID = user_info.PSId,
                         Gender = user_info.Gender
