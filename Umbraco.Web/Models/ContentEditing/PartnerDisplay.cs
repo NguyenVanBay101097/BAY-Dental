@@ -163,5 +163,11 @@ namespace Umbraco.Web.Models.ContentEditing
             {
             }
         }
+
+        /// <summary>
+        /// Nhan vien tu van 
+        /// </summary>
+        public Guid? ConsultantId { get; set; }
+        public EmployeeSimple Consultant { get; set; }
     }
 }

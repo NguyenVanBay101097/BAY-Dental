@@ -57,6 +57,7 @@ export class PartnerDisplay extends PartnerBasic {
     date: string;
     titleId: string;
     title: PartnerTitle;
+    consultant: EmployeeSimple;
 }
 
 export class PartnerCategorySimple {
@@ -78,6 +79,7 @@ export class PartnerPaged {
     supplier: boolean;
     search: string;
     categoryId: string;
+    tagIds: string[];
     computeCreditDebit: boolean;
 }
 

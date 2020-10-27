@@ -3,13 +3,33 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddServiceCardOrderPaymentTable : Migration
+    public partial class AddFixMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
+                name: "EmployeeId",
+                table: "ToaThuocs",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "TagId",
+                table: "TCareCampaigns",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
                 name: "AccountMoveId",
                 table: "ServiceCardOrders",
+                nullable: true);
+
+            migrationBuilder.AddColumn<decimal>(
+                name: "AmountRefund",
+                table: "ServiceCardOrders",
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "ConsultantId",
+                table: "Partners",
                 nullable: true);
 
             migrationBuilder.CreateTable(
@@ -55,9 +75,24 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ToaThuocs_EmployeeId",
+                table: "ToaThuocs",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TCareCampaigns_TagId",
+                table: "TCareCampaigns",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServiceCardOrders_AccountMoveId",
                 table: "ServiceCardOrders",
                 column: "AccountMoveId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Partners_ConsultantId",
+                table: "Partners",
+                column: "ConsultantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServiceCardOrderPayments_CreatedById",
@@ -80,10 +115,34 @@ namespace Infrastructure.Data.Migrations
                 column: "WriteById");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Partners_Employees_ConsultantId",
+                table: "Partners",
+                column: "ConsultantId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_ServiceCardOrders_AccountMoves_AccountMoveId",
                 table: "ServiceCardOrders",
                 column: "AccountMoveId",
                 principalTable: "AccountMoves",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_TCareCampaigns_PartnerCategories_TagId",
+                table: "TCareCampaigns",
+                column: "TagId",
+                principalTable: "PartnerCategories",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ToaThuocs_Employees_EmployeeId",
+                table: "ToaThuocs",
+                column: "EmployeeId",
+                principalTable: "Employees",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -91,19 +150,59 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_Partners_Employees_ConsultantId",
+                table: "Partners");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_ServiceCardOrders_AccountMoves_AccountMoveId",
                 table: "ServiceCardOrders");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_TCareCampaigns_PartnerCategories_TagId",
+                table: "TCareCampaigns");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ToaThuocs_Employees_EmployeeId",
+                table: "ToaThuocs");
 
             migrationBuilder.DropTable(
                 name: "ServiceCardOrderPayments");
 
             migrationBuilder.DropIndex(
+                name: "IX_ToaThuocs_EmployeeId",
+                table: "ToaThuocs");
+
+            migrationBuilder.DropIndex(
+                name: "IX_TCareCampaigns_TagId",
+                table: "TCareCampaigns");
+
+            migrationBuilder.DropIndex(
                 name: "IX_ServiceCardOrders_AccountMoveId",
                 table: "ServiceCardOrders");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Partners_ConsultantId",
+                table: "Partners");
+
+            migrationBuilder.DropColumn(
+                name: "EmployeeId",
+                table: "ToaThuocs");
+
+            migrationBuilder.DropColumn(
+                name: "TagId",
+                table: "TCareCampaigns");
 
             migrationBuilder.DropColumn(
                 name: "AccountMoveId",
                 table: "ServiceCardOrders");
+
+            migrationBuilder.DropColumn(
+                name: "AmountRefund",
+                table: "ServiceCardOrders");
+
+            migrationBuilder.DropColumn(
+                name: "ConsultantId",
+                table: "Partners");
         }
     }
 }

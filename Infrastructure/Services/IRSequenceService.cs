@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
@@ -84,6 +86,27 @@ namespace Infrastructure.Services
         {
             var sequence = await GetByIdAsync(id);
             return await Next(sequence);
+        }
+
+        public IQueryable<IRSequenceViewModel> GetViewModels()
+        {
+            return SearchQuery().Select(x => new IRSequenceViewModel
+            {
+                Id = x.Id,
+                Code = x.Code,
+                Implementation = x.Implementation,
+                Name = x.Name,
+                NumberIncrement = x.NumberIncrement,
+                NumberNext = x.NumberNext,
+                Padding = x.Padding,
+                Prefix = x.Prefix,
+                Suffix = x.Suffix
+            });
+        }
+
+        public Task<IQueryable<IRSequenceViewModel>> GetViewModelsAsync()
+        {
+            return Task.Run(() => GetViewModels());
         }
     }
 }

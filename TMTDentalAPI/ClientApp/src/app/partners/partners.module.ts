@@ -37,6 +37,7 @@ import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-i
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
 import { PartnerInfoComponent } from './partner-info/partner-info.component';
 import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner-category-popover/partner-category-popover.component';
+import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner
     PartnerCustomerUploadImageComponent,
     PartnerCustomerQuotationsComponent,
     PartnerInfoComponent,
-    PartnerCategoryPopoverComponent
+    PartnerCategoryPopoverComponent,
+    PartnerCustomerAutoGenerateCodeDialogComponent
   ],
   imports: [
     CommonModule,
@@ -85,7 +87,8 @@ import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner
     PartnerCreateUpdateComponent,
     PartnerImportComponent,
     PartnerSearchDialogComponent,
-    PartnerCustomerTreatmentPaymentDetailComponent
+    PartnerCustomerTreatmentPaymentDetailComponent,
+    PartnerCustomerAutoGenerateCodeDialogComponent
   ],
   providers: [],
   exports: [

@@ -40,7 +40,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   listEmployees: EmployeeBasic[] = [];
-
+  filterEmployee: any;
 
 
   public today: Date = new Date(new Date().toDateString());
@@ -85,8 +85,8 @@ export class AppointmentKanbanComponent implements OnInit {
     return this.employeeService.getEmployeePaged(paged);
   }
 
-  valueChangeUser(user) {
-    this.userId = user ? user.id : null;
+  valueChangeUser(employee) {
+    this.filterEmployee = employee;
     this.loadData();
   }
 
@@ -135,7 +135,7 @@ export class AppointmentKanbanComponent implements OnInit {
         val.search = this.search;
       }
 
-      val.userId = this.userId;
+      val.employeeId = this.filterEmployee ? this.filterEmployee.id : null;
       
       val.date = this.intlService.formatDate(date, 'yyyy-MM-dd');
       return this.appointmentService.searchReadByDate(val);

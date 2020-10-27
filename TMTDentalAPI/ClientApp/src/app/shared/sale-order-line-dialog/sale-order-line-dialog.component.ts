@@ -36,6 +36,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
   saleOrderId: string;
   partnerId: string;
   pricelistId: string;
+  showSaveACreate: boolean = false;
+  listSaleLine: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -296,11 +298,46 @@ export class SaleOrderLineDialogComponent implements OnInit {
     val.employeeId = val.employee ? val.employee.id : null;
     val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    this.activeModal.close(val);
+    this.listSaleLine.push(val);
+    this.activeModal.close(this.listSaleLine);
   }
 
-  onCancel() {
-    this.activeModal.dismiss();
+  onSaveACreate() {
+    if (!this.saleLineForm.valid) {
+      return;
+    }
+    var val = this.saleLineForm.value;
+    val.productId = val.product ? val.product.id : null;
+    val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
+    val.employeeId = val.employee ? val.employee.id : null;
+    val.priceSubTotal = this.getPriceSubTotal();
+    val.teeth = this.teethSelected;
+    this.listSaleLine.push(val);
+    this.saleLineForm = this.fb.group({
+      name: '',
+      product: [null, Validators.required],
+      productId: null,
+      priceUnit: 0,
+      productUOMQty: 1,
+      discount: 0,
+      discountType: 'percentage',
+      discountFixed: 0,
+      priceSubTotal: 1,
+      amountPaid:0,
+      amountResidual:0,
+      diagnostic: null,
+      toothCategory: null,
+      state: 'draft',
+      employee: null
+    });
+  }
+
+  onClose() {
+    if (this.listSaleLine.length) {
+      this.activeModal.close(this.listSaleLine);
+    } else {
+      this.activeModal.dismiss();
+    }
   }
 }
 
