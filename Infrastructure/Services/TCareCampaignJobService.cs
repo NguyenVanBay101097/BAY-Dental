@@ -26,15 +26,18 @@ namespace Infrastructure.Services
             _configuration = configuration;
         }
 
-        public async Task Run(string db, Guid? ScenarioId)
+        public async Task Run(string db, IEnumerable<Guid> ids)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
             await using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                var activeCampaigns = !ScenarioId.HasValue ? null : await context.TCareCampaigns.Where(x => x.TCareScenarioId.Value == ScenarioId.Value && x.Active).ToListAsync();
-                foreach (var campaign in activeCampaigns)
+                // bình thường sẽ chỉ chạy các chiến dịch mà có kịch bản là auto_everyday
+                var campaigns = ids != null ? await context.TCareCampaigns.Where(x => x.Active && ids.Contains(x.Id)).ToListAsync() :
+                    await context.TCareCampaigns.Where(x => x.Active && x.TCareScenario.Type == "auto_everyday").ToListAsync();
+
+                foreach (var campaign in campaigns)
                 {
                     if (!campaign.FacebookPageId.HasValue)
                         continue;

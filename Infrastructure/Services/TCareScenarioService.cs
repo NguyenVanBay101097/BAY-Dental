@@ -74,16 +74,12 @@ namespace Infrastructure.Services
             var jobId = $"{tenant}-tcare-scenario-{entity.Id}-custom";
 
             entity.JobId = jobId;
-            if (entity.Type == "auto_everyday")
-            {
-                RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"0 0 * * *", TimeZoneInfo.Local);
-            }
-            else if (entity.Type == "auto_custom")
+            if (entity.Type == "auto_custom")
             {
                 if (entity.AutoCustomType == "custom1")
-                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant,new Guid[]{ entity.Id}), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
                 else if (entity.AutoCustomType == "custom2")
-                    RecurringJob.AddOrUpdate<TCareCampaignJobService>(jobId, x => x.Run(tenant, entity.Id), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} * *", TimeZoneInfo.Local);               
+                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant, new Guid[] { entity.Id }), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} * *", TimeZoneInfo.Local);               
             }else if (entity.Type == "manual")
             {
                 if (entity.JobId != null)
@@ -113,12 +109,9 @@ namespace Infrastructure.Services
 
         public async Task ActionStart(IEnumerable<Guid> ids)
         {
-            var campaignJobObj = GetService<ITCareCampaignJobService>();
-            var camObj = GetService<ITCareCampaignService>();
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var campaigns = await camObj.SearchQuery(x => x.Active && ids.Contains(x.TCareScenarioId.Value)).ToListAsync();
-            //foreach => run()
-            await campaignJobObj.Run(tenant, ids.FirstOrDefault());
+            var scenarioJobObj = GetService<ITCareScenarioJobService>();
+            var db = _tenant != null ? _tenant.Hostname : "localhost";
+            await scenarioJobObj.Run(db, ids);
         }
 
         public async Task<TCareScenarioDisplay> GetDisplay(Guid id)
