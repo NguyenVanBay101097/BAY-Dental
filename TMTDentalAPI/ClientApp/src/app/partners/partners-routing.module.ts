@@ -12,6 +12,7 @@ import { PartnerCustomerCategoriesComponent } from './partner-customer-categorie
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
 import { PartnerCustomerTreatmentHistoryComponent } from './partner-customer-treatment-history/partner-customer-treatment-history.component';
+import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer-treatment-history-form/partner-customer-treatment-history-form.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,7 @@ const routes: Routes = [
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationsComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
+      { path: 'treatment-histories-form', component: PartnerCustomerTreatmentHistoryFormComponent },
     ]
   },
 ];

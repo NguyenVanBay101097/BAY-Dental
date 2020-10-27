@@ -12,4 +12,8 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   ngOnInit() {
   }
 
+  loadSaleOrder(){
+    
+  }
+
 }
