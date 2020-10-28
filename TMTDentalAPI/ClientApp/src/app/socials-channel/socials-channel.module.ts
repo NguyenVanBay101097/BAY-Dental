@@ -41,6 +41,7 @@ import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-selec
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
 import { FacebookModule } from 'ngx-facebook';
+import { ZaloOAConfigService } from '../zalo-oa-config/zalo-oa-config.service';
 
 @NgModule({
   declarations: [
@@ -101,7 +102,7 @@ import { FacebookModule } from 'ngx-facebook';
     AudienceFilterInputComponent
   ],
   providers: [
-    FacebookUserProfilesService
+    FacebookUserProfilesService,ZaloOAConfigService
   ]
 })
 export class SocialsChannelModule { }

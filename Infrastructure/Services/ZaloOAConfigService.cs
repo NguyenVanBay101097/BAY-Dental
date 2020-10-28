@@ -44,10 +44,14 @@ namespace Infrastructure.Services
 
             if (page != null)
             {
+                if (!string.IsNullOrEmpty(val.PageId) && val.PageId != oa_id)
+                {
+                    throw new Exception("Tài khoản zalo này không có quyền với trang này!");
+                }
                 page.PageName = profile.data.name;
                 page.Avatar = profile.data.avatar;
                 page.PageAccesstoken = accessToken;
-                await pageObj.UpdateAsync(page);              
+                await pageObj.UpdateAsync(page);
             }
             else
             {

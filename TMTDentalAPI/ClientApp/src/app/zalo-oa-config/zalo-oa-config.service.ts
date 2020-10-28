@@ -4,6 +4,7 @@ import { Injectable, Inject } from '@angular/core';
 
 export class ZaloOAConfigSave {
     accessToken: string;
+    pageId: string;
 }
 
 export class ZaloOAConfigUpdate {
