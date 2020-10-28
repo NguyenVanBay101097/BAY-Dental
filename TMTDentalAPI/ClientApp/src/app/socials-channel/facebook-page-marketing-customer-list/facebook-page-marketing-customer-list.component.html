@@ -31,21 +31,25 @@
         </kendo-grid-checkbox-column>
         <kendo-grid-column title="Hình đại diện" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <img class="rounded-circle" [src]="dataItem.avatar" height="50" width="50">
+                <img class="rounded-circle" [src]="dataItem.Avatar" height="50" width="50">
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200">
+        <kendo-grid-column field="Name" title="Tên" width="200">
         </kendo-grid-column>
         <kendo-grid-column title="Số điện thoại" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <app-partner-phone-popover [phones]="dataItem.phone" [customerId]="dataItem.id"
-                    [partnerName]="dataItem.partnerName" (reloadCustomerList)="loadDataFromApi()">
-                </app-partner-phone-popover> {{dataItem.phone}}
+                {{dataItem.Phone}} 
+                <app-facebook-user-profile-update-phone-partner-popover [data]="dataItem" (valueChange)="onPhonePartnerChange(dataItem, $event)"
+                (createPartnerClick)="onCreatePartnerClick(dataItem, $event)">
+                </app-facebook-user-profile-update-phone-partner-popover> 
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng liên kết" width="150">
+        <kendo-grid-column field="Partner" title="Khách hàng liên kết" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getDisplayName(dataItem.Partner)}} 
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="Id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>

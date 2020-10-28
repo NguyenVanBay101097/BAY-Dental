@@ -41,6 +41,7 @@ import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-selec
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
 import { FacebookModule } from 'ngx-facebook';
+import { FacebookUserProfileUpdatePhonePartnerPopoverComponent } from './facebook-user-profile-update-phone-partner-popover/facebook-user-profile-update-phone-partner-popover.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { FacebookModule } from 'ngx-facebook';
     FacebookAudienceFilterComponent,
     FacebookSelectTagComponent,
     FacebookPluginTextareaComponent,
-    FacebookPageListComponent
+    FacebookPageListComponent,
+    FacebookUserProfileUpdatePhonePartnerPopoverComponent
   ],
   imports: [
     CommonModule,

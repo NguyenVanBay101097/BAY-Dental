@@ -26,9 +26,11 @@ export class FacebookUserProfilesService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConnectPartner', val);
   }
 
-  
-
   removePartner(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/RemovePartner', val);
+  }
+
+  patch(id: string, patch: any) {
+    return this.http.patch(this.baseApi + this.apiUrl + "/" + id, patch);
   }
 }

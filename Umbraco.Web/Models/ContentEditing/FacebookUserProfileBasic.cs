@@ -16,14 +16,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
 
         public string Phone { get; set; }
-        /// <summary>
-        /// ngày tạo
-        /// </summary>
+
         public DateTime DateCreated { get; set; }
 
-        public Guid? PartnerId { get; set; }
+        public string Partner { get; set; }
 
-        public string PartnerName { get; set; }
+        public Guid? PartnerId { get; set; }
 
         public string Avatar { get; set; }
     }

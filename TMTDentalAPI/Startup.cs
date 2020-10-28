@@ -617,13 +617,20 @@ namespace TMTDentalAPI
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<PartnerViewModel>("Partners");
+         
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
+            builder.EntitySet<PartnerViewModel>("Partners");
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")
                .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
+            builder.EntityType<FacebookUserProfile>()
+              .Collection
+              .Function("GetView")
+              .ReturnsCollection<FacebookUserProfileBasic>();
 
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();
