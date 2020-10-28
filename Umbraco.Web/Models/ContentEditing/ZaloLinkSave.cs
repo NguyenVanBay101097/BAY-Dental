@@ -7,5 +7,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ZaloOAConfigSave
     {
         public string AccessToken { get; set; }
+        public string PageId { get; set; }
     }
 }

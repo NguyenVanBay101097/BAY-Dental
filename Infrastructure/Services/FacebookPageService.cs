@@ -1061,6 +1061,10 @@ namespace Infrastructure.Services
 
                 //update accesstoken connect page
                 var connectPage = await connectPageObj.SearchQuery(x => x.PageId == page.Id).SingleOrDefaultAsync();
+                if (connectPage == null)
+                {
+                    throw new Exception("tài khoản facebook này không có quyền với trang này!");
+                }
                 connectPage.PageAccessToken = page.PageAccesstoken;
 
                 await connectPageObj.UpdateAsync(connectPage);
