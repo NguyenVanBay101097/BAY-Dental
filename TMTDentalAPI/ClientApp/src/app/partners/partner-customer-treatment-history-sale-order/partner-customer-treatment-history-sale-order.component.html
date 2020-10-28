@@ -1,18 +1,28 @@
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Số phiếu</th>
-            <th scope="col">Ngày lập phiếu</th>
-            <th scope="col">Tổng tiền</th>
-            <th scope="col">Còn nợ</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let item of listSaleOrder">
-            <td>{{item.name}}</td>
-            <td>{{item.dateOrder | date: 'short'}}</td>
-            <td>{{item.amountTotal | number}}</td>
-            <td>{{!item.residual ? 0 : item.residual | number}}</td>
-        </tr>
-    </tbody>
-</table>
+
+<div class="d-flex flex-column h-100">
+    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+        <h5 class="m-0">Phiếu điều trị</h5>
+        <button type="button" class="btn btn-primary btn-sm">Thêm</button>
+    </div>
+    <div class="t-conTable">
+        <div class="t-parTable t-scrollbar">
+            <table class="t-sticky-thead t-sticky-col-left t-tbody-nowrap">
+                <thead>
+                    <tr>
+                        <th *ngFor="let item of thTable_saleOrders">
+                            {{item.name}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="t-scrollbar">
+                    <tr *ngFor="let item of listSaleOrder">
+                        <td>{{item.name}}</td>
+                        <td>{{item.dateOrder | date: 'short'}}</td>
+                        <td>{{item.amountTotal | number}}</td>
+                        <td>{{!item.residual ? 0 : item.residual | number}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

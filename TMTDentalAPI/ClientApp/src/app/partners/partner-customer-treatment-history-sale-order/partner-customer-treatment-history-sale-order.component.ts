@@ -11,6 +11,12 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   // @Input() partnerId: string;
   limit: number = 20;
   skip: number = 0;
+  thTable_saleOrders = [
+    { name: 'Số phiếu' },
+    { name: 'Ngày lập phiếu' },
+    { name: 'Tổng tiền' },
+    { name: 'Còn nợ' }
+  ]
   listSaleOrder: SaleOrderBasic[] = [];
   partnerId: string = '173a31a8-7881-4a7a-8ad0-08d834686640';
   constructor(
@@ -31,7 +37,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
     this.saleOrderService.getPaged(val).subscribe(res => {
       this.listSaleOrder = res.items;
       console.log(this.listSaleOrder[0]);
-      
+
     }, err => {
       console.log(err);
     })

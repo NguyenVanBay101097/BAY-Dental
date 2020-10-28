@@ -18,6 +18,21 @@ export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements 
   partnerId: string;
   listProductServices: ProductBasic2[] = [];
   searchUpdate = new Subject<string>();
+  
+  thTable_services = [
+    { name: 'Dịch vụ' },
+    { name: 'Đơn giá' }
+  ]
+
+  services: any[] = [
+    {
+      service: "this is service name",
+      money: "this is money",
+    }, {
+      service: "this is service name aaaaaaaaaaaaaa",
+      money: "this is money",
+    }
+  ];
 
   constructor(
     private productService: ProductService,
