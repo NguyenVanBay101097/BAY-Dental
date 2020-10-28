@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class UpdateTCareTablesV1 : Migration
+    public partial class AddFixMigrationTCare : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,9 +42,13 @@ namespace Infrastructure.Data.Migrations
                 name: "SheduleDate",
                 table: "TCareMessagings");
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "EmployeeId",
-                table: "ToaThuocs",
+            migrationBuilder.DropColumn(
+                name: "SheduleStart",
+                table: "TCareCampaigns");
+
+            migrationBuilder.AddColumn<string>(
+                name: "AutoCustomType",
+                table: "TCareScenarios",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
@@ -54,6 +58,36 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "ChannelSocialId",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CustomDay",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CustomHour",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CustomMinute",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "CustomMonth",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "JobId",
+                table: "TCareScenarios",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Type",
                 table: "TCareScenarios",
                 nullable: true);
 
@@ -87,19 +121,15 @@ namespace Infrastructure.Data.Migrations
                 table: "TCareCampaigns",
                 nullable: true);
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "TagId",
-                table: "TCareCampaigns",
-                nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "AccountMoveId",
-                table: "ServiceCardOrders",
-                nullable: true);
-
             migrationBuilder.AddColumn<decimal>(
-                name: "AmountRefund",
-                table: "ServiceCardOrders",
+                name: "SheduleStartNumber",
+                table: "TCareCampaigns",
+                nullable: false,
+                defaultValue: 0m);
+
+            migrationBuilder.AddColumn<string>(
+                name: "SheduleStartType",
+                table: "TCareCampaigns",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
@@ -108,7 +138,7 @@ namespace Infrastructure.Data.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "ServiceCardOrderPayments",
+                name: "TCareConfigs",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -116,33 +146,22 @@ namespace Infrastructure.Data.Migrations
                     WriteById = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true),
-                    OrderId = table.Column<Guid>(nullable: false),
-                    Amount = table.Column<decimal>(nullable: false),
-                    JournalId = table.Column<Guid>(nullable: false)
+                    JobCampaignHour = table.Column<int>(nullable: true),
+                    JobCampaignMinute = table.Column<int>(nullable: true),
+                    JobMessagingMinute = table.Column<int>(nullable: true),
+                    JobMessageMinute = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServiceCardOrderPayments", x => x.Id);
+                    table.PrimaryKey("PK_TCareConfigs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServiceCardOrderPayments_AspNetUsers_CreatedById",
+                        name: "FK_TCareConfigs_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ServiceCardOrderPayments_AccountJournals_JournalId",
-                        column: x => x.JournalId,
-                        principalTable: "AccountJournals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceCardOrderPayments_ServiceCardOrders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "ServiceCardOrders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ServiceCardOrderPayments_AspNetUsers_WriteById",
+                        name: "FK_TCareConfigs_AspNetUsers_WriteById",
                         column: x => x.WriteById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -281,11 +300,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ToaThuocs_EmployeeId",
-                table: "ToaThuocs",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TCareScenarios_ChannelSocialId",
                 table: "TCareScenarios",
                 column: "ChannelSocialId");
@@ -306,33 +320,13 @@ namespace Infrastructure.Data.Migrations
                 column: "FacebookPageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TCareCampaigns_TagId",
-                table: "TCareCampaigns",
-                column: "TagId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrders_AccountMoveId",
-                table: "ServiceCardOrders",
-                column: "AccountMoveId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrderPayments_CreatedById",
-                table: "ServiceCardOrderPayments",
+                name: "IX_TCareConfigs_CreatedById",
+                table: "TCareConfigs",
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrderPayments_JournalId",
-                table: "ServiceCardOrderPayments",
-                column: "JournalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrderPayments_OrderId",
-                table: "ServiceCardOrderPayments",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServiceCardOrderPayments_WriteById",
-                table: "ServiceCardOrderPayments",
+                name: "IX_TCareConfigs_WriteById",
+                table: "TCareConfigs",
                 column: "WriteById");
 
             migrationBuilder.CreateIndex(
@@ -391,26 +385,10 @@ namespace Infrastructure.Data.Migrations
                 column: "PartnerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ServiceCardOrders_AccountMoves_AccountMoveId",
-                table: "ServiceCardOrders",
-                column: "AccountMoveId",
-                principalTable: "AccountMoves",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_TCareCampaigns_FacebookPages_FacebookPageId",
                 table: "TCareCampaigns",
                 column: "FacebookPageId",
                 principalTable: "FacebookPages",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_TCareCampaigns_PartnerCategories_TagId",
-                table: "TCareCampaigns",
-                column: "TagId",
-                principalTable: "PartnerCategories",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
@@ -437,28 +415,12 @@ namespace Infrastructure.Data.Migrations
                 principalTable: "FacebookPages",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ToaThuocs_Employees_EmployeeId",
-                table: "ToaThuocs",
-                column: "EmployeeId",
-                principalTable: "Employees",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_ServiceCardOrders_AccountMoves_AccountMoveId",
-                table: "ServiceCardOrders");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_TCareCampaigns_FacebookPages_FacebookPageId",
-                table: "TCareCampaigns");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_TCareCampaigns_PartnerCategories_TagId",
                 table: "TCareCampaigns");
 
             migrationBuilder.DropForeignKey(
@@ -473,12 +435,8 @@ namespace Infrastructure.Data.Migrations
                 name: "FK_TCareScenarios_FacebookPages_ChannelSocialId",
                 table: "TCareScenarios");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_ToaThuocs_Employees_EmployeeId",
-                table: "ToaThuocs");
-
             migrationBuilder.DropTable(
-                name: "ServiceCardOrderPayments");
+                name: "TCareConfigs");
 
             migrationBuilder.DropTable(
                 name: "TCareMessages");
@@ -488,10 +446,6 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TCareMessagingPartnerRels");
-
-            migrationBuilder.DropIndex(
-                name: "IX_ToaThuocs_EmployeeId",
-                table: "ToaThuocs");
 
             migrationBuilder.DropIndex(
                 name: "IX_TCareScenarios_ChannelSocialId",
@@ -509,17 +463,9 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_TCareCampaigns_FacebookPageId",
                 table: "TCareCampaigns");
 
-            migrationBuilder.DropIndex(
-                name: "IX_TCareCampaigns_TagId",
-                table: "TCareCampaigns");
-
-            migrationBuilder.DropIndex(
-                name: "IX_ServiceCardOrders_AccountMoveId",
-                table: "ServiceCardOrders");
-
             migrationBuilder.DropColumn(
-                name: "EmployeeId",
-                table: "ToaThuocs");
+                name: "AutoCustomType",
+                table: "TCareScenarios");
 
             migrationBuilder.DropColumn(
                 name: "ChannalType",
@@ -527,6 +473,30 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "ChannelSocialId",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "CustomDay",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "CustomHour",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "CustomMinute",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "CustomMonth",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "JobId",
+                table: "TCareScenarios");
+
+            migrationBuilder.DropColumn(
+                name: "Type",
                 table: "TCareScenarios");
 
             migrationBuilder.DropColumn(
@@ -554,16 +524,12 @@ namespace Infrastructure.Data.Migrations
                 table: "TCareCampaigns");
 
             migrationBuilder.DropColumn(
-                name: "TagId",
+                name: "SheduleStartNumber",
                 table: "TCareCampaigns");
 
             migrationBuilder.DropColumn(
-                name: "AccountMoveId",
-                table: "ServiceCardOrders");
-
-            migrationBuilder.DropColumn(
-                name: "AmountRefund",
-                table: "ServiceCardOrders");
+                name: "SheduleStartType",
+                table: "TCareCampaigns");
 
             migrationBuilder.DropColumn(
                 name: "Phone",
@@ -602,6 +568,12 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.AddColumn<DateTime>(
                 name: "SheduleDate",
                 table: "TCareMessagings",
+                type: "datetime2",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "SheduleStart",
+                table: "TCareCampaigns",
                 type: "datetime2",
                 nullable: true);
 
