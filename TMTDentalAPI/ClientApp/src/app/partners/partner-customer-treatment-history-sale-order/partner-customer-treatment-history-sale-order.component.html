@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr [ngClass]="{'info': id==item.id}" (click)="chossesSaleOrder(item)" *ngFor="let item of listSaleOrder">
+                    <tr [ngClass]="{'clicked': id==item.id}" (click)="chossesSaleOrder(item)" *ngFor="let item of listSaleOrder">
                         <td>{{item.name}}</td>
                         <td>{{item.dateOrder | date: 'short'}}</td>
                         <td>{{item.amountTotal | number}}</td>
