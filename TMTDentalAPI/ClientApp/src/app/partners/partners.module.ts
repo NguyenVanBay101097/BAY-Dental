@@ -44,6 +44,7 @@ import { PartnerCustomerTreatmentHistoryFormPaymentComponent } from './partner-c
 import { PartnerCustomerTreatmentHistoryFormServiceListComponent } from './partner-customer-treatment-history-form-service-list/partner-customer-treatment-history-form-service-list.component';
 import { PartnerCustomerTreatmentHistoryFormServiceSearchComponent } from './partner-customer-treatment-history-form-service-search/partner-customer-treatment-history-form-service-search.component';
 import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
+import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-cus
     PartnerCustomerTreatmentHistoryFormPaymentComponent,
     PartnerCustomerTreatmentHistoryFormServiceListComponent,
     PartnerCustomerTreatmentHistoryFormServiceSearchComponent,
-    PartnerCustomerTreatmentHistorySaleOrderComponent
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
   imports: [
     CommonModule,
@@ -100,7 +102,8 @@ import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-cus
     PartnerImportComponent,
     PartnerSearchDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerAutoGenerateCodeDialogComponent
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
   providers: [],
   exports: [

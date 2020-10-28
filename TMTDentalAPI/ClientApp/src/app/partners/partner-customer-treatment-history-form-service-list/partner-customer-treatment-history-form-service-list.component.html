@@ -1,1 +1,25 @@
-<p>partner-customer-treatment-history-form-service-list works!</p>
+<div class="list-product-service">
+    <div class="search-product-service">
+        <input class="form-control" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+    <div class="empty"></div>
+    <div class="table-product-service table-scroll">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">No</th>
+                    <th scope="col">Tên dịch vụ</th>
+                    <th scope="col">Đơn giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listProductServices;let i = index">
+                    <td class="text-center" scope="col">{{i+1}}</td>
+                    <td [title]="item.name">{{item.name}}</td>
+                    <td>{{item.listPrice | number}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

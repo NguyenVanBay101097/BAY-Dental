@@ -7,18 +7,21 @@
     height: 2%;
 }
 
+.action-form-right {
+    padding: 19px;
+    background-color: white;
+}
+
 .list-service-form-right {
     height: 100%;
+    margin-left: 15px;
+    overflow: hidden;
     background-color: white;
 }
 
 .form-payment-form-right {
     height: 100%;
-    background-color: white;
-}
-
-.action-form-right {
-    min-height: 70px;
-    padding: 19px;
+    overflow: hidden;
+    margin-right: 15px;
     background-color: white;
 }
