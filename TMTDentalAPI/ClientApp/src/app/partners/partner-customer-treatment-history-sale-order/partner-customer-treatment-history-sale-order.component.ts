@@ -49,7 +49,9 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   }
 
   chossesSaleOrder(saleOrder) {
-    this.id = saleOrder.id;
-    this.newItemEvent.emit(saleOrder);
+    if (saleOrder) {
+      this.id = saleOrder.id;
+      this.newItemEvent.emit(saleOrder);
+    }
   }
 }
