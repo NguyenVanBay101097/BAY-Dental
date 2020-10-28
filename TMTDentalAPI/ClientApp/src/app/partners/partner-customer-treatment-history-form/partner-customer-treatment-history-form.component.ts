@@ -30,7 +30,7 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { PartnerPaged, PartnerSimple } from '../partner-simple';
 import { PartnerService } from '../partner.service';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-partner-customer-treatment-history-form',
@@ -40,6 +40,10 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@
 export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnChanges {
   @Input() partnerId: string;
   @Input() saleOrderId: string;
+  @Output() reload = new EventEmitter();
+  @Output() orderId = new EventEmitter<string>();
+
+  id: string
   saleOrderLine: any;
   formGroup: FormGroup;
   filteredPartners: PartnerSimple[];
@@ -71,6 +75,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     private laboOrderService: LaboOrderService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
+    debugger
     if (this.saleOrderId) {
       this.loadFromApi();
     } else {
@@ -165,7 +170,6 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-        debugger
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
@@ -557,7 +561,9 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
         }),
       )
       .subscribe(() => {
-        this.loadRecord();
+        this.onSetOrderId(this.saleOrder.id);
+        // this.reload.emit(true);
+        
       })
   }
 
@@ -651,7 +657,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
         })
       )
       .subscribe(r => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
+        this.loadRecord();
       });
   }
 
@@ -719,12 +725,16 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
           type: { style: 'success', icon: true }
         });
         this.loadRecord();
+        this.onSetOrderId(this.saleOrder.id);
+
       }, () => {
         this.loadRecord();
       });
     } else {
       this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+        this.saleOrderId = result.id;
+        this.loadFromApi();
+        this.reload.emit(false);
       });
     }
   }
@@ -735,6 +745,10 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
         this.formGroup.patchValue(result);
       });
     }
+  }
+
+  onSetOrderId(value) {
+    this.orderId.emit(value);
   }
 
   loadRecord() {
@@ -770,6 +784,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
       modalRef.result.then(() => {
         this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
           this.loadRecord();
+          this.orderId.emit(this.saleOrder.id);
         });
       }, () => {
       });
@@ -877,48 +892,6 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     }
   }
 
-  // actionCreateDotKham() {
-  //   if (this.saleOrderId) {
-  //     let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-  //     modalRef.componentInstance.title = 'Tạo đợt khám';
-  //     modalRef.componentInstance.saleOrderId = this.saleOrderId;
-
-  //     modalRef.result.then(res => {
-  //       if (res.view) {
-  //         this.actionEditDotKham(res.result);
-  //         this.loadDotKhamList();
-  //       } else {
-  //         this.loadDotKhamList();
-  //         // $('#myTab a[href="#profile"]').tab('show');
-  //       }
-  //     }, () => {
-  //     });
-  //   }
-  // }
-
-  // actionEditDotKham(item) {
-  //   let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-  //   modalRef.componentInstance.title = 'Cập nhật đợt khám';
-  //   modalRef.componentInstance.id = item.id;
-  //   modalRef.componentInstance.partnerId = this.partner.id;
-  //   if (this.partnerSend)
-  //     modalRef.componentInstance.partner = this.partnerSend;
-  //   modalRef.result.then(() => {
-  //     this.loadDotKhamList();
-  //   }, () => {
-  //   });
-  // }
-
-  // deleteDotKham(dotKham) {
-  //   let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-  //   modalRef.componentInstance.title = 'Xóa đợt khám';
-  //   modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-  //   modalRef.result.then(() => {
-  //     this.dotKhamService.delete(dotKham.id).subscribe(() => {
-  //       this.loadDotKhamList();
-  //     });
-  //   }, () => { });
-  // }
 
   deletePayment(payment) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -968,8 +941,206 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
   }
 
 
-  chosseSaleOrderLine(event) {
-    this.saleOrderLine = event;
+
+
+
+
+  addLine(val) {
+    debugger
+    let line = val as any;
+    line.teeth = this.fb.array(line.teeth);
+    this.orderLines.push(this.fb.group(line));
+    this.orderLines.markAsDirty();
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+    // if (this.formGroup.get('state').value == "sale") {
+    //   var val = this.getFormDataSave();
+    //   this.saleOrderService.update(this.id, val).subscribe(() => {
+    //     this.notificationService.show({
+    //       content: 'Lưu thành công',
+    //       hideAfter: 3000,
+    //       position: { horizontal: 'center', vertical: 'top' },
+    //       animation: { type: 'fade', duration: 400 },
+    //       type: { style: 'success', icon: true }
+    //     });
+    //     this.loadRecord();
+    //   }, () => {
+    //     this.loadRecord();
+    //   });
+    // }
+
   }
+
+
+  onChangeQuantity(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscountFixed(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscount(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangeDiscountType(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.value.discount = 0;
+      res.value.discountFixed = 0;
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
+  // editLine(line: FormGroup) {
+  //   var partner = this.formGroup.get('partner').value;
+  //   if (!partner) {
+  //     alert('Vui lòng chọn khách hàng');
+  //     return false;
+  //   }
+
+  //   let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  //   modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
+  //   modalRef.componentInstance.line = line.value;
+  //   modalRef.componentInstance.partnerId = partner.Id;
+  //   var pricelist = this.formGroup.get('pricelist').value;
+  //   modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
+
+  //   modalRef.result.then(result => {
+  //     var a = result[0] as any;
+  //     line.patchValue(a);
+  //     line.setControl('teeth', this.fb.array(a.teeth || []));
+  //     this.computeAmountTotal();
+  //     this.orderLines.markAsDirty();
+
+  //     /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
+  //     if (this.formGroup.get('state').value == "sale") {
+  //       var val = this.getFormDataSave();
+  //       this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+  //         this.notificationService.show({
+  //           content: 'Sửa thành công',
+  //           hideAfter: 3000,
+  //           position: { horizontal: 'center', vertical: 'top' },
+  //           animation: { type: 'fade', duration: 400 },
+  //           type: { style: 'success', icon: true }
+  //         });
+  //         this.loadRecord();
+  //       }, () => {
+  //         this.loadRecord();
+  //       });
+  //     }
+  //   }, () => {
+  //   });
+  // }
+
+
+  chosseSaleOrderLine(event) {
+    // this.saleOrderLine = event;
+    let line = event as any;
+    line.teeth = this.fb.array(line.teeth);
+    this.orderLines.push(this.fb.group(line));
+    // this.orderLines.markAsDirty();
+    this.computeAmountTotal();
+
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+  }
+
+  lineTeeth(line: FormGroup) {
+    var teeth = line.get('teeth').value as any[];
+    return teeth.map(x => x.name).join(',');
+  }
+
+  deleteLine(index: number) {
+    this.orderLines.removeAt(index);
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+    this.orderLines.markAsDirty();
+  }
+
+
+  getPriceSubTotal() {
+    this.orderLines.controls.forEach(line => {
+      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+      var discountFixedValue = line.get('discountFixed').value;
+      var discountNumber = line.get('discount').value;
+      var getquanTity = line.get('productUOMQty').value;
+      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
+      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
+      var price = priceUnit * getquanTity;
+
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
+      line.get('priceSubTotal').setValue(subtotal);
+      var getResidual = subtotal - getamountPaid;
+      line.get('amountResidual').setValue(getResidual);
+    });
+
+  }
+
+  //Tính nợ theo số tổng
+  computeResidual(total) {
+    let diff = this.getAmountTotal - this.getResidual;
+    let residual = total - diff;
+    this.formGroup.get('residual').patchValue(residual);
+  }
+
+  ///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

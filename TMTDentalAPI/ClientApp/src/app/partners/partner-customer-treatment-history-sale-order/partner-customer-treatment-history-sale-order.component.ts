@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
@@ -7,7 +7,7 @@ import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
   templateUrl: './partner-customer-treatment-history-sale-order.component.html',
   styleUrls: ['./partner-customer-treatment-history-sale-order.component.css']
 })
-export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit {
+export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit , OnChanges {
   // @Input() partnerId: string;
   limit: number = 20;
   skip: number = 0;
@@ -19,13 +19,22 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   ]
   listSaleOrder: SaleOrderBasic[] = [];
   @Input() partnerId: string;
+  @Input() isReload: boolean = false;
   @Output() newItemEvent = new EventEmitter<any>();
 
   constructor(
     private saleOrderService: SaleOrderService
   ) { }
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges): void {
+    if(this.isReload){
+      this.loadDataFromApi();      
+    }else{
+      this.loadDataFromApi(); 
+    }
+  }
+
+  ngOnInit() {   
     this.loadDataFromApi();
   }
 
@@ -45,7 +54,13 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
     })
   }
 
-  chossesSaleOrder(saleOrder) {
-    this.newItemEvent.emit(saleOrder);
+  checkReload(isReload) {
+    if (isReload) {
+      this.loadDataFromApi();
+    }
+  }
+
+  chossesSaleOrder(value) {
+    this.newItemEvent.emit(value);
   }
 }

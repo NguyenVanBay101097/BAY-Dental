@@ -72,14 +72,14 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
+    
   ngOnChanges(changes: SimpleChanges): void {
     if (this.id) {
       this.loadFromApi();
     } else {
-      this.loadDefault();;
+      this.loadDefault();
     }
     if (this.saleOrderLine) {
-      debugger
       this.addLine(this.saleOrderLine);
     }
     console.log(this.saleOrderLine);
@@ -869,6 +869,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   addLine(val) {
+    debugger
     let line = val as any;
     line.teeth = this.fb.array(line.teeth);
     this.orderLines.push(this.fb.group(line));
@@ -876,21 +877,21 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     this.getPriceSubTotal();
     this.computeAmountTotal();
 
-    if (this.formGroup.get('state').value == "sale") {
-      var val = this.getFormDataSave();
-      this.saleOrderService.update(this.id, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
+    // if (this.formGroup.get('state').value == "sale") {
+    //   var val = this.getFormDataSave();
+    //   this.saleOrderService.update(this.id, val).subscribe(() => {
+    //     this.notificationService.show({
+    //       content: 'Lưu thành công',
+    //       hideAfter: 3000,
+    //       position: { horizontal: 'center', vertical: 'top' },
+    //       animation: { type: 'fade', duration: 400 },
+    //       type: { style: 'success', icon: true }
+    //     });
+    //     this.loadRecord();
+    //   }, () => {
+    //     this.loadRecord();
+    //   });
+    // }
 
   }
 

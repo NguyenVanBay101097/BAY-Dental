@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -17,7 +17,7 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 })
 export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implements OnInit {
   @ViewChild('employeeCbx', { static: true }) private employeeCbx: ComboBoxComponent;
-
+  title:'thêm dịch vụ';
   productService: any;
   line: any;
   saleLineForm: FormGroup
@@ -208,21 +208,26 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
   }
 
+  onChangeDiscountFixed(value) {
+    var price = this.getPriceUnit();
+    if (value > price) {
+      this.saleLineForm.get('discountFixed').setValue(price);
+    }
+  }
 
 
   onSave() {
-    debugger
+    
     if (!this.saleLineForm.valid) {
       return;
     }
     var val = this.saleLineForm.value;
     val.productId = this.productService.id;
-    val.product = this.productService;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.employeeId = val.employee ? val.employee.id : null;
+    val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    this.activeModal.close(val);
-    console.log("Tao cần tìm", val);
+    this.activeModal.close(val);   
 
   }
 }

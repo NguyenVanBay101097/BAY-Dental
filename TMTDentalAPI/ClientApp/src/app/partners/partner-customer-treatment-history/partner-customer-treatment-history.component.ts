@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -10,6 +10,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   partnerId: string;
   date: Date = new Date();
   saleOrderId: string;
+  isReload: boolean ;
   constructor(
     private activeRoute: ActivatedRoute
   ) { }
@@ -20,9 +21,18 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
 
   changeSaleOrder(event) {
     if (event) {
-      this.saleOrderId = event.id;
+      this.saleOrderId = event;
     } else {
       this.saleOrderId = null;
+    }
+  }
+
+  changeIsReload(event){
+    debugger
+    if (event) {
+      this.isReload = event;
+    } else {
+      this.isReload = false;
     }
   }
 

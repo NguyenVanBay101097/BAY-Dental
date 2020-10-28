@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody class="t-scrollbar">
-                    <tr (click)="chossesSaleOrder(item)" *ngFor="let item of listSaleOrder">
+                    <tr (click)="chossesSaleOrder(item.id)" *ngFor="let item of listSaleOrder">
                         <td>{{item.name}}</td>
                         <td>{{item.dateOrder | date: 'short'}}</td>
                         <td>{{item.amountTotal | number}}</td>
