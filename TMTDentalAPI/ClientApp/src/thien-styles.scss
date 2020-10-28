@@ -1,6 +1,6 @@
 @for $i from 0 through 20 {
-    .w-#{$i * 5} {width: $i * 5 + '%';}
-    .h-#{$i * 5} {height: $i * 5 + '%';}
+    .w-#{$i * 5} {width: #{$i * 5 + '%'};}
+    .h-#{$i * 5} {height: #{$i * 5 + '%'};}
 }
 .t-thead-align-top > thead > tr > th {vertical-align: top;}
 .t-tbody-align-top > tbody > tr > td {vertical-align: top;}
