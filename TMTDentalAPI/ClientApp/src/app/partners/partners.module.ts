@@ -45,6 +45,10 @@ import { PartnerCustomerTreatmentHistoryFormServiceListComponent } from './partn
 import { PartnerCustomerTreatmentHistoryFormServiceSearchComponent } from './partner-customer-treatment-history-form-service-search/partner-customer-treatment-history-form-service-search.component';
 import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
 import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
+import { SaleOrderApplyCouponDialogComponent } from '../sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
+import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
+import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
 
 @NgModule({
   declarations: [
@@ -84,6 +88,7 @@ import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './
     PartnerCustomerTreatmentHistoryFormServiceListComponent,
     PartnerCustomerTreatmentHistoryFormServiceSearchComponent,
     PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
   imports: [
@@ -96,12 +101,17 @@ import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './
     SharedModule,
     FlexLayoutModule,
     NgbModule,
+    SaleOrdersModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
     PartnerImportComponent,
     PartnerSearchDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    SaleOrderApplyCouponDialogComponent,
+    SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderApplyDiscountDefaultDialogComponent,
     PartnerCustomerAutoGenerateCodeDialogComponent,
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],

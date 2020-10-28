@@ -1,1 +1,264 @@
-<p>partner-customer-treatment-history-form-payment works!</p>
+<div class="bg-white">
+    <div class="o_form_view o_form_nosheet">
+        <form [formGroup]="formGroup">
+            <div>
+                <div class="o_form_sheet">
+                    <div class="o_group">
+                        <table class="o_group o_inner_group o_group_col_6">
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày lập phiếu
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datetimepicker formControlName="dateOrderObj">
+                                        </kendo-datetimepicker>
+                                        <!-- <span
+                                            [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span> -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group">
+                        <button type="button" hasGroups [groups]="'sale.group_service_card'"
+                            class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCardDialog()"
+                            *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
+                            <span>thẻ tiền mặt</span>
+                        </button>
+                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                            class="btn btn-sm btn-outline-secondary mr-2" (click)="showApplyCouponDialog()"
+                            *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
+                            <span>coupon, mã khuyến mãi</span>
+                        </button>
+                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                            name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave"
+                            ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
+                            popoverTitle="Cập nhật khuyến mãi" class="btn btn-sm btn-outline-secondary"
+                            *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1"
+                            (click)="applyPromotion()">
+                            <span>Cập nhật khuyến mãi</span>
+                        </button>
+                    </div>
+                    <!-- container -->
+                    <div class="o_notebook">
+                        <div class="o_group">
+                            <div class="row">
+                                <div class="o_group o_inner_group col-12">
+                                    <div>
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Dịch vụ</th>
+                                                    <th>Răng</th>
+                                                    <th>Chuẩn đoán</th>
+                                                    <th class="text-center">Số lượng</th>
+                                                    <th class="text-right">Đơn giá</th>
+                                                    <th class="text-center">Giảm</th>
+                                                    <th class="text-right">Thành tiền</th>
+                                                    <th class="text-right">Thanh toán</th>
+                                                    <th class="text-right">Nợ</th>
+                                                    <th class="text-right">
+                                                        #
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="orderLines">
+                                                <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                                    <tr [formGroupName]="i">
+                                                        <td>{{ line.get('name').value }}</td>
+                                                        <td>{{lineTeeth(line)}}</td>
+                                                        <td>{{line.get('diagnostic').value}}</td>
+                                                        <td class="text-right">
+                                                            <kendo-numerictextbox style="max-width: 90px;"
+                                                                [spinners]="false"
+                                                                formControlName="productUOMQty"
+                                                                (valueChange)="onChangeQuantity(line)">
+                                                            </kendo-numerictextbox>
+                                                        </td>
+                                                        <td class="text-right" style="max-width: 300px;">
+                                                            {{ line.get('priceUnit').value | number }}</td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center justify-content-end">
+                                                                <kendo-numerictextbox
+                                                                    [class.d-none]="line.get('discountType').value !== 'percentage'"
+                                                                    [min]="0" [max]="100" formControlName="discount"
+                                                                    [autoCorrect]="true"
+                                                                    [spinners]="false"
+                                                                    (valueChange)="onChangeDiscount(line)"
+                                                                    style="max-width: 100px;">
+                                                                </kendo-numerictextbox>
+                                                                <kendo-numerictextbox [format]="'n0'"
+                                                                    [spinners]="false"
+                                                                    [class.d-none]="line.get('discountType').value !== 'fixed'"
+                                                                    (valueChange)="onChangeDiscountFixed(line)"
+                                                                    formControlName="discountFixed"
+                                                                    style="max-width: 100px;">
+                                                                </kendo-numerictextbox>
+                                                                <select class="form-control" style="max-width: 70px;"
+                                                                    (change)="onChangeDiscountType(line)"
+                                                                    formControlName="discountType">
+                                                                    <option value="percentage">%</option>
+                                                                    <option value="fixed">VNĐ</option>
+                                                                </select>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{line.get('priceSubTotal').value | number}}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{ line.get('amountPaid').value | number }}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{ line.get('amountResidual').value | number }}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <div>
+                                                                <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                                        (click)="editLine(line)">
+                                                                        <span class="k-icon k-i-edit"></span>
+                                                                    </button> -->
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-light"
+                                                                    (click)="deleteLine(i)">
+                                                                    <span class="k-icon k-i-delete"></span>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="o_group">
+                                        <table class="o_group o_inner_group o_group_col_8">
+                                        </table>
+                                        <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label pb-0">
+                                                        <label class="o_form_label oe_subtotal_footer_separator">
+                                                            Tổng tiền
+                                                        </label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <span
+                                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="saleOrder.state != 'draft'">
+                                                    <td colspan="1" class="o_td_label pb-0">
+                                                        <label
+                                                            class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                                            Số tiền thanh toán
+                                                        </label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <span
+                                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountPaidTotal | number}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="saleOrder.state != 'draft'">
+                                                    <td colspan="1" class="o_td_label pb-0">
+                                                        <label
+                                                            class="o_form_label o_form_label_help oe_subtotal_footer_separator">
+                                                            Còn lại
+                                                        </label>
+                                                    </td>
+                                                    <td colspan="1">
+                                                        <span
+                                                            class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{saleOrder.residual | number}}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- <div class="o_group" *ngIf="amountTotalValue > 0">
+                                      
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home"
+                                                    role="tab" aria-controls="home" aria-selected="true">Thanh toán</a>
+                                            </li>
+                                        </ul>
+
+                              
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="home" role="tabpanel"
+                                                aria-labelledby="home-tab">
+                                                <div class="row">
+                                                    <div class="o_group o_inner_group col-4" style="border-right: 1px solid #f0eeee;">
+                                                        <div class="hbox-left" class="mt-1">
+                                                            <div>
+                                                                <div>
+                                                                    <div class="list-group">
+                                                                        <div *ngFor="let item of filteredJournals">
+                                                                            <a class="list-group-item rounded-2 mb-1" (click)="addPayment(item)">
+                                                                                {{item.name}}                          
+                                                                            </a>
+                                                                        </div>                                                                       
+                                                                    </div>                                                                  
+                                                                </div>
+                                                            </div>          
+                                                        </div>
+                                                    </div>
+                                                    <div class="o_group o_inner_group col-8">
+                                                        <div>
+                                                            <table class="table table-sm">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Phương thức thanh toán</th>                                                                  
+                                                                        <th class="text-right"> tiền thanh toán</th>
+                                                                        <th class="text-right"
+                                                                            *ngIf="['cancel', 'done', 'sale'].indexOf(cardOrder.state) === -1">
+                                                                            #
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody formArrayName="cusPayments">
+                                                                    <ng-container *ngFor="let payment of cusPayments.controls; let i=index">
+                                                                        <tr [formGroupName]="i">
+                                                                            <td>{{ payment.get('journal').value.name }}</td>
+                                                                            <td class="text-right">
+                                                                                <kendo-numerictextbox  [format]="'n0'" style="max-width: 200px;"
+                                                                                    formControlName="amount" (valueChange)="onChangePayment(payment)">
+                                                                                </kendo-numerictextbox>                   
+                                                                            </td>
+                                                                            <td class="text-right"
+                                                                                *ngIf="['cancel', 'done', 'sale'].indexOf(cardOrder.state) === -1">
+                                                                                <div>                                                                           
+                                                                                    <button type="button"
+                                                                                        class="btn btn-icon btn-sm btn-light"
+                                                                                        (click)="deletePay(i)">
+                                                                                        <span class="k-icon k-i-delete"></span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </ng-container>
+                    
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
