@@ -1,1 +1,155 @@
-<p>partner-customer-treatment-history works!</p>
+<div class="w-100 h-100 d-flex bg-white">
+    <div class="w-30 h-100 border-right">
+        <!-- Component Sale Order -->
+        <div class="d-flex flex-column h-100">
+            <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                <h5 class="m-0">Phiếu điều trị</h5>
+                <button type="button" class="btn btn-primary btn-sm">Thêm</button>
+            </div>
+            <div class="t-conTable">
+                <div class="t-parTable t-scrollbar">
+                    <table class="t-sticky-thead t-sticky-col-left t-tbody-nowrap">
+                        <thead>
+                            <tr>
+                                <th *ngFor="let item of thTable_saleOrders">
+                                    {{item.name}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="t-scrollbar">
+                            <tr *ngFor="let item of saleOrders; index as i">
+                                <td>{{item.id}}</td>
+                                <td>{{item.date}}</td>
+                                <td>{{item.money}}</td>
+                                <td>{{item.owe}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="t-tControlBar">
+                    <div class="t-tPagination">
+                        <span class="active">1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-70 h-100">
+        <!-- Component Form -->
+        <div class="d-flex flex-column h-100">
+            <div>
+                <div class="d-flex align-items-center p-2 border-bottom">
+                    <button type="button" class="btn btn-primary btn-sm mx-1">Lưu nháp</button>
+                    <button type="button" class="btn btn-primary btn-sm mx-1">Xác nhận</button>
+                    <button type="button" class="btn btn-primary btn-sm mx-1">Hủy phiếu</button>
+                </div>
+                <div class="d-flex justify-content-end align-items-center border-bottom py-1 pr-3">
+                    <span class="mr-2">Ngày lập phiếu</span>
+                    <kendo-datepicker [(value)]="date">
+                    </kendo-datepicker>
+                </div>
+            </div>
+            <div class="h-100">
+                <div class="w-100 h-100 d-flex">
+                    <div class="w-30 h-100 border-right">
+                        <div class="d-flex flex-column h-100">
+                            <!-- Component Form Service Search -->
+                            <div class="d-flex align-items-end py-1">
+                                <input class="form-control form-control-sm mx-1" type="text"
+                                    placeholder="search...">
+                            </div>
+                            <!-- Component Form Service List -->
+                            <div class="t-conTable">
+                                <div class="t-parTable t-scrollbar">
+                                    <table class="t-sticky-thead t-sticky-col-left">
+                                        <thead>
+                                            <tr>
+                                                <th *ngFor="let item of thTable_services">
+                                                    {{item.name}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="t-scrollbar">
+                                            <tr *ngFor="let item of services; index as i">
+                                                <td>{{item.service}}</td>
+                                                <td>{{item.money}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-70 h-100">
+                        <div class="d-flex flex-column h-100">
+                            <!-- Component Form Service Payment -->
+                            <div class="my-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm mx-1">coupon, mã
+                                    khuyến mãi</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm mx-1">Cập nhật
+                                    khuyến mãi</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm mx-1">Áp dụng thẻ
+                                    tiền mặt</button>
+                            </div>
+
+                            <div class="t-conTable">
+                                <div class="t-parTable t-scrollbar">
+                                    <table class="t-sticky-thead t-sticky-col-left">
+                                        <thead>
+                                            <tr>
+                                                <th *ngFor="let item of thTable_payments"
+                                                    [style.min-width]="item.width ? item.width : ''">
+                                                    {{item.name}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="t-scrollbar">
+                                            <tr *ngFor="let item of payments; index as i">
+                                                <td>{{item.service}}</td>
+                                                <td>{{item.teeth}}</td>
+                                                <td>{{item.chuandoan}}</td>
+                                                <td>{{item.count}}</td>
+                                                <td>{{item.money}}</td>
+                                                <td>{{item.discount}}</td>
+                                                <td>{{item.tmoney}}</td>
+                                                <td>{{item.pay}}</td>
+                                                <td>{{item.owe}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <table class="table-borderless table-text-right mr-4 my-3">
+                                    <tr>
+                                        <td>Thành tiền:</td>
+                                        <td>400.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mx-1">Giảm
+                                                tiền</button>
+                                        </td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tổng tiền:</td>
+                                        <td>400.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Số tiền thanh toán:</td>
+                                        <td>400.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Còn lại:</td>
+                                        <td>0</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
