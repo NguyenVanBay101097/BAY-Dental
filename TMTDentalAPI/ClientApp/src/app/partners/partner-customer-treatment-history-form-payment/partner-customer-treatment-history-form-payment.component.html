@@ -39,7 +39,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody formArrayName="orderLines" class="t-scrollbar">
+                <tbody formArrayName="orderLines">
                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                         <tr [formGroupName]="i">
                             <td>{{ line.get('name').value }}</td>
