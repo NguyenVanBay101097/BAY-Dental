@@ -42,6 +42,10 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Umbraco.Web.Models.ContentEditing;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.OData.Edm;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.Net.Http.Headers;
 
 namespace TMTDentalAPI
 {
@@ -283,6 +287,8 @@ namespace TMTDentalAPI
             services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
             services.AddScoped<IHrSalaryConfigService, HrSalaryConfigService>();
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
+            services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
+
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddMemoryCache();
@@ -297,6 +303,7 @@ namespace TMTDentalAPI
             {
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
+                mc.AddProfile(new IRSequenceProfile());
                 mc.AddProfile(new UoMProfile());
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
@@ -503,6 +510,21 @@ namespace TMTDentalAPI
             services.AddHttpContextAccessor();
 
             services.AddSignalR();
+
+            services.AddOData();
+
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+
+                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -564,6 +586,18 @@ namespace TMTDentalAPI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+
+                endpoints.MapControllers();
+
+                endpoints.Select()
+                   .Expand()
+                   .Filter()
+                   .OrderBy()
+                   .MaxTop(20)
+                   .Count();
+
+                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.EnableDependencyInjection();
             });
 
             app.UseSpa(spa =>
@@ -578,6 +612,21 @@ namespace TMTDentalAPI
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+        }
+
+        private static IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+            builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
+
+            builder.EntityType<PartnerViewModel>()
+               .Collection
+               .Function("GetView")
+               .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
+            return builder.GetEdmModel();
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()

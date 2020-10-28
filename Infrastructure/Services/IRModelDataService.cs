@@ -108,6 +108,12 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "res.partner.title":
+                        {
+                            var service = GetService<IPartnerTitleService>();
+                            var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
+                            return (T)(object)group;
+                        }
                     case "res.company":
                         {
                             var service = GetService<ICompanyService>();
@@ -120,6 +126,7 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                   
                     default:
                         {
                             return null;

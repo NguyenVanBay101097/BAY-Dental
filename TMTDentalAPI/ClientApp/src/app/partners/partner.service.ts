@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, OnChanges } from '@angular/core';
 import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
@@ -86,6 +86,11 @@ export class PartnerImageBasic {
     date: string;
     note: string;
     uploadId: string;
+}
+
+export class GenderPartner {
+    id: string;
+    name: string;
 }
 
 export class PartnerImageSave {
@@ -228,6 +233,7 @@ export class PartnerService {
     }
 
     getWardAship(request): Observable<Ward[]> {
+        debugger
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
@@ -378,6 +384,10 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + '/RemoveTags', val);
     }
 
+    updateTags(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateTags', val);
+    }
+
     getPrint(id: string): Observable<PartnerPrint> {
         return this.http.get<PartnerPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
@@ -407,6 +417,10 @@ export class PartnerService {
 
     deleteParnerImage(id) {
         return this.http.delete(this.baseApi + this.apiPartnerImage + '/' + id);
+    }
+
+    getDefaultTitle(val) {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetDefaultTitle', { params: new HttpParams({ fromObject: val }) });
     }
 }
 

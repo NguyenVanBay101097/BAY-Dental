@@ -761,6 +761,8 @@ namespace Infrastructure.Services
             var tooth_category_dict = new Dictionary<string, ToothCategory>();
             var tooth_dict = new Dictionary<string, Tooth>();
             var sequence_dict = new Dictionary<string, IRSequence>();
+            var partner_title_dict = new Dictionary<string, PartnerTitle>();
+
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
             doc.Load(file_path);
@@ -788,6 +790,21 @@ namespace Infrastructure.Services
                         }
                     }
                     tooth_category_dict.Add(id, category);
+                }
+                else if (model == "partner.title")
+                {
+                    var partnerTitle = new PartnerTitle();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+                            partnerTitle.Name = field.InnerText;
+                        }
+                    }
+                    partner_title_dict.Add(id, partnerTitle);
                 }
                 else if (model == "tooth")
                 {
@@ -863,6 +880,13 @@ namespace Infrastructure.Services
 
             var seqObj = GetService<IIRSequenceService>();
             await seqObj.CreateAsync(sequence_dict.Values);
+
+            var partnerTitlte = GetService<IPartnerTitleService>();
+            await partnerTitlte.CreateAsync(partner_title_dict.Values);
+
+            var modelDataObj = GetService<IIRModelDataService>();
+            await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
+           
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity

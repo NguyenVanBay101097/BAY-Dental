@@ -1,0 +1,27 @@
+<a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
+    <span *ngFor="let tag of tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
+    <span *ngIf="!tags.length" class="badge badge-info">
+        <i class="fa fa-tags"></i>
+    </span>
+</a>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center">
+        <span>Nhãn khách hàng</span>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent let-mytags="mytags">
+    <div>
+        <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="mytags"
+            (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'Name'"
+            [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
+            [valueNormalizer]="valueNormalizer" [popupSettings]="{appendTo: 'component'}">
+        </kendo-multiselect>
+        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories(mytags)" accesskey="c">
+            Lưu
+        </button>
+    </div>
+</ng-template>

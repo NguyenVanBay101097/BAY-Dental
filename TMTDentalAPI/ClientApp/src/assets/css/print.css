@@ -1,4 +1,8 @@
 
+@page {
+  size: auto;
+}
+
 [type="text"], [type="password"], [type="number"], textarea, select {
     width: 100%;
     display: block;

@@ -41,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
+        private readonly IIRModelDataService _iRModelDataService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -51,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
             IServiceCardCardService serviceCardService,
-            IPartnerSourceService partnerSourceService)
+            IPartnerSourceService partnerSourceService,
+            IIRModelDataService iRModelDataService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -64,11 +66,12 @@ namespace TMTDentalAPI.Controllers
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
+            _iRModelDataService = iRModelDataService;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
+        public async Task<IActionResult> Get([FromQuery] PartnerPaged val)
         {
             var result = await _partnerService.GetPagedResultAsync(val);
 
@@ -96,8 +99,28 @@ namespace TMTDentalAPI.Controllers
         public IActionResult DefaultGet(PartnerDefaultGet val)
         {
             var res = new PartnerDisplay();
+            var maleTitle = _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man").Result;
+            if (maleTitle != null)
+            {
+                res.Title = _mapper.Map<PartnerTitleBasic>(maleTitle);
+                res.TitleId = maleTitle.Id;
+            }
+
             res.CompanyId = CompanyId;
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultTitle(string gender)
+        {
+            PartnerTitle title = null;
+            if (gender == "male")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man");
+            else if (gender == "female")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_woman");
+
+            var basic = title != null ? _mapper.Map<PartnerTitleBasic>(title) : null;
+            return Ok(basic);
         }
 
         [HttpPost]
@@ -265,12 +288,22 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateTags(PartnerAddRemoveTagsVM val)
+        {
+            await _partnerService.UpdateTags(val);
+            return Ok();
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetValidServiceCards(Guid id)
         {
             var cards = await _mapper.ProjectTo<ServiceCardCardBasic>(_serviceCardService.SearchQuery(x => x.PartnerId == id && x.Residual > 0)).ToListAsync();
             return Ok(cards);
         }
+
+
+
 
         private void SaveCategories(PartnerDisplay val, Partner partner)
         {
@@ -330,7 +363,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -357,38 +390,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        private async Task<Dictionary<string, AddressCheckApi>> CheckAddressAsync(List<string> strs, int limit = 100)
-        {
-            int offset = 0;
-            var dict = new Dictionary<string, AddressCheckApi>();
-            while (offset < strs.Count)
-            {
-                var subStrs = strs.Skip(offset).Take(limit);
-                var allTasks = subStrs.Select(x => AddressHandleAsync(x));
-                var res = await Task.WhenAll(allTasks);
-                foreach (var item in res)
-                {
-                    dict.Add(item.Key, item.Value);
-                }
 
-                offset += limit;
-            }
-
-            return dict;
-        }
-
-        private async Task<KeyValuePair<string, AddressCheckApi>> AddressHandleAsync(string text)
-        {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://dc.tpos.vn/home/checkaddress?address=" + text);
-            var res = response.Content.ReadAsAsync<AddressCheckApi[]>().Result.ToList().FirstOrDefault();
-            var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
-            return pair;
-        }
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -396,7 +402,7 @@ namespace TMTDentalAPI.Controllers
 
         //Check địa chỉ 
         [HttpGet("CheckAddress")]
-        public async Task<IActionResult> CheckAddress([FromQuery]string text)
+        public async Task<IActionResult> CheckAddress([FromQuery] string text)
         {
             //HttpClient client = new HttpClient();
             HttpResponseMessage response = null;
@@ -413,7 +419,7 @@ namespace TMTDentalAPI.Controllers
                     return Ok(new List<AddressCheckApi>());
                 }
             }
-            
+
         }
 
         [HttpGet("{id}/[action]")]
@@ -503,14 +509,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 3].Value = "Ngày tạo";
                 worksheet.Cells[1, 4].Value = "Giới tính";
                 worksheet.Cells[1, 5].Value = "Ngày sinh";
-                worksheet.Cells[1, 6].Value = "SĐT";
-                worksheet.Cells[1, 7].Value = "Địa chỉ";
-                worksheet.Cells[1, 8].Value = "Tiểu sử bệnh";
-                worksheet.Cells[1, 9].Value = "Nghề nghiệp";
-                worksheet.Cells[1, 10].Value = "Email";
-                worksheet.Cells[1, 11].Value = "Ghi chú";
+                worksheet.Cells[1, 6].Value = "Tháng sinh";
+                worksheet.Cells[1, 7].Value = "Năm sinh";
+                worksheet.Cells[1, 8].Value = "SĐT";
+                worksheet.Cells[1, 9].Value = "Đường";
+                worksheet.Cells[1, 10].Value = "Phường/Xã";
+                worksheet.Cells[1, 11].Value = "Quận/Huyện";
+                worksheet.Cells[1, 12].Value = "Tỉnh/Thành";
+                worksheet.Cells[1, 13].Value = "Tiểu sử bệnh";
+                worksheet.Cells[1, 14].Value = "Nghề nghiệp";
+                worksheet.Cells[1, 15].Value = "Email";
+                worksheet.Cells[1, 16].Value = "Ghi chú";
 
-                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in data)
@@ -520,19 +531,24 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.Date;
                     worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 4].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
-                    worksheet.Cells[row, 5].Value = item.DateOfBirth;
-                    worksheet.Cells[row, 6].Value = item.Phone;
-                    worksheet.Cells[row, 7].Value = item.Address;
-                    worksheet.Cells[row, 8].Value = string.Join(",", item.MedicalHistories);
-                    worksheet.Cells[row, 9].Value = item.Job;
-                    worksheet.Cells[row, 10].Value = item.Email;
-                    worksheet.Cells[row, 11].Value = item.Note;
+                    worksheet.Cells[row, 5].Value = item.BirthDay;
+                    worksheet.Cells[row, 6].Value = item.BirthMonth;
+                    worksheet.Cells[row, 7].Value = item.BirthYear;
+                    worksheet.Cells[row, 8].Value = item.Phone;
+                    worksheet.Cells[row, 9].Value = item.Street;
+                    worksheet.Cells[row, 10].Value = item.WardName;
+                    worksheet.Cells[row, 11].Value = item.DistrictName;
+                    worksheet.Cells[row, 12].Value = item.CityName;
+                    worksheet.Cells[row, 13].Value = string.Join(",", item.MedicalHistories);
+                    worksheet.Cells[row, 14].Value = item.Job;
+                    worksheet.Cells[row, 15].Value = item.Email;
+                    worksheet.Cells[row, 16].Value = item.Note;
 
                     row++;
                 }
 
-                worksheet.Column(4).Style.Numberformat.Format = "@";
-                worksheet.Column(5).Style.Numberformat.Format = "@";
+                worksheet.Column(8).Style.Numberformat.Format = "@";
+                worksheet.Cells.AutoFitColumns();
 
                 package.Save();
 

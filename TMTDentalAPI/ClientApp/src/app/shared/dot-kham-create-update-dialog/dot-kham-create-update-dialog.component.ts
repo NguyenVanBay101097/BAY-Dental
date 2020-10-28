@@ -789,9 +789,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     if (this.getAppointment)
       modalRef.componentInstance.appointId = this.getAppointment.id;
 
-    if (this.partner)
-      modalRef.componentInstance.partnerSend = this.partner;
-
     modalRef.componentInstance.dotKhamId = this.id;
     modalRef.result.then(
       rs => {
