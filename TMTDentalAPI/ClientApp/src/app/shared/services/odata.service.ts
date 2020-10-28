@@ -37,6 +37,14 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
             queryStr = queryStr + '&$expand=' + options.expand;
         }
 
+        if (queryStr) {
+            // encode everything which looks like a GUID
+            var guid = /('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')/ig;
+            queryStr = queryStr.replace(guid, function (x) {
+                return x.substring(1, x.length - 1);
+            });
+        }
+
         this.loading = true;
 
         return this.http
@@ -60,6 +68,10 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
 
     public update(id: any, value: any) {
         return this.http.put(`${this.BASE_URL}${this.tableName}(${id})`, value);
+    }
+
+    public patch(id: any, value: any) {
+        return this.http.patch(`${this.BASE_URL}${this.tableName}(${id})`, value);
     }
 
     public delete(id: any) {

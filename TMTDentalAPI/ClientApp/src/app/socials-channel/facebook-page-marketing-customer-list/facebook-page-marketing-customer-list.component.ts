@@ -8,7 +8,10 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { TcareQuickreplyDialogComponent } from 'src/app/tcare/tcare-quickreply-dialog/tcare-quickreply-dialog.component';
+import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebook-user-profiles.service';
+import { State } from '@progress/kendo-data-query';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { Operation } from 'fast-json-patch';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -20,7 +23,8 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   constructor(private modalService: NgbModal,
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
-    private notificationService: NotificationService, private route: ActivatedRoute) { }
+    private notificationService: NotificationService, private route: ActivatedRoute,
+    private facebookUserProfilesODataService: FacebookUserProfilesODataService) { }
 
   dataSendMessage: any[] = [];
   gridData: GridDataResult;
@@ -48,31 +52,29 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     });
   }
 
+  onPhonePartnerChange(dataItem, event) {
+    dataItem = Object.assign(dataItem, event);
+  }
+
   loadDataFromApi() {
+    this.rowsSelected = [];
     this.loading = true;
-    var val = {
-      limit: this.limit,
-      offset: this.skip,
-      search: this.search || '',
-      fbPageId: this.pageId
+
+    var state: State = {
+      take: this.limit,
+      skip: this.skip
     };
 
-    this.rowsSelected = [];
-    
-
-    this.facebookUserProfilesService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
+    this.facebookUserProfilesODataService.getView(state).subscribe(res => {
       this.gridData = res;
       this.loading = false;
-      console.log(res);
     }, err => {
-      console.log(err);
       this.loading = false;
     });
+  }
+
+  getDisplayName(data) {
+    return data ? JSON.parse(data).DisplayName : "";
   }
 
   syncUsers() {
@@ -104,7 +106,6 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     //   this.loadDataFromApi();
     // });
     if (this.pageId) {
-      debugger
       this.facebookPageService.syncNumberPhoneUsers([this.pageId]).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
@@ -129,7 +130,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       res.pageId = this.pageId;
       res.userIds = this.rowsSelected;
       this.facebookPageService.syncPartnerForMultiUsers(res).subscribe(() => {
-        this.loadDataFromApi();    
+        this.loadDataFromApi();
       }, err => {
         console.log(err);
       });
@@ -142,16 +143,54 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
       res.pageId = this.pageId;
       res.userIds = this.rowsSelected;
       this.facebookPageService.syncPhoneForMultiUsers(res).subscribe(() => {
-        this.loadDataFromApi();        
+        this.loadDataFromApi();
       }, err => {
         console.log(err);
       });
     }
   }
 
+  onCreatePartnerClick(dataItem, data) {
+    const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
+      scrollable: true,
+      size: "xl",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+
+    modalRef.componentInstance.title = "Thêm khách hàng";
+    modalRef.componentInstance.addtionalData = { phone: data.phone };
+    modalRef.result.then(
+      (result: any) => {
+        var patch: Operation[] = [
+          { path: 'Phone', op: 'replace', value: result.phone },
+          { path: 'PartnerId', op: 'replace', value: result.id }
+        ];
+
+        this.facebookUserProfilesODataService.patch(dataItem.Id, patch).subscribe(() => {
+          this.facebookUserProfilesODataService.getView({
+            filter: {
+              logic: 'and',
+              filters: [
+                { field: 'Id', operator: 'eq', value: dataItem.Id }
+              ]
+            },
+            take: 1
+          }).subscribe(result2 => {
+            if (result2.data.length) {
+              dataItem = Object.assign(dataItem, result2.data[0]);
+            }
+          });
+        });
+      },
+      (err) => { }
+    );
+  }
+
   editItem(item: any) {
     let modalRef = this.modalService.open(FacebookPageMarketingCustomerDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.customerId = item.id;
+    modalRef.componentInstance.customerId = item.Id;
 
     modalRef.result.then((result) => {
       this.loadDataFromApi();
