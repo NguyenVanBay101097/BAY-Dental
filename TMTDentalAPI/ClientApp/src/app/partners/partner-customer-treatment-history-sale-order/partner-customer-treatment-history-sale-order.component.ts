@@ -18,7 +18,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
     { name: 'Còn nợ' }
   ]
   listSaleOrder: SaleOrderBasic[] = [];
-  partnerId: string = '173a31a8-7881-4a7a-8ad0-08d834686640';
+  partnerId: string = '346fa7c1-73be-459d-d6c0-08d8757a3015';
   constructor(
     private saleOrderService: SaleOrderService
   ) { }

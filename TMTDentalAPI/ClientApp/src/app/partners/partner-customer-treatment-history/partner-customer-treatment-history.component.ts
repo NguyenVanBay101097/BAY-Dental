@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./partner-customer-treatment-history.component.css']
 })
 export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
-  
+  partnerId : string;
   date: Date = new Date();
 
   thTable_payments = [
