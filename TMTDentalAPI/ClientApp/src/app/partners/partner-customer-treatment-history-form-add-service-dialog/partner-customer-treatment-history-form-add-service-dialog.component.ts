@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SaleOrderLineOnChangeProduct, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
@@ -30,18 +31,27 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     private employeeService: EmployeeService,
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
-    private activeModal: NgbActiveModal
+    private activeModal: NgbActiveModal,
+    private saleLineService: SaleOrderLineService
   ) { }
 
   ngOnInit() {
     this.saleLineForm = this.fb.group({
       name: '',
+      product: null,
       productId: null,
+      priceUnit: 0,
       productUOMQty: 1,
+      discount: 0,
+      discountType: 'percentage',
+      discountFixed: 0,
+      priceSubTotal: 1,
+      amountPaid: 0,
+      amountResidual: 0,
+      diagnostic: null,
+      toothCategory: null,
       state: 'draft',
-      diagnostic: '',
-      employee: null,
-      toothCategory: null
+      employee: null
     });
     this.loadData();
     this.loadToothCategories();
@@ -63,7 +73,15 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
   }
 
   loadData() {
-    this.saleLineForm.patchValue(this.productService);
+    if (this.productService) {
+      var val = new SaleOrderLineOnChangeProduct();
+      val.productId = this.productService.id;
+      this.saleLineService.onChangeProduct(val).subscribe(result => {
+        console.log(result);
+
+        this.saleLineForm.patchValue(result);
+      });
+    }
   }
 
   loadEmployees() {
@@ -131,12 +149,42 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     }
   }
 
+  get discountTypeValue() {
+    return this.saleLineForm.get('discountType').value;
+  }
+
+  getPriceSubTotal() {
+    var discountType = this.discountTypeValue;
+    var price = discountType == 'percentage' ? this.getPriceUnit() * (1 - this.getDiscount() / 100) :
+      Math.max(0, this.getPriceUnit() - this.discountFixedValue);
+    var subtotal = price * this.getQuantity();
+    return subtotal;
+  }
+
+  getPriceUnit() {
+    return this.saleLineForm.get('priceUnit').value;
+  }
+
+  getQuantity() {
+    return this.saleLineForm.get('productUOMQty').value;
+  }
+
+  getDiscount() {
+    return this.saleLineForm.get('discount').value;
+  }
+
+  get discountFixedValue() {
+    return this.saleLineForm.get('discountFixed').value;
+  }
+
   onChangeToothCategory(value: any) {
     if (value.id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
     }
   }
+
+
 
   processTeeth(teeth: ToothDisplay[]) {
     this.hamList = {
@@ -160,15 +208,21 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
   }
 
+
+
   onSave() {
+    debugger
     if (!this.saleLineForm.valid) {
       return;
     }
     var val = this.saleLineForm.value;
-    val.productId = this.productService.id
+    val.productId = this.productService.id;
+    val.product = this.productService;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.employeeId = val.employee ? val.employee.id : null;
     val.teeth = this.teethSelected;
     this.activeModal.close(val);
+    console.log("Tao cần tìm", val);
+
   }
 }

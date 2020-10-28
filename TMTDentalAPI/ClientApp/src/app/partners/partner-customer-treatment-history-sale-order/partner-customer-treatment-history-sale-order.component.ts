@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
@@ -18,7 +18,9 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
     { name: 'Còn nợ' }
   ]
   listSaleOrder: SaleOrderBasic[] = [];
-  partnerId: string = '346fa7c1-73be-459d-d6c0-08d8757a3015';
+  @Input() partnerId: string;
+  @Output() newItemEvent = new EventEmitter<any>();
+
   constructor(
     private saleOrderService: SaleOrderService
   ) { }
@@ -37,10 +39,13 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
     this.saleOrderService.getPaged(val).subscribe(res => {
       this.listSaleOrder = res.items;
       console.log(this.listSaleOrder[0]);
-
+      this.newItemEvent.emit(this.listSaleOrder[0])
     }, err => {
       console.log(err);
     })
   }
 
+  chossesSaleOrder(saleOrder) {
+    this.newItemEvent.emit(saleOrder);
+  }
 }

@@ -1,8 +1,7 @@
-
 <div class="d-flex flex-column h-100">
     <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
         <h5 class="m-0">Phiếu điều trị</h5>
-        <button type="button" class="btn btn-primary btn-sm">Thêm</button>
+        <button type="button" (click)="chossesSaleOrder(null)" class="btn btn-primary btn-sm">Thêm</button>
     </div>
     <div class="t-conTable">
         <div class="t-parTable t-scrollbar">
@@ -15,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody class="t-scrollbar">
-                    <tr *ngFor="let item of listSaleOrder">
+                    <tr (click)="chossesSaleOrder(item)" *ngFor="let item of listSaleOrder">
                         <td>{{item.name}}</td>
                         <td>{{item.dateOrder | date: 'short'}}</td>
                         <td>{{item.amountTotal | number}}</td>

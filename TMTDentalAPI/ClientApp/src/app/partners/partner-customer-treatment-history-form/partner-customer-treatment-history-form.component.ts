@@ -1,4 +1,3 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -31,16 +30,17 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { PartnerPaged, PartnerSimple } from '../partner-simple';
 import { PartnerService } from '../partner.service';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-partner-customer-treatment-history-form',
   templateUrl: './partner-customer-treatment-history-form.component.html',
   styleUrls: ['./partner-customer-treatment-history-form.component.css']
 })
-export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
-  id: string;
-  partnerId: string;
-
+export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnChanges {
+  @Input() partnerId: string;
+  @Input() saleOrderId: string;
+  saleOrderLine: any;
   formGroup: FormGroup;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
@@ -70,6 +70,14 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.saleOrderId) {
+      this.loadFromApi();
+    } else {
+      this.loadDefault();;
+    }
+  }
+
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
@@ -82,16 +90,77 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
       card: null,
       pricelist: [null, Validators.required],
     });
-    this.routeActive();
+    // this.routeActive();
   }
+
+  loadDefault() {
+    this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe(
+      result => {
+        this.saleOrder = result;
+        this.partnerSend = result.partner;
+        this.formGroup.patchValue(result);
+        let dateOrder = new Date(result.dateOrder);
+        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+        if (result.user) {
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        }
+
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+          if (!this.saleOrderId) {
+            this.onChangePartner(result.partner);
+          }
+        }
+        const control = this.formGroup.get('orderLines') as FormArray;
+        control.clear();
+        result.orderLines.forEach(line => {
+          var g = this.fb.group(line);
+          g.setControl('teeth', this.fb.array(line.teeth));
+          control.push(g);
+        });
+
+        this.formGroup.markAsPristine();
+      }
+    )
+  }
+
+  loadFromApi() {
+    this.saleOrderService.get(this.saleOrderId).subscribe(result => {
+      this.saleOrder = result;
+      this.partnerSend = result.partner;
+      this.formGroup.patchValue(result);
+      let dateOrder = new Date(result.dateOrder);
+      this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+      if (result.user) {
+        this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+      }
+
+      if (result.partner) {
+        this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        if (!this.saleOrderId) {
+          this.onChangePartner(result.partner);
+        }
+      }
+      const control = this.formGroup.get('orderLines') as FormArray;
+      control.clear();
+      result.orderLines.forEach(line => {
+        var g = this.fb.group(line);
+        g.setControl('teeth', this.fb.array(line.teeth));
+        control.push(g);
+      });
+
+      this.formGroup.markAsPristine();
+    })
+  }
+
 
   routeActive() {
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
-        this.id = "a9920fa3-3b39-498e-c6bd-08d87a494ffe";
-        this.partnerId = "346fa7c1-73be-459d-d6c0-08d8757a3015";
-        if (this.id) {
-          return this.saleOrderService.get(this.id);
+        if (this.saleOrderId) {
+          return this.saleOrderService.get(this.saleOrderId);
         } else {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
@@ -109,7 +178,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.id) {
+          if (!this.saleOrderId) {
             this.onChangePartner(result.partner);
           }
         }
@@ -136,7 +205,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
       return parterIdParam;
     }
 
-    if (this.id && this.saleOrder) {
+    if (this.saleOrderId && this.saleOrder) {
       return this.saleOrder.partnerId;
     }
 
@@ -152,9 +221,9 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
 
   loadLaboOrderList() {
-    if (this.id) {
+    if (this.saleOrderId) {
       var val = new LaboOrderPaged();
-      val.saleOrderId = this.id;
+      val.saleOrderId = this.saleOrderId;
       return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
         this.laboOrders = result.items;
       });
@@ -214,11 +283,11 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
       return false;
     }
 
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
           let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.orderId = this.id;
+          modalRef.componentInstance.orderId = this.saleOrderId;
           modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
           modalRef.result.then(() => {
             this.loadRecord();
@@ -227,7 +296,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
         })
       } else {
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = this.id;
+        modalRef.componentInstance.orderId = this.saleOrderId;
         modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
@@ -266,11 +335,11 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   showApplyCouponDialog() {
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
           let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.orderId = this.id;
+          modalRef.componentInstance.orderId = this.saleOrderId;
           modalRef.result.then(() => {
             this.loadRecord();
           }, () => {
@@ -278,7 +347,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
         })
       } else {
         let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = this.id;
+        modalRef.componentInstance.orderId = this.saleOrderId;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -308,7 +377,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
 
 
- 
+
 
   isCouponLine(line: FormControl) {
     var c = line.get('couponId');
@@ -340,17 +409,17 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   applyPromotion() {
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+          this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
             this.loadRecord();
           }, (error) => {
             this.errorService.show(error);
           });
         });
       } else {
-        this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+        this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
           this.loadRecord();
         }, (error) => {
           this.errorService.show(error);
@@ -372,9 +441,9 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   onApplyDiscount(val: any) {
-    if (this.id) {
+    if (this.saleOrderId) {
       this.discountDefault = val;
-      this.discountDefault.saleOrderId = this.id;
+      this.discountDefault.saleOrderId = this.saleOrderId;
       this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
         this.loadRecord();
       }, (error) => {
@@ -428,7 +497,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
     });
-    return this.saleOrderService.update(this.id, val);
+    return this.saleOrderService.update(this.saleOrderId, val);
   }
 
   removeCard() {
@@ -469,7 +538,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
       return false;
     }
 
-    if (!this.id) {
+    if (!this.saleOrderId) {
       return false;
     }
 
@@ -478,13 +547,13 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
         mergeMap(r => {
           if (r) {
             var val = this.getFormDataSave();
-            return this.saleOrderService.update(this.id, val);
+            return this.saleOrderService.update(this.saleOrderId, val);
           } else {
             return of(true);
           }
         }),
         mergeMap(() => {
-          return this.saleOrderService.actionConfirm([this.id]);
+          return this.saleOrderService.actionConfirm([this.saleOrderId]);
         }),
       )
       .subscribe(() => {
@@ -493,14 +562,14 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   actionViewInvoice() {
-    if (this.id) {
-      this.router.navigate(['/sale-orders/' + this.id + '/invoices']);
+    if (this.saleOrderId) {
+      this.router.navigate(['/sale-orders/' + this.saleOrderId + '/invoices']);
     }
   }
 
   actionInvoiceCreateV2() {
-    if (this.id) {
-      this.saleOrderService.actionInvoiceCreateV2(this.id).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionInvoiceCreateV2(this.saleOrderId).subscribe(() => {
         this.notificationService.show({
           content: 'Cập nhật thành công',
           hideAfter: 3000,
@@ -515,8 +584,8 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
 
   printSaleOrder() {
-    if (this.id) {
-      this.saleOrderService.getPrint(this.id).subscribe((result: any) => {
+    if (this.saleOrderId) {
+      this.saleOrderService.getPrint(this.saleOrderId).subscribe((result: any) => {
         this.saleOrderPrint = result;
         setTimeout(() => {
           var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
@@ -540,16 +609,16 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   actionDone() {
-    if (this.id) {
-      this.saleOrderService.actionDone([this.id]).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
       });
     }
   }
 
   actionUnlock() {
-    if (this.id) {
-      this.saleOrderService.actionUnlock([this.id]).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionUnlock([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
       });
     }
@@ -577,12 +646,12 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
     this.saleOrderService.create(val)
       .pipe(
         mergeMap(r => {
-          this.id = r.id;
+          this.saleOrderId = r.id;
           return this.saleOrderService.actionConfirm([r.id]);
         })
       )
       .subscribe(r => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
       });
   }
 
@@ -640,8 +709,8 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
     });
-    if (this.id) {
-      this.saleOrderService.update(this.id, val).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -669,8 +738,8 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   loadRecord() {
-    if (this.id) {
-      this.saleOrderService.get(this.id).subscribe(result => {
+    if (this.saleOrderId) {
+      this.saleOrderService.get(this.saleOrderId).subscribe(result => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
@@ -694,12 +763,12 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   actionCancel() {
-    if (this.id) {
+    if (this.saleOrderId) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Hủy phiếu điều trị';
       modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
       modalRef.result.then(() => {
-        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
           this.loadRecord();
         });
       }, () => {
@@ -730,7 +799,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
   get getAmountPaidTotal() {
     let total = 0;
-    this.orderLines.controls.forEach(line => {     
+    this.orderLines.controls.forEach(line => {
       total += line.get('amountPaid').value;
     });
     return total;
@@ -750,8 +819,8 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
 
   actionSaleOrderPayment() {
-    if (this.id) {
-      this.paymentService.saleDefaultGet([this.id]).subscribe(rs2 => {
+    if (this.saleOrderId) {
+      this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
@@ -801,18 +870,18 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
 
 
   loadPayments() {
-    if (this.id) {
-      this.saleOrderService.getPayments(this.id).subscribe(result => {
+    if (this.saleOrderId) {
+      this.saleOrderService.getPayments(this.saleOrderId).subscribe(result => {
         this.paymentsInfo = result;
       });
     }
   }
 
   // actionCreateDotKham() {
-  //   if (this.id) {
+  //   if (this.saleOrderId) {
   //     let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
   //     modalRef.componentInstance.title = 'Tạo đợt khám';
-  //     modalRef.componentInstance.saleOrderId = this.id;
+  //     modalRef.componentInstance.saleOrderId = this.saleOrderId;
 
   //     modalRef.result.then(res => {
   //       if (res.view) {
@@ -878,8 +947,8 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
   }
 
   getAccountPaymentReconcicles() {
-    if (this.id) {
-      this.saleOrderService.getAccountPaymentReconcicles(this.id).subscribe(
+    if (this.saleOrderId) {
+      this.saleOrderService.getAccountPaymentReconcicles(this.saleOrderId).subscribe(
         rs => {
           this.paymentsInfo = rs;
         }
@@ -898,5 +967,9 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
     }, er => { });
   }
 
+
+  chosseSaleOrderLine(event) {
+    this.saleOrderLine = event;
+  }
 
 }
