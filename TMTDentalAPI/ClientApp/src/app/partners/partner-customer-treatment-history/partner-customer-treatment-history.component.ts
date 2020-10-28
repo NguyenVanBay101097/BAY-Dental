@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./partner-customer-treatment-history.component.css']
 })
 export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
+  partnerId: string;
 
   thTable_saleOrders = [
     { name: 'Số phiếu' },
@@ -118,7 +119,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
     }
   ];
 
-  constructor() { }
+  constructor( private activeRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
