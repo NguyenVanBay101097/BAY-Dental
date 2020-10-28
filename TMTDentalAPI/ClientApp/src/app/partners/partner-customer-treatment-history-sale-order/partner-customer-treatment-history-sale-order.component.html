@@ -5,7 +5,7 @@
     </div>
     <div class="t-conTable">
         <div class="t-parTable t-scrollbar">
-            <table class="t-sticky-thead t-sticky-col-left t-tbody-nowrap">
+            <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
                 <thead>
                     <tr>
                         <th *ngFor="let item of thTable_saleOrders">
@@ -13,7 +13,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="t-scrollbar">
+                <tbody>
                     <tr (click)="chossesSaleOrder(item)" *ngFor="let item of listSaleOrder">
                         <td>{{item.name}}</td>
                         <td>{{item.dateOrder | date: 'short'}}</td>

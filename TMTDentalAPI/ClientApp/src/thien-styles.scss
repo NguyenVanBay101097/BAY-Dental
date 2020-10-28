@@ -2,14 +2,24 @@
     .w-#{$i * 5} {width: #{$i * 5 + '%'};}
     .h-#{$i * 5} {height: #{$i * 5 + '%'};}
 }
-.t-thead-align-top > thead > tr > th {vertical-align: top;}
-.t-tbody-align-top > tbody > tr > td {vertical-align: top;}
+.table-thead-align-top > thead > tr > th {vertical-align: top;}
+.table-tbody-align-top > tbody > tr > td {vertical-align: top;}
 .text-nowrap {white-space: nowrap;}
-.t-thead-nowrap > thead > tr > th {white-space: nowrap;}
-.t-tbody-nowrap > tbody > tr > td {white-space: nowrap;}
+.table-thead-nowrap > thead > tr > th {white-space: nowrap;}
+.table-tbody-nowrap > tbody > tr > td {white-space: nowrap;}
 .table-borderless { th, td {border: none;}}
 .table-text-left { th, td {text-align: left;}}
 .table-text-right { th, td {text-align: right;}}
+.table-payment-result {
+    font-size: 1.1rem;
+    td:nth-child(1) {
+        font-weight: bold;
+        padding-right: 1rem;
+    }
+    td:nth-child(2) {
+        font-weight: 500;
+    }
+}
 .t-conTable {
     position: relative;
     height: 100%;
@@ -95,6 +105,7 @@
         position: -webkit-sticky;
         position: sticky;
         top: 0;
+        z-index: 1;
     }
 }
 
@@ -103,6 +114,7 @@
         position: -webkit-sticky;
         position: sticky;
         bottom: 0;
+        z-index: 1;
     }
 }
 
