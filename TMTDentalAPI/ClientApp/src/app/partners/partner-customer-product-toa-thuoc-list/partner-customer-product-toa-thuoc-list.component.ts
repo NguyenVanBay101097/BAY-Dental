@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
 import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-partner-customer-product-toa-thuoc-list',
@@ -28,7 +29,8 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
   constructor(
     private activeRoute: ActivatedRoute, 
     private toaThuocService: ToaThuocService, 
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -58,9 +60,9 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     })
   }
 
-  printToaThuoc(item) {
-    this.toaThuocService.getPrint(item.id).subscribe(result => {
-      this.toaThuocPrintComponent.print(result);
+printToaThuoc(item) {
+    this.toaThuocService.getPrint(item.id).subscribe((result:any) => {
+      this.printService.print(result.html);
     });
   }
 

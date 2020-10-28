@@ -1,0 +1,135 @@
+﻿@model Umbraco.Web.Models.ContentEditing.ToaThuocPrintViewModel;
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>Print tab</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <style>
+        #lbdictex_find_popup{
+            display:none;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">@Model.Company.Name</h5>
+            <div style="@(string.IsNullOrEmpty(Model.Company.Address)? "display:none":"")">Địa chỉ: @Model.Company.Address</div>
+            <div style="@(string.IsNullOrEmpty(Model.Company.Phone)? "display:none":"")">ĐT: @Model.Company.Phone</div>
+            <div style="@(string.IsNullOrEmpty(Model.Company.Email)? "display:none":"")">Email: @Model.Company.Email</div>
+        </div>
+        <div class="text-center">
+            <h1>Đơn thuốc</h1>
+            <span>Số: @Model.Name - Ngày: @Model.Date.ToShortDateString()</span>
+        </div>
+        <div class="o_group"  style="display: flex;">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.Partner.Name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.Partner.Address
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Phái
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.Partner.DisplayGender
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tuổi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @(Model.Partner.Age != null? Model.Partner.Age.ToString() : "")
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="o_group mt-0 mb-0">
+            <table class="o_group o_inner_group mt-0">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Chuẩn đoán
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.Diagnostic
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Thuốc</th>
+                        <th class="text-right">Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var line in Model.Lines)
+                    {
+                        <tr>
+                            <td>
+                                <span class="font-weight-bold">@line.ProductName </span> <br />
+                                <span class="font-italic">@line.Name </span>
+                            </td>
+                            <td class="text-right">@line.Quantity </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div>Lời dặn: @Model.Note</div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="text-center font-weight-bold">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="text-center">
+                    <strong>Bác sĩ</strong> <br />
+                    <span>@Model.EmployeeName</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

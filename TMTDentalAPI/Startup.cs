@@ -46,6 +46,7 @@ using Microsoft.AspNet.OData.Extensions;
 using Microsoft.OData.Edm;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.Net.Http.Headers;
+using ApplicationCore.Utilities;
 
 namespace TMTDentalAPI
 {
@@ -291,6 +292,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();
+            services.AddScoped<ViewRender, ViewRender>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();

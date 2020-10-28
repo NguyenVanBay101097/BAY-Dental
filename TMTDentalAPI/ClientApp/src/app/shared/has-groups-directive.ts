@@ -29,7 +29,6 @@ export class HasGroupsDirective implements OnInit {
         }
         var permissions = this.groups.split(',');
         let hasDefined = this.permissionService.hasOneDefined(permissions);
-console.log(this.elementRef.nativeElement);
 
         if (!hasDefined) {
             this.renderer.setStyle(

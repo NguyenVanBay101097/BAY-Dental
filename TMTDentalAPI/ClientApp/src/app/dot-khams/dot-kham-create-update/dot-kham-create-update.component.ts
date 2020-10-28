@@ -41,6 +41,7 @@ import { Operation } from 'fast-json-patch';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 declare var $: any;
 
 @Component({
@@ -114,7 +115,9 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     private dialogService: DialogService, private router: Router, private route: ActivatedRoute,
     private toaThuocService: ToaThuocService, private appointmentService: AppointmentService, private productService: ProductService,
     private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal,
-    private dotKhamStepService: DotKhamStepService) { }
+    private dotKhamStepService: DotKhamStepService,
+    private printService: PrintService
+    ) { }
 
 
   ngOnInit() {
@@ -418,27 +421,9 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     }
   }
 
-
   printToaThuoc(item: ToaThuocBasic) {
-    this.toaThuocService.getPrint(item.id).subscribe(result => {
-      this.toaThuocPrint = result;
-      setTimeout(() => {
-        var printContents = document.getElementById('printToaThuocDiv').innerHTML;
-        var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-        popupWin.document.open();
-        popupWin.document.write(`
-            <html>
-              <head>
-                <title>Print tab</title>
-                <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-                <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
-              </head>
-          <body onload="window.print();window.close()">${printContents}</body>
-            </html>`
-        );
-        popupWin.document.close();
-        this.toaThuocPrint = null;
-      }, 500);
+    this.toaThuocService.getPrint(item.id).subscribe((result:any) => {
+     this.printService.print(result.html);
     });
   }
 
