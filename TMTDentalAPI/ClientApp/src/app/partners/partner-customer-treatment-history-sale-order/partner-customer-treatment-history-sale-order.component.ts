@@ -21,6 +21,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   @Input() partnerId: string;
   @Input() isReload: boolean = false;
   @Output() newItemEvent = new EventEmitter<any>();
+  id: string;
 
   constructor(
     private saleOrderService: SaleOrderService
@@ -47,8 +48,10 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
 
     this.saleOrderService.getPaged(val).subscribe(res => {
       this.listSaleOrder = res.items;
-      console.log(this.listSaleOrder[0]);
-      this.newItemEvent.emit(this.listSaleOrder[0])
+      if (this.listSaleOrder && this.listSaleOrder.length) {
+        this.id = this.listSaleOrder[0].id;
+        this.newItemEvent.emit(this.listSaleOrder[0])
+      }
     }, err => {
       console.log(err);
     })

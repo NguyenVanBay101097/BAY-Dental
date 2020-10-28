@@ -74,15 +74,15 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private laboOrderService: LaboOrderService) { }
     
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.id) {
-      this.loadFromApi();
-    } else {
-      this.loadDefault();
-    }
     if (this.saleOrderLine) {
       this.addLine(this.saleOrderLine);
+    } else {
+      if (this.id) {
+        this.loadFromApi();
+      } else {
+        this.loadDefault();
+      }
     }
-    console.log(this.saleOrderLine);
   }
 
   ngOnInit() {
@@ -97,70 +97,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       card: null,
       pricelist: [null, Validators.required],
     });
-
-  }
-
-  routeActive() {
-
-
-    this.route.queryParamMap.pipe(
-      switchMap((params: ParamMap) => {
-        debugger
-        if (this.id) {
-          return this.saleOrderService.get(this.id);
-        } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
-        }
-      })).subscribe(result => {
-        this.saleOrder = result;
-        this.partnerSend = result.partner;
-        this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-        }
-
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.id) {
-            this.onChangePartner(result.partner);
-          }
-        }
-
-        // if (result.pricelist) {
-        //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-        // }
-
-        const control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
-          control.push(g);
-        });
-
-        this.formGroup.markAsPristine();
-      });
-  }
-
-  get customerId() {
-    var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
-    if (parterIdParam) {
-      return parterIdParam;
-    }
-
-    if (this.id && this.saleOrder) {
-      return this.saleOrder.partnerId;
-    }
-
-    return undefined;
-  }
-
-  get partner() {
-    var control = this.formGroup.get('partner');
-    return control ? control.value : null;
   }
 
   loadDefault() {
@@ -380,8 +316,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     }
   }
 
-
-
   getCouponLines() {
     var lines = this.orderLines.value;
     var list = [];
@@ -577,7 +511,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     });
   }
 
-
   searchUsers(filter?: string) {
     var val = new UserPaged();
     val.search = filter;
@@ -596,9 +529,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
-
-
-
 
   actionConfirm() {
     if (!this.formGroup.valid) {
@@ -832,11 +762,9 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
         }
-
         let control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -844,7 +772,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
           g.setControl('teeth', this.fb.array(line.teeth));
           control.push(g);
         });
-
         this.formGroup.markAsPristine();
       });
     }
@@ -873,26 +800,24 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     let line = val as any;
     line.teeth = this.fb.array(line.teeth);
     this.orderLines.push(this.fb.group(line));
-    this.orderLines.markAsDirty();
     this.getPriceSubTotal();
     this.computeAmountTotal();
-
-    // if (this.formGroup.get('state').value == "sale") {
-    //   var val = this.getFormDataSave();
-    //   this.saleOrderService.update(this.id, val).subscribe(() => {
-    //     this.notificationService.show({
-    //       content: 'Lưu thành công',
-    //       hideAfter: 3000,
-    //       position: { horizontal: 'center', vertical: 'top' },
-    //       animation: { type: 'fade', duration: 400 },
-    //       type: { style: 'success', icon: true }
-    //     });
-    //     this.loadRecord();
-    //   }, () => {
-    //     this.loadRecord();
-    //   });
-    // }
-
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+    this.saleOrderLine = null;
   }
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -946,8 +871,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       }
     }, () => {
     });
-
-
   }
 
   onChangeQuantity(line: FormGroup) {
@@ -1105,9 +1028,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     this.formGroup.get('residual').patchValue(residual);
   }
 
-  ///
-
-
   actionSaleOrderPayment() {
     if (this.id) {
       this.paymentService.saleDefaultGet([this.id]).subscribe(rs2 => {
@@ -1157,7 +1077,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       });
     }
   }
-
 
   loadPayments() {
     if (this.id) {
@@ -1256,7 +1175,5 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     modalRef.result.then((val) => {
     }, er => { });
   }
-
-
 
 }
