@@ -75,14 +75,15 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   ngOnChanges(changes: SimpleChanges): void {
     if (this.id) {
       this.loadFromApi();
+      if (this.saleOrderLine) {
+        this.addLine(this.saleOrderLine);
+      }
     } else {
-      this.loadDefault();;
+      this.loadDefault();
+      if (this.saleOrderLine) {
+        this.addLine(this.saleOrderLine);
+      }
     }
-    if (this.saleOrderLine) {
-      debugger
-      this.addLine(this.saleOrderLine);
-    }
-    console.log(this.saleOrderLine);
   }
 
   ngOnInit() {
@@ -98,51 +99,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       pricelist: [null, Validators.required],
     });
 
-  }
-
-  routeActive() {
-
-
-    this.route.queryParamMap.pipe(
-      switchMap((params: ParamMap) => {
-        debugger
-        if (this.id) {
-          return this.saleOrderService.get(this.id);
-        } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
-        }
-      })).subscribe(result => {
-        this.saleOrder = result;
-        this.partnerSend = result.partner;
-        this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-        }
-
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.id) {
-            this.onChangePartner(result.partner);
-          }
-        }
-
-        // if (result.pricelist) {
-        //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-        // }
-
-        const control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
-          control.push(g);
-        });
-
-        this.formGroup.markAsPristine();
-      });
   }
 
   get customerId() {
@@ -832,11 +788,9 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
-
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
         }
-
         let control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -844,7 +798,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
           g.setControl('teeth', this.fb.array(line.teeth));
           control.push(g);
         });
-
         this.formGroup.markAsPristine();
       });
     }
@@ -875,7 +828,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     this.orderLines.markAsDirty();
     this.getPriceSubTotal();
     this.computeAmountTotal();
-
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();
       this.saleOrderService.update(this.id, val).subscribe(() => {
@@ -891,7 +843,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
         this.loadRecord();
       });
     }
-
+    console.log("form Array", this.orderLines);
   }
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -945,8 +897,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       }
     }, () => {
     });
-
-
   }
 
   onChangeQuantity(line: FormGroup) {

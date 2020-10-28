@@ -211,7 +211,6 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
 
 
   onSave() {
-    debugger
     if (!this.saleLineForm.valid) {
       return;
     }
