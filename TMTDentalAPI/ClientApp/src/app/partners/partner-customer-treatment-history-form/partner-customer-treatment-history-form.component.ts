@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-partner-customer-treatment-history-form',
@@ -6,10 +6,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./partner-customer-treatment-history-form.component.css']
 })
 export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit {
-
+  @Input() partnerId: string;
+  @Input() saleOrderId: string;
+  saleOrderLine: any;
   constructor() { }
 
   ngOnInit() {
+  }
+
+  chosseSaleOrderLine(event) {
+    this.saleOrderLine = event;
   }
 
 }

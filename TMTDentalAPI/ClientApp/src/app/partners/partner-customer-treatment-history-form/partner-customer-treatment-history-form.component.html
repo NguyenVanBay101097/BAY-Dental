@@ -7,7 +7,7 @@
         </div>
         <div class="d-flex justify-content-end align-items-center border-bottom py-1 pr-3">
             <span class="mr-2">Ngày lập phiếu</span>
-            <kendo-datepicker >
+            <kendo-datepicker>
             </kendo-datepicker>
         </div>
     </div>
@@ -15,13 +15,15 @@
         <div class="w-100 h-100 d-flex">
             <div class="w-30 h-100 border-right">
                 <!-- Component List Service and search -->
-                <app-partner-customer-treatment-history-form-service-list>
+                <app-partner-customer-treatment-history-form-service-list
+                    (newEventEmiter)="chosseSaleOrderLine($event)">
                 </app-partner-customer-treatment-history-form-service-list>
             </div>
             <div class="w-70 h-100">
-                <app-partner-customer-treatment-history-form-payment></app-partner-customer-treatment-history-form-payment>
+                <app-partner-customer-treatment-history-form-payment [saleOrderLine]="saleOrderLine" [id]="saleOrderId"
+                    [partnerId]="partnerId">
+                </app-partner-customer-treatment-history-form-payment>
             </div>
         </div>
     </div>
 </div>
-

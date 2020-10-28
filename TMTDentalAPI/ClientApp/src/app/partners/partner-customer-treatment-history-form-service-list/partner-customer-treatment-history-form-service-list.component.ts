@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -11,14 +11,14 @@ import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from '..
   styleUrls: ['./partner-customer-treatment-history-form-service-list.component.css']
 })
 export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements OnInit {
-
+  @Output() newEventEmiter = new EventEmitter<any>()
   limit: number = 20;
   skip: number = 0;
   search: string;
   partnerId: string;
   listProductServices: ProductBasic2[] = [];
   searchUpdate = new Subject<string>();
-  
+
   thTable_services = [
     { name: 'Dịch vụ' },
     { name: 'Đơn giá' }
@@ -73,7 +73,9 @@ export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements 
     modalRef.componentInstance.productService = item;
     modalRef.result.then(result => {
       console.log(result);
-
+      if(result){
+        this.newEventEmiter.emit(result);
+      }
     }, () => {
     });
   }

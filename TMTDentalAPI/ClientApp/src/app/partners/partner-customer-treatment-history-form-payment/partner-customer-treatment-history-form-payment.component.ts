@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -40,9 +40,10 @@ import { PartnerService } from '../partner.service';
   templateUrl: './partner-customer-treatment-history-form-payment.component.html',
   styleUrls: ['./partner-customer-treatment-history-form-payment.component.css']
 })
-export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnInit {
-  id: string;
-  partnerId: string;
+export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnInit, OnChanges {
+  @Input() id: string;
+  @Input() partnerId: string;
+  @Input() saleOrderLine: any;
 
   formGroup: FormGroup;
   filteredPartners: PartnerSimple[];
@@ -54,7 +55,6 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
-
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   laboOrders: LaboOrderBasic[] = [];
@@ -72,6 +72,18 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.id) {
+      this.loadFromApi();
+    } else {
+      this.loadDefault();;
+    }
+    if (this.saleOrderLine) {
+      debugger
+      this.addLine(this.saleOrderLine);
+    }
+    console.log(this.saleOrderLine);
+  }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -85,21 +97,21 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
       card: null,
       pricelist: [null, Validators.required],
     });
-    this.routeActive();
+
   }
 
   routeActive() {
+
+
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
-        this.id = "a9920fa3-3b39-498e-c6bd-08d87a494ffe";
-        this.partnerId = "346fa7c1-73be-459d-d6c0-08d8757a3015";
+        debugger
         if (this.id) {
           return this.saleOrderService.get(this.id);
         } else {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-        debugger
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
@@ -151,8 +163,67 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     return control ? control.value : null;
   }
 
+  loadDefault() {
+    this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' }).subscribe(
+      result => {
+        this.saleOrder = result;
+        this.partnerSend = result.partner;
+        this.formGroup.patchValue(result);
+        let dateOrder = new Date(result.dateOrder);
+        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
+        if (result.user) {
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        }
 
+        if (result.partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+          if (!this.id) {
+            this.onChangePartner(result.partner);
+          }
+        }
+        const control = this.formGroup.get('orderLines') as FormArray;
+        control.clear();
+        result.orderLines.forEach(line => {
+          var g = this.fb.group(line);
+          g.setControl('teeth', this.fb.array(line.teeth));
+          control.push(g);
+        });
+
+        this.formGroup.markAsPristine();
+      }
+    )
+  }
+
+  loadFromApi() {
+    this.saleOrderService.get(this.id).subscribe(result => {
+      this.saleOrder = result;
+      this.partnerSend = result.partner;
+      this.formGroup.patchValue(result);
+      let dateOrder = new Date(result.dateOrder);
+      this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+      if (result.user) {
+        this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+      }
+
+      if (result.partner) {
+        this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        if (!this.id) {
+          this.onChangePartner(result.partner);
+        }
+      }
+      const control = this.formGroup.get('orderLines') as FormArray;
+      control.clear();
+      result.orderLines.forEach(line => {
+        var g = this.fb.group(line);
+        g.setControl('teeth', this.fb.array(line.teeth));
+        control.push(g);
+      });
+
+      this.formGroup.markAsPristine();
+    })
+  }
 
   loadLaboOrderList() {
     if (this.id) {
@@ -797,7 +868,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     return this.formGroup.get('orderLines') as FormArray;
   }
 
-  addLine(val){
+  addLine(val) {
     let line = val as any;
     line.teeth = this.fb.array(line.teeth);
     this.orderLines.push(this.fb.group(line));
@@ -991,7 +1062,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
 
   get getAmountPaidTotal() {
     let total = 0;
-    this.orderLines.controls.forEach(line => {     
+    this.orderLines.controls.forEach(line => {
       total += line.get('amountPaid').value;
     });
     return total;
