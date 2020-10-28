@@ -141,7 +141,9 @@
 }
 
 .t-sticky-thead > thead > tr > th:first-child,
-.t-sticky-tfoot > tfoot > tr > td:first-child {
+.t-sticky-tfoot > tfoot > tr > td:first-child,
+.t-sticky-thead > thead > tr > th:last-child,
+.t-sticky-tfoot > tfoot > tr > td:last-child {
     z-index: 2;
 }
 
