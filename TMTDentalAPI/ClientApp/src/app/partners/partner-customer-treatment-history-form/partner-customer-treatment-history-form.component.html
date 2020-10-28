@@ -1,14 +1,20 @@
-<div class="d-flex flex-column h-100">
+<form class="o_form_view" class="d-flex flex-column h-100" [formGroup]="formGroup">
     <div>
         <div class="d-flex align-items-center p-2 border-bottom">
             <button type="button" class="btn btn-primary btn-sm mx-1">Lưu nháp</button>
             <button type="button" class="btn btn-primary btn-sm mx-1">Xác nhận</button>
             <button type="button" class="btn btn-primary btn-sm mx-1">Hủy phiếu</button>
         </div>
-        <div class="d-flex justify-content-end align-items-center border-bottom py-1 pr-3">
-            <span class="mr-2">Ngày lập phiếu</span>
-            <kendo-datepicker >
-            </kendo-datepicker>
+        <div class="d-flex justify-content-between align-items-center border-bottom py-1 pr-3">
+            <div>
+                <h3 class="ml-2" *ngIf="id">{{saleOrder.name}}</h3>
+                <h3 class="ml-2" *ngIf="!id">Thêm mới</h3>
+            </div>
+            <div>
+                <span class="mr-2">Ngày lập phiếu</span>
+                <kendo-datepicker formControlName="dateOrderObj">
+                </kendo-datepicker>
+            </div>
         </div>
     </div>
     <div class="h-100">
@@ -19,9 +25,9 @@
                 </app-partner-customer-treatment-history-form-service-list>
             </div>
             <div class="w-70 h-100">
-                <app-partner-customer-treatment-history-form-payment></app-partner-customer-treatment-history-form-payment>
+                <app-partner-customer-treatment-history-form-payment>
+                </app-partner-customer-treatment-history-form-payment>
             </div>
         </div>
     </div>
-</div>
-
+</form>
