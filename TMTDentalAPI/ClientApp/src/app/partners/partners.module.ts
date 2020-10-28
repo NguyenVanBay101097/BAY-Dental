@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PartnersRoutingModule } from './partners-routing.module';
@@ -47,8 +47,9 @@ import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-cus
 import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
 import { SaleOrderApplyCouponDialogComponent } from '../sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
-import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
+
 import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
 
 @NgModule({
   declarations: [
@@ -119,6 +120,6 @@ import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
-  ]
+  ],schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class PartnersModule { }
