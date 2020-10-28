@@ -17,55 +17,55 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   ]
   saleOrders: any[] = [
     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
-    },     {
-      id: "this is id", 
-      date: "this is date", 
-      money: "this is money", 
-      owe: "this is owe", 
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
+    }, {
+      id: "this is id",
+      date: "this is date",
+      money: "this is money",
+      owe: "this is owe",
     }
   ];
 
@@ -75,51 +75,55 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   ]
   services: any[] = [
     {
-      service: "this is service name", 
-      money: "this is money", 
-    },     {
-      service: "this is service name aaaaaaaaaaaaaa", 
-      money: "this is money", 
+      service: "this is service name",
+      money: "this is money",
+    }, {
+      service: "this is service name aaaaaaaaaaaaaa",
+      money: "this is money",
     }
   ];
 
   date: Date = new Date();
+  partnerId: string;
+
   thTable_payments = [
     { name: 'Dịch vụ', width: '200px' },
-    { name: 'Răng' }, 
-    { name: 'Chuẩn đoán' }, 
-    { name: 'Số lượng' }, 
-    { name: 'Đơn giá' }, 
-    { name: 'Giảm' }, 
-    { name: 'Thành tiền' }, 
-    { name: 'Thanh toán' }, 
-    { name: 'Còn nợ' }, 
+    { name: 'Răng' },
+    { name: 'Chuẩn đoán' },
+    { name: 'Số lượng' },
+    { name: 'Đơn giá' },
+    { name: 'Giảm' },
+    { name: 'Thành tiền' },
+    { name: 'Thanh toán' },
+    { name: 'Còn nợ' },
   ]
   payments: any[] = [
     {
-      service: "this is service name", 
+      service: "this is service name",
       teeth: "this is teeth",
       chuandoan: "this is chuandoan",
       count: "this is count",
-      money: "this is money", 
-      discount: "this is discount", 
-      tmoney: "this is tmoney", 
-      pay: "this is pay", 
-      owe: "this is owe", 
+      money: "this is money",
+      discount: "this is discount",
+      tmoney: "this is tmoney",
+      pay: "this is pay",
+      owe: "this is owe",
     }, {
-      service: "this is service name aaaaaaa aaaaaaa bbbbb nnnnn", 
+      service: "this is service name aaaaaaa aaaaaaa bbbbb nnnnn",
       teeth: "this is teeth",
       chuandoan: "this is chuandoan",
       count: "this is count",
-      money: "this is money", 
-      discount: "this is discount", 
-      tmoney: "this is tmoney", 
-      pay: "this is pay", 
-      owe: "this is owe", 
+      money: "this is money",
+      discount: "this is discount",
+      tmoney: "this is tmoney",
+      pay: "this is pay",
+      owe: "this is owe",
     }
   ];
 
-  constructor( private activeRoute: ActivatedRoute) { }
+  constructor(
+    private activeRoute: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');

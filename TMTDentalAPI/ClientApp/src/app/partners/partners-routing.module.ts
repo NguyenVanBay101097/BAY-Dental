@@ -35,7 +35,6 @@ const routes: Routes = [
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationsComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
-      { path: 'treatment-histories-form', component: PartnerCustomerTreatmentHistorySaleOrderComponent },
     ]
   },
 ];
