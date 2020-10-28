@@ -36,7 +36,12 @@
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Tên" width="200">
         </kendo-grid-column>
-        <kendo-grid-column field="phone" title="Số điện thoại" width="200">
+        <kendo-grid-column title="Số điện thoại" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <app-partner-phone-popover [phones]="dataItem.phone" [customerId]="dataItem.id"
+                    [partnerName]="dataItem.partnerName" (reloadCustomerList)="loadDataFromApi()">
+                </app-partner-phone-popover> {{dataItem.phone}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Khách hàng liên kết" width="150">
         </kendo-grid-column>
