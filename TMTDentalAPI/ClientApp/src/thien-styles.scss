@@ -1,16 +1,9 @@
-.w-20 {width: 20%;}
-.w-30 {width: 30%;}
-.w-40 {width: 40%;}
-.w-60 {width: 60%;}
-.w-70 {width: 70%;}
-.w-80 {width: 80%;}
-.h-20 {height: 20%;}
-.h-30 {height: 30%;}
-.h-40 {height: 40%;}
-.h-60 {height: 60%;}
-.h-70 {height: 70%;}
-.h-80 {height: 80%;}
-.t-align-top > tr > td {vertical-align: top;}
+@for $i from 0 through 20 {
+    .w-#{$i * 5} {width: #{$i * 5 + '%'};}
+    .h-#{$i * 5} {height: #{$i * 5 + '%'};}
+}
+.t-thead-align-top > thead > tr > th {vertical-align: top;}
+.t-tbody-align-top > tbody > tr > td {vertical-align: top;}
 .text-nowrap {white-space: nowrap;}
 .t-thead-nowrap > thead > tr > th {white-space: nowrap;}
 .t-tbody-nowrap > tbody > tr > td {white-space: nowrap;}
