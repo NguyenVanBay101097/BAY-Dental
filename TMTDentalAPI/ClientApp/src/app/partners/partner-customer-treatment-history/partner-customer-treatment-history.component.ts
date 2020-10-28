@@ -84,7 +84,6 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   ];
 
   date: Date = new Date();
-  partnerId: string;
 
   thTable_payments = [
     { name: 'Dịch vụ', width: '200px' },

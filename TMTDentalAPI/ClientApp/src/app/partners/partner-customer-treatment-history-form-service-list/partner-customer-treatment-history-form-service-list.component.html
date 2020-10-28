@@ -1,4 +1,4 @@
-<div class="list-product-service">
+<!-- <div class="list-product-service">
     <div class="search-product-service">
         <input class="form-control" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search"
             (ngModelChange)="this.searchUpdate.next($event)">
@@ -16,6 +16,26 @@
             <tbody>
                 <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listProductServices;let i = index">
                     <td class="text-center" scope="col">{{i+1}}</td>
+                    <td [title]="item.name">{{item.name}}</td>
+                    <td>{{item.listPrice | number}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div> -->
+  <!-- Component Form Service Search -->
+<app-partner-customer-treatment-history-form-service-search></app-partner-customer-treatment-history-form-service-search>
+<div class="t-conTable">
+    <div class="t-parTable t-scrollbar">
+        <table class="t-sticky-thead t-sticky-col-left">
+            <thead>
+                <tr>                 
+                    <th scope="col">Tên dịch vụ</th>
+                    <th scope="col">Đơn giá</th>
+                </tr>
+            </thead>
+            <tbody class="t-scrollbar">
+                <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listProductServices;let i = index">                  
                     <td [title]="item.name">{{item.name}}</td>
                     <td>{{item.listPrice | number}}</td>
                 </tr>
