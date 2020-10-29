@@ -231,11 +231,11 @@ export class LaboOrderStatisticsComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(LaboOrderStatisticUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Sửa labo';
-    modalRef.componentInstance.line = item;
+    modalRef.componentInstance.title = 'Cập nhật chi tiết phiếu labo';
+    modalRef.componentInstance.line = Object.assign({}, item);
     modalRef.result.then(() => {
       this.loadDataFromApi();
-    });
+    }, er => { });
   }
 
 }

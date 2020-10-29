@@ -4,7 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { dateFieldName, IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderLineService } from '../../labo-order-line.service';
-import * as jsonpatch from 'fast-json-patch';
+import { compare } from 'fast-json-patch';
 
 @Component({
   selector: 'app-labo-order-statistic-update-dialog',
@@ -15,6 +15,8 @@ export class LaboOrderStatisticUpdateDialogComponent implements OnInit {
 
   line: any;
   lineinitial: any;
+  warrantyPeriod: any;
+  receivedDate: any;
 
   constructor(
     private fb: FormBuilder,
@@ -25,31 +27,33 @@ export class LaboOrderStatisticUpdateDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.lineinitial = Object.assign({}, this.line);
-      this.loadData();
+    this.loadData();
+    setTimeout(() => {
+      this.lineinitial = Object.assign({}, this.line);
+    }, 200);
   }
 
   loadData() {
     if (this.line) {
-      this.line.warrantyPeriod = this.line.warrantyPeriod ? new Date(this.line.warrantyPeriod) : null;
-      this.line.receivedDate = this.line.receivedDate ? new Date(this.line.receivedDate) : null;
+      this.warrantyPeriod = this.line.warrantyPeriod ? new Date(this.line.warrantyPeriod) : null;
+      this.receivedDate = this.line.receivedDate ? new Date(this.line.receivedDate) : null;
     }
   }
 
   onCheckIsReceived(e) {
     if(e.target.checked) {
       this.line.receivedDate = new Date();
+    } else {
+      this.line.receivedDate = null;
     }
   }
 
   onSave() {
 
-    this.line.warrantyPeriod = this.intelservice.formatDate(this.line.warrantyPeriod, 'yyyy-MM-dd HH:mm:ss');
-    this.line.receivedDate = this.intelservice.formatDate(this.line.receivedDate, 'yyyy-MM-dd HH:mm:ss');
+    this.line.warrantyPeriod = this.warrantyPeriod ? this.intelservice.formatDate(this.warrantyPeriod, 'yyyy-MM-dd HH:mm:ss') : null;
+    this.line.receivedDate = this.line.isReceived ? this.intelservice.formatDate(this.receivedDate, 'yyyy-MM-dd HH:mm:ss') : null;
 
-    var observer = jsonpatch.observe(this.lineinitial);
-
-    var patch = jsonpatch.generate(observer);
+    const patch = compare(this.lineinitial, this.line);
 
     this.laboOrderLineService.updateStatistic(this.line.id, patch).subscribe(() => {
       this.notificationService.show({
