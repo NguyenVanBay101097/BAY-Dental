@@ -60,6 +60,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.loadRecord();
       } else {
         this.loadDefault(this.defaultVal || {});
+        this.onCreate();
+        this.onCreate();
+        this.onCreate();
       }
   
       this.employeeCbx.filterChange.asObservable().pipe(
@@ -163,6 +166,15 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   onSave(print) {
+    var i = 0;
+    while (i < this.lines.value.length) {
+      if (this.lines.value[i]['product'] == null) {
+        this.lines.removeAt(i);
+        i--;
+      }
+      i++;
+    }
+
     if (!this.toaThuocForm.valid) {
       return false;
     }
