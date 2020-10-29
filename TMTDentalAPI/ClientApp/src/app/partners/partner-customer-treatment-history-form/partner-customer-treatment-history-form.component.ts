@@ -75,7 +75,6 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     private laboOrderService: LaboOrderService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    debugger
     if (this.saleOrderId) {
       this.loadFromApi();
     } else {
@@ -1013,56 +1012,27 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     this.computeAmountTotal();
   }
 
-  //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
-  // editLine(line: FormGroup) {
-  //   var partner = this.formGroup.get('partner').value;
-  //   if (!partner) {
-  //     alert('Vui lòng chọn khách hàng');
-  //     return false;
-  //   }
-
-  //   let modalRef = this.modalService.open(SaleOrderLineDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-  //   modalRef.componentInstance.title = 'Sửa dịch vụ điều trị';
-  //   modalRef.componentInstance.line = line.value;
-  //   modalRef.componentInstance.partnerId = partner.Id;
-  //   var pricelist = this.formGroup.get('pricelist').value;
-  //   modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
-
-  //   modalRef.result.then(result => {
-  //     var a = result[0] as any;
-  //     line.patchValue(a);
-  //     line.setControl('teeth', this.fb.array(a.teeth || []));
-  //     this.computeAmountTotal();
-  //     this.orderLines.markAsDirty();
-
-  //     /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-  //     if (this.formGroup.get('state').value == "sale") {
-  //       var val = this.getFormDataSave();
-  //       this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-  //         this.notificationService.show({
-  //           content: 'Sửa thành công',
-  //           hideAfter: 3000,
-  //           position: { horizontal: 'center', vertical: 'top' },
-  //           animation: { type: 'fade', duration: 400 },
-  //           type: { style: 'success', icon: true }
-  //         });
-  //         this.loadRecord();
-  //       }, () => {
-  //         this.loadRecord();
-  //       });
-  //     }
-  //   }, () => {
-  //   });
-  // }
+ 
 
 
   chosseSaleOrderLine(event) {
     // this.saleOrderLine = event;
-    let line = event as any;
-    line.teeth = this.fb.array(line.teeth);
-    this.orderLines.push(this.fb.group(line));
-    // this.orderLines.markAsDirty();
-    this.computeAmountTotal();
+    debugger
+    var res = this.fb.group(event);
+   // line.teeth = this.fb.array(line.teeth);
+   if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
+    this.orderLines.push(res);
+  } else {
+    var line = this.orderLines.controls.find(x => x.value.id === res.value.id);
+    if (line) {
+      line.value.productUOMQty += 1;
+      line.patchValue(line.value);
+    }
+  }
+
+  this.getPriceSubTotal();
+  this.orderLines.markAsDirty();
+  this.computeAmountTotal();
 
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();

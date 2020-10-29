@@ -50,7 +50,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
       this.listSaleOrder = res.items;
       if (this.listSaleOrder && this.listSaleOrder.length) {
         this.id = this.listSaleOrder[0].id;
-        this.newItemEvent.emit(this.listSaleOrder[0])
+        this.newItemEvent.emit(this.listSaleOrder[0].id)
       }
     }, err => {
       console.log(err);
@@ -64,6 +64,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   }
 
   chossesSaleOrder(value) {
+    this.id = value;
     this.newItemEvent.emit(value);
   }
 }

@@ -19,13 +19,13 @@
     </div>
     <div class="h-100">
         <div class="w-100 h-100 d-flex">
-            <div class="w-30 h-100 border-right">
+            <div class="w-20 h-100 border-right">
                 <!-- Component List Service and search -->
                 <app-partner-customer-treatment-history-form-service-list
                     (newEventEmiter)="chosseSaleOrderLine($event)">
                 </app-partner-customer-treatment-history-form-service-list>
             </div>
-            <div class="w-70 h-100">
+            <div class="w-80 h-100">
                 <div class="d-flex flex-column h-100">
                     <div class="my-1">
                         <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1"
@@ -70,7 +70,7 @@
                                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                         <tr [formGroupName]="i">
                                             <td>{{ line.get('name').value }}</td>
-                                            <td>{{lineTeeth(line)}}</td>
+                                            <td>aaa</td>
                                             <td>{{line.get('diagnostic').value}}</td>
                                             <td class="text-right">
                                                 <kendo-numerictextbox style="max-width: 90px;" [spinners]="false"
@@ -127,7 +127,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <table class="table-borderless table-text-right mr-4 my-3">
+                        <table class="table-borderless table-text-right mr-4 my-3 table-payment-result">
                             <tr>
                                 <td>Thành tiền:</td>
                                 <td>{{getAmountTotal | number}}</td>
