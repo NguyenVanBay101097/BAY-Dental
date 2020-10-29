@@ -109,6 +109,8 @@ namespace TMTDentalAPI.Controllers
         {
             var line = await _laboOrderLineService.GetByIdAsync(id);
             patchDoc.ApplyTo(line, ModelState);
+            if (!line.IsReceived) line.ReceivedDate = null;
+
             await _laboOrderLineService.UpdateAsync(line);
 
             return NoContent();

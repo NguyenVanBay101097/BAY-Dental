@@ -8,19 +8,20 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="d-flex align-items-center">
-                    <kendo-combobox class="mr-2" [placeholder]="'Tìm theo labo'" [data]="filteredSuppliers" [textField]="'name'" [filterable]="true"
-                        #supplierCbx [(ngModel)]="paged.partnerId" [valueField]="'id'" [valuePrimitive]="true"
+                    <kendo-combobox class="mr-2" [placeholder]="'Tìm theo labo'" [data]="filteredSuppliers"
+                        [textField]="'name'" [filterable]="true" #supplierCbx [(ngModel)]="paged.partnerId"
+                        [valueField]="'id'" [valuePrimitive]="true" (valueChange)="loadDataFromApi()">
+                    </kendo-combobox>
+                    <kendo-combobox class="mr-2" style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'"
+                        [data]="filteredProducts" [textField]="'name'" [filterable]="true" #productCbx
+                        [(ngModel)]="paged.productId" [valueField]="'id'" [valuePrimitive]="true"
                         (valueChange)="loadDataFromApi()">
                     </kendo-combobox>
-                    <kendo-combobox class="mr-2" style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'" [data]="filteredProducts" [textField]="'name'" [filterable]="true"
-                        #productCbx [(ngModel)]="paged.productId" [valueField]="'id'" [valuePrimitive]="true"
-                        (valueChange)="loadDataFromApi()">
-                    </kendo-combobox>
-                    <app-tai-date-range-filter-dropdown class="mr-2" title="Ngày gởi" [dateFrom]="paged.dateOrderFrom" [dateTo]="paged.dateOrderTo"
-                        (searchChange)="onDateOrderSearchChange($event)">
+                    <app-tai-date-range-filter-dropdown class="mr-2" title="Ngày gởi" [dateFrom]="paged.dateOrderFrom"
+                        [dateTo]="paged.dateOrderTo" (searchChange)="onDateOrderSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
-                    <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="paged.datePlannedFrom" [dateTo]="paged.datePlannedTo"
-                        (searchChange)="onDatePlannedSearchChange($event)">
+                    <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="paged.datePlannedFrom"
+                        [dateTo]="paged.datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
                 </div>
             </div>
@@ -40,7 +41,8 @@
             </kendo-grid-column>
             <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <a class="text-primary" *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderId}">
+                    <a class="text-primary" *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/form']"
+                        [queryParams]="{id: dataItem.saleOrderId}">
                         {{dataItem.saleOrderName}}
                     </a>
                 </ng-template>
@@ -69,32 +71,16 @@
                     {{dataItem.orderDatePlanned | date : 'short'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
-                    <a class="text-primary mr-2" [ngbPopover]="popContent" #popOver="ngbPopover" triggers="manual"  [autoClose]="'outside'" placement="left" (click)="toggleWithGreeting(popOver, dataItem)" >
-                        <span *ngIf="dataItem.warrantyCode">{{dataItem.warrantyCode}}</span>
-                        <i *ngIf="!dataItem.warrantyCode" class="far fa-edit"></i>
-                    </a>
-                    <ng-template #popContent>
-                        <div class="d-flex">
-                            <input type="text" class="form-control" [value]="dataItem.warrantyCode" id="code" />
-                            <button class="btn btn-primary btn-sm" (click)="updateWarrantyCode(popOver,dataItem.id)">Lưu</button>
-                        </div>
-                    </ng-template>
+            <kendo-grid-column field="receivedDate" title="Ngày thực nhận" width="140">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.receivedDate | date : 'short'}}
                 </ng-template>
             </kendo-grid-column>
+            <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
+            </kendo-grid-column>
             <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">                  
-                    <a  class="text-primary mr-2" [ngbPopover]="popContentwarrantyPeriod" #popOver="ngbPopover" triggers="manual" [autoClose]="false" placement="left" (click)="toggleWithGreeting(popOver, dataItem)">
-                        <span *ngIf="dataItem.warrantyPeriod">{{dataItem.warrantyPeriod | date : 'shortDate'}}</span>
-                        <i *ngIf="!dataItem.warrantyPeriod" class="far fa-edit"></i>
-                    </a>
-                    <ng-template #popContentwarrantyPeriod>
-                        <div class="d-flex">                            
-                            <kendo-datepicker [(value)]="value" (valueChange)="onChange($event)"></kendo-datepicker>
-                            <button class="btn btn-primary btn-sm" (click)="updateWarrantyPeriod(popOver,dataItem.id)">Lưu</button>             
-                        </div>
-                    </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <span *ngIf="dataItem.warrantyPeriod">{{dataItem.warrantyPeriod | date : 'shortDate'}}</span>
                 </ng-template>
                 <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.warrantyPeriod | date : 'shortDate'}}
@@ -104,9 +90,13 @@
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{stateGet(dataItem.state)}}
                 </ng-template>
-            </kendo-grid-column>         
+            </kendo-grid-column>
+            <kendo-grid-column title="Thao tác"  width="90">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                        <span class="far fa-edit"></span></button>
+                </ng-template>
+            </kendo-grid-column>
         </kendo-grid>
     </div>
 </div>
-
-
