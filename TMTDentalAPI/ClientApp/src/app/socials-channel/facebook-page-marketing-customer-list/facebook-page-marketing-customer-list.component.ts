@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebook-user-profiles.service';
-import { State } from '@progress/kendo-data-query';
+import { CompositeFilterDescriptor, State } from '@progress/kendo-data-query';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { Operation } from 'fast-json-patch';
 
@@ -62,7 +62,8 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
     var state: State = {
       take: this.limit,
-      skip: this.skip
+      skip: this.skip,
+      filter: this.getFilter()
     };
 
     this.facebookUserProfilesODataService.getView(state).subscribe(res => {
@@ -71,6 +72,34 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     }, err => {
       this.loading = false;
     });
+  }
+
+  getFilter() {
+    var filter: CompositeFilterDescriptor = {
+      logic: 'and',
+      filters: [
+        { field: 'FbPageId', operator: 'eq', value: this.pageId }
+      ]
+    };
+
+    if (this.search) {
+      filter = {
+        logic: 'and',
+        filters: [
+          { field: 'FbPageId', operator: 'eq', value: this.pageId },
+          { field: 'Name', operator: 'contains', value: this.search }
+        ]
+      };
+    } else {
+      filter = {
+        logic: 'and',
+        filters: [
+          { field: 'FbPageId', operator: 'eq', value: this.pageId }
+        ]
+      };
+    }
+
+    return filter;
   }
 
   getDisplayName(data) {

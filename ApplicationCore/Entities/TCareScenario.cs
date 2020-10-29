@@ -30,6 +30,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// custom1: Ngày giờ cụ thể hàng năm ví dụ ngày 8/3 lúc 8h30
         /// custom2: Ngày trong tháng ví dụ ngày 3 mỗi tháng lúc 8h30
+        /// custom3: Mỗi ngày ví dụ mỗi ngày vào lúc 8h30
         /// </summary>
         public string AutoCustomType { get; set; }
 

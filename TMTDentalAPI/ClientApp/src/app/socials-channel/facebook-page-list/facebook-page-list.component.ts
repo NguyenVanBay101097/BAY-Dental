@@ -126,20 +126,19 @@ export class FacebookPageListComponent implements OnInit {
     this.popupWindow(url, url, window, 650, 500);
     window.addEventListener("message", (event) => {
       var data = JSON.parse(event.data);
-      console.log(data.data.access_token);
       var val = new ZaloOAConfigSave();
-      val .pageId = item.pageId;
+      val.pageId = item.pageId;
       val.accessToken = data.data.access_token;
       this.zaloOAConfigService.create(val).subscribe((result) => {
         this.notificationService.show({
-          content: "Kết nối thành công !",
+          content: "Làm mới kênh thành công",
           hideAfter: 3000,
           position: { horizontal: "center", vertical: "top" },
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
       });
-    },{once:true});
+    }, { once: true });
   }
 
   popupWindow(url, title, win, w, h) {
@@ -175,7 +174,7 @@ export class FacebookPageListComponent implements OnInit {
           this.facebookPageService.refreshPage(item).subscribe(() => {
             this.loadDataFromApi();
             this.notificationService.show({
-              content: "Làm mới kênh thành công!",
+              content: "Làm mới kênh thành công",
               hideAfter: 3000,
               position: { horizontal: "center", vertical: "top" },
               animation: { type: "fade", duration: 400 },

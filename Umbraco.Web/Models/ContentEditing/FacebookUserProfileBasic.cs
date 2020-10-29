@@ -24,5 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
 
         public string Avatar { get; set; }
+
+        public Guid FbPageId { get; set; }
     }
 }

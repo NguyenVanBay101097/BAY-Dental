@@ -12,6 +12,7 @@ namespace ApplicationCore.Entities
         public TCareCampaign()
         {
             Active = false;
+            SheduleStartType = "hour";
         }
 
         public string Name { get; set; }
