@@ -902,6 +902,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     modalRef.result.then(result => {
+      debugger
       for (let i = 0; i < result.length; i++) {
         let line = result[i] as any;
         line.teeth = this.fb.array(line.teeth);

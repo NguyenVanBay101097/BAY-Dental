@@ -1,13 +1,14 @@
 <div class="w-100 h-100 d-flex bg-white">
-    <div class="w-30 h-100 border-right">
+    <div class="w-20 h-100 border-right">
         <!-- Component Sale Order -->
-        <app-partner-customer-treatment-history-sale-order (newItemEvent)="changeSaleOrder($event)"
+        <app-partner-customer-treatment-history-sale-order (newItemEvent)="changeSaleOrder($event)" [isReload]="isReload"
             [partnerId]="partnerId">
         </app-partner-customer-treatment-history-sale-order>
     </div>
-    <div class="w-70 h-100">
+    <div class="w-80 h-100">
         <!-- Component Form -->
-        <app-partner-customer-treatment-history-form [saleOrderId]="saleOrderId" [partnerId]="partnerId">
+        <app-partner-customer-treatment-history-form [saleOrderId]="saleOrderId" [partnerId]="partnerId" (OrderId)="changeSaleOrder($event)">
         </app-partner-customer-treatment-history-form>
     </div>
 </div>
+

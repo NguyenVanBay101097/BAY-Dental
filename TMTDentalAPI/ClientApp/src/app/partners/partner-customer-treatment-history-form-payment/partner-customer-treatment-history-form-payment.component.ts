@@ -72,6 +72,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
+    
   ngOnChanges(changes: SimpleChanges): void {
     if (this.saleOrderLine) {
       this.addLine(this.saleOrderLine);
@@ -795,6 +796,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   addLine(val) {
+    debugger
     let line = val as any;
     line.teeth = this.fb.array(line.teeth);
     this.orderLines.push(this.fb.group(line));
