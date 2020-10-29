@@ -1,0 +1,35 @@
+<a [ngbPopover]="popContent" popoverClass="popover-teeth" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTags(popOver)">
+    <span class="badge badge-primary">
+        <i class="fa fa-plus"></i>
+    </span>
+</a>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center">
+        <span>Răng</span>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent let-mytags="mytags">
+    <div>
+        <div class="teeth-map">
+            <table class="table table-sm">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                        *ngFor="let vitri of ham.value | keyvalue">
+                        <div (click)="onSelected(rang)" class="tooth-item-teeth"
+                            [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                            {{rang.name}}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button type="button" class="btn btn-sm mt-1 btn-primary" (click)="onSave()" accesskey="c">
+            Lưu
+        </button>
+    </div>
+</ng-template>
+         
