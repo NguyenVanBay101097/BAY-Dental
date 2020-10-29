@@ -20,6 +20,9 @@ import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-o
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { PartnersModule } from '../partners/partners.module';
+import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
+import { SaleOrderPaymentComponent } from './sale-order-payment/sale-order-payment.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,9 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
-    SaleOrderPaymentDialogComponent
+    SaleOrderPaymentDialogComponent,
+    SaleOrderListServiceComponent,
+    SaleOrderPaymentComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +50,7 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
     MyCustomKendoModule,
     FormsModule,
     SharedModule,
-    NgbModule,
+    NgbModule
   ],
   providers: [],
   exports: [

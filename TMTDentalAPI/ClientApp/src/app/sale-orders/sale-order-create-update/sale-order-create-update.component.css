@@ -1,1 +1,8 @@
+.o_form_view>.o_form_sheet_bg>.o_form_sheet {
+    width: 100%;
+    max-width: 100%;
+}
 
+.o_form_view .o_notebook .tab-content>.tab-pane {
+    padding-bottom: 0;
+}
