@@ -42,7 +42,7 @@ export class LaboOrderStatisticUpdateDialogComponent implements OnInit {
 
   onCheckIsReceived(e) {
     if(e.target.checked) {
-      this.line.receivedDate = new Date();
+      this.receivedDate = new Date();
     } else {
       this.line.receivedDate = null;
     }
