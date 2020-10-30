@@ -28,17 +28,17 @@ namespace Infrastructure.Services
 
         public async Task Run(string db)
         {
-            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
+            //await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
 
-            //giới hạn 10000 tin nhắn
-            var now = DateTime.Now;
-            var messageIds = await context.TCareMessages.Where(x => x.State == "waiting" && (x.ScheduledDate.HasValue || x.ScheduledDate.Value < now))
-                .OrderBy(x => x.DateCreated).Take(10000).Select(x => x.Id).ToListAsync();
+            ////giới hạn 10000 tin nhắn
+            //var now = DateTime.Now;
+            //var messageIds = await context.TCareMessages.Where(x => x.State == "waiting" && (x.ScheduledDate.HasValue || x.ScheduledDate.Value < now))
+            //    .OrderBy(x => x.DateCreated).Take(10000).Select(x => x.Id).ToListAsync();
 
-            foreach (var messageId in messageIds)
-            {
-                BackgroundJob.Enqueue(() => Send(messageId, db));
-            }
+            //foreach (var messageId in messageIds)
+            //{
+            //    BackgroundJob.Enqueue(() => Send(messageId, db));
+            //}
         }
 
         public async Task Send(Guid id, string db)

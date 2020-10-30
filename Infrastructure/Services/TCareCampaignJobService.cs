@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Hangfire;
 using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -79,8 +80,8 @@ namespace Infrastructure.Services
                     await context.TCareMessagings.AddAsync(messaging);
                     await context.SaveChangesAsync();
 
-                    //Gửi tin nhắn hàng loạt
-                    //await CreateMessages(context, messaging, partner_ids);
+                    var dateSchedule = (messaging.ScheduleDate ?? DateTime.Now).ToUniversalTime();
+                    BackgroundJob.Schedule<TCareMessagingJobService>(x => x.ActionSendMail(db, messaging.Id), dateSchedule);
                 }
 
                 await transaction.CommitAsync();

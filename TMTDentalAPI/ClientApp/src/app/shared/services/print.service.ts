@@ -5,7 +5,6 @@ declare var $: any;
 export class PrintService {
 
   public print(html) {
-    debugger;
     var hiddenFrame = $('<iframe style="visibility: hidden"></iframe>').appendTo('body')[0];
     hiddenFrame.onload = function () {
       hiddenFrame.contentWindow.print();
