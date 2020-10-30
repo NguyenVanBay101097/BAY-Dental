@@ -10,7 +10,6 @@ namespace Infrastructure.Services
 {
     public interface ITCareScenarioService : IBaseService<TCareScenario>
     {
-        Task<TCareScenario> GetDefault();
         Task<PagedResult2<TCareScenarioBasic>> GetPagedResultAsync(TCareScenarioPaged val);
         Task<TCareScenarioDisplay> GetDisplay(Guid id);
 
