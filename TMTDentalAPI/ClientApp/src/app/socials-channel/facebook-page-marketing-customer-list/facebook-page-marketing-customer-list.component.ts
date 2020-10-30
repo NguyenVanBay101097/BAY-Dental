@@ -34,6 +34,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
   loading = false;
   searchUpdate = new Subject<string>();
   rowsSelected: any[] = [];
+  public mySelection: any[] = [];
   isSelected = false;
 
   pageId: string;
@@ -157,7 +158,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     if (this.pageId) {
       var res = new MultiUserProfilesVm();
       res.pageId = this.pageId;
-      res.userIds = this.rowsSelected;
+      res.userIds = this.mySelection ? this.mySelection : null;
       this.facebookPageService.syncPartnerForMultiUsers(res).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
@@ -170,7 +171,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     if (this.pageId) {
       var res = new MultiUserProfilesVm();
       res.pageId = this.pageId;
-      res.userIds = this.rowsSelected;
+      res.userIds = this.mySelection ? this.mySelection : null;
       this.facebookPageService.syncPhoneForMultiUsers(res).subscribe(() => {
         this.loadDataFromApi();
       }, err => {
