@@ -663,6 +663,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  blurSave() {
+
+  }
+
   printSaleOrder() {
     if (this.id) {
       this.saleOrderService.getPrint(this.id).subscribe((result: any) => {
@@ -921,10 +925,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // this.saleOrderLine = event;
     var res = this.fb.group(val);
     // line.teeth = this.fb.array(line.teeth);
-    if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
+    if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
       this.orderLines.push(res);
     } else {
-      var line = this.orderLines.controls.find(x => x.value.id === res.value.id);
+      var line = this.orderLines.controls.find(x => x.value.productId === res.value.productId);
       if (line) {
         line.value.productUOMQty += 1;
         line.patchValue(line.value);
@@ -1034,10 +1038,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.orderLines.removeAt(index);
-    this.computeAmountTotal();
-
-    this.orderLines.markAsDirty();
+    if (this.formGroup.get('state').value == "draft" || this.formGroup.get('state').value == "cancel") {
+      this.orderLines.removeAt(index);
+      this.computeAmountTotal();
+      this.orderLines.markAsDirty();
+    } else{
+      this.notificationService.show({
+        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
+        hideAfter: 5000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
   }
 
   get getAmountTotal() {
@@ -1239,6 +1252,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
     this.getPriceSubTotal();
     this.computeAmountTotal();
+  }
+
+  updateSaleOrder() {
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
 
   }
 

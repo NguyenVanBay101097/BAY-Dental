@@ -306,11 +306,12 @@
                                                                 </td>
                                                                 <td>
                                                                     <input type="text" class="form-control"
-                                                                        formControlName="diagnostic">
+                                                                        formControlName="diagnostic"
+                                                                        (blur)="updateSaleOrder()">
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <kendo-numerictextbox style="max-width: 90px;"
-                                                                        [spinners]="false"
+                                                                        [spinners]="false" (blur)="updateSaleOrder()"
                                                                         formControlName="productUOMQty"
                                                                         (valueChange)="onChangeQuantity(line)">
                                                                     </kendo-numerictextbox>
@@ -324,12 +325,14 @@
                                                                             [class.d-none]="line.get('discountType').value !== 'percentage'"
                                                                             [min]="0" [max]="100"
                                                                             formControlName="discount"
+                                                                            (blur)="updateSaleOrder()"
                                                                             [autoCorrect]="true" [spinners]="false"
                                                                             (valueChange)="onChangeDiscount(line)"
                                                                             style="max-width: 100px;">
                                                                         </kendo-numerictextbox>
                                                                         <kendo-numerictextbox [format]="'n0'"
                                                                             [spinners]="false"
+                                                                            (blur)="updateSaleOrder()"
                                                                             [class.d-none]="line.get('discountType').value !== 'fixed'"
                                                                             (valueChange)="onChangeDiscountFixed(line)"
                                                                             formControlName="discountFixed"
