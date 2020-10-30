@@ -247,6 +247,7 @@
                                     <div class="w-75 h-100">
                                         <!-- Component Form Service Payment -->
                                         <div class="my-1">
+
                                             <button type="button" hasGroups [groups]="'sale.group_service_card'"
                                                 class="btn btn-outline-primary btn-sm mx-1"
                                                 (click)="showApplyCardDialog()"
@@ -271,7 +272,9 @@
                                                 (click)="applyPromotion()">
                                                 <span>Cập nhật khuyến mãi</span>
                                             </button>
-
+                                            <app-sale-order-apply-discount-default-dialog
+                                                (discountFormGroup)="onApplyDiscount($event)">
+                                            </app-sale-order-apply-discount-default-dialog>
                                         </div>
 
                                         <div class="t-conTable" style="min-height: 340px;">
@@ -281,6 +284,7 @@
                                                         <tr>
                                                             <th [style.min-width.px]="200">Dịch vụ</th>
                                                             <th [style.min-width.px]="130">Răng</th>
+                                                            <th [style.min-width.px]="80">Bác sĩ</th>
                                                             <th [style.min-width.px]="120">Chuẩn đoán</th>
                                                             <th class="text-center">Số lượng</th>
                                                             <th class="text-right">Đơn giá</th>
@@ -305,13 +309,21 @@
                                                                     </app-sale-order-teeth-popover>
                                                                 </td>
                                                                 <td>
+                                                                    <kendo-combobox [data]="filteredEmployees"
+                                                                        (blur)="updateSaleOrder()" [textField]="'name'"
+                                                                        [filterable]="true" #employeeCbx
+                                                                        formControlName="employee" [valueField]="'id'">
+                                                                    </kendo-combobox>
+                                                                </td>
+                                                                <td>
                                                                     <input type="text" class="form-control"
                                                                         formControlName="diagnostic"
                                                                         (blur)="updateSaleOrder()">
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <kendo-numerictextbox style="max-width: 90px;"
-                                                                        [spinners]="false" (blur)="updateSaleOrder()"
+                                                                        [min]="0" [spinners]="false"
+                                                                        (blur)="updateSaleOrder()"
                                                                         formControlName="productUOMQty"
                                                                         (valueChange)="onChangeQuantity(line)">
                                                                     </kendo-numerictextbox>
@@ -331,7 +343,7 @@
                                                                             style="max-width: 100px;">
                                                                         </kendo-numerictextbox>
                                                                         <kendo-numerictextbox [format]="'n0'"
-                                                                            [spinners]="false"
+                                                                            [spinners]="false" [min]="0"
                                                                             (blur)="updateSaleOrder()"
                                                                             [class.d-none]="line.get('discountType').value !== 'fixed'"
                                                                             (valueChange)="onChangeDiscountFixed(line)"
@@ -384,14 +396,7 @@
                                                     <td>Thành tiền</td>
                                                     <td>{{getAmountTotal | number}}</td>
                                                 </tr>
-                                                <tr>
-                                                    <td>
-                                                        <button type="button"
-                                                            class="btn btn-outline-primary btn-sm mx-1">Giảm
-                                                            tiền</button>
-                                                    </td>
-                                                    <td>0</td>
-                                                </tr>
+
                                                 <tr>
                                                     <td>Tổng tiền</td>
                                                     <td>{{getAmountTotal | number}}</td>

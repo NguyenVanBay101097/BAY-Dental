@@ -9,9 +9,9 @@
 <ng-template #popTitle>
     <div class="d-flex align-items-center d-inline-block" [formGroup]="formGroup">
         <span>Loại răng</span>
-        <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [filterable]="true"
-            formControlName="toothCategory" class="btn-sm" (valueChange)="onChangeToothCategory($event)"
-            #toothCategoryCbx [valueField]="'id'">
+        <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}"
+            [filterable]="true" formControlName="toothCategory" class="btn-sm"
+            (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
         </kendo-combobox>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
     </div>
@@ -20,8 +20,8 @@
 <ng-template #popContent>
     <div class="d-inline-flex w-100">
         <h5 class="w-80">Răng</h5>
-        <button (click)="onSave()" *ngIf="line.get('state') && line.get('state').value == 'sale'" class="btn btn-sm btn-primary ">Xác
-            nhận</button>
+        <button (click)="onSave()" *ngIf="line.get('state') && line.get('state').value == 'sale'"
+            class="btn btn-sm btn-primary ">Xác nhận</button>
     </div>
     <div class="teeth-map">
         <table class="table">

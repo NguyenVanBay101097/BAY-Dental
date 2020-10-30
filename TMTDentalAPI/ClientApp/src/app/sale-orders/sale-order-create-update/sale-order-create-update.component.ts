@@ -38,6 +38,8 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-crea
 import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 declare var $: any;
 
@@ -62,6 +64,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -70,6 +73,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
+  filteredEmployees: EmployeeBasic[] = [];
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -81,7 +85,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
   }
 
   ngOnInit() {
@@ -97,12 +101,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null, Validators.required],
     });
     this.routeActive();
-
+    this.loadEmployees();
+    this.employeeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.employeeCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result.items;
+      this.employeeCbx.loading = false;
+    });
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
     // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
+  }
+
+  loadEmployees() {
+    this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
+    });
+  }
+
+
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter || '';
+    val.isDoctor = true;
+    return this.employeeService.getEmployeePaged(val);
   }
 
   routeActive() {
@@ -716,9 +742,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
-      var index = this.orderLines.value.findIndex(x => x.id == line.id);
-      if (index >= 0) {
-        line.toothIds = this.orderLines.value[index].teeth ? this.orderLines.value[index].teeth.map(x => x.id) : [];
+      if (line.employee) {
+        line.employeeId = line.employee.id;
+      }
+      if (line.teeth) {
+        line.toothIds = line.teeth.map(x => x.id);
       }
     });
     return val;
@@ -1042,7 +1070,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.orderLines.removeAt(index);
       this.computeAmountTotal();
       this.orderLines.markAsDirty();
-    } else{
+    } else {
       this.notificationService.show({
         content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
         hideAfter: 5000,
@@ -1236,7 +1264,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeQuantity(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       res.patchValue(line.value);
     }
@@ -1246,7 +1274,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscountFixed(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       res.patchValue(line.value);
     }
@@ -1257,6 +1285,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   updateSaleOrder() {
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();
+      debugger
       this.saleOrderService.update(this.id, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
@@ -1274,7 +1303,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscount(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       res.patchValue(line.value);
     }
@@ -1283,7 +1312,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscountType(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       res.value.discount = 0;
       res.value.discountFixed = 0;
