@@ -1,8 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
 
 @Component({
   selector: 'app-sale-order-list-service',
@@ -14,6 +16,7 @@ export class SaleOrderListServiceComponent implements OnInit {
   @Output() newEventEmiter = new EventEmitter<any>()
   limit: number = 20;
   skip: number = 0;
+  toothDisplays: ToothDisplay[] = []
   search: string;
   partnerId: string;
   listProductServices: ProductBasic2[] = [];
@@ -26,7 +29,8 @@ export class SaleOrderListServiceComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -57,16 +61,23 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   addServiceToSaleOrder(item) {
-    item.priceSubTotal = 0;
-    item.amountResidual = 0;
-    item.priceUnit = item.listPrice;
-    item.diagnostic = "";
-    item.discountType = "percentage";
-    item.amountPaid = 0;
-    item.productUOMQty = 1;
-    item.discount = 0;
-    item.discountFixed = 0;
-    this.newEventEmiter.emit(item)
+    var value = {
+      priceSubTotal: 0,
+      amountResidual: 0,
+      priceUnit: item.listPrice,
+      diagnostic: '',
+      name: item.name,
+      productId: item.id,
+      product: item,
+      discountType: 'percentage',
+      amountPaid: 0,
+      productUOMQty: 1,
+      toothCategory: null,
+      toothCategoryId: '',
+      teeth: this.fb.array([]),
+      discount: 0,
+      discountFixed: 0
+    };
+    this.newEventEmiter.emit(value);
   }
-
 }

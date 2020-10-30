@@ -22,7 +22,7 @@ import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo
 import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { PartnersModule } from '../partners/partners.module';
 import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
-import { SaleOrderPaymentComponent } from './sale-order-payment/sale-order-payment.component';
+import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +41,7 @@ import { SaleOrderPaymentComponent } from './sale-order-payment/sale-order-payme
     LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
     SaleOrderListServiceComponent,
-    SaleOrderPaymentComponent
+    SaleOrderTeethPopoverComponent,
   ],
   imports: [
     CommonModule,

@@ -372,8 +372,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-
-
   getCouponLines() {
     var lines = this.orderLines.value;
     var list = [];
@@ -569,7 +567,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-
   searchUsers(filter?: string) {
     var val = new UserPaged();
     val.search = filter;
@@ -588,7 +585,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
-
 
   createNew() {
     if (this.customerId) {
@@ -716,7 +712,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
+      var index = this.orderLines.value.findIndex(x => x.id == line.id);
+      if (index >= 0) {
+        line.toothIds = this.orderLines.value[index].teeth ? this.orderLines.value[index].teeth.map(x => x.id) : [];
+      }
     });
     return val;
   }
@@ -725,7 +724,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.getFormDataSave();
     this.saleOrderService.create(val)
       .pipe(
@@ -812,20 +810,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
-
-  // thang
-  flag = false;
-  addSaleOrderLine(item) {
-    debugger
-    if (this.saleOrderLine && this.saleOrderLine.id == item.id) {
-      this.flag = true;
-    }
-    this.saleOrderLine = item;
-  }
-
-  // end thang
-
-
 
   onChangePartner(value) {
     if (value) {
@@ -930,6 +914,75 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, () => {
     });
 
+
+  }
+
+  addLine(val) {
+    // this.saleOrderLine = event;
+    var res = this.fb.group(val);
+    // line.teeth = this.fb.array(line.teeth);
+    if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
+      this.orderLines.push(res);
+    } else {
+      var line = this.orderLines.controls.find(x => x.value.id === res.value.id);
+      if (line) {
+        line.value.productUOMQty += 1;
+        line.patchValue(line.value);
+      }
+    }
+    this.getPriceSubTotal();
+    this.orderLines.markAsDirty();
+    this.computeAmountTotal();
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+    this.saleOrderLine = null;
+  }
+
+  updateTeeth(line) {
+    var val = this.getFormDataSave();
+    this.saleOrderService.update(this.id, val).subscribe(() => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.loadRecord();
+    }, () => {
+      this.loadRecord();
+    });
+  }
+
+  getPriceSubTotal() {
+    this.orderLines.controls.forEach(line => {
+      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+      var discountFixedValue = line.get('discountFixed') ? line.get('discountFixed').value : 0;
+      var discountNumber = line.get('discount') ? line.get('discount').value : 0;
+      var getquanTity = line.get('productUOMQty') ? line.get('productUOMQty').value : 1;
+      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
+      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
+      var price = priceUnit * getquanTity;
+
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
+      line.get('priceSubTotal').setValue(subtotal);
+      var getResidual = subtotal - getamountPaid;
+      line.get('amountResidual').setValue(getResidual);
+    });
 
   }
 
@@ -1167,5 +1220,45 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then((val) => {
     }, er => { });
+  }
+
+  onChangeQuantity(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscountFixed(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscount(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangeDiscountType(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.value.discount = 0;
+      res.value.discountFixed = 0;
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
   }
 }
