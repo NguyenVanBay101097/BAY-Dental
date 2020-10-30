@@ -350,7 +350,21 @@ namespace Infrastructure.Services
             var page = await SearchQuery(x => x.Id == val.PageId).FirstOrDefaultAsync();
 
             var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id).ToListAsync();
-            var psIds = users.Select(x => x.PSID).ToList();
+            if(page.Type == "facebook")
+            {
+                await UpdatePhoneForMultiUsersFB(page, users);
+            }
+            else if(page.Type == "zalo") 
+            {
+                await UpdatePhoneForMultiUsersZaLo(page, users);
+            }
+       
+        }
+
+        public async Task UpdatePhoneForMultiUsersFB(FacebookPage page, IEnumerable<FacebookUserProfile> profiles)
+        {
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var psIds = profiles.Select(x => x.PSID).ToList();
             var conversations = await LoadConversations(page);
             //task whenall
             var conversationsOfMultiUser = conversations.Where(x => x.Sender.Data.Any(s => psIds.Contains(s.Id))).ToList();
@@ -364,6 +378,8 @@ namespace Infrastructure.Services
                     allMessages.AddRange(item);
             }
 
+
+            /// update phone
             IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
             foreach (var message in allMessages)
             {
@@ -379,7 +395,6 @@ namespace Infrastructure.Services
             }
 
             var psids = psidPhoneDict.Keys.ToArray();
-            var profiles = users.Where(x => psids.Contains(x.PSID)).ToList();
             var profileDict = profiles.ToDictionary(x => x.PSID, x => x);
 
             foreach (var item in psidPhoneDict)
@@ -392,9 +407,49 @@ namespace Infrastructure.Services
             }
 
             await userProfileObj.UpdateAsync(profiles);
-
-
         }
+
+        public async Task UpdatePhoneForMultiUsersZaLo(FacebookPage page, IEnumerable<FacebookUserProfile> profiles)
+        {
+            var userProfileObj = GetService<IFacebookUserProfileService>();
+            var tasks = profiles.Select(x => LoadMessagesZaloPage(page, long.Parse(x.PSID))).ToList();
+            var results = await Task.WhenAll(tasks);
+
+
+            var allMessages = new List<GetMessageFollowersData>();
+            foreach (var item in results)
+            {
+                if (item != null)
+                    allMessages.AddRange(item);
+            }
+
+            IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
+            foreach (var message in allMessages)
+            {
+                var psid = message.from_id;
+
+                var phones = GetPhonesFromText(message.message);
+                if (!psidPhoneDict.ContainsKey(psid))
+                    psidPhoneDict.Add(psid, new List<string>());
+
+                psidPhoneDict[psid].AddRange(phones);
+            }
+
+            var psids = psidPhoneDict.Keys.ToArray();
+            var profileDict = profiles.ToDictionary(x => x.PSID, x => x);
+
+            foreach (var item in psidPhoneDict)
+            {
+                if (!profileDict.ContainsKey(item.Key))
+                    continue;
+                var profile = profileDict[item.Key];
+                var phones = item.Value;
+                profile.Phone = string.Join(",", phones.Distinct().ToList());
+            }
+
+            await userProfileObj.UpdateAsync(profiles);
+        }
+
 
         public async Task SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
         {
@@ -457,35 +512,6 @@ namespace Infrastructure.Services
             await userProfileObj.UpdateAsync(profiles);
         }
 
-
-
-        public async Task UpdatePartnerIdOfUserProfile(FacebookUserProfile user)
-        {
-            var partnerObj = GetService<IPartnerService>();
-            var userProfileObj = GetService<IFacebookUserProfileService>();
-            var partnes = await partnerObj.SearchQuery(x => !string.IsNullOrEmpty(x.Phone)).ToListAsync();
-            var partnerdict = partnes.GroupBy(x => x.Phone).ToDictionary(x => x.Key, x => x.ToList());
-            var listPartnerId = new List<Guid>();
-
-            if (user == null)
-                return;
-
-            var listPhone = user.Phone == null ? null : user.Phone.Split(",");
-            if (listPhone == null)
-                return;
-            foreach (var phone in listPhone)
-            {
-                var isUpdate = !string.IsNullOrWhiteSpace(phone) && partnerdict.ContainsKey(phone) ? true : false;
-                var partnerId = isUpdate ? partnerdict[phone]?[0].Id : null;
-                if (partnerId.HasValue)
-                    listPartnerId.Add(partnerId.Value);
-            }
-
-            if (listPartnerId.Any())
-                user.PartnerId = listPartnerId.FirstOrDefault();
-
-            await userProfileObj.UpdateAsync(user);
-        }
 
         /// <summary>
         /// lấy ra tất cả userprofile của page
@@ -607,13 +633,6 @@ namespace Infrastructure.Services
 
             return list;
 
-        }
-
-        public async Task<IEnumerable<FacebookUserProfile>> GetAllUserProfileOfPage(Guid pageId)
-        {
-            var userProfileObj = GetService<IFacebookUserProfileService>();
-            var profiles = await userProfileObj.SearchQuery(x => x.FbPageId == pageId).ToListAsync();
-            return profiles;
         }
 
         public async Task<List<ApiPagedConversationsData>> LoadConversations(FacebookPage page)
