@@ -174,6 +174,11 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       }
       i++;
     }
+    // var controls = this.lines.controls.filter(x => x.get('product').value == null);
+    // controls.forEach(control => {
+    //   this.lines.removeAt(this.lines.controls.findIndex(x => image.id === 502))
+    // });
+  
 
     if (!this.toaThuocForm.valid) {
       return false;
