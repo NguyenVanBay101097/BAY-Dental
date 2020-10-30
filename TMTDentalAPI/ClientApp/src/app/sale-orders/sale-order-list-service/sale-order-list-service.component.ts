@@ -61,23 +61,37 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   addServiceToSaleOrder(item) {
-    var value = {
-      priceSubTotal: 0,
-      amountResidual: 0,
-      priceUnit: item.listPrice,
-      diagnostic: '',
-      name: item.name,
-      productId: item.id,
-      product: item,
-      discountType: 'percentage',
-      amountPaid: 0,
-      productUOMQty: 1,
-      toothCategory: null,
-      toothCategoryId: '',
-      teeth: this.fb.array([]),
-      discount: 0,
-      discountFixed: 0
-    };
-    this.newEventEmiter.emit(value);
+    // var value = {
+    //   priceSubTotal: 0,
+    //   amountResidual: 0,
+    //   priceUnit: item.listPrice,
+    //   diagnostic: '',
+    //   name: item.name,
+    //   productId: item.id,
+    //   product: item,
+    //   discountType: 'percentage',
+    //   amountPaid: 0,
+    //   productUOMQty: 1,
+    //   toothCategory: null,
+    //   toothCategoryId: '',
+    //   teeth: this.fb.array([]),
+    //   discount: 0,
+    //   discountFixed: 0
+    // };
+    item.priceSubTotal = 0;
+    item.amountResidual = 0;
+    item.priceUnit = item.listPrice;
+    item.diagnostic = "";
+    item.productId = item.id;
+    item.discountType = "percentage";
+    item.amountPaid = 0;
+    item.productUOMQty = 1;
+    item.toothCategory = null;
+    item.toothCategoryId = "";
+    item.teeth = this.fb.array([]);
+    item.discount = 0;
+    item.discountFixed = 0;
+    this.newEventEmiter.emit(item)
   }
+
 }
