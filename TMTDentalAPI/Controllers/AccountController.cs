@@ -173,8 +173,8 @@ namespace TMTDentalAPI.Controllers
             string code = await _userManager.GeneratePasswordResetTokenAsync(user);
             code = System.Web.HttpUtility.UrlEncode(code);
             //string callbackUrl = Url.Action("resetpassword", "account", new { token = code }, Request.Scheme);
-            string callbackUrl = Request.Scheme + ":" + Request.Host.Value + "/reset-password/" + code;
-            await _mailSender.SendEmailAsync(user.Email, "Yêu cầu reset mật khẩu!", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+            string callbackUrl = Request.Scheme + "://" + Request.Host.Value + "/auth/reset-password?code=" + code;
+            await _mailSender.SendEmailAsync(user.Email, "Yêu cầu reset mật khẩu!", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>", user.Name);
 
             return Ok(new { success = true, message = "Hệ thống đã gửi đường link để reset mật khẩu vào hộp thư của bạn, bạn hãy kiểm tra thư để reset mật khẩu!" });
         }
