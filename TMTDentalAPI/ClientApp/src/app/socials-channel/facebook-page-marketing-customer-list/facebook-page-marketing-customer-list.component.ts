@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, RowArgs } from '@progress/kendo-angular-grid';
 import { FacebookPageService, MultiUserProfilesVm } from '../facebook-page.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
@@ -232,14 +232,13 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  selectedKeysChange(rows: any) {
+  selectedKeysChange(rows: any[]) {
     this.rowsSelected = rows;
     if (this.rowsSelected.length > 0) {
       this.isSelected = true;
     } else {
       this.isSelected = false;
     }
-
   }
 
   removePartner(dataItem: any, rowIndex) {
