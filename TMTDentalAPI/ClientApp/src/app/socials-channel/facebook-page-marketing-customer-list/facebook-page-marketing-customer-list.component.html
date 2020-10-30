@@ -1,33 +1,37 @@
 <div class="px-3 py-2 d-flex justify-content-between">
     <div>
         <button class="btn btn-sm btn-primary" (click)="syncUsers()">Tải người tương tác</button>
-        <button class="btn btn-sm btn-primary ml-1"  (click)="syncNumberPhoneUsers()">Quét hộp thoại cập nhật SĐT</button>
-        <button class="btn btn-sm btn-success ml-1"  (click)="syncPartners()">Liên kết khách hàng tự động</button>  
-    </div>  
+        <button class="btn btn-sm btn-primary ml-1" (click)="syncNumberPhoneUsers()">Quét hộp thoại cập nhật
+            SĐT</button>
+        <button class="btn btn-sm btn-success ml-1" (click)="syncPartners()">Liên kết khách hàng tự động</button>
+    </div>
     <div>
         <div class="o_cp_sidebar">
             <div class="btn-group">
                 <div class="btn-group o_dropdown" *ngIf="isSelected">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" type="button" id="dropdownMenuButton">
                         Thao tác
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <button class="dropdown-item" (click)="syncPartnersMutilUser()">Liên kết khách hàng tự động</button>
-                        <button class="dropdown-item" (click)="syncPhoneOfMutilUser()">Quét hộp thoại cập nhật SĐT</button>
+                        <button class="dropdown-item" (click)="syncPartnersMutilUser()">Liên kết khách hàng tự
+                            động</button>
+                        <button class="dropdown-item" (click)="syncPhoneOfMutilUser()">Quét hộp thoại cập nhật
+                            SĐT</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <input class="px-2 form-control" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
-        (ngModelChange)="this.searchUpdate.next($event)">
+    <input class="px-2 form-control" style="max-width: 400px;" placeholder="Tìm kiếm..." type="text"
+        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
 </div>
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }" [selectedKeys]="rowsSelected" [kendoGridSelectBy]="'id'" (selectedKeysChange)="selectedKeysChange($event)">
-        <kendo-grid-checkbox-column showSelectAll="true" width="30">              
+        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }"
+         [kendoGridSelectBy]="'Id'" (selectedKeysChange)="selectedKeysChange($event)">
+        <kendo-grid-checkbox-column showSelectAll="true" width="30">         
         </kendo-grid-checkbox-column>
         <kendo-grid-column title="Hình đại diện" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -38,15 +42,16 @@
         </kendo-grid-column>
         <kendo-grid-column title="Số điện thoại" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Phone}} 
-                <app-facebook-user-profile-update-phone-partner-popover [data]="dataItem" (valueChange)="onPhonePartnerChange(dataItem, $event)"
-                (createPartnerClick)="onCreatePartnerClick(dataItem, $event)">
-                </app-facebook-user-profile-update-phone-partner-popover> 
+                {{dataItem.Phone}}
+                <app-facebook-user-profile-update-phone-partner-popover [data]="dataItem"
+                    (valueChange)="onPhonePartnerChange(dataItem, $event)"
+                    (createPartnerClick)="onCreatePartnerClick(dataItem, $event)">
+                </app-facebook-user-profile-update-phone-partner-popover>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Partner" title="Khách hàng liên kết" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{getDisplayName(dataItem.Partner)}} 
+                {{getDisplayName(dataItem.Partner)}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Id" width="100">
