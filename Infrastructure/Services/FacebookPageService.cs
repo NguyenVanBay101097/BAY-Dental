@@ -619,6 +619,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<GetMessageFollowersData>> LoadMessagesZaloPage(FacebookPage self , long psid)
         {
+
             var zaloClient = new ZaloClient(self.PageAccesstoken);         
             var offset = 0;
             var count = 10;
