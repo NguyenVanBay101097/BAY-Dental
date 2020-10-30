@@ -1,0 +1,18 @@
+.popover-teeth{
+    max-width: 800px !important;
+    width: 600px;
+}
+
+.tooth-item-teeth {
+    padding: 4px 5px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin-right: 1px;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.tooth-item-teeth.selected {
+    background-color: #6c757d;
+    color: white;
+}

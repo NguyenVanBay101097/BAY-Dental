@@ -179,6 +179,10 @@ export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements 
     item.productUOMQty = 1;
     item.discount = 0;
     item.discountFixed = 0;
+    item.toothCategoryId = item.toothCategory ? item.toothCategory.id : null;
+    item.employeeId = item.employee ? item.employee.id : null;
+    item.priceSubTotal = this.getPriceSubTotal();
+    item.teeth = this.teethSelected;
     this.newEventEmiter.emit(item);
   }
 }

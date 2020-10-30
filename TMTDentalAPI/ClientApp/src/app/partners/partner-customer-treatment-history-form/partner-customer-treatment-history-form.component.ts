@@ -1012,14 +1012,23 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     this.computeAmountTotal();
   }
 
+  onChangeTeeth(line:FormGroup , event){
+    debugger
+    var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
+    if (res) {
+      res.value.teeth = event;
+      res.patchValue(line.value);
+    }
+  }
+
  
 
 
   chosseSaleOrderLine(event) {
     // this.saleOrderLine = event;
     debugger
+    event.teeth = this.fb.array(event.teeth);
     var res = this.fb.group(event);
-   // line.teeth = this.fb.array(line.teeth);
    if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
     this.orderLines.push(res);
   } else {

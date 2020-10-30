@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex align-items-center p-2 border-bottom">
             <button type="button" class="btn btn-primary btn-sm mx-1" (click)="onSave()">Lưu</button>
-            <button type="button" class="btn btn-primary btn-sm mx-1" (click)="actionConfirm()" >Xác nhận</button>
+            <button type="button" class="btn btn-primary btn-sm mx-1" (click)="actionConfirm()">Xác nhận</button>
             <button type="button" class="btn btn-primary btn-sm mx-1" (click)="actionCancel()">Hủy phiếu</button>
         </div>
         <div class="d-flex justify-content-between align-items-center border-bottom py-1 pr-3">
@@ -28,8 +28,9 @@
             <div class="w-80 h-100">
                 <div class="d-flex flex-column h-100">
                     <div class="my-1">
-                        <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1"
-                            (click)="showApplyCardDialog()" *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
+                        <button type="button" hasGroups [groups]="'sale.group_service_card'"
+                            class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()"
+                            *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
                             <span>thẻ tiền mặt</span>
                         </button>
                         <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
@@ -37,16 +38,17 @@
                             *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
                             <span>coupon, mã khuyến mãi</span>
                         </button>
-                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'" name="recompute_coupon_lines"
-                            placement="bottom" triggers="mouseenter:mouseleave"
+                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                            name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave"
                             ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
                             popoverTitle="Cập nhật khuyến mãi" class="btn btn-outline-primary btn-sm mx-1"
-                            *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1" (click)="applyPromotion()">
+                            *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1"
+                            (click)="applyPromotion()">
                             <span>Cập nhật khuyến mãi</span>
                         </button>
-                
+
                     </div>
-                
+
                     <div class="t-conTable">
                         <div class="t-parTable t-scrollbar">
                             <table class="t-sticky-thead t-sticky-col-left">
@@ -70,11 +72,16 @@
                                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                         <tr [formGroupName]="i">
                                             <td>{{ line.get('name').value }}</td>
-                                            <td>aaa</td>
+                                            <td>
+                                                <app-treatment-history-teeth-popover [teeths]="line.get('teeth').value"
+                                                    (teethselected)="onChangeTeeth(line,$event)">
+                                                </app-treatment-history-teeth-popover>
+                                            </td>
                                             <td>{{line.get('diagnostic').value}}</td>
                                             <td class="text-right">
                                                 <kendo-numerictextbox style="max-width: 90px;" [spinners]="false"
-                                                    formControlName="productUOMQty" (valueChange)="onChangeQuantity(line)">
+                                                    formControlName="productUOMQty"
+                                                    (valueChange)="onChangeQuantity(line)">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td class="text-right" style="max-width: 300px;">
@@ -82,17 +89,20 @@
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-end">
                                                     <kendo-numerictextbox
-                                                        [class.d-none]="line.get('discountType').value !== 'percentage'" [min]="0"
-                                                        [max]="100" formControlName="discount" [autoCorrect]="true" [spinners]="false"
-                                                        (valueChange)="onChangeDiscount(line)" style="max-width: 100px;">
+                                                        [class.d-none]="line.get('discountType').value !== 'percentage'"
+                                                        [min]="0" [max]="100" formControlName="discount"
+                                                        [autoCorrect]="true" [spinners]="false"
+                                                        (valueChange)="onChangeDiscount(line)"
+                                                        style="max-width: 100px;">
                                                     </kendo-numerictextbox>
                                                     <kendo-numerictextbox [format]="'n0'" [spinners]="false"
                                                         [class.d-none]="line.get('discountType').value !== 'fixed'"
-                                                        (valueChange)="onChangeDiscountFixed(line)" formControlName="discountFixed"
-                                                        style="max-width: 100px;">
+                                                        (valueChange)="onChangeDiscountFixed(line)"
+                                                        formControlName="discountFixed" style="max-width: 100px;">
                                                     </kendo-numerictextbox>
                                                     <select class="form-control" style="max-width: 70px;"
-                                                        (change)="onChangeDiscountType(line)" formControlName="discountType">
+                                                        (change)="onChangeDiscountType(line)"
+                                                        formControlName="discountType">
                                                         <option value="percentage">%</option>
                                                         <option value="fixed">VNĐ</option>
                                                     </select>
@@ -113,16 +123,17 @@
                                                             (click)="editLine(line)">
                                                             <span class="k-icon k-i-edit"></span>
                                                         </button> -->
-                                                    <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
+                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                        (click)="deleteLine(i)">
                                                         <span class="k-icon k-i-delete"></span>
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
                                     </ng-container>
-                
+
                                 </tbody>
-                
+
                             </table>
                         </div>
                     </div>
