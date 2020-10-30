@@ -33,11 +33,6 @@ namespace Infrastructure.Services
 
         }
 
-        public Task<TCareScenario> GetDefault()
-        {
-            throw new NotImplementedException();
-        }
-
         public override async Task UpdateAsync(TCareScenario entity)
         {
             var campaignObj = GetService<ITCareCampaignService>();
@@ -48,7 +43,7 @@ namespace Infrastructure.Services
                 item.FacebookPageId = entity.ChannelSocialId;
             }
             await campaignObj.UpdateAsync(campaigns);
-           await AddOrUpdateRunningJob(entity);
+            await AddOrUpdateRunningJob(entity);
         }
 
         public override async Task<TCareScenario> CreateAsync(TCareScenario entity)
@@ -77,14 +72,14 @@ namespace Infrastructure.Services
             if (entity.Type == "auto_custom")
             {
                 if (entity.AutoCustomType == "custom1")
-                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant,new Guid[]{ entity.Id}), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
+                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant, new Guid[] { entity.Id }), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} {entity.CustomMonth} *", TimeZoneInfo.Local);
                 else if (entity.AutoCustomType == "custom2")
-                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant, new Guid[] { entity.Id }), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} * *", TimeZoneInfo.Local);               
-            }else if (entity.Type == "manual")
+                    RecurringJob.AddOrUpdate<TCareScenarioJobService>(jobId, x => x.Run(tenant, new Guid[] { entity.Id }), $"{entity.CustomMinute} {entity.CustomHour} {entity.CustomDay} * *", TimeZoneInfo.Local);
+            }
+            else if (entity.Type == "manual" || entity.Type == "auto_everyday")
             {
-                if (entity.JobId != null)
+                if (!string.IsNullOrEmpty(entity.JobId))
                     RecurringJob.RemoveIfExists(entity.JobId);
-
                 entity.JobId = null;
             }
 

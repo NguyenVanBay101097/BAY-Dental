@@ -24,7 +24,6 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
   loading = false;
   search: string;
   searchCateg: ProductCategoryBasic;
-  @ViewChild(ToaThuocPrintComponent, {static: true}) toaThuocPrintComponent: ToaThuocPrintComponent;
 
   constructor(
     private activeRoute: ActivatedRoute, 
