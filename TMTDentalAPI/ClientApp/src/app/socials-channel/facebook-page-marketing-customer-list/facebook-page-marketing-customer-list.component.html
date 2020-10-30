@@ -29,7 +29,7 @@
 
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }"
+        (pageChange)="pageChange($event)" [selectable]="{enabled: true, checkboxOnly: true }"  [selectedKeys]="mySelection"
          [kendoGridSelectBy]="'Id'" (selectedKeysChange)="selectedKeysChange($event)">
         <kendo-grid-checkbox-column showSelectAll="true" width="30">         
         </kendo-grid-checkbox-column>

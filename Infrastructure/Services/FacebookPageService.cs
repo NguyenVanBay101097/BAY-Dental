@@ -350,15 +350,15 @@ namespace Infrastructure.Services
             var page = await SearchQuery(x => x.Id == val.PageId).FirstOrDefaultAsync();
 
             var users = await userProfileObj.SearchQuery(x => val.UserIds.Contains(x.Id) && x.FbPageId == page.Id).ToListAsync();
-            if(page.Type == "facebook")
+            if (page.Type == "facebook")
             {
                 await UpdatePhoneForMultiUsersFB(page, users);
             }
-            else if(page.Type == "zalo") 
+            else if (page.Type == "zalo")
             {
                 await UpdatePhoneForMultiUsersZaLo(page, users);
             }
-       
+
         }
 
         public async Task UpdatePhoneForMultiUsersFB(FacebookPage page, IEnumerable<FacebookUserProfile> profiles)
@@ -525,7 +525,7 @@ namespace Infrastructure.Services
             {
                 var conversations = await LoadConversations(page);
                 //task whenall
-                var tasks = conversations.Select(x => LoadMessagesOfConversation(page, x.Id)).ToList();
+                var tasks = conversations.Select(x => LoadMessagesOfConversation(page, x.Id));
                 var results = await Task.WhenAll(tasks);
 
                 var allMessages = new List<ApiPagedConversationMessages>();
@@ -590,7 +590,7 @@ namespace Infrastructure.Services
                 IDictionary<string, List<string>> psidPhoneDict = new Dictionary<string, List<string>>();
                 foreach (var message in allMessages)
                 {
-                    var psid = message.from_id;               
+                    var psid = message.from_id;
 
                     var phones = GetPhonesFromText(message.message);
                     if (!psidPhoneDict.ContainsKey(psid))
@@ -617,23 +617,26 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<GetMessageFollowersData>> LoadMessagesZaloPage(FacebookPage self , long psid)
+        public Task<List<GetMessageFollowersData>> LoadMessagesZaloPage(FacebookPage self, long psid)
         {
+            var listMessage = Task.Run(() =>
+              {
+                  var zaloClient = new ZaloClient(self.PageAccesstoken);
+                  var offset = 0;
+                  var count = 10;
+                  var res = zaloClient.getListConversationWithUser(psid, offset, count).ToObject<GetMessageUserFollowersResponse>();
+                  var list = new List<GetMessageFollowersData>();
+                  while (res.data != null && res.data.Any())
+                  {
+                      list.AddRange(res.data);
+                      offset += count;
+                      res = zaloClient.getListConversationWithUser(psid, offset, count).ToObject<GetMessageUserFollowersResponse>();
+                  }
 
-            var zaloClient = new ZaloClient(self.PageAccesstoken);         
-            var offset = 0;
-            var count = 10;
-            var res = zaloClient.getListConversationWithUser(psid, offset, count).ToObject<GetMessageUserFollowersResponse>();
-            var list = new List<GetMessageFollowersData>();
-            while (res.data != null && res.data.Any())
-            {
-                list.AddRange(res.data);
-                offset += count;
-                res = zaloClient.getListConversationWithUser(psid, offset, count).ToObject<GetMessageUserFollowersResponse>();
-            }
+                  return list;
+              });
 
-            return list;
-
+            return listMessage;
         }
 
         public async Task<List<ApiPagedConversationsData>> LoadConversations(FacebookPage page)
