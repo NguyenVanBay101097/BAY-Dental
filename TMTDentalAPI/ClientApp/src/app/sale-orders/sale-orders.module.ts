@@ -54,6 +54,7 @@ import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-
   ],
   providers: [],
   exports: [
+    SaleOrderTeethPopoverComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,
