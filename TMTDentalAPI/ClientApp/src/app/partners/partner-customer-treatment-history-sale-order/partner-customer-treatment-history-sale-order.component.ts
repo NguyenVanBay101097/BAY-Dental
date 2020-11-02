@@ -46,12 +46,6 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   //   })
   // }
 
-  checkReload(isReload) {
-    if (isReload) {
-      // this.loadDataFromApi();
-    }
-  }
-
   chossesSaleOrder(value) {
     this.id = value.id
     this.newItemEvent.emit(value);

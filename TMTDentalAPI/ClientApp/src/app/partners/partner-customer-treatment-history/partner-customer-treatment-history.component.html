@@ -19,7 +19,6 @@
             <div class="d-flex align-items-center p-2 border-bottom">
                 <button type="button" class="btn btn-primary btn-sm mx-1" (click)="onSave()">Lưu</button>
                 <button type="button" class="btn btn-primary btn-sm mx-1" (click)="actionConfirm()">Xác nhận</button>
-                <button type="button" class="btn btn-primary btn-sm mx-1" (click)="actionCancel()">Hủy phiếu</button>
                 <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                     class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                     Thanh toán
@@ -129,7 +128,11 @@
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td class="text-right" style="max-width: 300px;">
-                                                {{ line.get('priceUnit').value | number }}</td>
+                                                <kendo-numerictextbox [min]="0" formControlName="priceUnit"
+                                                    (blur)="updateSaleOrder()" [autoCorrect]="true" [spinners]="false"
+                                                    [format]="'n0'" style="min-width: 50px;">
+                                                </kendo-numerictextbox>
+                                            </td>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-end">
                                                     <kendo-numerictextbox
