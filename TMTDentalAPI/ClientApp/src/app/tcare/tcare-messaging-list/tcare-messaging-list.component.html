@@ -46,7 +46,7 @@
 
 <div class="bg-white">
     <div class="o_form_view o_form_nosheet o_form_editable">
-        <div>
+        <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-column field="scenarioName" title="Kịch bản" width="150">
@@ -82,6 +82,15 @@
                 <kendo-grid-column field="state" title="Trạng thái" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{getState(dataItem.state)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button *ngIf="['exception'].indexOf(dataItem.state) !== -1" class="btn btn-primary btn-sm" title="Gửi lại" (click)="refreshSendItem(dataItem)">
+                            <span class="fas fa-sync-alt"></span></button>
                     </ng-template>
                 </kendo-grid-column>
             </kendo-grid>

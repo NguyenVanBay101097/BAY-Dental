@@ -34,6 +34,7 @@ namespace ApplicationCore.Entities
         /// draft: Mới
         /// in_queue: Chờ gửi
         /// sending: Đang gửi
+        /// exception: that bai
         /// done: Hoàn thành
         /// </summary>
         public string State { get; set; }

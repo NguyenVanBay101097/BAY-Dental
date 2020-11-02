@@ -44,4 +44,8 @@ export class TcareMessagingService {
   getPaged(val: any) {
     return this.http.get(this.base_api + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
+
+  refeshMessaging(ids: string[]){
+    return this.http.post(this.base_api + this.apiUrl + "/RefeshMessaging", ids);
+  }
 }

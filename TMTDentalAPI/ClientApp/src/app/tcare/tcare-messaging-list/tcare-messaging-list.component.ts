@@ -32,9 +32,7 @@ export class TcareMessagingListComponent implements OnInit {
   ngOnInit() {
     // var today = new Date(new Date().toDateString());
     // this.dateFrom = today;
-    // this.dateTo = today;
-
-    this.loadDataFromApi();
+    // this.dateTo = today;  
 
     this.categCbx.filterChange
       .asObservable()
@@ -48,12 +46,14 @@ export class TcareMessagingListComponent implements OnInit {
         this.categCbx.loading = false;
       });
 
-    this.searchUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe(() => {
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(value => {
         this.loadDataFromApi();
       });
 
+    this.loadDataFromApi();
     this.loadFilteredCategs();
   }
 
@@ -79,31 +79,45 @@ export class TcareMessagingListComponent implements OnInit {
   loadDataFromApi() {
     this.loading = true;
     var val = new TCareMessagingPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
     if (this.dateFrom) {
       val.dateFrom = this.intlService.formatDate(this.dateFrom, "d", "en-US");
     }
     if (this.dateTo) {
       val.dateTo = this.intlService.formatDate(this.dateTo, "d", "en-US");
     }
-    val.tCareScenarioId = this.searchCateg ? this.searchCateg.id : "";
+
+    if (this.searchCateg) {
+      val.tCareScenarioId = this.searchCateg ? this.searchCateg.id : '';
+    }
 
     this.tcareMessagingService.getPaged(val).pipe(
-      map((response: any) =>
-        (<GridDataResult>{
-          data: response.items,
-          total: response.totalItems
-        }))
-    ).subscribe(res => {
-      this.gridData = res;
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
+      map(
+        (response: any) =>
+          <GridDataResult>{
+            data: response.items,
+            total: response.totalItems,
+          }
+      )
+    )
+      .subscribe(
+        (res) => {
+          this.gridData = res;
+          this.loading = false;
+        },
+        (err) => {
+          console.log(err);
+          this.loading = false;
+        }
+      );
   }
+
+
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   loadFilteredCategs() {
@@ -125,9 +139,27 @@ export class TcareMessagingListComponent implements OnInit {
         return 'Đang gửi';
       case 'done':
         return 'Hoàn thành';
+      case 'exception':
+        return 'thất bại';
       default:
         return 'Mới';
     }
+  }
+
+  refreshSendItem(value: any) {
+    this.tcareMessagingService.refeshMessaging([value.id]).subscribe((res: any) => {
+      setTimeout(() => {
+        this.loadDataFromApi();
+      }, 500);
+      // this.notificationService.show({
+      //   content: 'thành công!',
+      //   hideAfter: 3000,
+      //   position: { horizontal: 'center', vertical: 'top' },
+      //   animation: { type: 'fade', duration: 400 },
+      //   type: { style: 'success', icon: true },
+      // });
+    });
+
   }
 
 

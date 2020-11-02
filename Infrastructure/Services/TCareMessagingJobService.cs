@@ -79,20 +79,44 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task ActionSendMail(string db, Guid messagingId)
+        public async Task RefeshProcessQueue(string db , IEnumerable<Guid> ids)
         {
             await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
-            await using var transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                //làm sao để gửi tin?
-                //điều kiện cần: kênh gửi, danh sách người nhận, nội dung
-                var messaging = await context.TCareMessagings.Where(x => x.Id == messagingId).Include(x => x.FacebookPage)
-                    .Include(x => x.PartnerRecipients).Include(x => x.TCareCampaign).FirstOrDefaultAsync();
-                if (messaging == null)
-                    return;
+                DateTime now = DateTime.Now;
+                //tìm danh sách các chiến dịch đang active
+                var states = new string[] { "exception"};
+                var messagings = await context.TCareMessagings.Where(x => ids.Contains(x.Id) && (x.ScheduleDate.HasValue || x.ScheduleDate.Value < now)).ToListAsync();
 
+
+              
+            }
+            catch (Exception)
+            {
+                // TODO: Handle failure
+                //await transaction.RollbackAsync();
+            }
+        }
+
+        public async Task ActionSendMail(string db, Guid messagingId)
+        {
+            await using var context = DbContextHelper.GetCatalogDbContext(db, _configuration);
+
+            //làm sao để gửi tin?
+            //điều kiện cần: kênh gửi, danh sách người nhận, nội dung
+            var messaging = await context.TCareMessagings.Where(x => x.Id == messagingId).Include(x => x.FacebookPage)
+                .Include(x => x.PartnerRecipients).Include(x => x.TCareCampaign).FirstOrDefaultAsync();
+            if (messaging == null)
+                return;
+
+            messaging.State = "exception";
+            await context.SaveChangesAsync();
+
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
                 var channel = messaging.FacebookPage;
                 if (channel.Type == "facebook" || channel.Type == "zalo")
                 {
@@ -151,14 +175,15 @@ namespace Infrastructure.Services
 
                 messaging.State = "done";
                 await context.SaveChangesAsync();
-
                 await transaction.CommitAsync();
             }
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
+           
             }
         }
+
 
         public async Task<string> CreateNewCoupon(Guid programId, Guid partnerId, CatalogDbContext context)
         {

@@ -463,6 +463,7 @@ namespace TMTDentalAPI
             GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
             GlobalJobFilters.Filters.Add(new ServerTenantFilter());
             GlobalJobFilters.Filters.Add(new ClientTenantFilter());
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 5 });
 
             services.AddControllersWithViews(options =>
             {

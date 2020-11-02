@@ -68,7 +68,7 @@ namespace Infrastructure.Services
                     {
                         message.State = "exception";
                         message.Sent = null;
-                        message.FailureReason = sendResult.error;
+                        message.FailureReason = sendResult.error;                      
                     }
                     else
                     {

@@ -15,6 +15,8 @@ namespace Infrastructure.Services
         Task<TCareMessagingDisplay> GetDisplay(Guid id);
         Task<TCareMessaging> Create(TCareMessagingSave val);
         Task<TCareMessaging> Update(Guid id, TCareMessagingSave val);
-       
+        Task RefeshMessagings(IEnumerable<Guid> ids);
+
+
     }
 }

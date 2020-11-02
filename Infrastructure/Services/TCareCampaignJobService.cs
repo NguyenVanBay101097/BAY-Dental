@@ -37,6 +37,7 @@ namespace Infrastructure.Services
                 // bình thường sẽ chỉ chạy các chiến dịch mà có kịch bản là auto_everyday
                 var campaigns = ids != null ? await context.TCareCampaigns.Where(x => x.Active && ids.Contains(x.Id)).ToListAsync() :
                     await context.TCareCampaigns.Where(x => x.Active && x.TCareScenario.Type == "auto_everyday").ToListAsync();
+             
 
                 foreach (var campaign in campaigns)
                 {
@@ -93,6 +94,8 @@ namespace Infrastructure.Services
                 await transaction.RollbackAsync();
             }
         }
+
+     
 
         private async Task<IEnumerable<FacebookUserProfile>> GetProfiles(IEnumerable<Guid> partnerIds, Guid? fbFageId, CatalogDbContext context)
         {
