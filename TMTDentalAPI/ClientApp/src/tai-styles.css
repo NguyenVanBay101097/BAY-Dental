@@ -16,10 +16,13 @@ a {
 }
 
 @media (min-width: 1200px) {
-    .modal-lg,
-    .modal-xl {
+    .modal-lg, .modal-xl {
         max-width: 1120px;
     }
+}
+
+.width-xxl {
+    min-width: 521px !important;
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
@@ -1226,7 +1229,6 @@ span.char-count {
     color: #ffc107!important;
 }
 
-
 .GAL03TOCDKB {
     margin-left: 10px;
     white-space: nowrap;
@@ -1334,7 +1336,7 @@ span.char-count {
 }
 
 .popover-xl {
-    max-width: 400px!important;  
+    max-width: 400px!important;
     width: 400px;
 }
 

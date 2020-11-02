@@ -1,0 +1,38 @@
+<a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+    <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.name}}</span>
+    <span class="badge badge-info" *ngIf="!teethSelected || teethSelected.length == 0">
+        <i class="fa fa-tags"></i>
+    </span>
+</a>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center d-inline-block" [formGroup]="formGroup">
+        <span>Loại răng</span>
+        <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}"
+            [filterable]="true" formControlName="toothCategory" class="btn-sm"
+            (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
+        </kendo-combobox>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div class="d-inline-flex w-100">
+        <h5 class="w-80">Răng</h5>
+        <button (click)="onSave()" *ngIf="line.get('state') && line.get('state').value == 'sale'"
+            class="btn btn-sm btn-primary ">Xác nhận</button>
+    </div>
+    <div class="teeth-map">
+        <table class="table">
+            <tr *ngFor="let ham of hamList | keyvalue">
+                <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}"
+                        *ngFor="let rang of vitri.value">
+                        {{rang.name}}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</ng-template>

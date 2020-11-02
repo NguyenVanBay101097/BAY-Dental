@@ -38,6 +38,8 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-crea
 import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 
 declare var $: any;
 
@@ -62,14 +64,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
-
+  saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
+  filteredEmployees: EmployeeBasic[] = [];
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -81,7 +85,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
   }
 
   ngOnInit() {
@@ -97,12 +101,34 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       pricelist: [null, Validators.required],
     });
     this.routeActive();
-
+    this.loadEmployees();
+    this.employeeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.employeeCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result.items;
+      this.employeeCbx.loading = false;
+    });
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
     // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
+  }
+
+  loadEmployees() {
+    this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
+    });
+  }
+
+
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter || '';
+    val.isDoctor = true;
+    return this.employeeService.getEmployeePaged(val);
   }
 
   routeActive() {
@@ -372,8 +398,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-
-
   getCouponLines() {
     var lines = this.orderLines.value;
     var list = [];
@@ -569,7 +593,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-
   searchUsers(filter?: string) {
     var val = new UserPaged();
     val.search = filter;
@@ -588,7 +611,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.search = filter;
     return this.partnerService.getAutocompleteSimple(val);
   }
-
 
   createNew() {
     if (this.customerId) {
@@ -667,6 +689,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  blurSave() {
+
+  }
+
   printSaleOrder() {
     if (this.id) {
       this.saleOrderService.getPrint(this.id).subscribe((result: any) => {
@@ -716,7 +742,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.userId = val.user ? val.user.id : null;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
+      if (line.employee) {
+        line.employeeId = line.employee.id;
+      }
+      if (line.teeth) {
+        line.toothIds = line.teeth.map(x => x.id);
+      }
     });
     return val;
   }
@@ -725,7 +756,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.getFormDataSave();
     this.saleOrderService.create(val)
       .pipe(
@@ -919,6 +949,75 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   }
 
+  addLine(val) {
+    // this.saleOrderLine = event;
+    var res = this.fb.group(val);
+    // line.teeth = this.fb.array(line.teeth);
+    if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
+      this.orderLines.push(res);
+    } else {
+      var line = this.orderLines.controls.find(x => x.value.productId === res.value.productId);
+      if (line) {
+        line.value.productUOMQty += 1;
+        line.patchValue(line.value);
+      }
+    }
+    this.getPriceSubTotal();
+    this.orderLines.markAsDirty();
+    this.computeAmountTotal();
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+    this.saleOrderLine = null;
+  }
+
+  updateTeeth(line) {
+    var val = this.getFormDataSave();
+    this.saleOrderService.update(this.id, val).subscribe(() => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.loadRecord();
+    }, () => {
+      this.loadRecord();
+    });
+  }
+
+  getPriceSubTotal() {
+    this.orderLines.controls.forEach(line => {
+      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+      var discountFixedValue = line.get('discountFixed') ? line.get('discountFixed').value : 0;
+      var discountNumber = line.get('discount') ? line.get('discount').value : 0;
+      var getquanTity = line.get('productUOMQty') ? line.get('productUOMQty').value : 1;
+      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
+      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
+      var price = priceUnit * getquanTity;
+
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
+      line.get('priceSubTotal').setValue(subtotal);
+      var getResidual = subtotal - getamountPaid;
+      line.get('amountResidual').setValue(getResidual);
+    });
+
+  }
+
   //Mở popup Sửa dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
   editLine(line: FormGroup) {
     var partner = this.formGroup.get('partner').value;
@@ -967,10 +1066,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.orderLines.removeAt(index);
-    this.computeAmountTotal();
-
-    this.orderLines.markAsDirty();
+    if (this.formGroup.get('state').value == "draft" || this.formGroup.get('state').value == "cancel") {
+      this.orderLines.removeAt(index);
+      this.computeAmountTotal();
+      this.orderLines.markAsDirty();
+    } else {
+      this.notificationService.show({
+        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
+        hideAfter: 5000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
   }
 
   get getAmountTotal() {
@@ -1153,5 +1261,64 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then((val) => {
     }, er => { });
+  }
+
+  onChangeQuantity(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscountFixed(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  updateSaleOrder() {
+    if (this.formGroup.get('state').value == "sale") {
+      var val = this.getFormDataSave();
+      debugger
+      this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+
+  }
+
+  onChangeDiscount(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangeDiscountType(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.value.discount = 0;
+      res.value.discountFixed = 0;
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
   }
 }
