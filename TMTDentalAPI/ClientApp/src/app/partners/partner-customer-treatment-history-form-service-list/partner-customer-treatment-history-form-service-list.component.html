@@ -1,10 +1,11 @@
 <div class="d-flex flex-column h-100">
-    <div class="d-flex align-items-end py-1">
-        <input class="form-control form-control-sm mx-1" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search"
-        (ngModelChange)="this.searchUpdate.next($event)">
+    <div class="d-flex align-items-end py-1 h-10">
+        <h5 style="margin-left: 8px; white-space: pre;">Dịch vụ</h5>
+        <input class="form-control form-control-sm mx-1" placeholder="Tìm kiếm theo mã hoặc tên..." type="text"
+            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
     <!-- Component Form Service List -->
-    <div class="t-conTable">
+    <div class="t-conTable h-90">
         <div class="t-parTable t-scrollbar">
             <table class="t-sticky-thead t-sticky-col-left">
                 <thead>

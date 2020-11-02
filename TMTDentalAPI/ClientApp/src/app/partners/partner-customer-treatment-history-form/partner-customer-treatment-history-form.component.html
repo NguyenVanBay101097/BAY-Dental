@@ -19,13 +19,7 @@
     </div>
     <div class="h-100">
         <div class="w-100 h-100 d-flex">
-            <div class="w-20 h-100 border-right">
-                <!-- Component List Service and search -->
-                <app-partner-customer-treatment-history-form-service-list
-                    (newEventEmiter)="chosseSaleOrderLine($event)">
-                </app-partner-customer-treatment-history-form-service-list>
-            </div>
-            <div class="w-80 h-100">
+            <div class="w-100 h-100">
                 <div class="d-flex flex-column h-100">
                     <div class="my-1">
                         <button type="button" hasGroups [groups]="'sale.group_service_card'"

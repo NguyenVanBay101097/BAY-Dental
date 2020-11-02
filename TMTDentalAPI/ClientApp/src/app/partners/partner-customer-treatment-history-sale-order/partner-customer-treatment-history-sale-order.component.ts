@@ -7,64 +7,47 @@ import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
   templateUrl: './partner-customer-treatment-history-sale-order.component.html',
   styleUrls: ['./partner-customer-treatment-history-sale-order.component.css']
 })
-export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit , OnChanges {
-  // @Input() partnerId: string;
-  limit: number = 20;
-  skip: number = 0;
+export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit {
   thTable_saleOrders = [
     { name: 'Số phiếu' },
     { name: 'Ngày lập phiếu' },
     { name: 'Tổng tiền' },
     { name: 'Còn nợ' }
   ]
-  listSaleOrder: SaleOrderBasic[] = [];
-  @Input() partnerId: string;
-  @Input() isReload: boolean = false;
+  @Input() listSaleOrder: SaleOrderBasic[] = [];
   @Output() newItemEvent = new EventEmitter<any>();
   id: string;
-
   constructor(
-    private saleOrderService: SaleOrderService
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if(this.isReload){
-      this.loadDataFromApi();      
-    }else{
-      this.loadDataFromApi(); 
+  ngOnInit() {
+    console.log(this.listSaleOrder);
+    if (this.listSaleOrder && this.listSaleOrder[0]) {
+      this.id = this.listSaleOrder[0].id
     }
+    // this.loadDataFromApi();
   }
 
-  ngOnInit() {   
-    this.loadDataFromApi();
-  }
+  // loadDataFromApi() {
+  //   debugger
+  //   var val = new SaleOrderPaged();
+  //   val.limit = this.limit;
+  //   val.offset = this.skip;
+  //   val.partnerId = this.partnerId;
 
-  loadDataFromApi() {
-    var val = new SaleOrderPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.partnerId = this.partnerId;
-    val.isQuotation = false;
-
-    this.saleOrderService.getPaged(val).subscribe(res => {
-      this.listSaleOrder = res.items;
-      if (this.listSaleOrder && this.listSaleOrder.length) {
-        this.id = this.listSaleOrder[0].id;
-        this.newItemEvent.emit(this.listSaleOrder[0].id)
-      }
-    }, err => {
-      console.log(err);
-    })
-  }
-
-  checkReload(isReload) {
-    if (isReload) {
-      this.loadDataFromApi();
-    }
-  }
+  //   this.saleOrderService.getPaged(val).subscribe(res => {
+  //     this.listSaleOrder = res.items;
+  //     if (this.listSaleOrder && this.listSaleOrder.length) {
+  //       this.id = this.listSaleOrder[0].id;
+  //       this.newItemEvent.emit(this.listSaleOrder[0].id)
+  //     }
+  //   }, err => {
+  //     console.log(err);
+  //   })
+  // }
 
   chossesSaleOrder(value) {
-    this.id = value;
+    this.id = value.id
     this.newItemEvent.emit(value);
   }
 }
