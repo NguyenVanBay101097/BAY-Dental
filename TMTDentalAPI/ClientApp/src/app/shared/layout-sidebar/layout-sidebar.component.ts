@@ -108,6 +108,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
+        { name: 'Tạo phiếu điều trị nhanh', link: '/partners/treatment-paymentfast' },
         { name: 'Nhãn khách hàng', link: '/partner-categories' },
         { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },

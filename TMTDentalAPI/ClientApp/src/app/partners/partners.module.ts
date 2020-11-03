@@ -53,6 +53,7 @@ import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sal
 import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatment-history-form/treatment-history-teeth-popover/treatment-history-teeth-popover.component';
 import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
 import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
+import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +97,8 @@ import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-t
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
     TreatmentHistoryTeethPopoverComponent,
     ApplyDiscountDefaultPopoverComponent,
-    ApplyDiscountSaleOrderLinePopoverComponent
+    ApplyDiscountSaleOrderLinePopoverComponent,
+    PartnerCustomerTreatmentPaymentFastComponent
   ],
   imports: [
     CommonModule,

@@ -1108,7 +1108,7 @@ namespace Infrastructure.Services
             await UpdateAsync(order);
 
             var self = new List<SaleOrder>() { order };
-            await _GenerateDotKhamSteps(self);
+           // await _GenerateDotKhamSteps(self);
 
             if (order.InvoiceStatus == "to invoice")
             {
@@ -1389,7 +1389,7 @@ namespace Infrastructure.Services
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-            await _GenerateDotKhamSteps(self);
+           // await _GenerateDotKhamSteps(self);
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
