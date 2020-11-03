@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AppointmentDisplay } from 'src/app/appointment/appointment';
+import { PartnerDisplay } from '../../partner-simple';
 
 @Component({
   selector: 'app-partner-overview',
@@ -6,10 +9,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./partner-overview.component.css']
 })
 export class PartnerOverviewComponent implements OnInit {
+  partnerId: string;
 
-  constructor() { }
+  constructor(
+    private activeRoute: ActivatedRoute
+  ) { }
 
   ngOnInit() {
+    this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
   }
 
 }
