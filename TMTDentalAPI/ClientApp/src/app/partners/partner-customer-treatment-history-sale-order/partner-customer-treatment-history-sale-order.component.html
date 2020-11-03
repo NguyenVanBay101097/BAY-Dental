@@ -8,14 +8,14 @@
             <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
                 <thead>
                     <tr>
-                       <th>Số phiếu</th>
-                       <th>Ngày lập phiếu</th>
-                       <th>Tổng tiền</th>
-                       <th>Nợ</th>
+                        <th>Số phiếu</th>
+                        <th>Ngày lập phiếu</th>
+                        <th>Tổng tiền</th>
+                        <th>Nợ</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr [ngClass]="{'clicked':id && id == item.id}" (click)="chossesSaleOrder(item.id)"
+                    <tr [ngClass]="{'clicked': id === item.id}" (click)="chossesSaleOrder(item.id)"
                         *ngFor="let item of listSaleOrder">
                         <td>{{item.name}}</td>
                         <td>{{item.dateOrder | date: 'dd/MM/yyyy'}}</td>

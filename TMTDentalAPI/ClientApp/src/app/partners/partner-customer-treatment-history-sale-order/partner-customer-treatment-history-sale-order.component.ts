@@ -21,33 +21,17 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   ) { }
 
   ngOnInit() {
-    console.log(this.listSaleOrder);
-    if (this.listSaleOrder && this.listSaleOrder[0]) {
-      this.id = this.listSaleOrder[0].id
-    }
-    // this.loadDataFromApi();
+    setTimeout(() => {
+      if (this.listSaleOrder && this.listSaleOrder[0]) {
+        this.id = this.listSaleOrder[0].id
+      }
+    }, 200);
   }
 
-  // loadDataFromApi() {
-  //   debugger
-  //   var val = new SaleOrderPaged();
-  //   val.limit = this.limit;
-  //   val.offset = this.skip;
-  //   val.partnerId = this.partnerId;
-
-  //   this.saleOrderService.getPaged(val).subscribe(res => {
-  //     this.listSaleOrder = res.items;
-  //     if (this.listSaleOrder && this.listSaleOrder.length) {
-  //       this.id = this.listSaleOrder[0].id;
-  //       this.newItemEvent.emit(this.listSaleOrder[0].id)
-  //     }
-  //   }, err => {
-  //     console.log(err);
-  //   })
-  // }
-
   chossesSaleOrder(value) {
-    this.id = value.id
+    if (value) {
+      this.id = value
+    }
     this.newItemEvent.emit(value);
   }
 }

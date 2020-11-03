@@ -138,6 +138,8 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
 
     this.saleOrderService.getPaged(val).subscribe(res => {
       this.listSaleOrder = res.items;
+      console.log(res.items);
+      
       if (this.listSaleOrder && this.listSaleOrder.length) {
         this.saleOrderId = this.listSaleOrder[0].id;
       }
