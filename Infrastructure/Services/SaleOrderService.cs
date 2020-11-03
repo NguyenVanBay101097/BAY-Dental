@@ -284,7 +284,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetInvoiceQty(sale.OrderLines);
                 saleLineObj._GetToInvoiceQty(sale.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x=>x.Id).ToList());
+                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
             }
 
@@ -1216,8 +1216,9 @@ namespace Infrastructure.Services
                     if (saleLine != null)
                     {
                         _mapper.Map(line, saleLine);
+                        saleLine.Discount = line.Discount;
                         saleLine.Sequence = sequence++;
-                        saleLine.Order = order;                       
+                        saleLine.Order = order;
                         saleLine.SaleOrderLineToothRels.Clear();
                         foreach (var toothId in line.ToothIds)
                         {
@@ -1442,7 +1443,7 @@ namespace Infrastructure.Services
                             await dotKhamStepService.Unlink(line.DotKhamSteps);
                         continue;
                     }
-                        
+
                     if (line.DotKhamSteps.Any())
                         continue;
 

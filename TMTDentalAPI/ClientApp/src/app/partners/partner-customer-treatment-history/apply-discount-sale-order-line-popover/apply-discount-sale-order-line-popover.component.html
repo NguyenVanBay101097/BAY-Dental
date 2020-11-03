@@ -1,0 +1,34 @@
+<a [ngbPopover]="popContent" popoverClass="popover" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggle(popOver)">
+    <button class="btn btn-sm btn-outline-secondary mr-2">Giảm tiền</button>
+</a>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center">
+        <span>Giảm tiền</span>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+<ng-template #popContent>
+    <div>
+        <form [formGroup]="formGroup">
+            <div class="form-group">
+                <div class="d-flex">
+                    <kendo-numerictextbox [class.d-none]="discountTypeValue !== 'percentage'" [min]="0" [max]="100"
+                        formControlName="discountPercent" [autoCorrect]="true">
+                    </kendo-numerictextbox>
+                    <kendo-numerictextbox [format]="'n0'" [class.d-none]="discountTypeValue !== 'fixed'"
+                        formControlName="discountFixed">
+                    </kendo-numerictextbox>
+                    <div class="d-flex">
+                        <select class="form-control width-auto" formControlName="discountType">
+                            <option value="percentage">%</option>
+                            <option value="fixed">VNĐ</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary btn-sm" (click)="applyDiscount()" accesskey="s">Áp dụng</button>
+    </div>
+</ng-template>

@@ -5,10 +5,10 @@
 </header> -->
 
 <button 
-    class="btn btn-sm btn-outline-secondary mr-2" [ngbPopover]="popContentDiscountDefault" popoverTitle="Giảm tiền" #popOver="ngbPopover"  [autoClose]="'outside'" placement="bottom" >
+    class="btn btn-sm btn-outline-secondary mr-2" [ngbPopover]="popContent" popoverTitle="Giảm tiền" #popOver="ngbPopover"  [autoClose]="'outside'" placement="bottom" >
 <span>Giảm tiền</span>
 </button>
-<ng-template #popContentDiscountDefault>                              
+<ng-template #popContent>                              
     <form  [formGroup]="formGroup">
         <div class="form-group">            
             <div class="d-flex">
