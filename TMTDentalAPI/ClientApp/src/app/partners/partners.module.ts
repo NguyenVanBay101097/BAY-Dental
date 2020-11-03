@@ -53,6 +53,14 @@ import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sal
 import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatment-history-form/treatment-history-teeth-popover/treatment-history-teeth-popover.component';
 import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
 import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
+import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
+import { PartnerOverviewInfoComponent } from './partner-overview/partner-overview-info/partner-overview-info.component';
+import { PartnerOverviewAppointmentComponent } from './partner-overview/partner-overview-appointment/partner-overview-appointment.component';
+import { PartnerOverviewTreatmentComponent } from './partner-overview/partner-overview-treatment/partner-overview-treatment.component';
+import { PartnerOverviewAdvisoryComponent } from './partner-overview/partner-overview-advisory/partner-overview-advisory.component';
+import { PartnerOverviewPromotionComponent } from './partner-overview/partner-overview-promotion/partner-overview-promotion.component';
+import { PartnerOverviewReportComponent } from './partner-overview/partner-overview-report/partner-overview-report.component';
+import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +104,15 @@ import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-t
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
     TreatmentHistoryTeethPopoverComponent,
     ApplyDiscountDefaultPopoverComponent,
-    ApplyDiscountSaleOrderLinePopoverComponent
+    ApplyDiscountSaleOrderLinePopoverComponent,
+    PartnerOverviewComponent,
+    PartnerOverviewInfoComponent,
+    PartnerOverviewAppointmentComponent,
+    PartnerOverviewTreatmentComponent,
+    PartnerOverviewAdvisoryComponent,
+    PartnerOverviewPromotionComponent,
+    PartnerOverviewReportComponent,
+    PartnerOverviewImageComponent
   ],
   imports: [
     CommonModule,
