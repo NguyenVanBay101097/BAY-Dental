@@ -1,0 +1,179 @@
+@for $i from 0 through 20 {
+    .w-#{$i * 5} {width: #{$i * 5 + '%'};}
+    .h-#{$i * 5} {height: #{$i * 5 + '%'};}
+}
+.table-thead-align-top > thead > tr > th {vertical-align: top;}
+.table-tbody-align-top > tbody > tr > td {vertical-align: top;}
+.text-nowrap {white-space: nowrap;}
+.table-thead-nowrap > thead > tr > th {white-space: nowrap;}
+.table-tbody-nowrap > tbody > tr > td {white-space: nowrap;}
+.table-borderless { th, td {border: none;}}
+.table-text-left { th, td {text-align: left;}}
+.table-text-right { th, td {text-align: right;}}
+.table-payment-result {
+    font-size: 1.1rem;
+    td:nth-child(1) {
+        font-weight: bold;
+        padding-right: 1rem;
+    }
+    td:nth-child(2) {
+        font-weight: 500;
+    }
+}
+.t-conTable {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    .t-parTable {
+        flex:1;
+        position: relative;
+        width: 100%;
+        border-left: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        overflow: auto;
+        background: white;
+        table {
+            position: absolute;
+            min-width: 100%;
+            background: white;
+            border-collapse: separate;
+            border-spacing: 0;
+            th, td {
+                padding: .5rem .5rem;
+                cursor: default;
+            }
+            thead {
+                tr {
+                    th {
+                        font-weight: 600;
+                        white-space: nowrap;
+                        color: #212529;
+                        background: white;
+                        border-top: 2px solid #dee2e6;
+                        border-bottom: 2px solid #dee2e6;
+                        border-right: 1px solid #dee2e6;
+                        &:last-child {border-right: 0;}
+                    }
+                }
+            }
+            tbody {
+                tr {
+                    background: #f5f5f5;
+                    &:hover {background: white;}
+                    td {
+                        border-bottom: 1px solid #dee2e6;
+                        border-right: 1px solid #dee2e6;
+                        &:last-child {border-right: 0;}
+                    }
+                }
+                .t-tRowAdd {
+                    td {
+                        border-bottom: 2px solid #dee2e6;
+                    }
+                }
+            }
+            tfoot {
+                tr {
+                    td {
+                        background: white;
+                        border-top: 1px solid #dee2e6;
+                        border-bottom: 1px solid #dee2e6;
+                    }
+                }
+            }
+        }
+    }
+    .t-tControlBar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        border: 1px solid #dee2e6;
+        padding: .5rem 10px;
+        background: white;
+        .t-tPagination {
+            flex-grow: 1;
+            text-align: center;
+        }
+    }
+}
+
+.t-sticky-thead {
+    thead tr th {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+}
+
+.t-sticky-tfoot {
+    tfoot tr td {
+        position: -webkit-sticky;
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+    }
+}
+
+.t-sticky-col-left {
+    th:first-child, td:first-child {
+        position: -webkit-sticky;
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: white;
+        border-right: 1px solid #dee2e6;
+    }
+}
+
+.t-sticky-col-right {
+    th:last-child, td:last-child {
+        position: -webkit-sticky;
+        position: sticky;
+        right: 0;
+        z-index: 1;
+        background: white;
+        border-left: 1px solid #dee2e6;
+    }
+}
+
+.t-sticky-thead > thead > tr > th:first-child,
+.t-sticky-tfoot > tfoot > tr > td:first-child,
+.t-sticky-thead > thead > tr > th:last-child,
+.t-sticky-tfoot > tfoot > tr > td:last-child {
+    z-index: 2;
+}
+
+.t-tPagination {
+    font-weight: 600;
+    span.active {
+        color: #007bff;
+    }
+}
+
+/* Custom Scrollbar using CSS */
+.t-scrollbar {
+    overflow-y: scroll;
+}
+/* scrollbar width */
+.t-scrollbar::-webkit-scrollbar {
+    height: 10px;              /* height of horizontal scrollbar */
+    width: 10px;               /* width of vertical scrollbar */
+}
+/* scrollbar track */
+.t-scrollbar::-webkit-scrollbar-track {
+    background: #eee;
+}
+/* scrollbar handle */
+.t-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #dee2e6;
+}
+// .t-scrollbar::-webkit-scrollbar-thumb:vertical  {
+//     background-image: linear-gradient(to top, #00d2ff 0%, #3a7bd5 100%);
+// }
+// .t-scrollbar::-webkit-scrollbar-thumb:horizontal {
+//     background-image: linear-gradient(to left, #00d2ff 0%, #3a7bd5 100%);
+// }

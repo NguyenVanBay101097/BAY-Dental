@@ -35,6 +35,7 @@
               "src/styles.css",
               "src/tai-styles.css",
               "src/quan-styles.css",
+              "src/thien-styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css"
             ],
             "scripts": [
