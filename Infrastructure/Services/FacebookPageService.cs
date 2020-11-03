@@ -487,7 +487,7 @@ namespace Infrastructure.Services
 
             //get partner
             var partnes = await partnerObj.SearchQuery(x => !string.IsNullOrEmpty(x.Phone) && x.Customer).ToListAsync();
-            var partnerDict = partnes.ToDictionary(x => x.Phone, x => x);
+            var partnerDict = partnes.GroupBy(x => x.Phone).ToDictionary(x => x.Key, x => x.FirstOrDefault());
             //get list had condition
 
 

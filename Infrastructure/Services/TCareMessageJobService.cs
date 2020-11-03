@@ -106,6 +106,7 @@ namespace Infrastructure.Services
                 Console.WriteLine(ex.Message);
                 // TODO: Handle failure
                 await transaction.RollbackAsync();
+                throw ex;
             }
         }
 

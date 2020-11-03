@@ -180,7 +180,7 @@ namespace Infrastructure.Services
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
-           
+                throw e;
             }
         }
 

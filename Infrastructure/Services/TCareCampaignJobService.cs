@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using OfficeOpenXml.Style.XmlAccess;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -72,10 +73,13 @@ namespace Infrastructure.Services
 
                     foreach (var profile in profiles)
                     {
-                        messaging.PartnerRecipients.Add(new TCareMessagingPartnerRel
+                        if (!messaging.PartnerRecipients.Any(x => x.PartnerId == profile.PartnerId.Value))
                         {
-                            PartnerId = profile.PartnerId.Value
-                        });
+                            messaging.PartnerRecipients.Add(new TCareMessagingPartnerRel
+                            {
+                                PartnerId = profile.PartnerId.Value
+                            });
+                        }
                     }
 
                     await context.TCareMessagings.AddAsync(messaging);
@@ -92,6 +96,7 @@ namespace Infrastructure.Services
                 Console.WriteLine(ex.Message);
                 // TODO: Handle failure
                 await transaction.RollbackAsync();
+                throw ex;
             }
         }
 

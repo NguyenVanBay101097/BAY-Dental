@@ -39,16 +39,16 @@ namespace Infrastructure.Services
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
                 spec = spec.And(new InitialSpecification<TCareMessaging>(x => x.ScheduleDate.Value >= dateFrom));
             }
+
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<TCareMessaging>(x => x.ScheduleDate.Value <= dateTo));
-
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var query = SearchQuery(spec.AsExpression());
+            var items = await _mapper.ProjectTo<TCareMessagingBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
 
-            var items = await _mapper.ProjectTo<TCareMessagingBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<TCareMessagingBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -118,9 +118,6 @@ namespace Infrastructure.Services
             mes = _mapper.Map(val, mes);
             await UpdateAsync(mes);
             return mes;
-
         }
-
-
     }
 }

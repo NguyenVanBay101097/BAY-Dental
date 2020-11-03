@@ -28,19 +28,21 @@ namespace Infrastructure.Services
                 if (ids != null)
                 {
                     query = query.Where(x => ids.Contains(x.Id));
-                } else
+                }
+                else
                 {
                     query = query.Where(x => x.Type == "auto_everyday");
                 }
-                var scenarios = await query.Include(x=>x.Campaigns).Select(x=> new {campIds = x.Campaigns.Select(y=>y.Id)}).ToListAsync();
+                var scenarios = await query.Include(x => x.Campaigns).Select(x => new { campIds = x.Campaigns.Select(y => y.Id) }).ToListAsync();
 
                 // call campaign job
-                var campIds = scenarios.SelectMany(x=>x.campIds).ToList();
-                BackgroundJob.Enqueue<TCareCampaignJobService>(x=> x.Run(db, campIds));
+                var campIds = scenarios.SelectMany(x => x.campIds).ToList();
+                BackgroundJob.Enqueue<TCareCampaignJobService>(x => x.Run(db, campIds));
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw ex;
             }
         }
     }

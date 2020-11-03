@@ -41,10 +41,8 @@ namespace Infrastructure.Services
         Task DeleteAsync(T entity);
         Task DeleteAsync(IEnumerable<T> entities);
 
-        IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            int offSet = 0,
-            int limit = int.MaxValue);
+        public IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int offSet = 0, int limit = int.MaxValue,
+            bool isPagingEnabled = false);
 
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
         Task<int> CountAsync(ISpecification<T> spec);
