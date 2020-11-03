@@ -82,7 +82,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     private cardCardService: CardCardService,
     private pricelistService: PriceListService,
     private employeeService: EmployeeService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -211,8 +211,8 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.id = this.partner.id;
 
     modalRef.result.then(
-      () => {},
-      () => {}
+      () => { },
+      () => { }
     );
   }
 
@@ -235,7 +235,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
         this.filteredPartners = _.unionBy(this.filteredPartners, [p], "id");
         this.onChangePartner(p);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -258,7 +258,7 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
           this.onChangePartner(p);
         }
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -497,12 +497,15 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(
       (result) => {
-        let line = result as any;
-        line.teeth = this.fb.array(line.teeth);
-        this.orderLines.push(this.fb.group(line));
-        this.computeAmountTotal();
+        for (let i = 0; i < result.length; i++) {
+          let line = result[i] as any;
+          line.teeth = this.fb.array(line.teeth);
+          this.orderLines.push(this.fb.group(line));
+          this.orderLines.markAsDirty();
+          this.computeAmountTotal();
+        }
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -527,12 +530,12 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(
       (result) => {
-        var a = result as any;
-        line.patchValue(result);
-        line.setControl("teeth", this.fb.array(a.teeth || []));
+        var a = result[0] as any;
+        line.patchValue(a);
+        line.setControl('teeth', this.fb.array(a.teeth || []));
         this.computeAmountTotal();
       },
-      () => {}
+      () => { }
     );
   }
 
