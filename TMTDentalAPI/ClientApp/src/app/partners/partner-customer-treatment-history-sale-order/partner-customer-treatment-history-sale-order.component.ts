@@ -21,10 +21,11 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   ) { }
 
   ngOnInit() {
-    console.log(this.listSaleOrder);
-    if (this.listSaleOrder && this.listSaleOrder[0]) {
-      this.id = this.listSaleOrder[0].id
-    }
+    setTimeout(() => {
+      if (this.listSaleOrder && this.listSaleOrder[0]) {
+        this.id = this.listSaleOrder[0].id
+      }
+    }, 200);
     // this.loadDataFromApi();
   }
 
@@ -47,7 +48,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
   // }
 
   chossesSaleOrder(value) {
-    this.id = value.id
+    this.id = value;
     this.newItemEvent.emit(value);
   }
 }
