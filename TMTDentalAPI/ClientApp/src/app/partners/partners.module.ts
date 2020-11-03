@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PartnersRoutingModule } from './partners-routing.module';
@@ -38,6 +38,21 @@ import { PartnerCustomerQuotationsComponent } from './partner-customer-quotation
 import { PartnerInfoComponent } from './partner-info/partner-info.component';
 import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner-category-popover/partner-category-popover.component';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { PartnerCustomerTreatmentHistoryComponent } from './partner-customer-treatment-history/partner-customer-treatment-history.component';
+import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer-treatment-history-form/partner-customer-treatment-history-form.component';
+import { PartnerCustomerTreatmentHistoryFormPaymentComponent } from './partner-customer-treatment-history-form-payment/partner-customer-treatment-history-form-payment.component';
+import { PartnerCustomerTreatmentHistoryFormServiceListComponent } from './partner-customer-treatment-history-form-service-list/partner-customer-treatment-history-form-service-list.component';
+import { PartnerCustomerTreatmentHistoryFormServiceSearchComponent } from './partner-customer-treatment-history-form-service-search/partner-customer-treatment-history-form-service-search.component';
+import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
+import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
+import { SaleOrderApplyCouponDialogComponent } from '../sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
+import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
+
+import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
+import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatment-history-form/treatment-history-teeth-popover/treatment-history-teeth-popover.component';
+import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
+import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +85,18 @@ import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-custom
     PartnerCustomerQuotationsComponent,
     PartnerInfoComponent,
     PartnerCategoryPopoverComponent,
-    PartnerCustomerAutoGenerateCodeDialogComponent
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    PartnerCustomerTreatmentHistoryComponent,
+    PartnerCustomerTreatmentHistoryFormComponent,
+    PartnerCustomerTreatmentHistoryFormPaymentComponent,
+    PartnerCustomerTreatmentHistoryFormServiceListComponent,
+    PartnerCustomerTreatmentHistoryFormServiceSearchComponent,
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
+    TreatmentHistoryTeethPopoverComponent,
+    ApplyDiscountDefaultPopoverComponent,
+    ApplyDiscountSaleOrderLinePopoverComponent
   ],
   imports: [
     CommonModule,
@@ -82,18 +108,24 @@ import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-custom
     SharedModule,
     FlexLayoutModule,
     NgbModule,
+    SaleOrdersModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
     PartnerImportComponent,
     PartnerSearchDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerAutoGenerateCodeDialogComponent
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    SaleOrderApplyCouponDialogComponent,
+    SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderApplyDiscountDefaultDialogComponent,
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
   providers: [],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
-  ]
+  ],schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class PartnersModule { }

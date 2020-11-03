@@ -11,6 +11,9 @@ import { PartnerCustomerProductToaThuocListComponent } from './partner-customer-
 import { PartnerCustomerCategoriesComponent } from './partner-customer-categories/partner-customer-categories.component';
 import { PartnerCustomerUploadImageComponent } from './partner-customer-upload-image/partner-customer-upload-image.component';
 import { PartnerCustomerQuotationsComponent } from './partner-customer-quotations/partner-customer-quotations.component';
+import { PartnerCustomerTreatmentHistoryComponent } from './partner-customer-treatment-history/partner-customer-treatment-history.component';
+import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer-treatment-history-form/partner-customer-treatment-history-form.component';
+import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
 
 const routes: Routes = [
   {
@@ -31,6 +34,11 @@ const routes: Routes = [
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationsComponent },
+      { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },
+      {
+        path: 'treatment-histories/form',
+        component: PartnerCustomerTreatmentHistoryFormComponent
+      },
     ]
   },
 ];
