@@ -23,7 +23,8 @@
                     class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                     Thanh toán
                 </button>
-                <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm mx-1" (click)="printSaleOrder()">
+                <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm mx-1"
+                    (click)="printSaleOrder()">
                     In phiếu
                 </button>
                 <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button"
@@ -55,7 +56,7 @@
             <div class="w-100 h-100 d-flex">
                 <div class="w-100 h-100">
                     <!-- Component Form Service Payment -->
-                    <div class="my-1 h-4">
+                    <div class="my-1 h-5">
                         <button type="button" hasGroups [groups]="'sale.group_service_card'"
                             class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()"
                             *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
@@ -75,10 +76,10 @@
                             <span>Cập nhật khuyến mãi</span>
                         </button>
 
-                       
+
                     </div>
 
-                    <div class="t-conTable h-76" style="min-height: 340px;height: 75%;">
+                    <div class="t-conTable h-70">
                         <div class="t-parTable t-scrollbar">
                             <table class="t-sticky-thead t-sticky-col-left t-sticky-col-right">
                                 <thead>
@@ -127,8 +128,9 @@
                                             </td>
                                             <td class="text-right" style="max-width: 300px;">
                                                 <kendo-numerictextbox [min]="0" formControlName="priceUnit"
-                                                    (blur)="updateSaleOrder()" (valueChange)="onChangePriceUnit(line)" [autoCorrect]="true" [spinners]="false"
-                                                    [format]="'n0'" style="min-width: 50px;">
+                                                    (blur)="updateSaleOrder()" (valueChange)="onChangePriceUnit(line)"
+                                                    [autoCorrect]="true" [spinners]="false" [format]="'n0'"
+                                                    style="min-width: 50px;">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td>
@@ -183,7 +185,8 @@
                             </table>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-end h-20">
+
+                    <div class="d-flex justify-content-end h-25">
                         <table class="table-borderless table-text-right mr-4 my-3 table-payment-result">
                             <tr>
                                 <td>Thành tiền</td>
@@ -191,7 +194,8 @@
                             </tr>
                             <tr *ngIf="saleOrderId">
                                 <td>
-                                    <app-apply-discount-default-popover (discountFormGroup)="onApplyDiscount($event)"></app-apply-discount-default-popover>
+                                    <app-apply-discount-default-popover (discountFormGroup)="onApplyDiscount($event)">
+                                    </app-apply-discount-default-popover>
                                     <!-- <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)">
                                     </app-sale-order-apply-discount-default-dialog> -->
                                 </td>
