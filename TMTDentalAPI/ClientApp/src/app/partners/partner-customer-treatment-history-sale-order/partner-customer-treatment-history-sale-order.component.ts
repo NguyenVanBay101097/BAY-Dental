@@ -26,6 +26,7 @@ export class PartnerCustomerTreatmentHistorySaleOrderComponent implements OnInit
         this.id = this.listSaleOrder[0].id
       }
     }, 200);
+    // this.loadDataFromApi();
   }
 
   chossesSaleOrder(value) {

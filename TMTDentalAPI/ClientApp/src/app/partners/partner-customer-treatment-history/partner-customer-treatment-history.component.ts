@@ -1060,6 +1060,15 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
     return this.formGroup.get('partner').value;
   }
 
+  get getAmountPaidTotal(){
+    let total = 0;
+    this.orderLines.controls.forEach(line => {
+      total += line.get('amountPaid').value;
+    });
+
+    return total;
+  }
+
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
@@ -1194,6 +1203,16 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
 
   }
 
+  onChangePriceUnit(line: FormGroup){
+    debugger
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
   onChangeDiscountFixed(line: FormGroup) {
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
@@ -1206,7 +1225,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   updateSaleOrder() {
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();
-      debugger
+
       this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
