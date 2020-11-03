@@ -727,16 +727,35 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     var val = this.getFormDataSave();
-    this.saleOrderService.create(val)
-      .pipe(
-        mergeMap(r => {
-          this.id = r.id;
-          return this.saleOrderService.actionConfirm([r.id]);
-        })
-      )
-      .subscribe(r => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
-      });
+    if (!this.id) {
+      this.saleOrderService.create(val)
+        .pipe(
+          mergeMap(r => {
+            this.id = r.id;
+            return this.saleOrderService.actionConfirm([r.id]);
+          })
+        )
+        .subscribe(r => {
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+        });
+    } else {
+      this.saleOrderService.update(this.id, val)
+        .pipe(
+          mergeMap(r => {
+            return this.saleOrderService.actionConfirm([this.id]);
+          })
+        )
+        .subscribe(() => {
+          this.notificationService.show({
+            content: 'Cập nhật thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        });
+    }
   }
 
   checkPromotion(id) {
@@ -883,16 +902,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.partnerId = this.partnerId;
     var pricelist = this.formGroup.get('pricelist').value;
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
+    if (this.formGroup.get('state').value == "draft") {
+      modalRef.componentInstance.showSaveACreate = true;
+    }
 
     modalRef.result.then(result => {
-      let line = result as any;
-      line.teeth = this.fb.array(line.teeth);
-      this.orderLines.push(this.fb.group(line));
-      this.orderLines.markAsDirty();
-      this.computeAmountTotal();
+      for (let i = 0; i < result.length; i++) {
+        let line = result[i] as any;
+        line.teeth = this.fb.array(line.teeth);
+        this.orderLines.push(this.fb.group(line));
+        this.orderLines.markAsDirty();
+        this.computeAmountTotal();
+      }
 
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
-
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
         this.saleOrderService.update(this.id, val).subscribe(() => {
@@ -930,9 +953,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
 
     modalRef.result.then(result => {
-      debugger;
-      var a = result as any;
-      line.patchValue(result);
+      var a = result[0] as any;
+      line.patchValue(a);
       line.setControl('teeth', this.fb.array(a.teeth || []));
       this.computeAmountTotal();
       this.orderLines.markAsDirty();

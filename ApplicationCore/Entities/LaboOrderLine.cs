@@ -71,5 +71,14 @@ namespace ApplicationCore.Entities
         public Guid? SaleOrderLineId { get; set; }
         
         public SaleOrderLine SaleOrderLine { get; set; }
+        /// <summary>
+        /// đã nhận hay chưa
+        /// </summary>
+        public bool IsReceived { get; set; }
+        /// <summary>
+        /// ngày nhận thực tế
+        /// </summary>
+        public DateTime? ReceivedDate { get; set; }
+
     }
 }

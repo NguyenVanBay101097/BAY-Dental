@@ -21,10 +21,11 @@
                                     <label class="o_form_label">Khách hàng</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
+                                    <div *ngIf="dotKhamId && partner">{{partner.name}}</div>
+                                    <div [ngClass]="dotKhamId ? 'd-none' : 'd-flex'">
                                         <kendo-combobox formControlName="partner"
                                             [filterable]="true" [data]="customerSimpleFilter" #partnerCbx
-                                            [valueField]="'id'" [textField]="'name'">
+                                            [valueField]="'id'" [textField]="'displayName'">
                                         </kendo-combobox>
                                         <a title="Sửa khách hàng" class="pl-2 py-1" type="button" *ngIf="partner"
                                             (click)="updateCustomerModal()">

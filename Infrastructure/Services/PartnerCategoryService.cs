@@ -193,5 +193,19 @@ namespace Infrastructure.Services
 
             return new PartnerCategoryImportResponse { Success = true };
         }
+
+        public IQueryable<PartnerCategoryViewModel> GetViewModels()
+        {
+            return SearchQuery().Select(x => new PartnerCategoryViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+        }
+
+        public Task<IQueryable<PartnerCategoryViewModel>> GetViewModelsAsync()
+        {
+            return Task.Run(() => GetViewModels());
+        }
     }
 }

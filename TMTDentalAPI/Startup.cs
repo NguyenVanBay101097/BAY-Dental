@@ -282,6 +282,8 @@ namespace TMTDentalAPI
             services.AddScoped<IHrPayslipRunService, HrPayslipRunService>();
             services.AddScoped<IHrSalaryConfigService, HrSalaryConfigService>();
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
+            services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -294,6 +296,7 @@ namespace TMTDentalAPI
             {
                 mc.AddProfile(new ProductCategoryProfile());
                 mc.AddProfile(new ProductProfile());
+                mc.AddProfile(new IRSequenceProfile());
                 mc.AddProfile(new UoMProfile());
                 mc.AddProfile(new UoMCategoryProfile());
                 mc.AddProfile(new PartnerProfile());
@@ -606,6 +609,14 @@ namespace TMTDentalAPI
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
+
+            builder.EntityType<PartnerViewModel>()
+               .Collection
+               .Function("GetView")
+               .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();
         }
 

@@ -41,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountPaymentService _paymentService;
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
+        private readonly IIRModelDataService _iRModelDataService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -51,7 +52,8 @@ namespace TMTDentalAPI.Controllers
             IAccountInvoiceService accountInvoiceService,
             IAccountPaymentService paymentService,
             IServiceCardCardService serviceCardService,
-            IPartnerSourceService partnerSourceService)
+            IPartnerSourceService partnerSourceService,
+            IIRModelDataService iRModelDataService)
         {
             _partnerService = partnerService;
             _mapper = mapper;
@@ -64,11 +66,12 @@ namespace TMTDentalAPI.Controllers
             _paymentService = paymentService;
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
+            _iRModelDataService = iRModelDataService;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> Get([FromQuery]PartnerPaged val)
+        public async Task<IActionResult> Get([FromQuery] PartnerPaged val)
         {
             var result = await _partnerService.GetPagedResultAsync(val);
 
@@ -96,8 +99,28 @@ namespace TMTDentalAPI.Controllers
         public IActionResult DefaultGet(PartnerDefaultGet val)
         {
             var res = new PartnerDisplay();
+            var maleTitle = _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man").Result;
+            if (maleTitle != null)
+            {
+                res.Title = _mapper.Map<PartnerTitleBasic>(maleTitle);
+                res.TitleId = maleTitle.Id;
+            }
+
             res.CompanyId = CompanyId;
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultTitle(string gender)
+        {
+            PartnerTitle title = null;
+            if (gender == "male")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_man");
+            else if (gender == "female")
+                title = await _iRModelDataService.GetRef<PartnerTitle>("base.partner_title_woman");
+
+            var basic = title != null ? _mapper.Map<PartnerTitleBasic>(title) : null;
+            return Ok(basic);
         }
 
         [HttpPost]
@@ -279,6 +302,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(cards);
         }
 
+
+
+
         private void SaveCategories(PartnerDisplay val, Partner partner)
         {
             var toRemove = partner.PartnerPartnerCategoryRels.Where(x => !val.Categories.Any(s => s.Id == x.CategoryId)).ToList();
@@ -337,7 +363,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -368,7 +394,7 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery]Ex_ImportExcelDirect dir)
+        public async Task<IActionResult> ExcelImportUpdate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
             return Ok();
@@ -376,7 +402,7 @@ namespace TMTDentalAPI.Controllers
 
         //Check địa chỉ 
         [HttpGet("CheckAddress")]
-        public async Task<IActionResult> CheckAddress([FromQuery]string text)
+        public async Task<IActionResult> CheckAddress([FromQuery] string text)
         {
             //HttpClient client = new HttpClient();
             HttpResponseMessage response = null;
@@ -393,7 +419,7 @@ namespace TMTDentalAPI.Controllers
                     return Ok(new List<AddressCheckApi>());
                 }
             }
-            
+
         }
 
         [HttpGet("{id}/[action]")]

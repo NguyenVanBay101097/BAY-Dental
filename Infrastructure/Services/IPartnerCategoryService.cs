@@ -2,6 +2,7 @@
 using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -15,5 +16,6 @@ namespace Infrastructure.Services
         Task<PartnerCategory> CreatePartnerCategoryAsync(PartnerCategory categ);
         Task UpdatePartnerCategoryAsync(PartnerCategory categ);
         Task<PartnerCategoryImportResponse> Import(PartnerCategoryImportExcelViewModel val);
+        Task<IQueryable<PartnerCategoryViewModel>> GetViewModelsAsync();
     }
 }

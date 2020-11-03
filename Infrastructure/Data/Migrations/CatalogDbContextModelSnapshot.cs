@@ -3674,6 +3674,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsReceived")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -3706,6 +3709,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<decimal>("QtyInvoiced")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ReceivedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");

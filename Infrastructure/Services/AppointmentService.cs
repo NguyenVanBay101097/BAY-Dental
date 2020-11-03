@@ -284,7 +284,8 @@ namespace Infrastructure.Services
                 State = x.State,
                 Note = x.Note,
                 PartnerPhone = x.Partner.Phone,
-                UserName = x.User.Name
+                UserName = x.User.Name,
+                PartnerDisplayName = x.Partner.DisplayName
             }).FirstOrDefaultAsync();
         }
 

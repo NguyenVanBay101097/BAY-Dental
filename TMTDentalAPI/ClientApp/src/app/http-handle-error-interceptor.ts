@@ -27,13 +27,15 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                         message = error.error.message;
                     }
 
-                    this.notificationService.show({
-                        content: message,
-                        hideAfter: 3000,
-                        position: { horizontal: 'center', vertical: 'top' },
-                        animation: { type: 'fade', duration: 400 },
-                        type: { style: 'error', icon: true }
-                    });
+                    if (message) {
+                        this.notificationService.show({
+                            content: message,
+                            hideAfter: 3000,
+                            position: { horizontal: 'center', vertical: 'top' },
+                            animation: { type: 'fade', duration: 400 },
+                            type: { style: 'error', icon: true }
+                        });
+                    }
                 } else {
                     // Client Error
                     if (!navigator.onLine) {
