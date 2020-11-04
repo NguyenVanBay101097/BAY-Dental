@@ -310,7 +310,7 @@ export class TcareScenarioCrUpComponent implements OnInit {
         () => {
           campaign.active = true;
           this.notificationService.show({
-            content: "Chạy kịch bản thành công!.",
+            content: "Chạy chiến dịch thành công!.",
             hideAfter: 3000,
             position: { horizontal: "center", vertical: "top" },
             animation: { type: "fade", duration: 400 },
