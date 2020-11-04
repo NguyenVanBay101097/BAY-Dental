@@ -1,11 +1,13 @@
 <div *ngIf="partner" class="h-100" style="padding: 15px;">
     <div class=" h-100">
         <div style="height: 30%;">
-            <div class="parent">
+            <div class="parent o_form_view">
                 <div class="child">
-                    <img class="avatar" style="max-height: 100%;"
+                        <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100" [height]="100">
+                        </app-image-file-upload>
+                    <!-- <img style="max-height: 100%; border: 5px solid #dee2e6 !important;"
                         [src]="partner.Avatar? partner.Avatar:'#'"
-                        alt="">
+                        alt=""> -->
                 </div>
             </div>
             <h3 class="mt-5 text-center">{{partner.Name}}
@@ -17,14 +19,14 @@
         <div style="height: 70%;" class="card overflow-auto t-scrollbar">
             <p>Mã khách hàng: {{partner.Ref}}</p>
             <p>Ngày tạo: {{partner.Date | date:'shortDate' }}</p>
-            <p>Giới tính: {{getGender(partner.Gender)}}</p>
+            <p>Giới tính: {{partner.GenderConvert}}</p>
             <p>Ngày sinh: {{partner.BirthDay}}/{{partner.BirthMonth}}/{{partner.BirthYear}}
-                {{partner.BirthYear ? '('+ ( partner.BirthYear | getAge ) + ' tuổi)' : ''}}</p>
-            <p>Địa chỉ: {{getAddress(partner)}}</p>
+                {{partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : ''}}</p>
+            <p>Địa chỉ: {{partner.Address}}</p>
             <p>Điện thoại: {{partner.Phone}}</p>
             <p>Email: {{partner.Email}}</p>
             <p>Nghề nghiệp: {{partner.JobTitle}}</p>
-            <p>Tiểu sử bệnh: {{getHistories(partner)}}</p>
+            <p>Tiểu sử bệnh: {{partner.HistoriesString}}</p>
             <p>Nhãn dán:
                 <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
                     (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">

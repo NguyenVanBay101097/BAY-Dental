@@ -54,7 +54,7 @@ import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatm
 import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
 import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
 import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
-import { GetAgePipe, PartnerOverviewInfoComponent } from './partner-overview/partner-overview-info/partner-overview-info.component';
+import { PartnerOverviewInfoComponent } from './partner-overview/partner-overview-info/partner-overview-info.component';
 import { PartnerOverviewAppointmentComponent } from './partner-overview/partner-overview-appointment/partner-overview-appointment.component';
 import { PartnerOverviewTreatmentComponent } from './partner-overview/partner-overview-treatment/partner-overview-treatment.component';
 import { PartnerOverviewAdvisoryComponent } from './partner-overview/partner-overview-advisory/partner-overview-advisory.component';
@@ -113,7 +113,6 @@ import { PartnerOverviewImageComponent } from './partner-overview/partner-overvi
     PartnerOverviewPromotionComponent,
     PartnerOverviewReportComponent,
     PartnerOverviewImageComponent,
-    GetAgePipe
   ],
   imports: [
     CommonModule,
