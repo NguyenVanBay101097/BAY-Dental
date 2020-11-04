@@ -54,5 +54,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public Guid? SaleOrderLineId { get; set; }
+        public bool IsReceived { get; set; }
+        public DateTime? ReceivedDate { get; set; }
     }
 }

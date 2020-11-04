@@ -21,6 +21,10 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.TagId);
 
+            builder.HasOne(x => x.FacebookPage)
+              .WithMany()
+              .HasForeignKey(x => x.FacebookPageId);
+
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);

@@ -11,6 +11,10 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<TCareScenario> builder)
         {
+            builder.HasOne(x => x.ChannelSocial)
+                .WithMany()
+                .HasForeignKey(x => x.ChannelSocialId);
+
             builder.HasOne(x => x.CreatedBy)
               .WithMany()
               .HasForeignKey(x => x.CreatedById);

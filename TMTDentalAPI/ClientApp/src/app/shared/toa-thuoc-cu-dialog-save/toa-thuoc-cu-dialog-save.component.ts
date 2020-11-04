@@ -60,6 +60,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         this.loadRecord();
       } else {
         this.loadDefault(this.defaultVal || {});
+        this.onCreate();
+        this.onCreate();
+        this.onCreate();
       }
   
       this.employeeCbx.filterChange.asObservable().pipe(
@@ -163,6 +166,20 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   onSave(print) {
+    var i = 0;
+    while (i < this.lines.value.length) {
+      if (this.lines.value[i]['product'] == null) {
+        this.lines.removeAt(i);
+        i--;
+      }
+      i++;
+    }
+    // var controls = this.lines.controls.filter(x => x.get('product').value == null);
+    // controls.forEach(control => {
+    //   this.lines.removeAt(this.lines.controls.findIndex(x => image.id === 502))
+    // });
+  
+
     if (!this.toaThuocForm.valid) {
       return false;
     }

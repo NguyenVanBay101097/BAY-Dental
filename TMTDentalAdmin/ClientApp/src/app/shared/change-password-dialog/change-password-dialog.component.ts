@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from 'src/app/auth/auth.service';
+import { AuthService } from 'app/auth/auth.service';
 
 @Component({
   selector: 'app-change-password-dialog',

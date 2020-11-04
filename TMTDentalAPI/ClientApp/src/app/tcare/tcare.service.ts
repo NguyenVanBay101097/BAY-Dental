@@ -1,3 +1,4 @@
+import { ChannelSocial } from './../socials-channel/facebook-page.service';
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -25,7 +26,8 @@ export class TCareCampaignDisplay {
   graphXml: string;
   state: string;
   tagId: string;
-  sheduleStart: string;
+  sheduleStartType: string;
+  sheduleStartNumber: number;
   recurringJobId: string;
   active: boolean;
 }
@@ -33,6 +35,7 @@ export class TCareCampaignDisplay {
 export class TCareScenarioDisplay {
   id: string;
   name: string;
+  channelSocial: ChannelSocial;
   campaigns: TCareCampaignDisplay[];
 }
 
@@ -175,5 +178,9 @@ export class TcareService {
 
   updateScenario(id, val) {
     return this.http.put(this.base_api + this.apiUrlScenario + "/" + id, val);
+  }
+
+  actionStartScenario(val: any[]) {
+    return this.http.post(this.base_api + this.apiUrlScenario + "/ActionStart", val)
   }
 }

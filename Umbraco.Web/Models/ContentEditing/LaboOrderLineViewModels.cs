@@ -39,6 +39,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public string OrderName { get; set; }
+
+        public bool IsReceived { get; set; }
+        public DateTime? ReceivedDate { get; set; }
     }
 
    

@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using AutoMapper;
+using Hangfire;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -18,12 +22,21 @@ namespace TMTDentalAPI.Controllers
         private readonly ITCareMessagingService _tCareMessagingService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly AppTenant _tenant;
         public TCareMessagingsController(ITCareMessagingService tCareMessagingService,
-           IMapper mapper, IUnitOfWorkAsync unitOfWork)
+           IMapper mapper, IUnitOfWorkAsync unitOfWork, ITenant<AppTenant> tenant)
         {
             _tCareMessagingService = tCareMessagingService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _tenant = tenant?.Value;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] TCareMessagingPaged val)
+        {
+            var result = await _tCareMessagingService.GetPagedResultAsync(val);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -68,6 +81,16 @@ namespace TMTDentalAPI.Controllers
             await _tCareMessagingService.DeleteAsync(type);
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RefeshMessaging(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _tCareMessagingService.RefeshMessagings(ids);
+            return NoContent();
+
         }
 
     }

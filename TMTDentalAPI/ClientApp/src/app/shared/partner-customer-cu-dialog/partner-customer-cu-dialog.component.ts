@@ -93,6 +93,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   historiesList: HistorySimple[] = [];
 
+  addtionalData: any;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -137,9 +139,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       title: null, 
       consultant: null
     });
-
-
-
 
     setTimeout(() => {
       if (this.id) {
@@ -200,8 +199,11 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         this.partnerService.defaultGet().subscribe((result) => {
           this.formGroup.patchValue(result);
           this.formGroup.get("dateObj").setValue(new Date());
-        });
 
+          if (this.addtionalData) {
+            this.formGroup.patchValue(this.addtionalData);
+          }
+        });
       }
 
       this.dayList = _.range(1, 32);

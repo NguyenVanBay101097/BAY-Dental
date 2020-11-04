@@ -13,6 +13,7 @@ import { LaboOrderQuickCreateDialogComponent } from './labo-order-quick-create-d
 import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order-statistics.component';
 import { LaboOrderLineService } from './labo-order-line.service';
 import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-order-list-dialog.component';
+import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistics/labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-orde
     LaboOrderCreateUpdateComponent,
     LaboOrderQuickCreateDialogComponent,
     LaboOrderStatisticsComponent,
-    LaboOrderListDialogComponent
+    LaboOrderListDialogComponent,
+    LaboOrderStatisticUpdateDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +40,8 @@ import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-orde
   ],
   entryComponents: [
     LaboOrderQuickCreateDialogComponent,
-    LaboOrderListDialogComponent
+    LaboOrderListDialogComponent,
+    LaboOrderStatisticUpdateDialogComponent
   ]
 })
 export class LaboOrdersModule { }

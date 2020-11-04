@@ -109,6 +109,10 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     if (this.saleOrderLineId) {
       this.saleLineService.getTeeth(this.saleOrderLineId).subscribe((result: any) => {
         this.toothList = result;
+        if (!this.line) {
+        this.teethSelected = Object.assign([], this.toothList);
+        this.formGroup.get('productQty').setValue(result.length);
+        }
       });
     }
   }
