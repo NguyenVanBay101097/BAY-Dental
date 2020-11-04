@@ -19,6 +19,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   tags_temp;
   search_partnerCategory: string;
   searchUpdatePopOver = new Subject<string>();
+  @Input() popOverPlace = 'left';
 
   @Input() rowPartnerId: string;
   @Output() onSave = new EventEmitter();

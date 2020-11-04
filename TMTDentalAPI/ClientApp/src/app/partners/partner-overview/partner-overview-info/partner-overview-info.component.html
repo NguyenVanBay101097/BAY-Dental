@@ -1,1 +1,36 @@
-<p>partner-overview-info works!</p>
+<div *ngIf="partner" class="h-100" style="padding: 15px;">
+    <div class=" h-100">
+        <div style="height: 30%;">
+            <div class="parent">
+                <div class="child">
+                    <img class="avatar" style="max-height: 100%;"
+                        [src]="partner.Avatar? partner.Avatar:'#'"
+                        alt="">
+                </div>
+            </div>
+            <h3 class="mt-5 text-center">{{partner.Name}}
+                <button type="button" class="btn btn-primary btn-sm"
+                    (click)="editCustomer()" accesskey="c">
+                    <i class="fas fa-pencil-alt"></i>
+                </button></h3>
+        </div>
+        <div style="height: 70%;" class="card overflow-auto t-scrollbar">
+            <p>Mã khách hàng: {{partner.Ref}}</p>
+            <p>Ngày tạo: {{partner.Date | date:'shortDate' }}</p>
+            <p>Giới tính: {{getGender(partner.Gender)}}</p>
+            <p>Ngày sinh: {{partner.BirthDay}}/{{partner.BirthMonth}}/{{partner.BirthYear}}
+                {{partner.BirthYear ? '('+ ( partner.BirthYear | getAge ) + ' tuổi)' : ''}}</p>
+            <p>Địa chỉ: {{getAddress(partner)}}</p>
+            <p>Điện thoại: {{partner.Phone}}</p>
+            <p>Email: {{partner.Email}}</p>
+            <p>Nghề nghiệp: {{partner.JobTitle}}</p>
+            <p>Tiểu sử bệnh: {{getHistories(partner)}}</p>
+            <p>Nhãn dán:
+                <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
+                    (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
+                </app-partner-category-popover>
+            </p>
+            <p>Tiểu sử bệnh khác: {{partner.MedicalHistory}}</p>
+        </div>
+    </div>
+</div>

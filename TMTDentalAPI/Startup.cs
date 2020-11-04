@@ -610,11 +610,20 @@ namespace TMTDentalAPI
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<PartnerViewModel>("Partners");
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
+            builder.EntitySet<Partner>("Partner");
 
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")
                .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntityType<PartnerViewModel>()
+            .Function("GetDisplay")
+            .Returns<PartnerDisplay>();
+
+            builder.ComplexType<PartnerDisplay>();
+            builder.ComplexType<HistorySimple>();
+            builder.ComplexType<PartnerCategoryBasic>();
 
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();

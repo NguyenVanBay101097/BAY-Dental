@@ -2,11 +2,12 @@
     <div class="w-30 h-100" style="overflow: hidden;">
         <div class="w-100 h-70">
             <!-- Component info -->
-            <app-partner-overview-info></app-partner-overview-info>
+            <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
         </div>
         <div class="w-100 h-30">
             <!-- Component appointment -->
-            <app-partner-overview-appointment></app-partner-overview-appointment>
+                    <app-partner-overview-appointment *ngIf="customerAppointment" [partnerId]="partnerId" [customerAppointment]="customerAppointment">
+                    </app-partner-overview-appointment>
         </div>
     </div>
     <div class="w-70 h-100" style="overflow: hidden;">

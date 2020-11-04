@@ -1,5 +1,5 @@
 <a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle"
-    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
+    #popOver="ngbPopover" [placement]="popOverPlace" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
     <span *ngFor="let tag of tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
     <span *ngIf="!tags.length" class="badge badge-info">
         <i class="fa fa-tags"></i>
