@@ -4,6 +4,12 @@
       <li class="active">Danh sách đăng ký</li>
     </ol>
     <div class="o_cp_searchview">
+      <div class="o_cp_searchview_group">
+        <div class="o_searchview">
+          <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+      </div>
     </div>
     <div class="o_cp_left">
       <div class="o_cp_buttons">

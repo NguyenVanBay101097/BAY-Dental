@@ -78,13 +78,25 @@ html .o_web_client .o_action_manager .o_action {
     position: relative;
 }
 
-html .o_web_client .o_action_manager .o_action>.o_cp_controller {
+
+html .o_web_client .o_action_manager .o_action router-outlet ~ * {
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+    position: relative;
+}
+
+html .o_web_client .o_action_manager .o_action .o_cp_controller {
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
 }
 
-html .o_web_client .o_action_manager .o_action>.o_content {
+html .o_web_client .o_action_manager .o_action .o_content {
     flex: 1 1 100%;
     position: relative;
 }
@@ -102,7 +114,7 @@ html .o_web_client>.o_action_manager .o_action .o_content {
 }
 
 @media (min-width: 768px) {
-    html .o_web_client>.o_action_manager .o_action .o_content {
+    html .o_web_client .o_action_manager .o_action .o_content {
         overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
