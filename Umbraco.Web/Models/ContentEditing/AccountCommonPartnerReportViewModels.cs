@@ -19,7 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Từ ngày
         /// </summary>
         public DateTime? FromDate { get; set; }
-        
+
         /// <summary>
         /// Đến ngày
         /// </summary>
@@ -60,6 +60,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public string ResultSelection { get; set; }
+    }
+
+    public class AccountCommonPartnerReport
+    {
+        /// <summary>
+        /// khach hang
+        /// </summary>
+        public Guid PartnerId { get; set; }
+        /// <summary>
+        /// Toong tien da mua dv
+        /// </summary>
+        public decimal Debit { get; set; }
+        /// <summary>
+        /// so tien da tra
+        /// </summary>
+        public decimal Credit { get; set; }
+
+        /// <summary>
+        /// con no
+        /// </summary>
+        public decimal InitialBalance { get; set; }
+
+        public int CountSaleOrder { get; set; }
+
     }
 
     public class AccountCommonPartnerReportItemDetail
