@@ -227,7 +227,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (_tenant != null)
                 _cache.Remove(_tenant.Hostname.ToLower());
-            return Ok(true);
+            return NoContent();
         }
 
         [HttpPost("[action]")]

@@ -66,7 +66,7 @@ export class TenantListComponent implements OnInit {
     let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.id = dataItem.id;
     modalRef.componentInstance.title = `Gia hạn: ${dataItem.hostname}`;
-    modalRef.componentInstance.dateExpired = new Date(dataItem.dateExpired);
+    modalRef.componentInstance.dateExpired = dataItem.dateExpired ? new Date(dataItem.dateExpired) : null;
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

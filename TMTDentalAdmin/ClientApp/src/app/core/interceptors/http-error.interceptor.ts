@@ -17,9 +17,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         this.loadingService.setLoading(true);
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
-                if (error.message) {
+                if (error.error && error.error.message) {
                     this.notificationService.show({
-                        content: error.message,
+                        content: error.error.message,
                         hideAfter: 3000,
                         position: { horizontal: 'center', vertical: 'top' },
                         animation: { type: 'fade', duration: 400 },

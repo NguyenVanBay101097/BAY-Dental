@@ -47,6 +47,7 @@ using Microsoft.OData.Edm;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.Net.Http.Headers;
 using ApplicationCore.Utilities;
+using TMTDentalAPI.ActionFilters;
 
 namespace TMTDentalAPI
 {
@@ -469,6 +470,7 @@ namespace TMTDentalAPI
             services.AddControllersWithViews(options =>
             {
                 options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+                options.Filters.Add(typeof(CheckTenantExpiredActionFilter));
             }).AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>

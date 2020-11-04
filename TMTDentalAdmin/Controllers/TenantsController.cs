@@ -93,35 +93,39 @@ namespace TMTDentalAdmin.Controllers
                 throw new Exception("Địa chỉ gian hàng đã được sử dụng");
 
             tenant = _mapper.Map<AppTenant>(val);
+            tenant.DateExpired = DateTime.Today.AddDays(15);
             await _tenantService.CreateAsync(tenant);
 
-            //tạo database ở đây
-            var db = val.Hostname;
-            CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db,_configuration);
-            await context.Database.MigrateAsync();
-
-            //chạy api setuptenant -> fail
-            HttpResponseMessage response = null;
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-            using (var client = new HttpClient(new RetryHandler(clientHandler)))
+            try
             {
-                client.Timeout = new TimeSpan(1, 0, 0);
-                response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
-                {
-                    CompanyName = val.CompanyName,
-                    Name = val.Name,
-                    Username = val.Username,
-                    Password = val.Password,
-                    Phone = val.Phone,
-                    Email = val.Email
-                });
-            }
+                var db = val.Hostname;
+                CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db, _configuration);
+                await context.Database.MigrateAsync();
 
-            if (!response.IsSuccessStatusCode)
+                //chạy api setuptenant -> fail
+                HttpResponseMessage response = null;
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                {
+                    response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                    {
+                        CompanyName = val.CompanyName,
+                        Name = val.Name,
+                        Username = val.Username,
+                        Password = val.Password,
+                        Phone = val.Phone,
+                        Email = val.Email
+                    });
+                }
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
+            }
+            catch (Exception e)
             {
                 await _tenantService.DeleteAsync(tenant);
-                throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
+                throw e;
             }
 
             return NoContent();
@@ -133,21 +137,31 @@ namespace TMTDentalAdmin.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            await _unitOfWork.BeginTransactionAsync();
+
             var tenant = await _tenantService.GetByIdAsync(val.Id);
+            var oldDateExpired = tenant.DateExpired;
             tenant.DateExpired = val.DateExpired;
             await _tenantService.UpdateAsync(tenant);
 
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-            using (HttpClient client = new HttpClient(clientHandler))
+            try
             {
-                client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Something fail");
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
 
-                _unitOfWork.Commit();
+                HttpResponseMessage response = null;
+                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                {
+                    response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
+                }
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Có lỗi xảy ra");
+            }
+            catch(Exception e)
+            {
+                tenant.DateExpired = oldDateExpired;
+                await _tenantService.UpdateAsync(tenant);
+                throw e;
             }
 
             return NoContent();
