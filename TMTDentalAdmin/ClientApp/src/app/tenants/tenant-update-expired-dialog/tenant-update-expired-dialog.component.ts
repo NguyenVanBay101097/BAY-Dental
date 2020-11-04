@@ -28,6 +28,10 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
     val.id = this.id;
     this.tenantService.updateDateExpired(val).subscribe(() => {
       this.activeModal.close(true);
+    }, (err) => {
+      if (err.message) {
+        alert(err.message);
+      }
     });
   }
 }

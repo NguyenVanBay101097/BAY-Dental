@@ -9,10 +9,7 @@ import { TenantUpdateExpiredDialogComponent } from '../tenant-update-expired-dia
 @Component({
   selector: 'app-tenant-list',
   templateUrl: './tenant-list.component.html',
-  styleUrls: ['./tenant-list.component.css'],
-  host: {
-    class: 'o_action o_view_controller'
-  }
+  styleUrls: ['./tenant-list.component.css']
 })
 
 export class TenantListComponent implements OnInit {
@@ -53,14 +50,10 @@ export class TenantListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  updateExpired() {
-    if (this.selectedIds.length !== 1) {
-      alert('Vui lòng chỉ chọn 1 dòng.');
-      return false;
-    }
-
+  updateExpired(dataItem) {
     let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.id = this.selectedIds[0];
+    modalRef.componentInstance.id = dataItem.id;
+    modalRef.componentInstance.title = `Gia hạn: ${dataItem.hostname}`;
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

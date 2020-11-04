@@ -8,7 +8,6 @@ import { ChangePasswordDialogComponent } from './change-password-dialog/change-p
 import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
-import { NavSidebarService } from './nav-sidebar.service';
 import { DisableControlDirective } from './disable-control-directive';
 import { AppLoadingService } from './app-loading.service';
 import { LoadingComponent } from './loading/loading.component';
@@ -40,7 +39,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     MyCustomKendoModule,
     NgbModule
   ],
-  providers: [NavSidebarService, AppLoadingService],
+  providers: [AppLoadingService],
   entryComponents: [ConfirmDialogComponent, ChangePasswordDialogComponent],
 })
 export class SharedModule { }

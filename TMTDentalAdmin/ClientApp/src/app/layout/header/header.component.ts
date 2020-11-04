@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/auth/auth.service';
+import { ChangePasswordDialogComponent } from '@shared/change-password-dialog/change-password-dialog.component';
 import { NavSidebarService } from '@shared/services/nav-sidebar.service';
 
 @Component({
-  selector: 'app-layout-header',
-  templateUrl: './layout-header.component.html',
-  styleUrls: ['./layout-header.component.css']
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
-export class LayoutHeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit {
 
   constructor(private sidebarService: NavSidebarService, private modalService: NgbModal,
     public authService: AuthService, private router: Router) { }
@@ -36,3 +36,4 @@ export class LayoutHeaderComponent implements OnInit {
     this.router.navigate(['login']);
   }
 }
+
