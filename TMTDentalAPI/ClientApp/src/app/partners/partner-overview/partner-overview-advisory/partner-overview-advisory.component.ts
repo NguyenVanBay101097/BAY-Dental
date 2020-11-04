@@ -11,8 +11,6 @@ export class PartnerOverviewAdvisoryComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.saleQuotations);
-    
   }
 
   // updateTeeth(line) {
