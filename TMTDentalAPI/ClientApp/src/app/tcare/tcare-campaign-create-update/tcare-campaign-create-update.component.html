@@ -9,8 +9,7 @@
                 <!-- <kendo-timepicker [disabled]="campaign.active" (valueChange)="onChange($event)" style="width: 100px;"
                     formControlName="scheduleStart">
                 </kendo-timepicker> -->
-                <kendo-numerictextbox style="width: 80px;" class="small" [disabled]="campaign.active" formControlName="sheduleStartNumber" [min]="0" [max]="100"
-                    [autoCorrect]="autoCorrect" [format]="'n1'">
+                <kendo-numerictextbox style="width: 80px;" class="small" [disabled]="campaign.active" formControlName="sheduleStartNumber" [min]="0" [max]="100" [format]="'n1'">
                 </kendo-numerictextbox>
                 <select style="width: 80px;" [attr.disabled]="campaign.active ? '' : null" class="form-control mx-1 small" formControlName="sheduleStartType">
                     <option value="hour">giờ</option>
