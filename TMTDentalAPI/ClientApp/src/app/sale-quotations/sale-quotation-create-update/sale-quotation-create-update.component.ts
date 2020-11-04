@@ -497,12 +497,15 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(
       (result) => {
-        let line = result as any;
-        line.teeth = this.fb.array(line.teeth);
-        this.orderLines.push(this.fb.group(line));
-        this.computeAmountTotal();
+        for (let i = 0; i < result.length; i++) {
+          let line = result[i] as any;
+          line.teeth = this.fb.array(line.teeth);
+          this.orderLines.push(this.fb.group(line));
+          this.orderLines.markAsDirty();
+          this.computeAmountTotal();
+        }
       },
-      () => {}
+      () => { }
     );
   }
 

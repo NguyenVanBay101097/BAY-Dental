@@ -14,6 +14,12 @@ export class SaleOrderLineOnChangeProductResult {
     priceUnit: number;
 }
 
+export class SaleOrderLinesPaged {
+    Offset: number;
+    limit: number;
+    isQuotation: boolean;
+}
+
 @Injectable({providedIn: 'root'})
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
@@ -21,6 +27,10 @@ export class SaleOrderLineService {
 
     onChangeProduct(val: SaleOrderLineOnChangeProduct): Observable<SaleOrderLineOnChangeProductResult> {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
+    }
+
+    get(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl, {params: new HttpParams({ fromObject: val })});
     }
 
     create(val): Observable<SaleOrderLineDisplay> {

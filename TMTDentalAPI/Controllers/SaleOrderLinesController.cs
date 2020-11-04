@@ -40,13 +40,7 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _saleLineService.GetPagedResultAsync(val);
 
-            var paged = new PagedResult2<SaleOrderLineBasic>(result.TotalItems, val.Offset, val.Limit)
-            {
-                //Có thể dùng thư viện automapper
-                Items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(result.Items),
-            };
-
-            return Ok(paged);
+            return Ok(result);
         }
 
         [HttpPost("[action]")]

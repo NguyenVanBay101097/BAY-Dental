@@ -1,1 +1,39 @@
-<p>partner-overview-report works!</p>
+<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; overflow: hidden;">
+    <div class="report-title">
+        <h5>Báo cáo</h5>
+    </div>
+    <div class="report-content row">
+        <div class="col-6 middle-cu">
+            <div class="content-title w-100 text-center">
+                DOANH THU
+            </div>
+            <div class="content-content w-100 text-center">
+                {{(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number}} VNĐ
+            </div>
+        </div>
+        <div class="col-6 middle-cu">
+            <div class="content-title w-100 text-center">
+                THANH TOÁN
+            </div>
+            <div class="content-content w-100 text-center">
+                {{(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number}} VNĐ
+            </div>
+        </div>
+        <div class="col-6 middle-cu">
+            <div class="content-title w-100 text-center">
+                CÒN LẠI
+            </div>
+            <div class="content-content w-100 text-center">
+                {{(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number}} VNĐ
+            </div>
+        </div>
+        <div class="col-6 middle-cu">
+            <div class="content-title w-100 text-center">
+                SỐ PHIẾU ĐIỀU TRỊ
+            </div>
+            <div class="content-content w-100 text-center">
+                {{(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number}} VNĐ
+            </div>
+        </div>
+    </div>
+</div>

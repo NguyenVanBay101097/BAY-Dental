@@ -61,6 +61,7 @@ import { PartnerOverviewAdvisoryComponent } from './partner-overview/partner-ove
 import { PartnerOverviewPromotionComponent } from './partner-overview/partner-overview-promotion/partner-overview-promotion.component';
 import { PartnerOverviewReportComponent } from './partner-overview/partner-overview-report/partner-overview-report.component';
 import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
+import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
 
 @NgModule({
   declarations: [
@@ -124,6 +125,7 @@ import { PartnerOverviewImageComponent } from './partner-overview/partner-overvi
     SharedModule,
     FlexLayoutModule,
     NgbModule,
+    AccountCommonPartnerReportsModule,
     SaleOrdersModule
   ],
   entryComponents: [

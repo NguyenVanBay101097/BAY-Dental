@@ -1,4 +1,4 @@
-<div *ngIf="partner" class="h-100" style="padding: 15px;">
+<div class="h-100" style="padding: 15px;">
     <div class=" h-100">
         <div style="height: 30%;">
             <div class="parent o_form_view">
@@ -17,22 +17,22 @@
                 </button></h3>
         </div>
         <div style="height: 70%;" class="card overflow-auto t-scrollbar">
-            <p>Mã khách hàng: {{partner.Ref}}</p>
-            <p>Ngày tạo: {{partner.Date | date:'shortDate' }}</p>
-            <p>Giới tính: {{partner.GenderConvert}}</p>
-            <p>Ngày sinh: {{partner.BirthDay}}/{{partner.BirthMonth}}/{{partner.BirthYear}}
-                {{partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : ''}}</p>
-            <p>Địa chỉ: {{partner.Address}}</p>
-            <p>Điện thoại: {{partner.Phone}}</p>
-            <p>Email: {{partner.Email}}</p>
-            <p>Nghề nghiệp: {{partner.JobTitle}}</p>
-            <p>Tiểu sử bệnh: {{partner.HistoriesString}}</p>
+            <p>Mã khách hàng: {{partner ? partner.Ref : ''}}</p>
+            <p>Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}</p>
+            <p>Giới tính: {{partner ? partner.GenderConvert : ''}}</p>
+            <p>Ngày sinh: {{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear 
+               + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}} </p>
+            <p>Địa chỉ: {{partner ? partner.Address: ''}}</p>
+            <p>Điện thoại: {{partner ?partner.Phone:''}}</p>
+            <p>Email: {{partner ?partner.Email:''}}</p>
+            <p>Nghề nghiệp: {{partner ?partner.JobTitle:''}}</p>
+            <p>Tiểu sử bệnh: {{partner ?partner.HistoriesString:''}}</p>
             <p>Nhãn dán:
                 <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
                     (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
                 </app-partner-category-popover>
             </p>
-            <p>Tiểu sử bệnh khác: {{partner.MedicalHistory}}</p>
+            <p>Tiểu sử bệnh khác: {{partner ? partner.MedicalHistory : ''}}</p>
         </div>
     </div>
 </div>

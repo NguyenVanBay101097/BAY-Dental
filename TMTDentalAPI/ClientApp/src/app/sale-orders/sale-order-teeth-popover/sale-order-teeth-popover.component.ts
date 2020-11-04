@@ -26,6 +26,8 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   @Output() eventTeeth = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: any;
 
+  @Input() lineValue: any;
+
   constructor(
     private partnerCategoriesService: PartnerCategoriesService,
     private partnerCategoryService: PartnerCategoryService,
