@@ -23,4 +23,15 @@ export class PartnersService extends ODataService {
             super.next(x);
         });
     }
+
+    public getViewByPhone(phone: string) {
+        return this.fetch(this.tableName, {
+            filter: {
+                logic: 'and',
+                filters: [
+                    { field: 'phone', operator: 'eq', value: phone}
+                ]
+            }
+        });
+    }
 }

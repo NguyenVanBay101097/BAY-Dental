@@ -39,6 +39,7 @@ namespace Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<PartnerSource> PartnerSources { get; set; }
+        public DbSet<PartnerPartnerCategoryRel> PartnerPartnerCategoryRel { get; set; } //khong nen sua lai ten table nay
         public DbSet<Company> Companies { get; set; }
         public DbSet<UoM> UoMs { get; set; }
         public DbSet<UoMCategory> UoMCategories { get; set; }
@@ -161,8 +162,6 @@ namespace Infrastructure.Data
         public DbSet<TCareRule> TCareRules { get; set; }
         public DbSet<TCareProperty> TCareProperties { get; set; }
         public DbSet<TCareMessaging> TCareMessagings { get; set; }
-        public DbSet<TCareMessagingTrace> TCareMessingTraces { get; set; }
-
         public DbSet<StockHistory> StockHistories { get; set; }
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
@@ -207,11 +206,17 @@ namespace Infrastructure.Data
         public DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
         public DbSet<HrSalaryConfig> HrSalaryConfigs { get; set; }
         public DbSet<PartnerTitle> PartnerTitles { get; set; }
+        public DbSet<TCareMessage> TCareMessages { get; set; }
+        public DbSet<TCareMessagingPartnerRel> TCareMessagingPartnerRels { get; set; }
+
         public DbSet<ServiceCardOrderPayment> ServiceCardOrderPayments { get; set; }
+        public DbSet<TCareMessageTemplate> TCareMessageTemplates { get; set; }
+        public DbSet<TCareConfig> TCareConfigs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
+            builder.ApplyConfiguration(new TCareMessageConfiguration());
             builder.ApplyConfiguration(new ProductCategoryConfiguration());
             builder.ApplyConfiguration(new CompanyConfiguration());
             builder.ApplyConfiguration(new PartnerConfiguration());
@@ -348,7 +353,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCareRuleConfiguration());
             builder.ApplyConfiguration(new TCarePropertyConfiguration());
             builder.ApplyConfiguration(new TCareMessagingConfiguration());
-            builder.ApplyConfiguration(new TCareMessagingTraceConfiguration());
             builder.ApplyConfiguration(new PartnerImageConfiguration());
             builder.ApplyConfiguration(new LoaiThuChiConfiguration());
             builder.ApplyConfiguration(new PhieuThuChiConfiguration());
@@ -373,7 +377,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new HrPayslipWorkedDaysConfiguration());
             builder.ApplyConfiguration(new HrPayslipRunConfiguration());
             builder.ApplyConfiguration(new HrSalaryConfiguration());
+            builder.ApplyConfiguration(new TCareMessagingPartnerRelConfiguration());
             builder.ApplyConfiguration(new ServiceCardOrderPaymentConfiguration());
+            builder.ApplyConfiguration(new TCareMessageTemplateConfiguration());
+            builder.ApplyConfiguration(new TCareConfigConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
@@ -423,19 +430,22 @@ namespace Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (_tenant != null)
+            if (!optionsBuilder.IsConfigured)
             {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+                if (_tenant != null)
+                {
+                    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
 
-                if (_tenant.Hostname != "localhost")
-                    builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
+                    if (_tenant.Hostname != "localhost")
+                        builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
 
-                optionsBuilder.UseSqlServer(builder.ConnectionString);
-            }
-            else
-            {
-                var defaultConnectionString = _connectionStrings.CatalogConnection;
-                optionsBuilder.UseSqlServer(defaultConnectionString);
+                    optionsBuilder.UseSqlServer(builder.ConnectionString);
+                }
+                else
+                {
+                    var defaultConnectionString = _connectionStrings.CatalogConnection;
+                    optionsBuilder.UseSqlServer(defaultConnectionString);
+                }
             }
 
             base.OnConfiguring(optionsBuilder);

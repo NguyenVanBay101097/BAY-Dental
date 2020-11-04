@@ -29,39 +29,49 @@ namespace TMTDentalAPI.Middlewares
             var tenant = context.GetTenant<AppTenant>();
             if (tenant != null)
             {
-                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                //{
-                //    var now = DateTime.Now;
-                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                //    {
-                //        //await HandleExpiredAsync(context);
-                //    }
-                //}
+                Microsoft.Extensions.Primitives.StringValues skipCheck = "";
+                if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
+                {
+                    var now = DateTime.Now;
+                    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
+                    {
+                        await HandleExpiredAsync(context);
+                        return;
+                    }
+                }
 
-                var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-                var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                    await dbContext.Database.MigrateAsync();
+                //var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+                //var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+                //if (pendingMigrations.Any())
+                //    await dbContext.Database.MigrateAsync();
             }
+
+            //var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+            //var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+            //if (pendingMigrations.Any())
+            //    await dbContext.Database.MigrateAsync();
 
             // Call the next delegate/middleware in the pipeline
             await _next(context);
         }
 
-        //private static Task HandleExpiredAsync(HttpContext context)
-        //{
-        //    return context.Response.WriteHtmlAsync("<html>" +
-        //        "<head>" +
-        //            "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-        //        "</head>" +
-        //        "<body>" +
-        //            "<div class=\"jumbotron\">" +
-        //                "<h1 class=\"display-4\">Hết hạn!</h1>" +
-        //                "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
-        //            "</div>" +
-        //        "</body>" +
-        //        "</html>");
-        //}
+        private static Task HandleExpiredAsync(HttpContext context)
+        {
+            var result = JsonConvert.SerializeObject(new { error = "Hết hạn sử dụng phần mềm", message = "Hết hạn sử dụng phần mềm", url = "/auth/expired" });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 410;
+            return context.Response.WriteAsync(result);
+            //return context.Response.WriteHtmlAsync("<html>" +
+            //    "<head>" +
+            //        "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+            //    "</head>" +
+            //    "<body>" +
+            //        "<div class=\"jumbotron\">" +
+            //            "<h1 class=\"display-4\">Hết hạn!</h1>" +
+            //            "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
+            //        "</div>" +
+            //    "</body>" +
+            //    "</html>");
+        }
     }
 }

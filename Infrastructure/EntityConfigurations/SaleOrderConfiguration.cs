@@ -14,7 +14,7 @@ namespace Infrastructure.EntityConfigurations
             builder.Property(x => x.Name).IsRequired();
 
             builder.HasOne(x => x.Partner)
-                .WithMany()
+                .WithMany(x => x.SaleOrders)
                 .HasForeignKey(x => x.PartnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 

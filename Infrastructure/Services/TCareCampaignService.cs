@@ -7,11 +7,13 @@ using Hangfire;
 using Hangfire.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -23,12 +25,42 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly AppTenant _tenant;
+        private readonly IIrConfigParameterService _irConfigParameterService;
         public TCareCampaignService(IAsyncRepository<TCareCampaign> repository, IHttpContextAccessor httpContextAccessor, ITenant<AppTenant> tenant,
-            IMapper mapper)
+            IMapper mapper, IIrConfigParameterService irConfigParameterService)
             : base(repository, httpContextAccessor)
         {
             _tenant = tenant?.Value;
             _mapper = mapper;
+            _irConfigParameterService = irConfigParameterService;
+        }
+
+        public override async Task<IEnumerable<TCareCampaign>> CreateAsync(IEnumerable<TCareCampaign> entities)
+        {
+            await _SetFacebookPage(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<TCareCampaign> entities)
+        {
+            await _SetFacebookPage(entities);
+            await base.UpdateAsync(entities);
+        }
+
+        private async Task _SetFacebookPage(IEnumerable<TCareCampaign> self)
+        {
+            var scenarioObj = GetService<ITCareScenarioService>();
+            foreach(var campaign in self)
+            {
+                if (!campaign.FacebookPageId.HasValue)
+                {
+                    if (campaign.TCareScenarioId.HasValue)
+                    {
+                        var scenario = await scenarioObj.GetByIdAsync(campaign.TCareScenarioId.Value);
+                        campaign.FacebookPageId = scenario.ChannelSocialId;
+                    }
+                }    
+            }
         }
 
         public async Task<PagedResult2<TCareCampaignBasic>> GetPagedResultAsync(TCareCampaignPaged val)
@@ -64,24 +96,16 @@ namespace Infrastructure.Services
             var jobService = GetService<ITCareJobService>();
             var states = new string[] { "draft", "stopped" };
             var campaign = await SearchQuery(x => x.Id == val.Id && x.Active == false).FirstOrDefaultAsync();
-         
+
             XmlSerializer serializer = new XmlSerializer(typeof(MxGraphModel));
             MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(campaign.GraphXml));
             MxGraphModel resultingMessage = (MxGraphModel)serializer.Deserialize(memStream);
             var sequence = resultingMessage.Root.Sequence;
             var rule = resultingMessage.Root.Rule;
             if (sequence == null || rule == null)
-                 throw new Exception("điều kiện hoặc nội dung trống");
-          
-
-            var runAt = campaign.SheduleStart.HasValue ? campaign.SheduleStart.Value : DateTime.Today;
+                throw new Exception("điều kiện hoặc nội dung trống");
             campaign.State = "running";
-            campaign.Active = true;
-            campaign.SheduleStart = runAt;
-            var tenant = _tenant != null ? _tenant.Hostname : "localhost";
-            var jobId = $"{tenant}-tcare-campaign-{campaign.Id}";
-            campaign.RecurringJobId = jobId;
-            RecurringJob.AddOrUpdate(campaign.RecurringJobId, () => jobService.Run(tenant, campaign.Id), $"{runAt.Minute} {runAt.Hour} * * *", TimeZoneInfo.Local);
+            campaign.Active = true;                    
             await UpdateAsync(campaign);
         }
 
@@ -93,9 +117,6 @@ namespace Infrastructure.Services
             {
                 campaign.State = "stopped";
                 campaign.Active = false;
-                if (!string.IsNullOrEmpty(campaign.RecurringJobId))
-                    RecurringJob.RemoveIfExists(campaign.RecurringJobId);
-                campaign.RecurringJobId = null;
             }
 
             await UpdateAsync(campaigns);
@@ -106,7 +127,8 @@ namespace Infrastructure.Services
             var campaign = await GetByIdAsync(val.Id);
             if (campaign != null)
             {
-                campaign.SheduleStart = val.SheduleStart.HasValue ? val.SheduleStart.Value : DateTime.Today;
+                campaign.SheduleStartType = val.ScheduleStartType;
+                campaign.SheduleStartNumber = val.ScheduleStartNumber;
                 await UpdateAsync(campaign);
             }
         }

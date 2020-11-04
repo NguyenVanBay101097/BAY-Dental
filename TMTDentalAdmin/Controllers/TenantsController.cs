@@ -5,6 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Helpers;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
@@ -13,6 +16,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Umbraco.Web.Models.ContentEditing;
@@ -28,9 +33,10 @@ namespace TMTDentalAdmin.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly UserManager<ApplicationAdminUser> _userManager;
         private readonly AdminAppSettings _appSettings;
+        private readonly IConfiguration _configuration;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            UserManager<ApplicationAdminUser> userManager,
+            UserManager<ApplicationAdminUser> userManager, IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings)
         {
             _tenantService = tenantService;
@@ -38,6 +44,7 @@ namespace TMTDentalAdmin.Controllers
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _appSettings = appSettings?.Value;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -88,32 +95,33 @@ namespace TMTDentalAdmin.Controllers
             tenant = _mapper.Map<AppTenant>(val);
             await _tenantService.CreateAsync(tenant);
 
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.Timeout = new TimeSpan(0, 30, 0);
-                    HttpResponseMessage response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
-                    {
-                        CompanyName = val.CompanyName,
-                        Name = val.Name,
-                        Username = val.Username,
-                        Password = val.Password,
-                        Phone = val.Phone,
-                        Email = val.Email
-                    });
+            //tạo database ở đây
+            var db = val.Hostname;
+            CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db,_configuration);
+            await context.Database.MigrateAsync();
 
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var result = response.Content.ReadAsAsync<dynamic>().Result;
-                        throw new Exception("Có lỗi xảy ra: " + result.message);
-                    }
-                }
+            //chạy api setuptenant -> fail
+            HttpResponseMessage response = null;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+            using (var client = new HttpClient(new RetryHandler(clientHandler)))
+            {
+                client.Timeout = new TimeSpan(1, 0, 0);
+                response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                {
+                    CompanyName = val.CompanyName,
+                    Name = val.Name,
+                    Username = val.Username,
+                    Password = val.Password,
+                    Phone = val.Phone,
+                    Email = val.Email
+                });
             }
-            catch(Exception e)
+
+            if (!response.IsSuccessStatusCode)
             {
                 await _tenantService.DeleteAsync(tenant);
-                throw new Exception(e.Message);
+                throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
             }
 
             return NoContent();
@@ -130,10 +138,12 @@ namespace TMTDentalAdmin.Controllers
             tenant.DateExpired = val.DateExpired;
             await _tenantService.UpdateAsync(tenant);
 
-            using (HttpClient client = new HttpClient())
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+            using (HttpClient client = new HttpClient(clientHandler))
             {
                 client.Timeout = new TimeSpan(1, 0, 0);
-                HttpResponseMessage response = await client.GetAsync($"http://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
+                HttpResponseMessage response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant?skipCheckExpired=true");
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Something fail");
 

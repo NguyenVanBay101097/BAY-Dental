@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public interface ITCareMessagingTraceService : IBaseService<TCareMessagingTrace>
+    public interface ITCareCampaignJobService
     {
-        Task AddTagWebhook(IEnumerable<TCareMessagingTrace> traces, string type);
+        Task Run(string db, IEnumerable<Guid> ids);
     }
 }

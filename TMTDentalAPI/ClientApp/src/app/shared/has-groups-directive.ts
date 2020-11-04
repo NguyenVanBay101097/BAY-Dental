@@ -8,6 +8,8 @@ import { PermissionService } from './permission.service';
 })
 export class HasGroupsDirective implements OnInit {
     @Input() groups: string;
+    @Input() item: any;
+    @Input() child: any;
     constructor(private elementRef: ElementRef, private renderer: Renderer2,
         private permissionService: PermissionService) {
 

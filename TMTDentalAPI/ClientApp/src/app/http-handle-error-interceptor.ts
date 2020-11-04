@@ -20,8 +20,14 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
                 let message;
+                if (error.status === 410 && error.error.url) {
+                    this.authService.logout();
+                    this.router.navigate([error.error.url]);
+                    return throwError(error);
+                }
                 if (error instanceof HttpErrorResponse) {
                     // Server Error
+
                     message = error.message;
                     if (error.error) {
                         message = error.error.message;
@@ -45,9 +51,15 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     }
                 }
 
+                this.loadingService.setLoading(false);
                 return throwError(error);
-            }),
-            finalize(() => this.loadingService.setLoading(false)));
+            }))
+            .pipe(map<HttpEvent<any>, any>((evt: HttpEvent<any>) => {
+                if (evt instanceof HttpResponse) {
+                    this.loadingService.setLoading(false);
+                }
+                return evt;
+            }));
     }
 
     addAuthenticationToken(request) {

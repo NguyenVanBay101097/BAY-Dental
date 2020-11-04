@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -22,13 +23,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IToaThuocService _toaThuocService;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
-
-        public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper,
+        private readonly ViewRender view;
+        public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, ViewRender view,
             IIRModelAccessService modelAccessService)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
+            this.view = view;
         }
 
         [HttpGet]
@@ -112,9 +114,10 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
-            if (res == null)
-                return NotFound();
-            return Ok(res);
+
+            var html = this.view.Render("ToathuocPrint", res);
+
+            return Ok(new printData() { html = html });
         }
 
         private void SaveOrderLines(ToaThuocSave val, ToaThuoc order)

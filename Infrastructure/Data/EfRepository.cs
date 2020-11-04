@@ -108,22 +108,19 @@ namespace Infrastructure.Data
             _dbContext.SaveChanges();
         }
 
-        public IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int offSet = 0, int limit = int.MaxValue)
+        public IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int offSet = 0, int limit = int.MaxValue,
+            bool isPagingEnabled = false)
         {
             var query = _dbContext.Set<T>().AsQueryable();
             if (domain != null)
                 query = query.Where(domain);
 
             if (orderBy != null)
-            {
                 query = orderBy(query);
-                query = query.Skip(offSet).Take(limit);
-            }
-            //else
-            //{
-            //    query = query.OrderBy(x => x.DateCreated);
-            //}
 
+            if (isPagingEnabled)
+                query = query.Skip(offSet).Take(limit);
+          
             return query;
         }
 
