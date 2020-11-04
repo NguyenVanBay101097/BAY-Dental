@@ -24,7 +24,7 @@ const routes: Routes = [
     path: 'suppliers', component: PartnerSupplierListComponent
   },
   {
-    path:'treatment-paymentfast',
+    path:'treatment-paymentfast/from',
     component: PartnerCustomerTreatmentPaymentFastComponent
   },
   {

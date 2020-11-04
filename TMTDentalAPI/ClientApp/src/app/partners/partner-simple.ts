@@ -7,6 +7,9 @@ export class PartnerSimple {
     id: string;
     name: string;
     displayName: string;
+    birth: string;
+    address: string;
+    phone: string;
 }
 
 export class PartnerSimpleContact {

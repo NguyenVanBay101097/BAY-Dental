@@ -9,8 +9,10 @@ import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { debounceTime, tap, switchMap, mergeMap } from 'rxjs/operators';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
+import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { DiscountDefault, SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -29,13 +31,18 @@ import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineLaboOrdersDialogComponent } from 'src/app/sale-orders/sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { SaleOrderPaymentDialogComponent } from 'src/app/sale-orders/sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
+import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserService, UserPaged } from 'src/app/users/user.service';
+import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from '../partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
 import { PartnerSearchDialogComponent } from '../partner-search-dialog/partner-search-dialog.component';
 import { PartnerSimple, PartnerPaged } from '../partner-simple';
 import { PartnerService } from '../partner.service';
@@ -55,6 +62,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
+  filteredJournals: AccountJournalSimple[];
+
   discountDefault: DiscountDefault;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
@@ -62,6 +71,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -71,16 +81,17 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
   filteredEmployees: EmployeeBasic[] = [];
+  @ViewChild(ToaThuocPrintComponent, { static: true }) toaThuocPrintComponent: ToaThuocPrintComponent;
 
   searchCardBarcode: string;
   partnerSend: any;
   type: string;
 
-  constructor(private fb: FormBuilder, private partnerService: PartnerService,
-    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
+  constructor(private fb: FormBuilder, private partnerService: PartnerService, private toaThuocService: ToaThuocService,
+    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService, private accountJournalService: AccountJournalService,
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
+    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService, private authService: AuthService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
   }
@@ -96,6 +107,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       residual: null,
       card: null,
       pricelist: [null, Validators.required],
+      journal: null,
     });
 
     this.routeActive();
@@ -105,6 +117,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.loadDotKhamList();
     // this.loadLaboOrderList();
     this.loadPayments();
+    this.loadFilteredJournals();
     // this.loadPricelists();
   }
 
@@ -150,6 +163,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
+        // this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()], 'id');
+
+
+
         // if (result.pricelist) {
         //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
         // }
@@ -163,6 +180,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         });
 
         this.formGroup.markAsPristine();
+        this.getPriceSubTotal();
+        this.computeAmountTotal();
       });
   }
 
@@ -199,6 +218,84 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }, () => {
     });
   }
+
+  ///load phương thức thanh toán
+  loadFilteredJournals() {
+    this.searchJournals().subscribe(result => {
+      this.filteredJournals = result;
+
+    })
+  }
+
+  getJournalDefault() {
+    var jounrnalDedault = this.filteredJournals.find(x => x.name == "Tiền mặt");
+    return jounrnalDedault;
+  }
+
+
+  searchJournals(search?: string) {
+    var val = new AccountJournalFilter();
+    val.type = 'bank,cash';
+    val.search = search || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
+  }
+
+
+
+  actionPayment(id) {
+    var pay = this.fb.group({
+      amount: 0,
+      paymentDateObj: [null, Validators.required],
+      paymentDate: null,
+      communication: null,
+      paymentType: null,
+      journalId: null,
+      journal: [null, Validators.required],
+      partnerType: null,
+      partnerId: null,
+      invoiceIds: null,
+      saleOrderIds: null,
+      serviceCardOrderIds: null,
+    });
+
+    var val = this.formGroup.value;
+
+    if (id) {
+      this.paymentService.saleDefaultGet([id]).subscribe(rs2 => {
+        debugger
+        pay.patchValue(rs2);
+        pay.value.amount = val.amountTotal;
+        pay.value.journal = val.journal;
+        pay.value.journalId = val.journal ? val.journal.id : null;
+        pay.value.paymentDateObj = new Date();
+        pay.value.paymentDate = this.intlService.formatDate(pay.value.paymentDateObj, 'd', 'en-US');
+        this.paymentService.create(pay.value).subscribe((result: any) => {
+          this.paymentService.post([result.id]).subscribe(() => {
+            this.loadRecord();
+          }, (err) => {
+            this.notificationService.show({
+              content: err,
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'error', icon: true }
+            });
+          });
+        }, (err) => {
+          this.notificationService.show({
+            content: err,
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'error', icon: true }
+          });
+        });
+
+      })
+    }
+  }
+
 
   updateCustomerModal() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -246,6 +343,16 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   get cardValue() {
     return this.formGroup.get('card').value;
+  }
+
+  get amountPaid(){
+    var total = 0;
+
+    this.orderLines.controls.forEach(line => {
+      console.log(total);
+      total += line.get('amountPaid').value;
+    });
+    return total;
   }
 
   loadPartners() {
@@ -605,9 +712,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   createNew() {
     //resetform
-    if (this.customerId) {
-      this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.customerId } });
-    }
+    this.router.navigate(['/partners/treatment-paymentfast/from']);
+
   }
 
   actionConfirm() {
@@ -757,7 +863,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         })
       )
       .subscribe(r => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
+        this.router.navigate(['partners/treatment-paymentfast/from'], {
+          queryParams: {
+            id: this.saleOrderId
+          },
+        });
+        this.loadRecord();
       });
   }
 
@@ -830,7 +941,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       });
     } else {
       this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+        this.router.navigate(['partners/treatment-paymentfast/from'], {
+          queryParams: {
+            id: result['id']
+          },
+        });
+        this.loadRecord();
+        // this.router.navigate(['partners/treatment-paymentfast/from'], { queryParams: { id: result.id } });
+
       });
     }
   }
@@ -865,6 +983,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         });
 
         this.formGroup.markAsPristine();
+        this.getPriceSubTotal();
+        this.computeAmountTotal();
+
       });
     }
   }
@@ -943,8 +1064,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   addLine(val) {
-    // this.saleOrderLine = event;
+    debugger
     var res = this.fb.group(val);
+
     // line.teeth = this.fb.array(line.teeth);
     if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
       this.orderLines.push(res);
@@ -974,6 +1096,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       });
     }
     this.saleOrderLine = null;
+  }
+
+  copyLine(line: FormGroup) {
+    this.orderLines.push(line);
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+    this.orderLines.markAsDirty();
   }
 
   updateTeeth(line) {
@@ -1008,6 +1137,43 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       var getResidual = subtotal - getamountPaid;
       line.get('amountResidual').setValue(getResidual);
     });
+
+  }
+
+  //Mở popup thêm thông tin bổ sung
+  addInfoLineModal(line: FormGroup) {
+    let modalRef = this.modalService.open(PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm thông tin bổ sung';
+    modalRef.componentInstance.partnerId = this.partnerId;
+    modalRef.componentInstance.line = line.value;
+
+    modalRef.result.then(result => {
+      debugger
+      var a = result as any;
+      line.patchValue(a);
+      line.setControl('teeth', this.fb.array(a.teeth || []));
+      this.computeAmountTotal();
+      this.orderLines.markAsDirty();
+
+      /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
+      // if (this.formGroup.get('state').value == "sale") {
+      //   var val = this.getFormDataSave();
+      //   this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+      //     this.notificationService.show({
+      //       content: 'Lưu thành công',
+      //       hideAfter: 3000,
+      //       position: { horizontal: 'center', vertical: 'top' },
+      //       animation: { type: 'fade', duration: 400 },
+      //       type: { style: 'success', icon: true }
+      //     });
+      //     this.loadRecord();
+      //   }, () => {
+      //     this.loadRecord();
+      //   });
+      // }
+    }, () => {
+    });
+
 
   }
 
@@ -1072,6 +1238,39 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
     }
+  }
+
+
+  ///Toa thuốc
+  createToaThuoc() {
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
+    modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
+    modalRef.result.then((result: any) => {
+      this.loadRecord();
+      if (result.print) {
+        this.printToaThuoc(result.item);
+      }
+    }, () => {
+    });
+  }
+
+  printToaThuoc(item) {
+    this.toaThuocService.getPrint(item.id).subscribe(result => {
+      this.toaThuocPrintComponent.print(result);
+    });
+  }
+
+  ///lịch hẹn
+  createAppoinment() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: lịch hẹn';
+    modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
+
+    modalRef.result.then((result: any) => {
+      this.loadRecord();
+    }, () => {
+    });
   }
 
   get getAmountTotal() {
@@ -1224,6 +1423,15 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onChangeDiscountFixed(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangePriceUnit(line: FormGroup) {
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       res.patchValue(line.value);

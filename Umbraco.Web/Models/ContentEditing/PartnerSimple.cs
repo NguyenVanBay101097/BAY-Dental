@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
                     list.Add(BirthMonth.ToString());
                 if (!string.IsNullOrEmpty(BirthYear.ToString()))
                     list.Add(BirthYear.ToString());
-                return string.Join("/ ", list);
+                return string.Join("/", list);
             }
             set { }
         }

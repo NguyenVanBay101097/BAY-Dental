@@ -8,8 +8,15 @@
     <div class="o_form_view" [formGroup]="saleLineForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_group mt-0 mb-0">
+                <!-- <div class="o_group mt-0 mb-0">
                     <table class="o_group o_inner_group">
+                        <tbody>
+                           
+                        </tbody>
+                    </table>
+                </div> -->
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -21,12 +28,6 @@
                                     <input type="text" class="form-control" readonly formControlName="name">
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="o_group mt-0 mb-0">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -38,77 +39,27 @@
                                         #employeeCbx formControlName="employee" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Đơn giá
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'"
-                                        [disableControl]="line && line.qtyInvoiced > 0" formControlName="priceUnit">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
+                            </tr>                        
 
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Loại răng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredToothCategories" [textField]="'name'"
-                                        [filterable]="true" formControlName="toothCategory"
-                                        (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                </td>
-                            </tr>
+                        
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Số lượng
+                                    <label class="o_form_label">
+                                        Ghi chú
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [format]="'n0'" formControlName="productUOMQty">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Giảm
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <kendo-numerictextbox [class.d-none]="discountTypeValue !== 'percentage'"
-                                            [min]="0" [max]="100" formControlName="discount" [autoCorrect]="true">
-                                        </kendo-numerictextbox>
-                                        <kendo-numerictextbox [format]="'n0'"
-                                            [class.d-none]="discountTypeValue !== 'fixed'"
-                                            (valueChange)="onChangeDiscountFixed($event)"
-                                            formControlName="discountFixed">
-                                        </kendo-numerictextbox>
-                                        <select class="form-control width-auto" formControlName="discountType">
-                                            <option value="percentage">%</option>
-                                            <option value="fixed">VNĐ</option>
-                                        </select>
-                                    </div>
-
+                                    <input type="text" class="form-control" formControlName="note" />
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Chẩn đoán
+                                        Chẩn đoán,điều trị
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
@@ -117,6 +68,28 @@
                             </tr>
                         </tbody>
                     </table>
+                   
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Loại răng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">                             
+                                <kendo-combobox [data]="filteredToothCategories" [textField]="'name'"
+                                    [filterable]="true" formControlName="toothCategory"
+                                    (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx
+                                    [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>   
+                    <table class="o_group o_inner_group o_group_col_6">
+                        
+                    </table>              
                 </div>
 
                 <div class="teeth-map">

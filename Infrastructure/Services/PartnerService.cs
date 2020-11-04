@@ -472,6 +472,14 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear,
+                Phone = x.Phone,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Street = x.Street,
             }).ToListAsync();
             return partners;
         }
@@ -483,6 +491,7 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Phone = x.Phone,
                 Name = x.Name
+
             }).ToListAsync();
             return partners;
         }
