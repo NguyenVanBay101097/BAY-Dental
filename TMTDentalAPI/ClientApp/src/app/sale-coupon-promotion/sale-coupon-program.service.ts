@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
@@ -41,7 +41,11 @@ export class SaleCouponProgramService {
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<SaleCouponProgramBasic>> {
-        return this.http.get<PagedResult2<SaleCouponProgramBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+        const headerSettings: { [name: string]: string | string[]; } = {};
+        headerSettings['Content-Type'] = 'application/json';
+        headerSettings['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxNmU2NDE5Zi1iMWRhLTQwZDctYTYxMC0xOGM2OTQxOGYzZTMiLCJ1bmlxdWVfbmFtZSI6IjEyMzEyMyIsImNvbXBhbnlfaWQiOiIwY2VkYWFmZC0wNjFiLTRkZTUtZDg3Zi0wOGQ4N2FlZDVhNDkiLCJ1c2VyX3Jvb3QiOiJUcnVlIiwibmJmIjoxNjA0NDg3OTQ0LCJleHAiOjE2MDUwOTI3NDQsImlhdCI6MTYwNDQ4Nzk0NH0.V2nxhWIDWX5w_EyjXCOuLcK2u9fUBW_ca4KHtq7kR6Q';
+        const newHeader = new HttpHeaders(headerSettings);
+        return this.http.get<PagedResult2<SaleCouponProgramBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }), headers:newHeader });
     }
 
     get(id): Observable<SaleCouponProgramDisplay> {

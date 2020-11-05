@@ -1,0 +1,16 @@
+.content-content {
+    font-weight: bolder;
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.item-promotion {
+    min-height: 70px;
+    max-height: 100px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden
+}

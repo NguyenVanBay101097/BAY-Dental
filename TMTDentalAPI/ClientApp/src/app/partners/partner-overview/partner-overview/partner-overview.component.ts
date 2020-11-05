@@ -5,6 +5,8 @@ import { AccountCommonPartnerReport, AccountCommonPartnerReportService } from 's
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService } from 'src/app/promotion-programs/promotion-program.service';
+import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { PartnersService } from 'src/app/shared/services/partners.service';
@@ -21,6 +23,7 @@ export class PartnerOverviewComponent implements OnInit {
   partner: PartnerDisplay;
   customerAppointment: AppointmentDisplay;
   saleQuotations: SaleOrderLineDisplay;
+  promotions: SaleCouponProgramBasic = new SaleCouponProgramBasic();
 
   limit = 20;
   listSaleOrder: SaleOrderBasic[] = [];
@@ -35,6 +38,7 @@ export class PartnerOverviewComponent implements OnInit {
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
     private saleOrderLineService: SaleOrderLineService,
     private saleOrderService: SaleOrderService,
+    private saleCouponProgramService: SaleCouponProgramService
   ) { }
 
   ngOnInit() {
@@ -44,6 +48,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.getSaleQoutation();
     this.loadReport();
     this.loadSaleOrder();
+    this.loadPromotion();
   }
 
   GetPartner() {
@@ -92,6 +97,14 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadCustomerAppointment();
   }
 
-
+  loadPromotion() {
+    const val = new SaleCouponProgramPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.programType = 'promotion_program';
+    this.saleCouponProgramService.getPaged(val).subscribe((res: any) => {
+    this.promotions = res.items;
+    });
+  }
 
 }

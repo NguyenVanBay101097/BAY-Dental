@@ -4,6 +4,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerService } from '../../partner.service';
 
 @Component({
@@ -48,10 +49,44 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
     });
   }
 
-  getNextAppointment() {
-    this.partnerService.getNextAppointment(this.partnerId).subscribe(rs => {
-        this.customerAppointment = rs;
-    });
+  removeAppointment() {
+    if (this.customerAppointment) {
+      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Xóa lịch hẹn';
+      modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
+      modalRef.result.then(() => {
+        this.appointmentService.removeAppointment(this.customerAppointment.id).subscribe(() => {
+          this.getNextAppointment();
+          this.notificationService.show({
+            content: "Xóa lịch hẹn thành công!.",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+        })
+      }, () => { });
+    }
   }
 
+  editAppointment() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.appointId = this.customerAppointment.id;
+    modalRef.result.then(() => {
+      this.getNextAppointment();
+      this.notificationService.show({
+        content: "Sửa lịch hẹn thành công!.",
+        hideAfter: 3000,
+        position: { horizontal: "center", vertical: "top" },
+        animation: { type: "fade", duration: 400 },
+        type: { style: "success", icon: true },
+      });
+    }, () => { });
+  }
+
+  getNextAppointment() {
+    this.partnerService.getNextAppointment(this.partnerId).subscribe(rs => {
+      this.customerAppointment = rs;
+    });
+  }
 }

@@ -1,3 +1,14 @@
 <div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; overflow: hidden;">
-
+    <div class="h-100 w-100">
+        <div class=" m-2" style="max-height: 30%;">
+            <div class="d-flex justify-content-between">
+                <h5>Ưu đãi</h5>
+            </div>
+        </div>
+        <div class="card-body overflow-auto t-scrollbar py-2 d-flex" style="max-height: 70%;">
+            <div *ngFor="let item of promotions" class="w-50 card text-center m-1 item-promotion">
+                {{item.name}}
+            </div>
+        </div>
+    </div>
 </div>
