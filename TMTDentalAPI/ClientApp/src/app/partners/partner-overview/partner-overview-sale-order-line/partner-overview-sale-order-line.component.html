@@ -1,0 +1,41 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}" field="name"
+        title="Tên dịch vụ" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}" field="teeth"
+        title="Răng">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <div *ngIf="dataItem.teeth">
+                <span *ngFor="let teeth of dataItem.teeth" class="badge badge-primary mr-1">{{teeth.name}}</span>
+            </div>
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}"
+        field="employee.name" title="Bác sĩ">
+    </kendo-grid-column>
+
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}" field="priceUnit"
+        title="Đơn giá">
+        <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.priceUnit | number}}</ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}"
+        field="productUOMQty" title="Số lượng">
+        <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.productUOMQty | number}}</ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}" field="name"
+        title="Giảm">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <span *ngIf="dataItem.discountType == 'percentage'">{{dataItem.discount | number}} %</span>
+            <span *ngIf="dataItem.discountType == 'fixed'">{{dataItem.discountFixed | number}} VNĐ</span>
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}"
+        field="priceSubTotal" title="Thành tiền">
+        <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.priceSubTotal | number}}</ng-template>
+    </kendo-grid-column>
+</kendo-grid>

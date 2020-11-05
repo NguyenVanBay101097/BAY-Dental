@@ -14,7 +14,6 @@ namespace Infrastructure.Services
         Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id);
         Task<SaleOrder> GetSaleOrderWithLines(Guid id);
         Task UpdateOrderAsync(Guid id, SaleOrderSave val);
-        Task<PagedResult2<SaleOrderDisplay>> GetPagedResultDisplayAsync(SaleOrderPaged val);
         Task<SaleOrder> GetSaleOrderByIdAsync(Guid id);
         Task UnlinkSaleOrderAsync(SaleOrder order);
 

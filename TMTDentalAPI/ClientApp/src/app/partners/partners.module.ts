@@ -62,6 +62,7 @@ import { PartnerOverviewReportComponent } from './partner-overview/partner-overv
 import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
 import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
+import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 
 @NgModule({
   declarations: [
@@ -114,6 +115,7 @@ import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-p
     PartnerOverviewPromotionComponent,
     PartnerOverviewReportComponent,
     PartnerOverviewImageComponent,
+    PartnerOverviewSaleOrderLineComponent,
   ],
   imports: [
     CommonModule,

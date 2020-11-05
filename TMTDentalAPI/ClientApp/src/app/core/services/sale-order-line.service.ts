@@ -20,7 +20,7 @@ export class SaleOrderLinesPaged {
     isQuotation: boolean;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -30,11 +30,15 @@ export class SaleOrderLineService {
     }
 
     get(val: any) {
-        return this.http.get(this.baseApi + this.apiUrl, {params: new HttpParams({ fromObject: val })});
+        return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     create(val): Observable<SaleOrderLineDisplay> {
         return this.http.post<SaleOrderLineDisplay>(this.baseApi + this.apiUrl, val);
+    }
+
+    getDisplayBySaleOrder(id): Observable<SaleOrderLineDisplay[]> {
+        return this.http.get<SaleOrderLineDisplay[]>(this.baseApi + this.apiUrl + '/GetDisplayBySaleOrder/' + id);
     }
 
     cancelOrderLine(ids: string[]) {

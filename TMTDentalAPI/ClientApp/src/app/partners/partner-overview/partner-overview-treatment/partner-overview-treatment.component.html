@@ -1,42 +1,42 @@
-<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; overflow: hidden;">
+<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf;border-radius: 5px; overflow: hidden;">
     <div class="d-flex justify-content-between align-items-center p-2 border-bottom" style="height: 15% !important;">
-        <h5 class="m-0">Phiếu điều trị</h5>
+        <h5 class="m-0 text-primary">Phiếu điều trị</h5>
         <button type="button" (click)="chossesSaleOrder(null)" class="btn btn-primary btn-sm">Thêm</button>
     </div>
 
-    <kendo-grid [data]="gridData" [pageSize]="limit" style="height: 85% !important;" [skip]="skip" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Số phiếu" width="60">
+    <kendo-grid [data]="gridData" [pageSize]="limit" style="height: 85% !important;border-radius: 5px;"
+        [resizable]="true" [skip]="skip" [loading]="loading">
+        <kendo-grid-column [style.line-height.px]="14"
+            [headerStyle]="{'color': '#007bff', 'font-weight':'600','line-height': '1em'}" field="name" title="Số phiếu"
+            width="60">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <a class="text-primary" (click)="chossesSaleOrder(dataItem.id)">{{dataItem.name}}</a>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Ngày lập phiếu" width="150">
+        <kendo-grid-column [style.line-height.px]="14"
+            [headerStyle]="{'color': '#007bff','font-weight':'600','line-height': '1em'}" field="dateOrder"
+            title="Ngày lập phiếu" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" title="Tổng tiền" width="80">
+        <kendo-grid-column [style.line-height.px]="14"
+            [headerStyle]="{'color': '#007bff','font-weight':'600','line-height': '1em'}" field="amountTotal"
+            title="Tổng tiền" width="80">
         </kendo-grid-column>
-        <kendo-grid-column field="residual" title="Còn thiếu" width="80">
+        <kendo-grid-column [style.line-height.px]="14"
+            [headerStyle]="{'color': '#007bff','font-weight':'600','line-height': '1em'}" field="residual"
+            title="Còn lại" width="80">
         </kendo-grid-column>
-        <ng-template kendoGridDetailTemplate="let dataItem">
-            <div class="t-conTable">
-                <div class="t-parTable t-scrollbar">
-                    <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
-                        <thead>
-                            <tr>
-                                <th>Số phiếu</th>
-                               
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr (click)="chossesSaleOrder(item.id)" *ngFor="let item of dataItem.orderLines">
-                                <td>{{item.name}}</td>
-                              
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </ng-template>
+        <kendo-grid-column [style.line-height.px]="14"
+            [headerStyle]="{'color': '#007bff','font-weight':'600','line-height': '1em'}" field="state"
+            title="Trạng thái" width="80">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span *ngIf="dataItem.state === 'draft'">Nháp</span>
+                <span *ngIf="dataItem.state === 'done'">Hoàn thành</span>
+                <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-partner-overview-sale-order-line [saleOrderId]="dataItem.id"></app-partner-overview-sale-order-line>
+        </div>
     </kendo-grid>
 
 </div>

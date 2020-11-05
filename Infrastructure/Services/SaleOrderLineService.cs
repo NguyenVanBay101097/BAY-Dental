@@ -55,7 +55,7 @@ namespace Infrastructure.Services
                     Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
-                line.PriceTotal = line.PriceSubTotal + line.PriceTax;              
+                line.PriceTotal = line.PriceSubTotal + line.PriceTax;
             }
         }
 
@@ -207,7 +207,7 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var amountPaid = 0M;
-                foreach(var rel in line.SaleOrderLinePaymentRels)
+                foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
                     if (payment.State == "draft")
@@ -310,7 +310,7 @@ namespace Infrastructure.Services
             }
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
-            if (val.Limit > 0 )
+            if (val.Limit > 0)
             {
                 query = query.Take(val.Limit).Skip(val.Offset);
             }
@@ -472,7 +472,7 @@ namespace Infrastructure.Services
 
             var commissionLineObj = GetService<ISaleOrderLinePartnerCommissionService>();
             var commission_lines = new List<SaleOrderLinePartnerCommission>();
-            foreach(var line in self)
+            foreach (var line in self)
             {
                 await commissionLineObj.DeleteAsync(line.PartnerCommissions);
 
@@ -504,6 +504,15 @@ namespace Infrastructure.Services
             };
 
             return res;
+        }
+
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id)
+        {
+            var lines = await SearchQuery(x => x.OrderId == Id)
+                .Include(x => x.Employee)
+                .Include("SaleOrderLineToothRels.Tooth")
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
         }
     }
 }
