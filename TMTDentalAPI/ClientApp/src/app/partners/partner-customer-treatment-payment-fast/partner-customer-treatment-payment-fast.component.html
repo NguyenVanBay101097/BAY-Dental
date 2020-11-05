@@ -8,7 +8,7 @@
                 <span *ngIf="saleOrderId">{{saleOrder.name}}</span>
                 <span *ngIf="!saleOrderId">Mới</span>
             </li>
-        </ol>      
+        </ol>
     </div>
 </div>
 
@@ -22,14 +22,16 @@
                         Trở lại
                     </a>
                     <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
-                    *ngIf="saleOrderId">
-                    Thêm mới</button>
-                    <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft' && !saleOrderId"
+                        *ngIf="saleOrderId">
+                        Thêm mới</button>
+                    <!-- <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft' && !saleOrderId"
                         class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
                         Lưu và xác nhận
-                    </button>
-                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'" (click)="onSave()">Lưu</button>
-                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'" (click)="actionConfirm()">Xác
+                    </button> -->
+                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'"
+                        (click)="onSave()">Lưu</button>
+                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'"
+                        (click)="onSaveConfirm()">Xác
                         nhận</button>
                     <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-primary btn-sm" (click)="actionPayment(saleOrderId)">
@@ -46,7 +48,7 @@
                 </div>
 
             </div>
-            <div class="o_form_sheet">                
+            <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_4">
                         <tbody>
@@ -128,8 +130,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -162,25 +164,28 @@
                             <div class="w-75 h-100">
                                 <!-- Component Form Service Payment -->
                                 <div class="my-2 d-flex justify-content-end">
-
-                                    <button type="button" hasGroups [groups]="'sale.group_service_card'"
-                                        class="btn btn-outline-secondary btn-sm btn-treatment mx-1" (click)="showApplyCardDialog()"
-                                        *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
-                                        <span>thẻ tiền mặt</span>
-                                    </button>
-                                    <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
-                                        class="btn btn-outline-secondary btn-sm btn-treatment mx-1" (click)="showApplyCouponDialog()"
-                                        *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
-                                        <span>coupon, mã khuyến mãi</span>
-                                    </button>
                                     <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
                                         name="recompute_coupon_lines" placement="bottom"
                                         triggers="mouseenter:mouseleave"
                                         ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
-                                        popoverTitle="Cập nhật khuyến mãi" class="btn btn-outline-secondary btn-sm btn-treatment mr-3"
+                                        popoverTitle="Cập nhật khuyến mãi"
+                                        class="btn btn-outline-secondary btn-sm btn-treatment mx-1"
                                         *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1"
                                         (click)="applyPromotion()">
                                         <span>Cập nhật khuyến mãi</span>
+                                    </button>
+
+                                    <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                                        class="btn btn-outline-secondary btn-sm btn-treatment mx-1"
+                                        (click)="showApplyCouponDialog()"
+                                        *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.state) !== -1">
+                                        <span>coupon, mã khuyến mãi</span>
+                                    </button>
+                                    <button type="button" hasGroups [groups]="'sale.group_service_card'"
+                                        class="btn btn-outline-secondary btn-sm btn-treatment mr-3"
+                                        (click)="showApplyCardDialog()"
+                                        *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
+                                        <span>Áp dụng thẻ tiền mặt</span>
                                     </button>
                                     <app-sale-order-apply-discount-default-dialog
                                         (discountFormGroup)="onApplyDiscount($event)">
@@ -298,11 +303,11 @@
                                         </tr>
                                         <tr>
                                             <td>Số tiền thanh toán</td>
-                                            <td>{{amountPaid | number}}</td>
+                                            <td>{{saleOrder.paid ? saleOrder.paid : 0  | number}}</td>
                                         </tr>
                                         <tr>
                                             <td>Còn lại</td>
-                                            <td>{{saleOrder.residual | number}}</td>
+                                            <td>{{getResidual ? getResidual : 0 | number}}</td>
                                         </tr>
                                     </table>
                                 </div>

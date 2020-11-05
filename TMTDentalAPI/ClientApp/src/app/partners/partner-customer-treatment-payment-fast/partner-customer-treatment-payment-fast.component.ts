@@ -63,6 +63,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   filteredJournals: AccountJournalSimple[];
+  journalFixed: AccountJournalSimple;
 
   discountDefault: DiscountDefault;
 
@@ -110,6 +111,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       journal: null,
     });
 
+    this.loadFilteredJournals();
+
     this.routeActive();
     this.loadEmployees();
     this.loadPartners();
@@ -117,7 +120,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.loadDotKhamList();
     // this.loadLaboOrderList();
     this.loadPayments();
-    this.loadFilteredJournals();
+
+   
     // this.loadPricelists();
   }
 
@@ -160,11 +164,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
           if (!this.saleOrderId) {
             this.onChangePartner(result.partner);
+
           }
         }
 
-        // this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()], 'id');
-
+        if (!this.saleOrderId) {
+          this.formGroup.get('journal').patchValue(this.getJournalDefault());
+        }
 
 
         // if (result.pricelist) {
@@ -223,13 +229,13 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
-
+      this.routeActive();
     })
   }
 
   getJournalDefault() {
-    var jounrnalDedault = this.filteredJournals.find(x => x.name == "Tiền mặt");
-    return jounrnalDedault;
+      var jounrnalDedault = this.filteredJournals.find(x => x.name == "Tiền mặt");
+      return jounrnalDedault;  
   }
 
 
@@ -244,6 +250,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
 
   actionPayment(id) {
+
+    var val = this.formGroup.value;
+
+    if(!val.journal){
+      this.notificationService.show({
+        content: "Chọn hình thức thanh toán",
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
+
     var pay = this.fb.group({
       amount: 0,
       paymentDateObj: [null, Validators.required],
@@ -259,11 +278,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       serviceCardOrderIds: null,
     });
 
-    var val = this.formGroup.value;
-
     if (id) {
       this.paymentService.saleDefaultGet([id]).subscribe(rs2 => {
-        debugger
         pay.patchValue(rs2);
         pay.value.amount = val.amountTotal;
         pay.value.journal = val.journal;
@@ -345,7 +361,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return this.formGroup.get('card').value;
   }
 
-  get amountPaid(){
+  get amountPaid() {
     var total = 0;
 
     this.orderLines.controls.forEach(line => {
@@ -855,7 +871,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       return false;
     }
     var val = this.getFormDataSave();
-    this.saleOrderService.create(val)
+    if(!this.saleOrderId){
+      this.saleOrderService.create(val)
       .pipe(
         mergeMap(r => {
           this.saleOrderId = r.id;
@@ -868,8 +885,27 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
             id: this.saleOrderId
           },
         });
+        this.journalFixed = this.formGroup.get('journal').value;
         this.loadRecord();
       });
+    }else{
+      this.saleOrderService.update(this.saleOrderId, val).pipe(
+        mergeMap(r => {        
+          return this.saleOrderService.actionConfirm([this.saleOrderId]);
+        })
+      ).subscribe(() => {
+        this.router.navigate(['partners/treatment-paymentfast/from'], {
+          queryParams: {
+            id: this.saleOrderId
+          },
+        });
+        this.journalFixed = this.formGroup.get('journal').value;
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+    
   }
 
   checkPromotion(id) {
@@ -974,6 +1010,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
         }
 
+        if(this.journalFixed){
+          this.filteredJournals = _.unionBy(this.filteredJournals, [this.journalFixed], 'id');
+        }else{
+          this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()], 'id');
+        }
+
         let control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -987,6 +1029,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.computeAmountTotal();
 
       });
+    }else{
+      this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()],'id');
     }
   }
 
@@ -1032,7 +1076,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
 
     modalRef.result.then(result => {
-      debugger
       for (let i = 0; i < result.length; i++) {
         let line = result[i] as any;
         line.teeth = this.fb.array(line.teeth);

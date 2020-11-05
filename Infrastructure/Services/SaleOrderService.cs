@@ -157,6 +157,7 @@ namespace Infrastructure.Services
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
+          
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -786,6 +787,8 @@ namespace Infrastructure.Services
                 };
             }
 
+
+
             var programObj = GetService<ISaleCouponProgramService>();
             var rewards = new List<SaleOrderLine>();
             var lines = _GetPaidOrderLines(self);
@@ -801,6 +804,7 @@ namespace Infrastructure.Services
                 }
 
                 var total_discount_amount = 0M;
+
                 foreach (var line in lines)
                 {
                     var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
@@ -829,6 +833,7 @@ namespace Infrastructure.Services
             return discount_amount;
         }
 
+
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
             var total_amount = _GetPaidOrderLines(self).Sum(x => x.PriceTotal);
@@ -840,7 +845,7 @@ namespace Infrastructure.Services
 
         private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
         {
-            return self.OrderLines.Where(x => !x.IsRewardLine && !(x.QtyInvoiced > 0)).ToList();
+            return self.OrderLines.Where(x => !x.IsRewardLine && (x.QtyInvoiced > 0)).ToList();
         }
 
         public async Task ApplyPromotion(Guid id)
@@ -1110,7 +1115,7 @@ namespace Infrastructure.Services
             await UpdateAsync(order);
 
             var self = new List<SaleOrder>() { order };
-           // await _GenerateDotKhamSteps(self);
+            // await _GenerateDotKhamSteps(self);
 
             if (order.InvoiceStatus == "to invoice")
             {
@@ -1391,7 +1396,7 @@ namespace Infrastructure.Services
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-           // await _GenerateDotKhamSteps(self);
+            // await _GenerateDotKhamSteps(self);
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -1645,6 +1650,9 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
                 .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .Include(x => x.CodePromoProgram).ToListAsync();
             foreach (var order in self)
             {
@@ -1742,6 +1750,7 @@ namespace Infrastructure.Services
             }
 
             _AmountAll(order);
+            _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(order);
         }
 
@@ -1812,6 +1821,13 @@ namespace Infrastructure.Services
                     else
                         residual -= invoice.AmountResidual;
                 }
+
+                var lines = order.OrderLines.Where(x => x.IsRewardLine).ToList();
+                foreach(var line in lines)
+                {
+                    residual += line.PriceSubTotal;
+                }
+                
 
                 order.Residual = residual;
             }
