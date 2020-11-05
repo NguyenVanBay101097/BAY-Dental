@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -56,5 +57,7 @@ namespace Infrastructure.Services
         Task<IQueryable<PartnerViewModel>> GetViewModelsAsync();
         Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync();
         Task UpdateTags(PartnerAddRemoveTagsVM val);
+
+        Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val);
     }
 }

@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { LaboOrderReportInput, LaboOrderReportOutput, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
 import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 
 @Component({
@@ -19,16 +20,19 @@ export class ReceptionDashboardComponent implements OnInit {
   saleReport: SaleReportItem;
   appointmentStateCount = {};
   laboOrderReport: LaboOrderReportOutput;
+  customerReport: PartnerCustomerReportOutput;
 
   constructor(private intlService: IntlService, 
     private appointmentService: AppointmentService, 
     private saleReportService: SaleReportService, 
-    private laboOrderService: LaboOrderService) { }
+    private laboOrderService: LaboOrderService, 
+    private partnerService: PartnerService) { }
 
   ngOnInit() {
     this.loadSaleReport();
     this.loadAppoiment();
     this.loadLaboOrderReport();
+    this.loadPartnerCustomerReport();
   }
 
   loadSaleReport() {
@@ -81,10 +85,25 @@ export class ReceptionDashboardComponent implements OnInit {
     var val = new LaboOrderReportInput();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    console.log(val);
+
     this.laboOrderService.getLaboOrderReport(val).subscribe(
       result => {
         this.laboOrderReport = result;
+      },
+      error => {
+
+      }
+    );
+  }
+
+  loadPartnerCustomerReport() {
+    var val = new PartnerCustomerReportInput();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+
+    this.partnerService.getPartnerCustomerReport(val).subscribe(
+      result => {
+        this.customerReport = result;
       },
       error => {
 
