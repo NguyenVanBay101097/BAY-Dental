@@ -42,6 +42,7 @@ export class DiscountDefault {
 }
 
 
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -49,6 +50,11 @@ export class SaleOrderService {
 
     getPaged(val: any): Observable<PagedResult2<SaleOrderBasic>> {
         return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getPagedDisplay(val: any): Observable<PagedResult2<SaleOrderDisplay>> {
+        return this.http.get<PagedResult2<SaleOrderDisplay>>(this.baseApi + this.apiUrl + "/GetPagedDisplay", { params: new HttpParams({ fromObject: val }) });
+
     }
 
     get(id): Observable<SaleOrderDisplay> {

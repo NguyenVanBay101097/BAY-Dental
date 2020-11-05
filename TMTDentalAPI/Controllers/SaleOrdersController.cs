@@ -50,6 +50,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetPagedDisplay([FromQuery] SaleOrderPaged val)
+        {
+            var result = await _saleOrderService.GetPagedResultDisplayAsync(val);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
