@@ -102,14 +102,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
     this.routeActive();
     this.loadEmployees();
-    this.employeeCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.employeeCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value))
-    ).subscribe(result => {
-      this.filteredEmployees = result.items;
-      this.employeeCbx.loading = false;
-    });
+    // this.employeeCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.employeeCbx.loading = true)),
+    //   switchMap(value => this.searchEmployees(value))
+    // ).subscribe(result => {
+    //   this.filteredEmployees = result.items;
+    //   this.employeeCbx.loading = false;
+    // });
     // this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
     // this.loadLaboOrderList();
@@ -757,22 +757,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
     var val = this.getFormDataSave();
-    if (!this.id) {
+    if (!this.saleOrderId) {
       this.saleOrderService.create(val)
         .pipe(
           mergeMap(r => {
-            this.id = r.id;
+            this.saleOrderId = r.id;
             return this.saleOrderService.actionConfirm([r.id]);
           })
         )
         .subscribe(r => {
-          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
         });
     } else {
-      this.saleOrderService.update(this.id, val)
+      this.saleOrderService.update(this.saleOrderId, val)
         .pipe(
           mergeMap(r => {
-            return this.saleOrderService.actionConfirm([this.id]);
+            return this.saleOrderService.actionConfirm([this.saleOrderId]);
           })
         )
         .subscribe(() => {
