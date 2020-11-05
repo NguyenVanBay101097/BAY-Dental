@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="card-body overflow-auto t-scrollbar py-2 d-flex" style="max-height: 70%;">
-            <div *ngFor="let item of promotions" class="w-50 card text-center m-1 item-promotion">
+            <div *ngFor="let item of promotions" [routerLink]="[ '/programs/promotion-programs/form']" [queryParams]="{id: item.id}" class="w-50 card text-center m-1 item-promotion">
                 {{item.name}}
             </div>
         </div>

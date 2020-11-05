@@ -32,12 +32,12 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadDataFromApi()
+    this.loadDataFromApi();
   }
 
   chossesSaleOrder(id) {
     if (id) {
-      this.router.navigateByUrl(`sale-orders/form?id=${id}`)
+      this.router.navigateByUrl(`sale-orders/form?id=${id}`);
     }
   }
 

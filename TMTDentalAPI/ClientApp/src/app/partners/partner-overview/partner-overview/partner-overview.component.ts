@@ -23,7 +23,7 @@ export class PartnerOverviewComponent implements OnInit {
   partner: PartnerDisplay;
   customerAppointment: AppointmentDisplay;
   saleQuotations: SaleOrderLineDisplay;
-  promotions: SaleCouponProgramBasic = new SaleCouponProgramBasic();
+  promotions: SaleCouponProgramBasic[] = [];
 
   limit = 20;
   listSaleOrder: SaleOrderBasic[] = [];
@@ -46,7 +46,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.GetPartner();
     this.loadCustomerAppointment();
     this.getSaleQoutation();
-    this.loadSaleOrder();
+    this.loadPromotion();
   }
 
   GetPartner() {
