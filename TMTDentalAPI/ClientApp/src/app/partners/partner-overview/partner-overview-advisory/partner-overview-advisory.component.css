@@ -1,3 +1,9 @@
 .table-advisory th {
     color: #5d95d2;
 }
+
+.table-advisory tr td,
+.table-advisory tr th {
+    border: none;
+    background-color: white;
+}

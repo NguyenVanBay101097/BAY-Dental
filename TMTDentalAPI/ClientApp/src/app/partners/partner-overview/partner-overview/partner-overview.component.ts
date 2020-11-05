@@ -45,8 +45,8 @@ export class PartnerOverviewComponent implements OnInit {
     this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
     this.GetPartner();
     this.loadCustomerAppointment();
-    this.getSaleQoutation();
-    this.loadPromotion();
+    // this.getSaleQoutation();
+    // this.loadPromotion();
   }
 
   GetPartner() {

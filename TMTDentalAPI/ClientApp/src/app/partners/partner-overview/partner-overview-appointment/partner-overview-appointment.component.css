@@ -13,6 +13,6 @@
 }
 
 .appoint-table tr td:last-child {
-    font-weight: 600;
-    padding-left: 20px;
+    font-weight: bolder;
+    padding-left: 30px;
 }
