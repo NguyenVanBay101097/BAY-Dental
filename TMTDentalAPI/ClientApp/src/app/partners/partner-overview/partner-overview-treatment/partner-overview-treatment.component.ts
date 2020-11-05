@@ -38,6 +38,8 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   chossesSaleOrder(id) {
     if (id) {
       this.router.navigateByUrl(`sale-orders/form?id=${id}`)
+    } else {
+      this.router.navigateByUrl(`sale-orders/form`)
     }
   }
 
@@ -47,7 +49,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.partnerId = this.partnerId;
-    this.saleOrderService.getPagedDisplay(val).pipe(
+    this.saleOrderService.getPaged(val).pipe(
       map((response: any) =>
         (<GridDataResult>{
           data: response.items,

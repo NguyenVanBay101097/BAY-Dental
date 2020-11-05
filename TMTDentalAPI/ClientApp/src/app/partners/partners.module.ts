@@ -21,7 +21,6 @@ import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
-import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
@@ -62,6 +61,7 @@ import { PartnerOverviewPromotionComponent } from './partner-overview/partner-ov
 import { PartnerOverviewReportComponent } from './partner-overview/partner-overview-report/partner-overview-report.component';
 import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 
 @NgModule({
   declarations: [
@@ -114,13 +114,13 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
     PartnerOverviewPromotionComponent,
     PartnerOverviewReportComponent,
     PartnerOverviewImageComponent,
+    PartnerOverviewSaleOrderLineComponent,
   ],
   imports: [
     CommonModule,
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    HttpClientModule,
     FormsModule,
     SharedModule,
     FlexLayoutModule,

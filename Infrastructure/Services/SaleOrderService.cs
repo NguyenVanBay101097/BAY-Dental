@@ -224,56 +224,6 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<SaleOrderDisplay>> GetPagedResultDisplayAsync(SaleOrderPaged val)
-        {
-            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
-            if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.Name.Contains(val.Search) ||
-                x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
-
-            if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.PartnerId == val.PartnerId));
-
-            if (val.Id.HasValue)
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.Id == val.Id));
-
-            if (val.DateOrderFrom.HasValue)
-            {
-                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= dateFrom));
-            }
-            if (val.DateOrderTo.HasValue)
-            {
-                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
-            }
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                var states = val.State.Split(",");
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
-            }
-
-            if (val.IsQuotation.HasValue)
-                spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
-
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated)).Include(x => x.OrderLines);
-            var items = await query.Select(x => new SaleOrderDisplay
-            {
-                Id = x.Id,
-                OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(x.OrderLines),
-                DateOrder = x.DateOrder,
-                AmountTotal = x.AmountTotal,
-                Residual = x.Residual
-            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
-            var totalItems = await query.CountAsync();
-            return new PagedResult2<SaleOrderDisplay>(totalItems, val.Offset, val.Limit)
-            {
-                Items = items
-            };
-        }
-
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id))

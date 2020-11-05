@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISaleOrderLineService: IBaseService<SaleOrderLine>
+    public interface ISaleOrderLineService : IBaseService<SaleOrderLine>
     {
         void ComputeAmount(IEnumerable<SaleOrderLine> orderLines);
 
@@ -41,5 +41,7 @@ namespace Infrastructure.Services
         Task RecomputeCommissions(IEnumerable<SaleOrderLine> self);
 
         Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id);
     }
 }

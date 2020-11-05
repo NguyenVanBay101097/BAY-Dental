@@ -54,11 +54,7 @@ export class AccountCommonPartnerReportService {
     }
 
     getSummaryByPartner(id: string): Observable<AccountCommonPartnerReport> {
-        const headerSettings: { [name: string]: string | string[]; } = {};
-        headerSettings['Content-Type'] = 'application/json';
-        headerSettings['Authorization'] = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZTk1YzgyNi05MjQ4LTRkN2EtODAwMC04MDdmZjZkNTkzMGMiLCJ1bmlxdWVfbmFtZSI6ImZveGp1ZG85NSIsImNvbXBhbnlfaWQiOiIyOTg3ZmRmMS04ZWUzLTRhODctMDQ4MS0wOGQ4MzQzMDY5OWEiLCJ1c2VyX3Jvb3QiOiJUcnVlIiwibmJmIjoxNjA0NDAzMzA0LCJleHAiOjE2MDUwMDgxMDQsImlhdCI6MTYwNDQwMzMwNH0.rO8EITO37Z_v9OG4rlkDM3AqkzhDe8wYfUCKvGvSb_g';
-        const newHeader = new HttpHeaders(headerSettings);
-        return this.http.get<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryByPartner/" + id, { headers: newHeader });
+        return this.http.get<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryByPartner/" + id);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {
