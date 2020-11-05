@@ -4,40 +4,40 @@
             <h4 class="font-weight-bold">TRUY CẬP NHANH</h4>
             <div class="d-flex border-bottom border-secondary my-3 pb-3">
                 <div class="w-50 pr-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/appointments/kanban']" class="btn btn-primary w-100 h-100">
                         <i class="far fa-calendar-alt"></i>
                         Lịch hẹn
-                    </button>
+                    </a>
                 </div>
                 <div class="w-50 pl-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/partners/customers']" class="btn btn-primary w-100 h-100">
                         <i class="far fa-address-book"></i>
                         Khách hàng
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="d-flex border-bottom border-secondary my-3 pb-3">
                 <div class="w-50 pr-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}" class="btn btn-primary w-100 h-100">
                         Mua hàng
-                    </button>
+                    </a>
                 </div>
                 <div class="w-50 pl-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/']" class="btn btn-primary w-100 h-100">
                         Phiếu thu - Điều trị nhanh
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="d-flex border-bottom border-secondary my-3 pb-3">
                 <div class="w-50 pr-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/time-keepings']" class="btn btn-primary w-100 h-100">
                         Chấm công
-                    </button>
+                    </a>
                 </div>
                 <div class="w-50 pl-3">
-                    <button type="button" class="btn btn-primary w-100 h-100">
+                    <a [routerLink]="['/']" class="btn btn-primary w-100 h-100">
                         Tạo phiếu labo
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -46,11 +46,11 @@
             <div class="d-flex justify-content-between my-3">
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
                     <span>DOANH THU</span>
-                    <h4>50.000.000</h4>
+                    <h4>{{saleReport ? saleReport.priceTotal : 0}}</h4>
                 </div>
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>THANH TOÁN</span>
-                    <h4>30.000.000</h4>
+                    <span>DỊCH VỤ</span>
+                    <h4>{{saleReport ? saleReport.productUOMQty : 0}}</h4>
                 </div>
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
                     <span>TIỀN MẶT</span>
@@ -59,30 +59,16 @@
             </div>
             <div class="d-flex justify-content-between my-3">
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>LABO TỚI HẸN</span>
-                    <h4>5</h4>
+                    <span>LABO TỚI HẸN/ NHẬN</span>
+                    <h4>{{laboOrderReport ? laboOrderReport.laboReceived : 0}}/{{laboOrderReport ? laboOrderReport.laboAppointment : 0}}</h4>
                 </div>
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
                     <span>KHÁCH MỚI/ CŨ</span>
                     <h4>8/5</h4>
                 </div>
                 <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>ĐIỀU TRỊ MỚI/ TÁI KHÁM</span>
-                    <h4>8/5</h4>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between my-3">
-                <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>DỊCH VỤ</span>
-                    <h4>15</h4>
-                </div>
-                <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>KHÁCH ĐANG HẸN</span>
-                    <h4>1</h4>
-                </div>
-                <div class="w-30 d-flex flex-column text-center border border-secondary rounded py-2">
-                    <span>TỈ LỆ ĐẾN/ LỊCH HẸN</span>
-                    <h4>13/18</h4>
+                    <span>TỔNG LỊCH HẸN/ ĐÃ TỚI</span>
+                    <h4>{{appointmentStateCount.all ? appointmentStateCount.all : 0}}/{{appointmentStateCount.done ? appointmentStateCount.done : 0}}</h4>
                 </div>
             </div>
         </div>
@@ -98,6 +84,7 @@
                     <table class="t-sticky-thead t-sticky-col-left t-thead-nowrap t-tbody-nowrap">
                         <thead>
                             <tr>
+                                <th>Mã phiếu điều trị</th>
                                 <th>Khách hàng</th>
                                 <th>Bác sĩ</th>
                                 <th>Răng</th>
@@ -106,7 +93,7 @@
                                 <th>Tổng tiền</th>
                                 <th>Thanh toán</th>
                                 <th>Còn nợ</th>
-                                <th>Tái khám</th>
+                                <th>Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
