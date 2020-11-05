@@ -493,3 +493,12 @@ small {
 .o_kanban_record_top>.dropdown>.btn.dropdown-toggle.o-no-caret {
     padding: 0px;
 }
+
+@media only screen and (max-width: 1200px) {
+    .o_form_view .oe_avatar>img {
+        width: 60px;
+    }
+    .oe_avatar {
+        margin-right: 0px !important;
+    }
+}

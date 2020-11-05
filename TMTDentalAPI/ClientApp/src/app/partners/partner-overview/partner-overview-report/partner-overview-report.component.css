@@ -25,7 +25,7 @@
 }
 
 .content-title {
-    font-weight: 500;
+    font-weight: bold;
     text-overflow: ellipsis;
     white-space: pre;
     overflow: hidden;
@@ -38,4 +38,5 @@
     white-space: pre;
     overflow: hidden;
     vertical-align: middle;
+    margin-top: 5px;
 }
