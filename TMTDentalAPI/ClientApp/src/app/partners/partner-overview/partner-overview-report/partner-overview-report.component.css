@@ -1,12 +1,17 @@
 .report-title {
-    padding: 8px;
-    width: 100%;
-    height: 13%;
+    padding: 15px 15px 5px 15px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 37px;
+    /* identical to box height */
+    color: #0B92F3;
 }
 
 .report-content {
     width: 100%;
-    height: 87%;
+    height: 85%;
     color: #007bff;
 }
 
@@ -18,14 +23,37 @@
     height: 49% !important;
 }
 
+.col-6 {
+    padding: 15px;
+}
+
 .middle-cu {
-    border-radius: 5px;
-    border: 1px solid #007bff;
-    margin-bottom: 5px;
+    position: relative;
+    box-shadow: 7px 12px 18px rgba(17, 137, 247, 0.2);
+    border-radius: 8px;
+}
+
+.shape-cone {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 70px solid transparent;
+    border-right: 70px solid transparent;
+    border-top: 100px solid;
+    background: linear-gradient(139.84deg, #5056F9 33.64%, rgba(114, 119, 249, 0.64) 89.71%);
+    border-radius: 50%;
 }
 
 .content-title {
+    left: 0;
+    top: 25%;
+    font-family: Roboto;
+    font-style: normal;
     font-weight: 500;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FFFFFF;
+    position: absolute;
     text-overflow: ellipsis;
     white-space: pre;
     overflow: hidden;
@@ -33,7 +61,15 @@
 }
 
 .content-content {
+    font-family: Roboto;
+    font-style: normal;
     font-weight: 500;
+    left: 0;
+    top: 50%;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FFFFFF;
+    position: absolute;
     text-overflow: ellipsis;
     white-space: pre;
     overflow: hidden;

@@ -75,41 +75,27 @@ export class PartnerOverviewImageComponent implements OnInit {
     modalRef.result.then(() => {
       this.partnerService.deleteParnerImage(item.id).subscribe(
         () => {
-          this.imagesPreview.splice(index, 1);
-          this.processGroupImages();
+          this.loadData();
         })
     })
   }
 
   getImageIds() {
+    this.loadData();
+  }
+
+  loadData() {
     this.imagesPreview = [];
     var value = {
       partnerId: this.partnerId
     }
-
     this.partnerService.getPartnerImageIds(value).subscribe(
       result => {
         if (result) {
           this.imagesPreview = result;
-          this.processGroupImages();
         }
       }
     )
-  }
-
-  processGroupImages() {
-    var self = this;
-    var groups = _.groupBy(this.imagesPreview, function (obj) {
-      var date = new Date(obj.date);
-      return self.intlService.formatDate(date, 'dd/MM/yyyy');
-    });
-
-    this.imagesGroup = _.map(groups, function (group, day) {
-      return {
-        date: day,
-        images: group
-      }
-    });
   }
 
   viewImage(partnerImage: PartnerImageBasic) {

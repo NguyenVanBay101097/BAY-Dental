@@ -16,3 +16,14 @@
     font-weight: bolder;
     padding-left: 30px;
 }
+
+.appointment-title {
+    padding: 15px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 37px;
+    /* identical to box height */
+    color: #0B92F3;
+}

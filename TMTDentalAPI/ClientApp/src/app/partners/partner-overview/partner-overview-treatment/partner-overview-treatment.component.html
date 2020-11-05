@@ -1,7 +1,8 @@
-<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf;border-radius: 5px; overflow: hidden;">
-    <div class="d-flex justify-content-between align-items-center p-2 border-bottom" style="height: 15% !important;">
-        <h5 class="m-0 text-primary">Phiếu điều trị</h5>
-        <button type="button" (click)="chossesSaleOrder(null)" class="btn btn-primary btn-sm">Thêm</button>
+<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf;border-radius: 8px; overflow: hidden;">
+    <div class="treatment-title">
+        Phiếu điều trị
+        <button type="button" (click)="chossesSaleOrder(null)" style="font-family: Roboto;"
+            class="btn btn-primary btn-sm float-right"><i class="fas fa-folder-plus"></i> Thêm</button>
     </div>
 
     <kendo-grid [data]="gridData" [pageSize]="limit" style="height: 85% !important;border-radius: 5px;"

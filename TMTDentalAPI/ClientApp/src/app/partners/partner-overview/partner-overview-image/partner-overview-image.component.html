@@ -1,42 +1,35 @@
-<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; overflow: hidden;">
+<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; border-radius: 8px; overflow: hidden;">
     <div class="o_chatter oe_chatter h-100 w-100">
         <div class="o_mail_chatter_attachments h-100 w-100">
             <div class="o_chatter_attachment h-100 w-100">
-                <div class="d-inline-flex pl-2 pt-2 pr-2 h-23 w-100" style="height: 30%;">
-                    <div class="w-50">
-                        <h5 class=" text-primary">Hình ảnh</h5>
+                <div class="d-inline-flex w-100" style="height: 40%;">
+                    <div class="w-50 image-title">
+                        Hình ảnh
                     </div>
-                    <div class="w-50">
-                        <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">Thêm
-                            hình</button>
+                    <div class="w-50" style="padding:17px 15px;">
+                        <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
+                            <i class="far fa-image"></i> Thêm hình</button>
                         <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
                             accept="image/*" (change)="addPartnerImages($event)">
                     </div>
                 </div>
-                <div class="h-70 w-100 view-img" style="height: 77%;">
-                    <div class="o_attachments_view_image " *ngFor="let group of imagesGroup">
-                        <div class="o_attachments_date_separator">
-                            <span class="o_attachments_date">{{group.date}}</span>
-                        </div>
-                        <div class="o_attachments_previews">
-                            <!-- Preview hình ảnh -->
-                            <div class="o_attachment" *ngFor="let img of group.images;let i = index">
-                                <div class="o_attachment_wrap" (click)="viewImage(img)">
-                                    <div class="o_image_box">
-                                        <div class="o_attachment_image" id="{{img.name}}"
-                                            [style.background-image]="'url('+ img.uploadId + '?width=240&height=240)'">
-                                        </div>
-                                        <div class="o_image_overlay o_attachment_view">
-                                            <span class="fa fa-times o_attachment_delete_cross"
-                                                (click)="deletePartnerImages(i, $event)"
-                                                title="Delete {{img.name}}"></span>
-                                            <span class="o_attachment_title text-white">{{img.name}}</span>
-                                            <a class="o_attachment_download" (click)="stopPropagation($event)"
-                                                href="{{webContentApi}}/{{img.uploadId}}">
-                                                <i aria-label="Download" class="fa fa-download text-white"
-                                                    role="img"></i>
-                                            </a>
-                                        </div>
+                <div class="w-100 view-img" style="height: 60%; padding: 0 10px;">
+                    <div class="o_attachments_previews">
+                        <!-- Preview hình ảnh -->
+                        <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                            <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                <div class="o_image_box">
+                                    <div class="o_attachment_image" id="{{img.name}}"
+                                        [style.background-image]="'url('+ img.uploadId + '?width=240&height=240)'">
+                                    </div>
+                                    <div class="o_image_overlay o_attachment_view">
+                                        <span class="fa fa-times o_attachment_delete_cross"
+                                            (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
+                                        <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                            href="{{webContentApi}}/{{img.uploadId}}">
+                                            <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

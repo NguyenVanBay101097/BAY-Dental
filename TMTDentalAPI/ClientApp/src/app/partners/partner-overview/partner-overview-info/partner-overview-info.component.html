@@ -1,17 +1,26 @@
-<div class="h-100">
-    <div class=" h-100">
-        <div class="d-inline-flex" style="height: 20%; min-height: 90px;">
-            <div class="o_form_view" style="max-width: 30%;border: 50%;">
-                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100" [height]="100">
+<div class="h-100 w-100">
+    <div class="w-100 h-100">
+        <div class="d-inline-flex w-100" style="height: 25%; min-height: 90px;">
+            <div class="o_form_view" style="width: 30%;border: 50%;margin: auto;">
+                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100"
+                    [height]="100">
                 </app-image-file-upload>
             </div>
-            <div style="max-width: 70%;" class="ml-1">
+            <div style="width: 70%;" class="ml-1">
                 <h4>{{partner? partner.Name: ''}}</h4>
-                <label class="sup-label">Mã khách hàng: {{partner ? partner.Ref : ''}}</label>
-                <label class="sup-label">Ngày tạo:  {{partner ? (partner.Date | date:'shortDate') : '' }}</label>
+                <div>
+                    <label class="sup-label">Mã khách hàng: {{partner ? partner.Ref : ''}}</label>
+                </div>
+                <div>
+                    <label class="sup-label">Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}</label>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm" (click)="editCustomer()" style="font-size: 11px;"><i
+                            class="fas fa-user-edit"></i> Sửa</button>
+                </div>
             </div>
         </div>
-        <div style="height: 78.5%;" class="overflow-auto t-scrollbar info">
+        <div style="height: 75%;" class="overflow-auto t-scrollbar info">
             <table>
                 <tr>
                     <td class="th">Giới tính:</td>
@@ -19,11 +28,12 @@
                 </tr>
                 <tr>
                     <td class="th">Ngày sinh:</td>
-                    <td>{{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}</td>
+                    <td>{{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}
+                    </td>
                 </tr>
                 <tr>
                     <td class="th">Địa chỉ:
-                        <td>{{partner ? partner.Address: ''}}</td>
+                    <td>{{partner ? partner.Address: ''}}</td>
                 </tr>
                 <tr>
                     <td class="th">Điện thoại:</td>
@@ -48,7 +58,8 @@
                 <tr>
                     <td class="th">Nhãn dán:</td>
                     <td>
-                        <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories" (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
+                        <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
+                            (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
                         </app-partner-category-popover>
                     </td>
                 </tr>

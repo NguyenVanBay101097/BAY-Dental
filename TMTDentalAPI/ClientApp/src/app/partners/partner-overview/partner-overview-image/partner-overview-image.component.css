@@ -8,3 +8,26 @@
     text-align: center;
     border-bottom: 1px solid #ced4da;
 }
+
+.o_attachments_previews>.o_attachment {
+    width: 33.33333333%;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment {
+    padding: 0px;
+}
+
+.image-title {
+    padding: 15px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 37px;
+    /* identical to box height */
+    color: #0B92F3;
+}
+
+.o_attachment .o_attachment_wrap {
+    border-radius: 12px;
+}
