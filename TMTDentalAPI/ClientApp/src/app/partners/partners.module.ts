@@ -21,7 +21,6 @@ import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
-import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
@@ -121,7 +120,6 @@ import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-p
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    HttpClientModule,
     FormsModule,
     SharedModule,
     FlexLayoutModule,

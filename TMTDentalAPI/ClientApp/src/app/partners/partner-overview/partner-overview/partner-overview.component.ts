@@ -47,6 +47,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadCustomerAppointment();
     // this.getSaleQoutation();
     // this.loadPromotion();
+    this.loadReport();
   }
 
   GetPartner() {
