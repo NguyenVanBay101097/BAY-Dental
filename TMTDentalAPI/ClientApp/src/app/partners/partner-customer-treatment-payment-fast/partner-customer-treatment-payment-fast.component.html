@@ -187,9 +187,6 @@
                                         *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
                                         <span>Áp dụng thẻ tiền mặt</span>
                                     </button>
-                                    <app-sale-order-apply-discount-default-dialog
-                                        (discountFormGroup)="onApplyDiscount($event)">
-                                    </app-sale-order-apply-discount-default-dialog>
                                 </div>
 
                                 <div class="t-conTable" style="min-height: 340px;">
@@ -201,9 +198,9 @@
                                                     <th [style.min-width.px]="110">Thông tin bổ sung</th>
                                                     <th class="text-center">Số lượng</th>
                                                     <th class="text-right" [style.min-width.px]="60">Đơn giá</th>
-                                                    <th [style.min-width.px]="150" class="text-center">Giảm
+                                                    <th [style.min-width.px]="50" class="text-center">Giảm
                                                     </th>
-                                                    <th class="text-right">Thành tiền</th>
+                                                    <th class="text-right" [style.min-width.px]="130">Thành tiền</th>
                                                     <th class="text-center" [style.min-width.px]="20">
                                                         #
                                                     </th>
@@ -211,15 +208,15 @@
                                             </thead>
                                             <tbody formArrayName="orderLines">
                                                 <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                                    <tr [formGroupName]="i">
+                                                    <tr [formGroupName]="i" >
                                                         <td>{{line.get('name').value }}</td>
                                                         <td>
                                                             <a (click)="addInfoLineModal(line)">
                                                                 <span
-                                                                    class="badge badge-primary mr-1">{{lineTeeth(line)}}</span>
+                                                                    class="badge badge-primary mr-1">{{lineTeeth(line)}}{{line.get('diagnostic').value}}</span>
                                                                 <span
                                                                     *ngIf="!line.get('teeth').value || line.get('teeth').value.length ==0">
-                                                                    <i class="fas fa-tooth text-info"></i>
+                                                                    <i class="fas fa-plus-square text-primary"></i>
                                                                 </span>
                                                             </a>
                                                             <!-- <app-sale-order-teeth-popover [line]="line"
@@ -243,7 +240,8 @@
                                                         </td>
                                                         <td>
                                                             <div class="d-flex align-items-center justify-content-end">
-                                                                <kendo-numerictextbox
+                                                                <app-sale-order-line-discount-popover [discountForm]="line" (discountFormGroup)="onChangeDiscount($event,line)"></app-sale-order-line-discount-popover>
+                                                                <!-- <kendo-numerictextbox
                                                                     [class.d-none]="line.get('discountType').value !== 'percentage'"
                                                                     [min]="0" [max]="100" formControlName="discount"
                                                                     (blur)="updateSaleOrder()" [autoCorrect]="true"
@@ -263,7 +261,7 @@
                                                                     formControlName="discountType">
                                                                     <option value="percentage">%</option>
                                                                     <option value="fixed">VNĐ</option>
-                                                                </select>
+                                                                </select> -->
                                                             </div>
                                                         </td>
                                                         <td class="text-right">
@@ -303,11 +301,11 @@
                                         </tr>
                                         <tr>
                                             <td>Số tiền thanh toán</td>
-                                            <td>{{saleOrder.paid ? saleOrder.paid : 0  | number}}</td>
+                                            <td>{{saleOrder.paid | number}}</td>
                                         </tr>
                                         <tr>
                                             <td>Còn lại</td>
-                                            <td>{{getResidual ? getResidual : 0 | number}}</td>
+                                            <td>{{getResidual | number}}</td>
                                         </tr>
                                     </table>
                                 </div>

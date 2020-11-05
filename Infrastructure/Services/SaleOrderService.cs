@@ -157,7 +157,7 @@ namespace Infrastructure.Services
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
-          
+
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -378,7 +378,10 @@ namespace Infrastructure.Services
              .Include(x => x.OrderLines).Include("OrderLines.Product")
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
-             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program").FirstOrDefaultAsync();
+             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
 
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
             if (program != null)
@@ -418,6 +421,7 @@ namespace Infrastructure.Services
                         await _CreateRewardLine(order, coupon.Program);
 
                         order.AppliedCoupons.Add(coupon);
+                        _ComputeResidual(new List<SaleOrder>() { order });
                         await UpdateAsync(order);
 
                         coupon.State = "used";
@@ -1823,11 +1827,11 @@ namespace Infrastructure.Services
                 }
 
                 var lines = order.OrderLines.Where(x => x.IsRewardLine).ToList();
-                foreach(var line in lines)
+                foreach (var line in lines)
                 {
                     residual += line.PriceSubTotal;
                 }
-                
+
 
                 order.Residual = residual;
             }

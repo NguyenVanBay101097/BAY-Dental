@@ -121,7 +121,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     // this.loadLaboOrderList();
     this.loadPayments();
 
-   
+
     // this.loadPricelists();
   }
 
@@ -234,8 +234,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   getJournalDefault() {
-      var jounrnalDedault = this.filteredJournals.find(x => x.name == "Tiền mặt");
-      return jounrnalDedault;  
+    var jounrnalDedault = this.filteredJournals.find(x => x.name == "Tiền mặt");
+    return jounrnalDedault;
   }
 
 
@@ -253,7 +253,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
     var val = this.formGroup.value;
 
-    if(!val.journal){
+    if (!val.journal) {
       this.notificationService.show({
         content: "Chọn hình thức thanh toán",
         hideAfter: 3000,
@@ -871,26 +871,26 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       return false;
     }
     var val = this.getFormDataSave();
-    if(!this.saleOrderId){
+    if (!this.saleOrderId) {
       this.saleOrderService.create(val)
-      .pipe(
-        mergeMap(r => {
-          this.saleOrderId = r.id;
-          return this.saleOrderService.actionConfirm([r.id]);
-        })
-      )
-      .subscribe(r => {
-        this.router.navigate(['partners/treatment-paymentfast/from'], {
-          queryParams: {
-            id: this.saleOrderId
-          },
+        .pipe(
+          mergeMap(r => {
+            this.saleOrderId = r.id;
+            return this.saleOrderService.actionConfirm([r.id]);
+          })
+        )
+        .subscribe(r => {
+          this.router.navigate(['partners/treatment-paymentfast/from'], {
+            queryParams: {
+              id: this.saleOrderId
+            },
+          });
+          this.journalFixed = this.formGroup.get('journal').value;
+          this.loadRecord();
         });
-        this.journalFixed = this.formGroup.get('journal').value;
-        this.loadRecord();
-      });
-    }else{
+    } else {
       this.saleOrderService.update(this.saleOrderId, val).pipe(
-        mergeMap(r => {        
+        mergeMap(r => {
           return this.saleOrderService.actionConfirm([this.saleOrderId]);
         })
       ).subscribe(() => {
@@ -905,7 +905,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.loadRecord();
       });
     }
-    
+
   }
 
   checkPromotion(id) {
@@ -1010,9 +1010,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
         }
 
-        if(this.journalFixed){
+        if (this.journalFixed) {
           this.filteredJournals = _.unionBy(this.filteredJournals, [this.journalFixed], 'id');
-        }else{
+        } else {
           this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()], 'id');
         }
 
@@ -1029,8 +1029,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.computeAmountTotal();
 
       });
-    }else{
-      this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()],'id');
+    } else {
+      this.filteredJournals = _.unionBy(this.filteredJournals, [this.getJournalDefault()], 'id');
     }
   }
 
@@ -1465,14 +1465,20 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   }
 
-  onChangeDiscountFixed(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
-    if (res) {
-      res.patchValue(line.value);
-    }
-    this.getPriceSubTotal();
-    this.computeAmountTotal();
-  }
+  // onChangeDiscountFixed(event, line: FormGroup) {
+  //   var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+  //   if (res) {
+  //     res.value.discountType = event.discountType;
+  //     if (event.discountType = "fixed") {
+  //       res.value.discountFixed = event.discountFixed;
+  //     } else {
+  //       res.value.discount = event.discount;
+  //     }
+  //     res.patchValue(line.value);
+  //   }
+  //   this.getPriceSubTotal();
+  //   this.computeAmountTotal();
+  // }
 
   onChangePriceUnit(line: FormGroup) {
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
@@ -1503,9 +1509,16 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   }
 
-  onChangeDiscount(line: FormGroup) {
+  onChangeDiscount(event,line: FormGroup) {
+    debugger
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
+      line.value.discountType = event.discountType;
+      if (event.discountType == "fixed") {
+        line.value.discountFixed = event.discountFixed;
+      } else {
+        line.value.discount = event.discountPercent;
+      }
       res.patchValue(line.value);
     }
     this.getPriceSubTotal();
