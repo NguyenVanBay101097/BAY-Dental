@@ -65,7 +65,6 @@ export class ServiceCardOrderPaymentsDialogComponent implements OnInit {
     } else if (charCode == 8) {
       this.RemoveLength();
     } else if (charCode == 27) {
-      debugger
       this.activeModal.dismiss();
     } 
 

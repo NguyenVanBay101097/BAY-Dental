@@ -9,9 +9,6 @@ export class OdataViewModel {
   value: any;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
 export abstract class ODataService extends BehaviorSubject<GridDataResult | null> {
   protected BASE_URL: string = 'odata/';
   private headers: Headers;
@@ -23,9 +20,9 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
   public loading: boolean;
 
   constructor(
-    protected http: HttpClient,
-    @Inject('BASE_API') baseUrl: string,
-    protected tableName: string
+    public http: HttpClient,
+    @Inject('BASE_API') public baseUrl: string,
+    public tableName: string
   ) {
     super(null);
     this.headers = new Headers();

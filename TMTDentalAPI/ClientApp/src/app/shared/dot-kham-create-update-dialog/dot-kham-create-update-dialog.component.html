@@ -249,7 +249,7 @@
                                                 <th>Số</th>
                                                 <th>Ngày</th>
                                                 <th>Bác sĩ</th>
-                                                <th>Chuẩn đoán</th>
+                                                <!-- <th>Chuẩn đoán</th> -->
                                                 <th>#</th>
                                             </tr>
                                         </thead>
@@ -262,7 +262,7 @@
 
                                                 <td>{{ line.date | date : 'short' }}</td>
                                                 <td>{{ line.employeeName }}</td>
-                                                <td>{{ line.diagnostic }}</td>
+                                                <!-- <td>{{ line.diagnostic }}</td> -->
                                                 <td>
                                                     <button [disabled]="invoiceState=='cancel'" type="button"
                                                         class="btn btn-icon btn-sm btn-light mr-1" title="In đơn thuốc"

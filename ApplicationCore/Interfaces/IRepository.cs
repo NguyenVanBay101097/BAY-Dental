@@ -35,10 +35,8 @@ namespace ApplicationCore.Interfaces
         /// <param name="entity">Entity</param>
         void Delete(T entity);
 
-        IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            int offSet = 0,
-            int limit = int.MaxValue);
+        IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int offSet = 0, int limit = int.MaxValue,
+            bool isPagingEnabled = false);
 
         IEnumerable<T> SqlQuery(string sql, params object[] parameters);
 

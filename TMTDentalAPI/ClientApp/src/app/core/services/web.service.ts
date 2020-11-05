@@ -21,4 +21,9 @@ export class WebService {
     getFeatures() {
         return this.http.get(this.baseApi + this.apiUrl + '/Features');
     }
+
+    getExpire() {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetExpire');
+    }
+
 }

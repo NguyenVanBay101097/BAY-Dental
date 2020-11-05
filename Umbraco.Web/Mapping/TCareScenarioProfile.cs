@@ -13,7 +13,9 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<TCareScenario, TCareScenarioBasic>();
             CreateMap<TCareScenario, TCareScenarioDisplay>();
-            CreateMap<TCareScenarioSave, TCareScenario>();
+            CreateMap<TCareScenarioSave, TCareScenario>()
+                .ForMember(x => x.Campaigns, x => x.Ignore())
+                .ForMember(x => x.ChannelSocial, x => x.Ignore());
         }
     }
 }

@@ -1353,3 +1353,10 @@ span.char-count {
     line-height: 13px;
     min-width: 200px;
 }
+
+.popover-d-contents{
+    border: none !important;
+}
+.popover-d-contents .popover-body{
+    display: contents !important;
+}

@@ -29,7 +29,32 @@ namespace Infrastructure.Services
             var to = new EmailAddress(email);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, body, body);
 
-            //msg.AddSubstitution("[%first_name%]", item.NameTo);
+            msg.AddSubstitution("[%first_name%]", email);
+            msg.AddSubstitution("[from_name]", "TPOS.VN");
+            msg.AddSubstitution("[sender_name]", "TPOS.VN");
+            msg.AddSubstitution("[Sender_Name]", "TPOS.VN");
+            msg.AddSubstitution("[Sender_Address]", "54/35 Diệp Minh Châu, P. Tân Sơn Nhì, Q. Tân Phú");
+            msg.AddSubstitution("[Sender_City]", "Hồ Chí Minh");
+            msg.AddSubstitution("[Sender_State]", "Việt Nam");
+            msg.AddSubstitution("[Sender_Zip]", "700000");
+
+            msg.SetTemplateId(_config.TemplateId);
+
+            try
+            {
+                var response = await client.SendEmailAsync(msg);
+            }
+            catch { }
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string body, string name)
+        {
+            var client = new SendGridClient(_config.ApiKey);
+            var from = new EmailAddress(_config.From, "TPOS.VN");
+            var to = new EmailAddress(email);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, body, body);
+
+            msg.AddSubstitution("[%first_name%]", name);
             msg.AddSubstitution("[from_name]", "TPOS.VN");
             msg.AddSubstitution("[sender_name]", "TPOS.VN");
             msg.AddSubstitution("[Sender_Name]", "TPOS.VN");

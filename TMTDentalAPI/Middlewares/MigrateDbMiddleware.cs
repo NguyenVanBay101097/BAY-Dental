@@ -1,4 +1,6 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore.Constants;
+using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using HtmlAgilityPack;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -25,43 +27,27 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //nen check version de han che viec migrate hay ko?
-            var tenant = context.GetTenant<AppTenant>();
-            if (tenant != null)
+            var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__migrate");
+            var lockObj = LockUtils.Get(key);
+            await lockObj.WaitAsync();
+
+            try
             {
-                //Microsoft.Extensions.Primitives.StringValues skipCheck = "";
-                //if (!context.Request.Query.TryGetValue("skipCheckExpired", out skipCheck))
-                //{
-                //    var now = DateTime.Now;
-                //    if (tenant.DateExpired.HasValue && tenant.DateExpired.Value <= now)
-                //    {
-                //        //await HandleExpiredAsync(context);
-                //    }
-                //}
+                var tenant = context.GetTenant<AppTenant>();
+                if (tenant != null)
+                {
+                    var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
+                    var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+                    if (pendingMigrations.Any())
+                        await dbContext.Database.MigrateAsync();
+                }
 
-                var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
-                var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                    await dbContext.Database.MigrateAsync();
+                await _next(context);
             }
-
-            // Call the next delegate/middleware in the pipeline
-            await _next(context);
+            finally
+            {
+                lockObj.Release();
+            }
         }
-
-        //private static Task HandleExpiredAsync(HttpContext context)
-        //{
-        //    return context.Response.WriteHtmlAsync("<html>" +
-        //        "<head>" +
-        //            "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-        //        "</head>" +
-        //        "<body>" +
-        //            "<div class=\"jumbotron\">" +
-        //                "<h1 class=\"display-4\">Hết hạn!</h1>" +
-        //                "<p class=\"lead\">Ứng dụng đã hết hạn, vui lòng liên hệ hotline <strong>0908075455</strong> để được hỗ trợ.</p>" +
-        //            "</div>" +
-        //        "</body>" +
-        //        "</html>");
-        //}
     }
 }

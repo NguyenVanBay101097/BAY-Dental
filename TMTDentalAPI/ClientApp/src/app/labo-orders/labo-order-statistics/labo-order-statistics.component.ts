@@ -21,6 +21,7 @@ import { PartnerPaged } from "src/app/partners/partner-simple";
 import { ProductService, ProductPaged } from "src/app/products/product.service";
 import * as _ from "lodash";
 import { LaboOrderLineService } from "../labo-order-line.service";
+import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
 
 @Component({
   selector: "app-labo-order-statistics",
@@ -61,6 +62,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
     private laboOrderLineService: LaboOrderLineService,
     private productService: ProductService,
     private intlService: IntlService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit() {
@@ -199,31 +201,6 @@ export class LaboOrderStatisticsComponent implements OnInit {
       );
   }
 
-  updateWarrantyCode(popover, id) {
-    var code = document.getElementById("code")["value"];
-    var name = "WarrantyCode";
-    var ar = [];
-    var o = { op: "replace", path: "/" + name, value: code };
-    ar.push(o);
-    this.laboOrderLineService.updateStatistic(id, ar).subscribe(() => {
-      popover.close();
-      this.loadDataFromApi();
-    });
-  }
-
-  updateWarrantyPeriod(popover,id) {
-    var formardate = this.intlService.formatDate(this.value, 'yyyy-MM-dd');   
-    var name = "WarrantyPeriod";
-    var ar = [];
-    var o = { op: "replace", path: "/" + name, value: formardate };
-    ar.push(o);
-    this.laboOrderLineService.updateStatistic(id, ar).subscribe(() => {
-      popover.close();
-      this.loadDataFromApi();
-    });
-  }
-
-
   onAdvanceSearchChange(data) {
     this.sentDateFrom = data.sentDateFrom;
     this.sentDateTo = data.sentDateTo;
@@ -250,6 +227,15 @@ export class LaboOrderStatisticsComponent implements OnInit {
       this.value = new Date(dataItem.warrantyPeriod ? dataItem.warrantyPeriod : Date());    
       popover.open();
     }
+  }
+
+  editItem(item) {
+    const modalRef = this.modalService.open(LaboOrderStatisticUpdateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Cập nhật chi tiết phiếu labo';
+    modalRef.componentInstance.line = Object.assign({}, item);
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, er => { });
   }
 
 }

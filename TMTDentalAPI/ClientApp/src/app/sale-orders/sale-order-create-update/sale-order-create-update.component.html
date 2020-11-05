@@ -28,18 +28,14 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="1" *ngIf="!id" class="btn btn-primary btn-sm"
+                    <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft'" class="btn btn-primary btn-sm"
                         (click)="onSaveConfirm()">
                         Lưu và xác nhận
                     </button>
-                    <!-- <button type="button" accesskey="1" *ngIf="id && saleOrder.state == 'draft'"
-                        class="btn btn-primary btn-sm" (click)="actionConfirm()">
-                        Xác nhận
-                    </button> -->
-                    <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s"
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="s"
                         *ngIf="['draft', 'sale'].indexOf(saleOrder.state) !== -1" (click)="onSave()">
                         Lưu
-                    </button> -->
+                    </button>
                     <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                         Thanh toán
@@ -47,10 +43,10 @@
                     <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                         In phiếu
                     </button>
-                    <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
+                    <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.invoiceStatus == 'to invoice'"
                         (click)="actionInvoiceCreateV2()">
                         Cập nhật công nợ
-                    </button> -->
+                    </button>
                     <button *ngIf="['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm"
                         (click)="actionCancel()">
                         Hủy phiếu

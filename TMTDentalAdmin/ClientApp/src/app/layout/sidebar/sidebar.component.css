@@ -1,0 +1,128 @@
+.main-nav-wrapper {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #1c2b36;
+    scrollbar-width: .3125rem;
+}
+
+.main-nav-wrapper::-webkit-scrollbar {
+    width: .3125rem;
+    height: .3125rem;
+}
+
+.main-nav-wrapper::-webkit-scrollbar-thumb {
+    background: #e4e9f2;
+    cursor: pointer;
+    border-radius: .15625rem;
+}
+
+.main-nav {
+    width: 260px;
+}
+
+.main-nav .nav-link {
+    color: #869fb1;
+    position: relative;
+}
+
+.main-nav .nav-link:hover {
+    color: #fff;
+    background-color: #16232d;
+}
+
+.main-nav .nav-link .menu-icon {
+    margin-right: 5px;
+    min-width: 20px;
+}
+
+.main-nav .nav-link.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.main-nav-wrapper.main-nav-wrapper-folded .main-nav {
+    width: 60px;
+}
+
+.main-nav-wrapper.main-nav-wrapper-folded .main-nav .nav-link span {
+    display: none;
+}
+
+.nav-sub {
+    height: 0;
+    margin-left: -20px;
+    overflow: hidden;
+    opacity: 0;
+    -webkit-transition: all .2s ease-in-out 0s;
+    transition: all .2s ease-in-out 0s;
+}
+
+.nav-sub .nav-link {
+    padding-left: 55px;
+}
+
+.active>.nav-sub {
+    height: auto !important;
+    margin-left: 0;
+    overflow: auto;
+    opacity: 1;
+}
+
+.active>.auto .text-active {
+    display: inline-block !important;
+}
+
+.text-active, .active>.text, .active>.auto .text {
+    display: none !important;
+}
+
+.main-nav-wrapper.collapsed .main-nav {
+    width: 60px;
+}
+
+.main-nav-wrapper.collapsed .main-nav .menu-name {
+    display: none;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-sub {
+    position: absolute;
+    z-index: 1024;
+    left: 60px;
+    margin-top: -50px;
+    width: 200px;
+}
+
+.main-nav-wrapper.collapsed .nav-sub li a.nav-link {
+    background-color: #1c2b36;
+    margin: 0;
+    padding-left: 1rem;
+    height: auto;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link .menu-icon {
+    margin: 0;
+}
+
+.main-nav-wrapper.collapsed .main-nav .nav-link .menu-open {
+    display: none;
+}
+
+.main-nav-wrapper.collapsed .nav-sub li a {
+    display: block;
+}
+
+
+
+
+

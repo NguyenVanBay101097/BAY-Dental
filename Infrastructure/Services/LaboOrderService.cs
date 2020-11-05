@@ -153,7 +153,9 @@ namespace Infrastructure.Services
                 WarrantyPeriod = x.WarrantyPeriod,
                 State = x.State,
                 SaleOrderName = x.SaleOrderLine.Order.Name,
-                SaleOrderId = x.SaleOrderLine.Order.Id
+                SaleOrderId = x.SaleOrderLine.Order.Id,
+                IsReceived = x.IsReceived,
+                ReceivedDate = x.ReceivedDate
             }).ToListAsync();
 
             var totalItems = await query.CountAsync();

@@ -757,16 +757,35 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
     var val = this.getFormDataSave();
-    this.saleOrderService.create(val)
-      .pipe(
-        mergeMap(r => {
-          this.saleOrderId = r.id;
-          return this.saleOrderService.actionConfirm([r.id]);
-        })
-      )
-      .subscribe(r => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
-      });
+    if (!this.id) {
+      this.saleOrderService.create(val)
+        .pipe(
+          mergeMap(r => {
+            this.id = r.id;
+            return this.saleOrderService.actionConfirm([r.id]);
+          })
+        )
+        .subscribe(r => {
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+        });
+    } else {
+      this.saleOrderService.update(this.id, val)
+        .pipe(
+          mergeMap(r => {
+            return this.saleOrderService.actionConfirm([this.id]);
+          })
+        )
+        .subscribe(() => {
+          this.notificationService.show({
+            content: 'Cập nhật thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadRecord();
+        });
+    }
   }
 
   checkPromotion(id) {

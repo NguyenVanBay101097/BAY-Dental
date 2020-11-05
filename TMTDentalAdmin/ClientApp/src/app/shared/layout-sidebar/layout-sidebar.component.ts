@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NavSidebarService } from '../nav-sidebar.service';
-import { AuthService } from 'src/app/auth/auth.service';
+import { NavSidebarService } from '@shared/services/nav-sidebar.service';
+import { AuthService } from 'app/auth/auth.service';
 
 @Component({
   selector: 'app-layout-sidebar',

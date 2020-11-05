@@ -136,7 +136,7 @@ export class ToaThuocService {
         return this.http.post(this.baseApi + this.apiUrl + `/${id}/ActionConfirm`, null);
     }
 
-    getPrint(id: string): Observable<ToaThuocPrint> {
-        return this.http.get<ToaThuocPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
 }

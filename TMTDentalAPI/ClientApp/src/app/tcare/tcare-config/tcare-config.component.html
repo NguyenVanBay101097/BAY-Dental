@@ -1,0 +1,95 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/tcare/scenarios">Thiết lập tự động</a>
+            </li>
+
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" accesskey="s" class="btn btn-primary btn-sm" (click)="onSave()">
+                        Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label style="width: 250px;" class="o_form_label o_form_label_help">
+                                        Chạy kịch bản tự động vào lúc
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="jobCampaignHour">
+                                            <option value="">giờ</option>
+                                            <option *ngFor="let i of hourList">{{i}}</option>
+                                        </select> <span class="mx-2 font-weight-600">giờ </span>
+                                        <select class="form-control" formControlName="jobCampaignMinute">
+                                            <option value="">phút</option>
+                                            <option *ngFor="let i of minuteList">{{i}}</option>
+                                        </select> <span class="mx-1 font-weight-600">phút</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label style="width: 250px;" class="o_form_label o_form_label_help">
+                                        Tự động xử lý gửi tin hàng loạt mỗi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="jobMessagingMinute">
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                            <option value="60">60</option>
+                                        </select> <span class="mx-1 font-weight-600">phút</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label style="width: 250px;" class="o_form_label o_form_label_help">
+                                        Tự động xử lý gửi tin mỗi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <select class="form-control" formControlName="jobMessageMinute">
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                            <option value="60">60</option>
+                                        </select><span class="mx-1 font-weight-600">phút</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <!-- <table class="o_group o_inner_group o_group_col_6">
+                    </table> -->
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

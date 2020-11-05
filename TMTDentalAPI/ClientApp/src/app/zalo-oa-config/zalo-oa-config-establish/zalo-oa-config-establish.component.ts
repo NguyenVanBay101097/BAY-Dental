@@ -83,7 +83,7 @@ export class ZaloOaConfigEstablishComponent implements OnInit {
 
         this.loadDataFromApi();
       });
-    });
+    },{once:true});
   }
 
   popupWindow(url, title, win, w, h) {

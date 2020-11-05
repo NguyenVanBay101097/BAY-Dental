@@ -47,6 +47,7 @@ declare var mxKeyHandler: any;
 })
 export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   @ViewChild('tagCbx', { static: true }) tagCbx: ComboBoxComponent;
+  @Input() textareaLength = 640;
   @Input() campaign: TCareCampaignDisplay;
   @Output('actionNext') actionNext = new EventEmitter<any>();
   @Output('timeChange') timeChange = new EventEmitter<any>();
@@ -78,7 +79,8 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.formCampaign = this.fb.group({
       // name: ["", Validators.required],
-      scheduleStart: null,
+      sheduleStartType: ['hour', Validators.required],
+      sheduleStartNumber: [0, Validators.required],
       tagId: null
     });
 
@@ -91,8 +93,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
       this.tagCbx.loading = false;
     });
 
-    var scheduleStart = new Date(this.campaign.sheduleStart);
-    this.formCampaign.patchValue({ scheduleStart });
+    this.formCampaign.patchValue(this.campaign);
     this.formCampaign.get('tagId').patchValue(this.campaign.tagId);
     this.load();
     this.loadTags();
@@ -101,12 +102,12 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.formCampaign = this.fb.group({
       // name: ["", Validators.required],
-      scheduleStart: null,
+      sheduleStartType: ['hour', Validators.required],
+      sheduleStartNumber: [0, Validators.required],
       tagId: null
     });
 
-    var scheduleStart = new Date(this.campaign.sheduleStart);
-    this.formCampaign.patchValue({ scheduleStart });
+    this.formCampaign.patchValue(this.campaign);
     this.formCampaign.get('tagId').patchValue(this.campaign.tagId);
     this.load();
   }
@@ -760,6 +761,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     let modalRef = that.modalService.open(TcareCampaignDialogSequencesComponent, { size: "lg", windowClass: "o_technical_modal", scrollable: true, backdrop: "static", keyboard: false });
     modalRef.componentInstance.title = "Cài đặt gửi tin";
     modalRef.componentInstance.model = objx;
+    modalRef.componentInstance.textareaLength = this.textareaLength;
 
     modalRef.result.then(
       (result: any) => {
@@ -911,18 +913,17 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     } else { return false; }
   }
 
-  get sheduleStartControl() { return this.formCampaign.get('sheduleStart') }
-
   onChangeTimeStartCampaign() {
-    var scheduleStartControl = this.formCampaign.get('scheduleStart');
     var value = {
       id: this.campaign ? this.campaign.id : null,
-      sheduleStart: scheduleStartControl ? this.intlService.formatDate(scheduleStartControl.value, "yyyy-MM-ddTHH:mm:ss") : null
+      sheduleStartType: this.formCampaign.get('sheduleStartType').value,
+      sheduleStartNumber: this.formCampaign.get('sheduleStartNumber').value,
+      
     };
 
     this.tcareService.actionSetSheduleStartCampaign(value).subscribe(
       () => {
-        this.actionNext.emit({ sheduleStart: value.sheduleStart });
+        this.actionNext.emit(value);
         console.log(this.campaign);
         // this.notificationService.show({
         //   content: 'Cài thời gian chạy chiến dịch thành công !',
@@ -967,14 +968,15 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
 
   onSave() {
     // this.submited = true;
-    // if (this.formCampaign.invalid) {
-    //   return false;
-    // }
+    if (this.formCampaign.invalid) {
+      return false;
+    }
 
     var value = this.formCampaign.value;
-    this.campaign.sheduleStart = value.scheduleStart ? this.intlService.formatDate(value.scheduleStart, "yyyy-MM-ddTHH:mm:ss") : null;
     var enc = new mxCodec(mxUtils.createXmlDocument());
     var node = enc.encode(this.editor.graph.getModel());
+    this.campaign.sheduleStartNumber = value.sheduleStartNumber;
+    this.campaign.sheduleStartType = value.sheduleStartType;
     this.campaign.tagId = value.tagId;
     this.campaign.graphXml = mxUtils.getPrettyXml(node);
 

@@ -46,6 +46,8 @@ using Microsoft.AspNet.OData.Extensions;
 using Microsoft.OData.Edm;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.Net.Http.Headers;
+using ApplicationCore.Utilities;
+using TMTDentalAPI.ActionFilters;
 
 namespace TMTDentalAPI
 {
@@ -61,6 +63,7 @@ namespace TMTDentalAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            GlobalConfiguration.Configuration.UseBatches();
             services.AddMultitenancy<AppTenant, CachingAppTenantResolver>();
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
 
@@ -79,6 +82,10 @@ namespace TMTDentalAPI
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
 
+            services.AddSingleton(new TCareCampaignJobService(Configuration));
+            services.AddSingleton(new TCareMessageJobService(Configuration));
+            services.AddSingleton(new TCareMessagingJobService(Configuration));
+            services.AddSingleton(new FacebookWebhookJobService(Configuration));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(config =>
             {
@@ -251,7 +258,8 @@ namespace TMTDentalAPI
             services.AddScoped<ITCarePropertyService, TCarePropertyService>();
             services.AddScoped<ITCareMessagingService, TCareMessagingService>();
             services.AddScoped<ITCareJobService, TCareJobService>();
-            services.AddScoped<ITCareMessagingTraceService, TCareMessagingTraceService>();
+            services.AddScoped<ITCareCampaignJobService, TCareCampaignJobService>();
+            services.AddScoped<ITCareScenarioJobService, TCareScenarioJobService>();
             services.AddScoped<IPartnerSourceService, PartnerSourceService>();
             services.AddScoped<ILoaiThuChiService, LoaiThuChiService>();
             services.AddScoped<IPhieuThuChiService, PhieuThuChiService>();
@@ -284,6 +292,10 @@ namespace TMTDentalAPI
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
             services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
 
+            services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
+            services.AddScoped<ITCareConfigService, TCareConfigService>();
+            services.AddScoped<ITCareMessageService, TCareMessageService>();
+            services.AddScoped<ViewRender, ViewRender>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -406,6 +418,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrPayslipRunProfile());
                 mc.AddProfile(new HrSalaryConfigProfile());
                 mc.AddProfile(new ResourceCalendarLeaveProfile());
+                mc.AddProfile(new TCareMessageTemplateProfile());
+                mc.AddProfile(new TCareConfigProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -451,10 +465,12 @@ namespace TMTDentalAPI
             GlobalJobFilters.Filters.Add(new LogEverythingAttribute());
             GlobalJobFilters.Filters.Add(new ServerTenantFilter());
             GlobalJobFilters.Filters.Add(new ClientTenantFilter());
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 5 });
 
             services.AddControllersWithViews(options =>
             {
                 options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+                options.Filters.Add(typeof(CheckTenantExpiredActionFilter));
             }).AddNewtonsoftJson();
 
             services.AddSwaggerGen(c =>
@@ -519,7 +535,7 @@ namespace TMTDentalAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CatalogDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -608,13 +624,20 @@ namespace TMTDentalAPI
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<PartnerViewModel>("Partners");
+         
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
+            builder.EntitySet<PartnerViewModel>("Partners");
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")
                .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
+            builder.EntityType<FacebookUserProfile>()
+              .Collection
+              .Function("GetView")
+              .ReturnsCollection<FacebookUserProfileBasic>();
 
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();

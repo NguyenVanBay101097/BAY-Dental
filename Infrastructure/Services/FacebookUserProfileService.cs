@@ -6,6 +6,7 @@ using AutoMapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +63,7 @@ namespace Infrastructure.Services
                     PSId = x.PSID,
                     DateCreated = x.DateCreated.Value,
                     PartnerId = x.PartnerId
-                   
+
                 }).FirstOrDefaultAsync();
             var res = _mapper.Map<FacebookUserProfileBasic>(fbprofile);
             return res;
@@ -193,6 +194,11 @@ namespace Infrastructure.Services
                 .ToListAsync();
             await DeleteAsync(profiles);
         }
+
+
+
+
+
 
     }
 

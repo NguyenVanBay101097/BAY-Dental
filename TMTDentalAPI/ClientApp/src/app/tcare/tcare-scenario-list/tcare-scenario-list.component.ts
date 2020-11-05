@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TcareScenarioCrDialogComponent } from '../tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-tcare-scenario-list',
@@ -27,7 +28,8 @@ export class TcareScenarioListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private tcareService: TcareService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -62,12 +64,13 @@ export class TcareScenarioListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(TcareScenarioCrDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
-    modalRef.result.then((result: any) => {
-      this.router.navigateByUrl(`tcare/scenario/${result.id}`);
-    }, () => {
-    });
+    this.router.navigateByUrl("tcare/scenarios/form");
+    // let modalRef = this.modalService.open(TcareScenarioCrDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    // modalRef.result.then((result: any) => {
+    //   this.router.navigateByUrl(`tcare/scenario/${result.id}`);
+    // }, () => {
+    // });
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -76,7 +79,8 @@ export class TcareScenarioListComponent implements OnInit {
   }
 
   editItem(item) {
-    this.router.navigateByUrl(`tcare/scenario/${item.id}`);
+    this.router.navigateByUrl("tcare/scenarios/form?id=" + item.id);
+    //this.router.navigateByUrl(`tcare/scenario/${item.id}`);
   }
 
   deleteItem(item) {
@@ -91,5 +95,24 @@ export class TcareScenarioListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  actionStart(item: any) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chạy kịch bản';
+
+    modalRef.result.then(() => {
+      this.tcareService.actionStartScenario([item.id]).subscribe((res: any) => {
+        this.notificationService.show({
+          content: 'thành công!',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true },
+        });
+      });
+    }, () => {
+    });
+   
   }
 }
