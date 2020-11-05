@@ -61,6 +61,7 @@ import { PartnerOverviewPromotionComponent } from './partner-overview/partner-ov
 import { PartnerOverviewReportComponent } from './partner-overview/partner-overview-report/partner-overview-report.component';
 import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 
 @NgModule({
@@ -140,7 +141,7 @@ import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partne
     PartnerCustomerAutoGenerateCodeDialogComponent,
     PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
-  providers: [],
+  providers: [SaleCouponProgramService],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent

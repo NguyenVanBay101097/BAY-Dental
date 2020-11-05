@@ -6,7 +6,7 @@
         <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
     </div>
     <div class="promotion">
-        <app-partner-overview-promotion></app-partner-overview-promotion>
+        <app-partner-overview-promotion [promotions]="promotions"></app-partner-overview-promotion>
     </div>
     <div class="report">
         <app-partner-overview-report [accountCommonPartnerReport]="accountCommonPartnerReport">

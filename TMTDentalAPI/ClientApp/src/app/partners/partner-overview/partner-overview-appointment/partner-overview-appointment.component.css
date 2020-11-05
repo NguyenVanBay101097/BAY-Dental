@@ -5,5 +5,14 @@
 .card-body {
     -webkit-box-flex: 1;
     flex: 1 1 auto;
-    padding:0 15px;
+    padding: 0 15px;
+}
+
+.appoint-table tr td:first-child {
+    font-weight: 500;
+}
+
+.appoint-table tr td:last-child {
+    font-weight: bolder;
+    padding-left: 30px;
 }

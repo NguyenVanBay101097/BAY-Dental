@@ -1,17 +1,31 @@
-.parent{
-    background-color: #73c8de;
-    position: relative;
-    height: 80px;
-}
-.child {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    overflow: hidden;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+.o_form_view .oe_avatar>img {
+    border-radius: 50%;
 }
 
+.info table tr .th {
+    font-weight: 600;
+    min-width: 140px;
+    padding-bottom: 8px;
+}
+
+.info table tr td:last-child {
+    padding-left: 20px;
+    padding-bottom: 8px;
+}
+
+@media only screen and (max-width: 1200px) {
+    .info table tr .th {
+        min-width: 80px;
+        padding-bottom: 4px;
+    }
+    .info table tr td:last-child {
+        padding-left: 5px;
+        padding-bottom: 4px;
+    }
+}
+
+.sup-label {
+    font-size: 13px;
+    color: #7d7070;
+    margin-bottom: 5px;
+}

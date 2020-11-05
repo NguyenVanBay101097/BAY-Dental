@@ -24,8 +24,10 @@ export class PartnerOverviewInfoComponent implements OnInit {
   }
 
   onAvatarUploaded(data: any) {
+    debugger;
     this.partner.avatar = data ? data.fileUrl : null;
-    this.partnerService.saveAvatar({ partnerId: this.partner.id, imageId: data ? data.fileUrl : null }).subscribe(() => {
+    this.partnerService.saveAvatar({ partnerId: this.partner.Id, imageId: data ? data.fileUrl : null }).subscribe(() => {
+      this.GetPartner(this.partner.Id);
     });
   }
 

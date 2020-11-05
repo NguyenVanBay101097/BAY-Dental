@@ -11,22 +11,8 @@ export class PartnerOverviewAdvisoryComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log(this.saleQuotations);
+    
   }
-
-  // updateTeeth(line) {
-  //   var val = this.getFormDataSave();
-  //   this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-  //     this.notificationService.show({
-  //       content: 'Lưu thành công',
-  //       hideAfter: 3000,
-  //       position: { horizontal: 'center', vertical: 'top' },
-  //       animation: { type: 'fade', duration: 400 },
-  //       type: { style: 'success', icon: true }
-  //     });
-  //     this.loadRecord();
-  //   }, () => {
-  //     this.loadRecord();
-  //   });
-  // }
 
 }

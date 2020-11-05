@@ -1,38 +1,62 @@
 <div class="h-100">
     <div class=" h-100">
-        <div style="height: 30%;">
-            <div class="parent o_form_view">
-                <div class="child">
-                    <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar"
-                        [width]="100" [height]="100">
-                    </app-image-file-upload>
-                    <!-- <img style="max-height: 100%; border: 5px solid #dee2e6 !important;"
-                        [src]="partner.Avatar? partner.Avatar:'#'"
-                        alt=""> -->
-                </div>
+        <div class="d-inline-flex" style="height: 20%; min-height: 90px;">
+            <div class="o_form_view" style="max-width: 30%;border: 50%;">
+                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100" [height]="100">
+                </app-image-file-upload>
             </div>
-            <h3 class="mt-5 text-center">{{partner.Name}}
-                <button type="button" class="btn btn-primary btn-sm" (click)="editCustomer()" accesskey="c">
-                    <i class="fas fa-pencil-alt"></i>
-                </button></h3>
+            <div style="max-width: 70%;" class="ml-1">
+                <h4>{{partner? partner.Name: ''}}</h4>
+                <label class="sup-label">Mã khách hàng: {{partner ? partner.Ref : ''}}</label>
+                <label class="sup-label">Ngày tạo:  {{partner ? (partner.Date | date:'shortDate') : '' }}</label>
+            </div>
         </div>
-        <div style="height: 68.5%;" class="card overflow-auto t-scrollbar">
-            <p>Mã khách hàng: {{partner ? partner.Ref : ''}}</p>
-            <p>Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}</p>
-            <p>Giới tính: {{partner ? partner.GenderConvert : ''}}</p>
-            <p>Ngày sinh: {{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear 
-               + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}} </p>
-            <p>Địa chỉ: {{partner ? partner.Address: ''}}</p>
-            <p>Điện thoại: {{partner ?partner.Phone:''}}</p>
-            <p>Email: {{partner ?partner.Email:''}}</p>
-            <p>Nghề nghiệp: {{partner ?partner.JobTitle:''}}</p>
-            <p>Tiểu sử bệnh: {{partner ?partner.HistoriesString:''}}</p>
-            <p>Nhãn dán:
-                <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
-                    (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
-                </app-partner-category-popover>
-            </p>
-            <p>Tiểu sử bệnh khác: {{partner ? partner.MedicalHistory : ''}}</p>
+        <div style="height: 78.5%;" class="overflow-auto t-scrollbar info">
+            <table>
+                <tr>
+                    <td class="th">Giới tính:</td>
+                    <td>{{partner ? partner.GenderConvert : ''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Ngày sinh:</td>
+                    <td>{{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Địa chỉ:
+                        <td>{{partner ? partner.Address: ''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Điện thoại:</td>
+                    <td>{{partner ?partner.Phone:''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Nghề nghiệp:</td>
+                    <td>{{partner ?partner.JobTitle:''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Giới tính:</td>
+                    <td>{{partner ? partner.GenderConvert : ''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Email:</td>
+                    <td>{{partner ?partner.Email:''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Tiểu sử bệnh:</td>
+                    <td>{{partner ?partner.HistoriesString:''}}</td>
+                </tr>
+                <tr>
+                    <td class="th">Nhãn dán:</td>
+                    <td>
+                        <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories" (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
+                        </app-partner-category-popover>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="th">Tiểu sử bệnh khác:</td>
+                    <td>{{partner ? partner.MedicalHistory : ''}}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

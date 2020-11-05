@@ -32,7 +32,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadDataFromApi()
+    this.loadDataFromApi();
   }
 
   chossesSaleOrder(id) {

@@ -3,25 +3,21 @@
         <h5 class="m-0  text-primary">Dịch vụ đã tư vấn</h5>
     </div>
     <div class="t-conTable">
-        <div class="t-parTable t-scrollbar">
-            <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
+        <div class="t-parTable t-scrollbar border-0">
+            <table class="table-advisory t-sticky-thead t-sticky-col-left">
                 <thead>
                     <tr>
-                        <th>Dịch vụ</th>
-                        <th>Răng</th>
-                        <th>Bác sĩ</th>
-                        <th>Tổng tiền</th>
+                        <th style="width: 40%;">Dịch vụ</th>
+                        <th style="width: 20%;">Răng</th>
+                        <th style="width: 20%;">Bác sĩ</th>
+                        <th style="width: 20%;">Tổng tiền</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of saleQuotations">
                         <td>{{item.name}}</td>
                         <td>
-                            <!-- <span *ngFor="let teeth of teethSelected"
-                                class="badge badge-primary mr-1">{{teeth.name}}</span>
-                            <span *ngIf="!teethSelected || teethSelected.length ==0">
-                                <i class="fas fa-tooth text-info"></i>
-                            </span> -->
+                            <span *ngFor="let t of item.teeth" class="badge badge-primary mr-1">{{t.name}}</span>
                         </td>
                         <td>{{item.employee ? item.employee.name : ''}}</td>
                         <td>{{!item.priceTotal ? 0 : item.priceTotal | number}}</td>
