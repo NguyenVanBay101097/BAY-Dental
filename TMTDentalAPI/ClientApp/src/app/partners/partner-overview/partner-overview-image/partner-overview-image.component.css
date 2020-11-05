@@ -1,0 +1,10 @@
+.view-img {
+    overflow: auto;
+}
+
+.o_attachments_date_separator {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+    border-bottom: 1px solid #ced4da;
+}

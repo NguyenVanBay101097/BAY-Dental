@@ -1,0 +1,9 @@
+.form-group {
+    margin-bottom: 0;
+}
+
+.card-body {
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+    padding:0 15px;
+}

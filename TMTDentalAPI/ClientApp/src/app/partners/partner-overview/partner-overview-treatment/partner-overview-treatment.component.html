@@ -1,28 +1,42 @@
 <div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; overflow: hidden;">
-    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+    <div class="d-flex justify-content-between align-items-center p-2 border-bottom" style="height: 15% !important;">
         <h5 class="m-0">Phiếu điều trị</h5>
         <button type="button" (click)="chossesSaleOrder(null)" class="btn btn-primary btn-sm">Thêm</button>
     </div>
-    <div class="t-conTable">
-        <div class="t-parTable t-scrollbar">
-            <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
-                <thead>
-                    <tr>
-                        <th>Số phiếu</th>
-                        <th>Ngày lập phiếu</th>
-                        <th>Tổng tiền</th>
-                        <th>Nợ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr (click)="chossesSaleOrder(item.id)" *ngFor="let item of listSaleOrder">
-                        <td>{{item.name}}</td>
-                        <td>{{item.dateOrder | date: 'dd/MM/yyyy'}}</td>
-                        <td>{{item.amountTotal | number}}</td>
-                        <td>{{!item.residual ? 0 : item.residual | number}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+    <kendo-grid [data]="gridData" [pageSize]="limit" style="height: 85% !important;" [skip]="skip" [pageable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Số phiếu" width="60">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" (click)="chossesSaleOrder(dataItem.id)">{{dataItem.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="dateOrder" title="Ngày lập phiếu" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" title="Tổng tiền" width="80">
+        </kendo-grid-column>
+        <kendo-grid-column field="residual" title="Còn thiếu" width="80">
+        </kendo-grid-column>
+        <ng-template kendoGridDetailTemplate="let dataItem">
+            <div class="t-conTable">
+                <div class="t-parTable t-scrollbar">
+                    <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Số phiếu</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr (click)="chossesSaleOrder(item.id)" *ngFor="let item of dataItem.orderLines">
+                                <td>{{item.name}}</td>
+                              
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </ng-template>
+    </kendo-grid>
+
 </div>

@@ -43,7 +43,6 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadCustomerAppointment();
     this.getSaleQoutation();
     this.loadReport();
-    this.loadSaleOrder();
   }
 
   GetPartner() {
@@ -67,19 +66,6 @@ export class PartnerOverviewComponent implements OnInit {
     this.saleOrderLineService.get(val).subscribe((res: any) => {
       this.saleQuotations = res.items;
     });
-  }
-
-  loadSaleOrder() {
-    var val = new SaleOrderPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.partnerId = this.partnerId;
-
-    this.saleOrderService.getPaged(val).subscribe(res => {
-      this.listSaleOrder = res.items;
-    }, err => {
-      console.log(err);
-    })
   }
 
   loadReport() {
