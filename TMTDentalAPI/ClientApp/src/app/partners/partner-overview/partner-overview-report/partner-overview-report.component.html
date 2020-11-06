@@ -1,45 +1,56 @@
-<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; border-radius: 8px; overflow: hidden;">
+<div class="d-flex flex-column h-100 w-100 partner-overview">
     <div class="report-title">
         Báo cáo
     </div>
     <div class="report-content row mx-0 overflow-auto t-scrollbar">
         <div class="col-6">
-            <div class="h-100 middle-cu" style="background: #4097E7;">
+            <div class="h-100 report-debit">
+                <div class="vector-debit">
+                </div>
                 <div class="content-title w-100 text-center">
                     DOANH THU
                 </div>
-                <div class="content-content w-100 text-center">
+                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number"
+                    class="content-content w-100 text-center">
                     {{(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number}}
                 </div>
             </div>
         </div>
         <div class="col-6">
-            <div class="h-100 middle-cu" style="background: #5056F9;">
+            <div class="h-100 report-credit">
+                <div class="vector-credit">
+                </div>
                 <div class="content-title w-100 text-center">
                     THANH TOÁN
                 </div>
-                <div class="content-content w-100 text-center">
+                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number"
+                    class="content-content w-100 text-center">
                     {{(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number}}
                 </div>
             </div>
         </div>
         <div class="col-6">
-            <div class="h-100 middle-cu" style="background: #4AC5AE;">
-
+            <div class="h-100 report-initialBalance">
+                <div class="vector-initialBalance">
+                </div>
                 <div class="content-title w-100 text-center">
                     DỰ KIẾN THU
                 </div>
-                <div class="content-content w-100 text-center">
+                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number"
+                    class="content-content w-100 text-center">
                     {{(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number}}
                 </div>
             </div>
         </div>
         <div class="col-6">
-            <div class="h-100 middle-cu" style="background: #FFAA62;">
+            <div class="h-100 report-countSaleOrder">
+                <div class="vector-countSaleOrder">
+                </div>
                 <div class="content-title w-100 text-center">
                     SỐ P.ĐIỀU TRỊ
                 </div>
-                <div class="content-content w-100 text-center">
+                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number"
+                    class="content-content w-100 text-center">
                     {{(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number}}
                 </div>
             </div>

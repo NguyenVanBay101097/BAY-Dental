@@ -38,7 +38,11 @@
     grid-auto-rows: 23% 23% 24% 24%;
     overflow: hidden;
     display: grid;
-    grid-template-areas: 'info treatment treatment' 'info treatment treatment' 'info appointment report' 'image appointment report';
+    grid-template-areas: 
+    'info treatment treatment' 
+    'info treatment treatment' 
+    'info report appointment' 
+    'image report appointment';
     grid-gap: 15px;
     background-color: white;
     padding: 15px;
@@ -47,7 +51,6 @@
 .grid-container>div {
     background-color: white;
     width: 100%;
-    padding: 15px;
-    box-shadow: 12px 19px 40px rgba(17, 137, 247, 0.15);
+    box-shadow: 4px 8px 12px rgba(17, 137, 247, 0.15);
     overflow: hidden;
 }

@@ -1,19 +1,19 @@
-<div class="d-flex flex-column h-100 w-100" style="border: 1px solid #dfdfdf; border-radius: 8px; overflow: hidden;">
+<div class="d-flex flex-column h-100 w-100 partner-overview">
     <div class="o_chatter oe_chatter h-100 w-100">
         <div class="o_mail_chatter_attachments h-100 w-100">
             <div class="o_chatter_attachment h-100 w-100">
-                <div class="d-inline-flex w-100" style="height: 40%;">
+                <div class="d-inline-flex w-100 h-25">
                     <div class="w-50 image-title">
                         Hình ảnh
                     </div>
-                    <div class="w-50" style="padding:17px 15px;">
+                    <div class="w-50 btn-right">
                         <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
                             <i class="far fa-image"></i> Thêm hình</button>
                         <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
                             accept="image/*" (change)="addPartnerImages($event)">
                     </div>
                 </div>
-                <div class="w-100 view-img" style="height: 60%; padding: 0 10px;">
+                <div class="w-100 view-img h-75">
                     <div class="o_attachments_previews">
                         <!-- Preview hình ảnh -->
                         <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">

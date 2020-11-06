@@ -1,4 +1,4 @@
-<div class="grid-container h-100 w-100" style="border: 1px solid #dfdfdf; border-radius: 5px; overflow: hidden;">
+<div class="grid-container h-100 w-100 partner-overview">
     <div class="treatment">
         <app-partner-overview-treatment [partnerId]="partnerId"></app-partner-overview-treatment>
     </div>
@@ -17,11 +17,11 @@
         <app-partner-overview-appointment [partnerId]="partnerId" [customerAppointment]="customerAppointment">
         </app-partner-overview-appointment>
     </div>
-    <!-- <div class="promotion">
+    <div class="promotion">
         <app-partner-overview-promotion [promotions]="promotions"></app-partner-overview-promotion>
-    </div> -->
-    <!-- <div class="advisory">
+    </div>
+    <div class="advisory">
         <app-partner-overview-advisory *ngIf="saleQuotations" [saleQuotations]="saleQuotations">
         </app-partner-overview-advisory>
-    </div> -->
+    </div>
 </div>

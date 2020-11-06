@@ -1,12 +1,12 @@
-<div class="h-100 w-100">
-    <div class="w-100 h-100">
-        <div class="d-inline-flex w-100" style="height: 25%; min-height: 90px;">
-            <div class="o_form_view" style="width: 30%;border: 50%;margin: auto;">
+<div class="h-100 w-100 info-overview">
+    <div class="w-100 h-100 pt-pb-10 pr-pl-15">
+        <div class="d-inline-flex w-100 h-30">
+            <div class="o_form_view w-30 info-image">
                 <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100"
                     [height]="100">
                 </app-image-file-upload>
             </div>
-            <div style="width: 70%;" class="ml-1">
+            <div class="ml-1 w-70">
                 <h4>{{partner? partner.Name: ''}}</h4>
                 <div>
                     <label class="sup-label">Mã khách hàng: {{partner ? partner.Ref : ''}}</label>
@@ -15,59 +15,61 @@
                     <label class="sup-label">Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}</label>
                 </div>
                 <div>
-                    <button class="btn btn-outline-primary btn-sm" (click)="editCustomer()" style="font-size: 11px;"><i
-                            class="fas fa-user-edit"></i> Sửa</button>
+                    <button class="btn btn-success btn-sm" (click)="editCustomer()"><i class="fas fa-user-edit"></i>
+                        Sửa</button>
                 </div>
             </div>
         </div>
-        <div style="height: 75%;" class="overflow-auto t-scrollbar info">
-            <table>
-                <tr>
-                    <td class="th">Giới tính:</td>
-                    <td>{{partner ? partner.GenderConvert : ''}}</td>
+        <div class="overflow-auto t-scrollbar h-70 w-100 info">
+            <table class="w-100">
+                <tr class="w-100">
+                    <td class="th w-30">Giới tính:</td>
+                    <td class="w-70">{{partner ? partner.GenderConvert : ''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Ngày sinh:</td>
-                    <td>{{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}
+                <tr class="w-100">
+                    <td class="th w-30">Ngày sinh:</td>
+                    <td class="w-70">
+                        {{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}
                     </td>
                 </tr>
-                <tr>
-                    <td class="th">Địa chỉ:
-                    <td>{{partner ? partner.Address: ''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Địa chỉ:
+                    <td class="w-70">{{partner ? partner.Address: ''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Điện thoại:</td>
-                    <td>{{partner ?partner.Phone:''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Điện thoại:</td>
+                    <td class="w-70">{{partner ?partner.Phone:''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Nghề nghiệp:</td>
-                    <td>{{partner ?partner.JobTitle:''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Nghề nghiệp:</td>
+                    <td class="w-70">{{partner ?partner.JobTitle:''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Giới tính:</td>
-                    <td>{{partner ? partner.GenderConvert : ''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Giới tính:</td>
+                    <td class="w-70">{{partner ? partner.GenderConvert : ''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Email:</td>
-                    <td>{{partner ?partner.Email:''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Email:</td>
+                    <td class="w-70">{{partner ?partner.Email:''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Tiểu sử bệnh:</td>
-                    <td>{{partner ?partner.HistoriesString:''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Tiểu sử bệnh:</td>
+                    <td class="w-70">{{partner ?partner.HistoriesString:''}}</td>
                 </tr>
-                <tr>
-                    <td class="th">Nhãn dán:</td>
-                    <td>
+                <tr class="w-100">
+                    <td class="th w-30">Nhãn dán:</td>
+                    <td class="w-70">
                         <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
                             (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
                         </app-partner-category-popover>
                     </td>
                 </tr>
-                <tr>
-                    <td class="th">Tiểu sử bệnh khác:</td>
-                    <td>{{partner ? partner.MedicalHistory : ''}}</td>
+                <tr class="w-100">
+                    <td class="th w-30">Tiểu sử bệnh khác:</td>
+                    <td class="w-70">{{partner ? partner.MedicalHistory : ''}}</td>
                 </tr>
             </table>
         </div>
     </div>
+
 </div>

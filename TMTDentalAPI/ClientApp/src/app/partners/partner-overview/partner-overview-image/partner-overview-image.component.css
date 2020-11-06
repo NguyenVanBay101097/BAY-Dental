@@ -1,5 +1,6 @@
 .view-img {
     overflow: auto;
+    padding: 0 10px;
 }
 
 .o_attachments_date_separator {
@@ -18,16 +19,35 @@
 }
 
 .image-title {
-    padding: 15px;
-    font-family: Roboto;
+    padding: 10px 15px;
     font-style: normal;
     font-weight: 500;
-    font-size: 26px;
-    line-height: 37px;
-    /* identical to box height */
+    font-size: 24px;
+    line-height: 24px;
     color: #0B92F3;
 }
 
-.o_attachment .o_attachment_wrap {
-    border-radius: 12px;
+/* width */
+
+::-webkit-scrollbar {
+    width: 3px;
+    border-radius: 8px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

@@ -1,35 +1,92 @@
 .report-title {
-    padding: 15px 15px 5px 15px;
-    font-family: Roboto;
+    padding: 10px 15px;
+    height: 10%;
     font-style: normal;
     font-weight: 500;
-    font-size: 26px;
-    line-height: 37px;
-    /* identical to box height */
+    font-size: 24px;
+    line-height: 24px;
     color: #0B92F3;
 }
 
 .report-content {
     width: 100%;
-    height: 85%;
+    height: 90%;
     color: #007bff;
 }
 
-.w-49 {
-    width: 49%!important;
+.vector-debit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #4097E7 33.64%, rgba(110, 178, 240, 0.64) 89.71%);
+    opacity: 0.8;
 }
 
-.h-49 {
-    height: 49% !important;
+.vector-credit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #5056F9 33.64%, rgba(114, 119, 249, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.vector-initialBalance {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #4AC5AE 33.64%, rgba(121, 217, 199, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.vector-countSaleOrder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #FFAA62 33.64%, rgba(255, 197, 149, 0.64) 89.71%);
+    opacity: 0.8;
 }
 
 .col-6 {
     padding: 15px;
 }
 
-.middle-cu {
+.report-debit {
     position: relative;
-    box-shadow: 7px 12px 18px rgba(17, 137, 247, 0.2);
+    overflow: hidden;
+    background: #4097E7;
+    border-radius: 8px;
+}
+
+.report-credit {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #5056F9;
+}
+
+.report-initialBalance {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #4AC5AE;
+}
+
+.report-countSaleOrder {
+    position: relative;
+    overflow: hidden;
+    background: #FFAA62;
     border-radius: 8px;
 }
 
@@ -47,7 +104,6 @@
 .content-title {
     left: 0;
     top: 25%;
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     font-size: 20px;
@@ -61,7 +117,6 @@
 }
 
 .content-content {
-    font-family: Roboto;
     font-style: normal;
     font-weight: 500;
     left: 0;

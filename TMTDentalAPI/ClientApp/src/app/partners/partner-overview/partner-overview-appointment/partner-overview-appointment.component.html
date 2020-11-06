@@ -1,19 +1,19 @@
-<div class="d-flex flex-column h-100 w-100" style="overflow: hidden; border-radius: 8px;">
+<div class="d-flex flex-column h-100 w-100 overflow-hidden">
     <div class="card h-100 w-100">
         <div class=" d-flex justify-content-between">
             <div class="appointment-title">
                 Lịch hẹn gần đây
             </div>
-            <div class="d-inline-flex" style="padding: 19px 7.5px 15px 15px">
+            <div class="d-inline-flex btn-right">
                 <!-- <button class="btn btn-primary btn-sm px-2 py-1" (click)="addAppointment()">Tạo lịch hẹn</button> -->
-                <a (click)="addAppointment()" title="Thêm" class="px-2 py-1">
-                    <i style="color: #84f5ed;" class="fas fa-plus"></i>
+                <a (click)="addAppointment()" title="Thêm" class="pl-2 py-1">
+                    <i class="fas fa-plus text-primary"></i>
                 </a>
-                <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="px-2 py-1">
-                    <i style="color: #007bff;" class="fas fa-edit"></i>
+                <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="pl-2 py-1">
+                    <i class="fas fa-edit text-success"></i>
                 </a>
-                <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="px-2 py-1">
-                    <i style="color: red;" class="far fa-trash-alt"></i>
+                <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="pl-2 py-1">
+                    <i class="far fa-trash-alt text-danger"></i>
                 </a>
             </div>
         </div>
@@ -21,7 +21,7 @@
             <div *ngIf="customerAppointment">
                 <table class="appoint-table">
                     <tr>
-                        <td style="min-width: 100px;">
+                        <td>
                             Mã lịch hẹn
                         </td>
                         <td>
@@ -57,9 +57,16 @@
                             Trạng thái
                         </td>
                         <td>
-                            <span style="color: #acecbb;">
-                                {{customerAppointment.state == 'confirmed' ? 'đang hẹn' : 
-                                (customerAppointment.state == 'done'? 'đã tới':'đã hủy')}}
+                            <span *ngIf="customerAppointment.state == 'done'" class="text-primary">
+                                Đã tới
+                            </span>
+                            <span *ngIf="customerAppointment.state == 'confirmed'" class="text-success">
+                                Đang henj
+                            </span>
+                            <span
+                                *ngIf="customerAppointment.state != 'done' && customerAppointment.state != 'confirmed'"
+                                class="text-danger">
+                                Đã hủy
                             </span>
                         </td>
                     </tr>

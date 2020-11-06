@@ -155,14 +155,6 @@ html .o_web_client .o_content .o_view_controller {
     }
 }
 
-.w-27{
-    width: 27%;
-}
-
-.w-73{
-    width: 73%;
-}
-
 .o_cp_searchview_group {
     display: flex;
 }
@@ -1352,4 +1344,29 @@ span.char-count {
     font-size: 13px;
     line-height: 13px;
     min-width: 200px;
+}
+
+.partner-overview {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.btn-right {
+    padding: 10px 15px;
+}
+
+.h-25 {
+    height: 25% !important;
+}
+
+.h-75 {
+    height: 75% !important;
+}
+
+.pt-pb-10 {
+    padding: 10px;
+}
+
+.pr-pl-15 {
+    padding: 15px;
 }
