@@ -641,6 +641,9 @@ namespace TMTDentalAPI
               .ReturnsCollection<FacebookUserProfileBasic>();
 
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
+
+            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
+
             return builder.GetEdmModel();
         }
 
