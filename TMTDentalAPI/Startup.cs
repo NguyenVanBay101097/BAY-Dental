@@ -628,6 +628,7 @@ namespace TMTDentalAPI
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
             builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<Product>("Products");
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")

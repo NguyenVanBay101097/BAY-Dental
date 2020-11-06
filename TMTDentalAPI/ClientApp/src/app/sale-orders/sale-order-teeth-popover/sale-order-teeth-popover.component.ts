@@ -9,6 +9,7 @@ import { PartnerAddRemoveTags, PartnerService } from 'src/app/partners/partner.s
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { log } from 'util';
 
 @Component({
   selector: 'app-sale-order-teeth-popover',
@@ -16,11 +17,11 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
   styleUrls: ['./sale-order-teeth-popover.component.css']
 })
 export class SaleOrderTeethPopoverComponent implements OnInit {
-  formGroup: FormGroup
+  formGroup: FormGroup;
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
   listTeeths: ToothDisplay[] = [];
-  filteredToothCategories: ToothCategoryBasic[] = [];
+  @Input() filteredToothCategories: ToothCategoryBasic[] = [];
   toolCateg: ToothCategoryBasic = new ToothCategoryBasic();
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
@@ -36,14 +37,13 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadToothCategories();
     this.formGroup = this.fb.group({
       toothCategory: null
-    })
+    });
     this.loadToothCategories();
     if (this.line.get('toothCategory').value) {
-      this.loadTeethMap(this.line.get('toothCategory').value)
-      this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value)
+      this.loadTeethMap(this.line.get('toothCategory').value);
+      this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value);
     }
     if (this.line.get('teeth')) {
       this.teethSelected = [...this.line.get('teeth').value];
@@ -51,17 +51,23 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   }
 
   loadToothCategories() {
-    return this.toothCategoryService.getAll().subscribe(
-      result => {
-        this.filteredToothCategories = result;
-        if (this.line.get('toothCategory').value == null) {
-          this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[1])
-          this.onChangeToothCategory(this.filteredToothCategories[1]);
-          this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[1].id);
-          this.line.get('toothCategory').patchValue(this.filteredToothCategories[1]);
-        }
-      }
-    );
+    // return this.toothCategoryService.getAll().subscribe(
+    //   result => {
+    //     this.filteredToothCategories = result;
+    //     if (this.line.get('toothCategory').value == null) {
+    //       this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[1])
+    //       this.onChangeToothCategory(this.filteredToothCategories[1]);
+    //       this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[1].id);
+    //       this.line.get('toothCategory').patchValue(this.filteredToothCategories[1]);
+    //     }
+    //   }
+    // );
+    if (this.line.get('toothCategory').value == null && this.filteredToothCategories.length > 0) {
+      this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[1])
+      this.onChangeToothCategory(this.filteredToothCategories[1]);
+      this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[1].id);
+      this.line.get('toothCategory').patchValue(this.filteredToothCategories[1]);
+    }
   }
 
   isSelected(tooth: ToothDisplay) {

@@ -40,6 +40,7 @@ import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-custome
 import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 
 declare var $: any;
 
@@ -59,6 +60,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
+  filteredToothCategories: any[] = [];
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -85,7 +87,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
+    private toothCategoryService: ToothCategoryService
+    ) {
   }
 
   ngOnInit() {
@@ -115,6 +119,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // this.loadLaboOrderList();
     this.loadPayments();
     // this.loadPricelists();
+    this.loadToothCategories();
   }
 
   loadEmployees() {
@@ -128,6 +133,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = filter || '';
     val.isDoctor = true;
+    val.limit = 0;
     return this.employeeService.getEmployeePaged(val);
   }
 
@@ -1104,6 +1110,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('amountTotal').value;
   }
 
+  get getAmountPaidTotal() {
+    return this.saleOrder.paidTotal;
+  }
+
   get getState() {
     return this.formGroup.get('state').value;
   }
@@ -1119,7 +1129,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
-      console.log(total);
       total += line.get('priceSubTotal').value;
     });
     // this.computeResidual(total);
@@ -1339,5 +1348,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
     this.getPriceSubTotal();
     this.computeAmountTotal();
+  }
+
+  loadToothCategories() {
+    return this.toothCategoryService.getAll().subscribe(
+      result => {
+        this.filteredToothCategories = result;
+      }
+    );
   }
 }
