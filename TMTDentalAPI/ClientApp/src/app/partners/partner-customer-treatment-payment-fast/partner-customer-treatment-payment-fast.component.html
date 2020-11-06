@@ -299,11 +299,11 @@
                                             <td>Tổng tiền</td>
                                             <td>{{getAmountTotal | number}}</td>
                                         </tr>
-                                        <tr>
+                                        <tr *ngIf="['done','sale'].indexOf(saleOrder.state) !== -1">
                                             <td>Số tiền thanh toán</td>
                                             <td>{{saleOrder.paid | number}}</td>
                                         </tr>
-                                        <tr>
+                                        <tr *ngIf="['done','sale'].indexOf(saleOrder.state) !== -1">
                                             <td>Còn lại</td>
                                             <td>{{getResidual | number}}</td>
                                         </tr>
