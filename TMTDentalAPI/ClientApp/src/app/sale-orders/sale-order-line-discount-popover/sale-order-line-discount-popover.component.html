@@ -5,8 +5,8 @@
 <!-- <input type="button" > -->
 <button tabindex="0" [ngbPopover]="popContentDiscountDefault" #popOver="ngbPopover" [autoClose]="'outside'"
     placement="bottom" type="button" class="btn btn-sm button-border-bottom">
-    <div class="text-body" *ngIf="discountTypeValue !== 'fixed'"> {{discountValue}} %</div>
-    <div class="text-body" *ngIf="discountTypeValue !== 'percentage'">{{discountFixedValue | number}} </div>
+    <div *ngIf="discountTypeValue !== 'fixed'"> {{discountValue}} %</div>
+    <div *ngIf="discountTypeValue !== 'percentage'">{{discountFixedValue | number}} </div>
 </button>
 <ng-template #popContentDiscountDefault>
     <form [formGroup]="formGroup">
@@ -16,7 +16,7 @@
                     (valueChange)="onChangeDiscount()" [min]="0" [max]="100" formControlName="discountPercent"
                     [autoCorrect]="true" [spinners]="false">
                 </kendo-numerictextbox>
-                <kendo-numerictextbox [format]="'n0'" (valueChange)="onChangeDiscount()"
+                <kendo-numerictextbox [format]="'n0'" (valueChange)="onChangeDiscount()" [min]="0" [autoCorrect]="true"
                     [class.d-none]="discountTypeValue !== 'fixed'" [spinners]="false" formControlName="discountFixed">
                 </kendo-numerictextbox>
 

@@ -6,7 +6,8 @@
   -webkit-align-items: baseline;
   align-items: baseline;
   display: inline-flex;
-  padding: 0 0.5rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
 }
 
 .form-check-inline {
@@ -24,6 +25,7 @@ input[type="radio"] {
   height: 0;
   width: 0;
 }
+
 
 label {
   display: table-cell;

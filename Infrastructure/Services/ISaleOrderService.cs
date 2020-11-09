@@ -57,5 +57,7 @@ namespace Infrastructure.Services
         Task ActionUnlock(IEnumerable<Guid> ids);
 
         void _GetInvoiced(IEnumerable<SaleOrder> orders);
+
+        Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val);
     }
 }

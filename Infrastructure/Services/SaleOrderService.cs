@@ -289,6 +289,7 @@ namespace Infrastructure.Services
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
                 sale.Residual = 0;
+                sale.Paid = 0;
             }
 
             _GetInvoiced(self);
@@ -2011,6 +2012,68 @@ namespace Infrastructure.Services
             var laboObj = GetService<ILaboOrderService>();
             var labos = await _mapper.ProjectTo<LaboOrderDisplay>(laboObj.SearchQuery(x => x.SaleOrderId == id, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
             return labos;
+        }
+
+        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val)
+        {
+            var res = new SaleOrderSave();
+            res.CompanyId = val.CompanyId;
+            res.DateOrder = val.DateOrder;
+            res.Note = val.Note;
+            res.OrderLines = val.OrderLines;
+            res.PartnerId = val.PartnerId;
+            res.PricelistId = val.PricelistId;
+
+            var order = _mapper.Map<SaleOrder>(res);
+
+            //tạo sale order
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            {
+                var sequenceService = GetService<IIRSequenceService>();
+                if (order.IsQuotation == true)
+                {
+                    order.Name = await sequenceService.NextByCode("sale.quotation");
+                    if (string.IsNullOrEmpty(order.Name))
+                    {
+                        await InsertSaleQuotationSequence();
+                        order.Name = await sequenceService.NextByCode("sale.quotation");
+                    }
+                }
+                else
+                    order.Name = await sequenceService.NextByCode("sale.order");
+            }
+
+            var lines = new List<SaleOrderLine>();
+            var sequence = 0;
+            foreach (var item in val.OrderLines)
+            {
+                var saleLine = _mapper.Map<SaleOrderLine>(item);
+                saleLine.Order = order;
+                saleLine.Sequence = sequence++;
+                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+                foreach (var toothId in item.ToothIds)
+                {
+                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+
+                lines.Add(saleLine);
+            }
+
+            var saleLineService = GetService<ISaleOrderLineService>();
+            await saleLineService.CreateAsync(lines);
+
+            _AmountAll(order);
+
+            await UpdateAsync(order);
+            //confirm sale order
+            await ActionConfirm(new List<Guid>() { order.Id });
+
+            var basic = _mapper.Map<SaleOrderBasic>(order);
+            return basic;
+
         }
 
         //thêm Orderline chiết khấu tổng vào SaleOrder

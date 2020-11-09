@@ -109,6 +109,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       card: null,
       pricelist: [null, Validators.required],
       journal: null,
+      payments: null,
     });
 
     this.loadFilteredJournals();
@@ -150,6 +151,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
+        debugger
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
@@ -249,9 +251,15 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
 
 
-  actionPayment(id) {
-
+  actionPayment() {
     var val = this.formGroup.value;
+    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.partnerId = val.partner.id;
+    val.pricelistId = val.pricelist.id;
+    val.cardId = val.card ? val.card.id : null;
+    val.orderLines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
+    });
 
     if (!val.journal) {
       this.notificationService.show({
@@ -278,8 +286,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       serviceCardOrderIds: null,
     });
 
-    if (id) {
-      this.paymentService.saleDefaultGet([id]).subscribe(rs2 => {
+    this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
+      this.paymentService.saleDefaultGet([rs.id]).subscribe(rs2 => {
         pay.patchValue(rs2);
         pay.value.amount = val.amountTotal;
         pay.value.journal = val.journal;
@@ -288,7 +296,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         pay.value.paymentDate = this.intlService.formatDate(pay.value.paymentDateObj, 'd', 'en-US');
         this.paymentService.create(pay.value).subscribe((result: any) => {
           this.paymentService.post([result.id]).subscribe(() => {
-            this.loadRecord();
+            this.notificationService.show({
+              content: "thanh toán thành công",
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+           this.routeActive();       
           }, (err) => {
             this.notificationService.show({
               content: err,
@@ -309,7 +324,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         });
 
       })
-    }
+    })   
   }
 
 
@@ -359,16 +374,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   get cardValue() {
     return this.formGroup.get('card').value;
-  }
-
-  get amountPaid() {
-    var total = 0;
-
-    this.orderLines.controls.forEach(line => {
-      console.log(total);
-      total += line.get('amountPaid').value;
-    });
-    return total;
   }
 
   loadPartners() {
@@ -446,7 +451,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
 
       this.createRecord().subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], {
+        this.router.navigate(['/partners/treatment-paymentfast/from'], {
           queryParams: {
             id: result.id
           },
@@ -590,9 +595,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   applyPromotion() {
+    debugger
     if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
+          if (this.saleOrder.state == "draft") {
+            this.onSaveConfirm();
+          }
+
           this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
             this.loadRecord();
           }, (error) => {
@@ -600,6 +610,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           });
         });
       } else {
+        if (this.saleOrder.state == "draft") {
+          this.onSaveConfirm();
+        }
         this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
           this.loadRecord();
         }, (error) => {
@@ -608,11 +621,15 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
     } else {
       this.createRecord().subscribe((result) => {
-        this.router.navigate(['/sale-orders/form'], {
+        this.router.navigate(['/partners/treatment-paymentfast/from'], {
           queryParams: {
             id: result.id
           },
         });
+
+        if (this.saleOrder.state == "draft") {
+          this.onSaveConfirm();
+        }
 
         this.saleOrderService.applyPromotion(result.id).subscribe(() => {
           this.loadRecord();
@@ -637,7 +654,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       }
 
       this.createRecord().subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], {
+        this.router.navigate(['/partners/treatment-paymentfast/from'], {
           queryParams: {
             id: result.id
           },
@@ -867,6 +884,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onSaveConfirm() {
+    debugger
     if (!this.formGroup.valid) {
       return false;
     }
@@ -1509,7 +1527,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   }
 
-  onChangeDiscount(event,line: FormGroup) {
+  onChangeDiscount(event, line: FormGroup) {
     debugger
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {

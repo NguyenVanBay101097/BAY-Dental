@@ -1,12 +1,9 @@
 <div class="o_cp_controller">
     <div class="o_control_panel o_breadcrumb_full">
-        <ol class="breadcrumb">
-            <li *ngIf="customerId">
-                <a [routerLink]="['/partners/customer/' + getPartner.id + '/treatment-payment']">Phiếu điều trị</a>
-            </li>
+        <ol class="breadcrumb">         
             <li class="active">
                 <span *ngIf="saleOrderId">{{saleOrder.name}}</span>
-                <span *ngIf="!saleOrderId">Mới</span>
+                <span *ngIf="!saleOrderId">Tạo phiếu điều trị nhanh</span>
             </li>
         </ol>
     </div>
@@ -15,28 +12,14 @@
 <div class="o_content">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar">
+            <!-- <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
                     <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']"
                         class="btn btn-secondary btn-sm">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
-                        *ngIf="saleOrderId">
-                        Thêm mới</button>
-                    <!-- <button type="button" accesskey="1" *ngIf="saleOrder.state == 'draft' && !saleOrderId"
-                        class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
-                        Lưu và xác nhận
-                    </button> -->
-                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'"
-                        (click)="onSave()">Lưu</button>
-                    <button type="button" class="btn btn-primary btn-sm mx-1" *ngIf="saleOrder.state == 'draft'"
-                        (click)="onSaveConfirm()">Xác
-                        nhận</button>
-                    <button *ngIf="['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionPayment(saleOrderId)">
-                        Thanh toán
-                    </button>
+
+
                     <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm mx-1"
                         (click)="printSaleOrder()">
                         In phiếu
@@ -47,7 +30,7 @@
                     </button>
                 </div>
 
-            </div>
+            </div> -->
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_4">
@@ -138,7 +121,7 @@
                         </tbody>
                     </table>
                     <div class="o_group o_inner_group o_group_col_4">
-                        <div class="d-flex justify-content-end">
+                        <!-- <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-outline-secondary btn-sm btn-treatment mx-2">
                                 <span>Tư vấn</span>
                             </button>
@@ -150,19 +133,18 @@
                                 (click)="createAppoinment()">
                                 <span>Lịch hẹn</span>
                             </button>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
                 <div class="o_notebook">
-                    <div class="h-100">
-                        <div class="w-100 h-100 d-flex">
-                            <div class="w-25 h-100 border-right">
+                    <div class="o_group">
+                        <div class="row">
+                            <div class="o_group o_inner_group col-3" >
                                 <app-sale-order-list-service (newEventEmiter)="addLine($event)">
                                 </app-sale-order-list-service>
                             </div>
-                            <div class="w-75 h-100">
-                                <!-- Component Form Service Payment -->
+                            <div class="o_group o_inner_group col-9">
                                 <div class="my-2 d-flex justify-content-end">
                                     <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
                                         name="recompute_coupon_lines" placement="bottom"
@@ -188,130 +170,132 @@
                                         <span>Áp dụng thẻ tiền mặt</span>
                                     </button>
                                 </div>
-
-                                <div class="t-conTable" style="min-height: 340px;">
-                                    <div class="t-parTable t-scrollbar">
-                                        <table class="t-sticky-thead t-sticky-col-left t-sticky-col-right">
-                                            <thead>
-                                                <tr>
-                                                    <th [style.min-width.px]="200">Dịch vụ</th>
-                                                    <th [style.min-width.px]="110">Thông tin bổ sung</th>
-                                                    <th class="text-center">Số lượng</th>
-                                                    <th class="text-right" [style.min-width.px]="60">Đơn giá</th>
-                                                    <th [style.min-width.px]="50" class="text-center">Giảm
-                                                    </th>
-                                                    <th class="text-right" [style.min-width.px]="130">Thành tiền</th>
-                                                    <th class="text-center" [style.min-width.px]="20">
-                                                        #
-                                                    </th>
+                                <div class="table-wrapper">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th [style.min-width.px]="200">Dịch vụ</th>
+                                                <th [style.min-width.px]="80">Thông tin bổ sung</th>
+                                                <th>Bác sĩ</th>
+                                                <th class="text-center">Số lượng</th>
+                                                <th class="text-right" [style.min-width.px]="60">Đơn giá</th>
+                                                <th [style.min-width.px]="50" class="text-center">Giảm
+                                                </th>
+                                                <th class="text-right" [style.min-width.px]="130">Thành tiền</th>
+                                                <th class="text-center" [style.min-width.px]="20">
+                                                    #
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody formArrayName="orderLines">
+                                            <ng-container *ngFor="let line of orderLines.controls; let i=index">
+                                                <tr [formGroupName]="i">
+                                                    <td>{{line.get('name').value }}</td>
+                                                    <td>
+                                                        <a (click)="addInfoLineModal(line)">
+                                                            <span
+                                                                class="badge badge-primary mr-1">{{lineTeeth(line)}}{{line.get('diagnostic').value}}</span>
+                                                            <span
+                                                                *ngIf="!line.get('teeth').value || line.get('teeth').value.length ==0">
+                                                                <i class="fas fa-plus-square text-primary"></i>
+                                                            </span>
+                                                        </a>
+                                                        <!-- <app-sale-order-teeth-popover [line]="line"
+                                                            (eventTeeth)="updateTeeth($event)">
+                                                        </app-sale-order-teeth-popover> -->
+                                                    </td>
+                                                    <td>
+                                                        <kendo-combobox [data]="filteredEmployees" (blur)="updateSaleOrder()"
+                                                            [textField]="'name'" [filterable]="true" #employeeCbx
+                                                            formControlName="employee" [valueField]="'id'">
+                                                        </kendo-combobox>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <kendo-numerictextbox style="max-width: 90px;" [min]="0"
+                                                            [spinners]="false" 
+                                                            formControlName="productUOMQty"
+                                                            (valueChange)="onChangeQuantity(line)">
+                                                        </kendo-numerictextbox>
+                                                    </td>
+                                                    <td class="text-right" style="max-width: 300px;">
+                                                        <kendo-numerictextbox [min]="0" formControlName="priceUnit"
+                                                            (valueChange)="onChangePriceUnit(line)"
+                                                            [autoCorrect]="true" [spinners]="false" [format]="'n0'">
+                                                        </kendo-numerictextbox>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center justify-content-end">
+                                                            <app-sale-order-line-discount-popover
+                                                                [discountForm]="line"
+                                                                (discountFormGroup)="onChangeDiscount($event,line)">
+                                                            </app-sale-order-line-discount-popover>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{line.get('priceSubTotal').value | number}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <div>
+                                                            <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
+                                                                        (click)="copyLine(line)">
+                                                                        <span class="k-icon k-i-copy"></span>
+                                                                    </button> -->
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-light"
+                                                                (click)="deleteLine(i)">
+                                                                <span class="k-icon k-i-delete"></span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody formArrayName="orderLines">
-                                                <ng-container *ngFor="let line of orderLines.controls; let i=index">
-                                                    <tr [formGroupName]="i" >
-                                                        <td>{{line.get('name').value }}</td>
-                                                        <td>
-                                                            <a (click)="addInfoLineModal(line)">
-                                                                <span
-                                                                    class="badge badge-primary mr-1">{{lineTeeth(line)}}{{line.get('diagnostic').value}}</span>
-                                                                <span
-                                                                    *ngIf="!line.get('teeth').value || line.get('teeth').value.length ==0">
-                                                                    <i class="fas fa-plus-square text-primary"></i>
-                                                                </span>
-                                                            </a>
-                                                            <!-- <app-sale-order-teeth-popover [line]="line"
-                                                                (eventTeeth)="updateTeeth($event)">
-                                                            </app-sale-order-teeth-popover> -->
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <kendo-numerictextbox style="max-width: 90px;" [min]="0"
-                                                                [spinners]="false" (blur)="updateSaleOrder()"
-                                                                formControlName="productUOMQty"
-                                                                (valueChange)="onChangeQuantity(line)">
-                                                            </kendo-numerictextbox>
-                                                        </td>
-                                                        <td class="text-right" style="max-width: 300px;">
-                                                            <kendo-numerictextbox [min]="0" formControlName="priceUnit"
-                                                                (blur)="updateSaleOrder()"
-                                                                (valueChange)="onChangePriceUnit(line)"
-                                                                [autoCorrect]="true" [spinners]="false" [format]="'n0'"
-                                                                style="min-width: 50px;">
-                                                            </kendo-numerictextbox>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center justify-content-end">
-                                                                <app-sale-order-line-discount-popover [discountForm]="line" (discountFormGroup)="onChangeDiscount($event,line)"></app-sale-order-line-discount-popover>
-                                                                <!-- <kendo-numerictextbox
-                                                                    [class.d-none]="line.get('discountType').value !== 'percentage'"
-                                                                    [min]="0" [max]="100" formControlName="discount"
-                                                                    (blur)="updateSaleOrder()" [autoCorrect]="true"
-                                                                    [spinners]="false"
-                                                                    (valueChange)="onChangeDiscount(line)"
-                                                                    style="max-width: 100px;">
-                                                                </kendo-numerictextbox>
-                                                                <kendo-numerictextbox [format]="'n0'" [spinners]="false"
-                                                                    [min]="0" (blur)="updateSaleOrder()"
-                                                                    [class.d-none]="line.get('discountType').value !== 'fixed'"
-                                                                    (valueChange)="onChangeDiscountFixed(line)"
-                                                                    formControlName="discountFixed"
-                                                                    style="max-width: 100px;">
-                                                                </kendo-numerictextbox>
-                                                                <select class="form-control" style="max-width: 70px;"
-                                                                    (change)="onChangeDiscountType(line)"
-                                                                    formControlName="discountType">
-                                                                    <option value="percentage">%</option>
-                                                                    <option value="fixed">VNĐ</option>
-                                                                </select> -->
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{line.get('priceSubTotal').value | number}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <div>
-                                                                <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
-                                                                            (click)="copyLine(line)">
-                                                                            <span class="k-icon k-i-copy"></span>
-                                                                        </button> -->
-                                                                <button type="button"
-                                                                    class="btn btn-icon btn-sm btn-light"
-                                                                    (click)="deleteLine(i)">
-                                                                    <span class="k-icon k-i-delete"></span>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </ng-container>
+                                            </ng-container>
 
-                                            </tbody>
+                                        </tbody>
 
-                                        </table>
-                                    </div>
+                                    </table>
+                                  
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <table class="table-borderless table-text-right mr-4 my-3 table-payment-result">
-                                        <tr>
-                                            <td>Thành tiền</td>
-                                            <td>{{getAmountTotal | number}}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Tổng tiền</td>
-                                            <td>{{getAmountTotal | number}}</td>
-                                        </tr>
-                                        <tr *ngIf="['done','sale'].indexOf(saleOrder.state) !== -1">
-                                            <td>Số tiền thanh toán</td>
-                                            <td>{{saleOrder.paid | number}}</td>
-                                        </tr>
-                                        <tr *ngIf="['done','sale'].indexOf(saleOrder.state) !== -1">
-                                            <td>Còn lại</td>
-                                            <td>{{getResidual | number}}</td>
-                                        </tr>
+                                <div class="o_group">
+                                    <table class="o_group o_inner_group o_group_col_8">
+                                    </table>
+                                    <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label pb-0">
+                                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                                        Thành tiền
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    <span
+                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label pb-0">
+                                                    <label class="o_form_label oe_subtotal_footer_separator">
+                                                        Tổng tiền
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    <span
+                                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>                                                  
+                                                <td colspan="2" class="text-right">                                                       
+                                                    <!-- <input type="text" class="btn btn-group-lg btn-success" (keyup.enter)="onKeyPressPayment($event)" (keypress)="onKeyPressPayment($event)" value="Thanh toán" /> -->
+                                                   <button type="button" class="btn btn-group-lg btn-success" (click)="actionPayment()">Thanh toán</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
+                                <div class="clearfix"></div>
                             </div>
                         </div>
                     </div>
+                    
                     <div class="clearfix"></div>
                 </div>
             </div>
