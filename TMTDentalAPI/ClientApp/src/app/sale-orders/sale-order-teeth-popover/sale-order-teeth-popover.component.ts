@@ -19,10 +19,11 @@ import { log } from 'util';
 export class SaleOrderTeethPopoverComponent implements OnInit {
   formGroup: FormGroup;
   hamList: { [key: string]: {} };
-  teethSelected: ToothDisplay[] = [];
-  listTeeths: ToothDisplay[] = [];
-  @Input() filteredToothCategories: ToothCategoryBasic[] = [];
-  toolCateg: ToothCategoryBasic = new ToothCategoryBasic();
+  teethSelected: any[] = [];
+  listTeeths: any[] = [];
+  @Input() initialListTeeths: any = [];
+  @Input() filteredToothCategories: any[] = [];
+  toolCateg: any = new ToothCategoryBasic();
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: any;
@@ -38,17 +39,23 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      toothCategory: null
+      ToothCategory: null,
+      Diagnostic: null
     });
     this.loadToothCategories();
-    if (this.line.get('toothCategory').value) {
-      this.loadTeethMap(this.line.get('toothCategory').value);
-      this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value);
+    if (this.line.get('ToothCategory').value) {
+      this.loadTeethMap(this.line.get('ToothCategory').value);
+      this.formGroup.get('ToothCategory').patchValue(this.line.get('ToothCategory').value);
     }
-    if (this.line.get('teeth')) {
-      this.teethSelected = [...this.line.get('teeth').value];
+    if(this.formGroup.get('Diagnostic').value) {
+    this.formGroup.get('Diagnostic').patchValue(this.line.get('Diagnostic').value);
+    }
+    if (this.line.get('Teeth')) {
+      this.teethSelected = [...this.line.get('Teeth').value];
     }
   }
+
+  get ToothCategoryControl() {return this.formGroup.get('ToothCategory'); }
 
   loadToothCategories() {
     // return this.toothCategoryService.getAll().subscribe(
@@ -62,26 +69,27 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     //     }
     //   }
     // );
-    if (this.line.get('toothCategory').value == null && this.filteredToothCategories.length > 0) {
-      this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[1])
-      this.onChangeToothCategory(this.filteredToothCategories[1]);
-      this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[1].id);
-      this.line.get('toothCategory').patchValue(this.filteredToothCategories[1]);
+    if (this.line.get('ToothCategory').value == null && this.filteredToothCategories.length > 0) {
+      const cate = this.filteredToothCategories.find(x => x.Sequence === 1);
+      this.formGroup.get('ToothCategory').patchValue(cate);
+      this.onChangeToothCategory(cate);
+      this.line.get('ToothCategoryId').patchValue(cate.Id);
+      this.line.get('ToothCategory').patchValue(cate);
     }
   }
 
-  isSelected(tooth: ToothDisplay) {
+  isSelected(tooth: any) {
     for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
+      if (this.teethSelected[i].Id === tooth.Id) {
         return true;
       }
     }
     return false;
   }
 
-  getSelectedIndex(tooth: ToothDisplay) {
+  getSelectedIndex(tooth: any) {
     for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
+      if (this.teethSelected[i].Id === tooth.Id) {
         return i;
       }
     }
@@ -93,14 +101,14 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
-      this.line.get('teeth').value.splice(index, 1);
+      this.line.get('Teeth').value.splice(index, 1);
     } else {
       this.teethSelected.push(tooth);
-      this.line.get('teeth').push(this.fb.group(tooth));
+      this.line.get('Teeth').push(this.fb.group(tooth));
     }
   }
 
-  processTeeth(teeth: ToothDisplay[]) {
+  processTeeth(teeth: any[]) {
     this.hamList = {
       '0_up': { '0_right': [], '1_left': [] },
       '1_down': { '0_right': [], '1_left': [] }
@@ -108,29 +116,29 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
 
     for (var i = 0; i < teeth.length; i++) {
       var tooth = teeth[i];
-      if (tooth.position === '1_left') {
-        this.hamList[tooth.viTriHam][tooth.position].push(tooth);
+      if (tooth.Position === '1_left') {
+        this.hamList[tooth.ViTriHam][tooth.Position].push(tooth);
       } else {
-        this.hamList[tooth.viTriHam][tooth.position].unshift(tooth);
+        this.hamList[tooth.ViTriHam][tooth.Position].unshift(tooth);
       }
     }
   }
 
   onChangeToothCategory(value: any) {
-    if (value.id) {
+    if (value.Id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
-      this.line.get('toothCategoryId').patchValue(value.id);
-      this.line.get('toothCategory').patchValue(value);
+      this.line.get('ToothCategoryId').patchValue(value.Id);
+      this.line.get('ToothCategory').patchValue(value);
+      this.formGroup.get('ToothCategory').setValue(value);
     }
   }
 
-  loadTeethMap(categ: ToothCategoryBasic) {
-    var val = new ToothFilter();
-    val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(
-      result => this.processTeeth(result)
-    );
+  loadTeethMap(categ: any) {
+    const val = new ToothFilter();
+    val.categoryId = categ.Id;
+    const result = this.initialListTeeths.filter(x => x.CategoryId === categ.Id);
+    this.processTeeth(result);
   }
 
   toggleWithTeeth(popover) {
@@ -143,6 +151,10 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
 
   onSave() {
     this.eventTeeth.emit(this.line);
+  }
+
+  onDiagnosticChange(val) {
+    this.line.get('Diagnostic').patchValue(val);
   }
 
   public service$ = (text: string): any => {

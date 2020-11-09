@@ -41,6 +41,10 @@ import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sa
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
+import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
+import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
 
 declare var $: any;
 
@@ -61,6 +65,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
   filteredToothCategories: any[] = [];
+  initialListTeeths: any[] = [];
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -68,7 +73,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
-  saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  saleOrder: any = new SaleOrderDisplay();
   saleOrderPrint: any;
   dotKhams: DotKhamBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
@@ -88,21 +93,23 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
-    private toothCategoryService: ToothCategoryService
-    ) {
+    private toothCategoryService: ToothCategoryService, private saleOrderOdataService: SaleOrdersOdataService,
+    private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
+    private teethOdataService:TeethOdataService
+  ) {
   }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      partner: [null, Validators.required],
+      Partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      orderLines: this.fb.array([]),
-      companyId: null,
-      amountTotal: 0,
-      state: null,
-      residual: null,
-      card: null,
-      pricelist: [null, Validators.required],
+      OrderLines: this.fb.array([]),
+      CompanyId: null,
+      AmountTotal: 0,
+      State: null,
+      Residual: null,
+      Card: null,
+      Pricelist: [null, Validators.required],
     });
     this.routeActive();
     this.loadEmployees();
@@ -120,12 +127,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadPayments();
     // this.loadPricelists();
     this.loadToothCategories();
+    this.loadTeethList();
   }
 
   loadEmployees() {
-    this.searchEmployees().subscribe(result => {
-      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
-    });
+    const options = {
+      select: 'Id,Name'
+    };
+    this.employeeOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.filteredEmployees = result.data;
+      }
+    );
   }
 
 
@@ -143,25 +156,25 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrderId = params.get("id");
         this.partnerId = params.get("partner_id");
         if (this.saleOrderId) {
-          return this.saleOrderService.get(this.saleOrderId);
+          return this.saleOrderOdataService.getDisplay(this.saleOrderId);
         } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
+          return this.saleOrderOdataService.defaultGet({ partnerId: this.partnerId || '' });
         }
-      })).subscribe(result => {
+      })).subscribe((result: any) => {
         this.saleOrder = result;
-        this.partnerSend = result.partner;
+        this.partnerSend = result.Partner;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
+        let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        if (result.User) {
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
         }
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        if (result.Partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
           if (!this.saleOrderId) {
-            this.onChangePartner(result.partner);
+            this.onChangePartner(result.Partner);
           }
         }
 
@@ -169,11 +182,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
         // }
 
-        const control = this.formGroup.get('orderLines') as FormArray;
+        const control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach(line => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
 
@@ -188,14 +201,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     if (this.saleOrderId && this.saleOrder) {
-      return this.saleOrder.partnerId;
+      return this.saleOrder.PartnerId;
     }
 
     return undefined;
   }
 
   get partner() {
-    var control = this.formGroup.get('partner');
+    var control = this.formGroup.get('Partner');
     return control ? control.value : null;
   }
 
@@ -742,17 +755,17 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   getFormDataSave() {
     var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      if (line.employee) {
-        line.employeeId = line.employee.id;
+    val.DateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.PartnerId = val.Partner.Id;
+    val.pricelistId = val.Pricelist.Id;
+    val.UserId = val.User ? val.User.Id : null;
+    val.CardId = val.card ? val.card.id : null;
+    val.OrderLines.forEach(line => {
+      if (line.Employee) {
+        line.EmployeeId = line.Employee.Id;
       }
-      if (line.teeth) {
-        line.toothIds = line.teeth.map(x => x.id);
+      if (line.Teeth) {
+        line.ToothIds = line.Teeth.map(x => x.Id);
       }
     });
     return val;
@@ -839,17 +852,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onSave() {
     if (!this.formGroup.valid) {
       return false;
-    }
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
+    }debugger;
+    const val = this.getFormDataSave();
+   
     if (this.saleOrderId) {
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -858,12 +865,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           type: { style: 'success', icon: true }
         });
         this.loadRecord();
-      }, () => {
+      }, (error) => {
         this.loadRecord();
       });
     } else {
-      this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+      this.saleOrderOdataService.create(val).subscribe((result: any) => {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.Id } });
       });
     }
   }
@@ -878,21 +885,21 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     if (this.saleOrderId) {
-      this.saleOrderService.get(this.saleOrderId).subscribe(result => {
+      this.saleOrderOdataService.getDisplay(this.saleOrderId).subscribe((result: any) => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
+        let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        if (result.Partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
         }
 
-        let control = this.formGroup.get('orderLines') as FormArray;
+        let control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach(line => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
 
@@ -916,7 +923,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get orderLines() {
-    return this.formGroup.get('orderLines') as FormArray;
+    return this.formGroup.get('OrderLines') as FormArray;
   }
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -943,7 +950,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
 
     modalRef.result.then(result => {
-      debugger
       for (let i = 0; i < result.length; i++) {
         let line = result[i] as any;
         line.teeth = this.fb.array(line.teeth);
@@ -978,19 +984,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // this.saleOrderLine = event;
     var res = this.fb.group(val);
     // line.teeth = this.fb.array(line.teeth);
-    if (!this.orderLines.controls.some(x => x.value.productId === res.value.productId)) {
+    if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
       this.orderLines.push(res);
     } else {
-      var line = this.orderLines.controls.find(x => x.value.productId === res.value.productId);
+      var line = this.orderLines.controls.find(x => x.value.ProductId === res.value.ProductId);
       if (line) {
-        line.value.productUOMQty += 1;
+        line.value.ProductUOMQty += 1;
         line.patchValue(line.value);
       }
     }
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
-    if (this.formGroup.get('state').value == "sale") {
+    if (this.formGroup.get('State').value == "sale") {
       var val = this.getFormDataSave();
       this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
@@ -1026,19 +1032,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   getPriceSubTotal() {
     this.orderLines.controls.forEach(line => {
-      var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
-      var discountFixedValue = line.get('discountFixed') ? line.get('discountFixed').value : 0;
-      var discountNumber = line.get('discount') ? line.get('discount').value : 0;
-      var getquanTity = line.get('productUOMQty') ? line.get('productUOMQty').value : 1;
-      var getamountPaid = line.get('amountPaid') ? line.get('amountPaid').value : 0;
-      var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
+      var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
+      var discountFixedValue = line.get('DiscountFixed') ? line.get('DiscountFixed').value : 0;
+      var discountNumber = line.get('Discount') ? line.get('Discount').value : 0;
+      var getquanTity = line.get('ProductUOMQty') ? line.get('ProductUOMQty').value : 1;
+      var getamountPaid = line.get('AmountPaid') ? line.get('AmountPaid').value : 0;
+      var priceUnit = line.get('PriceUnit') ? line.get('PriceUnit').value : 0;
       var price = priceUnit * getquanTity;
 
       var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
         Math.max(0, price - discountFixedValue);
-      line.get('priceSubTotal').setValue(subtotal);
+      line.get('PriceSubTotal').setValue(subtotal);
       var getResidual = subtotal - getamountPaid;
-      line.get('amountResidual').setValue(getResidual);
+      line.get('AmountResidual').setValue(getResidual);
     });
 
   }
@@ -1107,7 +1113,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get getAmountTotal() {
-    return this.formGroup.get('amountTotal').value;
+    return this.formGroup.get('AmountTotal').value;
   }
 
   get getAmountPaidTotal() {
@@ -1115,31 +1121,31 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get getState() {
-    return this.formGroup.get('state').value;
+    return this.formGroup.get('State').value;
   }
 
   get getResidual() {
-    return this.formGroup.get('residual').value;
+    return this.formGroup.get('Residual').value;
   }
 
   get getPartner() {
-    return this.formGroup.get('partner').value;
+    return this.formGroup.get('Partner').value;
   }
 
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
-      total += line.get('priceSubTotal').value;
+      total += line.get('PriceSubTotal').value;
     });
     // this.computeResidual(total);
-    this.formGroup.get('amountTotal').patchValue(total);
+    this.formGroup.get('AmountTotal').patchValue(total);
   }
 
   //Tính nợ theo số tổng
   computeResidual(total) {
     let diff = this.getAmountTotal - this.getResidual;
     let residual = total - diff;
-    this.formGroup.get('residual').patchValue(residual);
+    this.formGroup.get('Residual').patchValue(residual);
   }
 
   actionSaleOrderPayment() {
@@ -1311,10 +1317,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   updateSaleOrder() {
-    if (this.formGroup.get('state').value == "sale") {
+    if (this.formGroup.get('State').value == "sale") {
       var val = this.getFormDataSave();
-      debugger
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -1351,9 +1356,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   loadToothCategories() {
-    return this.toothCategoryService.getAll().subscribe(
-      result => {
-        this.filteredToothCategories = result;
+    const options = {
+      select: 'Id,Name,Sequence'
+    };
+    this.toothCategoryOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.filteredToothCategories = result.data;
+      }
+    );
+  }
+  loadTeethList() {
+    const options = {
+      select: 'Id,Name,CategoryId,ViTriHam,Position'
+    };
+    this.teethOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.initialListTeeths = result.data;
       }
     );
   }

@@ -54,6 +54,25 @@ namespace TMTDentalAPI.OdataControllers
             return SingleResult.Create(results);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
+        {
+            var res = await _saleOrderService.GetDisplayAsync(key);
+            if (res == null)
+            {
+                return NotFound();
+            }
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGet([FromQuery] SaleOrderDefaultGet val)
+        {
+            var res = await _saleOrderService.DefaultGet(val);
+            return Ok(res);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Post(SaleOrderSave model)
         {
             if (!ModelState.IsValid)
@@ -67,6 +86,30 @@ namespace TMTDentalAPI.OdataControllers
 
             var basic = _mapper.Map<SaleOrderViewModel>(order);
             return Created(basic);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PUT([FromODataUri] Guid key, SaleOrderSave val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.UpdateOrderAsync(key, val);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            var saleOrder = await _saleOrderService.GetSaleOrderByIdAsync(id);
+            if (saleOrder == null)
+                return NotFound();
+            await _saleOrderService.UnlinkSaleOrderAsync(saleOrder);
+
+            return NoContent();
         }
     }
 }

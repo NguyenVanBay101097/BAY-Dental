@@ -79,7 +79,7 @@ export class SaleOrderListServiceComponent implements OnInit {
     };
 
     this.productOdataService
-      .get(state, options).subscribe(
+      .getFetch(state, options).subscribe(
         (res: any) => {
           this.listProducts = res.data;
           this.totalListProducts = res.data.map(x => ({
@@ -105,29 +105,29 @@ export class SaleOrderListServiceComponent implements OnInit {
 
   addServiceToSaleOrder(item) {
     var value = {
-      amountPaid: 0,
-      amountResidual: 0,
-      diagnostic: '',
-      discount: 0,
-      discountFixed: 0,
-      discountType: 'percentage',
-      employee: null,
-      employeeId: '',
-      name: item.Name,
-      priceSubTotal: 0,
-      priceUnit: item.ListPrice,
-      productId: item.Id,
-      product: {
-        id: item.Id,
-        name: item.Name
+      AmountPaid: 0,
+      AmountResidual: 0,
+      Diagnostic: '',
+      Discount: 0,
+      DiscountFixed: 0,
+      DiscountType: 'percentage',
+      Employee: null,
+      EmployeeId: '',
+      Name: item.Name,
+      PriceSubTotal: 0,
+      PriceUnit: item.ListPrice,
+      ProductId: item.Id,
+      Product: {
+        Id: item.Id,
+        Name: item.Name
       },
-      productUOMQty: 1,
-      state: 'draft',
-      teeth: this.fb.array([]),
-      toothCategory: null,
-      toothCategoryId: '',
+      ProductUOMQty: 1,
+      State: 'draft',
+      Teeth: this.fb.array([]),
+      ToothCategory: null,
+      ToothCategoryId: '',
     };
-    this.newEventEmiter.emit(value)
+    this.newEventEmiter.emit(value);
   }
 
 }

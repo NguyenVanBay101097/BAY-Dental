@@ -629,20 +629,41 @@ namespace TMTDentalAPI
 
             builder.EntitySet<PartnerViewModel>("Partners");
             builder.EntitySet<Product>("Products");
+            builder.EntitySet<Employee>("Employees");
+            builder.EntitySet<Tooth>("Teeth");
+            builder.EntitySet<ToothCategory>("ToothCategories");
+            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
+
+            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
+            // entitype
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")
                .ReturnsCollection<GridPartnerViewModel>();
 
-            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
             builder.EntityType<FacebookUserProfile>()
               .Collection
               .Function("GetView")
               .ReturnsCollection<FacebookUserProfileBasic>();
 
-            builder.EntitySet<IRSequenceViewModel>("IRSequences");
+            builder.EntityType<SaleOrderViewModel>()
+              .Function("GetDisplay")
+              .Returns<SaleOrderDisplay>();
 
-            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
+            builder.EntityType<SaleOrderViewModel>()
+                .Collection
+             .Function("DefaultGet")
+             .Returns<SaleOrderDisplay>();
+            // complextype
+            builder.ComplexType<SaleOrderDisplay>(); 
+            builder.ComplexType<SaleOrderLineDisplay>();
+            builder.ComplexType<PartnerSimple>();
+            builder.ComplexType<ApplicationUserSimple>();
+            builder.ComplexType<ToothDisplay>(); 
+            builder.ComplexType<ToothCategoryBasic>();
+            builder.ComplexType<EmployeeBasic>();
+            builder.ComplexType<ProductPricelistBasic>();
 
             return builder.GetEdmModel();
         }
