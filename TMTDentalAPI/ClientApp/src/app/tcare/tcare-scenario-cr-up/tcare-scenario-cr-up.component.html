@@ -5,7 +5,9 @@
                 <a routerLink="/tcare/scenarios">{{title}}</a>
             </li>
             <li class="active">
-                <span *ngIf="scenario">{{scenario.name}}</span>
+                <span *ngIf="id">{{scenario.name}}</span>
+                <span *ngIf="!id">Mới</span>
+
             </li>
         </ol>
         <div class="o_cp_left">
@@ -36,9 +38,112 @@
                         <input type="text" name="name" class="form-control" formControlName="name">
                     </h1>
                     <div *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched || submitted)">
-                        <label *ngIf="nameControl.errors.required">Nhập tên kịch bản</label>
+                        <label *ngIf="nameControl.errors.required" style="color: red;">Nhập tên kịch bản</label>
                     </div>
                 </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Kênh gửi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filterdChannelSocials" [textField]="'pageName'"
+                                        [filterable]="true" #channelSocialCbx formControlName="channelSocial"
+                                        [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <span>{{dataItem.pageName}} ({{dataItem.type}})</span>
+                                        </ng-template>
+                                    </kendo-combobox>
+                                    <div
+                                        *ngIf="channelSocialControl.invalid && (channelSocialControl.dirty || channelSocialControl.touched || submitted)">
+                                        <label *ngIf="channelSocialControl.errors.required" style="color: red;">Kênh
+                                            gửi không được để trống !</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Kiểu kịch bản
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="type" (change)="onChangeType()">
+                                        <option value="auto_everyday">Chạy tự động hằng ngày</option>
+                                        <option value="auto_custom">Tùy chỉnh chạy tự động</option>
+                                        <!-- <option value="manual">Chạy thủ công</option> -->
+                                    </select>
+                                    <div
+                                        *ngIf="typeControl.invalid && (typeControl.dirty || typeControl.touched || submitted)">
+                                        <label *ngIf="typeControl.errors.required" style="color: red;">Kiểu kịch bản
+                                            không được để trống !</label>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr *ngIf="typeControl.value == 'auto_custom'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chạy tự động
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control" formControlName="autoCustomType" (change)="onChangeCustomType()">
+                                        <option value="custom1">Vào một ngày cụ thể</option>
+                                        <option value="custom2">Vào một ngày trong tháng</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="customTypeControl.value !== null && typeControl.value == 'auto_custom'">
+                                <td colspan="1" class="o_td_label">
+
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Ngày</label>
+                                            <select class="form-control-select mr-1" formControlName="customDay">
+                                                <option [value]="i" *ngFor="let i of dayList">
+                                                    {{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="o_group" *ngIf="customTypeControl.value !== 'custom2'">
+                                            <label class="o_form_label oe_edit_only">Tháng</label>
+                                            <select class="form-control-select mr-1" formControlName="customMonth">
+                                                <option [value]="i" *ngFor="let i of monthList">
+                                                    {{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Giờ</label>
+                                            <select class="form-control-select mr-1" formControlName="customHour">
+                                                <option [value]="i" *ngFor="let i of hourList">
+                                                    {{i | number:'2.0'}} </option>
+                                            </select>                                          
+                                        </div>                                       
+                                        <div class="o_group">
+                                            <label class="o_form_label oe_edit_only">Phút</label>
+                                            <select class="form-control-select mr-1" formControlName="customMinute">
+                                                <option [value]="i" *ngFor="let i of minuteList">{{i | number:'2.0'}}</option>
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="mb-2">
                     <button type="button" (click)="addCampaign()" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Thêm chiến dịch
@@ -53,8 +158,6 @@
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h5 class="mb-1">{{item.name}}</h5>
-                                            <small class="text-muted">Chạy lúc {{item.sheduleStart | date: 'HH:mm'}} mỗi
-                                                ngày</small>
                                         </div>
                                         <div class="d-flex">
                                             <span>
@@ -78,7 +181,7 @@
                     </div>
                     <div class="col-8">
                         <app-tcare-campaign-create-update *ngIf="campaign" (timeChange)="timeChangeCampaign($event)"
-                            (actionNext)="actionNext($event)" [campaign]="campaign">
+                            (actionNext)="actionNext($event)" [campaign]="campaign" [textareaLength]="textareaLength">
                         </app-tcare-campaign-create-update>
                     </div>
 

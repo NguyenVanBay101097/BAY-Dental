@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NavSidebarService } from '../nav-sidebar.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
-import { AuthService } from 'src/app/auth/auth.service';
 import { Router } from '@angular/router';
+import { AuthService } from 'app/auth/auth.service';
+import { NavSidebarService } from '@shared/services/nav-sidebar.service';
 
 @Component({
   selector: 'app-layout-header',

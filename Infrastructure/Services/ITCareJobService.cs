@@ -9,6 +9,7 @@ namespace Infrastructure.Services
     public interface ITCareJobService
     {
         Task Run(string db, Guid campaignId);
-
+        Task TCareTakeMessage(string db);
+        Task RunJob2Messages(string db);
     }
 }

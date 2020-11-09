@@ -115,7 +115,8 @@ namespace Infrastructure.Services
             return await _repository.ListAsync(spec);
         }
 
-        public IQueryable<TEntity> SearchQuery(Expression<Func<TEntity, bool>> domain = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int offSet = 0, int limit = int.MaxValue)
+        public IQueryable<TEntity> SearchQuery(Expression<Func<TEntity, bool>> domain = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, int offSet = 0, int limit = int.MaxValue,
+            bool isPagingEnabled = false)
         {
             //CheckAccessRights(typeof(TEntity).Name, "Read");
             ISpecification<TEntity> spec = new InitialSpecification<TEntity>(x => true);
@@ -123,7 +124,7 @@ namespace Infrastructure.Services
                 spec = new InitialSpecification<TEntity>(domain);
 
             spec = _ApplyIRRules(spec, "Read");
-            return _repository.SearchQuery(domain: spec.AsExpression(), orderBy: orderBy, offSet: offSet, limit: limit);
+            return _repository.SearchQuery(domain: spec.AsExpression(), orderBy: orderBy, offSet: offSet, limit: limit, isPagingEnabled: isPagingEnabled);
         }
 
         public void Update(TEntity entity)

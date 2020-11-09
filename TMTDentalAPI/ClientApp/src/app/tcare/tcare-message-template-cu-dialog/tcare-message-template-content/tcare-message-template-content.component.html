@@ -1,0 +1,35 @@
+<div [formGroup]="formGroup">
+    <!-- <textarea (change)="onTextChange($event)" formControlName="text" class="form-control" rows="5"></textarea> -->
+    <div class="position-relative" (clickOutside)=hideEmoji()>
+        <textarea #content type="text" my-autosize class="form-control" id="textarea_mass" formControlName="text"
+            (click)="selectArea($event)" [maxlength]="textareaLength" (keyup)="selectArea($event)" (paste)="selectArea($event)" (change)="onTextChange($event)"
+            (focus)="showEmoji()" rows="5">
+        </textarea>
+            <span style="color:red" *ngIf="textControl.errors?.maxlength">
+                số kí tự đã vượt quá cho phép !
+            </span>
+        <div class="d-flex">
+            <div>
+                <a *ngFor="let tab of tabs; let i = index" (click)="addToContent(tab.value)"
+            style="background-color:#5dd3e6; border-radius: 90px;" class="btn-tab btn btn-sm mt-1 mr-1">{{tab.name}}</a>
+            </div>
+            <div style="min-width: 50px;" class="ml-auto">
+                <i popoverClass="popover-d-contents" data-container="body" [autoClose]="'outside'" [ngbPopover]="popContent" class="fa fa-smile ml-auto"></i>
+                <ng-template #popContent>
+                    <emoji-mart class="d-flex"
+                    (emojiClick)="emotionClick($event)" title="Pick your emoji…" emoji="point_up"></emoji-mart>
+                </ng-template>
+                <!-- <i class="fa fa-hand-point-down"></i> -->
+                <span class="px-1">{{getLimitText()}}</span>
+            </div>
+           
+        </div>
+        
+
+        <!-- <app-tcare-scenario-message-textarea *ngIf="showPluginTextarea" [num_CharLeft]="getLimitText() | number" (content_send)="addContentPluginTextarea($event)"></app-tcare-scenario-message-textarea> -->
+    </div>
+    <!-- <div
+        *ngIf="contentControl.invalid && (contentControl.dirty || contentControl.touched || submited)">
+        <label *ngIf="contentControl.errors.required" style="color: red;">Nội dung gửi không được để trống !</label>
+    </div> -->
+</div>

@@ -2476,6 +2476,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -7580,6 +7583,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("FacebookPageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("GraphXml")
                         .HasColumnType("nvarchar(max)");
 
@@ -7593,8 +7599,11 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("RecurringJobId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("SheduleStart")
-                        .HasColumnType("datetime2");
+                    b.Property<decimal>("SheduleStartNumber")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SheduleStartType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
@@ -7612,6 +7621,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("FacebookPageId");
+
                     b.HasIndex("TCareScenarioId");
 
                     b.HasIndex("TagId");
@@ -7621,20 +7632,11 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("TCareCampaigns");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.TCareConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ChannelSocialId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ChannelType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -7642,47 +7644,43 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("IntervalNumber")
+                    b.Property<int?>("JobCampaignHour")
                         .HasColumnType("int");
 
-                    b.Property<string>("IntervalType")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("JobCampaignMinute")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("JobMessageMinute")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("JobMessagingMinute")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("MethodType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("SheduleDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TCareCampaignId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChannelSocialId");
-
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("TCareCampaignId");
 
                     b.HasIndex("WriteById");
 
-                    b.ToTable("TCareMessagings");
+                    b.ToTable("TCareConfigs");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingTrace", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ChannelSocialId")
+                    b.Property<Guid?>("CampaignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChannelSocicalId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedById")
@@ -7694,14 +7692,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("Delivery")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Error")
+                    b.Property<string>("FailureReason")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Exception")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("MessageContent")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MessageId")
                         .HasColumnType("nvarchar(max)");
@@ -7709,17 +7707,70 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("Opened")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PSID")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProfilePartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ScheduledDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("TCareCampaignId")
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TCareMessagingId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("ChannelSocicalId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("ProfilePartnerId");
+
+                    b.HasIndex("TCareMessagingId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareMessages");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessageTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CouponProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
@@ -7729,17 +7780,82 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChannelSocialId");
+                    b.HasIndex("CouponProgramId");
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("PartnerId");
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("TCareMessageTemplates");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CouponProgramId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("FacebookPageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MessagingModel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ScheduleDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TCareCampaignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponProgramId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FacebookPageId");
 
                     b.HasIndex("TCareCampaignId");
 
                     b.HasIndex("WriteById");
 
-                    b.ToTable("TCareMessingTraces");
+                    b.ToTable("TCareMessagings");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingPartnerRel", b =>
+                {
+                    b.Property<Guid>("MessagingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MessagingId", "PartnerId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.ToTable("TCareMessagingPartnerRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.TCareProperty", b =>
@@ -7841,11 +7957,35 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AutoCustomType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChannalType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ChannelSocialId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("CustomDay")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomHour")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomMinute")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomMonth")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("JobId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -7853,10 +7993,15 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ChannelSocialId");
 
                     b.HasIndex("CreatedById");
 
@@ -9184,7 +9329,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("InvoiceId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
+                        .WithMany("DotKhams")
                         .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
@@ -10946,7 +11091,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("OrderId");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
+                        .WithMany("SaleOrders")
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -11647,6 +11792,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "FacebookPage")
+                        .WithMany()
+                        .HasForeignKey("FacebookPageId");
+
                     b.HasOne("ApplicationCore.Entities.TCareScenario", "TCareScenario")
                         .WithMany("Campaigns")
                         .HasForeignKey("TCareScenarioId");
@@ -11660,15 +11809,76 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.TCareConfig", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocial")
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("ChannelSocialId");
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessage", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.TCareCampaign", "Campaign")
+                        .WithMany()
+                        .HasForeignKey("CampaignId");
+
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocical")
+                        .WithMany()
+                        .HasForeignKey("ChannelSocicalId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
+
+                    b.HasOne("ApplicationCore.Entities.FacebookUserProfile", "ProfilePartner")
+                        .WithMany()
+                        .HasForeignKey("ProfilePartnerId");
+
+                    b.HasOne("ApplicationCore.Entities.TCareMessaging", "TCareMessaging")
+                        .WithMany("TCareMessages")
+                        .HasForeignKey("TCareMessagingId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessageTemplate", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "CouponProgram")
+                        .WithMany()
+                        .HasForeignKey("CouponProgramId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessaging", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.SaleCouponProgram", "CouponProgram")
+                        .WithMany()
+                        .HasForeignKey("CouponProgramId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "FacebookPage")
+                        .WithMany()
+                        .HasForeignKey("FacebookPageId");
 
                     b.HasOne("ApplicationCore.Entities.TCareCampaign", "TCareCampaign")
                         .WithMany()
@@ -11681,31 +11891,19 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingTrace", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.TCareMessagingPartnerRel", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocial")
-                        .WithMany()
-                        .HasForeignKey("ChannelSocialId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
+                    b.HasOne("ApplicationCore.Entities.TCareMessaging", "Messaging")
+                        .WithMany("PartnerRecipients")
+                        .HasForeignKey("MessagingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ApplicationCore.Entities.TCareCampaign", "TCareCampaign")
-                        .WithMany("Traces")
-                        .HasForeignKey("TCareCampaignId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.TCareProperty", b =>
@@ -11744,6 +11942,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.TCareScenario", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.FacebookPage", "ChannelSocial")
+                        .WithMany()
+                        .HasForeignKey("ChannelSocialId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");

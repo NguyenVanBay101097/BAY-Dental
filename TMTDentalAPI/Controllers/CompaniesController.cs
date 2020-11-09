@@ -206,9 +206,17 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("SetupTenant")]
         public async Task<IActionResult> SetupTenant(CompanySetupTenant val)
         {
-            await _unitOfWork.BeginTransactionAsync();
-            await _companyService.SetupTenant(val);
-            _unitOfWork.Commit();
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                await _companyService.SetupTenant(val);
+                _unitOfWork.Commit();
+            }
+            catch(Exception e)
+            {
+                _unitOfWork.Rollback();
+                throw e;
+            }
 
             return Ok(true);
         }
@@ -219,7 +227,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (_tenant != null)
                 _cache.Remove(_tenant.Hostname.ToLower());
-            return Ok(true);
+            return NoContent();
         }
 
         [HttpPost("[action]")]
