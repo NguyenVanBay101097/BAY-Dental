@@ -3,7 +3,7 @@ import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dial
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
+import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple, PartnerSimpleInfo } from 'src/app/partners/partner-simple';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
@@ -28,13 +28,14 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 export class AppointmentCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
-  customerSimpleFilter: PartnerSimple[] = [];
+  customerSimpleFilter: PartnerSimpleInfo[] = [];
   userSimpleFilter: UserSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
+  public steps: any = { hour: 1, minute: 30 };
 
   hourList: number[] = [];
   minuteList: number[] = [0, 30];
@@ -56,8 +57,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partner: [null, Validators.required],
       user: [null],
       apptDate: [null, Validators.required],
-      apptHour: 0,
-      apptMinute: 0,
+      appTime:null,
       note: null,
       companyId: null,
       doctor: null,
@@ -103,16 +103,18 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    
-    if (appoint.apptHour < 10) {
-      appoint.apptHour = "0" + appoint.apptHour;
-    }
+    var appTime = this.intlService.formatDate(appoint.appTime, 'HH:mm');
+    debugger
+    // if (appoint.apptHour < 10) {
+    //   appoint.apptHour = "0" + appoint.apptHour;
+    // }
      
-    if (appoint.apptMinute < 10) {
-      appoint.apptMinute = "0" + appoint.apptMinute;
-    }
+    // if (appoint.apptMinute < 10) {
+    //   appoint.apptMinute = "0" + appoint.apptMinute;
+    // }
    
-    appoint.date = `${apptDate}T${appoint.apptHour}:${appoint.apptMinute}:00`;
+    appoint.date = `${apptDate}T${appTime}:00`;
+    appoint.time = appTime;
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
@@ -171,7 +173,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
-    this.partnerService.autocompletePartner(partnerPaged).subscribe(
+    this.partnerService.autocompletePartnerInfo(partnerPaged).subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
       }
@@ -209,7 +211,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partnerPaged.search = search.toLowerCase();
     }
 
-    return this.partnerService.autocompletePartner(partnerPaged);
+    return this.partnerService.autocompletePartnerInfo(partnerPaged);
   }
 
   searchUsers(search) {
@@ -229,18 +231,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   loadAppointmentToForm() {
-    if (this.appointId != null) {
+    if (this.appointId != null) {     
       this.appointmentService.get(this.appointId).subscribe(
-        (rs: any) => {
+        (rs: any) => {         
           this.formGroup.patchValue(rs);
-          let date = new Date(rs.date);
+          let date = new Date(rs.date);      
 
           this.formGroup.get('apptDate').patchValue(date);
-          this.formGroup.get('apptHour').patchValue(date.getHours());
-          this.formGroup.get('apptMinute').patchValue(date.getMinutes());
+          this.formGroup.get('appTime').patchValue(date);
+          // this.formGroup.get('apptHour').patchValue(date.getHours());
+          // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
           var appoint = this.formGroup.value;
-          console.log(appoint);
+          //console.log(appoint);
 
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
@@ -278,7 +281,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(result => {
       if (result && result.id) {
-        var newPartner = new PartnerSimple();
+        var newPartner = new PartnerSimpleInfo();
         newPartner.id = result.id;
         newPartner.name = result.name;
         this.customerSimpleFilter.push(newPartner);
@@ -287,6 +290,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }, er => {
       this.errorService.show(er);
     })
+  }
+
+
+  partnercatolories(tags) {
+    return tags.map(x => x.name).join(', ');
   }
 
   defaultGet() {
@@ -299,8 +307,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
+        var time = new Date();
+        if(date.getMinutes() <= 0){
+           time = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),0);
+        }else if (date.getMinutes() > 0){
+          time = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),30);
+        }
+        else if(date.getMinutes() > 30){
+          time =  new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours() + 1,0);
+        }
+       
 
         this.formGroup.get('apptDate').patchValue(date);
+        this.formGroup.get('appTime').patchValue(time);
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');

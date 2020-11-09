@@ -251,6 +251,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AutocompleteInfos(PartnerPaged val)
+        {
+            var res = await _partnerService.SearchPartnerInfosCbx(val);
+            return Ok(res);
+        }
+
         [HttpPost("UploadImage/{id}")]
         public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
         {

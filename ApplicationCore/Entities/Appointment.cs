@@ -20,6 +20,11 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
+        /// thời gian hẹn
+        /// </summary>
+        public string Time { get; set; }
+
+        /// <summary>
         /// Ghi chú, nội dung
         /// </summary>
         public string Note { get; set; }

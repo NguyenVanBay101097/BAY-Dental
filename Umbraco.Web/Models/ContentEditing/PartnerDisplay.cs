@@ -146,6 +146,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? Date { get; set; }
 
+
         public string DisplayName { get; set; }
 
         public string Age

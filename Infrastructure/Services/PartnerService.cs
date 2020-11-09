@@ -487,6 +487,27 @@ namespace Infrastructure.Services
             return partners;
         }
 
+        public async Task<IEnumerable<PartnerSimpleInfo>> SearchPartnerInfosCbx(PartnerPaged val)
+        {
+            var cateObj = GetService<IPartnerCategoryService>();
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleInfo
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                BirthYear = x.BirthYear,
+            }).ToListAsync();
+
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                       .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+
+            foreach (var partner in partners)
+                partner.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == partner.Id)));
+
+            return partners;
+        }
+
         public IQueryable<Partner> GetQueryPaged(PartnerPaged val)
         {
             var query = SearchQuery();
@@ -1439,7 +1460,7 @@ namespace Infrastructure.Services
         {
             var limit = 200;
             var offset = 0;
-           
+
             var res = new Dictionary<string, Partner>();
             while (offset < refs.Count())
             {

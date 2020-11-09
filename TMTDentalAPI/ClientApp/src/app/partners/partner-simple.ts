@@ -60,6 +60,14 @@ export class PartnerDisplay extends PartnerBasic {
     consultant: EmployeeSimple;
 }
 
+export class PartnerSimpleInfo {
+    id: string;
+    name: string;
+    phone: string;
+    categories: PartnerCategorySimple[];
+    age: string;
+}
+
 export class PartnerCategorySimple {
     id: string;
     name: string;

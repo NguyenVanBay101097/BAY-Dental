@@ -69,6 +69,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? Date { get; set; }
 
+        /// <summary>
+        /// thời gian hẹn
+        /// </summary>
+        public string Time { get; set; }
+
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -78,7 +83,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
+        public PartnerSimpleInfo Partner { get; set; }
 
         public Guid CompanyId { get; set; }
 

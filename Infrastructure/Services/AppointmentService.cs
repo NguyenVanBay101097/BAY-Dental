@@ -61,6 +61,8 @@ namespace Infrastructure.Services
             var category = await SearchQuery(x => x.Id == id)
                 .Include(x => x.User)
                 .Include("Partner")
+                .Include("Partner.PartnerPartnerCategoryRels")
+                .Include("Partner.PartnerPartnerCategoryRels.Category")
                 .Include("Doctor")
                 .FirstOrDefaultAsync();
             //Xác định cuộc hẹn đã có đợt khám tham chiếu hay chưa
@@ -135,7 +137,7 @@ namespace Infrastructure.Services
                 if (dk.PartnerId.HasValue)
                     res.PartnerId = dk.PartnerId.Value;
                 if (dk.Partner != null)
-                    res.Partner = _mapper.Map<PartnerSimple>(dk.Partner);
+                    res.Partner = _mapper.Map<PartnerSimpleInfo>(dk.Partner);
 
                 if (dk.Doctor != null)
                 {
@@ -148,7 +150,7 @@ namespace Infrastructure.Services
             {
                 var partnerObj = GetService<IPartnerService>();
                 var partner = await partnerObj.GetByIdAsync(val.PartnerId.Value);
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
+                res.Partner = _mapper.Map<PartnerSimpleInfo>(partner);
             }
 
             return res;
