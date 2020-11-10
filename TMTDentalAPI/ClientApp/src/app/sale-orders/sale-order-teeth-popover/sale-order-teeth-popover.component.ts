@@ -4,6 +4,7 @@ import { TooltipTemplateService } from '@progress/kendo-angular-charts';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { LaboOrderLineDefaultGet } from 'src/app/labo-order-lines/labo-order-line.service';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerAddRemoveTags, PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
@@ -17,6 +18,7 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 })
 export class SaleOrderTeethPopoverComponent implements OnInit {
   formGroup: FormGroup
+  title:'Thông tin bổ sung';
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
   listTeeths: ToothDisplay[] = [];
@@ -36,18 +38,37 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.loadToothCategories();
     this.formGroup = this.fb.group({
-      toothCategory: null
+      note: null,
+      diagnostic: null,
+      toothCategory: null,
     })
     this.loadToothCategories();
-    if (this.line.get('toothCategory').value) {
-      this.loadTeethMap(this.line.get('toothCategory').value)
-      this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value)
+
+    if (this.line) {
+      setTimeout(() => {
+        debugger;
+        this.formGroup.patchValue(this.line);
+        this.teethSelected = [...this.line.teeth];
+        if (this.line.get('toothCategory').value) {
+          this.loadTeethMap(this.line.get('toothCategory').value)
+          this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value)
+        }
+        if (this.line.get('teeth')) {
+          this.teethSelected = [...this.line.get('teeth').value];
+        }
+      });
+    } else {
+      setTimeout(() => {
+        this.formGroup = this.fb.group({
+          note: null,
+          diagnostic: null,
+          toothCategory: null,
+        })
+           
+      });
     }
-    if (this.line.get('teeth')) {
-      this.teethSelected = [...this.line.get('teeth').value];
-    }
+ 
   }
 
   loadToothCategories() {

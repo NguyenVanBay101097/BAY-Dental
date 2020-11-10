@@ -7,39 +7,84 @@
         <i class="fas fa-tooth text-info mr-1" style="font-size: 20px;"></i>
     </span> -->
     <span *ngIf="!teethSelected || teethSelected.length ==0">
-        <i class="fas fa-tooth text-info"></i>
+        <i class="fas fa-plus-square text-primary"></i>
     </span>
 
 </a>
 
 <ng-template #popTitle>
-    <div class=" d-flex align-items-center d-inline-block" [formGroup]="formGroup">
-        <span>Loại răng</span>
-        <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}"
-            [filterable]="true" formControlName="toothCategory" class="btn-sm"
-            (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
-        </kendo-combobox>
+    <div class=" d-flex align-items-center d-inline-block">
+        <h3>{{title}}</h3>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
 
     </div>
 </ng-template>
 
 <ng-template #popContent>
-    <div class="d-inline-flex w-100">
-        <h5 class="w-80">Răng</h5>
-        <button (click)="onSave()" *ngIf="line.get('state') && line.get('state').value == 'sale'"
-            class="btn btn-sm btn-primary ">Xác nhận</button>
-    </div>
-    <div class="teeth-map">
-        <table class="table">
-            <tr *ngFor="let ham of hamList | keyvalue">
-                <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}"
-                        *ngFor="let rang of vitri.value">
-                        {{rang.name}}
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet">
+            <div class="o_group mt-0 mb-0">
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Mô tả khách hàng
+                        </label>
                     </div>
-                </td>
-            </tr>
-        </table>
+                    <div colspan="1">
+                        <input type="text" class="form-control" formControlName="note" />
+                    </div>
+                </div>
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Chẩn đoán,điều trị
+                        </label>
+                    </div>
+                    <div colspan="1">
+                        <input type="text" class="form-control" formControlName="diagnostic" />
+                    </div>
+                </div>
+
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div>
+                        <div colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Loại răng
+                            </label>
+                        </div>
+                        <div colspan="1">
+                            <kendo-combobox [data]="filteredToothCategories" [textField]="'name'"
+                                [popupSettings]="{appendTo: 'component'}" [filterable]="true"
+                                formControlName="toothCategory" class="btn-sm"
+                                (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
+                            </kendo-combobox>
+                        </div>
+                    </div>
+                </div>
+                <table class="o_group o_inner_group o_group_col_6">
+
+                </table>
+            </div>
+            <div class="d-inline-flex w-100">
+                <div colspan="1" class="o_td_label">
+                    <label class="o_form_label">
+                        Răng
+                    </label>
+                </div>
+            </div>
+            <div class="teeth-map">
+                <table class="table">
+                    <tr *ngFor="let ham of hamList | keyvalue">
+                        <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                            *ngFor="let vitri of ham.value | keyvalue">
+                            <div (click)="onSelected(rang)" class="tooth-item"
+                                [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                {{rang.name}}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </ng-template>
