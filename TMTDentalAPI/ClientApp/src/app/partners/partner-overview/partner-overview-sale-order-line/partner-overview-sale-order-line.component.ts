@@ -13,7 +13,7 @@ export class PartnerOverviewSaleOrderLineComponent implements OnInit {
   @Input() public saleOrderId: string;
   skip = 0;
   limit = 10;
-  gridData: GridDataResult;
+  gridData: any = [];
   details: SaleOrderLineDisplay[];
   loading = false;
 
@@ -28,28 +28,14 @@ export class PartnerOverviewSaleOrderLineComponent implements OnInit {
     }
   }
 
-
-  public pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-    this.loadItems();
-  }
-
   loadFromApi() {
+    this.loading = true;
     this.saleOrderlineService.getDisplayBySaleOrder(this.saleOrderId).subscribe(
       result => {
-        this.details = result;
-        console.log(result);
-        this.gridData = {
-          data: this.details.slice(this.skip, this.skip + this.limit),
-          total: this.details.length
-        };
-      }
-    )
+        this.gridData = result;
+        this.loading = false;
+      }, () => {
+        this.loading = false;
+      });
   }
-
-
-  loadItems(): void {
-
-  }
-
 }

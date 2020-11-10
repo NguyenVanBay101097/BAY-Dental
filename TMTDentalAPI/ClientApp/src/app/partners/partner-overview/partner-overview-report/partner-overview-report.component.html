@@ -1,22 +1,24 @@
 <div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Báo cáo</h5>
+    <div class="card-body p-3">
+        <h5 class="card-title t_title">Báo cáo</h5>
         <div class="row">
             <div class="col-6">
-                <div class="card text-white bg-info">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">DOANH THU</h5>
-                        <p class="card-text">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body p-3">
+                        <h5 class="card-title text-center mb-2">
+                            DOANH THU
+                        </h5>
+                        <p class="card-text text-center t_amount">
                             {{(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number}}
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-6">
-                <div class="card text-white bg-primary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">THANH TOÁN</h5>
-                        <p class="card-text">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body p-3">
+                        <h5 class="card-title text-center mb-2">THANH TOÁN</h5>
+                        <p class="card-text text-center t_amount">
                             {{(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number}}
                         </p>
                     </div>
@@ -24,9 +26,9 @@
             </div>
             <div class="col-6">
                 <div class="card text-white bg-secondary">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">DỰ KIẾN THU</h5>
-                        <p class="card-text">
+                    <div class="card-body p-3">
+                        <h5 class="card-title text-center mb-2">DỰ KIẾN THU</h5>
+                        <p class="card-text text-center t_amount">
                             {{(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number}}
                         </p>
                     </div>
@@ -34,9 +36,9 @@
             </div>
             <div class="col-6">
                 <div class="card text-white bg-success">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">SỐ P.ĐIỀU TRỊ</h5>
-                        <p class="card-text">
+                    <div class="card-body p-3">
+                        <h5 class="card-title text-center mb-2">SỐ P.ĐIỀU TRỊ</h5>
+                        <p class="card-text text-center t_amount">
                             {{(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number}}
                         </p>
                     </div>

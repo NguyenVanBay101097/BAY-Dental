@@ -23,7 +23,7 @@
         <div class="row">
             <label class="col-sm-4 t_col_form_lable">Ngày sinh</label>
             <div class="col-sm-8">
-                {{partner ?( partner.BirthDay + '/'+ partner.BirthMonth + '/' + partner.BirthYear + (partner.BirthYear ? '('+ ( partner.Age) + ' tuổi)' : '') ): ''}}
+                {{ partner.DateOfBirth }}
             </div>
         </div>
         <div class="row">

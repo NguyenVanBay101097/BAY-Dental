@@ -125,13 +125,14 @@ namespace TMTDentalAPI.OdataControllers
                 Ref = x.Ref,
                 Name = x.Name,
                 Date = x.Date,
-                Email= x.Email,
+                Email = x.Email,
                 Gender = x.Gender,
                 Street = x.Street,
                 JobTitle = x.JobTitle,
                 Phone = x.Phone,
                 MedicalHistory = x.MedicalHistory,
-                Histories = x.PartnerHistoryRels.Select(x=> new HistorySimple() { 
+                Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
+                {
                     Id = x.HistoryId,
                     Name = x.History.Name
                 }),

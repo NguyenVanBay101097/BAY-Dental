@@ -39,6 +39,17 @@ namespace Umbraco.Web.Models.ContentEditing
             set { }
         }
 
+        public string DateOfBirth
+        {
+            get
+            {
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
+            }
+            set { }
+        }
+
         public string Street { get; set; }
 
         public string WardName { get; set; }

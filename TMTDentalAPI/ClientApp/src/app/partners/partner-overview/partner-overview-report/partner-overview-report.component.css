@@ -58,10 +58,6 @@
     opacity: 0.8;
 }
 
-.col-6 {
-    padding: 15px;
-}
-
 .report-debit {
     position: relative;
     overflow: hidden;
@@ -131,3 +127,11 @@
     vertical-align: middle;
     margin-top: 5px;
 }
+
+.t_amount {
+    font-size: 1.25rem;
+}
+
+ .t_title {
+    color: #0B92F3;
+ }

@@ -21,7 +21,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   @Input() partnerId: string;
 
   gridData: GridDataResult;
-  limit = 20;
+  limit = 1000;
   skip = 0;
   title = 'Đơn vị tính';
   loading = false;

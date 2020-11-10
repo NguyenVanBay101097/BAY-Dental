@@ -27,7 +27,7 @@ const routes: Routes = [
     path: 'customer/:id',
     component: PartnerCustomerDetailComponent,
     children: [
-      { path: '', redirectTo: 'treatment-payment', pathMatch: 'full' },
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'profile', component: PartnerCustomerProfileComponent },
       { path: 'treatment-payment', component: PartnerCustomerTreatmentPaymentComponent },
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },
