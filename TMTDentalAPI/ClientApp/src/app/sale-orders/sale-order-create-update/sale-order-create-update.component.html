@@ -5,8 +5,8 @@
                 <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{saleOrder.Name}}</span>
-                <span *ngIf="!id">Mới</span>
+                <span *ngIf="saleOrder">{{saleOrder.Name}}</span>
+                <span *ngIf="!saleOrder">Mới</span>
             </li>
         </ol>
         <!-- <div class="o_cp_left">
@@ -37,7 +37,7 @@
                     <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
-                    <button *ngIf="id" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                    <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
                         In phiếu
                     </button>
                     <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
@@ -230,8 +230,6 @@
                                                 popoverTitle="Cập nhật khuyến mãi" class="btn btn-outline-primary btn-sm mx-1" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1" (click)="applyPromotion()">
                                                 <span>Cập nhật khuyến mãi</span>
                                             </button>
-                                            <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)">
-                                            </app-sale-order-apply-discount-default-dialog>
                                         </div>
 
                                         <div class="t-conTable" style="min-height: 340px;">
@@ -260,14 +258,11 @@
                                                             <tr [formGroupName]="i">
                                                                 <td>{{line.get('Name').value }}</td>
                                                                 <td>
-                                                                    <app-sale-order-teeth-popover *ngIf="filteredToothCategories" [initialListTeeths]="initialListTeeths" [filteredToothCategories]="filteredToothCategories" [line]="line" (eventTeeth)="updateTeeth($event)">
+                                                                    <app-sale-order-teeth-popover *ngIf="filteredToothCategories && initialListTeeths" [initialListTeeths]="initialListTeeths" [filteredToothCategories]="filteredToothCategories" [line]="line" (eventTeeth)="updateTeeth($event)">
                                                                     </app-sale-order-teeth-popover>
-                                                                    <span>
-                                                                        {{line.get('Diagnostic').value?(',' + line.get('Diagnostic').value)  : ''}}
-                                                                    </span>
                                                                 </td>
                                                                 <td>
-                                                                    <kendo-combobox [data]="filteredEmployees" (blur)="updateSaleOrder()" [textField]="'Name'" [filterable]="true" #employeeCbx formControlName="Employee" [valueField]="'Id'">
+                                                                    <kendo-combobox [data]="filteredEmployees" (blur)="updateSaleOrder()" [textField]="'Name'" (filterChange)="searchEmployees($event)" [filterable]="true" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                                     </kendo-combobox>
                                                                 </td>
                                                                 <!-- <td>
@@ -282,7 +277,7 @@
                                                                 <td class="text-right" style="max-width: 300px;">
                                                                     {{ line.get('PriceUnit').value | number }}</td>
                                                                 <td>
-                                                                    <div class="d-flex align-items-center justify-content-end">
+                                                                    <!-- <div class="d-flex align-items-center justify-content-end">
                                                                         <kendo-numerictextbox [class.d-none]="line.get('DiscountType').value !== 'percentage'" [min]="0" [max]="100" formControlName="Discount" (blur)="updateSaleOrder()" [autoCorrect]="true" [spinners]="false" (valueChange)="onChangeDiscount(line)" style="max-width: 100px;">
                                                                         </kendo-numerictextbox>
                                                                         <kendo-numerictextbox [format]="'n0'" [spinners]="false" [min]="0" (blur)="updateSaleOrder()" [class.d-none]="line.get('DiscountType').value !== 'fixed'" (valueChange)="onChangeDiscountFixed(line)" formControlName="DiscountFixed" style="max-width: 100px;">
@@ -291,7 +286,9 @@
                                                                             <option value="percentage">%</option>
                                                                             <option value="fixed">VNĐ</option>
                                                                         </select>
-                                                                    </div>
+                                                                    </div> -->
+                                                                    <app-sale-order-line-discount-odata-popover [discountForm]="line" (discountFormGroup)="onChangeDiscount($event,line)">
+                                                                    </app-sale-order-line-discount-odata-popover>
                                                                 </td>
                                                                 <td class="text-right">
                                                                     {{line.get('PriceSubTotal').value | number}}
@@ -327,13 +324,21 @@
                                                     <td>Thành tiền</td>
                                                     <td>{{getAmountTotal | number}}</td>
                                                 </tr>
-
+                                                <tr>
+                                                    <td>
+                                                        <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)">
+                                                        </app-sale-order-apply-discount-default-dialog>
+                                                    </td>
+                                                    <td>
+                                                        {{this.formGroup.get('PriceUnit').value;}}
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <td>Tổng tiền</td>
                                                     <td>{{getAmountTotal | number}}</td>
                                                 </tr>
                                                 <tr *ngIf="formGroup.get('State').value !== 'draft'">
-                                                    <td>Số tiền thanh toán</td>
+                                                    <td>Đã thanh toán</td>
                                                     <td>{{getAmountPaidTotal | number}}</td>
                                                 </tr>
                                                 <tr *ngIf="formGroup.get('State').value !== 'draft'">

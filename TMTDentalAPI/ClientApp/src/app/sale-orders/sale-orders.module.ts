@@ -23,6 +23,7 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
 import { PartnersModule } from '../partners/partners.module';
 import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
+import { SaleOrderLineDiscountOdataPopoverComponent } from './sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-
     SaleOrderPaymentDialogComponent,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
+    SaleOrderLineDiscountOdataPopoverComponent,
   ],
   imports: [
     CommonModule,

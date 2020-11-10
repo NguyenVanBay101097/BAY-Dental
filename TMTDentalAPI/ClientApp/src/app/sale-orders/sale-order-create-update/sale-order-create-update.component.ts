@@ -64,14 +64,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
-  filteredToothCategories: any[] = [];
-  initialListTeeths: any[] = [];
+  filteredToothCategories: any[];
+  initialListTeeths: any[];
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
 
   saleOrder: any = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -80,7 +80,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
-  filteredEmployees: EmployeeBasic[] = [];
+  filteredEmployees: any[] = [];
+  initialListEmployees: any = [];
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -91,9 +92,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
+     private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
-    private toothCategoryService: ToothCategoryService, private saleOrderOdataService: SaleOrdersOdataService,
+    private saleOrderOdataService: SaleOrdersOdataService,
     private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
     private teethOdataService:TeethOdataService
   ) {
@@ -109,19 +110,19 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       State: null,
       Residual: null,
       Card: null,
-      Pricelist: [null, Validators.required],
+      Pricelist: [null],
     });
     this.routeActive();
     this.loadEmployees();
-    // this.employeeCbx.filterChange.asObservable().pipe(
+    // this.employeeCbx.filterChange.pipe(
     //   debounceTime(300),
     //   tap(() => (this.employeeCbx.loading = true)),
     //   switchMap(value => this.searchEmployees(value))
-    // ).subscribe(result => {
-    //   this.filteredEmployees = result.items;
+    // ).subscribe((result: any) => {
+    //   this.filteredEmployees = result;
     //   this.employeeCbx.loading = false;
     // });
-    // this.getAccountPaymentReconcicles();
+    this.getAccountPaymentReconcicles();
     this.loadDotKhamList();
     // this.loadLaboOrderList();
     this.loadPayments();
@@ -136,18 +137,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     };
     this.employeeOdataService.getFetch({}, options).subscribe(
       (result: any) => {
-        this.filteredEmployees = result.data;
+        this.initialListEmployees = result.data;
+        this.filteredEmployees = this.initialListEmployees.slice(0,20);
       }
     );
   }
 
 
   searchEmployees(filter?: string) {
-    var val = new EmployeePaged();
-    val.search = filter || '';
-    val.isDoctor = true;
-    val.limit = 0;
-    return this.employeeService.getEmployeePaged(val);
+    this.filteredEmployees = this.initialListEmployees.filter(x=>x.Name.includes(filter)).slice(0,20);
   }
 
   routeActive() {
@@ -221,7 +219,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       p.id = result.id;
       p.name = result.name;
       p.displayName = result.displayName;
-      this.formGroup.get('partner').patchValue(p);
+      this.formGroup.get('Partner').patchValue(p);
       this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
       this.onChangePartner(p);
     }, () => {
@@ -312,7 +310,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   showApplyCardDialog() {
-    var partner = this.formGroup.get('partner').value;
+    var partner = this.formGroup.get('Partner').value;
     if (!partner) {
       this.notificationService.show({
         content: 'Vui lòng chọn khách hàng',
@@ -330,7 +328,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saveRecord().subscribe(() => {
           let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
           modalRef.componentInstance.orderId = this.saleOrderId;
-          modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+          modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
           modalRef.result.then(() => {
             this.loadRecord();
           }, () => {
@@ -339,7 +337,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       } else {
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
         modalRef.componentInstance.orderId = this.saleOrderId;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -350,16 +348,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = result.id;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+        modalRef.componentInstance.orderId = result.Id;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -400,15 +398,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
         let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = result.id;
+        modalRef.componentInstance.orderId = result.Id;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -512,14 +510,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         });
       }
     } else {
-      this.createRecord().subscribe((result) => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
-        this.saleOrderService.applyPromotion(result.id).subscribe(() => {
+        this.saleOrderService.applyPromotion(result.Id).subscribe(() => {
           this.loadRecord();
         });
       });
@@ -541,14 +539,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
-        val.saleOrderId = result.id;
+        val.saleOrderId = result.Id;
         this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
           this.loadRecord();
         }, (error) => {
@@ -568,7 +566,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
     });
-    return this.saleOrderService.create(val);
+    return this.saleOrderOdataService.create(val);
   }
 
   getDiscountNumber(line: FormGroup) {
@@ -754,10 +752,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getFormDataSave() {
-    var val = this.formGroup.value;
+    const val = this.formGroup.value;
     val.DateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.PartnerId = val.Partner.Id;
-    val.pricelistId = val.Pricelist.Id;
+    val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
     val.UserId = val.User ? val.User.Id : null;
     val.CardId = val.card ? val.card.id : null;
     val.OrderLines.forEach(line => {
@@ -777,18 +775,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
     var val = this.getFormDataSave();
     if (!this.saleOrderId) {
-      this.saleOrderService.create(val)
+      this.saleOrderOdataService.create(val)
         .pipe(
-          mergeMap(r => {
-            this.saleOrderId = r.id;
-            return this.saleOrderService.actionConfirm([r.id]);
+          mergeMap((r: any) => {
+            this.saleOrderId = r.Id;
+            return this.saleOrderService.actionConfirm([r.Id]);
           })
         )
         .subscribe(r => {
           this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
         });
     } else {
-      this.saleOrderService.update(this.saleOrderId, val)
+      this.saleOrderOdataService.update(this.saleOrderId, val)
         .pipe(
           mergeMap(r => {
             return this.saleOrderService.actionConfirm([this.saleOrderId]);
@@ -852,7 +850,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onSave() {
     if (!this.formGroup.valid) {
       return false;
-    }debugger;
+    }
     const val = this.getFormDataSave();
    
     if (this.saleOrderId) {
@@ -1097,7 +1095,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    if (this.formGroup.get('state').value == "draft" || this.formGroup.get('state').value == "cancel") {
+    if (this.formGroup.get('State').value == "draft" || this.formGroup.get('State').value == "cancel") {
       this.orderLines.removeAt(index);
       this.computeAmountTotal();
       this.orderLines.markAsDirty();
@@ -1117,7 +1115,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get getAmountPaidTotal() {
-    return this.saleOrder.paidTotal;
+    return this.saleOrder.PaidTotal;
   }
 
   get getState() {
@@ -1335,9 +1333,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   }
 
-  onChangeDiscount(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+  onChangeDiscount(event, line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.Id === line.value.Id);
     if (res) {
+      line.value.DiscountType = event.DiscountType;
+      if (event.DiscountType == "fixed") {
+        line.value.DiscountFixed = event.DiscountFixed;
+      } else {
+        line.value.Discount = event.DiscountPercent;
+      }
       res.patchValue(line.value);
     }
     this.getPriceSubTotal();

@@ -1,14 +1,16 @@
+<span *ngFor="let teeth of teethSelected; let i = index">{{teeth.Name}} {{i !== teethSelected.length - 1? ',': ''}}</span>
+<span>{{DiagnosticControl.value ? '; ' + DiagnosticControl.value : ''}}</span>&nbsp;
 <a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
-    <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span>
+    <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
     <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
         <span style="font-size: 11px; position: absolute; color: white; left:
             3px;">{{teeth.name}}</span>
         <i class="fas fa-tooth text-info mr-1" style="font-size: 20px;"></i>
     </span> -->
-    <span *ngIf="!teethSelected || teethSelected.length ==0">
+    <!-- <span *ngIf="!teethSelected || teethSelected.length ==0">
         <i class="fas fa-tooth text-info"></i>
-    </span>
-
+    </span> -->
+    <i class="far fa-edit text-info"></i>
 </a>
 
 <ng-template #popTitle>
@@ -16,7 +18,7 @@
         <!-- <span>Loại răng</span>
         <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}" [filterable]="true" formControlName="toothCategory" class="btn-sm" (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
         </kendo-combobox> -->
-        <h4>Răng, Chuẩn đoán</h4>
+        <span>Răng, Chuẩn đoán</span>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
 
     </div>
@@ -24,37 +26,34 @@
 
 <ng-template #popContent>
     <div [formGroup]="formGroup">
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label"><h6>Loại răng</h6></label>
-            <div class="col-sm-9">
-                <!-- <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}" [filterable]="true" formControlName="toothCategory" class="btn-sm" (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
-            </kendo-combobox> -->
-                <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                    <input [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
-                    <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
+        <div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>
+                <div class="col-sm-9">
+                    <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic">
                 </div>
             </div>
         </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>
-            <div class="col-sm-9">
-                <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic">
+        <div class="d-inline-flex w-100">
+            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
+                <input [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
+                <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
             </div>
         </div>
-    </div>
-    <div class="d-inline-flex w-100">
-        <h5 class="w-80">Răng</h5>
-        <button (click)="onSave()" *ngIf="line.get('State') && line.get('State').value == 'sale'" class="btn btn-sm btn-primary ">Xác nhận</button>
-    </div>
-    <div class="teeth-map">
-        <table class="table">
-            <tr *ngFor="let ham of hamList | keyvalue">
-                <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                        {{rang.Name}}
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div class="teeth-map">
+            <table class="table">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                        <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                            {{rang.Name}}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="popover-footer">
+            <button (click)="onSave()" *ngIf="line.get('State') && line.get('State').value == 'sale'" class="btn btn-sm btn-primary ml-auto">Lưu</button>
+            <button (click)="popOver.close()" class="btn btn-sm btn-danger ml-2">Hủy</button>
+        </div>
     </div>
 </ng-template>
