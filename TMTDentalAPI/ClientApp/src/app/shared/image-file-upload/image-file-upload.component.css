@@ -1,4 +1,39 @@
-.o_form_view .oe_avatar>img {
+.oe_avatar>img {
     max-height: 100%;
     max-width: 100%;
+    margin-bottom: 10px;
+    border: 1px solid #a8a8a8;
+    border-radius: 50%;
 }
+
+.o_field_image .o_form_image_controls {
+    position: absolute;
+    top: 0;
+    left: auto;
+    bottom: auto;
+    right: 0;
+    width: 100%;
+    color: #fff;
+    background-color: #7c7bad;
+    opacity: 0;
+    transition: opacity ease 400ms;
+}
+
+.o_field_image .o_form_image_controls>.fa {
+    cursor: pointer;
+    margin: 5px;
+}
+
+.o_form_binary_progress,
+.o_hidden_input_file .o_input_file {
+    display: none;
+}
+
+.o_field_image:hover .o_form_image_controls {
+    opacity: .8
+}
+
+.o_field_image {
+    position: relative;
+}
+

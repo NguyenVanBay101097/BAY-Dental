@@ -1,57 +1,45 @@
-<div class="d-flex flex-column h-100 w-100 partner-overview">
-    <div class="report-title">
-        Báo cáo
-    </div>
-    <div class="report-content row mx-0 overflow-auto t-scrollbar">
-        <div class="col-6">
-            <div class="h-100 report-debit">
-                <div class="vector-debit">
-                </div>
-                <div class="content-title w-100 text-center">
-                    DOANH THU
-                </div>
-                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number"
-                    class="content-content w-100 text-center">
-                    {{(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number}}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Báo cáo</h5>
+        <div class="row">
+            <div class="col-6">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">DOANH THU</h5>
+                        <p class="card-text">
+                            {{(accountCommonPartnerReport && accountCommonPartnerReport.debit ? accountCommonPartnerReport.debit : 0) | number}}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 report-credit">
-                <div class="vector-credit">
-                </div>
-                <div class="content-title w-100 text-center">
-                    THANH TOÁN
-                </div>
-                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number"
-                    class="content-content w-100 text-center">
-                    {{(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number}}
+            <div class="col-6">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">THANH TOÁN</h5>
+                        <p class="card-text">
+                            {{(accountCommonPartnerReport && accountCommonPartnerReport.credit ? accountCommonPartnerReport.credit : 0) | number}}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 report-initialBalance">
-                <div class="vector-initialBalance">
-                </div>
-                <div class="content-title w-100 text-center">
-                    DỰ KIẾN THU
-                </div>
-                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number"
-                    class="content-content w-100 text-center">
-                    {{(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number}}
+            <div class="col-6">
+                <div class="card text-white bg-secondary">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">DỰ KIẾN THU</h5>
+                        <p class="card-text">
+                            {{(accountCommonPartnerReport && accountCommonPartnerReport.initialBalance ? accountCommonPartnerReport.initialBalance : 0) | number}}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-6">
-            <div class="h-100 report-countSaleOrder">
-                <div class="vector-countSaleOrder">
-                </div>
-                <div class="content-title w-100 text-center">
-                    SỐ P.ĐIỀU TRỊ
-                </div>
-                <div [title]="(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number"
-                    class="content-content w-100 text-center">
-                    {{(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number}}
+            <div class="col-6">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">SỐ P.ĐIỀU TRỊ</h5>
+                        <p class="card-text">
+                            {{(accountCommonPartnerReport && accountCommonPartnerReport.countSaleOrder ? accountCommonPartnerReport.countSaleOrder : 0) | number}}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

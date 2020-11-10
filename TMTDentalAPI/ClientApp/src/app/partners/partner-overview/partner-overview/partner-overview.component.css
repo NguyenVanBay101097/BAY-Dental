@@ -1,56 +1,12 @@
-.treatment {
-    grid-area: treatment;
-    border-radius: 5px;
+.t_wrapper {
+    display: flex;
+    overflow-x: hidden;
 }
 
-.info {
-    grid-area: info;
-    border-radius: 5px;
+.t_wrapper .t_section_left {
+    flex: 0 0 33%;
 }
 
-.advisory {
-    grid-area: advisory;
-    border-radius: 5px;
-}
-
-.promotion {
-    grid-area: promotion;
-    border-radius: 5px;
-}
-
-.report {
-    grid-area: report;
-    border-radius: 5px;
-}
-
-.image {
-    grid-area: image;
-    border-radius: 5px;
-}
-
-.appointment {
-    grid-area: appointment;
-    border-radius: 5px;
-}
-
-.grid-container {
-    grid-auto-columns: 30% 34% 34%;
-    grid-auto-rows: 23% 23% 24% 24%;
-    overflow: hidden;
-    display: grid;
-    grid-template-areas: 
-    'info treatment treatment' 
-    'info treatment treatment' 
-    'info report appointment' 
-    'image report appointment';
-    grid-gap: 15px;
-    background-color: white;
-    padding: 15px;
-}
-
-.grid-container>div {
-    background-color: white;
-    width: 100%;
-    box-shadow: 4px 8px 12px rgba(17, 137, 247, 0.15);
-    overflow: hidden;
+.t_wrapper .t_section_right {
+    flex: 1 1 100%;
 }

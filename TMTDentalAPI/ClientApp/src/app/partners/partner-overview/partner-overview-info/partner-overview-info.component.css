@@ -62,8 +62,29 @@
     }
 }
 
+.t_wrapper {
+    overflow-x: hidden;
+    padding: 15px;
+}
+
 .sup-label {
     font-size: 13px;
     color: #7d7070;
     margin-bottom: 5px;
+}
+
+.t_avatar {
+    width: 100px;
+    height: 100px;
+    margin-right: 15px;
+}
+
+.t_sub_title {
+    color: #6c757d!important;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.t_col_form_lable {
+    font-weight: 600;
 }

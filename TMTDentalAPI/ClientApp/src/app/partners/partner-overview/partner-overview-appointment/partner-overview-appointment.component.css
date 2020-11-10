@@ -1,32 +1,3 @@
-.form-group {
-    margin-bottom: 0;
-}
-
-.card-body {
-    -webkit-box-flex: 1;
-    flex: 1 1 auto;
-    padding: 0 15px;
-}
-
-.card{
-    border: none;
-}
-
-.appoint-table tr td:first-child {
-    font-weight: 500;
-}
-
-.appoint-table tr td:last-child {
-    font-weight: bolder;
-    padding-left: 30px;
-}
-
-.appointment-title {
-    padding: 10px 15px;
-    height: 10%;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 24px;
-    color: #0B92F3;
+.t_col_form_lable {
+    font-weight: 600;
 }

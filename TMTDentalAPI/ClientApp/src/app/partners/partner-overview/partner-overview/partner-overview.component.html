@@ -1,27 +1,26 @@
-<div class="grid-container h-100 w-100 partner-overview">
-    <div class="treatment">
-        <app-partner-overview-treatment [partnerId]="partnerId"></app-partner-overview-treatment>
+<div class="t_wrapper">
+    <div class="t_section_left">
+        <div class="info">
+            <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
+        </div>
+        <div class="image">
+            <app-partner-overview-image [partnerId]="partnerId">
+            </app-partner-overview-image>
+        </div>
     </div>
-    <div class="info">
-        <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
-    </div>
-    <div class="report">
-        <app-partner-overview-report [accountCommonPartnerReport]="accountCommonPartnerReport">
-        </app-partner-overview-report>
-    </div>
-    <div class="image">
-        <app-partner-overview-image [partnerId]="partnerId">
-        </app-partner-overview-image>
-    </div>
-    <div class="appointment">
-        <app-partner-overview-appointment [partnerId]="partnerId" [customerAppointment]="customerAppointment">
-        </app-partner-overview-appointment>
-    </div>
-    <div class="promotion">
-        <app-partner-overview-promotion [promotions]="promotions"></app-partner-overview-promotion>
-    </div>
-    <div class="advisory">
-        <app-partner-overview-advisory *ngIf="saleQuotations" [saleQuotations]="saleQuotations">
-        </app-partner-overview-advisory>
+    <div class="t_section_right">
+        <div class="treatment">
+            <app-partner-overview-treatment [partnerId]="partnerId"></app-partner-overview-treatment>
+        </div>
+        <div class="row p-3">
+            <div class="col-6">
+                <app-partner-overview-appointment [partnerId]="partnerId" [customerAppointment]="customerAppointment">
+                </app-partner-overview-appointment>
+            </div>
+            <div class="col-6">
+                <app-partner-overview-report [accountCommonPartnerReport]="accountCommonPartnerReport">
+                </app-partner-overview-report>
+            </div>
+        </div>
     </div>
 </div>

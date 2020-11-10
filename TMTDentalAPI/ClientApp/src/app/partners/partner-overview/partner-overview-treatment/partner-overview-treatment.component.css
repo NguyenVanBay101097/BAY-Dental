@@ -1,45 +1,7 @@
-.k-grid tbody tr {
-    height: 20px;
-}
-
 .treatment-title {
-    padding: 10px 15px;
-    height: 10%;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 24px;
     color: #0B92F3;
 }
 
-.kendo-grid-data {
-    margin: 15px;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 90% !important;
-}
-
-/* width */
-
-::-webkit-scrollbar {
-    width: 3px;
-    border-radius: 8px;
-}
-
-/* Track */
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-/* Handle */
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-/* Handle on hover */
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.t_wrapper {
+    padding: 15px;
 }
