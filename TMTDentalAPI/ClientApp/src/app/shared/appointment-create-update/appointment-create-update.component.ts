@@ -317,9 +317,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         newPartner.name = result.name;
         this.customerSimpleFilter.push(newPartner);
         this.formGroup.get('partner').setValue(newPartner);
+        this.onChangePartner();
       }
-    }, er => {
-      this.errorService.show(er);
     })
   }
 
