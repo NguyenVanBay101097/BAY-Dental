@@ -1,0 +1,42 @@
+<div class="d-flex flex-column partner-overview">
+    <div class="o_chatter oe_chatter">
+        <div class="o_mail_chatter_attachments">
+            <div class="o_chatter_attachment">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="image-title">
+                        Hình ảnh
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
+                            <i class="far fa-image"></i> Thêm hình</button>
+                        <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
+                            accept="image/*" (change)="addPartnerImages($event)">
+                    </div>
+                </div>
+                <div class="w-100 view-img h-75">
+                    <div class="o_attachments_previews">
+                        <!-- Preview hình ảnh -->
+                        <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                            <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                <div class="o_image_box">
+                                    <div class="o_attachment_image" id="{{img.name}}"
+                                        [style.background-image]="'url('+ img.uploadId + '?width=240&height=240)'">
+                                    </div>
+                                    <div class="o_image_overlay o_attachment_view">
+                                        <span class="fa fa-times o_attachment_delete_cross"
+                                            (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
+                                        <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                            href="{{webContentApi}}/{{img.uploadId}}">
+                                            <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

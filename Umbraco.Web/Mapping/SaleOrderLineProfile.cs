@@ -16,6 +16,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLineDisplay>()
                  .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
+
+
             CreateMap<SaleOrderLineDisplay, SaleOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.InvoiceStatus, x => x.Ignore())
@@ -45,7 +47,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
 
-            CreateMap<SaleOrderLine, SaleOrderLineBasic>();
+            CreateMap<SaleOrderLine, SaleOrderLineBasic>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
         }
     }
 }

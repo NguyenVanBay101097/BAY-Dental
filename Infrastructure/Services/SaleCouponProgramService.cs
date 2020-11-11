@@ -38,7 +38,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleCouponProgram>(x => val.Ids.Contains(x.Id)));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Sequence).ThenBy(s => s.RewardType));
-            var items = await _mapper.ProjectTo<SaleCouponProgramBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            if (val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+            var items = await _mapper.ProjectTo<SaleCouponProgramBasic>(query).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<SaleCouponProgramBasic>(totalItems, val.Offset, val.Limit)

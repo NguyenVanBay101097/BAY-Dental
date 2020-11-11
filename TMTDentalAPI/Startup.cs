@@ -626,6 +626,7 @@ namespace TMTDentalAPI
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
          
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
+            builder.EntitySet<Partner>("Partner");
 
             builder.EntitySet<PartnerViewModel>("Partners");
             builder.EntityType<PartnerViewModel>()
@@ -638,6 +639,14 @@ namespace TMTDentalAPI
               .Collection
               .Function("GetView")
               .ReturnsCollection<FacebookUserProfileBasic>();
+
+            builder.EntityType<PartnerViewModel>()
+            .Function("GetDisplay")
+            .Returns<PartnerDisplay>();
+
+            builder.ComplexType<PartnerDisplay>();
+            builder.ComplexType<HistorySimple>();
+            builder.ComplexType<PartnerCategoryBasic>();
 
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();

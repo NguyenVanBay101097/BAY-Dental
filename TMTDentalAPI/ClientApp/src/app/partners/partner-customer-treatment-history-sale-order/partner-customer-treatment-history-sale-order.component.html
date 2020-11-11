@@ -1,0 +1,29 @@
+<div class="d-flex flex-column h-100">
+    <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+        <h5 class="m-0">Phiếu điều trị</h5>
+        <button type="button" (click)="chossesSaleOrder(null)" class="btn btn-primary btn-sm">Thêm</button>
+    </div>
+    <div class="t-conTable">
+        <div class="t-parTable t-scrollbar">
+            <table class="t-sticky-thead t-sticky-col-left table-tbody-nowrap">
+                <thead>
+                    <tr>
+                        <th>Số phiếu</th>
+                        <th>Ngày lập phiếu</th>
+                        <th>Tổng tiền</th>
+                        <th>Nợ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr [ngClass]="{'clicked': id === item.id}" (click)="chossesSaleOrder(item.id)"
+                        *ngFor="let item of listSaleOrder">
+                        <td>{{item.name}}</td>
+                        <td>{{item.dateOrder | date: 'dd/MM/yyyy'}}</td>
+                        <td>{{item.amountTotal | number}}</td>
+                        <td>{{!item.residual ? 0 : item.residual | number}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

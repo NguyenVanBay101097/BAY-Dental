@@ -42,6 +42,7 @@ export class DiscountDefault {
 }
 
 
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';

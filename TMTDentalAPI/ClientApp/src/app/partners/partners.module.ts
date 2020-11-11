@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PartnersRoutingModule } from './partners-routing.module';
@@ -21,7 +21,6 @@ import { SharedModule } from '../shared/shared.module';
 import { PartnerTabSaleOrderListComponent } from './partner-tab-sale-order-list/partner-tab-sale-order-list.component';
 import { PartnerSearchDialogComponent } from './partner-search-dialog/partner-search-dialog.component';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
-import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerProfileInforComponent } from './partner-customer-profile-infor/partner-customer-profile-infor.component';
@@ -38,6 +37,32 @@ import { PartnerCustomerQuotationsComponent } from './partner-customer-quotation
 import { PartnerInfoComponent } from './partner-info/partner-info.component';
 import { PartnerCategoryPopoverComponent } from './partner-customer-list/partner-category-popover/partner-category-popover.component';
 import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { PartnerCustomerTreatmentHistoryComponent } from './partner-customer-treatment-history/partner-customer-treatment-history.component';
+import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer-treatment-history-form/partner-customer-treatment-history-form.component';
+import { PartnerCustomerTreatmentHistoryFormPaymentComponent } from './partner-customer-treatment-history-form-payment/partner-customer-treatment-history-form-payment.component';
+import { PartnerCustomerTreatmentHistoryFormServiceListComponent } from './partner-customer-treatment-history-form-service-list/partner-customer-treatment-history-form-service-list.component';
+import { PartnerCustomerTreatmentHistoryFormServiceSearchComponent } from './partner-customer-treatment-history-form-service-search/partner-customer-treatment-history-form-service-search.component';
+import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
+import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from './partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
+import { SaleOrderApplyCouponDialogComponent } from '../sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
+import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
+
+import { SaleOrdersModule } from '../sale-orders/sale-orders.module';
+import { SaleOrderApplyDiscountDefaultDialogComponent } from '../sale-orders/sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
+import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatment-history-form/treatment-history-teeth-popover/treatment-history-teeth-popover.component';
+import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
+import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
+import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
+import { PartnerOverviewInfoComponent } from './partner-overview/partner-overview-info/partner-overview-info.component';
+import { PartnerOverviewAppointmentComponent } from './partner-overview/partner-overview-appointment/partner-overview-appointment.component';
+import { PartnerOverviewTreatmentComponent } from './partner-overview/partner-overview-treatment/partner-overview-treatment.component';
+import { PartnerOverviewAdvisoryComponent } from './partner-overview/partner-overview-advisory/partner-overview-advisory.component';
+import { PartnerOverviewPromotionComponent } from './partner-overview/partner-overview-promotion/partner-overview-promotion.component';
+import { PartnerOverviewReportComponent } from './partner-overview/partner-overview-report/partner-overview-report.component';
+import { PartnerOverviewImageComponent } from './partner-overview/partner-overview-image/partner-overview-image.component';
+import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
+import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 
 @NgModule({
   declarations: [
@@ -70,30 +95,56 @@ import { PartnerCustomerAutoGenerateCodeDialogComponent } from './partner-custom
     PartnerCustomerQuotationsComponent,
     PartnerInfoComponent,
     PartnerCategoryPopoverComponent,
-    PartnerCustomerAutoGenerateCodeDialogComponent
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    PartnerCustomerTreatmentHistoryComponent,
+    PartnerCustomerTreatmentHistoryFormComponent,
+    PartnerCustomerTreatmentHistoryFormPaymentComponent,
+    PartnerCustomerTreatmentHistoryFormServiceListComponent,
+    PartnerCustomerTreatmentHistoryFormServiceSearchComponent,
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistorySaleOrderComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent,
+    TreatmentHistoryTeethPopoverComponent,
+    ApplyDiscountDefaultPopoverComponent,
+    ApplyDiscountSaleOrderLinePopoverComponent,
+    PartnerOverviewComponent,
+    PartnerOverviewInfoComponent,
+    PartnerOverviewAppointmentComponent,
+    PartnerOverviewTreatmentComponent,
+    PartnerOverviewAdvisoryComponent,
+    PartnerOverviewPromotionComponent,
+    PartnerOverviewReportComponent,
+    PartnerOverviewImageComponent,
+    PartnerOverviewSaleOrderLineComponent,
   ],
   imports: [
     CommonModule,
     PartnersRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    HttpClientModule,
     FormsModule,
     SharedModule,
     FlexLayoutModule,
     NgbModule,
+    AccountCommonPartnerReportsModule,
+    SaleOrdersModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
     PartnerImportComponent,
     PartnerSearchDialogComponent,
     PartnerCustomerTreatmentPaymentDetailComponent,
-    PartnerCustomerAutoGenerateCodeDialogComponent
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    SaleOrderApplyCouponDialogComponent,
+    SaleOrderApplyServiceCardsDialogComponent,
+    SaleOrderApplyDiscountDefaultDialogComponent,
+    PartnerCustomerAutoGenerateCodeDialogComponent,
+    PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent
   ],
-  providers: [],
+  providers: [SaleCouponProgramService],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
-  ]
+  ],schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class PartnersModule { }

@@ -22,5 +22,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Diagnostic { get; set; }
 
         public DateTime DateCreated { get; set; }
+
+        public EmployeeBasic Employee { get; set; }
+        public decimal PriceTotal { get; set; }
+        public ToothCategoryBasic ToothCategory { get; set; }
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+
     }
 }
