@@ -19,6 +19,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? Date { get; set; }
 
+        public string Time { get; set; }
+
         /// <summary>
         /// Người hẹn
         /// </summary>

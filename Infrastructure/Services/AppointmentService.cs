@@ -283,6 +283,7 @@ namespace Infrastructure.Services
                 PartnerName = x.Partner.Name,
                 DoctorName = x.Doctor.Name,
                 Date = x.Date,
+                Time = x.Time,
                 State = x.State,
                 Note = x.Note,
                 PartnerPhone = x.Partner.Phone,

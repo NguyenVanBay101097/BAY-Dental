@@ -39,6 +39,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   hourList: number[] = [];
   minuteList: number[] = [0, 30];
+  timeList: string[] = [];
+  timeSource: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +59,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partner: [null, Validators.required],
       user: [null],
       apptDate: [null, Validators.required],
-      appTime:null,
+      appTime: null,
       note: null,
       companyId: null,
       doctor: null,
@@ -67,6 +69,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     setTimeout(() => {
       this.hourList = _.range(0, 24);
       // this.minuteList = _.range(0, 60, 5);
+      this.timeSource = this.TimeInit();
+      this.timeList = this.timeSource;
 
       if (this.appointId) {
         this.loadAppointmentToForm();
@@ -86,6 +90,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     });
   }
 
+  TimeInit() {
+    var times = new Array();; // time array
+    var tt = 0; // start time
+    var x = 30; //minutes interval
+    //var ap = ['AM', 'PM']; // AM-PM
+
+    for (var i = 0; tt < 24 * 60; i++) {
+      var hh = Math.floor(tt / 60); // getting hours of day in 0-24 format
+      var mm = (tt % 60); // getting minutes of the hour in 0-55 format
+      times[i] = ("0" + hh).slice(-2) + ':' + ("0" + mm).slice(-2);
+      tt = tt + x;
+    }
+    return times;
+  }
+
 
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
@@ -103,17 +122,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    var appTime = this.intlService.formatDate(appoint.appTime, 'HH:mm');
-    debugger
+    var appTime = appoint.appTime;
     // if (appoint.apptHour < 10) {
     //   appoint.apptHour = "0" + appoint.apptHour;
     // }
-     
+
     // if (appoint.apptMinute < 10) {
     //   appoint.apptMinute = "0" + appoint.apptMinute;
     // }
-   
-    appoint.date = `${apptDate}T${appTime}:00`;
+
+    appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
@@ -231,14 +249,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   loadAppointmentToForm() {
-    if (this.appointId != null) {     
+    if (this.appointId != null) {
       this.appointmentService.get(this.appointId).subscribe(
-        (rs: any) => {         
+        (rs: any) => {
           this.formGroup.patchValue(rs);
-          let date = new Date(rs.date);      
+          let date = new Date(rs.date);
 
           this.formGroup.get('apptDate').patchValue(date);
-          this.formGroup.get('appTime').patchValue(date);
+          this.formGroup.get('appTime').patchValue(rs.time);
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
@@ -307,19 +325,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
-        var time = new Date();
-        if(date.getMinutes() <= 0){
-           time = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),0);
-        }else if (date.getMinutes() > 0){
-          time = new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours(),30);
-        }
-        else if(date.getMinutes() > 30){
-          time =  new Date(date.getFullYear(),date.getMonth(),date.getDay(),date.getHours() + 1,0);
-        }
-       
-
         this.formGroup.get('apptDate').patchValue(date);
-        this.formGroup.get('appTime').patchValue(time);
+        this.formGroup.get('appTime').patchValue('00:00');
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
