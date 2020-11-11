@@ -1,7 +1,7 @@
 import { UserPaged, UserService } from './../../users/user.service';
 import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
 import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple, PartnerSimpleInfo } from 'src/app/partners/partner-simple';
 import * as _ from 'lodash';
@@ -18,6 +18,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { UserSimple } from 'src/app/users/user-simple';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnersService } from '../services/partners.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -28,7 +29,7 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 export class AppointmentCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
-  customerSimpleFilter: PartnerSimpleInfo[] = [];
+  customerSimpleFilter: PartnerSimple[] = [];
   userSimpleFilter: UserSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
@@ -36,7 +37,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   dotKhamId: any;
   public steps: any = { hour: 1, minute: 30 };
-
   hourList: number[] = [];
   minuteList: number[] = [0, 30];
   timeList: string[] = [];
@@ -51,15 +51,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService,
+    private odataPartnerService: PartnersService,
     private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: null,
       partner: [null, Validators.required],
+      partnerAge: null,
+      partnerPhone: null,
+      partnerTags: this.fb.array([]),
       user: [null],
       apptDate: [null, Validators.required],
-      appTime: null,
+      appTime: '00:00',
       note: null,
       companyId: null,
       doctor: null,
@@ -191,7 +195,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
-    this.partnerService.autocompletePartnerInfo(partnerPaged).subscribe(
+    this.partnerService.autocompletePartner(partnerPaged).subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
       }
@@ -229,7 +233,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partnerPaged.search = search.toLowerCase();
     }
 
-    return this.partnerService.autocompletePartnerInfo(partnerPaged);
+    return this.partnerService.autocompletePartner(partnerPaged);
   }
 
   searchUsers(search) {
@@ -265,6 +269,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+            this.onChangePartner();
           }
 
           if (rs.doctor) {
@@ -283,6 +288,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.formGroup.get('partner').value;
   }
 
+  get partnerAge(){
+    return this.formGroup.get('partnerAge').value;
+  }
+
+  get partnerPhone(){
+    return this.formGroup.get('partnerPhone').value;
+  }
+
   updateCustomerModal() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';
@@ -299,7 +312,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(result => {
       if (result && result.id) {
-        var newPartner = new PartnerSimpleInfo();
+        var newPartner = new PartnerSimple();
         newPartner.id = result.id;
         newPartner.name = result.name;
         this.customerSimpleFilter.push(newPartner);
@@ -308,6 +321,29 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }, er => {
       this.errorService.show(er);
     })
+  }
+
+  onChangePartner() {
+    if (this.partner) {
+      var expand: any = {
+        $expand: 'Tags'
+      };
+      this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
+        console.log(rs);
+        debugger
+        this.formGroup.get('partnerAge').patchValue(rs.Age);
+        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
+        this.tags.clear();
+        rs.Tags.forEach(tag => {
+          var g = this.fb.group(tag);        
+          this.tags.push(g);
+        });
+      });
+    }
+  }
+
+  get tags() {
+    return this.formGroup.get('partnerTags') as FormArray;
   }
 
 

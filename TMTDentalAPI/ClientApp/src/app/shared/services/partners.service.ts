@@ -10,18 +10,18 @@ export class PartnersService extends ODataService {
 
     public getView(state: any, options?: any): void {
         this.fetch(this.tableName + '/GetView', state, options || {})
-        .pipe(
-            map((data: GridDataResult) => {
-                data.data = data.data.map(x => {
-                    x.Tags = x.Tags ? JSON.parse(x.Tags) : [];
-                    return x;
-                });
-                return data;
-            })
-        )
-        .subscribe((x: any) => {
-            super.next(x);
-        });
+            .pipe(
+                map((data: GridDataResult) => {
+                    data.data = data.data.map(x => {
+                        x.Tags = x.Tags ? JSON.parse(x.Tags) : [];
+                        return x;
+                    });
+                    return data;
+                })
+            )
+            .subscribe((x: any) => {
+                super.next(x);
+            });
     }
 
     public getViewByPhone(phone: string) {
@@ -29,9 +29,11 @@ export class PartnersService extends ODataService {
             filter: {
                 logic: 'and',
                 filters: [
-                    { field: 'phone', operator: 'eq', value: phone}
+                    { field: 'phone', operator: 'eq', value: phone }
                 ]
-            }
+            },
+            expand: "Tags"
         });
     }
+
 }

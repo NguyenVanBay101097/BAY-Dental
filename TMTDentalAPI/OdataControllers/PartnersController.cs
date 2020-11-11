@@ -49,12 +49,32 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
-        public async Task<IActionResult> Get(ODataQueryOptions<PartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
+        public async Task<IActionResult> Get()
         {
             var results = await _partnerService.GetViewModelsAsync();
-            if (tagIds != null && tagIds.Any())
-                results = results.Where(x => x.Tags.Any(s => tagIds.Contains(s.Id)));
             return Ok(results);
+        }
+
+
+        [EnableQuery]
+        public SingleResult<PartnerInfoVm> Get([FromODataUri] Guid key)
+        {
+            var results = _partnerService.SearchQuery(x => x.Id == key).Select(x => new PartnerInfoVm
+            {
+                Id = x.Id,
+                BirthYear = x.BirthYear,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                Email = x.Email,
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
+            });    
+            
+            return SingleResult.Create(results);
         }
 
         [HttpPut]
@@ -69,8 +89,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
-        {
+        public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)        {
             var results = await _partnerService.GetGridViewModelsAsync();
             if (tagIds != null && tagIds.Any())
             {

@@ -1902,11 +1902,11 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                //{
-                //    Id = s.CategoryId,
-                //    Name = s.Category.Name,
-                //})
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
             });
         }
 
