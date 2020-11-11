@@ -218,8 +218,7 @@
                                     </div>
                                     <div class="w-75 h-100">
                                         <!-- Component Form Service Payment -->
-                                        <div class="my-1">
-
+                                        <div class="my-1" style="min-height: 30px;">
                                             <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()" *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.State) !== -1">
                                                 <span>thẻ tiền mặt</span>
                                             </button>
