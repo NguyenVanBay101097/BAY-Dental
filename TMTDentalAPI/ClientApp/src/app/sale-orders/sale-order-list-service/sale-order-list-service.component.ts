@@ -15,7 +15,7 @@ import { ToothDisplay } from 'src/app/teeth/tooth.service';
 })
 export class SaleOrderListServiceComponent implements OnInit {
 
-  @ViewChild("searchInput", {static: true}) searchInput: ElementRef;
+  @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
   @Output() newEventEmiter = new EventEmitter<any>()
   limit: number = 20;
   skip: number = 0;
@@ -45,7 +45,7 @@ export class SaleOrderListServiceComponent implements OnInit {
 
   searchInit() {
     fromEvent(document, 'keyup').pipe(
-      filter((s: any) => s.keyCode ===	67)
+      filter((s: any) => s.keyCode === 67)
     ).subscribe(s => {
       this.searchInput.nativeElement.focus();
     });
@@ -55,6 +55,13 @@ export class SaleOrderListServiceComponent implements OnInit {
       .subscribe((value) => {
         this.onSearch(value);
       });
+  }
+
+  onKeyUp(s) {
+    if(s.key === 'Enter' || s.keyCode === 13) {
+      if (this.listProducts)
+      { this.addServiceToSaleOrder(this.listProducts[0]); }
+    }
   }
 
   loadDataDefault() {
@@ -101,6 +108,7 @@ export class SaleOrderListServiceComponent implements OnInit {
       return;
     }
     this.listProducts = this.totalListProducts.filter(x => x.searchString.includes(val));
+    return;
   }
 
   addServiceToSaleOrder(item) {

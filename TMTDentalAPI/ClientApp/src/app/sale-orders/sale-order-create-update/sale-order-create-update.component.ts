@@ -92,11 +92,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-     private paymentService: AccountPaymentService,
+    private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
     private saleOrderOdataService: SaleOrdersOdataService,
     private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
-    private teethOdataService:TeethOdataService
+    private teethOdataService: TeethOdataService
   ) {
   }
 
@@ -138,14 +138,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.employeeOdataService.getFetch({}, options).subscribe(
       (result: any) => {
         this.initialListEmployees = result.data;
-        this.filteredEmployees = this.initialListEmployees.slice(0,20);
+        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
       }
     );
   }
 
 
   searchEmployees(filter?: string) {
-    this.filteredEmployees = this.initialListEmployees.filter(x=>x.Name.includes(filter)).slice(0,20);
+    this.filteredEmployees = this.initialListEmployees.filter(x => x.Name.includes(filter)).slice(0, 20);
   }
 
   routeActive() {
@@ -557,15 +557,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   createRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
+    const val = this.getFormDataSave();
     return this.saleOrderOdataService.create(val);
   }
 
@@ -852,7 +844,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
     const val = this.getFormDataSave();
-   
+
     if (this.saleOrderId) {
       this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
@@ -1114,6 +1106,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('AmountTotal').value;
   }
 
+  get getAmountTotalDiscount() {
+    if (this.saleOrder.OrderLines) {
+      const val = this.saleOrder.OrderLines.find(x => x.IsRewardLine === true);
+      return val ? val.PriceTotal : 0;
+    }
+    return 0;
+  }
+
   get getAmountPaidTotal() {
     return this.saleOrder.PaidTotal;
   }
@@ -1296,7 +1296,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeQuantity(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
     if (res) {
       res.patchValue(line.value);
     }
@@ -1306,7 +1306,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscountFixed(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
     if (res) {
       res.patchValue(line.value);
     }
@@ -1349,7 +1349,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscountType(line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
     if (res) {
       res.value.discount = 0;
       res.value.discountFixed = 0;

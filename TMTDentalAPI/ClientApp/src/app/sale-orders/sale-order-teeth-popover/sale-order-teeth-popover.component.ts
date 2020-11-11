@@ -42,6 +42,15 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
       ToothCategory: null,
       Diagnostic: null
     });
+    this.reLoad();
+  }
+
+  get ToothCategoryControl() {return this.formGroup.get('ToothCategory'); }
+  get DiagnosticControl() {return this.formGroup.get('Diagnostic'); }
+  get lineTeeth() {return this.line? this.line.value.Teeth : []; }
+  get lineDiagnostic() {return this.line? this.line.value.Diagnostic : ''; }
+
+  reLoad() {
     this.loadToothCategories();
     if (this.line.get('ToothCategory').value) {
       this.loadTeethMap(this.line.get('ToothCategory').value);
@@ -51,12 +60,9 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     this.formGroup.get('Diagnostic').patchValue(this.line.get('Diagnostic').value);
     }
     if (this.line.get('Teeth')) {
-      this.teethSelected = [...this.line.get('Teeth').value];
+      this.teethSelected = Object.assign([], this.line.get('Teeth').value);
     }
   }
-
-  get ToothCategoryControl() {return this.formGroup.get('ToothCategory'); }
-  get DiagnosticControl() {return this.formGroup.get('Diagnostic'); }
 
   loadToothCategories() {
     // return this.toothCategoryService.getAll().subscribe(
@@ -74,8 +80,8 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
       const cate = this.filteredToothCategories.find(x => x.Sequence === 1);
       this.formGroup.get('ToothCategory').patchValue(cate);
       this.onChangeToothCategory(cate);
-      this.line.get('ToothCategoryId').patchValue(cate.Id);
-      this.line.get('ToothCategory').patchValue(cate);
+      // this.line.get('ToothCategoryId').patchValue(cate.Id);
+      // this.line.get('ToothCategory').patchValue(cate);
     }
   }
 
@@ -102,12 +108,12 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
-      this.line.get('Teeth').value.splice(index, 1);
-      this.line.value.Teeth.value.splice(index, 1);
+      // this.line.get('Teeth').value.splice(index, 1);
+      // this.line.value.Teeth.value.splice(index, 1);
     } else {
       this.teethSelected.push(tooth);
-      this.line.get('Teeth').push(this.fb.group(tooth));
-      this.line.value.Teeth.push(tooth);
+      // this.line.get('Teeth').push(this.fb.group(tooth));
+      // this.line.value.Teeth.push(tooth);
     }
   }
 
@@ -131,11 +137,11 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     if (value.Id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
-      this.line.get('ToothCategoryId').patchValue(value.Id);
-      this.line.get('ToothCategory').patchValue(value);
+      // this.line.get('ToothCategoryId').patchValue(value.Id);
+      // this.line.get('ToothCategory').patchValue(value);
       this.formGroup.get('ToothCategory').setValue(value);
-      this.line.controls['Teeth'] = this.fb.array([]);
-      this.line.value.Teeth = [];
+      // this.line.controls['Teeth'] = this.fb.array([]);
+      // this.line.value.Teeth = [];
     }
   }
 
@@ -150,16 +156,24 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     if (popover.isOpen()) {
       popover.close();
     } else {
+      this.formGroup.reset();
+      this.reLoad();
       popover.open();
     }
   }
 
   onSave() {
-    this.eventTeeth.emit(this.line);
+    this.line.get('Diagnostic').patchValue(this.DiagnosticControl.value);
+    this.line.get('ToothCategoryId').patchValue(this.ToothCategoryControl.value.Id);
+    this.line.get('ToothCategory').patchValue(this.ToothCategoryControl.value);
+    this.line.get('Teeth').patchValue(this.teethSelected);
+    this.line.value.Teeth = this.teethSelected;
+    // this.eventTeeth.emit(this.line);
+    this.popover.close();
   }
 
   onDiagnosticChange(val) {
-    this.line.get('Diagnostic').patchValue(val);
+    // this.line.get('Diagnostic').patchValue(val);
   }
 
   public service$ = (text: string): any => {

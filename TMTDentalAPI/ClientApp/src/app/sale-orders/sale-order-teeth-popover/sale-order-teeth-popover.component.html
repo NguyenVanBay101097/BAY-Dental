@@ -1,5 +1,5 @@
-<span *ngFor="let teeth of teethSelected; let i = index">{{teeth.Name}} {{i !== teethSelected.length - 1? ',': ''}}</span>
-<span>{{DiagnosticControl.value ? '; ' + DiagnosticControl.value : ''}}</span>&nbsp;
+<span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
+<span>{{lineDiagnostic ? '; ' + lineDiagnostic : ''}}</span>&nbsp;
 <a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
     <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
     <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">

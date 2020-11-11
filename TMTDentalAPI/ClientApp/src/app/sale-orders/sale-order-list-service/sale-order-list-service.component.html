@@ -1,22 +1,22 @@
 <div class="d-flex flex-column h-100">
     <div class="d-flex align-items-end py-1">
-        <input #searchInput accesskey="C" class="form-control form-control-sm mx-1" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <input #searchInput accesskey="C" class="form-control form-control-sm mx-1" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
     </div>
     <!-- Component Form Service List -->
     <div class="t-conTable" style="min-height: 515px;">
-        <div class="t-parTable t-scrollbar">
+        <div class="t-parTable">
             <table class="t-sticky-thead t-sticky-col-left">
                 <thead>
                     <tr>
                         <th *ngFor="let item of thTable_services">
-                            {{item.Name}}
+                            {{item.name}}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listProducts;let i = index">
                         <td [title]="item.name">{{item.Name}}</td>
-                        <td>{{item.ListPrice | number}}</td>
+                        <td class="text-right">{{item.ListPrice | number}}</td>
                     </tr>
                 </tbody>
             </table>
