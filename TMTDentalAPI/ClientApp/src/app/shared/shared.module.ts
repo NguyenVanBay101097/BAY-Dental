@@ -59,7 +59,6 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
 import { ReceptionDashboardComponent } from './components/reception-dashboard/reception-dashboard.component';
-
 @NgModule({
   declarations: [
     ConfirmDialogComponent,

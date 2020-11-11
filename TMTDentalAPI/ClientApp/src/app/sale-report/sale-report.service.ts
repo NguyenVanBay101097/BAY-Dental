@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { SaleOrderLineDisplay } from '../sale-orders/sale-order-line-display';
 
 export class SaleReportItem {
     date: string;
@@ -50,13 +51,17 @@ export class SaleReportTopSaleProductSearch {
 }
 
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class SaleReportService {
     apiUrl = 'api/SaleReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getReport(val: SaleReportSearch): Observable<SaleReportItem[]> {
         return this.http.post<SaleReportItem[]>(this.baseApi + this.apiUrl + "/GetReport", val);
+    }
+
+    getReportService(val: SaleReportSearch): Observable<SaleOrderLineDisplay[]> {
+        return this.http.post<SaleOrderLineDisplay[]>(this.baseApi + this.apiUrl + '/GetReportService', val);
     }
 
     getTopSaleProduct(val: SaleReportTopSaleProductSearch): Observable<SaleReportItem[]> {

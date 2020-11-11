@@ -40,6 +40,15 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetReportService(SaleReportSearch val)
+        {
+            var res = await _saleReportService.GetReportService(val);
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
         public async Task<IActionResult> GetTopSaleProduct(SaleReportTopSaleProductSearch val)
         {
             var res = await _saleReportService.GetTopSaleProduct(val);
