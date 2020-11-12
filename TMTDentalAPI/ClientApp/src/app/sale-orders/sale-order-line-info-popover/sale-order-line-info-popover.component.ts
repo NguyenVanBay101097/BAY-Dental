@@ -138,6 +138,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onChangeToothCategory(value: any) {
+    debugger
     if (value.id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
