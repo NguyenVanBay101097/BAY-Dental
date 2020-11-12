@@ -60,7 +60,7 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     this.formGroup.get('Diagnostic').patchValue(this.line.get('Diagnostic').value);
     }
     if (this.line.get('Teeth')) {
-      this.teethSelected = Object.assign([], this.line.get('Teeth').value);
+      this.teethSelected = Object.assign([], this.line.value.Teeth);
     }
   }
 
@@ -167,7 +167,10 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     this.line.get('ToothCategoryId').patchValue(this.ToothCategoryControl.value.Id);
     this.line.get('ToothCategory').patchValue(this.ToothCategoryControl.value);
     this.line.get('Teeth').patchValue(this.teethSelected);
+    
     this.line.value.Teeth = this.teethSelected;
+    this.line.get('ProductUOMQty').patchValue(this.teethSelected.length);
+    this.line.get('QtyInvoiced').patchValue(this.teethSelected.length);
     // this.eventTeeth.emit(this.line);
     this.popover.close();
   }

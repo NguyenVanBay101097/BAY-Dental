@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201111065044_Bay_Add_SaleOrderIntoToaThuoc")]
+    partial class Bay_Add_SaleOrderIntoToaThuoc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1254,9 +1256,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SaleOrderId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -1277,8 +1276,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("DotKhamId");
 
                     b.HasIndex("PartnerId");
-
-                    b.HasIndex("SaleOrderId");
 
                     b.HasIndex("UserId");
 
@@ -9093,11 +9090,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
-                        .WithMany()
-                        .HasForeignKey("SaleOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()

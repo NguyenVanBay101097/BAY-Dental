@@ -96,6 +96,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeSimple Doctor { get; set; }
 
         public bool HasDotKhamRef { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
     public class AppointmentPaged
     {
@@ -121,6 +122,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         public string UserId { get; set; }
+        public Guid? SaleOrderId { get; set; }
+
     }
 
     public class AppointmentSearch
@@ -158,6 +161,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         public Guid? PartnerId { get; set; }
+        public Guid? SaleOrderId{ get; set; }
     }
 
     public class AppointmentStateCount

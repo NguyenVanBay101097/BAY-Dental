@@ -1,6 +1,9 @@
-<span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
+<span class="d-flex">
+    <span>
+        <span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
 <span>{{lineDiagnostic ? '; ' + lineDiagnostic : ''}}</span>&nbsp;
-<a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+</span>
+<a class="ml-auto" [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
     <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
     <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
         <span style="font-size: 11px; position: absolute; color: white; left:
@@ -12,6 +15,7 @@
     </span> -->
     <i class="far fa-edit text-info"></i>
 </a>
+</span>
 
 <ng-template #popTitle>
     <div class=" d-flex align-items-center d-inline-block">
@@ -30,7 +34,8 @@
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>
                 <div class="col-sm-9">
-                    <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic">
+                    <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
+                    <textarea formControlName="Diagnostic" (keyup)="onDiagnosticChange($event.target.value)" class="form-control"></textarea>
                 </div>
             </div>
         </div>
@@ -52,7 +57,7 @@
             </table>
         </div>
         <div class="popover-footer">
-            <button (click)="onSave()" *ngIf="line.get('State') && line.get('State').value == 'sale'" class="btn btn-sm btn-primary ml-auto">Lưu</button>
+            <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Lưu</button>
             <button (click)="popOver.close()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
     </div>

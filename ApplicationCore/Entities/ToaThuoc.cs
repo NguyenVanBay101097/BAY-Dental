@@ -51,5 +51,10 @@ namespace ApplicationCore.Entities
         public Employee Employee { get; set; }
 
         public ICollection<ToaThuocLine> Lines { get; set; } = new List<ToaThuocLine>();
+        /// <summary>
+        /// liên kết với 1 điều trị
+        /// </summary>
+        public Guid? SaleOrderID { get; set; }
+        public SaleOrder SaleOrder { get; set; }
     }
 }

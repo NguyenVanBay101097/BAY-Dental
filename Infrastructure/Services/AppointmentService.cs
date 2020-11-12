@@ -109,6 +109,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.PartnerId == val.PartnerId);
             }
 
+            if (val.SaleOrderId.HasValue)
+            {
+                query = query.Where(x=>x.SaleOrderId == val.SaleOrderId);
+            }
+
             query = query.OrderByDescending(x => x.DateCreated);
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
             var totalItems = await query.CountAsync();
@@ -149,6 +154,11 @@ namespace Infrastructure.Services
                 var partnerObj = GetService<IPartnerService>();
                 var partner = await partnerObj.GetByIdAsync(val.PartnerId.Value);
                 res.Partner = _mapper.Map<PartnerSimple>(partner);
+            }
+
+            if (val.SaleOrderId.HasValue)
+            {
+                res.SaleOrderId = val.SaleOrderId;
             }
 
             return res;

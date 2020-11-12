@@ -6,3 +6,23 @@
 .o_form_view .o_notebook .tab-content>.tab-pane {
     padding-bottom: 0;
 }
+
+.btns .btn {
+    margin-right: 5px;
+}
+
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}
+
+th {
+    position: sticky;
+    top: 0;
+    border: 1px solid #dee2e6;
+    background-color: #f9f9f9;
+    z-index: 10000;
+}

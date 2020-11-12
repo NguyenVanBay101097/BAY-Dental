@@ -45,6 +45,11 @@ import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
 import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
 declare var $: any;
 
@@ -72,6 +77,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
+  @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
 
   saleOrder: any = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -96,7 +102,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
     private saleOrderOdataService: SaleOrdersOdataService,
     private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
-    private teethOdataService: TeethOdataService
+    private teethOdataService: TeethOdataService,
+    private toaThuocService: ToaThuocService,
+    private printService: PrintService
   ) {
   }
 
@@ -1378,5 +1386,43 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.initialListTeeths = result.data;
       }
     );
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+  printToaThuoc(item) {
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.print(result.html);
+    });
+  }
+  createProductToaThuoc() {
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
+    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
+    modalRef.result.then((result: any) => {
+      this.notify('success', 'thành công');
+      this.toathuocComp.loadData();
+      if (result.print) {
+        this.printToaThuoc(result.item);
+      }
+    }, () => {
+    });
+  }
+
+  dialogAppointment() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+
+    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
+    modalRef.result.then(() => {
+      this.notify('success', 'thành công');
+    }, () => {
+    });
   }
 }

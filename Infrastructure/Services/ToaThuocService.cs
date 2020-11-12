@@ -69,6 +69,10 @@ namespace Infrastructure.Services
                 res.PartnerId = partner.Id;
                 res.Partner = _mapper.Map<PartnerSimple>(partner);
             }
+            if (val.SaleOrderId.HasValue)
+            {
+                res.SaleOrderId = val.SaleOrderId;
+            }
 
             return res;
         }
@@ -163,8 +167,17 @@ namespace Infrastructure.Services
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
+            if (val.SaleOrderId.HasValue)
+            {
+                query = query.Where(x => x.SaleOrder.Id == val.SaleOrderId);
+            }
 
-            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            if(val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
+            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, val.Limit)
