@@ -849,7 +849,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onSave() {
     if (!this.formGroup.valid) {
       return false;
-    } debugger;
+    }
     const val = this.getFormDataSave();
 
     if (this.saleOrderId) {
@@ -1330,7 +1330,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onChangeDiscount(event, line: FormGroup) {
-    var res = this.orderLines.controls.find(x => x.value.Id === line.value.Id);
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
     if (res) {
       line.value.DiscountType = event.DiscountType;
       if (event.DiscountType == "fixed") {

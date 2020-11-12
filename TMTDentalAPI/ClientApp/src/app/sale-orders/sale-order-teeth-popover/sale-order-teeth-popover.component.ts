@@ -23,6 +23,7 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   listTeeths: any[] = [];
   @Input() initialListTeeths: any = [];
   @Input() filteredToothCategories: any[] = [];
+  @Input() saleOrderState = 'draft';
   toolCateg: any = new ToothCategoryBasic();
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
@@ -108,6 +109,9 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
+    if(this.saleOrderState !== 'draft') {
+      return;
+    }
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);

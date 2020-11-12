@@ -55,7 +55,8 @@ namespace Infrastructure.Services
                     Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
-                line.PriceTotal = line.PriceSubTotal + line.PriceTax;              
+                line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+                line.AmountResidual = line.PriceTotal - line.AmountPaid;
             }
         }
 
