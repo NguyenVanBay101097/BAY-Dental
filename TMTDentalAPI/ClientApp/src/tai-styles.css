@@ -20,6 +20,10 @@ a {
     .modal-xl {
         max-width: 1120px;
     }
+
+    .modal-appointment .modal-lg{
+        max-width: 880px;
+    }
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {

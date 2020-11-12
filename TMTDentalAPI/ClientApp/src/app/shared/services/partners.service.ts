@@ -32,7 +32,6 @@ export class PartnersService extends ODataService {
                     { field: 'phone', operator: 'eq', value: phone }
                 ]
             },
-            expand: "Tags"
         });
     }
 

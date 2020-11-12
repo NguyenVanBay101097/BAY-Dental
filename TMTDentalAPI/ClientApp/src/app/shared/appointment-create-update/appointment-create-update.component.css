@@ -27,8 +27,8 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
   background-clip: padding-box;
   border: 1px solid #ced4da;
   border-radius: .25rem;
-  -webkit-transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  -webkit-transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
 .o_form_label_times {
@@ -36,3 +36,5 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
   margin-right: 0px;
   width: 100px;
 }
+
+
