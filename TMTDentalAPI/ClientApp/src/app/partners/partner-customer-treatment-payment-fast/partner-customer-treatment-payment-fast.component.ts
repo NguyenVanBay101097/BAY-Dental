@@ -151,7 +151,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
         }
       })).subscribe(result => {
-        debugger
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
