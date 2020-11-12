@@ -37,4 +37,10 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
   width: 100px;
 }
 
+.o_form_view .o_group {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0;
+}
+
 

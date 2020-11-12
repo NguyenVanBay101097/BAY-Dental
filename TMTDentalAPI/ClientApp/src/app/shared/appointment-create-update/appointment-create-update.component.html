@@ -12,113 +12,111 @@
                     <h1>
                         <span>{{formGroup.get('name').value}}</span>
                     </h1>
-                </div> -->            
-                    <div class="row">
-                        <div class=" o_inner_group col-5">
-                            <div >
-                                <div class=" o_inner_group o_group_col_12">
-                                    <div class="d-flex ">
-                                        <div class="o_td_label">
-                                            <label class="o_form_label_times">Thời gian</label>
-                                        </div>
-                                        <div>
-                                            <select class="form-control-select" formControlName="appTime">
-                                                <option [value]="i" *ngFor="let i of timeList">
-                                                    {{i}}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class=" o_inner_group o_group_col_12 mt-2">
-                                    <kendo-calendar [navigation]="false" formControlName="apptDate"></kendo-calendar>
-                                </div>
-                            </div>
+                </div> -->
+                <div class="d-flex">
+                    <div class="mr-3">
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Thời gian</label>
+                                    </td>
+                                    <td colspan="1">
+                                        <select class="form-control" formControlName="appTime">
+                                            <option [value]="i" *ngFor="let i of timeList">
+                                                {{i}}</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <kendo-calendar [navigation]="false" formControlName="apptDate">
+                            </kendo-calendar>
                         </div>
-                        <div class="o_group o_inner_group col-7">
-                     
-                                <table class="o_group o_inner_group col-12">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Khách hàng</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <div *ngIf="dotKhamId && partner">{{partner.name}}</div>
-                                                <div [ngClass]="dotKhamId ? 'd-none' : 'd-flex'">
-                                                    <kendo-combobox formControlName="partner" [filterable]="true"
-                                                        [data]="customerSimpleFilter" (valueChange)="onChangePartner()"
-                                                        #partnerCbx [valueField]="'id'" [textField]="'displayName'">
-                                                    </kendo-combobox>
-                                                    <!-- <a title="Sửa khách hàng" class="pl-2 py-1" type="button" *ngIf="partner"
+                    </div>
+                    <div>
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Khách hàng</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <div *ngIf="dotKhamId && partner">{{partner.name}}</div>
+                                        <div [ngClass]="dotKhamId ? 'd-none' : 'd-flex'">
+                                            <kendo-combobox formControlName="partner" [filterable]="true"
+                                                [data]="customerSimpleFilter" (valueChange)="onChangePartner()"
+                                                #partnerCbx [valueField]="'id'" [textField]="'displayName'">
+                                            </kendo-combobox>
+                                            <!-- <a title="Sửa khách hàng" class="pl-2 py-1" type="button" *ngIf="partner"
                                                         (click)="updateCustomerModal()">
                                                         <i class="fas fa-external-link-alt"></i>
                                                     </a> -->
-                                                    <a type="button" title="Thêm khách hàng" class="pl-2 py-1"
-                                                        (click)="quickCreateCustomerModal()">
-                                                        <i class="fas fa-plus"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="partner && partnerAge">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Tuổi</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <div>{{partnerAge}}</div>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="partner && partnerPhone">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Điện thoại</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <div *ngIf="partner">{{partnerPhone}}</div>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="partner && tags.length > 0">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Nhãn khách hàng</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <ng-container *ngFor="let item of tags.controls; let i = index;">
-                                                    <span class="badge badge-secondary mr-1">
-                                                        {{item.get('Name').value}}
-                                                    </span>
-                                                </ng-container>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="o_group o_inner_group col-12">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Bác sĩ</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox formControlName="doctor" [filterable]="true"
-                                                    [data]="filteredEmployees" #doctorCbx [valueField]="'id'"
-                                                    [textField]="'name'">
-                                                </kendo-combobox>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label o_td_label_right">
-                                                <label class="o_form_label">
-                                                    Nội dung
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;" class="o_td_control_right">
-                                                <textarea class="form-control" formControlName="note"></textarea>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                       
-                          
-                        </div>
-                    </div>                     
+                                            <a type="button" title="Thêm khách hàng" class="pl-2 py-1"
+                                                (click)="quickCreateCustomerModal()">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="partner && partnerAge">
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Tuổi</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <div>{{partnerAge}}</div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="partner && partnerPhone">
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Điện thoại</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <div *ngIf="partner">{{partnerPhone}}</div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="partner && tags.length > 0">
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Nhãn khách hàng</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <ng-container *ngFor="let item of tags.controls; let i = index;">
+                                            <span class="badge badge-secondary mr-1">
+                                                {{item.get('Name').value}}
+                                            </span>
+                                        </ng-container>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Bác sĩ</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-combobox formControlName="doctor" [filterable]="true"
+                                            [data]="filteredEmployees" #doctorCbx [valueField]="'id'"
+                                            [textField]="'name'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_right">
+                                        <label class="o_form_label">
+                                            Nội dung
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class="o_td_control_right">
+                                        <textarea class="form-control" rows="5" formControlName="note"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
