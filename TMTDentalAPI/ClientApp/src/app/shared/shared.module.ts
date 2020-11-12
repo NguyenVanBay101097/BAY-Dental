@@ -59,6 +59,7 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { PartnerPhonePopoverComponent } from './partner-phone-popover/partner-phone-popover.component';
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
+import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -110,7 +111,8 @@ import { PartnersBindingDirective } from './directives/partners-binding.directiv
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent, 
     PartnerPhonePopoverComponent,
-    PartnersBindingDirective
+    PartnersBindingDirective,
+    ProductServiceCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -193,7 +195,8 @@ import { PartnersBindingDirective } from './directives/partners-binding.directiv
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
-    PartnerPhonePopoverComponent
+    PartnerPhonePopoverComponent,
+    ProductServiceCuDialogComponent
   ],
 })
 export class SharedModule { }

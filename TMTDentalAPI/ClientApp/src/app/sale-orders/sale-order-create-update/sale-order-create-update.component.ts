@@ -151,11 +151,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     );
   }
 
-
-  searchEmployees(filter?: string) {
-    this.filteredEmployees = this.initialListEmployees.filter(x => x.Name.includes(filter)).slice(0, 20);
-  }
-
   routeActive() {
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
@@ -198,6 +193,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
         this.formGroup.markAsPristine();
       });
+  }
+
+  get stateControl() {
+    return this.formGroup.get('State');
   }
 
   get customerId() {
@@ -752,7 +751,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getFormDataSave() {
-    const val = this.formGroup.value;
+    const val = Object.assign({}, this.formGroup.value);
     val.DateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.PartnerId = val.Partner.Id;
     val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
@@ -850,7 +849,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   onSave() {
     if (!this.formGroup.valid) {
       return false;
-    }
+    } debugger;
     const val = this.getFormDataSave();
 
     if (this.saleOrderId) {
@@ -1012,20 +1011,28 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.saleOrderLine = null;
   }
 
-  updateTeeth(line) {
-    var val = this.getFormDataSave();
-    this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-      this.notificationService.show({
-        content: 'Lưu thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.loadRecord();
-    }, () => {
-      this.loadRecord();
+  updateTeeth(line, lineControl) {
+    // var val = this.getFormDataSave();
+    // this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+    //   this.notificationService.show({
+    //     content: 'Lưu thành công',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'success', icon: true }
+    //   });
+    //   this.loadRecord();
+    // }, () => {
+    //   this.loadRecord();
+    // });
+    line.ProductUOMQty= (line.Teeth&& line.Teeth.length > 0 )?line.Teeth.length:1;
+    lineControl.patchValue(line);
+    lineControl.get('Teeth').clear();
+    line.Teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('Teeth').push(g);
     });
+    this.onChangeQuantity(lineControl);
   }
 
   getPriceSubTotal() {
@@ -1322,25 +1329,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.computeAmountTotal();
   }
 
-  updateSaleOrder() {
-    if (this.formGroup.get('State').value == "sale") {
-      var val = this.getFormDataSave();
-      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
-
-  }
-
   onChangeDiscount(event, line: FormGroup) {
     var res = this.orderLines.controls.find(x => x.value.Id === line.value.Id);
     if (res) {
@@ -1407,7 +1395,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then((result: any) => {
-      this.notify('success', 'thành công');
+      this.notify('success', 'tạo toa thuốc thành công');
       this.toathuocComp.loadData();
       if (result.print) {
         this.printToaThuoc(result.item);
@@ -1421,7 +1409,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
-      this.notify('success', 'thành công');
+      this.notify('success', 'tạo lịch hẹn thành công');
     }, () => {
     });
   }

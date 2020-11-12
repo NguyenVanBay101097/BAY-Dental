@@ -1,9 +1,11 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Product } from 'src/app/products/product';
+import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
@@ -34,7 +36,8 @@ export class SaleOrderListServiceComponent implements OnInit {
   constructor(
     private productOdataService: ProductsOdataService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -45,7 +48,7 @@ export class SaleOrderListServiceComponent implements OnInit {
 
   searchInit() {
     fromEvent(document, 'keyup').pipe(
-      filter((s: any) => s.keyCode === 67)
+      filter((s: any) => s.keyCode === 113)
     ).subscribe(s => {
       this.searchInput.nativeElement.focus();
     });
@@ -58,9 +61,8 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   onKeyUp(s) {
-    if(s.key === 'Enter' || s.keyCode === 13) {
-      if (this.listProducts)
-      { this.addServiceToSaleOrder(this.listProducts[0]); }
+    if (s.key === 'Enter' || s.keyCode === 13) {
+      if (this.listProducts) { this.addServiceToSaleOrder(this.listProducts[0]); }
     }
   }
 
@@ -136,6 +138,31 @@ export class SaleOrderListServiceComponent implements OnInit {
       ToothCategoryId: '',
     };
     this.newEventEmiter.emit(value);
+  }
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+  createProductService() {
+    let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm: Dịch vụ";
+    modalRef.result.then(
+      () => {
+        this.notify('success','tạo dịch vụ thành công');
+        this.loadDataDefault();
+      },
+      () => { }
+    );
   }
 
 }

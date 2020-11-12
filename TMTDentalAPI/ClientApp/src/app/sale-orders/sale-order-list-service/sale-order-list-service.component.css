@@ -8,7 +8,27 @@
 
 th {
     position: sticky;
-    top: 0;
+    top: -1px;
     border: 1px solid #dee2e6;
     background-color: #f9f9f9;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
 }

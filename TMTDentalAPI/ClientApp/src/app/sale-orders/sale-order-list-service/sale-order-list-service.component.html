@@ -1,14 +1,18 @@
 <div class="d-flex flex-column h-100">
-    <div class="d-flex align-items-end py-1 flex-0-0-auto">
-        <input #searchInput accesskey="C" class="form-control form-control-sm mx-1" placeholder="Tìm kiếm theo mã hoặc tên..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
+    <div class="pb-1 flex-0-0-auto has-search">
+        <span class="fa fa-search form-control-feedback"></span>
+        <input #searchInput accesskey="C" class="form-control" style="border-radius: 0;" placeholder="Tìm kiếm [F2]..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" (keyup)="onKeyUp($event);">
     </div>
     <!-- Component Form Service List -->
     <div class="flex--1-1-100 overflow-auto">
         <table class="table table-bordered table-sm">
             <thead>
                 <tr>
-                    <th *ngFor="let item of thTable_services">
-                        {{item.name}}
+                    <th>
+                        Dịch vụ <a (click)="createProductService()"><i class="fas fa-plus text-primary"></i></a>
+                    </th>
+                    <th>
+                        Đơn giá
                     </th>
                 </tr>
             </thead>

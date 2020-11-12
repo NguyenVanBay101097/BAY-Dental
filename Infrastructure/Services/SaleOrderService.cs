@@ -1201,6 +1201,7 @@ namespace Infrastructure.Services
                     saleLine.Order = order;
                     saleLine.AmountPaid = 0;
                     saleLine.AmountResidual = 0;
+                    saleLine.PriceUnit = line.PriceUnit;
                     foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
