@@ -13,3 +13,31 @@
 .h-65 {
     height: 65% !important;
 }
+
+.h-37 {
+    height: 37% !important;
+}
+
+.h-63 {
+    height: 63% !important;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: bolder;
+    color: #007bff!important;
+}
+
+.image {
+    margin-right: 5px;
+}
+
+.title {
+    font-size: 100%;
+    font-weight: 600;
+    text-align: center;
+}
+
+.p-3-cu {
+    padding: 2%;
+}

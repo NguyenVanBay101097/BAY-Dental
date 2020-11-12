@@ -111,6 +111,33 @@ export class ReceptionDashboardComponent implements OnInit {
     })
   }
 
+  exportServiceExcelFile() {
+    var val = new SaleReportSearch();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
+    val.search = this.search;
+    val.state = 'draft';
+    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
+    this.saleReportService.exportServiceReportExcelFile(val).subscribe((rs) => {
+      let filename = "danh_sach_dich_vu_trong_ngay";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
   public dataStateChange(state: DataStateChangeEvent): void {
     this.state = state;
     this.loadService();
@@ -161,8 +188,6 @@ export class ReceptionDashboardComponent implements OnInit {
 
   loadDataMoney() {
     var val = new ReportCashBankGeneralLedger();
-    val.dateFrom = this.intlService.formatDate(new Date, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date, 'yyyy-MM-dd');
     val.companyId = this.authService.userInfo.companyId;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
       this.reportValue = result['accounts'].find(x => x.name == 'Tiền mặt');

@@ -75,4 +75,11 @@ export class SaleReportService {
     getReportPartner(val: SaleReportPartnerSearch): Observable<SaleReportPartnerItem[]> {
         return this.http.post<SaleReportPartnerItem[]>(this.baseApi + this.apiUrl + "/GetReportPartner", val);
     }
+
+    exportServiceReportExcelFile(val: any) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportServiceReportExcelFile", val,
+            { responseType: "blob" }
+        );
+    }
 }
