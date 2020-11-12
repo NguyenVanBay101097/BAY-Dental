@@ -159,7 +159,8 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent, 
     PartnerPhonePopoverComponent,
-    PartnersBindingDirective
+    PartnersBindingDirective,
+    
   ],
   imports: [
     CommonModule,

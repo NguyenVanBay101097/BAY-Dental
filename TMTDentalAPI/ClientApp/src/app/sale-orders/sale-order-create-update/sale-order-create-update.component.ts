@@ -31,7 +31,6 @@ import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-o
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
-import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
@@ -50,6 +49,7 @@ import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 
 declare var $: any;
 
@@ -75,13 +75,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
   @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
+  @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
   saleOrder: any = new SaleOrderDisplay();
   saleOrderPrint: any;
-  dotKhams: DotKhamBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
@@ -131,9 +130,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //   this.employeeCbx.loading = false;
     // });
     this.getAccountPaymentReconcicles();
-    this.loadDotKhamList();
     // this.loadLaboOrderList();
-    this.loadPayments();
     // this.loadPricelists();
     this.loadToothCategories();
     this.loadTeethList();
@@ -257,14 +254,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       }
     }, () => {
     });
-  }
-
-  loadDotKhamList() {
-    if (this.saleOrderId) {
-      return this.saleOrderService.getDotKhamList(this.saleOrderId).subscribe(result => {
-        this.dotKhams = result;
-      });
-    }
   }
 
   loadLaboOrderList() {
@@ -1025,7 +1014,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // }, () => {
     //   this.loadRecord();
     // });
-    line.ProductUOMQty= (line.Teeth&& line.Teeth.length > 0 )?line.Teeth.length:1;
+    line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
     lineControl.patchValue(line);
     lineControl.get('Teeth').clear();
     line.Teeth.forEach(teeth => {
@@ -1177,7 +1166,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           });
 
           this.loadRecord();
-          this.loadPayments();
+          this.paymentComp.loadPayments();
         }, () => {
         });
       })
@@ -1209,84 +1198,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         console.log(err);
       });
     }
-  }
-
-
-  loadPayments() {
-    if (this.saleOrderId) {
-      this.saleOrderService.getPayments(this.saleOrderId).subscribe(result => {
-        this.paymentsInfo = result;
-      });
-    }
-  }
-
-  actionCreateDotKham() {
-    if (this.saleOrderId) {
-      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Tạo đợt khám';
-      modalRef.componentInstance.saleOrderId = this.saleOrderId;
-
-      modalRef.result.then(res => {
-        if (res.view) {
-          this.actionEditDotKham(res.result);
-          this.loadDotKhamList();
-        } else {
-          this.loadDotKhamList();
-          // $('#myTab a[href="#profile"]').tab('show');
-        }
-      }, () => {
-      });
-    }
-  }
-
-  actionEditDotKham(item) {
-    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cập nhật đợt khám';
-    modalRef.componentInstance.id = item.id;
-    modalRef.componentInstance.partnerId = this.partner.id;
-    if (this.partnerSend)
-      modalRef.componentInstance.partner = this.partnerSend;
-    modalRef.result.then(() => {
-      this.loadDotKhamList();
-    }, () => {
-    });
-  }
-
-  deleteDotKham(dotKham) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa đợt khám';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.dotKhamService.delete(dotKham.id).subscribe(() => {
-        this.loadDotKhamList();
-      });
-    }, () => { });
-  }
-
-  deletePayment(payment) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Xóa thanh toán thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-
-        this.loadRecord();
-        this.loadPayments();
-      });
-    });
-  }
-
-  printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.accountPaymentPrintComponent.print(result);
-    });
   }
 
   getAccountPaymentReconcicles() {
@@ -1412,5 +1323,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.notify('success', 'tạo lịch hẹn thành công');
     }, () => {
     });
+  }
+
+  paymentOutput(e) {
+    this.loadRecord();
   }
 }

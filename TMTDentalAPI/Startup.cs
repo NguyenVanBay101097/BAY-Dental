@@ -628,10 +628,10 @@ namespace TMTDentalAPI
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
             builder.EntitySet<PartnerViewModel>("Partners");
-            builder.EntitySet<Product>("Products");
-            builder.EntitySet<Employee>("Employees");
-            builder.EntitySet<Tooth>("Teeth");
-            builder.EntitySet<ToothCategory>("ToothCategories");
+            builder.EntitySet<ProductViewModel>("Products");
+            builder.EntitySet<EmployeeViewModel>("Employees");
+            builder.EntitySet<ToothViewModel>("Teeth");
+            builder.EntitySet<ToothCategoryViewModel>("ToothCategories");
             builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
             builder.EntitySet<IRSequenceViewModel>("IRSequences");
 

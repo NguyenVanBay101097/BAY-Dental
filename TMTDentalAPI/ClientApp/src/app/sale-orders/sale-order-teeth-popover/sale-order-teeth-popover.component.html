@@ -1,7 +1,7 @@
 <span class="d-flex">
     <span>
         <span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
-<span>{{lineDiagnostic ? '; ' + lineDiagnostic : ''}}</span>&nbsp;
+<span>{{lineDiagnostic ? (this.lineTeeth.length>0?'; ':'') + lineDiagnostic : ''}}</span>&nbsp;
 </span>
 <a class="ml-auto" [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
     <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->

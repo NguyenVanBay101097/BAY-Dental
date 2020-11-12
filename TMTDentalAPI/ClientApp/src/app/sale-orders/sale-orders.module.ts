@@ -25,6 +25,9 @@ import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-or
 import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from './sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
+import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
+import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-order-payment-list.component';
+import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,8 @@ import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuo
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent,
     PartnerCustomerToathuocListComponent,
+    SaleOrderDotkhamListComponent,
+    SaleOrderPaymentListComponent,
   ],
   imports: [
     CommonModule,

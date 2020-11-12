@@ -163,7 +163,7 @@
                                                         </app-sale-order-teeth-popover>
                                                     </td>
                                                     <td>
-                                                        <span *ngIf="stateControl.value === 'draft'">{{line.get('Employee').value?.Name }}</span>
+                                                        <span *ngIf="stateControl.value !== 'draft'">{{line.get('Employee').value?.Name }}</span>
                                                         <kendo-combobox *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                         </kendo-combobox>
                                                     </td>
@@ -266,35 +266,7 @@
                     </div>
 
                     <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <div class="mb-2">
-                            <button type="button" class="btn btn-secondary btn-sm" *ngIf="['sale'].indexOf(saleOrder.State) !== -1" (click)="actionCreateDotKham()">
-                                    Tạo đợt khám
-                                </button>
-                        </div>
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Số đợt khám</th>
-                                    <th>Ngày khám</th>
-                                    <th>Bác sĩ</th>
-                                    <th>Phụ tá</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let dk of dotKhams">
-                                    <td (click)="actionEditDotKham(dk)" style="cursor: pointer; color: #007bff;">
-                                        {{dk.name}}</td>
-                                    <td>{{ dk.date | date : 'short' }}</td>
-                                    <td>{{ dk.doctor ? dk.doctor.name : '' }}</td>
-                                    <td>{{dk.assistant ? dk.assistant.name : ''}}</td>
-                                    <td>
-                                        <a title="Xóa" (click)="deleteDotKham(dk)">
-                                            <span class="far fa-trash-alt"></span></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <app-sale-order-dotkham-list *ngIf="saleOrder && saleOrder.Id" [saleOrder]="saleOrder"></app-sale-order-dotkham-list>
                     </div>
 
                     <!-- <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
@@ -339,33 +311,7 @@
                         </div> -->
 
                     <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="payment" role="tabpanel" aria-labelledby="payment-tab">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Ngày thanh toán</th>
-                                    <th>Phương thức</th>
-                                    <th>Số tiền</th>
-                                    <!-- <th>Tham chiếu</th> -->
-                                    <th>#</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let payment of paymentsInfo">
-                                    <td>{{ payment.date | date : 'shortDate'}}</td>
-                                    <td>{{ payment.journalName }}</td>
-                                    <td>{{ payment.amount | number}}</td>
-                                    <!-- <td>{{ payment.ref }}</td> -->
-                                    <td>
-                                        <button type="button" class="btn btn-icon btn-sm btn-light mr-1" (click)="printPayment(payment)">
-                                                <span class="k-icon k-i-print"></span>
-                                            </button>
-                                        <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deletePayment(payment)">
-                                                <span class="k-icon k-i-delete"></span>
-                                            </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <app-sale-order-payment-list *ngIf="saleOrderId" (paymentOutput)="paymentOutput($event)" #paymentComp [saleOrderId]="saleOrderId"></app-sale-order-payment-list>
                     </div>
                     <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="toathuoc" role="tabpanel" aria-labelledby="payment-tab">
                         <app-partner-customer-toathuoc-list #toathuocComp [saleOrderId]="saleOrderId"></app-partner-customer-toathuoc-list>
