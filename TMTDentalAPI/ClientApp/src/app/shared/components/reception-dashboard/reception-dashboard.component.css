@@ -40,6 +40,10 @@
     text-align: center;
 }
 
+.w-32{
+    width: 32% !important;
+}
+
 .p-3-cu {
     padding: 2%;
 }
