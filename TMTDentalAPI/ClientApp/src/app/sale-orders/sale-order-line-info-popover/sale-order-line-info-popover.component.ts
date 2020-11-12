@@ -65,6 +65,8 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     }
   }
 
+  get ToothCategoryControl() {return this.formGroup.get('toothCategory').value; }
+
   loadToothCategories() {
     return this.toothCategoryService.getAll().subscribe(
       result => {
@@ -78,6 +80,16 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
       }
     );
   }
+
+  // loadToothCategories() {
+  //   if (this.line.ToothCategory == null && this.filteredToothCategories.length > 0) {
+  //     const cate = this.filteredToothCategories.find(x => x.s === 1);
+  //     this.formGroup.get('toothCategory').patchValue(cate);
+  //     this.onChangeToothCategory(cate);
+  //     // this.line.ToothCategoryId').patchValue(cate.Id);
+  //     // this.line.ToothCategory').patchValue(cate);
+  //   }
+  // }
 
   isSelected(tooth: ToothDisplay) {
     for (var i = 0; i < this.teethSelected.length; i++) {

@@ -1,12 +1,7 @@
-<a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle"
+<!-- <a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle"
     #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
     <span *ngIf="this.teethSelected.length > 0 && !getDianostic || getDianostic && this.teethSelected.length == 0 || getDianostic && this.teethSelected.length > 0  " class="badge badge-primary mr-1">{{showInfo()}}        
     </span>
-    <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
-        <span style="font-size: 11px; position: absolute; color: white; left:
-            3px;">{{teeth.name}}</span>
-        <i class="fas fa-tooth text-info mr-1" style="font-size: 20px;"></i>
-    </span> -->
     <span *ngIf="!teethSelected || teethSelected.length == 0 && !getDianostic">
         <i class="fas fa-plus-square text-primary"></i>
     </span>
@@ -85,6 +80,74 @@
                     </tr>
                 </table>
             </div>
+        </div>
+    </div>
+</ng-template> -->
+
+<span class="d-flex">
+    <span>
+        <span *ngFor="let teeth of this.teethSelected; let i = index">{{teeth.name}} {{i !== this.teethSelected.length - 1? ',': ''}}</span>
+<span>{{getDianostic ? '; ' + getDianostic : ''}}</span>&nbsp;
+</span>
+<a class="ml-auto" [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+    <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
+    <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
+        <span style="font-size: 11px; position: absolute; color: white; left:
+            3px;">{{teeth.name}}</span>
+        <i class="fas fa-tooth text-info mr-1" style="font-size: 20px;"></i>
+    </span> -->
+    <!-- <span *ngIf="!teethSelected || teethSelected.length ==0">
+        <i class="fas fa-tooth text-info"></i>
+    </span> -->
+    <i class="far fa-edit text-info"></i>
+</a>
+</span>
+
+<ng-template #popTitle>
+    <div class=" d-flex align-items-center d-inline-block">
+        <!-- <span>Loại răng</span>
+        <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}" [filterable]="true" formControlName="toothCategory" class="btn-sm" (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
+        </kendo-combobox> -->
+        <span>Thông tin bổ sung</span>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div [formGroup]="formGroup">
+        <div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>
+                <div class="col-sm-9">
+                    <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
+                    <textarea formControlName="diagnostic" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="d-inline-flex w-100">
+            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
+                <input class="form-check-input" type="radio" formControlName="toothCategory" (change)="onChangeToothCategory($event)" id="'name'" value="'id'">
+                <!-- <input [checked]="item.id === ToothCategoryControl.id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="toothCategory" [id]="'id'"> -->
+                <label class="form-check-label" [for]="'name'">{{item.name}}</label>
+            </div>
+        </div>
+        <div class="teeth-map">
+            <table class="table">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                        *ngFor="let vitri of ham.value | keyvalue">
+                        <div (click)="onSelected(rang)" class="tooth-item"
+                            [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                            {{rang.name}}
+                        </div>
+                    </td>
+                </tr>
+            </table>         
+        </div>
+        <div class="popover-footer">
+            <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Lưu</button>
+            <button (click)="popOver.close()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
     </div>
 </ng-template>
