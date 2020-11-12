@@ -24,6 +24,7 @@ import { PartnersModule } from '../partners/partners.module';
 import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discount-popover/sale-order-line-discount-popover.component';
+import { SaleOrderLineInfoPopoverComponent } from './sale-order-line-info-popover/sale-order-line-info-popover.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discoun
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent,
   ],
   imports: [
     CommonModule,
@@ -58,7 +60,8 @@ import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discoun
   exports: [
     SaleOrderTeethPopoverComponent,
     SaleOrderListServiceComponent,
-    SaleOrderLineDiscountPopoverComponent
+    SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,

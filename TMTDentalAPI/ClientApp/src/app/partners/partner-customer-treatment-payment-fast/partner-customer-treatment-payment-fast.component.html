@@ -24,7 +24,7 @@
                             <td colspan="1" style="width: 100%;">
                                 <div class="d-flex">
                                     <kendo-combobox [class.d-none]="saleOrder.state != 'draft'"
-                                        [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx
+                                        [data]="filteredPartners" [textField]="'displayName'" [filterable]="true" #partnerCbx
                                         formControlName="partner" [valueField]="'id'"
                                         (valueChange)="onChangePartner($event)">
                                     </kendo-combobox>
@@ -38,7 +38,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr *ngIf="getPartner && getPartner.birth">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Ngày sinh:
@@ -48,7 +48,7 @@
                                 {{getPartner ? getPartner.birth : null}}
                             </td>
                         </tr>
-                        <tr>
+                        <tr *ngIf="getPartner && getPartner.phone">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Số điện thoại:
@@ -58,7 +58,7 @@
                                 {{getPartner ? getPartner.phone : null}}
                             </td>
                         </tr>
-                        <tr>
+                        <tr *ngIf="getPartner && getPartner.address">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Địa chỉ:
@@ -106,16 +106,21 @@
             <div class="t_wrapper">
                 <div class="t_wrapper_left">
                     <div class="t_search_wrapper">
-                        <input type="text" class="form-control t_search_input" />
+                        <div class="box">
+                            <div class="container-1">
+                                <span class="icon"><i class="fa fa-search"></i></span>
+                                <input type="search" id="search" #search placeholder="Tìm kiếm dịch vụ [F2] ..." (keyup)="onChangeSearch($event.target.value)" />
+                            </div>
+                        </div>
                     </div>
                     <div class="t_scroll">
-                        <app-sale-order-list-service (newEventEmiter)="addLine($event)">
+                        <app-sale-order-list-service [searchText]="valueSearch" (newEventEmiter)="addLine($event)">
                         </app-sale-order-list-service>
                     </div>
                 </div>
                 <div class="t_wrapper_right">
                     <div class="t_section_top">
-                        <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
+                        <!-- <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'"
                             name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave"
                             ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
                             popoverTitle="Cập nhật khuyến mãi"
@@ -135,7 +140,7 @@
                             class="btn btn-outline-secondary btn-sm btn-treatment mr-3" (click)="showApplyCardDialog()"
                             *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.state) !== -1">
                             <span>Áp dụng thẻ tiền mặt</span>
-                        </button>
+                        </button> -->
                     </div>
                     <div class="table-wrapper">
                         <div class="table-responsive">
@@ -157,17 +162,17 @@
                                         <tr [formGroupName]="i">
                                             <td>{{line.get('name').value }}</td>
                                             <td>
-                                                <a (click)="addInfoLineModal(line)">
+                                                <!-- <a (click)="addInfoLineModal(line)">
                                                     <span
                                                         class="badge badge-primary mr-1">{{lineTeeth(line)}}{{line.get('diagnostic').value}}</span>
                                                     <span
                                                         *ngIf="!line.get('teeth').value || line.get('teeth').value.length ==0">
                                                         <i class="fas fa-plus-square text-primary"></i>
                                                     </span>
-                                                </a>
-                                                <!-- <app-sale-order-teeth-popover [line]="line"
+                                                </a> -->
+                                                <app-sale-order-line-info-popover [line]="line"
                                                     (eventTeeth)="updateTeeth($event)">
-                                                </app-sale-order-teeth-popover> -->
+                                                </app-sale-order-line-info-popover>
                                             </td>
                                             <td>
                                                 <kendo-combobox style="width: 100%;" [data]="filteredEmployees"

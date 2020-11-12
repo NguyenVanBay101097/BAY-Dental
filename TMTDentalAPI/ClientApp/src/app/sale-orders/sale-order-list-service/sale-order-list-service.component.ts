@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChange } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
@@ -12,7 +12,7 @@ import { ToothDisplay } from 'src/app/teeth/tooth.service';
   styleUrls: ['./sale-order-list-service.component.css']
 })
 export class SaleOrderListServiceComponent implements OnInit {
-
+  @Input() searchText;
   @Output() newEventEmiter = new EventEmitter<any>()
   limit: number = 20;
   skip: number = 0;
@@ -40,7 +40,12 @@ export class SaleOrderListServiceComponent implements OnInit {
       .subscribe((value) => {
         this.loadDataDefault();
       });
+
     this.loadDataDefault();
+  }
+
+  ngOnChanges(change: SimpleChange) {
+    this.onChangeSearch(this.searchText);
   }
 
   loadDataDefault() {
@@ -63,7 +68,6 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   onChangeSearch(value) {
-    debugger
     if (value == '' || !value) {
       this.listFilter = this.listProductServices
     } else {
@@ -101,7 +105,6 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   RemoveVietnamese(text) {
-    text = text.toLowerCase().trim();
     text = text.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
     text = text.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
     text = text.replace(/ì|í|ị|ỉ|ĩ/g, "i");
@@ -116,6 +119,12 @@ export class SaleOrderListServiceComponent implements OnInit {
     text = text.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
     text = text.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
     text = text.replace(/Đ/g, "D");
+    text = text.toLowerCase();
+    text = text
+      .replace(/[&]/g, "-and-")
+      .replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/[-]+/g, "-")
+      .replace(/-$/, "");
     return text;
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -66,6 +66,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   journalFixed: AccountJournalSimple;
 
   discountDefault: DiscountDefault;
+  valueSearch:string;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -73,6 +74,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
+  @ViewChild('search', { static: true }) searchElement: ElementRef;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
@@ -138,6 +140,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.search = filter || '';
     val.isDoctor = true;
     return this.employeeService.getEmployeePaged(val);
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    let charCode = (event.which) ? event.which : event.keyCode;
+   if (charCode == 113) {
+      setTimeout(() => {
+        this.searchElement.nativeElement.focus();
+      }, 0);
+    } else if (charCode == 46) {
+      console.log('Delete Key Pressed');
+    }
+
   }
 
   routeActive() {
@@ -1124,7 +1139,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   addLine(val) {
-    debugger
     var res = this.fb.group(val);
 
     // line.teeth = this.fb.array(line.teeth);
@@ -1319,6 +1333,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.toaThuocService.getPrint(item.id).subscribe(result => {
       this.toaThuocPrintComponent.print(result);
     });
+  }
+
+  onChangeSearch(value){
+    this.valueSearch = value;
   }
 
   ///lịch hẹn

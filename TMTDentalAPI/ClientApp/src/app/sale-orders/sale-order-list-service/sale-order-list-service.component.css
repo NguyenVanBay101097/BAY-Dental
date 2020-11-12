@@ -10,3 +10,10 @@
   position: sticky; 
   top:0; 
 }
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background-color: #007bff91;
+}
