@@ -461,6 +461,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Tags { get; set; }
     }
 
+    public class PartnerCustomerReportInput
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class PartnerCustomerReportOutput
+    {
+        public int CustomerOld { get; set; }
+        public int CustomerNew { get; set; }
+    }
+
     public class PartnerInfoVm
     {
         public Guid Id { get; set; }

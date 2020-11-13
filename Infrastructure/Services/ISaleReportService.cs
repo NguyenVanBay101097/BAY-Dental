@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,5 +14,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val);
         Task<IEnumerable<SaleReportPartnerItem>> GetReportPartner(SaleReportPartnerSearch val);
         Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val);
+        Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val);
     }
 }

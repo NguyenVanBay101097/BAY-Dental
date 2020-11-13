@@ -9,7 +9,7 @@ import { ComboBoxModule } from '@progress/kendo-angular-dropdowns';
 import { MultiSelectModule } from '@progress/kendo-angular-dropdowns';
 import { ChartModule } from '@progress/kendo-angular-charts';
 import { TreeViewModule } from '@progress/kendo-angular-treeview';
-
+import { PDFModule, ExcelModule } from '@progress/kendo-angular-grid';
 
 const kendo = [
     GridModule,
@@ -21,7 +21,9 @@ const kendo = [
     MultiSelectModule,
     NotificationModule,
     ChartModule,
-    TreeViewModule
+    TreeViewModule,
+    ExcelModule,
+    PDFModule
 ];
 
 @NgModule({

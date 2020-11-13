@@ -37,7 +37,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderSave, SaleOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.OrderLines, x => x.Ignore());
-           
+
             CreateMap<SaleOrder, SaleOrderPrintVM>();
         }
     }

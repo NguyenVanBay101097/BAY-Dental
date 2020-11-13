@@ -25,6 +25,7 @@ using Facebook.ApiClient.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyERP.Utilities;
@@ -1947,6 +1948,57 @@ namespace Infrastructure.Services
         public Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync()
         {
             return Task.Run(() => GetGridViewModels());
+        }
+
+        public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+
+            if (val.DateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            IEnumerable<Guid> ids_partner = query_saleOrder.Select(x => x.PartnerId).ToList();
+
+            var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId))
+                .GroupBy(x => x.PartnerId)
+                .Select(x => new {
+                    PartnerId = x.Key,
+                    PartnerCount = x.Count()
+                })
+                .OrderBy(x => x.PartnerId).ToListAsync();
+
+            var customerOld = 0;
+            var customerNew = 0;
+            foreach (var item in temp)
+            {
+                if (item.PartnerCount == 1)
+                {
+                    customerNew += 1;
+                } else
+                {
+                    customerOld += 1;
+                }
+            }
+
+            var result = new PartnerCustomerReportOutput
+            {
+                CustomerOld = customerOld,
+                CustomerNew = customerNew
+            };
+
+            return result;
         }
     }
 
