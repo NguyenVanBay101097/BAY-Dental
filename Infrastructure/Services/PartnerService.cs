@@ -1934,7 +1934,8 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                SourceName = x.Source.Name
+                SourceName = x.Source.Name,
+                DateCreated = x.DateCreated
             });
         }
 
