@@ -9,8 +9,8 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 })
 export class SaleOrderLineDiscountOdataPopoverComponent implements OnInit {
 
-  @Input() discountForm: any;
-  @Output() discountFormGroup = new EventEmitter<any>();
+  @Input() line: any;
+  @Output() lineDiscountEvent = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
   formGroup: FormGroup;
   constructor(private fb: FormBuilder) { }
@@ -19,12 +19,11 @@ export class SaleOrderLineDiscountOdataPopoverComponent implements OnInit {
     this.loadFormDiscount();
   }
   loadFormDiscount() {
-    var res = this.discountForm.value;
-    if (res) {      
+    if (this.line) {      
       this.formGroup = this.fb.group({
-        DiscountType: res.DiscountType,
-        DiscountPercent: res.Discount,
-        DiscountFixed: res.DiscountFixed,
+        DiscountType: this.line.DiscountType,
+        DiscountPercent: this.line.Discount,
+        DiscountFixed: this.line.DiscountFixed,
       });
     }else{
       this.formGroup = this.fb.group({
@@ -57,20 +56,20 @@ export class SaleOrderLineDiscountOdataPopoverComponent implements OnInit {
   }
 
   applyDiscount() {
-    this.discountFormGroup.emit(this.formGroup.value);
+    this.lineDiscountEvent.emit(this.formGroup.value);
     this.popover.close();
     this.resetForm(this.formGroup.value);
   }
 
   onChangeDiscount() {
-    this.discountFormGroup.emit(this.formGroup.value);
+    this.lineDiscountEvent.emit(this.formGroup.value);
   }
 
   onChangeDiscountType() {
     var res = this.formGroup.value;
     res.DiscountFixed = 0;
     res.DiscountPercent = 0;
-    this.discountFormGroup.emit(this.formGroup.value);
+    this.lineDiscountEvent.emit(this.formGroup.value);
     this.resetForm(this.formGroup.value);
   }
 
