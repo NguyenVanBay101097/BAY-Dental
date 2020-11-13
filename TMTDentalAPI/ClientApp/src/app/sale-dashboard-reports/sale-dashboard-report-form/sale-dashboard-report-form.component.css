@@ -3,7 +3,6 @@
     height: 16% !important;
     display: flex;
     background-color: white;
-    overflow: hidden;
 }
 
 .header-title {
@@ -25,13 +24,11 @@
     width: 100% !important;
     height: 84% !important;
     display: flex;
-    overflow: hidden;
 }
 
 .content-left {
     width: 65% !important;
     padding: 15px 15px 15px 0;
-    overflow: hidden;
     height: 100% !important;
 }
 
@@ -55,4 +52,12 @@
     border: 1px solid whitesmoke;
     width: 50% !important;
     height: 100% !important;
+}
+
+.mh-header {
+    min-height:420px !important;
+}
+
+.mh-body {
+    min-height: 420px !important;
 }
