@@ -161,7 +161,7 @@
                                                 <th style="min-width: 100px;" class="text-right">Thành tiền</th>
                                                 <th style="min-width: 100px;" class="text-right">Thanh toán</th>
                                                 <th style="min-width: 100px;" class="text-right">Còn lại</th>
-                                                <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
+                                                <th *ngIf="stateControl.value === 'draft'" style="min-width: 50px;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
                                         <tbody formArrayName="OrderLines">
@@ -177,14 +177,7 @@
                                                         <kendo-combobox *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                         </kendo-combobox>
                                                     </td>
-                                                    <!-- <td>
-                                                                        <input type="text" class="form-control"
-                                                                            formControlName="diagnostic"
-                                                                            (blur)="updateSaleOrder()">
-                                                                    </td> -->
                                                     <td class="text-right">
-                                                        <!-- <kendo-numerictextbox style="width:100%;" [min]="0" [spinners]="false" (blur)="updateSaleOrder()" formControlName="ProductUOMQty" (valueChange)="onChangeQuantity(line)">
-                                                        </kendo-numerictextbox> -->
                                                         <span *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value | number }}</span>
                                                         <input type="number" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                     </td>
@@ -194,19 +187,9 @@
                                                         </kendo-numerictextbox>
                                                     </td>
                                                     <td class="text-right">
-                                                        <!-- <div class="d-flex align-items-center justify-content-end">
-                                                                            <kendo-numerictextbox [class.d-none]="line.get('DiscountType').value !== 'percentage'" [min]="0" [max]="100" formControlName="Discount" (blur)="updateSaleOrder()" [autoCorrect]="true" [spinners]="false" (valueChange)="onChangeDiscount(line)" style="max-width: 100px;">
-                                                                            </kendo-numerictextbox>
-                                                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false" [min]="0" (blur)="updateSaleOrder()" [class.d-none]="line.get('DiscountType').value !== 'fixed'" (valueChange)="onChangeDiscountFixed(line)" formControlName="DiscountFixed" style="max-width: 100px;">
-                                                                            </kendo-numerictextbox>
-                                                                            <select class="form-control" style="max-width: 70px;" (change)="onChangeDiscountType(line)" formControlName="DiscountType">
-                                                                                <option value="percentage">%</option>
-                                                                                <option value="fixed">VNĐ</option>
-                                                                            </select>
-                                                                        </div> -->
                                                         <span *ngIf="stateControl.value !== 'draft'">{{ line.get('DiscountFixed').value | number }} {{line.get('DiscountType').value !== 'percentage'?'%':''}}</span>
                                                         <span *ngIf="stateControl.value === 'draft'">
-                                                            <app-sale-order-line-discount-odata-popover [discountForm]="line" (discountFormGroup)="onChangeDiscount($event,line)">
+                                                            <app-sale-order-line-discount-odata-popover [line]="line.value" (lineDiscountEvent)="onChangeDiscount($event,line)">
                                                             </app-sale-order-line-discount-odata-popover>
                                                         </span>
                                                     </td>
@@ -219,12 +202,8 @@
                                                     <td class="text-right">
                                                         {{ line.get('AmountResidual').value | number }}
                                                     </td>
-                                                    <td class="text-right b-sticky-right">
+                                                    <td *ngIf="stateControl.value === 'draft'" class="text-right b-sticky-right">
                                                         <div>
-                                                            <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
-                                                                                        (click)="editLine(line)">
-                                                                                        <span class="k-icon k-i-edit"></span>
-                                                                                    </button> -->
                                                             <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
                                                                                 <span class="k-icon k-i-delete"></span>
                                                                             </button>

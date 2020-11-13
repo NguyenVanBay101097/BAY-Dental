@@ -118,7 +118,6 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     PartnerTitleCuDialogComponent, 
     PartnerPhonePopoverComponent,
     PartnersBindingDirective,
-    ProductServiceCuDialogComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent,
