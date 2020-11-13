@@ -43,11 +43,10 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       ToothCategory: null,
+      ToothCategoryId: null,
       Diagnostic: null
     });
-    if(!this.line) {
      this.reLoad();
-    }
   }
 
   get ToothCategoryControl() {return this.formGroup.get('ToothCategory'); }
@@ -56,7 +55,6 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   get lineDiagnostic() {return this.line? this.line.Diagnostic : ''; }
 
   reLoad() {
-    
     this.loadToothCategories();
     if (this.line.ToothCategory) {
       this.loadTeethMap(this.line.ToothCategory);
@@ -169,6 +167,7 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
 
   onSave() {
     this.line = this.formGroup.value;
+    this.line.ToothCategoryId = this.line.ToothCategory.Id;
     this.line.Teeth = this.teethSelected;
     this.eventTeeth.emit(this.line);
     this.popover.close();
