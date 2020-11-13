@@ -59,6 +59,7 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { PartnerPhonePopoverComponent } from './partner-phone-popover/partner-phone-popover.component';
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
+import { ReceptionDashboardComponent } from './components/reception-dashboard/reception-dashboard.component';
 import { CalendarModule } from '@progress/kendo-angular-dateinputs';
 import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
@@ -111,6 +112,9 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective, 
+    ReceptionDashboardComponent,
     PartnerTitleCuDialogComponent, 
     PartnerPhonePopoverComponent,
     PartnersBindingDirective,
@@ -118,6 +122,7 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent
+    ProductServiceCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -162,9 +167,10 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
-    PartnerTitleCuDialogComponent, 
-    PartnerPhonePopoverComponent,
-    PartnersBindingDirective,
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective, 
+    ReceptionDashboardComponent,
+    PartnerPhonePopoverComponent
     
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,

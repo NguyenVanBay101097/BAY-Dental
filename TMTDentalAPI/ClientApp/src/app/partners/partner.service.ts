@@ -107,6 +107,16 @@ export class PartnerImageViewModel {
     partnerImages: PartnerImageBasic[];
 }
 
+export class PartnerCustomerReportInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class PartnerCustomerReportOutput {
+    customerOld: number;
+    customerNew: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -427,6 +437,10 @@ export class PartnerService {
 
     getDefaultTitle(val) {
         return this.http.get(this.baseApi + this.apiUrl + '/GetDefaultTitle', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getPartnerCustomerReport(data: any) {
+        return this.http.post<PartnerCustomerReportOutput>(this.baseApi + this.apiUrl + '/PartnerCustomerReport', data);
     }
 }
 

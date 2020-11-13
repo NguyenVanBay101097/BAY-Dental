@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
@@ -45,6 +47,7 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
+
 
 
         public async Task<IEnumerable<SaleReportTopServicesCs>> GetTopServices(SaleReportTopServicesFilter val)
@@ -140,7 +143,8 @@ namespace Infrastructure.Services
                     query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
                     x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
 
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     PartnerId = x.PartnerId,
                     PartnerName = x.Partner.Name
                 })
@@ -161,7 +165,8 @@ namespace Infrastructure.Services
                 if (!string.IsNullOrEmpty(val.Search))
                     query = query.Where(x => x.Employee.Name.Contains(val.Search));
 
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     EmployeeId = x.EmployeeId,
                     EmployeeName = x.Employee.Name
                 })
@@ -183,7 +188,8 @@ namespace Infrastructure.Services
                     query = query.Where(x => x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search) ||
                     x.Product.DefaultCode.Contains(val.Search));
 
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     ProductId = x.ProductId,
                     ProductName = x.Product.Name
                 })
@@ -201,7 +207,8 @@ namespace Infrastructure.Services
             }
             if (val.GroupBy == "date:quarter")
             {
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     x.Date.Year,
                     QuarterOfYear = (x.Date.Month - 1) / 3,
                 })
@@ -224,7 +231,8 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:month" || val.GroupBy == "date")
             {
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     x.Date.Year,
                     x.Date.Month,
                 })
@@ -245,7 +253,8 @@ namespace Infrastructure.Services
             }
             if (val.GroupBy == "date:week")
             {
-                var result = query.AsEnumerable().GroupBy(x => new {
+                var result = query.AsEnumerable().GroupBy(x => new
+                {
                     Year = x.Date.Year,
                     WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
                         x.Date, CalendarWeekRule.FirstDay, DayOfWeek.Monday)
@@ -269,7 +278,8 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:day")
             {
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     x.Date.Year,
                     x.Date.Month,
                     x.Date.Day,
@@ -299,6 +309,35 @@ namespace Infrastructure.Services
                   }).ToListAsync();
                 return result;
             }
+        }
+
+        public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var query = lineObj.SearchQuery(x => true)
+                .Include(x => x.Order)
+                .Include(x => x.Employee)
+                .Include(x => x.OrderPartner)
+                .Include(x => x.Product)
+                .Include("SaleOrderLineToothRels.Tooth")
+                .AsQueryable();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => !x.Order.State.Equals(val.State));
+            var items = await query.ToListAsync();
+
+            var totalItems = await query.CountAsync();
+
+            return new PagedResult2<SaleOrderLineDisplay>(totalItems, 0, 0)
+            {
+                Items = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(items)
+            };
         }
 
         public async Task<IEnumerable<SaleReportItemDetail>> GetReportDetail(SaleReportItem val)
@@ -450,7 +489,8 @@ namespace Infrastructure.Services
 
             if (val.TopBy == "amount")
             {
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     ProductId = x.ProductId,
                     ProductName = x.Product.Name
                 })
@@ -464,7 +504,8 @@ namespace Infrastructure.Services
             }
             else
             {
-                var result = await query.GroupBy(x => new {
+                var result = await query.GroupBy(x => new
+                {
                     ProductId = x.ProductId,
                     ProductName = x.Product.Name
                 })
