@@ -145,12 +145,12 @@
                                                 <th class="b-sticky-left" style="min-width: 200px;">Dịch vụ</th>
                                                 <th style="min-width: 200px;">Răng, Chuẩn đoán</th>
                                                 <th style="min-width: 200px;">Bác sĩ</th>
-                                                <th style="min-width: 60px;" class="text-center">SL</th>
+                                                <th style="min-width: 60px;" class="text-right">SL</th>
                                                 <th style="min-width: 120px;" class="text-right">Đơn giá</th>
-                                                <th style="min-width: 60px;" class="text-center">Giảm</th>
+                                                <th style="min-width: 60px;" class="text-right">Giảm</th>
                                                 <th style="min-width: 100px;" class="text-right">Thành tiền</th>
                                                 <th style="min-width: 100px;" class="text-right">Thanh toán</th>
-                                                <th style="min-width: 100px;" class="text-right">Còn nợ</th>
+                                                <th style="min-width: 100px;" class="text-right">Còn lại</th>
                                                 <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
@@ -183,7 +183,7 @@
                                                         <kendo-numerictextbox *ngIf="stateControl.value === 'draft'" style="width:100%;" [format]="'n0'" [spinners]="false" formControlName="PriceUnit" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                         </kendo-numerictextbox>
                                                     </td>
-                                                    <td>
+                                                    <td class="text-right">
                                                         <!-- <div class="d-flex align-items-center justify-content-end">
                                                                             <kendo-numerictextbox [class.d-none]="line.get('DiscountType').value !== 'percentage'" [min]="0" [max]="100" formControlName="Discount" (blur)="updateSaleOrder()" [autoCorrect]="true" [spinners]="false" (valueChange)="onChangeDiscount(line)" style="max-width: 100px;">
                                                                             </kendo-numerictextbox>
@@ -194,7 +194,7 @@
                                                                                 <option value="fixed">VNĐ</option>
                                                                             </select>
                                                                         </div> -->
-                                                        <span *ngIf="stateControl.value !== 'draft'">{{ line.get('DiscountFixed').value | number }} ({{line.get('DiscountType').value !== 'percentage'?'%':'vnđ'}})</span>
+                                                        <span *ngIf="stateControl.value !== 'draft'">{{ line.get('DiscountFixed').value | number }} {{line.get('DiscountType').value !== 'percentage'?'%':''}}</span>
                                                         <span *ngIf="stateControl.value === 'draft'">
                                                             <app-sale-order-line-discount-odata-popover [discountForm]="line" (discountFormGroup)="onChangeDiscount($event,line)">
                                                             </app-sale-order-line-discount-odata-popover>
@@ -229,7 +229,7 @@
                                 </div>
                                 <div class="d-flex justify-content-between mt-3">
                                     <div class="">
-                                        <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)">
+                                        <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)" *ngIf="['draft', 'sent'].indexOf(saleOrder.State) !== -1">
                                         </app-sale-order-apply-discount-default-dialog>
                                         <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()" *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.State) !== -1">
                                                 <span>thẻ tiền mặt</span>
@@ -252,7 +252,7 @@
                                             <td>{{getAmountTotal | number}}</td>
                                         </tr>
                                         <tr *ngIf="formGroup.get('State').value !== 'draft'">
-                                            <td>Đã thanh toán</td>
+                                            <td>Thanh toán</td>
                                             <td>{{getAmountPaidTotal | number}}</td>
                                         </tr>
                                         <tr *ngIf="formGroup.get('State').value !== 'draft'">
