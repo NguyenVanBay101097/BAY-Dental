@@ -23,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+
         public Guid CompanyId { get; set; }
 
         /// <summary>

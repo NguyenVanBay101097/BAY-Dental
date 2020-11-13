@@ -103,6 +103,18 @@
                                         </kendo-combobox>
                                     </td>
                                 </tr>
+                                <tr *ngIf="appointId">
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Trạng thái</label>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" formControlName="state">
+                                            <option value="confirmed">Đang hẹn</option>
+                                            <option value="done">Đã tới</option>
+                                            <option value="cancel">Đã hủy</option>
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_right">
                                         <label class="o_form_label">

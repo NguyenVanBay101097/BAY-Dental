@@ -127,17 +127,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    var appTime = appoint.appTime;
-    // if (appoint.apptHour < 10) {
-    //   appoint.apptHour = "0" + appoint.apptHour;
-    // }
-
-    // if (appoint.apptMinute < 10) {
-    //   appoint.apptMinute = "0" + appoint.apptMinute;
-    // }
-
+    var appTime = appoint.appTime;    
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
+
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
@@ -357,6 +350,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }
     this.appointmentService.defaultGet(val).subscribe(
       (rs: any) => {
+        debugger
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
@@ -365,6 +359,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+          this.onChangePartner();
         }
 
         if (rs.user) {

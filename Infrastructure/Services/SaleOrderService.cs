@@ -122,7 +122,6 @@ namespace Infrastructure.Services
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
             _ComputeResidual(self);
-            _ComputePaid(self);
             await UpdateAsync(self);
         }
 
@@ -291,7 +290,6 @@ namespace Infrastructure.Services
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
                 sale.Residual = 0;
-                sale.Paid = 0;
             }
 
             _GetInvoiced(self);
@@ -1841,28 +1839,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _ComputePaid(IEnumerable<SaleOrder> self)
-        {
-            foreach (var order in self)
-            {
-                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
-                decimal? residual = 0M;
-                foreach (var invoice in invoices)
-                {
-                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
-                        continue;
-                    if (invoice.Type == "out_invoice")
-                        residual += invoice.AmountResidual;
-                    else
-                        residual -= invoice.AmountResidual;
-                }
 
-                var paid = order.AmountTotal - residual;
-
-                order.Paid = paid;
-            }
-        }
 
         public void _ComputeResidual(IEnumerable<AccountInvoice> invoices)
         {

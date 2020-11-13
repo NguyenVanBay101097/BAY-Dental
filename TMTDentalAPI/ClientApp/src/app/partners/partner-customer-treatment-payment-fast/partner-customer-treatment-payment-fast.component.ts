@@ -1,3 +1,4 @@
+import { EmployeeSimple } from './../../employees/employee';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
@@ -85,7 +86,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
-  filteredEmployees: EmployeeBasic[] = [];
+  filteredEmployees: EmployeeSimple[] = [];
   @ViewChild(ToaThuocPrintComponent, { static: true }) toaThuocPrintComponent: ToaThuocPrintComponent;
 
   searchCardBarcode: string;
@@ -122,7 +123,10 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
     this.loadFilteredJournals();
 
-    this.routeActive();
+    setTimeout(() => {
+      this.routeActive();
+    },300)
+   
     this.loadEmployees();
     this.loadPartners();
     // this.getAccountPaymentReconcicles();
@@ -130,13 +134,23 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     // this.loadLaboOrderList();
     this.loadPayments();
 
-
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.partnerCbx.loading = true),
+      switchMap(val => this.searchPartners(val))
+    ).subscribe(
+      rs => {
+        this.filteredPartners = rs;
+        this.partnerCbx.loading = false;
+      }
+    )
+   
     // this.loadPricelists();
   }
 
   loadEmployees() {
     this.searchEmployees().subscribe(result => {
-      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, 'id');
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result, 'id');
     });
   }
 
@@ -145,7 +159,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = filter || '';
     val.isDoctor = true;
-    return this.employeeService.getEmployeePaged(val);
+    return this.employeeService.getEmployeeSimpleList(val);
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -181,7 +195,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         if (result.user) {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
-
+       
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
           if (!this.saleOrderId) {
@@ -190,11 +204,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
-
-
-
         if (!this.saleOrderId) {
-          this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
+          this.loadFilteredJournals();
+            this.formGroup.get('journal').patchValue(this.filteredJournals[0]);       
         }
 
 
@@ -266,7 +278,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
-      this.routeActive();
     })
   }
 
@@ -303,6 +314,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.partnerId = this.getPartner.id;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
+      line.employeeId = line.employee ? line.employee.id : null;
       line.toothIds = line.teeth.map(x => x.id);
     });
 

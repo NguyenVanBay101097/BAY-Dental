@@ -1316,7 +1316,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   dialogAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
 
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
