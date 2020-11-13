@@ -2062,14 +2062,40 @@ namespace Infrastructure.Services
                 lines.Add(saleLine);
             }
 
-            var saleLineService = GetService<ISaleOrderLineService>();
-            await saleLineService.CreateAsync(lines);
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await saleLineObj.CreateAsync(lines);
 
             _AmountAll(order);
 
             await UpdateAsync(order);
-            //confirm sale order
-            await ActionConfirm(new List<Guid>() { order.Id });
+            //confirm sale order       
+            order.State = "sale";
+            foreach (var line in order.OrderLines)
+            {
+                if (line.State == "cancel")
+                    continue;
+
+                line.State = "sale";
+            }
+
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+
+            await saleLineObj.RecomputeCommissions(order.OrderLines);
+
+
+            var invoices = await _CreateInvoices(new List<SaleOrder>() { order }, final: true);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
+            saleLineObj._GetInvoiceQty(order.OrderLines);
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+
+
+            _GetInvoiced(new List<SaleOrder>() { order });
+            _ComputeResidual(new List<SaleOrder>() { order });
+            await UpdateAsync(new List<SaleOrder>() { order });
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return basic;

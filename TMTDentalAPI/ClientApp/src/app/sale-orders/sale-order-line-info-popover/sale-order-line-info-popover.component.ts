@@ -42,17 +42,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     this.loadToothCategories();
 
     if (this.line) {
-      setTimeout(() => {
-        this.formGroup.patchValue(this.line);
-        this.teethSelected = [...this.line.teeth];
-        if (this.line.get('toothCategory').value) {
-          this.loadTeethMap(this.line.get('toothCategory').value)
-          this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value)
-        }
-        if (this.line.get('teeth')) {
-          this.teethSelected = [...this.line.get('teeth').value];
-        }
-      });
+     this.reLoad();
     } else {
       setTimeout(() => {
         this.formGroup = this.fb.group({
@@ -63,6 +53,28 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
 
       });
     }
+  }
+
+  reLoad(){
+    this.formGroup.patchValue(this.line);
+    if (this.line.toothCategory) {
+      this.loadTeethMap(this.line.toothCategory);
+      this.formGroup.get('toothCategory').patchValue(this.line.toothCategory);
+    }
+    if(this.line.diagnostic) {
+    this.formGroup.get('diagnostic').patchValue(this.line.Diagnostic);
+    }
+    if (this.line.teeth) {
+      this.teethSelected = Object.assign([], this.line.teeth);
+    }
+    // this.teethSelected = [...this.line.teeth];
+    // if (this.line.get('toothCategory').value) {
+    //   this.loadTeethMap(this.line.get('toothCategory').value)
+    //   this.formGroup.get('toothCategory').patchValue(this.line.get('toothCategory').value)
+    // }
+    // if (this.line.get('teeth')) {
+    //   this.teethSelected = [...this.line.get('teeth').value];
+    // }
   }
 
   get ToothCategoryControl() {return this.formGroup.get('toothCategory').value; }
@@ -165,13 +177,12 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
 
   showInfo() {
     var res = this.formGroup.value;
-    debugger
     if (this.teethSelected.length > 0 && !res.diagnostic) {
       return this.lineTeeth(this.teethSelected);
     } else if (res.diagnostic && this.teethSelected.length == 0) {
       return res.diagnostic;
     } else if (res.diagnostic && this.teethSelected.length > 0) {
-      return this.lineTeeth(this.teethSelected)+ ' ' + '-' + ' ' + res.diagnostic;
+      return this.lineTeeth(this.teethSelected)+ ' ' + ';' + ' ' + res.diagnostic;
     }
 
   }
@@ -185,7 +196,10 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onSave() {
+    this.line = this.formGroup.value;
+    this.line.Teeth = this.teethSelected;
     this.eventTeeth.emit(this.line);
+    this.popover.close();
   }
 
   public service$ = (text: string): any => {

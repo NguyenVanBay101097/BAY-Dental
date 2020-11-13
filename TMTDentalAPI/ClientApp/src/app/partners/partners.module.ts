@@ -54,6 +54,7 @@ import { TreatmentHistoryTeethPopoverComponent } from './partner-customer-treatm
 import { ApplyDiscountDefaultPopoverComponent } from './partner-customer-treatment-history/apply-discount-default-popover/apply-discount-default-popover.component';
 import { ApplyDiscountSaleOrderLinePopoverComponent } from './partner-customer-treatment-history/apply-discount-sale-order-line-popover/apply-discount-sale-order-line-popover.component';
 import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [
