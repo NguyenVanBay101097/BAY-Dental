@@ -375,6 +375,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateFastSaleOrder(FastSaleOrderVm val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _saleOrderService.CreateFastSaleOrder(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetServiceBySaleOrderId(Guid id)

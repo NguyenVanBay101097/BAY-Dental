@@ -14,6 +14,7 @@ import { PartnerCustomerQuotationsComponent } from './partner-customer-quotation
 import { PartnerCustomerTreatmentHistoryComponent } from './partner-customer-treatment-history/partner-customer-treatment-history.component';
 import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer-treatment-history-form/partner-customer-treatment-history-form.component';
 import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
+import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
 import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
 
 const routes: Routes = [
@@ -22,6 +23,10 @@ const routes: Routes = [
   },
   {
     path: 'suppliers', component: PartnerSupplierListComponent
+  },
+  {
+    path:'treatment-paymentfast/from',
+    component: PartnerCustomerTreatmentPaymentFastComponent
   },
   {
     path: 'customer/:id',

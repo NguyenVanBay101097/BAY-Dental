@@ -23,6 +23,8 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
 import { PartnersModule } from '../partners/partners.module';
 import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
+import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discount-popover/sale-order-line-discount-popover.component';
+import { SaleOrderLineInfoPopoverComponent } from './sale-order-line-info-popover/sale-order-line-info-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from './sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
 import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
@@ -51,6 +53,8 @@ import { AccountPaymentPrintComponent } from '../shared/account-payment-print/ac
     PartnerCustomerToathuocListComponent,
     SaleOrderDotkhamListComponent,
     SaleOrderPaymentListComponent,
+    SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent,
   ],
   imports: [
     CommonModule,
@@ -63,7 +67,10 @@ import { AccountPaymentPrintComponent } from '../shared/account-payment-print/ac
   ],
   providers: [],
   exports: [
-    SaleOrderTeethPopoverComponent
+    SaleOrderTeethPopoverComponent,
+    SaleOrderListServiceComponent,
+    SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,

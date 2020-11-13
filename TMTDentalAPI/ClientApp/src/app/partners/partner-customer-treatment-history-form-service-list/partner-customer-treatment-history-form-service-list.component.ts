@@ -67,6 +67,7 @@ export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements 
       amountPaid: 0,
       amountResidual: 0,
       diagnostic: '',
+      note: '',
       discount: 0,
       discountFixed: 0,
       discountType: 'percentage',
@@ -85,6 +86,7 @@ export class PartnerCustomerTreatmentHistoryFormServiceListComponent implements 
       teeth: this.fb.array([]),
       toothCategory: null,
       toothCategoryId: '',
+
     };
     this.newEventEmiter.emit(value)
   }

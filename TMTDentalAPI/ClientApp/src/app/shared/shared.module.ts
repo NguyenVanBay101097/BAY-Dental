@@ -61,6 +61,7 @@ import { PartnerPhonePopoverComponent } from './partner-phone-popover/partner-ph
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
 import { CalendarModule } from '@progress/kendo-angular-dateinputs';
 import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
+import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
 
 @NgModule({
   declarations: [
@@ -114,6 +115,9 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     PartnerPhonePopoverComponent,
     PartnersBindingDirective,
     ProductServiceCuDialogComponent
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective,
+    PrintSaleOrderComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -162,6 +166,9 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     PartnerPhonePopoverComponent,
     PartnersBindingDirective,
     
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective,
+    PrintSaleOrderComponent
   ],
   imports: [
     CommonModule,

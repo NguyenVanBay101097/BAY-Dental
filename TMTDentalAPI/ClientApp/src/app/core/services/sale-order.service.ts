@@ -148,6 +148,9 @@ export class SaleOrderService {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/OrderDefaultGet", val);
     }
 
+    createFastSaleOrder(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
+    }
 
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
