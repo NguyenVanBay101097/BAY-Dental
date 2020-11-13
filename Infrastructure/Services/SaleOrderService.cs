@@ -267,6 +267,13 @@ namespace Infrastructure.Services
                 await dkObj.ActionCancel(dotKhamIds);
             }
 
+            var dkStepObj = GetService<IDotKhamStepService>();
+            var saleLineIds = self.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();
+            var removeDkSteps = await dkStepObj.SearchQuery(x => saleLineIds.Contains(x.SaleLineId.Value)).ToListAsync();
+            if (removeDkSteps.Any(x => x.IsDone))
+                throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
+            await dkStepObj.DeleteAsync(removeDkSteps);
+
             foreach (var sale in self)
             {
                 foreach (var line in sale.OrderLines)
@@ -1283,6 +1290,14 @@ namespace Infrastructure.Services
             var dkSteps = await dkStepObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
             await dkStepObj.DeleteAsync(dkSteps);
 
+            var toaThuocObj = GetService<IToaThuocService>();
+            var toaThuocs = await toaThuocObj.SearchQuery(x => ids.Contains(x.SaleOrderID.Value)).ToListAsync();
+            await toaThuocObj.DeleteAsync(toaThuocs);
+
+            var appointmentObj = GetService<IAppointmentService>();
+            var appointments = await appointmentObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
+            await appointmentObj.DeleteAsync(appointments);
+
             var couponObj = GetService<ISaleCouponService>();
             var coupons = await couponObj.SearchQuery(x => ids.Contains(x.SaleOrderId.Value)).ToListAsync();
             if (coupons.Any())
@@ -1298,6 +1313,8 @@ namespace Infrastructure.Services
             var line_ids = self.SelectMany(x => x.OrderLines).Select(x => x.Id).ToList();
             var saleLineObj = GetService<ISaleOrderLineService>();
             await saleLineObj.Unlink(line_ids);
+
+
 
             await DeleteAsync(self);
         }

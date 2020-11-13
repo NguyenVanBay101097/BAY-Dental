@@ -12,7 +12,6 @@ import { ProductSearchListComponent } from './product-search-list/product-search
 import { ProductGridComponent } from './product-grid/product-grid.component';
 import { ProductServiceListComponent } from './product-service-list/product-service-list.component';
 import { ProductServiceFormComponent } from './product-service-form/product-service-form.component';
-import { ProductServiceCuDialogComponent } from './product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductAdvanceFilterComponent } from './product-advance-filter/product-advance-filter.component';
 import { ProductMedicineListComponent } from './product-medicine-list/product-medicine-list.component';
 import { ProductMedicineCuDialogComponent } from './product-medicine-cu-dialog/product-medicine-cu-dialog.component';
@@ -40,7 +39,6 @@ import { SharedModule } from '../shared/shared.module';
     ProductGridComponent, 
     ProductServiceListComponent, 
     ProductServiceFormComponent, 
-    ProductServiceCuDialogComponent, 
     ProductAdvanceFilterComponent, 
     ProductMedicineListComponent, 
     ProductMedicineCuDialogComponent, 
@@ -72,7 +70,7 @@ import { SharedModule } from '../shared/shared.module';
   providers: [
     ProductService
   ],
-  entryComponents: [ProductDialogComponent, ProductImportExcelDialogComponent, ProductServiceCuDialogComponent, ProductMedicineCuDialogComponent,
+  entryComponents: [ProductDialogComponent, ProductImportExcelDialogComponent, ProductMedicineCuDialogComponent,
     ProductLaboCuDialogComponent, ProductProductCuDialogComponent, ProductStepCuDialogComponent,
     ProductServiceImportDialogComponent
   ],
