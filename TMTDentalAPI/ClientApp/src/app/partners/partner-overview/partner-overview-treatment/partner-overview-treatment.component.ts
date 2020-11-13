@@ -39,7 +39,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     if (id) {
       this.router.navigateByUrl(`sale-orders/form?id=${id}`)
     } else {
-      this.router.navigateByUrl(`sale-orders/form`)
+      this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
     }
   }
 
