@@ -151,7 +151,7 @@
                                                 <th style="min-width: 100px;" class="text-right">Thành tiền</th>
                                                 <th style="min-width: 100px;" class="text-right">Thanh toán</th>
                                                 <th style="min-width: 100px;" class="text-right">Còn lại</th>
-                                                <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
+                                                <th *ngIf="stateControl.value === 'draft'" style="min-width: 50px;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
                                         <tbody formArrayName="OrderLines">
@@ -192,7 +192,7 @@
                                                     <td class="text-right">
                                                         {{ line.get('AmountResidual').value | number }}
                                                     </td>
-                                                    <td class="text-right b-sticky-right">
+                                                    <td *ngIf="stateControl.value === 'draft'" class="text-right b-sticky-right">
                                                         <div>
                                                             <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
                                                                                 <span class="k-icon k-i-delete"></span>

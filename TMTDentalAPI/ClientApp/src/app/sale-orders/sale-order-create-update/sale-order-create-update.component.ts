@@ -516,16 +516,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   saveRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    return this.saleOrderService.update(this.saleOrderId, val);
+    var val = this.getFormDataSave();
+    return this.saleOrderOdataService.update(this.saleOrderId, val);
   }
 
   removeCard() {
@@ -577,7 +569,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(r => {
           if (r) {
             var val = this.getFormDataSave();
-            return this.saleOrderService.update(this.saleOrderId, val);
+            return this.saleOrderOdataService.update(this.saleOrderId, val);
           } else {
             return of(true);
           }
@@ -872,14 +864,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
-        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-          this.notificationService.show({
-            content: 'Lưu thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+        this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
+          this.notify('success', 'lưu thành công');
           this.loadRecord();
         }, () => {
           this.loadRecord();
@@ -909,14 +895,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.computeAmountTotal();
     if (this.formGroup.get('State').value == "sale") {
       var val = this.getFormDataSave();
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
+      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
         this.loadRecord();
       }, () => {
         this.loadRecord();
@@ -980,14 +960,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
-        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-          this.notificationService.show({
-            content: 'Sửa thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
+        this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
+          this.notify('success', 'Sửa thành công');
           this.loadRecord();
         }, () => {
           this.loadRecord();
