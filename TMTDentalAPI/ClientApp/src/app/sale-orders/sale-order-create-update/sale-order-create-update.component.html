@@ -60,10 +60,10 @@
                                 Lưu
                             </button>
                     </div>
-                    <div *ngIf="this.saleOrderId" class="ml-auto">
+                    <div *ngIf="['sale'].indexOf(saleOrder.State) !== -1" class="ml-auto">
                         <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
-                                Tạo Đơn thuốc</button>
-                        <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">Tạo Lịch hẹn</button>
+                                Tạo đơn thuốc</button>
+                        <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">Tạo lịch hẹn</button>
                     </div>
                 </div>
                 <div class="o_group">
