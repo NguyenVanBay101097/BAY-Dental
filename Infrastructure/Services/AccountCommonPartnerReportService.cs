@@ -31,7 +31,7 @@ namespace Infrastructure.Services
 
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
 
-            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted");
+            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted",companyId:val.CompanyId);
             query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
             (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
 
@@ -81,7 +81,7 @@ namespace Infrastructure.Services
                     dict[item.PartnerId].Begin = -item.InitialBalance;
             }
 
-            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted");
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
             query2 = query2.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
              (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
 

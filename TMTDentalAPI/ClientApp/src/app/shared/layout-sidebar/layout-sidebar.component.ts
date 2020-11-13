@@ -140,6 +140,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
       children: [
+        { name: 'Sale dashboard report', link: '/sale-dashboard-reports' },
         { name: 'Kết quả kinh doanh', link: '/financial-report' },
         { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank' },
         { name: 'Thống kê doanh thu', link: '/revenue-report' },

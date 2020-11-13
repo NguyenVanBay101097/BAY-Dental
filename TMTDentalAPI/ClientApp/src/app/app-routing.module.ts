@@ -4,6 +4,11 @@ import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'sale-dashboard-reports',
+    loadChildren: () => import('./sale-dashboard-reports/sale-dashboard-reports.module').then(m => m.SaleDashboardReportsModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'work-entry-types',
     loadChildren: () => import('./work-entry-types/work-entry-types.module').then(m => m.WorkEntryTypesModule),
     canActivate: [AuthGuard]
@@ -218,48 +223,48 @@ const routes: Routes = [
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'commissions', 
+    path: 'commissions',
     loadChildren: () => import('./commissions/commissions.module').then(m => m.CommissionsModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'employees', 
+    path: 'employees',
     loadChildren: () => import('./employees/employees.module').then(m => m.EmployeesModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'commission-report', 
+    path: 'commission-report',
     loadChildren: () => import('./commission-reports/commission-reports.module').then(m => m.CommissionReportsModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'commission-settlements', 
+    path: 'commission-settlements',
     loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'partner-titles', 
+    path: 'partner-titles',
     loadChildren: () => import('./partner-titles/partner-titles.module').then(m => m.PartnerTitlesModule)
   },
   {
-    path: 'tcare', 
+    path: 'tcare',
     loadChildren: () => import('./tcare/tcare.module').then(m => m.TcareModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'socials', 
+    path: 'socials',
     loadChildren: () => import('./socials-channel/socials-channel.module').then(m => m.SocialsChannelModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'zalo-config', 
+    path: 'zalo-config',
     loadChildren: () => import('./zalo-oa-config/zalo-oa-config.module').then(m => m.ZaloOaConfigModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
-    path: 'roles', 
+    path: 'roles',
     loadChildren: () => import('./roles/roles.module').then(m => m.RolesModule),
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
     path: '',
