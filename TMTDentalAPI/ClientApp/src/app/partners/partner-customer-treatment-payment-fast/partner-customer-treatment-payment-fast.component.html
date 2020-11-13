@@ -38,34 +38,34 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="getPartner && getPartner.birth">
+                        <tr *ngIf="getPartner && partnerAge">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Ngày sinh:
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{getPartner ? getPartner.birth : null}}
+                                {{partnerAge ? partnerAge : null}}
                             </td>
                         </tr>
-                        <tr *ngIf="getPartner && getPartner.phone">
+                        <tr *ngIf="getPartner && partnerPhone">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Số điện thoại:
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{getPartner ? getPartner.phone : null}}
+                                {{partnerPhone ? partnerPhone : null}}
                             </td>
                         </tr>
-                        <tr *ngIf="getPartner && getPartner.address">
+                        <tr *ngIf="getPartner && partnerAddress">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help">
                                     Địa chỉ:
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                {{getPartner ? getPartner.address : null}}
+                                {{partnerAddress ? partnerAddress : null}}
                             </td>
                         </tr>
                     </tbody>

@@ -103,6 +103,7 @@ export class SaleOrderFastListServiceComponent implements OnInit {
       toothCategory: null,
       toothCategoryId: '',
     };
+    
     this.newEventEmiter.emit(value)
   }
 

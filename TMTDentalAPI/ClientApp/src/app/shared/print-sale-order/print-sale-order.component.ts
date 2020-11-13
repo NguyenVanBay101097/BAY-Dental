@@ -19,12 +19,10 @@ export class PrintSaleOrderComponent implements OnInit {
     this.printFastSaleOrder(this.saleOrderId);
   }
 
-  printFastSaleOrder(saleOrderId) {
-    debugger
+  printFastSaleOrder(saleOrderId) {   
     if (saleOrderId) {
       this.saleOrderService.getPrint(saleOrderId).subscribe((result: any) => {
-        this.saleOrderPrint = result;
-        debugger
+        this.saleOrderPrint = result;      
         setTimeout(() => {
           var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
           var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');

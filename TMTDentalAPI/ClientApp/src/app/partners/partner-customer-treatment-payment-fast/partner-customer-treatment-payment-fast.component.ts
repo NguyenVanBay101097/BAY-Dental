@@ -36,6 +36,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
+import { PartnersService } from 'src/app/shared/services/partners.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
@@ -66,7 +67,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   journalFixed: AccountJournalSimple;
 
   discountDefault: DiscountDefault;
-  valueSearch:string;
+  valueSearch: string;
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -78,7 +79,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;
-  saleOrderPrintId:string;
+  saleOrderPrintId: string;
   dotKhams: DotKhamBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
   saleOrderLine: any;
@@ -96,13 +97,17 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService, private authService: AuthService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
+    private paymentService: AccountPaymentService,
+    private odataPartnerService: PartnersService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
   }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
+      partnerAge: null,
+      partnerPhone: null,
+      partnerAddress: null,
       dateOrderObj: [null, Validators.required],
       orderLines: this.fb.array([]),
       companyId: null,
@@ -146,7 +151,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     let charCode = (event.which) ? event.which : event.keyCode;
-   if (charCode == 113) {
+    if (charCode == 113) {
       setTimeout(() => {
         this.searchElement.nativeElement.focus();
       }, 0);
@@ -185,8 +190,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
-       
-        
+
+
 
         if (!this.saleOrderId) {
           this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
@@ -227,6 +232,18 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   get partner() {
     var control = this.formGroup.get('partner');
     return control ? control.value : null;
+  }
+
+  get partnerAge(){
+    return this.formGroup.get('partnerAge').value;
+  }
+
+  get partnerPhone(){
+    return this.formGroup.get('partnerPhone').value;
+  }
+
+  get partnerAddress(){
+    return this.formGroup.get('partnerAddress').value;
   }
 
   quickCreateCustomer() {
@@ -283,8 +300,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
+    val.partnerId = this.getPartner.id;
     val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
@@ -313,7 +329,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       invoiceIds: null,
       saleOrderIds: null,
       serviceCardOrderIds: null,
-    });
+    });   
 
     this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
       this.paymentService.saleDefaultGet([rs.id]).subscribe(rs2 => {
@@ -334,8 +350,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
               animation: { type: 'fade', duration: 400 },
               type: { style: 'success', icon: true }
             });
-          
-           this.routeActive();       
+
+            this.routeActive();
           }, (err) => {
             this.notificationService.show({
               content: err,
@@ -356,7 +372,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         });
 
       })
-    })   
+    })
   }
 
 
@@ -627,7 +643,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   applyPromotion() {
-    debugger
     if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
@@ -830,24 +845,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
   }
 
-  print(): void {
-    let printContents, popupWin;
-    printContents = document.getElementById('print-section').innerHTML;
-    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-    popupWin.document.open();
-    popupWin.document.write(`
-      <html>
-        <head>
-          <title>Print tab</title>
-          <style>
-          //........Customized style.......
-          </style>
-        </head>
-      <body onload="window.print();">${printContents}</body>
-      </html>`
-    );
-    popupWin.document.close();
-}
 
   actionLabo(item?) {
     if (this.saleOrderId) {
@@ -879,7 +876,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     if (saleOrderId) {
       this.saleOrderService.getPrint(saleOrderId).subscribe((result: any) => {
         this.saleOrderPrint = result;
-        debugger
         setTimeout(() => {
           var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
           var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
@@ -896,7 +892,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           );
           popupWin.document.close();
           this.saleOrderPrint = null;
-        },300);
+        }, 300);
       });
     }
   }
@@ -936,7 +932,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onSaveConfirm() {
-    debugger
     if (!this.formGroup.valid) {
       return false;
     }
@@ -1060,10 +1055,14 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onChangePartner(value) {
-    debugger
-    if (value) {
-      this.saleOrderService.onChangePartner({ partnerId: value.id }).subscribe(result => {
-        this.formGroup.patchValue(result);
+    if (this.partner) {
+
+      this.odataPartnerService.get(this.partner.id,null).subscribe(rs => {
+        debugger
+        this.formGroup.get('partnerAge').patchValue(rs.Age);
+        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
+        this.formGroup.get('partnerAddress').patchValue(rs.Address);
+
       });
     }
   }
@@ -1177,6 +1176,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   addLine(val) {
+    console.log(val);
     var res = this.fb.group(val);
 
     // line.teeth = this.fb.array(line.teeth);
@@ -1192,21 +1192,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.getPriceSubTotal();
     this.orderLines.markAsDirty();
     this.computeAmountTotal();
-    if (this.formGroup.get('state').value == "sale") {
-      var val = this.getFormDataSave();
-      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadRecord();
-      }, () => {
-        this.loadRecord();
-      });
-    }
     this.saleOrderLine = null;
   }
 
@@ -1373,7 +1358,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
   }
 
-  onChangeSearch(value){
+  onChangeSearch(value) {
     this.valueSearch = value;
   }
 

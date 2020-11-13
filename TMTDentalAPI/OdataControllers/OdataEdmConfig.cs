@@ -15,7 +15,7 @@ namespace TMTDentalAPI.OdataControllers
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
 
-            #region Partners
+            #region Partners 
             builder.EntitySet<PartnerViewModel>("Partners");
 
             builder.EntityType<PartnerViewModel>()
@@ -26,7 +26,8 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<PartnerViewModel>()
             .Function("GetDisplay")
             .Returns<PartnerDisplay>();
-            
+
+
             #endregion
             #region PartnerCategories
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
@@ -83,6 +84,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<ApplicationUserSimple>();
             builder.ComplexType<EmployeeBasic>();
             builder.ComplexType<PartnerDisplay>();
+            builder.ComplexType<PartnerInfoVm>();
             builder.ComplexType<HistorySimple>();
             builder.ComplexType<ProductPricelistBasic>();
             builder.ComplexType<PartnerCategoryBasic>();
@@ -91,6 +93,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
+           
             #endregion
 
 
