@@ -81,6 +81,8 @@ namespace ApplicationCore.Entities
 
         public decimal? Residual { get; set; }
 
+        public decimal? Paid { get; set; }
+
         /// <summary>
         /// Ghi nhận lại sale order có sử dụng thẻ thành viên
         /// </summary>

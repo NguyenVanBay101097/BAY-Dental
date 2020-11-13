@@ -329,6 +329,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         $expand: 'Tags'
       };
       this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
+        debugger
         this.formGroup.get('partnerAge').patchValue(rs.Age);
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
         this.tags.clear();

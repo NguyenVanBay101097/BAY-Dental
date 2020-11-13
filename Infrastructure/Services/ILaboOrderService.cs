@@ -24,5 +24,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId);
 
         Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val);
+
+        Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val);
     }
 }

@@ -543,5 +543,40 @@ namespace Infrastructure.Services
                 }
             }
         }
+
+        public async Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val)
+        {
+            ISpecification<LaboOrderLine> spec_1 = new InitialSpecification<LaboOrderLine>(x => true);
+            ISpecification<LaboOrderLine> spec_2 = new InitialSpecification<LaboOrderLine>(x => true);
+
+            if (val.DateFrom.HasValue)
+            {
+                spec_1 = spec_1.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate >= val.DateFrom));
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec_1 = spec_1.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate <= dateTo));
+                spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= dateTo));
+            }
+
+            spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate.HasValue == false));
+
+            var lineObj = GetService<ILaboOrderLineService>();
+
+            var query = lineObj.SearchQuery(spec_1.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var laboReceived = await query.CountAsync();
+
+            query = lineObj.SearchQuery(spec_2.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+            var laboAppointment = await query.CountAsync();
+
+            var result = new LaboOrderReportOutput { 
+                LaboReceived = laboReceived,
+                LaboAppointment = laboAppointment
+            };
+
+            return result;
+        }
     }
 }

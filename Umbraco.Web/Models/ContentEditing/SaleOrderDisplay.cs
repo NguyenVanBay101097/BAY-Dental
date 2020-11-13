@@ -60,6 +60,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ApplicationUserSimple User { get; set; }
 
         public decimal? Residual { get; set; }
+        public decimal? Paid { get; set; }
 
         public Guid? PricelistId { get; set; }
         public ProductPricelistBasic Pricelist { get; set; }

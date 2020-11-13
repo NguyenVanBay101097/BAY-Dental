@@ -155,5 +155,12 @@ namespace TMTDentalAPI.Controllers
             var result = await _laboOrderService.GetStatisticsPaged(val);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> LaboOrderReport(LaboOrderReportInput val)
+        {
+            var result = await _laboOrderService.GetLaboOrderReport(val);
+            return Ok(result);
+        }
     }
 }

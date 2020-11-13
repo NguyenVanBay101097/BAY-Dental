@@ -67,6 +67,16 @@ export class LaboOrderStatisticsPaged {
     datePlannedTo: string;
 }
 
+export class LaboOrderReportInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class LaboOrderReportOutput {
+    laboReceived: number;
+    laboAppointment: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LaboOrderService {
     apiUrl = 'api/LaboOrders';
@@ -118,5 +128,9 @@ export class LaboOrderService {
 
     GetFromSaleOrder_OrderLine(val: any): Observable<PagedResult2<LaboOrderBasic>> {
         return this.http.get<PagedResult2<LaboOrderBasic>>(this.baseApi + this.apiUrl + '/GetFromSaleOrder_OrderLine', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getLaboOrderReport(data: any) {
+        return this.http.post<LaboOrderReportOutput>(this.baseApi + this.apiUrl + '/LaboOrderReport', data);
     }
 }

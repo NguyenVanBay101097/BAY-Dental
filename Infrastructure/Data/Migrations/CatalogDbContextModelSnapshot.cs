@@ -6211,6 +6211,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("Paid")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 

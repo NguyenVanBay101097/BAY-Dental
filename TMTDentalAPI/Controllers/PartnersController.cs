@@ -595,5 +595,12 @@ namespace TMTDentalAPI.Controllers
             await _partnerService.UpdateAsync(partner);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            var result = await _partnerService.GetPartnerCustomerReport(val);
+            return Ok(result);
+        }
     }
 }

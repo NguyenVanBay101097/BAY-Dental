@@ -461,6 +461,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Tags { get; set; }
     }
 
+    public class PartnerCustomerReportInput
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class PartnerCustomerReportOutput
+    {
+        public int CustomerOld { get; set; }
+        public int CustomerNew { get; set; }
+    }
+
     public class PartnerInfoVm
     {
         public Guid Id { get; set; }
@@ -487,6 +499,32 @@ namespace Umbraco.Web.Models.ContentEditing
             set
             {
             }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
         }
 
         public string Email { get; set; }

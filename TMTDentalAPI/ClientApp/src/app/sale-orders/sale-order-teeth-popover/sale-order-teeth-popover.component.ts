@@ -4,6 +4,7 @@ import { TooltipTemplateService } from '@progress/kendo-angular-charts';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { LaboOrderLineDefaultGet } from 'src/app/labo-order-lines/labo-order-line.service';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerAddRemoveTags, PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
