@@ -3,7 +3,7 @@
         <span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
 <span>{{lineDiagnostic ? (this.lineTeeth.length>0?'; ':'') + lineDiagnostic : ''}}</span>&nbsp;
 </span>
-<a class="ml-auto" [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+<a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
     <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
     <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
         <span style="font-size: 11px; position: absolute; color: white; left:
@@ -41,7 +41,7 @@
         </div>
         <div class="d-inline-flex w-100">
             <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                <input [attr.disabled]="saleOrderState !== 'draft'" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
+                <input [attr.disabled]="saleOrderState !== 'draft' ? true : null" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
                 <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
             </div>
         </div>

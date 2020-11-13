@@ -1,0 +1,100 @@
+﻿using ApplicationCore.Entities;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.OData.Edm;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace TMTDentalAPI.OdataControllers
+{
+    public static class OdataEdmConfig
+    {
+        public static IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+
+            #region Partners
+            builder.EntitySet<PartnerViewModel>("Partners");
+
+            builder.EntityType<PartnerViewModel>()
+              .Collection
+              .Function("GetView")
+              .ReturnsCollection<GridPartnerViewModel>();
+
+            builder.EntityType<PartnerViewModel>()
+            .Function("GetDisplay")
+            .Returns<PartnerDisplay>();
+            
+            #endregion
+            #region PartnerCategories
+            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
+
+            #endregion
+
+            #region Products
+            builder.EntitySet<ProductViewModel>("Products");
+
+            #endregion
+
+            #region Employees
+            builder.EntitySet<EmployeeViewModel>("Employees");
+
+            #endregion
+
+            #region Teeth
+            builder.EntitySet<ToothViewModel>("Teeth");
+
+            #endregion
+
+            #region ToothCategories
+            builder.EntitySet<ToothCategoryViewModel>("ToothCategories");
+
+            #endregion
+
+            #region FacebookUserProfiles
+            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
+            builder.EntityType<FacebookUserProfile>()
+             .Collection
+             .Function("GetView")
+             .ReturnsCollection<FacebookUserProfileBasic>();
+            #endregion
+
+            #region IRSequences
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
+
+            #endregion
+
+            #region SaleOrders
+            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
+
+            builder.EntityType<SaleOrderViewModel>()
+             .Function("GetDisplay")
+             .Returns<SaleOrderDisplay>();
+
+            builder.EntityType<SaleOrderViewModel>()
+                .Collection
+             .Function("DefaultGet")
+             .Returns<SaleOrderDisplay>();
+            #endregion
+
+            #region ComplexType
+            builder.ComplexType<ApplicationUserSimple>();
+            builder.ComplexType<EmployeeBasic>();
+            builder.ComplexType<PartnerDisplay>();
+            builder.ComplexType<HistorySimple>();
+            builder.ComplexType<ProductPricelistBasic>();
+            builder.ComplexType<PartnerCategoryBasic>();
+            builder.ComplexType<SaleOrderDisplay>();
+            builder.ComplexType<SaleOrderLineDisplay>();
+            builder.ComplexType<PartnerSimple>();
+            builder.ComplexType<ToothDisplay>();
+            builder.ComplexType<ToothCategoryBasic>();
+            #endregion
+
+
+            return builder.GetEdmModel();
+        }
+    }
+}
