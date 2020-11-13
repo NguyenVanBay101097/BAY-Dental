@@ -18,6 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string EmployeeName { get; set; }
 
         public string Diagnostic { get; set; }
+        public Guid PartnerId { get; set; }
+
     }
 
     public class ToaThuocPaged
@@ -31,6 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public Guid? PartnerId { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class ToaThuocDisplay
@@ -64,6 +67,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
 
         public IEnumerable<ToaThuocLineDisplay> Lines { get; set; } = new List<ToaThuocLineDisplay>();
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class ToaThuocDefaultGet
@@ -71,6 +75,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         public Guid? PartnerId { get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class ToaThuocLineDefaultGet

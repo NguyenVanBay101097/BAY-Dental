@@ -629,26 +629,43 @@ namespace TMTDentalAPI
             builder.EntitySet<Partner>("Partner");
 
             builder.EntitySet<PartnerViewModel>("Partners");
+            builder.EntitySet<ProductViewModel>("Products");
+            builder.EntitySet<EmployeeViewModel>("Employees");
+            builder.EntitySet<ToothViewModel>("Teeth");
+            builder.EntitySet<ToothCategoryViewModel>("ToothCategories");
+            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
+            builder.EntitySet<IRSequenceViewModel>("IRSequences");
+
+            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
+            // entitype
             builder.EntityType<PartnerViewModel>()
                .Collection
                .Function("GetView")
                .ReturnsCollection<GridPartnerViewModel>();
 
-            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
             builder.EntityType<FacebookUserProfile>()
               .Collection
               .Function("GetView")
               .ReturnsCollection<FacebookUserProfileBasic>();
 
-            builder.EntityType<PartnerViewModel>()
-            .Function("GetDisplay")
-            .Returns<PartnerDisplay>();
+            builder.EntityType<SaleOrderViewModel>()
+              .Function("GetDisplay")
+              .Returns<SaleOrderDisplay>();
 
-            builder.ComplexType<PartnerDisplay>();
-            builder.ComplexType<HistorySimple>();
-            builder.ComplexType<PartnerCategoryBasic>();
+            builder.EntityType<SaleOrderViewModel>()
+                .Collection
+             .Function("DefaultGet")
+             .Returns<SaleOrderDisplay>();
+            // complextype
+            builder.ComplexType<SaleOrderDisplay>(); 
+            builder.ComplexType<SaleOrderLineDisplay>();
+            builder.ComplexType<PartnerSimple>();
+            builder.ComplexType<ApplicationUserSimple>();
+            builder.ComplexType<ToothDisplay>(); 
+            builder.ComplexType<ToothCategoryBasic>();
+            builder.ComplexType<EmployeeBasic>();
+            builder.ComplexType<ProductPricelistBasic>();
 
-            builder.EntitySet<IRSequenceViewModel>("IRSequences");
             return builder.GetEdmModel();
         }
 

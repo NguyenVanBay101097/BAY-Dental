@@ -51,5 +51,8 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         public ICollection<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; } = new List<AppointmentMailMessageRel>();
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrder SaleOrder { get; set; }
     }
 }

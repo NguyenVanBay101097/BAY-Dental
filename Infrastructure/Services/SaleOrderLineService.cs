@@ -56,6 +56,7 @@ namespace Infrastructure.Services
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+                line.AmountResidual = line.PriceTotal - line.AmountPaid;
             }
         }
 

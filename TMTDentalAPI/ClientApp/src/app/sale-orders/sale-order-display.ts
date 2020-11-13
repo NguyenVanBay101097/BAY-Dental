@@ -24,4 +24,5 @@ export class SaleOrderDisplay {
     quote: SaleOrderBasic;
     order: SaleOrderBasic;
     invoiceCount: number;
+    paidTotal: number;
 }

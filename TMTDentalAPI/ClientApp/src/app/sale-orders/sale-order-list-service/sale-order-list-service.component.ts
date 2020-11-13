@@ -1,9 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { fromEvent, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { Product } from 'src/app/products/product';
+import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
+import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
 
 @Component({
@@ -13,13 +17,15 @@ import { ToothDisplay } from 'src/app/teeth/tooth.service';
 })
 export class SaleOrderListServiceComponent implements OnInit {
 
+  @ViewChild("searchInput", { static: true }) searchInput: ElementRef;
   @Output() newEventEmiter = new EventEmitter<any>()
   limit: number = 20;
   skip: number = 0;
   toothDisplays: ToothDisplay[] = []
   search: string;
   partnerId: string;
-  listProductServices: ProductBasic2[] = [];
+  totalListProducts: any[] = [];
+  listProducts: any[] = [];
   searchUpdate = new Subject<string>();
 
   thTable_services = [
@@ -28,31 +34,68 @@ export class SaleOrderListServiceComponent implements OnInit {
   ]
 
   constructor(
-    private productService: ProductService,
+    private productOdataService: ProductsOdataService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
-    this.searchUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((value) => {
-        this.loadDataDefault();
-      });
+
+    this.searchInit();
     this.loadDataDefault();
   }
 
-  loadDataDefault() {
-    var val = new ProductPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || "";
-    val.type2 = "service";
+  searchInit() {
+    fromEvent(document, 'keyup').pipe(
+      filter((s: any) => s.keyCode === 113)
+    ).subscribe(s => {
+      this.searchInput.nativeElement.focus();
+    });
 
-    this.productService
-      .getPaged(val).subscribe(
-        (res) => {
-          this.listProductServices = res.items;
+    this.searchUpdate
+      .pipe(distinctUntilChanged())
+      .subscribe((value) => {
+        this.onSearch(value);
+      });
+  }
+
+  onKeyUp(s) {
+    if (s.key === 'Enter' || s.keyCode === 13) {
+      if (this.listProducts) { this.addServiceToSaleOrder(this.listProducts[0]); }
+    }
+  }
+
+  loadDataDefault() {
+    // var val = new ProductPaged();
+    // val.limit = this.limit;
+    // val.offset = this.skip;
+    // val.search = this.search || "";
+    // val.type2 = "service";
+
+    const state = {
+      filter: {
+        logic: 'and',
+        filters: [
+          { field: 'Type2', operator: 'eq', value: 'service' }
+        ]
+      }
+    };
+
+    const options = {
+      select: 'Id,Name,NameNoSign,DefaultCode,ListPrice',
+      orderby: 'DateCreated desc'
+    };
+
+    this.productOdataService
+      .getFetch(state, options).subscribe(
+        (res: any) => {
+          this.listProducts = res.data;
+          this.totalListProducts = res.data.map(x => ({
+            ...x, searchString: x.Name.toLowerCase() + ' ' + x.NameNoSign.toLowerCase()
+              + ' ' + x.DefaultCode.toLowerCase()
+          }));
+
         },
         (err) => {
           console.log(err);
@@ -60,31 +103,66 @@ export class SaleOrderListServiceComponent implements OnInit {
       );
   }
 
+  onSearch(val) {
+    val = val.trim();
+    if (val === '') {
+      this.listProducts = this.totalListProducts;
+      return;
+    }
+    this.listProducts = this.totalListProducts.filter(x => x.searchString.includes(val));
+    return;
+  }
+
   addServiceToSaleOrder(item) {
     var value = {
-      amountPaid: 0,
-      amountResidual: 0,
-      diagnostic: '',
-      discount: 0,
-      discountFixed: 0,
-      discountType: 'percentage',
-      employee: null,
-      employeeId: '',
-      name: item.name,
-      priceSubTotal: 0,
-      priceUnit: item.listPrice,
-      productId: item.id,
-      product: {
-        id: item.id,
-        name: item.name
+      AmountPaid: 0,
+      AmountResidual: 0,
+      Diagnostic: '',
+      Discount: 0,
+      DiscountFixed: 0,
+      DiscountType: 'percentage',
+      Employee: null,
+      EmployeeId: '',
+      Name: item.Name,
+      PriceSubTotal: 0,
+      PriceUnit: item.ListPrice,
+      ProductId: item.Id,
+      Product: {
+        Id: item.Id,
+        Name: item.Name
       },
-      productUOMQty: 1,
-      state: 'draft',
-      teeth: this.fb.array([]),
-      toothCategory: null,
-      toothCategoryId: '',
+      ProductUOMQty: 1,
+      State: 'draft',
+      Teeth: this.fb.array([]),
+      ToothCategory: null,
+      ToothCategoryId: '',
     };
-    this.newEventEmiter.emit(value)
+    this.newEventEmiter.emit(value);
+  }
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+  createProductService() {
+    let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm: Dịch vụ";
+    modalRef.result.then(
+      () => {
+        this.notify('success','tạo dịch vụ thành công');
+        this.loadDataDefault();
+      },
+      () => { }
+    );
   }
 
 }

@@ -36,6 +36,12 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
         if (options.expand) {
             queryStr = queryStr + '&$expand=' + options.expand;
         }
+        if (options.select) {
+            queryStr = queryStr + '&$select=' + options.select;
+        }
+        if (options.orderby) {
+            queryStr = queryStr + '&$orderby=' + options.orderby;
+        }
 
         if (queryStr) {
             // encode everything which looks like a GUID
@@ -58,7 +64,7 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
             );
     }
 
-    public get(id: any, obj: any | null): Observable<any> {
+    public get(id: any, obj?: any | null): Observable<any> {
         return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
     }
 
@@ -76,6 +82,22 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
 
     public delete(id: any) {
         return this.http.delete(`${this.BASE_URL}${this.tableName}(${id})`);
+    }
+
+    public getFunction(id: string, func: string, options?: any) {
+        if (options) {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})/${func}`, options);
+        } else {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})/${func}`);
+        }
+    }
+
+    public getCollectionFunction(func: string, options?: any) {
+        if (options) {
+            return this.http.get(`${this.BASE_URL}${this.tableName}/${func}`, options);
+        } else {
+            return this.http.get(`${this.BASE_URL}${this.tableName}/${func}`);
+        }
     }
 }
 

@@ -147,15 +147,18 @@ namespace Infrastructure.Services
         {
             var totalAmountUntaxed = 0M;
             var totalAmountTax = 0M;
+            var Residual = 0M;
 
             foreach (var line in order.OrderLines)
             {
                 totalAmountUntaxed += line.PriceSubTotal;
                 totalAmountTax += line.PriceTax;
+                Residual += line.AmountResidual.Value;
             }
             order.AmountTax = Math.Round(totalAmountTax);
             order.AmountUntaxed = Math.Round(totalAmountUntaxed);
             order.AmountTotal = order.AmountTax + order.AmountUntaxed;
+            order.Residual = Residual;
         }
 
         public async Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "")
@@ -1201,6 +1204,7 @@ namespace Infrastructure.Services
                     saleLine.Order = order;
                     saleLine.AmountPaid = 0;
                     saleLine.AmountResidual = 0;
+                    saleLine.PriceUnit = line.PriceUnit;
                     foreach (var toothId in line.ToothIds)
                     {
                         saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel

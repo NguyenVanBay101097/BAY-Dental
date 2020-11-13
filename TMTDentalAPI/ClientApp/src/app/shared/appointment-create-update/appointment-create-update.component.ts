@@ -62,6 +62,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       companyId: null,
       doctor: null,
       state: 'confirmed',
+      saleOrderId: null
     })
 
     setTimeout(() => {

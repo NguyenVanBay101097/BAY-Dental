@@ -69,8 +69,11 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
             var query = GetQueryPaged(val);
-
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
+            if (val.Limit > 0 )
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+            var items = await query.Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();

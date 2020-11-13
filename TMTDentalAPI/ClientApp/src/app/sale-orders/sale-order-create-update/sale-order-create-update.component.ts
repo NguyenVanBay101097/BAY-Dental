@@ -31,13 +31,25 @@ import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-o
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { SaleOrderApplyServiceCardsDialogComponent } from '../sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
-import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { SaleOrderLineLaboOrdersDialogComponent } from '../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
+import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
+import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 
 declare var $: any;
 
@@ -51,25 +63,30 @@ declare var $: any;
 })
 export class SaleOrderCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
-  id: string;
+  saleOrderId: string;
   partnerId: string;
   filteredPartners: PartnerSimple[];
   filteredUsers: UserSimple[];
   filteredPricelists: ProductPriceListBasic[];
   discountDefault: DiscountDefault;
+  filteredToothCategories: any[];
+  initialListTeeths: any[];
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
+  @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
+  @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
 
-  saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
+  saleOrder: any = new SaleOrderDisplay();
   saleOrderPrint: any;
-  dotKhams: DotKhamBasic[] = [];
   laboOrders: LaboOrderBasic[] = [];
-
+  saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
   paymentsInfo: PaymentInfoContent[] = [];
+  filteredEmployees: any[] = [];
+  initialListEmployees: any = [];
 
   searchCardBarcode: string;
   partnerSend: any;
@@ -80,56 +97,82 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService) {
+    private paymentService: AccountPaymentService,
+    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
+    private saleOrderOdataService: SaleOrdersOdataService,
+    private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
+    private teethOdataService: TeethOdataService,
+    private toaThuocService: ToaThuocService,
+    private printService: PrintService
+  ) {
   }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      partner: [null, Validators.required],
+      Partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
-      orderLines: this.fb.array([]),
-      companyId: null,
-      amountTotal: 0,
-      state: null,
-      residual: null,
-      card: null,
-      pricelist: [null, Validators.required],
+      OrderLines: this.fb.array([]),
+      CompanyId: null,
+      AmountTotal: 0,
+      State: null,
+      Residual: null,
+      Card: null,
+      Pricelist: [null],
     });
     this.routeActive();
-
-    // this.getAccountPaymentReconcicles();
-    this.loadDotKhamList();
+    this.loadEmployees();
+    // this.employeeCbx.filterChange.pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.employeeCbx.loading = true)),
+    //   switchMap(value => this.searchEmployees(value))
+    // ).subscribe((result: any) => {
+    //   this.filteredEmployees = result;
+    //   this.employeeCbx.loading = false;
+    // });
+    this.getAccountPaymentReconcicles();
     // this.loadLaboOrderList();
-    this.loadPayments();
     // this.loadPricelists();
+    this.loadToothCategories();
+    this.loadTeethList();
+  }
+
+  loadEmployees() {
+    const options = {
+      select: 'Id,Name'
+    };
+    this.employeeOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.initialListEmployees = result.data;
+        this.filteredEmployees = this.initialListEmployees.slice(0, 20);
+      }
+    );
   }
 
   routeActive() {
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
-        this.id = params.get("id");
+        this.saleOrderId = params.get("id");
         this.partnerId = params.get("partner_id");
-        if (this.id) {
-          return this.saleOrderService.get(this.id);
+        if (this.saleOrderId) {
+          return this.saleOrderOdataService.getDisplay(this.saleOrderId);
         } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
+          return this.saleOrderOdataService.defaultGet({ partnerId: this.partnerId || '' });
         }
-      })).subscribe(result => {
+      })).subscribe((result: any) => {
         this.saleOrder = result;
-        this.partnerSend = result.partner;
+        this.partnerSend = result.Partner;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
+        let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        if (result.User) {
+          this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
         }
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.id) {
-            this.onChangePartner(result.partner);
+        if (result.Partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
+          if (!this.saleOrderId) {
+            this.onChangePartner(result.Partner);
           }
         }
 
@@ -137,16 +180,20 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
         // }
 
-        const control = this.formGroup.get('orderLines') as FormArray;
+        const control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach(line => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
 
         this.formGroup.markAsPristine();
       });
+  }
+
+  get stateControl() {
+    return this.formGroup.get('State');
   }
 
   get customerId() {
@@ -155,15 +202,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return parterIdParam;
     }
 
-    if (this.id && this.saleOrder) {
-      return this.saleOrder.partnerId;
+    if (this.saleOrderId && this.saleOrder) {
+      return this.saleOrder.PartnerId;
     }
 
     return undefined;
   }
 
   get partner() {
-    var control = this.formGroup.get('partner');
+    var control = this.formGroup.get('Partner');
     return control ? control.value : null;
   }
 
@@ -176,7 +223,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       p.id = result.id;
       p.name = result.name;
       p.displayName = result.displayName;
-      this.formGroup.get('partner').patchValue(p);
+      this.formGroup.get('Partner').patchValue(p);
       this.filteredPartners = _.unionBy(this.filteredPartners, [p], 'id');
       this.onChangePartner(p);
     }, () => {
@@ -209,18 +256,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  loadDotKhamList() {
-    if (this.id) {
-      return this.saleOrderService.getDotKhamList(this.id).subscribe(result => {
-        this.dotKhams = result;
-      });
-    }
-  }
-
   loadLaboOrderList() {
-    if (this.id) {
+    if (this.saleOrderId) {
       var val = new LaboOrderPaged();
-      val.saleOrderId = this.id;
+      val.saleOrderId = this.saleOrderId;
       return this.laboOrderService.GetFromSaleOrder_OrderLine(val).subscribe(result => {
         this.laboOrders = result.items;
       });
@@ -267,7 +306,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   showApplyCardDialog() {
-    var partner = this.formGroup.get('partner').value;
+    var partner = this.formGroup.get('Partner').value;
     if (!partner) {
       this.notificationService.show({
         content: 'Vui lòng chọn khách hàng',
@@ -280,12 +319,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
           let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-          modalRef.componentInstance.orderId = this.id;
-          modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+          modalRef.componentInstance.orderId = this.saleOrderId;
+          modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
           modalRef.result.then(() => {
             this.loadRecord();
           }, () => {
@@ -293,8 +332,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       } else {
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = this.id;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+        modalRef.componentInstance.orderId = this.saleOrderId;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -305,16 +344,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
         let modalRef = this.modalService.open(SaleOrderApplyServiceCardsDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
-        modalRef.componentInstance.orderId = result.id;
-        modalRef.componentInstance.amountTotal = this.formGroup.get('amountTotal').value;
+        modalRef.componentInstance.orderId = result.Id;
+        modalRef.componentInstance.amountTotal = this.formGroup.get('AmountTotal').value;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -332,11 +371,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   showApplyCouponDialog() {
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
           let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-          modalRef.componentInstance.orderId = this.id;
+          modalRef.componentInstance.orderId = this.saleOrderId;
           modalRef.result.then(() => {
             this.loadRecord();
           }, () => {
@@ -344,7 +383,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       } else {
         let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = this.id;
+        modalRef.componentInstance.orderId = this.saleOrderId;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -355,15 +394,15 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
         let modalRef = this.modalService.open(SaleOrderApplyCouponDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.orderId = result.id;
+        modalRef.componentInstance.orderId = result.Id;
         modalRef.result.then(() => {
           this.loadRecord();
         }, () => {
@@ -371,8 +410,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
-
-
 
   getCouponLines() {
     var lines = this.orderLines.value;
@@ -452,31 +489,31 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   applyPromotion() {
-    if (this.id) {
+    if (this.saleOrderId) {
       if (this.formGroup.dirty) {
         this.saveRecord().subscribe(() => {
-          this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+          this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
             this.loadRecord();
           }, (error) => {
             this.errorService.show(error);
           });
         });
       } else {
-        this.saleOrderService.applyPromotion(this.id).subscribe(() => {
+        this.saleOrderService.applyPromotion(this.saleOrderId).subscribe(() => {
           this.loadRecord();
         }, (error) => {
           this.errorService.show(error);
         });
       }
     } else {
-      this.createRecord().subscribe((result) => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
-        this.saleOrderService.applyPromotion(result.id).subscribe(() => {
+        this.saleOrderService.applyPromotion(result.Id).subscribe(() => {
           this.loadRecord();
         });
       });
@@ -484,9 +521,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onApplyDiscount(val: any) {
-    if (this.id) {
+    if (this.saleOrderId) {
       this.discountDefault = val;
-      this.discountDefault.saleOrderId = this.id;
+      this.discountDefault.saleOrderId = this.saleOrderId;
       this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
         this.loadRecord();
       }, (error) => {
@@ -498,14 +535,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         return false;
       }
 
-      this.createRecord().subscribe(result => {
+      this.createRecord().subscribe((result: any) => {
         this.router.navigate(['/sale-orders/form'], {
           queryParams: {
-            id: result.id
+            id: result.Id
           },
         });
 
-        val.saleOrderId = result.id;
+        val.saleOrderId = result.Id;
         this.saleOrderService.applyDiscountDefault(val).subscribe(() => {
           this.loadRecord();
         }, (error) => {
@@ -516,16 +553,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   createRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    return this.saleOrderService.create(val);
+    const val = this.getFormDataSave();
+    return this.saleOrderOdataService.create(val);
   }
 
   getDiscountNumber(line: FormGroup) {
@@ -556,7 +585,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.orderLines.forEach(line => {
       line.toothIds = line.teeth.map(x => x.id);
     });
-    return this.saleOrderService.update(this.id, val);
+    return this.saleOrderService.update(this.saleOrderId, val);
   }
 
   removeCard() {
@@ -568,7 +597,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
     });
   }
-
 
   searchUsers(filter?: string) {
     var val = new UserPaged();
@@ -589,7 +617,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
-
   createNew() {
     if (this.customerId) {
       this.router.navigate(['/sale-orders/form'], { queryParams: { partner_id: this.customerId } });
@@ -601,7 +628,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
-    if (!this.id) {
+    if (!this.saleOrderId) {
       return false;
     }
 
@@ -610,13 +637,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         mergeMap(r => {
           if (r) {
             var val = this.getFormDataSave();
-            return this.saleOrderService.update(this.id, val);
+            return this.saleOrderService.update(this.saleOrderId, val);
           } else {
             return of(true);
           }
         }),
         mergeMap(() => {
-          return this.saleOrderService.actionConfirm([this.id]);
+          return this.saleOrderService.actionConfirm([this.saleOrderId]);
         }),
       )
       .subscribe(() => {
@@ -625,14 +652,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionViewInvoice() {
-    if (this.id) {
-      this.router.navigate(['/sale-orders/' + this.id + '/invoices']);
+    if (this.saleOrderId) {
+      this.router.navigate(['/sale-orders/' + this.saleOrderId + '/invoices']);
     }
   }
 
   actionInvoiceCreateV2() {
-    if (this.id) {
-      this.saleOrderService.actionInvoiceCreateV2(this.id).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionInvoiceCreateV2(this.saleOrderId).subscribe(() => {
         this.notificationService.show({
           content: 'Cập nhật thành công',
           hideAfter: 3000,
@@ -646,7 +673,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionLabo(item?) {
-    if (this.id) {
+    if (this.saleOrderId) {
       let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       if (item && item.id) {
         modalRef.componentInstance.title = 'Cập nhật phiếu labo';
@@ -656,7 +683,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         modalRef.componentInstance.title = 'Tạo phiếu labo';
       }
 
-      modalRef.componentInstance.saleOrderId = this.id;
+      modalRef.componentInstance.saleOrderId = this.saleOrderId;
 
       modalRef.result.then(res => {
         if (res) {
@@ -667,9 +694,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
+  blurSave() {
+
+  }
+
   printSaleOrder() {
-    if (this.id) {
-      this.saleOrderService.getPrint(this.id).subscribe((result: any) => {
+    if (this.saleOrderId) {
+      this.saleOrderService.getPrint(this.saleOrderId).subscribe((result: any) => {
         this.saleOrderPrint = result;
         setTimeout(() => {
           var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
@@ -693,30 +724,35 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionDone() {
-    if (this.id) {
-      this.saleOrderService.actionDone([this.id]).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionDone([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
       });
     }
   }
 
   actionUnlock() {
-    if (this.id) {
-      this.saleOrderService.actionUnlock([this.id]).subscribe(() => {
+    if (this.saleOrderId) {
+      this.saleOrderService.actionUnlock([this.saleOrderId]).subscribe(() => {
         this.loadRecord();
       });
     }
   }
 
   getFormDataSave() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
+    const val = Object.assign({}, this.formGroup.value);
+    val.DateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.PartnerId = val.Partner.Id;
+    val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
+    val.UserId = val.User ? val.User.Id : null;
+    val.CardId = val.card ? val.card.id : null;
+    val.OrderLines.forEach(line => {
+      if (line.Employee) {
+        line.EmployeeId = line.Employee.Id;
+      }
+      if (line.Teeth) {
+        line.ToothIds = line.Teeth.map(x => x.Id);
+      }
     });
     return val;
   }
@@ -725,24 +761,23 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.getFormDataSave();
-    if (!this.id) {
-      this.saleOrderService.create(val)
+    if (!this.saleOrderId) {
+      this.saleOrderOdataService.create(val)
         .pipe(
-          mergeMap(r => {
-            this.id = r.id;
-            return this.saleOrderService.actionConfirm([r.id]);
+          mergeMap((r: any) => {
+            this.saleOrderId = r.Id;
+            return this.saleOrderService.actionConfirm([r.Id]);
           })
         )
         .subscribe(r => {
-          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.id } });
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
         });
     } else {
-      this.saleOrderService.update(this.id, val)
+      this.saleOrderOdataService.update(this.saleOrderId, val)
         .pipe(
           mergeMap(r => {
-            return this.saleOrderService.actionConfirm([this.id]);
+            return this.saleOrderService.actionConfirm([this.saleOrderId]);
           })
         )
         .subscribe(() => {
@@ -804,16 +839,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.cardId = val.card ? val.card.id : null;
-    val.orderLines.forEach(line => {
-      line.toothIds = line.teeth.map(x => x.id);
-    });
-    if (this.id) {
-      this.saleOrderService.update(this.id, val).subscribe(() => {
+    const val = this.getFormDataSave();
+
+    if (this.saleOrderId) {
+      this.saleOrderOdataService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
           hideAfter: 3000,
@@ -822,12 +851,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           type: { style: 'success', icon: true }
         });
         this.loadRecord();
-      }, () => {
+      }, (error) => {
         this.loadRecord();
       });
     } else {
-      this.saleOrderService.create(val).subscribe(result => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+      this.saleOrderOdataService.create(val).subscribe((result: any) => {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.Id } });
       });
     }
   }
@@ -841,22 +870,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   loadRecord() {
-    if (this.id) {
-      this.saleOrderService.get(this.id).subscribe(result => {
+    if (this.saleOrderId) {
+      this.saleOrderOdataService.getDisplay(this.saleOrderId).subscribe((result: any) => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
+        let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+        if (result.Partner) {
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
         }
 
-        let control = this.formGroup.get('orderLines') as FormArray;
+        let control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach(line => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
 
@@ -866,12 +895,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   actionCancel() {
-    if (this.id) {
+    if (this.saleOrderId) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Hủy phiếu điều trị';
       modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
       modalRef.result.then(() => {
-        this.saleOrderService.actionCancel([this.id]).subscribe(() => {
+        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
           this.loadRecord();
         });
       }, () => {
@@ -880,7 +909,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   get orderLines() {
-    return this.formGroup.get('orderLines') as FormArray;
+    return this.formGroup.get('OrderLines') as FormArray;
   }
 
   //Mở popup thêm dịch vụ cho phiếu điều trị (Component: SaleOrderLineDialogComponent)
@@ -918,7 +947,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
-        this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -934,6 +963,83 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }, () => {
     });
 
+
+  }
+
+  addLine(val) {
+    // this.saleOrderLine = event;
+    var res = this.fb.group(val);
+    // line.teeth = this.fb.array(line.teeth);
+    if (!this.orderLines.controls.some(x => x.value.ProductId === res.value.ProductId)) {
+      this.orderLines.push(res);
+    } else {
+      var line = this.orderLines.controls.find(x => x.value.ProductId === res.value.ProductId);
+      if (line) {
+        line.value.ProductUOMQty += 1;
+        line.patchValue(line.value);
+      }
+    }
+    this.getPriceSubTotal();
+    this.orderLines.markAsDirty();
+    this.computeAmountTotal();
+    if (this.formGroup.get('State').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
+    }
+    this.saleOrderLine = null;
+  }
+
+  updateTeeth(line, lineControl) {
+    // var val = this.getFormDataSave();
+    // this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+    //   this.notificationService.show({
+    //     content: 'Lưu thành công',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'success', icon: true }
+    //   });
+    //   this.loadRecord();
+    // }, () => {
+    //   this.loadRecord();
+    // });
+    line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
+    lineControl.patchValue(line);
+    lineControl.get('Teeth').clear();
+    line.Teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('Teeth').push(g);
+    });
+    this.onChangeQuantity(lineControl);
+  }
+
+  getPriceSubTotal() {
+    this.orderLines.controls.forEach(line => {
+      var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
+      var discountFixedValue = line.get('DiscountFixed') ? line.get('DiscountFixed').value : 0;
+      var discountNumber = line.get('Discount') ? line.get('Discount').value : 0;
+      var getquanTity = line.get('ProductUOMQty') ? line.get('ProductUOMQty').value : 1;
+      var getamountPaid = line.get('AmountPaid') ? line.get('AmountPaid').value : 0;
+      var priceUnit = line.get('PriceUnit') ? line.get('PriceUnit').value : 0;
+      var price = priceUnit * getquanTity;
+
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
+      line.get('PriceSubTotal').setValue(subtotal);
+      var getResidual = subtotal - getamountPaid;
+      line.get('AmountResidual').setValue(getResidual);
+    });
 
   }
 
@@ -962,7 +1068,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       /// nếu saleorder.state = "sale" thì update saleOrder và update công nợ
       if (this.formGroup.get('state').value == "sale") {
         var val = this.getFormDataSave();
-        this.saleOrderService.update(this.id, val).subscribe(() => {
+        this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
           this.notificationService.show({
             content: 'Sửa thành công',
             hideAfter: 3000,
@@ -985,48 +1091,68 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.orderLines.removeAt(index);
-    this.computeAmountTotal();
-
-    this.orderLines.markAsDirty();
+    if (this.formGroup.get('State').value == "draft" || this.formGroup.get('State').value == "cancel") {
+      this.orderLines.removeAt(index);
+      this.computeAmountTotal();
+      this.orderLines.markAsDirty();
+    } else {
+      this.notificationService.show({
+        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
+        hideAfter: 5000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
   }
 
   get getAmountTotal() {
-    return this.formGroup.get('amountTotal').value;
+    return this.formGroup.get('AmountTotal').value;
+  }
+
+  get getAmountTotalDiscount() {
+    if (this.saleOrder.OrderLines) {
+      const val = this.saleOrder.OrderLines.find(x => x.IsRewardLine === true);
+      return val ? val.PriceTotal : 0;
+    }
+    return 0;
+  }
+
+  get getAmountPaidTotal() {
+    return this.saleOrder.PaidTotal;
   }
 
   get getState() {
-    return this.formGroup.get('state').value;
+    return this.formGroup.get('State').value;
   }
 
   get getResidual() {
-    return this.formGroup.get('residual').value;
+    return this.formGroup.get('Residual').value;
   }
 
   get getPartner() {
-    return this.formGroup.get('partner').value;
+    return this.formGroup.get('Partner').value;
   }
 
   computeAmountTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
-      console.log(total);
-      total += line.get('priceSubTotal').value;
+      total += line.get('PriceSubTotal').value;
     });
     // this.computeResidual(total);
-    this.formGroup.get('amountTotal').patchValue(total);
+    this.formGroup.get('AmountTotal').patchValue(total);
   }
 
   //Tính nợ theo số tổng
   computeResidual(total) {
     let diff = this.getAmountTotal - this.getResidual;
     let residual = total - diff;
-    this.formGroup.get('residual').patchValue(residual);
+    this.formGroup.get('Residual').patchValue(residual);
   }
 
   actionSaleOrderPayment() {
-    if (this.id) {
-      this.paymentService.saleDefaultGet([this.id]).subscribe(rs2 => {
+    if (this.saleOrderId) {
+      this.paymentService.saleDefaultGet([this.saleOrderId]).subscribe(rs2 => {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
@@ -1040,7 +1166,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           });
 
           this.loadRecord();
-          this.loadPayments();
+          this.paymentComp.loadPayments();
         }, () => {
         });
       })
@@ -1074,87 +1200,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-
-  loadPayments() {
-    if (this.id) {
-      this.saleOrderService.getPayments(this.id).subscribe(result => {
-        this.paymentsInfo = result;
-      });
-    }
-  }
-
-  actionCreateDotKham() {
-    if (this.id) {
-      let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Tạo đợt khám';
-      modalRef.componentInstance.saleOrderId = this.id;
-
-      modalRef.result.then(res => {
-        if (res.view) {
-          this.actionEditDotKham(res.result);
-          this.loadDotKhamList();
-        } else {
-          this.loadDotKhamList();
-          // $('#myTab a[href="#profile"]').tab('show');
-        }
-      }, () => {
-      });
-    }
-  }
-
-  actionEditDotKham(item) {
-    let modalRef = this.modalService.open(DotKhamCreateUpdateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cập nhật đợt khám';
-    modalRef.componentInstance.id = item.id;
-    modalRef.componentInstance.partnerId = this.partner.id;
-    if (this.partnerSend)
-      modalRef.componentInstance.partner = this.partnerSend;
-    modalRef.result.then(() => {
-      this.loadDotKhamList();
-    }, () => {
-    });
-  }
-
-  deleteDotKham(dotKham) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa đợt khám';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.dotKhamService.delete(dotKham.id).subscribe(() => {
-        this.loadDotKhamList();
-      });
-    }, () => { });
-  }
-
-  deletePayment(payment) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
-    modalRef.result.then(() => {
-      this.paymentService.unlink([payment.accountPaymentId]).subscribe(() => {
-        this.notificationService.show({
-          content: 'Xóa thanh toán thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-
-        this.loadRecord();
-        this.loadPayments();
-      });
-    });
-  }
-
-  printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.accountPaymentPrintComponent.print(result);
-    });
-  }
-
   getAccountPaymentReconcicles() {
-    if (this.id) {
-      this.saleOrderService.getAccountPaymentReconcicles(this.id).subscribe(
+    if (this.saleOrderId) {
+      this.saleOrderService.getAccountPaymentReconcicles(this.saleOrderId).subscribe(
         rs => {
           this.paymentsInfo = rs;
         }
@@ -1171,5 +1219,113 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then((val) => {
     }, er => { });
+  }
+
+  onChangeQuantity(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  onChangeDiscountFixed(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangeDiscount(event, line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      line.value.DiscountType = event.DiscountType;
+      if (event.DiscountType == "fixed") {
+        line.value.DiscountFixed = event.DiscountFixed;
+      } else {
+        line.value.Discount = event.DiscountPercent;
+      }
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  onChangeDiscountType(line: FormGroup) {
+    var res = this.orderLines.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      res.value.discount = 0;
+      res.value.discountFixed = 0;
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  loadToothCategories() {
+    const options = {
+      select: 'Id,Name,Sequence'
+    };
+    this.toothCategoryOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.filteredToothCategories = result.data;
+      }
+    );
+  }
+  loadTeethList() {
+    const options = {
+      select: 'Id,Name,CategoryId,ViTriHam,Position'
+    };
+    this.teethOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.initialListTeeths = result.data;
+      }
+    );
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+  printToaThuoc(item) {
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.print(result.html);
+    });
+  }
+  createProductToaThuoc() {
+    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
+    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
+    modalRef.result.then((result: any) => {
+      this.notify('success', 'tạo toa thuốc thành công');
+      this.toathuocComp.loadData();
+      if (result.print) {
+        this.printToaThuoc(result.item);
+      }
+    }, () => {
+    });
+  }
+
+  dialogAppointment() {
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+
+    modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
+    modalRef.result.then(() => {
+      this.notify('success', 'tạo lịch hẹn thành công');
+    }, () => {
+    });
+  }
+
+  paymentOutput(e) {
+    this.loadRecord();
   }
 }

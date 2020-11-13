@@ -1254,6 +1254,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SaleOrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -1274,6 +1277,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("DotKhamId");
 
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("SaleOrderId");
 
                     b.HasIndex("UserId");
 
@@ -8050,6 +8055,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("SaleOrderID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -8067,6 +8075,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("SaleOrderID");
 
                     b.HasIndex("UserId");
 
@@ -9083,6 +9093,11 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()
@@ -11980,6 +11995,11 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
+                        .WithMany()
+                        .HasForeignKey("SaleOrderID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
                         .WithMany()
