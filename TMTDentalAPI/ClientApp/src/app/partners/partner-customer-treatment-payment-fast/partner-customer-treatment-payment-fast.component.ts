@@ -122,11 +122,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
     this.loadFilteredJournals();
+    this.routeActive();
 
-    setTimeout(() => {
-      this.routeActive();
-    },300)
-   
+
     this.loadEmployees();
     this.loadPartners();
     // this.getAccountPaymentReconcicles();
@@ -144,7 +142,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         this.partnerCbx.loading = false;
       }
     )
-   
+
     // this.loadPricelists();
   }
 
@@ -176,6 +174,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   routeActive() {
+    this.loadFilteredJournals();
     this.route.queryParamMap.pipe(
       switchMap((params: ParamMap) => {
         this.saleOrderId = params.get("id");
@@ -195,7 +194,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         if (result.user) {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
         }
-       
+
         if (result.partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
           if (!this.saleOrderId) {
@@ -204,15 +203,12 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
-        if (!this.saleOrderId) {
-          this.loadFilteredJournals();
-            this.formGroup.get('journal').patchValue(this.filteredJournals[0]);       
+        if (!this.saleOrderId) {      
+          setTimeout(()=>{
+            this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
+          })  
+          
         }
-
-
-        // if (result.pricelist) {
-        //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-        // }
 
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
@@ -246,15 +242,15 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return control ? control.value : null;
   }
 
-  get partnerAge(){
+  get partnerAge() {
     return this.formGroup.get('partnerAge').value;
   }
 
-  get partnerPhone(){
+  get partnerPhone() {
     return this.formGroup.get('partnerPhone').value;
   }
 
-  get partnerAddress(){
+  get partnerAddress() {
     return this.formGroup.get('partnerAddress').value;
   }
 
@@ -341,7 +337,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       invoiceIds: null,
       saleOrderIds: null,
       serviceCardOrderIds: null,
-    });   
+    });
 
     this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
       this.paymentService.saleDefaultGet([rs.id]).subscribe(rs2 => {
@@ -1069,7 +1065,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   onChangePartner(value) {
     if (this.partner) {
 
-      this.odataPartnerService.get(this.partner.id,null).subscribe(rs => {
+      this.odataPartnerService.get(this.partner.id, null).subscribe(rs => {
         debugger
         this.formGroup.get('partnerAge').patchValue(rs.Age);
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
