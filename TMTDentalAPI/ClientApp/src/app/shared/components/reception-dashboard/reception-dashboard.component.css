@@ -1,26 +1,3 @@
-.h-12 {
-    height: 12% !important;
-}
-
-.h-88 {
-    height: 88% !important;
-}
-
-.h-35 {
-    height: 35% !important;
-}
-
-.h-65 {
-    height: 65% !important;
-}
-
-.h-37 {
-    height: 37% !important;
-}
-
-.h-63 {
-    height: 63% !important;
-}
 
 .header-title {
     font-size: 1.5rem;
@@ -28,34 +5,26 @@
     color: #007bff!important;
 }
 
-.image {
-    margin-right: 5px;
-    width: 40%;
+.image-custom {
+    margin-right: 10px;
+    height: 57px;
 }
 
-.title {
-    font-size: 100%;
+.title-custom {
+    font-size: 16px;
     font-weight: 600;
-    width: 70%;
-    text-align: center;
+    color: white;
 }
 
-.w-32 {
-    width: 32% !important;
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+ 
+.pl-0{
+    padding-left: 0 !important;
 }
 
-.p-3-cu {
-    padding: 2%;
-}
-
-.mh-header {
-    min-height: 300px;
-}
-
-.mh-body {
-    min-height: 400px;
-}
-
-.mw-cu {
-    min-width: 1100px;
+.pr-0{
+    padding-right: 0 !important;
 }
