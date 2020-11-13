@@ -9,7 +9,7 @@ import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from '
 import { AuthService } from 'src/app/auth/auth.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-sale-dashboard-report-form',
@@ -26,8 +26,11 @@ export class SaleDashboardReportFormComponent implements OnInit {
     { field: 'end', aggregate: 'sum' },
   ];
   totalDebitNCC: number;
+  customerReport: PartnerCustomerReportOutput;
   filteredCompanies: CompanyBasic[] = [];
   reportLedgerBank: any;
+  moneyledger: number;
+  moneyBank: number;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -74,6 +77,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   loadAllData() {
     this.loadDebitNCC();
     this.loadDataMoney();
+    this.loadPartnerCustomerReport();
   }
 
   loadCompany() {
@@ -113,9 +117,25 @@ export class SaleDashboardReportFormComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
       this.reportLedgerBank = result;
+      if (this.reportLedgerBank && this.reportLedgerBank.accounts && this.reportLedgerBank.accounts.length > 0) {
+        this.moneyledger = this.reportLedgerBank.accounts[0] ? this.reportLedgerBank.accounts[0].balance : 0;
+        this.moneyBank =this.reportLedgerBank.accounts[1] ? this.reportLedgerBank.accounts[1].balance : 0;
+      }
     }, err => {
       console.log(err);
     });
+  }
+
+  loadPartnerCustomerReport() {
+    var val = new PartnerCustomerReportInput();
+    this.partnerService.getPartnerCustomerReport(val).subscribe(
+      result => {
+        this.customerReport = result;
+      },
+      error => {
+
+      }
+    );
   }
 
 }

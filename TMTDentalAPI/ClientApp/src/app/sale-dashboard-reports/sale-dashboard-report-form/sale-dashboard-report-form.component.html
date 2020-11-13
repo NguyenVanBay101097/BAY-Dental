@@ -49,13 +49,15 @@
                             <div class="w-50 h-100 border-right">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">TIỀN MẶT</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(moneyledger ? moneyledger : 0) | number}}</div>
                                 </div>
                             </div>
                             <div class="w-50 h-100">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">NGÂN HÀNG</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(moneyBank ? moneyBank : 0) | number}}</div>
                                 </div>
                             </div>
                         </div>
@@ -69,13 +71,15 @@
                             <div class="w-50 h-100 border-right">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">KHÁCH HÀNG CŨ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{customerReport ? customerReport.customerOld : 0}}</div>
                                 </div>
                             </div>
                             <div class="w-50 h-100">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">KHÁCH HÀNG MỚI</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{customerReport ? customerReport.customerNew : 0}}</div>
                                 </div>
                             </div>
                         </div>
