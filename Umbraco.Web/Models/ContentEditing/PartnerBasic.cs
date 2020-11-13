@@ -341,7 +341,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
-
+        public DateTime? DateCreated { get; set; }
         //public PartnerSourceViewModel Source { get; set; }
 
         public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
@@ -454,6 +454,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public string SourceName { get; set; }
 
