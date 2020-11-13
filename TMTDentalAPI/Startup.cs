@@ -48,6 +48,7 @@ using Microsoft.AspNet.OData.Builder;
 using Microsoft.Net.Http.Headers;
 using ApplicationCore.Utilities;
 using TMTDentalAPI.ActionFilters;
+using TMTDentalAPI.OdataControllers;
 
 namespace TMTDentalAPI
 {
@@ -603,7 +604,7 @@ namespace TMTDentalAPI
                    .MaxTop(20)
                    .Count();
 
-                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.MapODataRoute("odata", "odata", OdataEdmConfig.GetEdmModel());
                 endpoints.EnableDependencyInjection();
             });
 
@@ -619,54 +620,6 @@ namespace TMTDentalAPI
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-        }
-
-        private static IEdmModel GetEdmModel()
-        {
-            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-         
-            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
-            builder.EntitySet<Partner>("Partner");
-
-            builder.EntitySet<PartnerViewModel>("Partners");
-            builder.EntitySet<ProductViewModel>("Products");
-            builder.EntitySet<EmployeeViewModel>("Employees");
-            builder.EntitySet<ToothViewModel>("Teeth");
-            builder.EntitySet<ToothCategoryViewModel>("ToothCategories");
-            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
-            builder.EntitySet<IRSequenceViewModel>("IRSequences");
-
-            builder.EntitySet<SaleOrderViewModel>("SaleOrders");
-            // entitype
-            builder.EntityType<PartnerViewModel>()
-               .Collection
-               .Function("GetView")
-               .ReturnsCollection<GridPartnerViewModel>();
-
-            builder.EntityType<FacebookUserProfile>()
-              .Collection
-              .Function("GetView")
-              .ReturnsCollection<FacebookUserProfileBasic>();
-
-            builder.EntityType<SaleOrderViewModel>()
-              .Function("GetDisplay")
-              .Returns<SaleOrderDisplay>();
-
-            builder.EntityType<SaleOrderViewModel>()
-                .Collection
-             .Function("DefaultGet")
-             .Returns<SaleOrderDisplay>();
-            // complextype
-            builder.ComplexType<SaleOrderDisplay>(); 
-            builder.ComplexType<SaleOrderLineDisplay>();
-            builder.ComplexType<PartnerSimple>();
-            builder.ComplexType<ApplicationUserSimple>();
-            builder.ComplexType<ToothDisplay>(); 
-            builder.ComplexType<ToothCategoryBasic>();
-            builder.ComplexType<EmployeeBasic>();
-            builder.ComplexType<ProductPricelistBasic>();
-
-            return builder.GetEdmModel();
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
