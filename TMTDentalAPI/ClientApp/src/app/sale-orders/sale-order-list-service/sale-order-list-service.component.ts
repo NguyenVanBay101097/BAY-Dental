@@ -49,7 +49,7 @@ export class SaleOrderListServiceComponent implements OnInit {
   searchInit() {
     fromEvent(document, 'keyup').pipe(
       filter((s: any) => s.keyCode === 113)
-    ).subscribe(s => {
+    ).subscribe(s => {     
       this.searchInput.nativeElement.focus();
     });
 
@@ -139,6 +139,7 @@ export class SaleOrderListServiceComponent implements OnInit {
     };
     this.newEventEmiter.emit(value);
   }
+  
   notify(type, content) {
     this.notificationService.show({
       content: content,
@@ -148,6 +149,7 @@ export class SaleOrderListServiceComponent implements OnInit {
       type: { style: type, icon: true }
     });
   }
+
   createProductService() {
     let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
       size: "lg",

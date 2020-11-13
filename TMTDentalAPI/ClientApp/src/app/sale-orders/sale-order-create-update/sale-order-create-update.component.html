@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']">Phiếu điều trị</a>
+                <a [routerLink]="['/partners/customer/' + customerId + '/overview']">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="saleOrderId">{{saleOrder.Name}}</span>
@@ -53,7 +53,7 @@
                         <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
                                 Chưa hoàn thành
                             </button>
-                        <a [routerLink]="['/partners/customer/' + customerId + '/treatment-payment']" class="btn btn-secondary btn-sm">
+                        <a [routerLink]="['/partners/customer/' + customerId + '/overview']" class="btn btn-secondary btn-sm">
                                 Trở lại
                             </a>
                         <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder.State != 'draft'" (click)="onSave()">

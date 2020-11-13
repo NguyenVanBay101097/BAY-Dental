@@ -122,6 +122,7 @@ namespace Infrastructure.Services
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
             _ComputeResidual(self);
+            _ComputePaid(self);
             await UpdateAsync(self);
         }
 
@@ -289,6 +290,8 @@ namespace Infrastructure.Services
                 saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
+                sale.Residual = 0;
+                sale.Paid = 0;
             }
 
             _GetInvoiced(self);
@@ -378,7 +381,10 @@ namespace Infrastructure.Services
              .Include(x => x.OrderLines).Include("OrderLines.Product")
              .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
              .Include(x => x.GeneratedCoupons).Include("GeneratedCoupons.Program")
-             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program").FirstOrDefaultAsync();
+             .Include(x => x.CodePromoProgram).Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+             .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").FirstOrDefaultAsync();
 
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode).FirstOrDefaultAsync();
             if (program != null)
@@ -418,6 +424,7 @@ namespace Infrastructure.Services
                         await _CreateRewardLine(order, coupon.Program);
 
                         order.AppliedCoupons.Add(coupon);
+                        _ComputeResidual(new List<SaleOrder>() { order });
                         await UpdateAsync(order);
 
                         coupon.State = "used";
@@ -787,6 +794,8 @@ namespace Infrastructure.Services
                 };
             }
 
+
+
             var programObj = GetService<ISaleCouponProgramService>();
             var rewards = new List<SaleOrderLine>();
             var lines = _GetPaidOrderLines(self);
@@ -802,6 +811,7 @@ namespace Infrastructure.Services
                 }
 
                 var total_discount_amount = 0M;
+
                 foreach (var line in lines)
                 {
                     var discount_line_amount = _GetRewardValuesDiscountPercentagePerLine(self, program, line);
@@ -830,6 +840,7 @@ namespace Infrastructure.Services
             return discount_amount;
         }
 
+
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
             var total_amount = _GetPaidOrderLines(self).Sum(x => x.PriceTotal);
@@ -841,7 +852,7 @@ namespace Infrastructure.Services
 
         private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
         {
-            return self.OrderLines.Where(x => !x.IsRewardLine && !(x.QtyInvoiced > 0)).ToList();
+            return self.OrderLines.Where(x => !x.IsRewardLine && (x.QtyInvoiced > 0)).ToList();
         }
 
         public async Task ApplyPromotion(Guid id)
@@ -1111,7 +1122,7 @@ namespace Infrastructure.Services
             await UpdateAsync(order);
 
             var self = new List<SaleOrder>() { order };
-            await _GenerateDotKhamSteps(self);
+            // await _GenerateDotKhamSteps(self);
 
             if (order.InvoiceStatus == "to invoice")
             {
@@ -1393,7 +1404,7 @@ namespace Infrastructure.Services
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-            await _GenerateDotKhamSteps(self);
+            // await _GenerateDotKhamSteps(self);
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -1647,6 +1658,9 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .Include(x => x.NoCodePromoPrograms).Include("NoCodePromoPrograms.Program")
                 .Include(x => x.AppliedCoupons).Include("AppliedCoupons.Program")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
+                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
                 .Include(x => x.CodePromoProgram).ToListAsync();
             foreach (var order in self)
             {
@@ -1744,6 +1758,7 @@ namespace Infrastructure.Services
             }
 
             _AmountAll(order);
+            _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(order);
         }
 
@@ -1815,7 +1830,37 @@ namespace Infrastructure.Services
                         residual -= invoice.AmountResidual;
                 }
 
+                var lines = order.OrderLines.Where(x => x.IsRewardLine).ToList();
+                foreach (var line in lines)
+                {
+                    residual += line.PriceSubTotal;
+                }
+
+
                 order.Residual = residual;
+            }
+        }
+
+        public void _ComputePaid(IEnumerable<SaleOrder> self)
+        {
+            foreach (var order in self)
+            {
+                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
+                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
+                decimal? residual = 0M;
+                foreach (var invoice in invoices)
+                {
+                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
+                        continue;
+                    if (invoice.Type == "out_invoice")
+                        residual += invoice.AmountResidual;
+                    else
+                        residual -= invoice.AmountResidual;
+                }
+
+                var paid = order.AmountTotal - residual;
+
+                order.Paid = paid;
             }
         }
 
@@ -1970,6 +2015,94 @@ namespace Infrastructure.Services
             var laboObj = GetService<ILaboOrderService>();
             var labos = await _mapper.ProjectTo<LaboOrderDisplay>(laboObj.SearchQuery(x => x.SaleOrderId == id, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
             return labos;
+        }
+
+        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val)
+        {
+            var res = new SaleOrderSave();
+            res.CompanyId = val.CompanyId;
+            res.DateOrder = val.DateOrder;
+            res.Note = val.Note;
+            res.OrderLines = val.OrderLines;
+            res.PartnerId = val.PartnerId;
+            res.PricelistId = val.PricelistId;
+
+            var order = _mapper.Map<SaleOrder>(res);
+
+            //tạo sale order
+            if (string.IsNullOrEmpty(order.Name) || order.Name == "/")
+            {
+                var sequenceService = GetService<IIRSequenceService>();
+                if (order.IsQuotation == true)
+                {
+                    order.Name = await sequenceService.NextByCode("sale.quotation");
+                    if (string.IsNullOrEmpty(order.Name))
+                    {
+                        await InsertSaleQuotationSequence();
+                        order.Name = await sequenceService.NextByCode("sale.quotation");
+                    }
+                }
+                else
+                    order.Name = await sequenceService.NextByCode("sale.order");
+            }
+
+            var lines = new List<SaleOrderLine>();
+            var sequence = 0;
+            foreach (var item in val.OrderLines)
+            {
+                var saleLine = _mapper.Map<SaleOrderLine>(item);
+                saleLine.Order = order;
+                saleLine.Sequence = sequence++;
+                saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+                foreach (var toothId in item.ToothIds)
+                {
+                    saleLine.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+
+                lines.Add(saleLine);
+            }
+
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            await saleLineObj.CreateAsync(lines);
+
+            _AmountAll(order);
+
+            await UpdateAsync(order);
+            //confirm sale order       
+            order.State = "sale";
+            foreach (var line in order.OrderLines)
+            {
+                if (line.State == "cancel")
+                    continue;
+
+                line.State = "sale";
+            }
+
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+
+            await saleLineObj.RecomputeCommissions(order.OrderLines);
+
+
+            var invoices = await _CreateInvoices(new List<SaleOrder>() { order }, final: true);
+            var moveObj = GetService<IAccountMoveService>();
+            await moveObj.ActionPost(invoices);
+            saleLineObj._GetInvoiceQty(order.OrderLines);
+            saleLineObj._GetToInvoiceQty(order.OrderLines);
+            saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+            saleLineObj._ComputeLinePaymentRels(order.OrderLines);
+
+
+            _GetInvoiced(new List<SaleOrder>() { order });
+            _ComputeResidual(new List<SaleOrder>() { order });
+            await UpdateAsync(new List<SaleOrder>() { order });
+
+            var basic = _mapper.Map<SaleOrderBasic>(order);
+            return basic;
+
         }
 
         //thêm Orderline chiết khấu tổng vào SaleOrder

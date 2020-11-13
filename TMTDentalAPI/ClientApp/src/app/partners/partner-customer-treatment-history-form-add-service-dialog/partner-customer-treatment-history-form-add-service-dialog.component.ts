@@ -17,7 +17,7 @@ import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categori
 })
 export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implements OnInit {
   @ViewChild('employeeCbx', { static: true }) private employeeCbx: ComboBoxComponent;
-  title:'thêm dịch vụ';
+  title: 'thêm dịch vụ';
   productService: any;
   line: any;
   saleLineForm: FormGroup
@@ -40,19 +40,12 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
       name: '',
       product: null,
       productId: null,
-      priceUnit: 0,
-      productUOMQty: 1,
-      discount: 0,
-      discountType: 'percentage',
-      discountFixed: 0,
-      priceSubTotal: 1,
-      amountPaid: 0,
-      amountResidual: 0,
+      note: null,
       diagnostic: null,
       toothCategory: null,
-      state: 'draft',
       employee: null
     });
+
     this.loadData();
     this.loadToothCategories();
     this.loadEmployees();
@@ -73,14 +66,15 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
   }
 
   loadData() {
-    if (this.productService) {
+    if (this.line) {
+      debugger
       var val = new SaleOrderLineOnChangeProduct();
-      val.productId = this.productService.id;
+      val.productId = this.line.productId;
+      this.teethSelected = [...this.line.teeth];
       this.saleLineService.onChangeProduct(val).subscribe(result => {
-        console.log(result);
-
         this.saleLineForm.patchValue(result);
       });
+      this.saleLineForm.patchValue(this.line);
     }
   }
 
@@ -144,9 +138,9 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     }
 
     //update quantity combobox
-    if (this.teethSelected.length > 0) {
-      this.saleLineForm.get('productUOMQty').setValue(this.teethSelected.length);
-    }
+    // if (this.teethSelected.length > 0) {
+    //   this.saleLineForm.get('productUOMQty').setValue(this.teethSelected.length);
+    // }
   }
 
   get discountTypeValue() {
@@ -220,13 +214,15 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     if (!this.saleLineForm.valid) {
       return;
     }
+    debugger
     var val = this.saleLineForm.value;
-    val.productId = this.productService.id;
+    val.productId = this.line.productId;
     val.toothCategoryId = val.toothCategory ? val.toothCategory.id : null;
     val.employeeId = val.employee ? val.employee.id : null;
-    val.priceSubTotal = this.getPriceSubTotal();
     val.teeth = this.teethSelected;
-    this.activeModal.close(val);   
+    val.diagnostic = val.diagnostic;
+    val.note = val.note;
+    this.activeModal.close(val);
 
   }
 }

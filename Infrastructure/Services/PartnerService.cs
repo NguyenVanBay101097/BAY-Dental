@@ -472,7 +472,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
-                Name = x.Name
+                Name = x.Name,
             }).ToListAsync();
             return partners;
         }
@@ -484,6 +484,7 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Phone = x.Phone,
                 Name = x.Name
+
             }).ToListAsync();
             return partners;
         }

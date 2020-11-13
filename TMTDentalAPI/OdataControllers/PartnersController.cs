@@ -67,6 +67,10 @@ namespace TMTDentalAPI.OdataControllers
                 Name = x.Name,
                 Phone = x.Phone,
                 Email = x.Email,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Street = x.Street,
                 Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
                 {
                     Id = s.CategoryId,

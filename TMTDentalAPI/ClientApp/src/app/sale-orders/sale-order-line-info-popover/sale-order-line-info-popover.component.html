@@ -1,0 +1,145 @@
+<!-- <a [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+    <span *ngIf="this.teethSelected.length > 0 && !getDianostic || getDianostic && this.teethSelected.length == 0 || getDianostic && this.teethSelected.length > 0  " class="badge badge-primary mr-1">{{showInfo()}}        
+    </span>
+    <span *ngIf="!teethSelected || teethSelected.length == 0 && !getDianostic">
+        <i class="fas fa-plus-square text-primary"></i>
+    </span>
+
+</a>
+
+<ng-template #popTitle>
+    <div class=" d-flex align-items-center d-inline-block">
+        <h5>Thông tin bổ sung</h5>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div class="o_form_view t_custom_form" [formGroup]="formGroup">
+        <div class="o_form_sheet">
+            <div class="o_group">
+
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Mô tả khách hàng
+                        </label>
+                    </div>
+                    <input type="text" class="form-control" formControlName="note" />
+                </div>
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div colspan="1" class="o_td_label">
+                        <label class="o_form_label">
+                            Chẩn đoán,điều trị
+                        </label>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" formControlName="diagnostic" />
+                    </div>
+                </div>
+                <div class="o_group o_inner_group o_group_col_6">
+                    <div>
+                        <div colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Loại răng
+                            </label>
+                        </div>
+                        <div colspan="1">
+                            <kendo-combobox [data]="filteredToothCategories" [textField]="'name'"
+                                [popupSettings]="{appendTo: 'component'}" [filterable]="true"
+                                formControlName="toothCategory" class="btn-sm"
+                                (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
+                            </kendo-combobox>
+                        </div>
+                    </div>
+                </div>
+                <div class="o_group o_inner_group o_group_col_6">
+
+                </div>
+
+            </div>
+
+            <div class="d-inline-flex">
+                <div colspan="1" class="o_td_label">
+                    <label class="o_form_label">
+                        Răng
+                    </label>
+                </div>
+            </div>
+            <div class="teeth-map">
+                <table class="table">
+                    <tr *ngFor="let ham of hamList | keyvalue">
+                        <td [ngClass]="{'text-right': vitri.key === '0_right'}"
+                            *ngFor="let vitri of ham.value | keyvalue">
+                            <div (click)="onSelected(rang)" class="tooth-item"
+                                [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                {{rang.name}}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template> -->
+
+<span class="d-flex">
+
+    <span>{{showInfo()}}</span>&nbsp;
+
+    <a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'"
+        [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual"
+        (click)="toggleWithTeeth(popOver)">
+        <i class="far fa-edit text-info"></i>
+    </a>
+</span>
+
+<ng-template #popTitle>
+    <div class=" d-flex align-items-center d-inline-block">
+        <span>Thông tin bổ sung</span>
+        <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
+
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div [formGroup]="formGroup">
+        <div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">
+                    <h6>Chuẩn đoán</h6>
+                </label>
+                <div class="col-sm-9">
+                    <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
+                    <textarea formControlName="diagnostic" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="d-inline-flex w-100">
+            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline"
+                style="vertical-align: -webkit-baseline-middle;">
+                <input class="form-check-input" type="radio" formControlName="toothCategory"
+                    (change)="onChangeToothCategory(item)" id="'name'" [value]="item">
+                <!-- <input [checked]="item.id === ToothCategoryControl.id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="toothCategory" [id]="'id'"> -->
+                <label class="form-check-label" [for]="'name'">{{item.name}}</label>
+            </div>
+        </div>
+        <div class="teeth-map">
+            <table class="table">
+                <tr *ngFor="let ham of hamList | keyvalue">
+                    <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                        <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}"
+                            *ngFor="let rang of vitri.value">
+                            {{rang.name}}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="popover-footer">
+            <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Lưu</button>
+            <button (click)="popOver.close()" class="btn btn-sm btn-danger ml-2">Hủy</button>
+        </div>
+    </div>
+</ng-template>
