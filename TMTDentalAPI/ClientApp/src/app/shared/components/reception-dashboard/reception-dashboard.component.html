@@ -21,19 +21,19 @@
                             </div>
                         </div>
                     </a>
-                    <a [routerLink]="['/partners/customers']" class="card bg-primary t_card">
+                    <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}" class="card bg-primary t_card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <img class="image-custom" src="./assets/images/icons-tdental/add-labo.png"
                                     alt="Lịch hẹn">
-                                <span class="title-custom"> KHÁCH HÀNG</span>
+                                <span class="title-custom">MUA HÀNG</span>
                             </div>
                         </div>
                     </a>
-                    <a [routerLink]="['/']" class="card bg-primary t_card">
+                    <a [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
                         <div class="card-body">
                             <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png" alt="Lịch hẹn">
+                                <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png" alt="Điều trị nhanh">
                                 <span class="title-custom">PHIẾU ĐIỀU TRỊ NHANH</span>
                             </div>
                         </div>
@@ -129,7 +129,7 @@
     <div>
         <div class="header-title pb-3">DỊCH VỤ TRONG NGÀY</div>
         <kendo-grid [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
-            (dataStateChange)="dataStateChange($event)" [loading]="loading">
+            (dataStateChange)="dataStateChange($event)" [loading]="loading" [height]="400">
             <ng-template kendoGridToolbarTemplate>
                 <div class="d-flex">
                     <div class="input-group w-50">

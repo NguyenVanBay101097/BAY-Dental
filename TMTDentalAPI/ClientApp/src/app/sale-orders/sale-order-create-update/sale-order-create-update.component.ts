@@ -196,6 +196,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     return this.formGroup.get('State');
   }
 
+  getStateDisplay() {
+    var state = this.formGroup.get('State').value;
+    switch(state) {
+      case 'sale':
+        return 'Đang điều trị';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Nháp';
+    }
+  }
+
   get customerId() {
     var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
     if (parterIdParam) {
@@ -1184,7 +1196,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       modalRef.result.then(() => {
         this.saleOrderLineService.cancelOrderLine([idControl.value]).subscribe(() => {
           this.notificationService.show({
-            content: 'hủy dịch vụ thành công',
+            content: 'Hủy dịch vụ thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -1306,7 +1318,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then((result: any) => {
-      this.notify('success', 'tạo toa thuốc thành công');
+      this.notify('success', 'Tạo toa thuốc thành công');
       this.toathuocComp.loadData();
       if (result.print) {
         this.printToaThuoc(result.item);
@@ -1320,7 +1332,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
-      this.notify('success', 'tạo lịch hẹn thành công');
+      this.notify('success', 'Tạo lịch hẹn thành công');
     }, () => {
     });
   }

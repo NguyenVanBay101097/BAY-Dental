@@ -47,12 +47,12 @@
                         <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                                 Hủy phiếu
                             </button>
-                        <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                        <!-- <button *ngIf="['sale'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
                                 Hoàn thành
                             </button>
                         <button *ngIf="['done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
                                 Chưa hoàn thành
-                            </button>
+                            </button> -->
                         <a [routerLink]="['/partners/customer/' + customerId + '/overview']" class="btn btn-secondary btn-sm">
                                 Trở lại
                             </a>
@@ -93,6 +93,16 @@
                                     <kendo-datetimepicker [class.d-none]="saleOrder.State != 'draft'" formControlName="dateOrderObj">
                                     </kendo-datetimepicker>
                                     <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.DateOrder | date: 'short'}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Trạng thái
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{getStateDisplay()}}
                                 </td>
                             </tr>
                             <tr *ngIf="saleOrder.Quote">
