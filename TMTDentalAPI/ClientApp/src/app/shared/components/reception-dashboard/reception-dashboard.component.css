@@ -8,7 +8,7 @@
 .image-custom {
     margin-right: 10px;
     height: 57px;
-    min-width: 62px;
+    width: 57px;
 }
 
 .title-custom {
@@ -60,4 +60,8 @@
     margin-top: 0;
     margin-bottom: 0;
     padding: 0;
+}
+
+.t_kende_grid_height{
+    height: 533px;
 }
