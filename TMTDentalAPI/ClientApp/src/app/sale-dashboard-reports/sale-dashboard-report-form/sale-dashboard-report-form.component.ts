@@ -73,7 +73,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadAllData() {
     this.loadDebitNCC();
-    this.loadMoney();
+    this.loadDataMoney();
   }
 
   loadCompany() {
@@ -92,12 +92,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
     return this.companyService.getPaged(params);
   }
 
-
-
   loadDebitNCC() {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
-    val.companyId = this.formGroup.get('company') ? this.formGroup.get('company').value.id : null;
+    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
 
     this.reportService.getSummary(val).subscribe(res => {
 
@@ -110,9 +108,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
     })
   }
 
-  loadMoney() {
+  loadDataMoney() {
     var val = new ReportCashBankGeneralLedger();
-    val.companyId = this.formGroup.get('company') ? this.formGroup.get('company').value.id : null;
+    val.companyId = this.authService.userInfo.companyId;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
       this.reportLedgerBank = result;
     }, err => {
