@@ -7,8 +7,8 @@
 
 .image-custom {
     margin-right: 10px;
-    height: 57px;
-    width: 57px;
+    height: auto;
+    width: auto;
 }
 
 .title-custom {
