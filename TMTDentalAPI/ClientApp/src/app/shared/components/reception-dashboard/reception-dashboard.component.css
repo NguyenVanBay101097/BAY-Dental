@@ -8,6 +8,7 @@
 .image-custom {
     margin-right: 10px;
     height: 57px;
+    min-width: 62px;
 }
 
 .title-custom {
@@ -16,15 +17,47 @@
     color: white;
 }
 
-.row {
-    margin-right: 0;
-    margin-left: 0;
-}
- 
 .pl-0{
     padding-left: 0 !important;
 }
 
 .pr-0{
     padding-right: 0 !important;
+}
+
+.t_wrapper {
+    padding: 15px;
+}
+
+.t_kanban {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.t_card {
+    flex: 1 1 auto;
+    width: 240px;
+    margin: 5px 5px;
+    margin-right: 4px;
+}
+
+.t_card_right {
+    flex: 1 1 auto;
+    width: 295px;
+    margin: 5px 5px;
+    margin-right: 4px;
+}
+
+.t_report_item {
+    flex: 1;
+    text-align: center;
+}
+
+.t_card_ghost {
+    height: 0;
+    min-height: 0 !important;
+    visibility: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
 }
