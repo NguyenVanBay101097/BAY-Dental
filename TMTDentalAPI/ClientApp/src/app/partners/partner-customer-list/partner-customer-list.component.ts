@@ -49,8 +49,8 @@ export class PartnerCustomerListComponent implements OnInit {
       { field: "Customer", operator: "eq", value: true },
     ]
   };
-  
-  gridSort = [{ field: 'DisplayName', dir: 'asc' }];
+
+  gridSort = [{ field: 'Date', dir: 'desc' }, { field: 'Name', dir: 'asc' }];
   advanceFilter: any = {
     // expand: 'Tags,Source',
     params: {}
