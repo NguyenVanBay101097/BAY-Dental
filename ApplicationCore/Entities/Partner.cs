@@ -186,5 +186,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? ConsultantId { get; set; }
         public Employee Consultant { get; set; }
+
+        public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+
+        public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
     }
 }

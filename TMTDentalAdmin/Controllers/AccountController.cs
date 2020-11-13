@@ -75,7 +75,7 @@ namespace TMTDentalAdmin.Controllers
                     _authenticationResult = new LoggedInViewModel
                     {
                         Succeeded = false,
-                        Message = "Authentication failed",
+                        Message = "Tài khoản hoặc mật khẩu không đúng",
                     };
                 }
             }

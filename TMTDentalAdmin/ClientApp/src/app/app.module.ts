@@ -2,13 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { TenantsModule } from './tenants/tenants.module';
 import { MyCustomKendoModule } from './my-custom-kendo.module';
 import { AuthModule } from './auth/auth.module';
@@ -24,7 +19,13 @@ import { IntlModule } from '@progress/kendo-angular-intl';
 import '@progress/kendo-angular-intl/locales/vi/all';
 import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
 import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
-import { AuthGuard } from './auth/auth.guard';
+import { AppRoutingModule } from './app-routing.module';
+import { CoreModule } from '@app/core.module';
+import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
+import { ContentLayoutComponent } from './layout/content-layout/content-layout.component';
+import { HttpErrorInterceptor } from '@app/interceptors/http-error.interceptor';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
+import { HeaderComponent } from './layout/header/header.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -34,26 +35,25 @@ registerLocaleData(localeVi, 'vi');
 
 @NgModule({
   declarations: [
+    AuthLayoutComponent,
+    ContentLayoutComponent,
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
     TrialRegistrationComponent,
-    TrialRegistrationSuccessComponent
+    TrialRegistrationSuccessComponent,
+    SidebarComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'register', component: TrialRegistrationComponent },
-      { path: 'register-success', component: TrialRegistrationSuccessComponent },
-    ]),
+    AppRoutingModule,
     TenantsModule,
     MyCustomKendoModule,
     AuthModule,
+    CoreModule,
+    SharedModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -67,7 +67,7 @@ registerLocaleData(localeVi, 'vi');
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpHandleErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'vi-VN' },
   ],
   bootstrap: [AppComponent]

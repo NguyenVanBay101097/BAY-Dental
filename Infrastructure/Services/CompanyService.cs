@@ -24,18 +24,21 @@ namespace Infrastructure.Services
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
         public CompanyService(IAsyncRepository<Company> repository, IHttpContextAccessor httpContextAccessor,
-            IHostingEnvironment hostingEnvironment, IMapper mapper)
+            IHostingEnvironment hostingEnvironment, IMapper mapper,
+            UserManager<ApplicationUser> userManager)
         : base(repository, httpContextAccessor)
         {
             _hostingEnvironment = hostingEnvironment;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task SetupCompany(string companyName, string userName, string email, string password, string name = "")
         {
-            var dbContext = GetService<CatalogDbContext>();
-            await dbContext.Database.MigrateAsync();
+            //var dbContext = GetService<CatalogDbContext>();
+            //await dbContext.Database.MigrateAsync();
             var partnerObj = GetService<IPartnerService>();
             var companyObj = GetService<ICompanyService>();
             var modelDataObj = GetService<IIRModelDataService>();
@@ -82,7 +85,8 @@ namespace Infrastructure.Services
                 Customer = false,
                 Email = email,
             };
-            partnerObj.Create(partnerRoot);
+
+            await partnerObj.CreateAsync(partnerRoot);
 
             await modelDataObj.CreateAsync(new IRModelData
             {
@@ -99,6 +103,7 @@ namespace Infrastructure.Services
                 Company = mainCompany,
                 CompanyId = mainCompany.Id,
                 Partner = partnerRoot,
+                PartnerId = partnerRoot.Id,
                 Name = partnerRoot.Name,
                 IsUserRoot = true,
             };
@@ -107,6 +112,7 @@ namespace Infrastructure.Services
 
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);
+            //await _userManager.CreateAsync(userRoot, password);
 
             await modelDataObj.CreateAsync(new IRModelData
             {
@@ -903,7 +909,16 @@ namespace Infrastructure.Services
 
         public async Task SetupTenant(CompanySetupTenant val)
         {
-            await SetupCompany(val.CompanyName, val.Username, val.Email, val.Password, name: val.Name);
+            try
+            {
+                await SetupCompany(val.CompanyName, val.Username, val.Email, val.Password, name: val.Name);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public async Task InsertSecurityData()

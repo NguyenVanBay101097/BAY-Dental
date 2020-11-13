@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 
@@ -37,6 +37,14 @@ export class AccountCommonPartnerReportSearch {
     search: string;
 }
 
+export class AccountCommonPartnerReport {
+    partnerId: string;
+    debit: number;
+    credit: number;
+    initialBalance: number;
+    countSaleOrder: number;
+}
+
 @Injectable()
 export class AccountCommonPartnerReportService {
     apiUrl = 'api/AccountCommonPartnerReports';
@@ -44,6 +52,10 @@ export class AccountCommonPartnerReportService {
 
     getSummary(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem[]> {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSummary", val);
+    }
+
+    getSummaryByPartner(id: string): Observable<AccountCommonPartnerReport> {
+        return this.http.get<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryByPartner/" + id);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {

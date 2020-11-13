@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -57,8 +57,13 @@ import { ProductCategoryDialogComponent } from './product-category-dialog/produc
 import { PartnerCustomerCuDialogComponent } from './partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.component';
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
+import { PartnerPhonePopoverComponent } from './partner-phone-popover/partner-phone-popover.component';
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
 import { ReceptionDashboardComponent } from './components/reception-dashboard/reception-dashboard.component';
+import { CalendarModule } from '@progress/kendo-angular-dateinputs';
+import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
+import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
+
 @NgModule({
   declarations: [
     ConfirmDialogComponent,
@@ -109,7 +114,15 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective, 
-    ReceptionDashboardComponent
+    ReceptionDashboardComponent,
+    PartnerTitleCuDialogComponent, 
+    PartnerPhonePopoverComponent,
+    PartnersBindingDirective,
+    ProductServiceCuDialogComponent,
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective,
+    PrintSaleOrderComponent,
+    ProductServiceCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -156,7 +169,12 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective, 
-    ReceptionDashboardComponent
+    ReceptionDashboardComponent,
+    PartnerPhonePopoverComponent,
+    
+    PartnerTitleCuDialogComponent,
+    PartnersBindingDirective,
+    PrintSaleOrderComponent
   ],
   imports: [
     CommonModule,
@@ -166,6 +184,7 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
     MyCustomKendoModule,
     FormsModule,
     MyCustomNgbModule,
+    CalendarModule ,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         'm': 59
@@ -191,7 +210,10 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
-    PartnerTitleCuDialogComponent
+    PartnerTitleCuDialogComponent,
+    PartnerPhonePopoverComponent,
+    ProductServiceCuDialogComponent
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class SharedModule { }

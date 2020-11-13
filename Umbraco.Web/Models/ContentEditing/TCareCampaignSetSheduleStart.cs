@@ -8,6 +8,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public DateTime? SheduleStart { get; set; }
+        public string ScheduleStartType { get; set; }
+        public decimal ScheduleStartNumber { get; set; }
     }
 }

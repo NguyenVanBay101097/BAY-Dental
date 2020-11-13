@@ -4,8 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
     <div class="o_cp_left">
@@ -23,9 +22,7 @@
     <div class="o_cp_right">
         <div class="d-flex align-items-center">
             <div class="mr-1">
-                <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs"
-                    [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'"
-                    [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                <kendo-multiselect style="min-width: 400px;max-width: 400px;" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [(ngModel)]="searchCategs" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
                 </kendo-multiselect>
             </div>
             <div>
@@ -45,8 +42,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip"
-        style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
+    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip" style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Id" width="100" [locked]="true">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
@@ -63,10 +59,8 @@
         <kendo-grid-column field="Name" title="Họ tên" width="200" [locked]="true">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.Id]">
-                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span>
-                        {{dataItem.Name}}
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.Id]">
+                        <span *ngIf="dataItem.ref">[{{dataItem.Ref}}] </span> {{dataItem.Name}}
                     </a>
                 </div>
                 <!-- <div *ngIf="dataItem.Address">
@@ -82,8 +76,7 @@
         <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column>
         <kendo-grid-column title="Nhãn" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event"
-                    [rowPartnerId]="dataItem.Id">
+                <app-partner-category-popover [tags]="dataItem.Tags" (onSave)="dataItem.Tags = $event" [rowPartnerId]="dataItem.Id">
                 </app-partner-category-popover>
             </ng-template>
         </kendo-grid-column>
@@ -143,9 +136,7 @@
 
     <ng-template #popContent let-dataItem="dataItem">
         <div>
-            <kendo-multiselect class="mr-1" [data]="dataItem.Tags" [filterable]="true"
-                (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)"
-                [textField]="'name'" [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
+            <kendo-multiselect class="mr-1" [data]="dataItem.Tags" [filterable]="true" (filterChange)="handleFilterCategoryPopOver($event); this.searchUpdatePopOver.next($event)" [textField]="'name'" [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
                 [valueNormalizer]="valueNormalizer">
             </kendo-multiselect>
             <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">

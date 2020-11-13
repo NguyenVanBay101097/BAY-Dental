@@ -132,7 +132,7 @@ namespace Infrastructure.Services
                                         });
                                     }
 
-                                    string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,@TagId)";
+                                    string processQuery = "INSERT INTO FacebookUserProfileTagRels VALUES(@UserProfileId,)";
                                     await conn.ExecuteAsync(processQuery, profile.TagRels);
                                 }
 

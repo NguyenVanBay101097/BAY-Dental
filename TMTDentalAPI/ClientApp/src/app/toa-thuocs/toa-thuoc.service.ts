@@ -26,7 +26,8 @@ export class ToaThuocDisplay {
     note: string;
     state: string;
     companyId: string;
-    lines: []
+    lines: [];
+    saleOrderId: string;
 }
 
 export class ToaThuocSave {
@@ -90,6 +91,7 @@ export class ToaThuocPaged {
     offset: number;
     search: string;
     partnerId: string;
+    saleOrderId: string;
 }
 
 export class ToaThuocPaging {
@@ -136,7 +138,7 @@ export class ToaThuocService {
         return this.http.post(this.baseApi + this.apiUrl + `/${id}/ActionConfirm`, null);
     }
 
-    getPrint(id: string): Observable<ToaThuocPrint> {
-        return this.http.get<ToaThuocPrint>(this.baseApi + this.apiUrl + `/${id}/Print`);
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
 }

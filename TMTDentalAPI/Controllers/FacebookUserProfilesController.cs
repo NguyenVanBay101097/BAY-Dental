@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
@@ -51,6 +53,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, JsonPatchDocument<FacebookUserProfile> patch)
+        {
+            var profile = await _facebookUserProfileService.GetByIdAsync(id);
+            if (profile == null)
+                return NotFound();
+
+            patch.ApplyTo(profile);
+            await _facebookUserProfileService.UpdateAsync(profile);
+            return NoContent();
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> ConnectPartner(ConnectPartner val)
         {
@@ -61,6 +75,8 @@ namespace TMTDentalAPI.Controllers
            
             return NoContent();
         }
+
+      
 
         [HttpPost("[action]")]
         public async Task<IActionResult> RemovePartner(IEnumerable<Guid> ids)

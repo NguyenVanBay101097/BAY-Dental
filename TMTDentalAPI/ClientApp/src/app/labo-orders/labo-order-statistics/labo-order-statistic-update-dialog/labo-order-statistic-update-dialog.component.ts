@@ -17,12 +17,13 @@ export class LaboOrderStatisticUpdateDialogComponent implements OnInit {
   lineinitial: any;
   warrantyPeriod: any;
   receivedDate: any;
+  title: string;
 
   constructor(
     private fb: FormBuilder,
     private intelservice: IntlService,
     private laboOrderLineService: LaboOrderLineService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private notificationService: NotificationService
   ) { }
 

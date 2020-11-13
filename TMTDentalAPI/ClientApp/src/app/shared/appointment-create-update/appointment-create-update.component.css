@@ -13,3 +13,34 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
 .w-fit-content {
   width: fit-content;
 }
+
+.form-control-select {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .4rem 0.7rem;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  -webkit-transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.o_form_label_times {
+  font-weight: 600;
+  margin-right: 0px;
+  width: 100px;
+}
+
+.o_form_view .o_group {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0;
+}
+
+

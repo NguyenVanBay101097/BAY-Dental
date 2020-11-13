@@ -53,6 +53,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       companyId: null,
       dotKhamId: null,
       lines: this.fb.array([]),
+      saleOrderId: null
     });
 
     setTimeout(() => {

@@ -101,6 +101,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết nối Zalo', link: '/zalo-config' },
         { name: 'Danh sách kênh', link: '/socials/channels' },
         { name: 'Kịch bản', link: '/tcare/scenarios' },
+        { name: 'Thống kê gửi tin', link: '/tcare/messagings' },
+        { name: 'Mẫu tin nhắn', link: '/tcare/message-templates' },
+        { name: 'Thiết lập tự động', link: '/tcare/config' },
       ],
       groups: 'tcare.group_tcare',
     },
@@ -108,6 +111,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
+        { name: 'Tạo phiếu điều trị nhanh', link: '/partners/treatment-paymentfast/from' },
         { name: 'Nhãn khách hàng', link: '/partner-categories' },
         { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },

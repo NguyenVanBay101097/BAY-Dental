@@ -211,7 +211,7 @@ namespace Infrastructure.Services
             if (saleOrderIds.Any())
             {
                 var saleObj = GetService<ISaleOrderService>();
-                await saleObj.RecomputeResidual(saleOrderIds);
+                await saleObj.RecomputeResidual(saleOrderIds);               
             }
         }
 

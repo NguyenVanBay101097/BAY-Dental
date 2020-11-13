@@ -33,6 +33,13 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
 import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
+import { TcareMessageTemplateListComponent } from './tcare-message-template-list/tcare-message-template-list.component';
+import { TcareMessageTemplateCuDialogComponent } from './tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
+import { TcareMessageTemplateContentComponent } from './tcare-message-template-cu-dialog/tcare-message-template-content/tcare-message-template-content.component';
+import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
+import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messaging-list.component';
+import { TcareQuickreplyDialogComponent } from './tcare-quickreply-dialog/tcare-quickreply-dialog.component';
+import { TcareConfigComponent } from './tcare-config/tcare-config.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +65,12 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
     TcareScenarioMessageTextareaComponent,
+    TcareMessageTemplateListComponent,
+    TcareMessageTemplateCuDialogComponent,
+    TcareMessageTemplateContentComponent,
+    TcareMessagingListComponent,
+    TcareQuickreplyDialogComponent,
+    TcareConfigComponent,
   ],
   imports: [
     CommonModule,
@@ -73,7 +86,7 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
     PartnerCategoriesModule
   ],
 
-  providers: [TcareService],
+  providers: [TcareService, SaleCouponProgramService],
   entryComponents: [
     TcareCampaignDialogRuleComponent,
     TcareCampaignDialogSequencesComponent,
@@ -87,8 +100,8 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
     AudienceFilterLastExaminationComponent,
     AudienceFilterAppointmentDayComponent,
     TcareCampaignStartDialogComponent,
-    TcareScenarioCrDialogComponent
-    
+    TcareScenarioCrDialogComponent,
+    TcareMessageTemplateCuDialogComponent
   ]
 })
 export class TcareModule { }

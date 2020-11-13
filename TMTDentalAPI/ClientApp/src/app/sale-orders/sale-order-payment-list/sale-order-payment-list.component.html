@@ -1,0 +1,30 @@
+<div>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Ngày thanh toán</th>
+                <th>Phương thức</th>
+                <th>Số tiền</th>
+                <!-- <th>Tham chiếu</th> -->
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let payment of paymentsInfo">
+                <td>{{ payment.date | date : 'shortDate'}}</td>
+                <td>{{ payment.journalName }}</td>
+                <td>{{ payment.amount | number}}</td>
+                <!-- <td>{{ payment.ref }}</td> -->
+                <td>
+                    <button type="button" class="btn btn-icon btn-sm btn-light mr-1" (click)="printPayment(payment)">
+                            <span class="k-icon k-i-print"></span>
+                        </button>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deletePayment(payment)">
+                            <span class="k-icon k-i-delete"></span>
+                        </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<app-account-payment-print #printComp></app-account-payment-print>

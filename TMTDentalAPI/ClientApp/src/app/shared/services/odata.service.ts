@@ -36,6 +36,20 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
         if (options.expand) {
             queryStr = queryStr + '&$expand=' + options.expand;
         }
+        if (options.select) {
+            queryStr = queryStr + '&$select=' + options.select;
+        }
+        if (options.orderby) {
+            queryStr = queryStr + '&$orderby=' + options.orderby;
+        }
+
+        if (queryStr) {
+            // encode everything which looks like a GUID
+            var guid = /('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')/ig;
+            queryStr = queryStr.replace(guid, function (x) {
+                return x.substring(1, x.length - 1);
+            });
+        }
 
         this.loading = true;
 
@@ -50,8 +64,41 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
             );
     }
 
+    public fetch2(state: any | null, options?: any): Observable<GridDataResult> {
+        options = options || {};
+        var queryStr = `${toODataString(state)}&$count=true`;
+        if (options.params) {
+            queryStr = queryStr + '&' + (new HttpParams({ fromObject: options.params }).toString());
+        }
+
+        if (options.expand) {
+            queryStr = queryStr + '&$expand=' + options.expand;
+        }
+
+        if (queryStr) {
+            // encode everything which looks like a GUID
+            var guid = /('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')/ig;
+            queryStr = queryStr.replace(guid, function (x) {
+                return x.substring(1, x.length - 1);
+            });
+        }
+
+        this.loading = true;
+
+        return this.http
+            .get(`${this.BASE_URL}${this.tableName}?${queryStr}`)
+            .pipe(
+                map((response: any) => (<GridDataResult>{
+                    data: response.value,
+                    total: parseInt(response["@odata.count"], 10)
+                })),
+                finalize(() => this.loading = false)
+            );
+    }
+
     public get(id: any, obj: any | null): Observable<any> {
-        return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
+        var a = this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
+        return a;
     }
 
     public create(value: any) {
@@ -62,8 +109,28 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
         return this.http.put(`${this.BASE_URL}${this.tableName}(${id})`, value);
     }
 
+    public patch(id: any, value: any) {
+        return this.http.patch(`${this.BASE_URL}${this.tableName}(${id})`, value);
+    }
+
     public delete(id: any) {
         return this.http.delete(`${this.BASE_URL}${this.tableName}(${id})`);
+    }
+
+    public getFunction(id: string, func: string, options?: any) {
+        if (options) {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})/${func}`, options);
+        } else {
+            return this.http.get(`${this.BASE_URL}${this.tableName}(${id})/${func}`);
+        }
+    }
+
+    public getCollectionFunction(func: string, options?: any) {
+        if (options) {
+            return this.http.get(`${this.BASE_URL}${this.tableName}/${func}`, options);
+        } else {
+            return this.http.get(`${this.BASE_URL}${this.tableName}/${func}`);
+        }
     }
 }
 

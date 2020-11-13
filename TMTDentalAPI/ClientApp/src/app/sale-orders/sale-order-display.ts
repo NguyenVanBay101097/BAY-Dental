@@ -11,17 +11,19 @@ export class SaleOrderDisplay {
     partnerId: string;
     dateOrder: string;
     user: UserSimple;
-    employee:EmployeeSimple;
-    employeeId:string;
+    employee: EmployeeSimple;
+    employeeId: string;
     companyId: string;
     userId: string;
     state: string;
     residual: number;
     orderLines: SaleOrderLineDisplay[];
     name: string;
+    paid: number;
     pricelist: ProductPriceListBasic;
     invoiceStatus: string;
     quote: SaleOrderBasic;
     order: SaleOrderBasic;
     invoiceCount: number;
+    paidTotal: number;
 }

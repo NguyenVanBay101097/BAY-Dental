@@ -9,12 +9,38 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class AccountCommonPartnerReportService: IAccountCommonPartnerReportService
+    public class AccountCommonPartnerReportService : IAccountCommonPartnerReportService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public AccountCommonPartnerReportService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<AccountCommonPartnerReport> ReportSumaryByPartner(Guid partnerId)
+        {
+
+            var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var saleOrderObj = (ISaleOrderService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderService));
+            var countSaleOrder = await saleOrderObj.SearchQuery(x => x.PartnerId == partnerId).CountAsync();
+            string[] accountTypes = null;
+            accountTypes = new string[] { "receivable" };
+            var query = amlObj._QueryGet(initBal: true, state: "posted");
+            query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue && (x.PartnerId == partnerId));
+            var obj = await query
+               .GroupBy(x => new
+               {
+                   PartnerId = x.Partner.Id,
+               })
+               .Select(x => new AccountCommonPartnerReport
+               {
+                   PartnerId = x.Key.PartnerId,
+                   Debit = x.Sum(s => s.Debit),
+                   Credit = x.Sum(s => s.Credit),
+                   InitialBalance = x.Sum(s => s.Debit - s.Credit),
+                   CountSaleOrder = countSaleOrder
+               }).FirstOrDefaultAsync();
+            return obj;
         }
 
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val)
@@ -42,7 +68,8 @@ namespace Infrastructure.Services
             }
 
             var list = await query
-               .GroupBy(x => new {
+               .GroupBy(x => new
+               {
                    PartnerId = x.Partner.Id,
                    PartnerName = x.Partner.Name,
                    PartnerRef = x.Partner.Ref,
@@ -92,12 +119,14 @@ namespace Infrastructure.Services
             }
 
             var list2 = await query2
-                      .GroupBy(x => new {
+                      .GroupBy(x => new
+                      {
                           PartnerId = x.Partner.Id,
                           PartnerName = x.Partner.Name,
                           PartnerRef = x.Partner.Ref,
                           PartnerPhone = x.Partner.Phone,
-                          Type = x.Account.InternalType })
+                          Type = x.Account.InternalType
+                      })
                     .Select(x => new
                     {
                         PartnerId = x.Key.PartnerId,
@@ -200,7 +229,7 @@ namespace Infrastructure.Services
                         Credit = x.Account.InternalType == "payable" ? x.Debit : x.Credit,
                     }).ToList();
 
-          
+
             foreach (var item in list2)
             {
                 item.Begin = begin;

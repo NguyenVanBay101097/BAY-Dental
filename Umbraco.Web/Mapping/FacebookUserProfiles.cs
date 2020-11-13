@@ -12,7 +12,8 @@ namespace Umbraco.Web.Mapping
     {
         public FacebookUserProfiles()
         {
-            CreateMap<FacebookUserProfile, FacebookUserProfileBasic>();
+            CreateMap<FacebookUserProfile, FacebookUserProfileBasic>()
+                .ForMember(x => x.Partner, x => x.Ignore());
             CreateMap<FacebookUserProfile, FacebookUserProfileDisplay>();
 
             CreateMap<FacebookUserProfile, FacebookUserProfileSave>()

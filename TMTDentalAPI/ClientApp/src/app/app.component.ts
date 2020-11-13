@@ -36,8 +36,12 @@ export class AppComponent {
     this.authService.currentUser.subscribe((user) => {
       if (user) {
         this.loadIrConfigParam();
+        this.authService.getGroups().subscribe((result: any) => {
+          this.permissionService.define(result);
+        });
       }
-    })
+    });
+    
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {

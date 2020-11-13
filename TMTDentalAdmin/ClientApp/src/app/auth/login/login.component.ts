@@ -25,10 +25,12 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authService.login(this.loginForm.value).subscribe(data => {
-      this.router.navigateByUrl('/');
-    }, error => {
-      console.log('error login', error);
+    this.authService.login(this.loginForm.value).subscribe((data: any) => {
+      if (data.succeeded) {
+        this.router.navigateByUrl('/');
+      } else {
+        alert(data.message);
+      }
     });
   }
 

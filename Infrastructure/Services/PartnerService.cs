@@ -472,7 +472,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
-                Name = x.Name
+                Name = x.Name,
             }).ToListAsync();
             return partners;
         }
@@ -484,7 +484,29 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Phone = x.Phone,
                 Name = x.Name
+
             }).ToListAsync();
+            return partners;
+        }
+
+        public async Task<IEnumerable<PartnerSimpleInfo>> SearchPartnerInfosCbx(PartnerPaged val)
+        {
+            var cateObj = GetService<IPartnerCategoryService>();
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleInfo
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                BirthYear = x.BirthYear,
+            }).ToListAsync();
+
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                       .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+
+            foreach (var partner in partners)
+                partner.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == partner.Id)));
+
             return partners;
         }
 
@@ -1440,7 +1462,7 @@ namespace Infrastructure.Services
         {
             var limit = 200;
             var offset = 0;
-           
+
             var res = new Dictionary<string, Partner>();
             while (offset < refs.Count())
             {
@@ -1882,11 +1904,11 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                //{
-                //    Id = s.CategoryId,
-                //    Name = s.Category.Name,
-                //})
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
             });
         }
 
@@ -1914,7 +1936,8 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                SourceName = x.Source.Name
+                SourceName = x.Source.Name,
+                DateCreated = x.DateCreated
             });
         }
 

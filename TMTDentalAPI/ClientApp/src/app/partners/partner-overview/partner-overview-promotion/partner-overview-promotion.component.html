@@ -1,0 +1,24 @@
+<div class="d-flex flex-column h-100 w-100 partner-overview">
+    <div class="h-100 w-100">
+        <div class="h-30 m-2">
+            <div class="d-flex justify-content-between">
+                <h5>Ưu đãi</h5>
+            </div>
+        </div>
+        <div class="card-body overflow-auto t-scrollbar p-0 d-flex h-70">
+            <div *ngFor="let item of promotions" [routerLink]="[ '/programs/promotion-programs/form']" [queryParams]="{id: item.id}" class="w-50 card text-center m-1 item-promotion">
+                <div class="left w-25 d-flex">
+                    <div class="flex-grow-1">
+                        <!-- <i class="fad fa-badge-percent"></i> -->
+                    </div>
+                    <div>
+                        <!-- Giảm {{item.discountPercentage}} % -->
+                    </div>
+                </div>
+                <div class="right w-75">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

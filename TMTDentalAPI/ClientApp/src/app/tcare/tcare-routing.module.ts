@@ -1,11 +1,17 @@
+import { TcareMessagingListComponent } from './tcare-messaging-list/tcare-messaging-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenario-cr-up.component';
 import { TcareScenarioListComponent } from './tcare-scenario-list/tcare-scenario-list.component';
+import { TcareMessageTemplateListComponent } from './tcare-message-template-list/tcare-message-template-list.component';
+import { TcareConfigComponent } from './tcare-config/tcare-config.component';
 
 const routes: Routes = [
-  { path: 'scenario/:id', component: TcareScenarioCrUpComponent },
-  { path: 'scenarios', component: TcareScenarioListComponent }
+  { path: 'scenarios/form', component: TcareScenarioCrUpComponent },
+  { path: 'scenarios', component: TcareScenarioListComponent },
+  { path: 'messagings', component: TcareMessagingListComponent },
+  { path: 'message-templates', component: TcareMessageTemplateListComponent },
+  { path: 'config', component: TcareConfigComponent }
 ];
 
 @NgModule({
