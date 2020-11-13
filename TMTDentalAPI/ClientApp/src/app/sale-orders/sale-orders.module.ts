@@ -30,6 +30,7 @@ import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuo
 import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
 import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-order-payment-list.component';
 import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
+import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { AccountPaymentPrintComponent } from '../shared/account-payment-print/ac
     SaleOrderPaymentListComponent,
     SaleOrderLineDiscountPopoverComponent,
     SaleOrderLineInfoPopoverComponent,
+    SaleOrderFastListServiceComponent,
   ],
   imports: [
     CommonModule,
@@ -70,7 +72,8 @@ import { AccountPaymentPrintComponent } from '../shared/account-payment-print/ac
     SaleOrderTeethPopoverComponent,
     SaleOrderListServiceComponent,
     SaleOrderLineDiscountPopoverComponent,
-    SaleOrderLineInfoPopoverComponent
+    SaleOrderLineInfoPopoverComponent,
+    SaleOrderFastListServiceComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,

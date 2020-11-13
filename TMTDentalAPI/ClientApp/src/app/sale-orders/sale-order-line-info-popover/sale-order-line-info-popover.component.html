@@ -85,20 +85,18 @@
 </ng-template> -->
 
 <span class="d-flex">
-    <span>
-        <!-- <span *ngFor="let teeth of this.teethSelected; let i = index">{{teeth.name}}
-            {{i !== this.teethSelected.length - 1? ',': ''}}</span> -->
-        <span>{{showInfo()}}</span>&nbsp;
-    </span>
+
+    <span>{{showInfo()}}</span>&nbsp;
+
     <a class="ml-auto" [ngbPopover]="popContent" popoverClass="width-xxl" [autoClose]="'outside'"
         [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual"
-        (click)="toggleWithTeeth(popOver)">     
+        (click)="toggleWithTeeth(popOver)">
         <i class="far fa-edit text-info"></i>
     </a>
 </span>
 
 <ng-template #popTitle>
-    <div class=" d-flex align-items-center d-inline-block">     
+    <div class=" d-flex align-items-center d-inline-block">
         <span>Thông tin bổ sung</span>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
 

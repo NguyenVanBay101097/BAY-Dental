@@ -148,6 +148,7 @@ export class SaleOrderListServiceComponent implements OnInit {
       type: { style: type, icon: true }
     });
   }
+  
   createProductService() {
     let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
       size: "lg",
