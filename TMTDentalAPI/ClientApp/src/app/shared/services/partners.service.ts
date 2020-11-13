@@ -33,9 +33,10 @@ export class PartnersService extends ODataService {
             filter: {
                 logic: 'and',
                 filters: [
-                    { field: 'phone', operator: 'eq', value: phone}
+                    { field: 'phone', operator: 'eq', value: phone }
                 ]
-            }
+            },
         });
     }
+
 }

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -59,6 +59,7 @@ import { LoaiThuChiFormComponent } from './loai-thu-chi-form/loai-thu-chi-form.c
 import { PartnerTitleCuDialogComponent } from './partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { PartnerPhonePopoverComponent } from './partner-phone-popover/partner-phone-popover.component';
 import { PartnersBindingDirective } from './directives/partners-binding.directive';
+import { CalendarModule } from '@progress/kendo-angular-dateinputs';
 import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
 
 @NgModule({
@@ -170,6 +171,7 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     MyCustomKendoModule,
     FormsModule,
     MyCustomNgbModule,
+    CalendarModule ,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         'm': 59
@@ -199,5 +201,6 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     PartnerPhonePopoverComponent,
     ProductServiceCuDialogComponent
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class SharedModule { }

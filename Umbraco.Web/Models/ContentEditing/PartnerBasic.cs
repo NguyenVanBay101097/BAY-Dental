@@ -459,4 +459,39 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Tags { get; set; }
     }
+
+    public class PartnerInfoVm
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public string Phone { get; set; }
+
+        public int? BirthYear { get; set; }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+
+        public string Email { get; set; }
+
+        //public PartnerSourceViewModel Source { get; set; }
+
+        public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
+    }
 }
