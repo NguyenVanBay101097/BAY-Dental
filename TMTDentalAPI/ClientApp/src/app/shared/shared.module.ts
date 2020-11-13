@@ -121,7 +121,7 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     ProductServiceCuDialogComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
-    PrintSaleOrderComponent
+    PrintSaleOrderComponent,
     ProductServiceCuDialogComponent
   ],
   exports: [
@@ -170,7 +170,7 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective, 
     ReceptionDashboardComponent,
-    PartnerPhonePopoverComponent
+    PartnerPhonePopoverComponent,
     
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
