@@ -21,19 +21,18 @@
                             </div>
                         </div>
                     </a>
-                    <a [routerLink]="['/partners/customers']" class="card bg-primary t_card">
+                    <a [routerLink]="['/purchase/orders/create?type=order']" class="card bg-primary t_card">
                         <div class="card-body">
                             <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/add-labo.png"
-                                    alt="Lịch hẹn">
-                                <span class="title-custom"> KHÁCH HÀNG</span>
+                                <img class="image-custom" src="./assets/images/icons-tdental/cart.png" alt="Lịch hẹn">
+                                <span class="title-custom">TẠO MUA HÀNG</span>
                             </div>
                         </div>
                     </a>
                     <a [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
                         <div class="card-body">
                             <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png" alt="Lịch hẹn">
+                                <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png" alt="Điều trị nhanh">
                                 <span class="title-custom">PHIẾU ĐIỀU TRỊ NHANH</span>
                             </div>
                         </div>
@@ -128,7 +127,7 @@
     </div>
     <div>
         <div class="header-title pb-3">DỊCH VỤ TRONG NGÀY</div>
-        <kendo-grid [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
+        <kendo-grid class="t_kende_grid_height" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
             (dataStateChange)="dataStateChange($event)" [loading]="loading">
             <ng-template kendoGridToolbarTemplate>
                 <div class="d-flex">
