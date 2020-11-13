@@ -113,7 +113,7 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective, 
-    ReceptionDashboardComponent
+    ReceptionDashboardComponent,
     PartnerTitleCuDialogComponent, 
     PartnerPhonePopoverComponent,
     ProductServiceCuDialogComponent
