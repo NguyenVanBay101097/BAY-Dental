@@ -6,30 +6,23 @@
     </div>
 
     <div class="kendo-grid-data">
-        <kendo-grid [data]="gridData" [height]="300" [pageSize]="limit" [resizable]="true" [skip]="skip"
-            [loading]="loading">
-            <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
-                title="Số phiếu" width="100">
+        <kendo-grid [data]="gridData" [height]="300" [pageSize]="limit" [resizable]="true" [skip]="skip" [loading]="loading">
+            <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name" title="Số phiếu" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     <a class="text-primary" (click)="chossesSaleOrder(dataItem.id)">{{dataItem.name}}</a>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
-                field="dateOrder" title="Ngày lập phiếu" width="120">
+            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="dateOrder" title="Ngày lập phiếu" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.dateOrder | date:'short'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column class="text-right"
-                [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="amountTotal"
-                title="Tổng tiền" width="120">
+            <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="amountTotal" title="Tổng tiền" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.amountTotal | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column class="text-right"
-                [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="residual"
-                title="Còn lại" width="120">
+            <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="residual" title="Còn lại" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.residual | number}}
                 </ng-template>
@@ -39,6 +32,13 @@
                     <span *ngIf="dataItem.state === 'draft'">Nháp</span>
                     <span *ngIf="dataItem.state === 'done'">Hoàn thành</span>
                     <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteItem(dataItem)">
+                        <span class="k-icon k-i-delete"></span>
+                    </button>
                 </ng-template>
             </kendo-grid-column>
             <div *kendoGridDetailTemplate="let dataItem">

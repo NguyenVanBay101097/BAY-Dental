@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-partner-overview-treatment',
@@ -28,7 +30,8 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private saleOrderService: SaleOrderService
+    private saleOrderService: SaleOrderService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -69,5 +72,16 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu điều trị';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.saleOrderService.unlink([item.id]).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    });
   }
 }
