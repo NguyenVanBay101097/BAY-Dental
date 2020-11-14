@@ -58,6 +58,7 @@ export class AccountReportGeneralLedgerCashBankComponent implements OnInit {
 
     this.loading = true;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
+      debugger
       this.loading = false;
       this.reportValues = result;
     }, () => {

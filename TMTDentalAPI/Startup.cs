@@ -48,6 +48,7 @@ using Microsoft.AspNet.OData.Builder;
 using Microsoft.Net.Http.Headers;
 using ApplicationCore.Utilities;
 using TMTDentalAPI.ActionFilters;
+using TMTDentalAPI.OdataControllers;
 
 namespace TMTDentalAPI
 {
@@ -603,7 +604,7 @@ namespace TMTDentalAPI
                    .MaxTop(20)
                    .Count();
 
-                endpoints.MapODataRoute("odata", "odata", GetEdmModel());
+                endpoints.MapODataRoute("odata", "odata", OdataEdmConfig.GetEdmModel());
                 endpoints.EnableDependencyInjection();
             });
 
@@ -619,28 +620,6 @@ namespace TMTDentalAPI
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-        }
-
-        private static IEdmModel GetEdmModel()
-        {
-            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-         
-            builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
-
-            builder.EntitySet<PartnerViewModel>("Partners");
-            builder.EntityType<PartnerViewModel>()
-               .Collection
-               .Function("GetView")
-               .ReturnsCollection<GridPartnerViewModel>();
-
-            builder.EntitySet<FacebookUserProfile>("FacebookUserProfiles");
-            builder.EntityType<FacebookUserProfile>()
-              .Collection
-              .Function("GetView")
-              .ReturnsCollection<FacebookUserProfileBasic>();
-
-            builder.EntitySet<IRSequenceViewModel>("IRSequences");
-            return builder.GetEdmModel();
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()

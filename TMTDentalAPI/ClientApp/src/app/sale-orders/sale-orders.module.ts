@@ -20,6 +20,17 @@ import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-o
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { PartnersModule } from '../partners/partners.module';
+import { SaleOrderListServiceComponent } from './sale-order-list-service/sale-order-list-service.component';
+import { SaleOrderTeethPopoverComponent } from './sale-order-teeth-popover/sale-order-teeth-popover.component';
+import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discount-popover/sale-order-line-discount-popover.component';
+import { SaleOrderLineInfoPopoverComponent } from './sale-order-line-info-popover/sale-order-line-info-popover.component';
+import { SaleOrderLineDiscountOdataPopoverComponent } from './sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
+import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
+import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
+import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-order-payment-list.component';
+import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
+import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +47,16 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
-    SaleOrderPaymentDialogComponent
+    SaleOrderPaymentDialogComponent,
+    SaleOrderListServiceComponent,
+    SaleOrderTeethPopoverComponent,
+    SaleOrderLineDiscountOdataPopoverComponent,
+    PartnerCustomerToathuocListComponent,
+    SaleOrderDotkhamListComponent,
+    SaleOrderPaymentListComponent,
+    SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent,
+    SaleOrderFastListServiceComponent,
   ],
   imports: [
     CommonModule,
@@ -45,10 +65,15 @@ import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sal
     MyCustomKendoModule,
     FormsModule,
     SharedModule,
-    NgbModule,
+    NgbModule
   ],
   providers: [],
   exports: [
+    SaleOrderTeethPopoverComponent,
+    SaleOrderListServiceComponent,
+    SaleOrderLineDiscountPopoverComponent,
+    SaleOrderLineInfoPopoverComponent,
+    SaleOrderFastListServiceComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,

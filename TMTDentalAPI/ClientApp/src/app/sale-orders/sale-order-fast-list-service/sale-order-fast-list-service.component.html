@@ -1,0 +1,38 @@
+<!-- <table class="table table-sm table-bordered">
+    <thead>
+        <tr class="table-info">
+            <th *ngFor="let item of thTable_services">
+                {{item.name}}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listFilter;let i = index">
+            <td [title]="item.name">{{item.name}}</td>
+            <td>{{item.listPrice | number}}</td>
+        </tr>
+    </tbody>
+</table> -->
+<div class="d-flex flex-column h-100">
+    <!-- Component Form Service List -->
+    <div class="flex--1-1-100 overflow-auto">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="table-info">
+                    <th>
+                        Dịch vụ <a (click)="createProductService()"><i class="fas fa-plus text-primary"></i></a>
+                    </th>
+                    <th>
+                        Đơn giá
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listFilter;let i = index">
+                    <td [title]="item.name">{{item.name}}</td>
+                    <td class="text-right">{{item.listPrice | number}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

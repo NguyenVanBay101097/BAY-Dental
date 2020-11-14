@@ -26,7 +26,8 @@ export class ToaThuocDisplay {
     note: string;
     state: string;
     companyId: string;
-    lines: []
+    lines: [];
+    saleOrderId: string;
 }
 
 export class ToaThuocSave {
@@ -90,6 +91,7 @@ export class ToaThuocPaged {
     offset: number;
     search: string;
     partnerId: string;
+    saleOrderId: string;
 }
 
 export class ToaThuocPaging {

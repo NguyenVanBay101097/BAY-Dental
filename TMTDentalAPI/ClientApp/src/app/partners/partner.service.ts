@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
 import { Injectable, Inject, OnChanges } from '@angular/core';
-import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact } from './partner-simple';
+import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact, PartnerCategorySimple, PartnerSimpleInfo } from './partner-simple';
 import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
 import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
@@ -88,6 +88,8 @@ export class PartnerImageBasic {
     uploadId: string;
 }
 
+
+
 export class GenderPartner {
     id: string;
     name: string;
@@ -103,6 +105,16 @@ export class PartnerImageSave {
 export class PartnerImageViewModel {
     date: string;
     partnerImages: PartnerImageBasic[];
+}
+
+export class PartnerCustomerReportInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class PartnerCustomerReportOutput {
+    customerOld: number;
+    customerNew: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -132,6 +144,10 @@ export class PartnerService {
 
     autocompletePartner(val: PartnerPaged): Observable<PartnerSimple[]> {
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + "/autocomplete2", val);
+    }
+
+    autocompletePartnerInfo(val: PartnerPaged): Observable<PartnerSimpleInfo[]> {
+        return this.http.post<PartnerSimpleInfo[]>(this.baseApi + this.apiUrl + "/AutocompleteInfos", val);
     }
 
     autocompleteUser(val: ApplicationUserPaged): Observable<ApplicationUserSimple[]> {
@@ -421,6 +437,10 @@ export class PartnerService {
 
     getDefaultTitle(val) {
         return this.http.get(this.baseApi + this.apiUrl + '/GetDefaultTitle', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getPartnerCustomerReport(data: any) {
+        return this.http.post<PartnerCustomerReportOutput>(this.baseApi + this.apiUrl + '/PartnerCustomerReport', data);
     }
 }
 

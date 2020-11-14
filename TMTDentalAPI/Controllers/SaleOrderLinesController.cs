@@ -35,18 +35,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetDisplayBySaleOrder(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var res = await _saleLineService.GetDisplayBySaleOrder(id);
+            return Ok(res);
+        }
+
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]SaleOrderLinesPaged val)
+        public async Task<IActionResult> Get([FromQuery] SaleOrderLinesPaged val)
         {
             var result = await _saleLineService.GetPagedResultAsync(val);
 
-            var paged = new PagedResult2<SaleOrderLineBasic>(result.TotalItems, val.Offset, val.Limit)
-            {
-                //Có thể dùng thư viện automapper
-                Items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(result.Items),
-            };
-
-            return Ok(paged);
+            return Ok(result);
         }
 
         [HttpPost("[action]")]

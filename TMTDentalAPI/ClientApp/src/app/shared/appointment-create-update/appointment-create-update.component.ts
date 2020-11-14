@@ -1,9 +1,9 @@
 import { UserPaged, UserService } from './../../users/user.service';
 import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple } from 'src/app/partners/partner-simple';
+import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple, PartnerSimpleInfo } from 'src/app/partners/partner-simple';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
@@ -18,6 +18,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { UserSimple } from 'src/app/users/user-simple';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnersService } from '../services/partners.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -35,9 +36,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
-
+  public steps: any = { hour: 1, minute: 30 };
   hourList: number[] = [];
   minuteList: number[] = [0, 30];
+  timeList: string[] = [];
+  timeSource: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -48,25 +51,31 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService,
+    private odataPartnerService: PartnersService,
     private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: null,
       partner: [null, Validators.required],
+      partnerAge: null,
+      partnerPhone: null,
+      partnerTags: this.fb.array([]),
       user: [null],
       apptDate: [null, Validators.required],
-      apptHour: 0,
-      apptMinute: 0,
+      appTime: '00:00',
       note: null,
       companyId: null,
       doctor: null,
       state: 'confirmed',
+      saleOrderId: null
     })
 
     setTimeout(() => {
       this.hourList = _.range(0, 24);
       // this.minuteList = _.range(0, 60, 5);
+      this.timeSource = this.TimeInit();
+      this.timeList = this.timeSource;
 
       if (this.appointId) {
         this.loadAppointmentToForm();
@@ -86,6 +95,21 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     });
   }
 
+  TimeInit() {
+    var times = new Array();; // time array
+    var tt = 0; // start time
+    var x = 30; //minutes interval
+    //var ap = ['AM', 'PM']; // AM-PM
+
+    for (var i = 0; tt < 24 * 60; i++) {
+      var hh = Math.floor(tt / 60); // getting hours of day in 0-24 format
+      var mm = (tt % 60); // getting minutes of the hour in 0-55 format
+      times[i] = ("0" + hh).slice(-2) + ':' + ("0" + mm).slice(-2);
+      tt = tt + x;
+    }
+    return times;
+  }
+
 
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
@@ -103,16 +127,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    
-    if (appoint.apptHour < 10) {
-      appoint.apptHour = "0" + appoint.apptHour;
-    }
-     
-    if (appoint.apptMinute < 10) {
-      appoint.apptMinute = "0" + appoint.apptMinute;
-    }
-   
-    appoint.date = `${apptDate}T${appoint.apptHour}:${appoint.apptMinute}:00`;
+    var appTime = appoint.appTime;    
+    appoint.date = `${apptDate}T00:00:00`;
+    appoint.time = appTime;
+
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
@@ -236,14 +254,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           let date = new Date(rs.date);
 
           this.formGroup.get('apptDate').patchValue(date);
-          this.formGroup.get('apptHour').patchValue(date.getHours());
-          this.formGroup.get('apptMinute').patchValue(date.getMinutes());
+          this.formGroup.get('appTime').patchValue(rs.time);
+          // this.formGroup.get('apptHour').patchValue(date.getHours());
+          // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
           var appoint = this.formGroup.value;
-          console.log(appoint);
+          //console.log(appoint);
 
           if (rs.partner) {
             this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+            this.onChangePartner();
           }
 
           if (rs.doctor) {
@@ -260,6 +280,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   get partner() {
     return this.formGroup.get('partner').value;
+  }
+
+  get partnerAge(){
+    return this.formGroup.get('partnerAge').value;
+  }
+
+  get partnerPhone(){
+    return this.formGroup.get('partnerPhone').value;
   }
 
   updateCustomerModal() {
@@ -283,10 +311,36 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         newPartner.name = result.name;
         this.customerSimpleFilter.push(newPartner);
         this.formGroup.get('partner').setValue(newPartner);
+        this.onChangePartner();
       }
-    }, er => {
-      this.errorService.show(er);
     })
+  }
+
+  onChangePartner() {
+    if (this.partner) {
+      var expand: any = {
+        $expand: 'Tags'
+      };
+      this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
+        debugger
+        this.formGroup.get('partnerAge').patchValue(rs.Age);
+        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
+        this.tags.clear();
+        rs.Tags.forEach(tag => {
+          var g = this.fb.group(tag);        
+          this.tags.push(g);
+        });
+      });
+    }
+  }
+
+  get tags() {
+    return this.formGroup.get('partnerTags') as FormArray;
+  }
+
+
+  partnercatolories(tags) {
+    return tags.map(x => x.name).join(', ');
   }
 
   defaultGet() {
@@ -296,14 +350,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }
     this.appointmentService.defaultGet(val).subscribe(
       (rs: any) => {
+        debugger
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
-
         this.formGroup.get('apptDate').patchValue(date);
+        this.formGroup.get('appTime').patchValue('00:00');
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+          this.onChangePartner();
         }
 
         if (rs.user) {

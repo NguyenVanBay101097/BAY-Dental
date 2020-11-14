@@ -25,6 +25,7 @@ using Facebook.ApiClient.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyERP.Utilities;
@@ -471,7 +472,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
-                Name = x.Name
+                Name = x.Name,
             }).ToListAsync();
             return partners;
         }
@@ -483,7 +484,29 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Phone = x.Phone,
                 Name = x.Name
+
             }).ToListAsync();
+            return partners;
+        }
+
+        public async Task<IEnumerable<PartnerSimpleInfo>> SearchPartnerInfosCbx(PartnerPaged val)
+        {
+            var cateObj = GetService<IPartnerCategoryService>();
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleInfo
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                BirthYear = x.BirthYear,
+            }).ToListAsync();
+
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                       .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+
+            foreach (var partner in partners)
+                partner.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == partner.Id)));
+
             return partners;
         }
 
@@ -1439,7 +1462,7 @@ namespace Infrastructure.Services
         {
             var limit = 200;
             var offset = 0;
-           
+
             var res = new Dictionary<string, Partner>();
             while (offset < refs.Count())
             {
@@ -1881,11 +1904,11 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                //{
-                //    Id = s.CategoryId,
-                //    Name = s.Category.Name,
-                //})
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
             });
         }
 
@@ -1913,7 +1936,8 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                SourceName = x.Source.Name
+                SourceName = x.Source.Name,
+                DateCreated = x.DateCreated
             });
         }
 
@@ -1925,6 +1949,57 @@ namespace Infrastructure.Services
         public Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync()
         {
             return Task.Run(() => GetGridViewModels());
+        }
+
+        public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+
+            if (val.DateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            IEnumerable<Guid> ids_partner = query_saleOrder.Select(x => x.PartnerId).ToList();
+
+            var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId))
+                .GroupBy(x => x.PartnerId)
+                .Select(x => new {
+                    PartnerId = x.Key,
+                    PartnerCount = x.Count()
+                })
+                .OrderBy(x => x.PartnerId).ToListAsync();
+
+            var customerOld = 0;
+            var customerNew = 0;
+            foreach (var item in temp)
+            {
+                if (item.PartnerCount == 1)
+                {
+                    customerNew += 1;
+                } else
+                {
+                    customerOld += 1;
+                }
+            }
+
+            var result = new PartnerCustomerReportOutput
+            {
+                CustomerOld = customerOld,
+                CustomerNew = customerNew
+            };
+
+            return result;
         }
     }
 

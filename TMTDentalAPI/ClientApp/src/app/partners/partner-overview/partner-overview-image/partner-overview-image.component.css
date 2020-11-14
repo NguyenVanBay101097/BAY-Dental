@@ -1,0 +1,53 @@
+.view-img {
+    overflow: auto;
+    padding: 0 10px;
+}
+
+.o_attachments_date_separator {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+    border-bottom: 1px solid #ced4da;
+}
+
+.o_attachments_previews>.o_attachment {
+    width: 33.33333333%;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment {
+    padding: 0px;
+}
+
+.image-title {
+    padding: 10px 15px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 24px;
+    color: #0B92F3;
+}
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 3px;
+    border-radius: 8px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

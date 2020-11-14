@@ -8,11 +8,13 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SaleQuotationCreateUpdateDialogComponent } from './sale-quotation-create-update-dialog/sale-quotation-create-update-dialog.component';
 
 @NgModule({
   declarations: [
     SaleQuotationListComponent,
-    SaleQuotationCreateUpdateComponent
+    SaleQuotationCreateUpdateComponent,
+    SaleQuotationCreateUpdateDialogComponent
   ],
   imports: [
     CommonModule,

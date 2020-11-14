@@ -12,9 +12,9 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="date" title="Ngày hẹn" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.date | date:'HH:mm - EEEE, dd/MM/yyyy'}}
+                        {{dataItem.time}} - {{dataItem.date | date:'EEEE, dd/MM/yyyy'}}
                     </ng-template>
-                </kendo-grid-column>
+                </kendo-grid-column>               
                 <kendo-grid-column field="userName" title="Bác sĩ" width="150">
                 </kendo-grid-column>
                 <kendo-grid-column field="note" title="Ghi chú" width="150">

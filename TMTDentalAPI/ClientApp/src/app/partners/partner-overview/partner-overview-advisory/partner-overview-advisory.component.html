@@ -1,0 +1,29 @@
+<div class="d-flex flex-column h-100 w-100 partner-overview">
+    <div class=" p-2 border-bottom">
+        <h5 class="m-0  text-primary">Dịch vụ đã tư vấn</h5>
+    </div>
+    <div class="t-conTable">
+        <div class="t-parTable t-scrollbar border-0">
+            <table class="table-advisory t-sticky-thead t-sticky-col-left">
+                <thead>
+                    <tr>
+                        <th>Dịch vụ</th>
+                        <th>Răng</th>
+                        <th>Bác sĩ</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of saleQuotations">
+                        <td>{{item.name}}</td>
+                        <td>
+                            <span *ngFor="let t of item.teeth" class="badge badge-primary mr-1">{{t.name}}</span>
+                        </td>
+                        <td>{{item.employee ? item.employee.name : ''}}</td>
+                        <td>{{!item.priceTotal ? 0 : item.priceTotal | number}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

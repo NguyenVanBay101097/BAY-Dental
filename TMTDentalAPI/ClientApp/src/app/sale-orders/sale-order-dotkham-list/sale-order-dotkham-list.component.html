@@ -1,0 +1,31 @@
+<div>
+    <div class="mb-2">
+        <button type="button" class="btn btn-secondary btn-sm" *ngIf="['sale'].indexOf(saleOrder.State) !== -1" (click)="actionCreateDotKham()">
+            Tạo đợt khám
+        </button>
+    </div>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Số đợt khám</th>
+                <th>Ngày khám</th>
+                <th>Bác sĩ</th>
+                <th>Phụ tá</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let dk of dotKhams">
+                <td (click)="actionEditDotKham(dk)" style="cursor: pointer; color: #007bff;">
+                    {{dk.name}}</td>
+                <td>{{ dk.date | date : 'short' }}</td>
+                <td>{{ dk.doctor ? dk.doctor.name : '' }}</td>
+                <td>{{dk.assistant ? dk.assistant.name : ''}}</td>
+                <td>
+                    <a title="Xóa" (click)="deleteDotKham(dk)">
+                        <span class="far fa-trash-alt"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

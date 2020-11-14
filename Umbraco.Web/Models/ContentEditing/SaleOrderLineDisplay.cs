@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -75,5 +76,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? EmployeeId { get; set; }
         public EmployeeBasic Employee { get; set; }
+        public Guid OrderId { get; set; }
+        public SaleOrderBasic Order { get; set; }
+        public Guid? OrderPartnerId { get; set; }
+        public PartnerSimple OrderPartner { get; set; }
     }
 }

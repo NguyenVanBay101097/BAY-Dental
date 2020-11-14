@@ -251,6 +251,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AutocompleteInfos(PartnerPaged val)
+        {
+            var res = await _partnerService.SearchPartnerInfosCbx(val);
+            return Ok(res);
+        }
+
         [HttpPost("UploadImage/{id}")]
         public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
         {
@@ -587,6 +594,13 @@ namespace TMTDentalAPI.Controllers
             partner.Avatar = val.ImageId;
             await _partnerService.UpdateAsync(partner);
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            var result = await _partnerService.GetPartnerCustomerReport(val);
+            return Ok(result);
         }
     }
 }

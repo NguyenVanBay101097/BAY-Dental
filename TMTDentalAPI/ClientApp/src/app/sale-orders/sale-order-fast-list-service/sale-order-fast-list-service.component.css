@@ -1,0 +1,19 @@
+.table-wrapper {
+    min-height: 300px;
+    max-height: 600px;
+    overflow: auto;
+    display:inline-block;
+    width: 100%;
+}
+
+.t_stickey_header {
+  position: sticky; 
+  top:0; 
+}
+.table tbody tr {
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background-color: #007bff91;
+}

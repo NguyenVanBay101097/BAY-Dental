@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ISaleOrderLineService: IBaseService<SaleOrderLine>
+    public interface ISaleOrderLineService : IBaseService<SaleOrderLine>
     {
         void ComputeAmount(IEnumerable<SaleOrderLine> orderLines);
 
@@ -23,7 +23,7 @@ namespace Infrastructure.Services
         void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines);
         void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
-        Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val);
+        Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);
         Task _UpdateInvoiceQty(IEnumerable<Guid> ids);
         void UpdateProps(IEnumerable<SaleOrderLine> self);
@@ -41,5 +41,7 @@ namespace Infrastructure.Services
         Task RecomputeCommissions(IEnumerable<SaleOrderLine> self);
 
         Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id);
     }
 }

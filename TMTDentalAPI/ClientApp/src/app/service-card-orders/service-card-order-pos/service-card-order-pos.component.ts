@@ -215,9 +215,9 @@ export class ServiceCardOrderPosComponent implements OnInit {
       var discountNumber = line.get('discount').value;
       var getquanTity = line.get('productUOMQty').value;
       var priceUnit = line.get('priceUnit') ? line.get('priceUnit').value : 0;
-      var price = discountType == 'percentage' ? priceUnit * (1 - discountNumber / 100) :
-        Math.max(0, priceUnit - discountFixedValue);
-      var subtotal = price * getquanTity;
+      var price = priceUnit * getquanTity;
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
       line.get('priceSubTotal').setValue(subtotal);
     });
 

@@ -7,6 +7,9 @@ export class PartnerSimple {
     id: string;
     name: string;
     displayName: string;
+    birth: string;
+    address: string;
+    phone: string;
 }
 
 export class PartnerSimpleContact {
@@ -58,6 +61,14 @@ export class PartnerDisplay extends PartnerBasic {
     titleId: string;
     title: PartnerTitle;
     consultant: EmployeeSimple;
+}
+
+export class PartnerSimpleInfo {
+    id: string;
+    name: string;
+    phone: string;
+    categories: PartnerCategorySimple[];
+    age: string;
 }
 
 export class PartnerCategorySimple {

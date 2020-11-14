@@ -7,6 +7,7 @@ export class AppointmentBasic {
     id: string;
     name: string;
     date: string;
+    time: string;
     userId: string;
     user: ApplicationUserSimple;
     state: string;
