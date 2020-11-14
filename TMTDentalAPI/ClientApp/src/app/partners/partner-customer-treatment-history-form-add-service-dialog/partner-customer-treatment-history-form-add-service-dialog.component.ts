@@ -31,7 +31,7 @@ export class PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent implem
     private employeeService: EmployeeService,
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private saleLineService: SaleOrderLineService
   ) { }
 

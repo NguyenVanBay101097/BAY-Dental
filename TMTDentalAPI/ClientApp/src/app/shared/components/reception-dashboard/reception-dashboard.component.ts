@@ -29,7 +29,7 @@ export class ReceptionDashboardComponent implements OnInit {
   saleReport: SaleReportItem;
   limit = 20;
   offset = 0;
-  appointmentStateCount = {};
+  appointmentStateCount: any = {};
   search: string = '';
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
