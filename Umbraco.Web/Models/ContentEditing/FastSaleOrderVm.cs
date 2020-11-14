@@ -45,4 +45,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsQuotation { get; set; }
 
     }
+
+    public class FastSaleOrderSave: SaleOrderSave
+    {
+        public Guid JournalId { get; set; }
+    }
 }

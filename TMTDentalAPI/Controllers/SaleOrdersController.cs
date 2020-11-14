@@ -376,7 +376,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CreateFastSaleOrder(FastSaleOrderVm val)
+        public async Task<IActionResult> CreateFastSaleOrder(FastSaleOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
             var res = await _saleOrderService.CreateFastSaleOrder(val);

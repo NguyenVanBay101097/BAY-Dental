@@ -1,4 +1,4 @@
-<div id="printSaleOrderDiv" *ngIf="saleOrderPrint">
+<div id="printSaleOrderDiv" *ngIf="saleOrderPrint" style="display: none;">
     <div class="o_form_view o_print">
         <div class="text-center">
             <h5 class="mb-0">{{saleOrderPrint.companyName}}</h5>
@@ -65,7 +65,7 @@
                         <td>{{ line.productName }}</td>
                         <td class="text-right">{{ line.productUOMQty | number }}</td>
                         <td class="text-right">{{ line.priceUnit | number }}</td>
-                        <td class="text-right">{{ line.discount | number }}</td>
+                        <td class="text-right">{{ getDiscountNumber(line) | number }}{{getDiscountTypeDisplay(line)}}</td>
                         <td class="text-right">{{ line.priceSubTotal | number }}</td>
                     </tr>
                 </tbody>
@@ -88,12 +88,12 @@
             <div class="clearfix"></div>
         </div>
         <div class="row">
-            <div class="col-sm">
+            <div class="col col-sm">
                 <div class="text-center font-weight-bold">
                     Khách hàng
                 </div>
             </div>
-            <div class="col-sm">
+            <div class="col col-sm">
                 <div class="text-center font-weight-bold">
                     Người lập
                 </div>

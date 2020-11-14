@@ -11,6 +11,7 @@ namespace ApplicationCore.Entities
         {
             State = "draft";
             PaymentDifferenceHandling = "open";
+            PaymentDate = DateTime.Today;
         }
 
         /// <summary>

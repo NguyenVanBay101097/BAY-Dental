@@ -48,6 +48,7 @@ import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from '..
 import { PartnerSearchDialogComponent } from '../partner-search-dialog/partner-search-dialog.component';
 import { PartnerSimple, PartnerPaged } from '../partner-simple';
 import { PartnerService } from '../partner.service';
+import { PrintSaleOrderComponent } from 'src/app/shared/print-sale-order/print-sale-order.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -74,6 +75,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
+  @ViewChild(PrintSaleOrderComponent, { static: true }) printSaleOrderComponent: PrintSaleOrderComponent;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('search', { static: true }) searchElement: ElementRef;
@@ -116,8 +118,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       state: null,
       residual: null,
       card: null,
-      pricelist: [null, Validators.required],
-      journal: null,
+      pricelist: [null],
+      journal: [null, Validators.required],
       payments: null,
     });
 
@@ -294,7 +296,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
 
   actionPayment() {
-
     if (!this.getPartner) {
       this.notificationService.show({
         content: "Chọn khách hàng trước khi thanh toán",
@@ -303,84 +304,32 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'error', icon: true }
       });
+
+      return false;
     }
 
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.partnerId = this.getPartner.id;
-    val.cardId = val.card ? val.card.id : null;
     val.orderLines.forEach(line => {
       line.employeeId = line.employee ? line.employee.id : null;
       line.toothIds = line.teeth.map(x => x.id);
     });
 
-    if (!val.journal) {
+    val.journalId = val.journal.id;
+
+    this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
+      this.printFastSaleOrder(rs.id);
       this.notificationService.show({
-        content: "Chọn hình thức thanh toán",
+        content: "Thanh toán thành công",
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
+        type: { style: 'success', icon: true }
       });
-    }
 
-    var pay = this.fb.group({
-      amount: 0,
-      paymentDateObj: [null, Validators.required],
-      paymentDate: null,
-      communication: null,
-      paymentType: null,
-      journalId: null,
-      journal: [null, Validators.required],
-      partnerType: null,
-      partnerId: null,
-      invoiceIds: null,
-      saleOrderIds: null,
-      serviceCardOrderIds: null,
+      this.routeActive();
     });
-
-    this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
-      this.paymentService.saleDefaultGet([rs.id]).subscribe(rs2 => {
-        pay.patchValue(rs2);
-        pay.value.amount = val.amountTotal;
-        pay.value.journal = val.journal;
-        pay.value.journalId = val.journal ? val.journal.id : null;
-        pay.value.paymentDateObj = new Date();
-        pay.value.paymentDate = this.intlService.formatDate(pay.value.paymentDateObj, 'd', 'en-US');
-        this.paymentService.create(pay.value).subscribe((result: any) => {
-          this.paymentService.post([result.id]).subscribe(() => {
-            //this.printFastSaleOrder(rs.id);
-            this.saleOrderPrintId = rs.id;
-            this.notificationService.show({
-              content: "thanh toán thành công",
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'success', icon: true }
-            });
-
-            this.routeActive();
-          }, (err) => {
-            this.notificationService.show({
-              content: err,
-              hideAfter: 3000,
-              position: { horizontal: 'center', vertical: 'top' },
-              animation: { type: 'fade', duration: 400 },
-              type: { style: 'error', icon: true }
-            });
-          });
-        }, (err) => {
-          this.notificationService.show({
-            content: err,
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'error', icon: true }
-          });
-        });
-
-      })
-    })
   }
 
 
@@ -881,28 +830,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   printFastSaleOrder(saleOrderId) {
-    if (saleOrderId) {
-      this.saleOrderService.getPrint(saleOrderId).subscribe((result: any) => {
-        this.saleOrderPrint = result;
-        setTimeout(() => {
-          var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
-          var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
-          popupWin.document.open();
-          popupWin.document.write(`
-              <html>
-                <head>
-                  <title>Print tab</title>
-                  <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-                  <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
-                </head>
-                 <body onload="window.print()">${printContents}</body>
-              </html>`
-          );
-          popupWin.document.close();
-          this.saleOrderPrint = null;
-        }, 300);
-      });
-    }
+    this.saleOrderService.getPrint(saleOrderId).subscribe((result: any) => {
+      this.printSaleOrderComponent.print(result);
+    });
   }
 
   actionDone() {
@@ -1210,20 +1140,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     this.orderLines.markAsDirty();
   }
 
-  updateTeeth(line) {
-    var val = this.getFormDataSave();
-    this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
-      this.notificationService.show({
-        content: 'Lưu thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.loadRecord();
-    }, () => {
-      this.loadRecord();
+  updateTeeth(event, line) {
+    var teeth = event.teeth;
+    var teethFormArray = line.get('teeth') as FormArray;
+    teethFormArray.clear();
+    teeth.forEach(tooth => {
+      teethFormArray.push(this.fb.group(tooth));
     });
+
+    line.get('diagnostic').setValue(event.diagnostic);
+    line.get('productUOMQty').setValue(teeth.length ? teeth.length : 1);
+
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
   }
 
   getPriceSubTotal() {

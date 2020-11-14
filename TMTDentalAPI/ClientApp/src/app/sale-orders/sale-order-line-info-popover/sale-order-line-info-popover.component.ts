@@ -150,7 +150,6 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onChangeToothCategory(value: any) {
-    debugger
     if (value.id) {
       this.teethSelected = [];
       this.loadTeethMap(value);
@@ -176,15 +175,16 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   showInfo() {
-    var res = this.formGroup.value;
-    if (this.teethSelected.length > 0 && !res.diagnostic) {
-      return this.lineTeeth(this.teethSelected);
-    } else if (res.diagnostic && this.teethSelected.length == 0) {
-      return res.diagnostic;
-    } else if (res.diagnostic && this.teethSelected.length > 0) {
-      return this.lineTeeth(this.teethSelected)+ ' ' + ';' + ' ' + res.diagnostic;
+    var list = [];
+    if (this.teethSelected.length) {
+      list.push(this.teethSelected.map(x => x.name).join(','));
     }
 
+    if (this.formGroup.get('diagnostic').value) {
+      list.push(this.formGroup.get('diagnostic').value);
+    }
+
+    return list.join('; ');
   }
 
   get getDianostic(){
@@ -196,9 +196,9 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onSave() {
-    this.line = this.formGroup.value;
-    this.line.Teeth = this.teethSelected;
-    this.eventTeeth.emit(this.line);
+    var val = this.formGroup.value;
+    val.teeth = this.teethSelected;
+    this.eventTeeth.emit(val);
     this.popover.close();
   }
 

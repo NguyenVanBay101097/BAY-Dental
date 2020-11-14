@@ -21,7 +21,7 @@
                             </div>
                         </div>
                     </a>
-                    <a [routerLink]="['/purchase/orders/create?type=order']" class="card bg-primary t_card">
+                    <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}" class="card bg-primary t_card">
                         <div class="card-body">
                             <div class="d-flex">
                                 <img class="image-custom" src="./assets/images/icons-tdental/cart.png" alt="Lịch hẹn">
@@ -127,7 +127,7 @@
     </div>
     <div>
         <div class="header-title pb-3">DỊCH VỤ TRONG NGÀY</div>
-        <kendo-grid class="t_kende_grid_height" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
+        <kendo-grid [height]="500" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
             (dataStateChange)="dataStateChange($event)" [loading]="loading">
             <ng-template kendoGridToolbarTemplate>
                 <div class="d-flex">
@@ -144,54 +144,49 @@
                 </div>
             </ng-template>
             <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
-                title="Phiếu điều trị" class="text-center" width="170">
+                title="Phiếu điều trị" class="text-center" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị "
                         (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
-                title="Khách hàng">
+                title="Khách hàng" width="150">
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ" width="150">
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <span *ngFor="let teeth of dataItem.teeth">{{teeth.name}}, </span>
+                    {{getTeethDisplay(dataItem.teeth)}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán" width="150">
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceSubTotal" class="text-right"
-                title="Thành tiền">
+                title="Thành tiền" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.priceSubTotal | number}}
                 </ng-template>
 
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="amount" class="text-right"
-                title="Thanh toán">
+                title="Thanh toán" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{(dataItem.priceSubTotal - dataItem.amountResidual) | number}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="amountResidual"
-                title="Còn lại">
+                title="Còn lại" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.amountResidual | number}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column class="text-center" [headerClass]="{'text-center font-weight-bold':true}"
-                field="order.state" title="Trạng thái">
+                field="order.state" title="Trạng thái" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <span *ngIf="dataItem.order.state=='sale'">
-                        Đang điều trị
-                    </span>
-                    <span *ngIf="dataItem.order.state=='done'">
-                        Hoàn thành
-                    </span>
+                    {{getStateDisplay(dataItem.state)}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-excel fileName="Danh_sach_dich_vu.xlsx"></kendo-grid-excel>

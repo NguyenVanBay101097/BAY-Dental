@@ -58,6 +58,6 @@ namespace Infrastructure.Services
 
         void _GetInvoiced(IEnumerable<SaleOrder> orders);
 
-        Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val);
+        Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val);
     }
 }

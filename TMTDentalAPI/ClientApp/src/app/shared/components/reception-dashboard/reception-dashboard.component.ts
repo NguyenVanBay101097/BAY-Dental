@@ -253,4 +253,19 @@ export class ReceptionDashboardComponent implements OnInit {
       }
     );
   }
+
+  getStateDisplay(state) {
+    switch(state) {
+      case 'sale':
+        return 'Đang điều trị';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Nháp';
+    }
+  }
+
+  getTeethDisplay(teeth) {
+    return teeth.map(x => x.name).join(',');
+  }
 }

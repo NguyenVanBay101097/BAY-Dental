@@ -1419,7 +1419,7 @@ namespace Infrastructure.Services
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-            // await _GenerateDotKhamSteps(self);
+            await _GenerateDotKhamSteps(self);
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -2011,7 +2011,7 @@ namespace Infrastructure.Services
             return labos;
         }
 
-        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val)
+        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
             var res = new SaleOrderSave();
             res.CompanyId = val.CompanyId;
@@ -2093,6 +2093,25 @@ namespace Infrastructure.Services
             _GetInvoiced(new List<SaleOrder>() { order });
             _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(new List<SaleOrder>() { order });
+
+            //thanh toan
+            var amountTotal = order.AmountTotal ?? 0;
+            var payment = new AccountPayment()
+            {
+                Amount = amountTotal,
+                JournalId = val.JournalId,
+                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
+                PartnerId = order.PartnerId,
+                PartnerType = "customer",
+                CompanyId = order.CompanyId
+            };
+
+            payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order.Id });
+            foreach (var orderLine in order.OrderLines)
+                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = orderLine.Id, AmountPrepaid = orderLine.PriceTotal });
+            var paymentObj = GetService<IAccountPaymentService>();
+            await paymentObj.CreateAsync(payment);
+            await paymentObj.Post(new List<Guid>() { payment.Id });
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return basic;
