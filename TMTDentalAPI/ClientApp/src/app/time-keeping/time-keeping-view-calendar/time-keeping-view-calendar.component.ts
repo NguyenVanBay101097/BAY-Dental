@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { Router } from '@angular/router';
-import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged } from '../time-keeping.service';
+import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged, ChamCongSave } from '../time-keeping.service';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
@@ -17,6 +17,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PopupCloseEvent } from '@progress/kendo-angular-grid';
 import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -48,8 +49,10 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private modalService: NgbModal,
     private timeKeepingService: TimeKeepingService,
     private router: Router,
+    private fb: FormBuilder,
     config: NgbPopoverConfig,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+
   ) {
     config.placement = 'bottom';
     config.triggers = 'hover';
@@ -118,7 +121,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       if (!value.chamCongs) {
         value.chamCongs = [];
       }
-      var cc = vals ? vals.filter(x => new Date(x.timeIn).toDateString() == date.toDateString()) : null;
+      var cc = vals ? vals.filter(x => new Date(x.date).toDateString() == date.toDateString()) : null;
       if (cc) {
         value.chamCongs = cc;
         value.date = date;
@@ -244,7 +247,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
-    }, () => {});
+    }, () => { });
   }
 
   clickTimeSheetCreate(evt, date, employee) {
@@ -266,12 +269,45 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
-    }, () => {});
+    }, () => { });
+  }
+
+  createOrUpdateTimeKeeping(evt, date, employee) {
+    debugger
+
+    var res = new ChamCongSave() as any;
+    res.type = evt.type;
+    res.overTime = evt.overTime ? evt.overTime : false;
+    res.date = this.intl.formatDate(date, 'yyyy-MM-ddTHH:mm:ss');
+    res.overTimeHour = evt.overTimeHourType === 'orther' ? evt.overTimeHour : evt.overTimeHourType;
+    res.employeeId = employee ? employee.id : null;
+
+    this.timeKeepingService.create(res).subscribe(
+      result => {
+        this.notificationService.show({
+          content: 'Tạo mới thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+
+        var val = [];
+        val.push(result);
+        this.loadAllChamCong(val);
+
+      }, err => {
+        console.log(err);
+      }
+    )
+
   }
 
   setupWordEntryType() {
     this.router.navigateByUrl("time-keepings/types");
   }
+
+ 
 
   nextMonthFilter(myDate) {
     var nextMonth = new Date(myDate);
@@ -312,7 +348,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   timeKeepingForAll() {
     const modalRef = this.modalService.open(TimeKeepingForallDialogComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title  = 'Chấm công nguyên ngày';
+    modalRef.componentInstance.title = 'Chấm công nguyên ngày';
     modalRef.result.then(res => {
       this.timeKeepingService.timeKeepingForAll(res).subscribe(result => {
         this.notificationService.show({

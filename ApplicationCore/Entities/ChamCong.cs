@@ -30,6 +30,7 @@ namespace ApplicationCore.Entities
         /// thời gian checkout
         /// </summary>
         public DateTime? TimeOut { get; set; }
+
         /// <summary>
         /// số giờ đã làm nếu có đủ checkin và checkout
         /// </summary>
@@ -37,14 +38,32 @@ namespace ApplicationCore.Entities
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
+
         /// <summary>
         /// trạng thái của chấm công: intitial, process, done
         /// </summary>
         public string Status { get; set; }
+
         /// <summary>
         /// loại chấm công: nghỉ phép, workfromhome.....v.v
         /// </summary>
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryType WorkEntryType { get; set; }
+
+        ///version 2
+        
+        /// 3 loai : đi làm , nữa ngày , nghỉ
+        public string Type { get; set; }
+
+        /// <summary>
+        /// tăng ca
+        /// </summary>
+        public bool OverTime { get; set; }
+
+        /// <summary>
+        /// số giờ tăng ca
+        /// </summary>
+        public decimal? OverTimeHour { get; set; }
+
     }
 }

@@ -42,16 +42,16 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery(x => true);
             if (val.From.HasValue)
-                query = query.Where(x => x.TimeIn >= val.From);
+                query = query.Where(x => x.Date.Value >= val.From);
             if (val.To.HasValue)
-                query = query.Where(x => x.TimeIn <= val.To);
+                query = query.Where(x => x.Date.Value <= val.To);
 
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Take(val.Limit).Skip(val.Offset);
 
-            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.Include(x => x.WorkEntryType).ToListAsync());
+            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.ToListAsync());
 
             return new PagedResult2<ChamCongDisplay>(totalItems, val.Offset, val.Limit)
             {
@@ -692,32 +692,32 @@ namespace Infrastructure.Services
                     throw new Exception("Thời gian ra không được nhỏ hơn thời gian vào");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
-                var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                {
-                    var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
-                }
+                //var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                //if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
+                //{
+                //    var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                //}
 
-                if (!val.TimeOut.HasValue)
-                {
-                    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
-                    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
-                    if (cc != null)
-                    {
-                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
-                    }
-                }
-                else
-                {
-                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                    if (cc_sau != null && cc_sau != cc_truoc)
-                    {
-                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
-                    }
-                }
+                //if (!val.TimeOut.HasValue)
+                //{
+                //    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
+                //    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
+                //    if (cc != null)
+                //    {
+                //        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                //    }
+                //}
+                //else
+                //{
+                //    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                //    if (cc_sau != null && cc_sau != cc_truoc)
+                //    {
+                //        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
+                //    }
+                //}
             }
 
         }
