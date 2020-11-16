@@ -94,6 +94,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class LaboOrderReportOutput
