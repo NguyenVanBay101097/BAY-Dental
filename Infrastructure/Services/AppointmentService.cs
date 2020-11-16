@@ -277,7 +277,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => stateList.Contains(x.State));
             }
 
-            var items = await _mapper.ProjectTo<AppointmentBasic>(query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var items = await _mapper.ProjectTo<AppointmentBasic>(query.OrderBy(x => x.Date).ThenBy(x => x.Time).Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var count = await query.CountAsync();
 
             var res = new PagedResult2<AppointmentBasic>(count, val.Offset, val.Limit) { Items = items };

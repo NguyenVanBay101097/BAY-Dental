@@ -1956,9 +1956,7 @@ namespace Infrastructure.Services
             ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
 
             if (val.DateFrom.HasValue)
-            {
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
-            }
 
             if (val.DateTo.HasValue)
             {
@@ -1980,23 +1978,10 @@ namespace Infrastructure.Services
                 })
                 .OrderBy(x => x.PartnerId).ToListAsync();
 
-            var customerOld = 0;
-            var customerNew = 0;
-            foreach (var item in temp)
-            {
-                if (item.PartnerCount == 1)
-                {
-                    customerNew += 1;
-                } else
-                {
-                    customerOld += 1;
-                }
-            }
-
             var result = new PartnerCustomerReportOutput
             {
-                CustomerOld = customerOld,
-                CustomerNew = customerNew
+                CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
+                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count()
             };
 
             return result;

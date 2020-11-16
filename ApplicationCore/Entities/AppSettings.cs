@@ -11,5 +11,7 @@ namespace ApplicationCore.Entities
         public string Domain { get; set; }
 
         public string Schema { get; set; }
+
+        public string Version { get; set; }
     }
 }

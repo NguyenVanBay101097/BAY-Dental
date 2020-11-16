@@ -122,7 +122,6 @@ namespace Infrastructure.Services
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
                 .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move").ToListAsync();
             _ComputeResidual(self);
-            _ComputePaid(self);
             await UpdateAsync(self);
         }
 
@@ -298,7 +297,6 @@ namespace Infrastructure.Services
                 await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
                 sale.State = "draft";
                 sale.Residual = 0;
-                sale.Paid = 0;
             }
 
             _GetInvoiced(self);
@@ -1421,7 +1419,7 @@ namespace Infrastructure.Services
             _ComputeResidual(self);
             await UpdateAsync(self);
 
-            // await _GenerateDotKhamSteps(self);
+            await _GenerateDotKhamSteps(self);
         }
 
         public async Task<IEnumerable<PaymentInfoContent>> _GetPaymentInfoJson(Guid id)
@@ -1858,28 +1856,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public void _ComputePaid(IEnumerable<SaleOrder> self)
-        {
-            foreach (var order in self)
-            {
-                var invoices = order.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels)
-                    .Select(x => x.InvoiceLine).Select(x => x.Move).Distinct().ToList();
-                decimal? residual = 0M;
-                foreach (var invoice in invoices)
-                {
-                    if (invoice.Type != "out_invoice" && invoice.Type != "out_refund")
-                        continue;
-                    if (invoice.Type == "out_invoice")
-                        residual += invoice.AmountResidual;
-                    else
-                        residual -= invoice.AmountResidual;
-                }
 
-                var paid = order.AmountTotal - residual;
-
-                order.Paid = paid;
-            }
-        }
 
         public void _ComputeResidual(IEnumerable<AccountInvoice> invoices)
         {
@@ -2034,7 +2011,7 @@ namespace Infrastructure.Services
             return labos;
         }
 
-        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderVm val)
+        public async Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val)
         {
             var res = new SaleOrderSave();
             res.CompanyId = val.CompanyId;
@@ -2116,6 +2093,25 @@ namespace Infrastructure.Services
             _GetInvoiced(new List<SaleOrder>() { order });
             _ComputeResidual(new List<SaleOrder>() { order });
             await UpdateAsync(new List<SaleOrder>() { order });
+
+            //thanh toan
+            var amountTotal = order.AmountTotal ?? 0;
+            var payment = new AccountPayment()
+            {
+                Amount = amountTotal,
+                JournalId = val.JournalId,
+                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
+                PartnerId = order.PartnerId,
+                PartnerType = "customer",
+                CompanyId = order.CompanyId
+            };
+
+            payment.SaleOrderPaymentRels.Add(new SaleOrderPaymentRel { SaleOrderId = order.Id });
+            foreach (var orderLine in order.OrderLines)
+                payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = orderLine.Id, AmountPrepaid = orderLine.PriceTotal });
+            var paymentObj = GetService<IAccountPaymentService>();
+            await paymentObj.CreateAsync(payment);
+            await paymentObj.Post(new List<Guid>() { payment.Id });
 
             var basic = _mapper.Map<SaleOrderBasic>(order);
             return basic;

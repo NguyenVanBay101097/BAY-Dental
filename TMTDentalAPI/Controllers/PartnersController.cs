@@ -125,30 +125,15 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.Partner.Create")]
-        public async Task<IActionResult> Create(PartnerDisplay val)
+        public async Task<IActionResult> Create(PartnerSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
-
             await _unitOfWork.BeginTransactionAsync();
 
             var partner = _mapper.Map<Partner>(val);
-            CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
 
-            if (partner.SourceId != null)
-            {
-                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
-                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
-            }
-            else
-            {
-                partner.ReferralUserId = null;
-            }
-
-            SaveCategories(val, partner);
-            SaveHistories(val, partner);
+            //SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
 
             _unitOfWork.Commit();

@@ -29,7 +29,7 @@ export class ReceptionDashboardComponent implements OnInit {
   saleReport: SaleReportItem;
   limit = 20;
   offset = 0;
-  appointmentStateCount = {};
+  appointmentStateCount: any = {};
   search: string = '';
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
@@ -252,5 +252,20 @@ export class ReceptionDashboardComponent implements OnInit {
 
       }
     );
+  }
+
+  getStateDisplay(state) {
+    switch(state) {
+      case 'sale':
+        return 'Đang điều trị';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Nháp';
+    }
+  }
+
+  getTeethDisplay(teeth) {
+    return teeth.map(x => x.name).join(',');
   }
 }

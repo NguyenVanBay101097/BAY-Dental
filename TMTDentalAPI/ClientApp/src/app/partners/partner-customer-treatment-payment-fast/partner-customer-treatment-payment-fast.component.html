@@ -170,12 +170,12 @@
                                                     </span>
                                                 </a> -->
                                                 <app-sale-order-line-info-popover [line]="line"
-                                                    (eventTeeth)="updateTeeth($event)">
+                                                    (eventTeeth)="updateTeeth($event, line)">
                                                 </app-sale-order-line-info-popover>
                                             </td>
                                             <td>
                                                 <kendo-combobox style="width: 100%;" [data]="filteredEmployees"
-                                                    (blur)="updateSaleOrder()" [textField]="'name'" [filterable]="true"
+                                                   [textField]="'name'" [filterable]="true"
                                                     #employeeCbx formControlName="employee" [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
@@ -268,5 +268,5 @@
 
 <app-account-payment-print></app-account-payment-print>
 
-<app-print-sale-order [saleOrderId]="saleOrderPrintId" ></app-print-sale-order>
+<app-print-sale-order></app-print-sale-order>
 

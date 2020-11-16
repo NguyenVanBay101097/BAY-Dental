@@ -23,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+
         public Guid CompanyId { get; set; }
 
         /// <summary>
@@ -43,5 +44,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? IsQuotation { get; set; }
 
+    }
+
+    public class FastSaleOrderSave: SaleOrderSave
+    {
+        public Guid JournalId { get; set; }
     }
 }
