@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { RealRevenueReportResult } from '../real-revenue-report/real-revenue-report.service';
 
 export class RevenueReportResult {
     debit: number;
@@ -15,6 +16,7 @@ export class RevenueReportResultDetails {
     credit: number;
     balance: number;
     name: string;
+    month: number;
 }
 
 export class RevenueReportSearch {
@@ -33,4 +35,8 @@ export class RevenueReportService {
     getReport(val: any): Observable<RevenueReportResult> {
         return this.http.get<RevenueReportResult>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
+    getReportFlowYear(val: any): Observable<RevenueReportResult> {
+        return this.http.get<RevenueReportResult>(this.baseApi + this.apiUrl + '/GetReportFlowYear', { params: new HttpParams({ fromObject: val }) });
+    }
+
 }

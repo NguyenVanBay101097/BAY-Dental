@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IRevenueReportService
     {
         Task<RevenueReportResult> GetReport(RevenueReportSearch val);
+        Task<RevenueReportResult> GetReportFlowYear(RevenueReportSearch val);
     }
 }

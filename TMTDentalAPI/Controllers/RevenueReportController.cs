@@ -22,9 +22,17 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Report.Revenue")]
-        public async Task<IActionResult> Get([FromQuery]RevenueReportSearch val)
+        public async Task<IActionResult> Get([FromQuery] RevenueReportSearch val)
         {
             var result = await _revenueReportService.GetReport(val);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetReportFlowYear([FromQuery] RevenueReportSearch val)
+        {
+            var result = await _revenueReportService.GetReportFlowYear(val);
             return Ok(result);
         }
     }

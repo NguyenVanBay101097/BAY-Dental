@@ -7,6 +7,7 @@ import { SharedModule } from '@progress/kendo-angular-grid';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { RevenueReportModule } from '../revenue-report/revenue-report.module';
 
 @NgModule({
   declarations: [SaleDashboardReportFormComponent],
@@ -17,7 +18,8 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
     MyCustomKendoModule,
     FormsModule,
     ReactiveFormsModule,
-    AccountCommonPartnerReportsModule
+    AccountCommonPartnerReportsModule,
+    RevenueReportModule
   ]
 })
 export class SaleDashboardReportsModule { }

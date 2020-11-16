@@ -13,13 +13,31 @@
         <div class="content">
             <div class="content-left pr-3">
                 <div class="border border-secondary rounded bg-white w-100 h-100 overflow-hidden">
-                    <kendo-chart class=" pl-3 pr-3" class="w-100 h-100" [categoryAxis]='{ categories: categories }'>
-                        <kendo-chart-title text="BIỂU ĐỒ DOANH THU NĂM SO VỚI CÙNG KỲ"></kendo-chart-title>
+                    <kendo-chart
+                        *ngIf="reportCurrentYear && reportOldYear && reportOldYear.length > 0 && reportCurrentYear.length > 0"
+                        class=" pl-3 pr-3" class="w-100 h-100">
+                        <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU NĂM SO VỚI CÙNG KỲ">
+                        </kendo-chart-title>
                         <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
-                        <kendo-chart-tooltip format='{0}%'></kendo-chart-tooltip>
+                        <!-- <kendo-chart-tooltip format='{0} VNĐ'></kendo-chart-tooltip> -->
                         <kendo-chart-series>
-                            <kendo-chart-series-item *ngFor="let item of series" type="line" [data]="item.data"
-                                [style]="'smooth'" [name]="item.name">
+                            <kendo-chart-series-item type="line" [data]="reportOldYear" field="data"
+                                categoryField="month" [style]="'smooth'" [name]="oldYear">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
+                                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
+                            </kendo-chart-series-item>
+                            <kendo-chart-series-item type="line" [data]="reportCurrentYear" field="data"
+                                [dashType]="longDash" categoryField="month" [style]="'smooth'" [name]="currentYear">
+                                <kendo-chart-series-item-tooltip>
+                                    <ng-template let-dataItem="dataItem">
+                                        Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
+                                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
+                                    </ng-template>
+                                </kendo-chart-series-item-tooltip>
                             </kendo-chart-series-item>
                         </kendo-chart-series>
                     </kendo-chart>
@@ -37,7 +55,8 @@
                     <div class="w-50 h-100 pl-3">
                         <div class="w-100 h-100 bg-white p-3 text-center border border-secondary rounded">
                             <div class="text-top font-weight-bold">PHẢI THU</div>
-                            <div class="text-bottom font-weight-bold text-danger">400000</div>
+                            <div class="text-bottom font-weight-bold text-danger">
+                                {{(totalDebitCustomer ? totalDebitCustomer : 0) | number}}</div>
                         </div>
                     </div>
                 </div>
@@ -109,13 +128,15 @@
                             <div class="w-50 h-100 border-right">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">DOANH THU</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalDoanhThu ? totalDoanhThu : 0) | number}}</div>
                                 </div>
                             </div>
                             <div class="w-50 h-100">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">CHI PHÍ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalChiPhi ? totalChiPhi : 0) | number}}</div>
                                 </div>
                             </div>
                         </div>
@@ -129,13 +150,15 @@
                             <div class="w-50 h-100 border-right">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">PHÁT SINH</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalDebitNCCByMonth ? totalDebitNCCByMonth : 0) | number}}</div>
                                 </div>
                             </div>
                             <div class="w-50 h-100">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">THANH TOÁN</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalCreditNCCByMonth ? totalCreditNCCByMonth : 0) | number}}</div>
                                 </div>
                             </div>
                         </div>
@@ -151,13 +174,15 @@
                             <div class="w-50 h-100 border-right">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">THỰC THU</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalThu ? totalThu : 0) | number}}</div>
                                 </div>
                             </div>
                             <div class="w-50 h-100">
                                 <div class="w-100 h-100  text-center">
                                     <div class="text-top font-weight-bold">THỰC CHI</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{(totalChi ? totalChi : 0) | number}}</div>
                                 </div>
                             </div>
                         </div>
@@ -171,7 +196,9 @@
                             <div class=" w-100 h-70 d-flex">
                                 <div class="w-100 h-100 text-center">
                                     <div class="text-top font-weight-bold">HOA HỒNG ĐIỀU TRỊ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
+                                    <div class="text-bottom font-weight-bold text-primary">
+                                        {{ (totalHoaHong ? totalHoaHong : 0) | number}}
+                                    </div>
                                 </div>
                             </div>
                         </div>

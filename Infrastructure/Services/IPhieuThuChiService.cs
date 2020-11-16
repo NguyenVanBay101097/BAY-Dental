@@ -20,5 +20,7 @@ namespace Infrastructure.Services
         Task ActionCancel(IEnumerable<Guid> id);
 
         Task InsertModelsIfNotExists();
+
+        Task<IEnumerable<ReportPhieuThuChi>> ReportPhieuThuChi(PhieuThuChiSearch val);
     }
 }
