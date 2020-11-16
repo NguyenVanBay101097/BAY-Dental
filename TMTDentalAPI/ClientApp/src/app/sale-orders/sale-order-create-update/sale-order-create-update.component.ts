@@ -510,16 +510,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getDiscountNumber(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
     if (discountType == 'fixed') {
-      return line.get('discountFixed').value;
+      return line.get('DiscountFixed').value;
     } else {
-      return line.get('discount').value;
+      return line.get('Discount').value;
     }
   }
 
   getDiscountTypeDisplay(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
     if (discountType == 'fixed') {
       return "";
     } else {
