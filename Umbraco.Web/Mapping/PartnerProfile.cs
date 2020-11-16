@@ -54,6 +54,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<Partner, PartnerViewModel>();
 
             CreateMap<Partner, PartnerInfoVm>();
+
+            CreateMap<PartnerSave, Partner>();
         }
     }
 }
