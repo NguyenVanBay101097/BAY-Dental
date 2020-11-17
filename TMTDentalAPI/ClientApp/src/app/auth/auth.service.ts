@@ -50,6 +50,10 @@ export class AuthService {
                         localStorage.setItem('refresh_token', result.refreshToken);
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
+                        // get permission
+                        this.authResource.getPermission().pipe(map((res: any) => {
+                            localStorage.setItem('user_permission', JSON.stringify(res));
+                        })).subscribe();
                     }
                     return result;
                 })
