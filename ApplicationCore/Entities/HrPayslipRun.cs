@@ -26,5 +26,9 @@ namespace ApplicationCore.Entities
         public Company Company { get; set; }
 
         public ICollection<HrPayslip> Slips { get; set; } = new List<HrPayslip>();
+        /// <summary>
+        /// lương tháng nào?
+        /// </summary>
+        public int Month { get; set; }
     }
 }
