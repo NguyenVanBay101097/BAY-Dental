@@ -98,6 +98,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ChamCongSave val)
         {
             var chamcong = _mapper.Map<ChamCong>(val);
+            chamcong.CompanyId = CompanyId;
             await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.CreateAsync(chamcong);
             _unitOfWork.Commit();
