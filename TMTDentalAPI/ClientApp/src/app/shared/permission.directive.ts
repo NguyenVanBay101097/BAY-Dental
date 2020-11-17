@@ -7,7 +7,7 @@ export class PermissionDirective implements OnInit {
   private permissions = [];
   private allPermissions;
   private user_permission;
-  private logicalOp = 'OR';
+
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
@@ -34,12 +34,6 @@ export class PermissionDirective implements OnInit {
     this.updateView();
   }
 
-  @Input()
-  set appPermissionOp(permop) {
-    this.logicalOp = permop;
-    this.updateView();
-  }
-
   private updateView() {
     if (this.checkPermission()) {
       this.viewContainer.createEmbeddedView(this.templateRef);
@@ -49,21 +43,14 @@ export class PermissionDirective implements OnInit {
   }
 
   private checkPermission() {
-    let hasPermission = false;
+    let hasPermission = true;
 
     if (this.allPermissions) {
       for (const checkPermission of this.permissions) {
         const permissionFound = this.allPermissions.find(x => x.toUpperCase() === checkPermission.toUpperCase());
-        if (permissionFound) {
-          hasPermission = true;
-          if (this.logicalOp === 'OR') {
-            break;
-          }
-        } else {
+        if (!permissionFound) {
           hasPermission = false;
-          if (this.logicalOp === 'AND') {
-            break;
-          }
+          break;
         }
       }
     }
