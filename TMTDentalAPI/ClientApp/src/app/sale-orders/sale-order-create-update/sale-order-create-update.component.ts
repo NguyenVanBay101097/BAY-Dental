@@ -474,12 +474,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   onApplyDiscount(val: any) {
     if (this.saleOrderId) {
-      this.discountDefault = val;
-      this.discountDefault.saleOrderId = this.saleOrderId;
-      this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
-        this.loadRecord();
-      }, (error) => {
-        this.errorService.show(error);
+      this.saveRecord().subscribe(() => {
+        this.discountDefault = val;
+        this.discountDefault.saleOrderId = this.saleOrderId;
+        this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
+          this.loadRecord();
+        }, (error) => {
+          this.errorService.show(error);
+        });
       });
     }
     else {
