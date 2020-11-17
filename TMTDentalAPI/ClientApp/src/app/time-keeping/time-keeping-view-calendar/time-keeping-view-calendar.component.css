@@ -125,3 +125,16 @@
     overflow: hidden;
     padding: 4px;
 }
+
+.oe_kanban_content_timeOver{
+    min-height: 25px;
+}
+
+.oe_kanban_content_timeOver{
+    text-align: center;
+  }
+.oe_kanban_label_Emp{
+    min-width: 200px;
+    vertical-align : middle;
+    text-align:center;
+}

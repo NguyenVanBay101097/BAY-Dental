@@ -18,6 +18,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PopupCloseEvent } from '@progress/kendo-angular-grid';
 import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
 import { FormBuilder } from '@angular/forms';
+import { guid } from '@progress/kendo-angular-common';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -112,6 +113,14 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         })
       }
     )
+  }
+
+  getOverTime(value) {
+    if (value !== undefined) {
+      if (value.overTimeHour !== null) {
+        return value.overTimeHour + 'h';
+      }
+    }
   }
 
   loadTimeSheet(empId, vals: ChamCongBasic[]) {
@@ -261,6 +270,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         var val = [];
         val.push(result);
         this.loadAllChamCong(val);
+        this.getDateMonthList();
       }
       this.notificationService.show({
         content: 'Tạo mới thành công',
@@ -273,33 +283,53 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   }
 
   createOrUpdateTimeKeeping(evt, date, employee) {
-    debugger
-
-    var res = new ChamCongSave() as any;
+    var res = Object.assign({});
     res.type = evt.type;
     res.overTime = evt.overTime ? evt.overTime : false;
     res.date = this.intl.formatDate(date, 'yyyy-MM-ddTHH:mm:ss');
     res.overTimeHour = evt.overTimeHourType === 'orther' ? evt.overTimeHour : evt.overTimeHourType;
     res.employeeId = employee ? employee.id : null;
+    if (evt.companyId) {
+      res.companyId = evt.companyId ? evt.companyId : null;
+    }
 
-    this.timeKeepingService.create(res).subscribe(
-      result => {
-        this.notificationService.show({
-          content: 'Tạo mới thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
+    if (evt.id) {
+      this.timeKeepingService.update(evt.id, res).subscribe(
+        x => {
+          var val = [];
+          val.push(employee);
+          this.loadAllChamCong(val);
+          this.notificationService.show({
+            content: 'cập nhật thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }, err => {
+          console.log(err);
+        }
+      )
+    } else {
+      this.timeKeepingService.create(res).subscribe(
+        result => {
+          var val = [];
+          val.push(employee);
+          this.loadAllChamCong(val);
+          this.notificationService.show({
+            content: 'Tạo mới thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
 
-        var val = [];
-        val.push(result);
-        this.loadAllChamCong(val);
+        }, err => {
+          console.log(err);
+        }
+      )
+    }
 
-      }, err => {
-        console.log(err);
-      }
-    )
 
   }
 
@@ -307,7 +337,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     this.router.navigateByUrl("time-keepings/types");
   }
 
- 
+
 
   nextMonthFilter(myDate) {
     var nextMonth = new Date(myDate);

@@ -79,47 +79,28 @@
 
             </tr>
         </thead>
-        <tbody>         
-            <tr *ngFor="let empl of listEmployeies">
-                <Th style="min-width: 200px">{{empl.name}}</Th>
-                <!-- <th scope="row" style="min-width: 200px;"></th> -->
-                <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
-                    <div class="oe_kanban_content">
-                        <app-time-keeping-popover [line]="date" (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)"></app-time-keeping-popover>
-                        <!-- <div [ngClass]="{'mb-1': date.chamCongs && date.chamCongs.length > 1}"
-                            class="oe_kanban_timekepping" *ngFor="let cc of date.chamCongs"
-                            (click)="clickTimeSheet($event, cc.id, date.date, empl)">
-                            <ng-template #popContent>
-                                <b>Nhân viên: {{empl.name}}</b> <br>                                                   
-                            </ng-template>
-                            <ng-template #popTitle>
-                                {{cc.workEntryType? cc.workEntryType.name:'Chấm công'}} <b>{{empl.name}} </b> <br>
-                                {{cc.date | date:'EEEE, dd/MM/yyyy'}}
-                            </ng-template>
-
-
-                            <div class="oe_kanban_timeSheet" [ngbPopover]="popContent" [popoverTitle]="popTitle"
-                                container="body">
-                                <span>{{getType(cc.type)}}
-                                </span>
-                                <span class="time_sheet_type">
-                                    <i title="Chưa check-out" *ngIf="!cc.timeOut" class="text-danger fas fa-circle"></i>
-                                </span>
-                            </div>
-                        </div> -->
-                        <!-- <div (click)="clickTimeSheetCreate($event,date.date,empl)" class="oe_kanban_timekepping">
-                            <a class="oe_kanban_timeSheet_create" title="Thêm chấm công" (click)="clickTimeSheetCreate($event,date.date,empl)">
-                                <i class="fas fa-plus text-primary"></i>
-                            </a>
+        <tbody>
+            <ng-container *ngFor="let empl of listEmployeies">
+                <tr>
+                    <td rowspan="2" class="oe_kanban_label_Emp">{{empl.name}}</td>
+                    <!-- <th scope="row" style="min-width: 200px;"></th> -->
+                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
+                        <div class="oe_kanban_content">
+                            <app-time-keeping-popover [line]="date"
+                                (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)">
+                            </app-time-keeping-popover>
                         </div>
-                        <div class="oe_kanban_timeSheet" *ngIf="!date.chamCongs">
-                            <div class="oe_kanban_timeSheet"></div>
-                        </div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
+                        <div class="oe_kanban_content_timeOver">
+                            <span>{{getOverTime(date.chamCongs[0])}}</span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
 
-                    </div>
-                </td>
-              
-            </tr>
         </tbody>
     </table>
 

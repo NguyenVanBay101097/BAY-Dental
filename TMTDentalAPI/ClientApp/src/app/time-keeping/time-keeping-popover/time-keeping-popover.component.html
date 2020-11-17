@@ -7,11 +7,11 @@
 <a class="ml-auto" [ngbPopover]="popContent" popoverClass="timekeeping-popover-width" [autoClose]="'outside'"
     [popoverTitle]="popTitle" #popOver="ngbPopover" placement="bottom" data-container="body" triggers="manual"
     (click)="toggleWith(popOver)">
-    <div *ngIf="getType">
-        <span>{{getTimeType(getType)}}
+    <div *ngIf="getType" class="icon-timekeeping">
+        <span >{{getTimeType(getType)}}
         </span>
     </div>
-    <div *ngIf="line.chamCongs.length == 0">
+    <div *ngIf="line.chamCongs.length == 0" class="icon-timekeeping">
         <i class="fas fa-plus text-primary"></i>
     </div>
 </a>
@@ -19,7 +19,8 @@
 
 <ng-template #popTitle>
     <div class=" d-flex align-items-center d-inline-block">
-        <span>Thêm chấm công</span>
+        <span *ngIf="line.chamCongs.length == 0"> Thêm chấm công</span>
+        <span *ngIf="line.chamCongs.length !== 0"> Cập nhật chấm công</span>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
     </div>
 </ng-template>
@@ -31,21 +32,21 @@
                 <div class="row">
                     <div class="col-sm-12">                     
                         <div class="mb-1">
-                            <div class="">
+                            <div class="label-popover-timekeeping">
                                 Chấm công
                             </div>
                             <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" formControlName="type"
+                                <input  class="form-check-input" type="radio" formControlName="type"
                                     (change)="onChangeType($event.target.value)" id="work" value="work">
                                 <label class="form-check-label-radio" for="work">Đi làm</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline" >
                                 <input class="form-check-input" type="radio" formControlName="type"
                                     (change)="onChangeType($event.target.value)" id="halfaday" value="halfaday">
                                 <label class="form-check-label-radio" for="halfaday">làm nữa ngày</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline" >
                                 <input class="form-check-input" type="radio" formControlName="type"
                                     (change)="onChangeType($event.target.value)" id="off" value="off">
                                 <label class="form-check-label-radio" for="off">Nghỉ</label>
@@ -53,7 +54,7 @@
                         </div>
                     </div>
                     <div class="col-sm-12">
-                        <div *ngIf="getType === 'work'">
+                        <div *ngIf="getFormType === 'work'">
                             <div class="custom-control custom-checkbox mb-2 ml-1">
                                 <input type="checkbox" class="custom-control-input" formControlName="overTime" id="customCheck" (change)="changeCheckBox($event.target.checked ? true : false)" name="example1">
                                 <label class="custom-control-label" for="customCheck">Tăng ca</label>
@@ -63,22 +64,22 @@
                                     <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" formControlName="overTimeHourType"
-                                            (change)="onChangeOverTimeHourType($event.target.value)" id="1" value="1">
+                                            (change)="onChangeOverTimeHourType($event.target.value)" id="1" [value]="1">
                                         <label class="form-check-label-radio" for="1">1h</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" formControlName="overTimeHourType"
-                                            (change)="onChangeOverTimeHourType($event.target.value)" id="2" value="2">
+                                            (change)="onChangeOverTimeHourType($event.target.value)" id="2" [value]="2">
                                         <label class="form-check-label-radio" for="2">2h</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" formControlName="overTimeHourType"
-                                            (change)="onChangeOverTimeHourType($event.target.value)" id="3" value="3">
+                                            (change)="onChangeOverTimeHourType($event.target.value)" id="3" [value]="3">
                                         <label class="form-check-label-radio" for="3">3h</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" formControlName="overTimeHourType"
-                                            (change)="onChangeOverTimeHourType($event.target.value)" id="4" value="4">
+                                            (change)="onChangeOverTimeHourType($event.target.value)" id="4" [value]="4">
                                         <label class="form-check-label-radio" for="4">4h</label>
                                     </div>
                                     <div class="form-check form-check-inline">

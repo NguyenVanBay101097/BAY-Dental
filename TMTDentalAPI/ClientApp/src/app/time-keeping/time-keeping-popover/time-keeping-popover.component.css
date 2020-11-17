@@ -92,3 +92,15 @@
     overflow: hidden;
     padding: 4px;
 }
+
+.icon-timekeeping{
+  text-align: center;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.label-popover-timekeeping{
+  padding-left: 5px;
+  font-size: 1rem;
+  color: #212529;
+}

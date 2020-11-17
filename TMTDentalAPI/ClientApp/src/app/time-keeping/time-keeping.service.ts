@@ -74,8 +74,8 @@ export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/ChamCongs";
-  create(val): Observable<ChamCongSave> {
-    return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
+  create(val) {
+    return this.http.post<ChamCongBasic>(this.base_api + this.apiUrl, val);
   }
 
   update(id, val) {

@@ -50,6 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public Guid EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
 
         public DateTime? TimeIn { get; set; }
 
