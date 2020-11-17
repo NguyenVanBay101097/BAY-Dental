@@ -464,6 +464,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PartnerCustomerReportInput
     {
         public DateTime? DateFrom { get; set; }
+        public Guid? CompanyId { get; set; }
         public DateTime? DateTo { get; set; }
     }
 

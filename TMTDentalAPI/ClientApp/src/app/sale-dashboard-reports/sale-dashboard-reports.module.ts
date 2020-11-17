@@ -8,9 +8,14 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
 import { RevenueReportModule } from '../revenue-report/revenue-report.module';
-
+import { SaleDashboardReportChartFlowYearComponent } from './sale-dashboard-report-chart-flow-year/sale-dashboard-report-chart-flow-year.component';
+import { SaleDashboardReportChartFlowMonthComponent } from './sale-dashboard-report-chart-flow-month/sale-dashboard-report-chart-flow-month.component';
 @NgModule({
-  declarations: [SaleDashboardReportFormComponent],
+  declarations: [
+    SaleDashboardReportFormComponent,
+    SaleDashboardReportChartFlowYearComponent,
+    SaleDashboardReportChartFlowMonthComponent
+  ],
   imports: [
     CommonModule,
     SaleDashboardReportsRoutingModule,

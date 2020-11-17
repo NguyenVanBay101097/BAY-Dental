@@ -202,53 +202,5 @@ namespace Infrastructure.Services
 
             return result;
         }
-
-        public async Task<RevenueReportResult> GetReportFlowYear(RevenueReportSearch val)
-        {
-            var modelDataObj = GetService<IIRModelDataService>();
-            var amlObj = GetService<IAccountMoveLineService>();
-            var account_type_revenue = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
-            var currentYear = DateTime.Now.Year;
-            var oldYear = currentYear - 1;
-            var query = amlObj._QueryGet(dateTo: val.DateTo, dateFrom: val.DateFrom, state: "posted", companyId: val.CompanyId);
-            query = query.Where(x => x.Account.UserTypeId == account_type_revenue.Id);
-            if (val.GroupBy == "date:month-current-year")
-            {
-                query = query.Where(x => x.Date.Value.Year == currentYear);
-            }
-            else if (val.GroupBy == "date:month-old-year")
-            {
-                query = query.Where(x => x.Date.Value.Year == oldYear);
-            }
-            var result = await query.GroupBy(x => 0).Select(x => new RevenueReportResult
-            {
-                Debit = x.Sum(s => s.Debit),
-                Credit = x.Sum(s => s.Credit),
-                Balance = x.Sum(s => s.Credit - s.Debit)
-            }).FirstOrDefaultAsync();
-
-            if (result == null)
-                return new RevenueReportResult();
-
-            result.Details = await query.Where(x => x.Date.Value.Year == currentYear).GroupBy(x => new
-            {
-                x.Date.Value.Year,
-                x.Date.Value.Month,
-            })
-              .Select(x => new RevenueReportResultDetail
-              {
-                  Year = x.Key.Year,
-                  Month = x.Key.Month,
-                  Debit = x.Sum(s => s.Debit),
-                  Credit = x.Sum(s => s.Credit),
-                  Balance = x.Sum(s => s.Credit - s.Debit),
-              }).ToListAsync();
-
-            foreach (var item in result.Details)
-                item.Name = new DateTime(item.Year, item.Month, 1).ToString("MM/yyyy");
-
-            return result;
-        }
-
     }
 }

@@ -17,6 +17,7 @@ export class RevenueReportResultDetails {
     balance: number;
     name: string;
     month: number;
+    day: number;
 }
 
 export class RevenueReportSearch {
@@ -35,8 +36,4 @@ export class RevenueReportService {
     getReport(val: any): Observable<RevenueReportResult> {
         return this.http.get<RevenueReportResult>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
-    getReportFlowYear(val: any): Observable<RevenueReportResult> {
-        return this.http.get<RevenueReportResult>(this.baseApi + this.apiUrl + '/GetReportFlowYear', { params: new HttpParams({ fromObject: val }) });
-    }
-
 }

@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { observable, Observable } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
@@ -14,7 +16,7 @@ import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/co
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiSearch, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { RevenueReportSearch, RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
+import { RevenueReportResultDetails, RevenueReportSearch, RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
 
 @Component({
   selector: 'app-sale-dashboard-report-form',
@@ -26,6 +28,7 @@ import { RevenueReportSearch, RevenueReportService } from 'src/app/revenue-repor
 })
 export class SaleDashboardReportFormComponent implements OnInit {
   @ViewChild('companyCbx', { static: true }) companyCbx: ComboBoxComponent;
+  @ViewChild('monthCbx', { static: true }) monthCbx: ComboBoxComponent;
   formGroup: FormGroup
   public aggregates: any[] = [
     { field: 'end', aggregate: 'sum' }, { field: 'credit', aggregate: 'sum' }
@@ -38,6 +41,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
   public aggregatesCommissionSettlement: any[] = [
     { field: 'amount', aggregate: 'sum' }
   ];
+
+  dateTo: any;
+  dateFrom: any;
 
   totalDebitNCC: number;
   totalDebitNCCByMonth: number;
@@ -54,34 +60,50 @@ export class SaleDashboardReportFormComponent implements OnInit {
   reportLedgerBank: any;
   moneyledger: number;
   moneyBank: number;
-  public reportCurrentYear: any[] = [];
-  public reportOldYear: any[] = [];
+  listMonthOfYears: any[] = [
+    { id: 1, name: "Tháng 1", value: 1 },
+    { id: 2, name: "Tháng 2", value: 2 },
+    { id: 3, name: "Tháng 3", value: 3 },
+    { id: 4, name: "Tháng 4", value: 4 },
+    { id: 5, name: "Tháng 5", value: 5 },
+    { id: 6, name: "Tháng 6", value: 6 },
+    { id: 7, name: "Tháng 7", value: 7 },
+    { id: 8, name: "Tháng 8", value: 8 },
+    { id: 9, name: "Tháng 9", value: 9 },
+    { id: 10, name: "Tháng 10", value: 10 },
+    { id: 11, name: "Tháng 11", value: 11 },
+    { id: 12, name: "Tháng 12", value: 12 },
+  ]
+  public reportCurrentYears: any[];
+  public reportOldYears: any[];
+
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
-    private authService: AuthService,
     private partnerService: PartnerService,
     private fb: FormBuilder,
     private reportService: AccountCommonPartnerReportService,
     private companyService: CompanyService,
     private intlService: IntlService,
     private reportGeneralLedgerService: AccountReportGeneralLedgerService,
-    private revenueReportService: RevenueReportService,
     private accountFinancialReportService: AccountFinancialReportService,
     private reportFinancialService: ReportFinancialService,
     private PhieuThuChiService: PhieuThuChiService,
-    private commissionSettlementReportsService: CommissionSettlementsService
+    private commissionSettlementReportsService: CommissionSettlementsService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       company: null,
-      dataTo: this.monthEnd,
-      dateForm: this.monthStart,
+      month: { id: new Date().getMonth() + 1, name: `Tháng ${new Date().getMonth() + 1}`, value: new Date().getMonth() + 1 },
     });
+    this.dateTo = this.intlService.formatDate(this.monthEnd, "yyyy-MM-ddT23:59");
+    this.dateFrom = this.intlService.formatDate(this.monthStart, "yyyy-MM-dd");
+
     this.companyCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.companyCbx.loading = true),
@@ -96,17 +118,21 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.loadAllData();
   }
 
+
+
   loadAllData() {
     this.loadDebitNCC();
     this.loadDataMoney();
     this.loadPartnerCustomerReport();
-    this.loadReportRevenueCurrentYear();
-    this.loadReportRevenueOldYear();
     this.loadDebitCustomer();
     this.loadFinacialReport();
     this.loadDebitNCCByMonth();
     this.loadPhieuThuChiReport();
     this.loadCommissionSettlementReport();
+  }
+
+  changeCompany() {
+    this.loadAllData();
   }
 
   loadCompany() {
@@ -125,16 +151,18 @@ export class SaleDashboardReportFormComponent implements OnInit {
     return this.companyService.getPaged(params);
   }
 
+  // filter by company
+
   loadDebitNCC() {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-
+    val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportService.getSummary(val).subscribe(res => {
-
       var total = aggregateBy(res, this.aggregates);
-      if (total) {
+      if (total && total['end']) {
         this.totalDebitNCC = total['end'].sum
+      } else {
+        this.totalDebitNCC = 0;
       }
     }, err => {
       console.log(err);
@@ -144,13 +172,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
   loadDebitCustomer() {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "customer";
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-
+    val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportService.getSummary(val).subscribe(res => {
-
       var total = aggregateBy(res, this.aggregates);
-      if (total) {
+      if (total && total['end']) {
         this.totalDebitCustomer = total['end'].sum
+      } else {
+        this.totalDebitCustomer = 0;
       }
     }, err => {
       console.log(err);
@@ -159,7 +187,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadDataMoney() {
     var val = new ReportCashBankGeneralLedger();
-    val.companyId = this.authService.userInfo.companyId;
+    val.companyId = val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
       this.reportLedgerBank = result;
       if (this.reportLedgerBank && this.reportLedgerBank.accounts && this.reportLedgerBank.accounts.length > 0) {
@@ -173,6 +201,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadPartnerCustomerReport() {
     var val = new PartnerCustomerReportInput();
+    val.companyId = val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.partnerService.getPartnerCustomerReport(val).subscribe(
       result => {
         this.customerReport = result;
@@ -183,64 +212,19 @@ export class SaleDashboardReportFormComponent implements OnInit {
     );
   }
 
-  loadReportRevenueCurrentYear() {
-    var val = new RevenueReportSearch();
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
-    val.groupBy = "date:month-current-year";
-    this.revenueReportService.getReportFlowYear(val).subscribe(result => {
-      if (result && result.details) {
-        this.defindMonthOfCurrentYear(result.details)
-      }
-    }, error => {
-      console.log(error);
-    });
+  // filter by month and company
+
+  changeMonth() {
+    this.dateFrom = this.intlService.formatDate(new Date(new Date().getFullYear(), this.formGroup.get('month').value.value - 1, 1), "yyyy-MM-dd");
+    this.dateTo = this.intlService.formatDate(new Date(new Date().getFullYear(), this.formGroup.get('month').value.value, 0), "yyyy-MM-dd");
+    this.loadByMonthAndCompany();
   }
 
-  loadReportRevenueOldYear() {
-    var val = new RevenueReportSearch();
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
-    val.groupBy = "date:month-old-year";
-    this.revenueReportService.getReportFlowYear(val).subscribe(result => {
-      if (result && result.details) {
-        this.defindMonthOfOldYear(result.details)
-      }
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  defindMonthOfCurrentYear(details) {
-    for (let index = 1; index <= new Date().getMonth() + 1; index++) {
-      var value = {
-        month: index,
-        data: 0,
-        year: new Date().getFullYear()
-      }
-      var model = details.find(x => x.month == index);
-      if (model) {
-        value.data = model.balance;
-        this.reportCurrentYear.push(value);
-      } else {
-        this.reportCurrentYear.push(value);
-      }
-    }
-  }
-
-  defindMonthOfOldYear(details) {
-    for (let index = 1; index <= new Date().getMonth() + 1; index++) {
-      var value = {
-        year: new Date().getFullYear() - 1,
-        month: index,
-        data: 0
-      }
-      var model = details.find(x => x.month == index);
-      if (model) {
-        value.data = model.balance;
-        this.reportOldYear.push(value);
-      } else {
-        this.reportOldYear.push(value);
-      }
-    }
+  loadByMonthAndCompany() {
+    this.loadFinacialReport();
+    this.loadDebitNCCByMonth();
+    this.loadCommissionSettlementReport();
+    this.loadPhieuThuChiReport();
   }
 
   loadFinacialReport() {
@@ -252,8 +236,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
         }
         var val = new AccoutingReport();
         val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-        val.dateFrom = this.intlService.formatDate(this.formGroup.get('dateFrom') ? this.formGroup.get('dateFrom').value : null, "yyyy-MM-dd");
-        val.dateTo = this.intlService.formatDate(this.formGroup.get('dateTo') ? this.formGroup.get('dateTo').value : null, "yyyy-MM-dd");
+        val.dateFrom = this.dateFrom;
+        val.dateTo = this.dateTo;
         val.debitCredit = this.formGroup.get('debitCredit') ? this.formGroup.get('debitCredit').value : false;
         if (this.accountFinancialReportBasic)
           val.accountReportId = this.accountFinancialReportBasic.id;
@@ -276,10 +260,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   loadDebitNCCByMonth() {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
-    val.fromDate = this.intlService.formatDate(this.formGroup.get('dateFrom') ? this.formGroup.get('dateFrom').value : null, "yyyy-MM-dd");
-    val.toDate = this.intlService.formatDate(this.formGroup.get('dateTo') ? this.formGroup.get('dateTo').value : null, "yyyy-MM-dd");
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-
+    val.fromDate = this.dateFrom;
+    val.toDate = this.dateTo; val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportService.getSummary(val).subscribe(res => {
       var total = aggregateBy(res, this.aggregates);
       if (total) {
@@ -293,9 +275,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadPhieuThuChiReport() {
     var val = new PhieuThuChiSearch()
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
-    val.dateFrom = this.intlService.formatDate(this.formGroup.get('dateFrom') ? this.formGroup.get('dateFrom').value : null, "yyyy-MM-dd");
-    val.dateTo = this.intlService.formatDate(this.formGroup.get('dateTo') ? this.formGroup.get('dateTo').value : null, "yyyy-MM-dd");
+    val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
+    val.dateFrom = this.dateFrom;
+    val.dateTo = this.dateTo;
     this.PhieuThuChiService.reportPhieuThuChi(val).subscribe(
       result => {
         if (result) {
@@ -310,9 +292,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadCommissionSettlementReport() {
     var val = new CommissionSettlementReport();
-    val.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
-    val.dateFrom = this.intlService.formatDate(this.formGroup.get('dateFrom') ? this.formGroup.get('dateFrom').value : null, "yyyy-MM-dd");
-    val.dateTo = this.intlService.formatDate(this.formGroup.get('dateTo') ? this.formGroup.get('dateTo').value : null, "yyyy-MM-dd");
+    val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : '';
+    val.dateFrom = this.dateFrom;
+    val.dateTo = this.dateTo;
     this.commissionSettlementReportsService.getReport(val).subscribe(result => {
       if (result) {
         var total = aggregateBy(result, this.aggregatesCommissionSettlement);
@@ -323,5 +305,36 @@ export class SaleDashboardReportFormComponent implements OnInit {
       console.log(err);
     });
 
+  }
+
+  redirectTo(value) {
+    switch (value) {
+      case "ncc-debit-report":
+        this.router.navigateByUrl("report-account-common/partner?result_selection=supplier");
+        break;
+      case "customer-debit-report":
+        this.router.navigateByUrl("report-account-common/partner?result_selection=customer");
+        break;
+      case "money-report":
+        this.router.navigateByUrl("report-general-ledgers/cash-bank");
+        break;
+      case "new-old-customer-report":
+        this.router.navigateByUrl("sale-report/partner");
+        break;
+      case "financial-report":
+        this.router.navigateByUrl("financial-report");
+        break;
+      case "chi-report":
+        this.router.navigateByUrl("phieu-thu-chi?type=chi");
+        break;
+      case "thu-report":
+        this.router.navigateByUrl("phieu-thu-chi?type=thu");
+        break;
+      case "hoa-hong-report":
+        this.router.navigateByUrl("commission-settlements/report");
+        break;
+      default:
+        break;
+    }
   }
 }

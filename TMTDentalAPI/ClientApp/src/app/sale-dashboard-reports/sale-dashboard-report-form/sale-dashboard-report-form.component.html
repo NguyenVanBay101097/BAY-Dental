@@ -1,240 +1,193 @@
-<div class="h-100 w-100 px-3 py-3 overflow-auto" [formGroup]="formGroup">
-
-    <div class="h-50 w-100 mh-header">
-        <div class="header border border-secondary rounded">
+<div class="row px-3 py-3 overflow-auto " [formGroup]="formGroup">
+    <div class="col-12">
+        <div class="border border-secondary rounded col-12 d-flex">
             <div class="header-title">
                 BÁO CÁO TỔNG QUAN
             </div>
             <div class="header-filter">
-                <kendo-combobox class="form-control" [data]="filteredCompanies" [textField]="'name'" [filterable]="true"
-                    #companyCbx formControlName="company" [valueField]="'id'" [placeholder]="'Tất cả chi nhánh'">
+                <kendo-combobox (valueChange)="changeCompany()" class="form-control" [data]="filteredCompanies"
+                    [textField]="'name'" [filterable]="true" #companyCbx formControlName="company" [valueField]="'id'"
+                    [placeholder]="'Tất cả chi nhánh'">
                 </kendo-combobox>
             </div>
         </div>
-        <div class="content">
-            <div class="content-left pr-3">
-                <div class="border border-secondary rounded bg-white w-100 h-100 overflow-hidden">
-                    <kendo-chart
-                        *ngIf="reportCurrentYear && reportOldYear && reportOldYear.length > 0 && reportCurrentYear.length > 0"
-                        class=" pl-3 pr-3" class="w-100 h-100">
-                        <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU NĂM SO VỚI CÙNG KỲ">
-                        </kendo-chart-title>
-                        <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
-                        <!-- <kendo-chart-tooltip format='{0} VNĐ'></kendo-chart-tooltip> -->
-                        <kendo-chart-series>
-                            <kendo-chart-series-item type="line" [data]="reportOldYear" field="data"
-                                categoryField="month" [style]="'smooth'" [name]="oldYear">
-                                <kendo-chart-series-item-tooltip>
-                                    <ng-template let-dataItem="dataItem">
-                                        Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
-                                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
-                                    </ng-template>
-                                </kendo-chart-series-item-tooltip>
-                            </kendo-chart-series-item>
-                            <kendo-chart-series-item type="line" [data]="reportCurrentYear" field="data"
-                                [dashType]="longDash" categoryField="month" [style]="'smooth'" [name]="currentYear">
-                                <kendo-chart-series-item-tooltip>
-                                    <ng-template let-dataItem="dataItem">
-                                        Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
-                                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
-                                    </ng-template>
-                                </kendo-chart-series-item-tooltip>
-                            </kendo-chart-series-item>
-                        </kendo-chart-series>
-                    </kendo-chart>
+        <div class="row">
+            <div class="col-8 pt-3">
+                <div class="border border-secondary rounded bg-white">
+                    <app-sale-dashboard-report-chart-flow-year
+                        [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
+                    </app-sale-dashboard-report-chart-flow-year>
                 </div>
             </div>
-            <div class="content-right pt-3 pl-3">
-                <div class="content-right-child pb-3 d-flex">
-                    <div class="w-50 h-100 pr-3">
-                        <div class="w-100 h-100 bg-white p-3 text-center border border-secondary rounded">
-                            <div class="text-top font-weight-bold">CÔNG NỢ NCC</div>
-                            <div class="text-bottom font-weight-bold text-danger">
+            <div class="col-4">
+                <div class="pb-3 d-flex pt-3">
+                    <div class="w-50 h-100 pr-2">
+                        <div class="position-relative bg-white p-4 text-center border border-secondary rounded">
+                            <div class="text-top font-weight-bold font-size">CÔNG NỢ NCC</div>
+                            <div class="text-bottom font-weight-bold text-danger font-size">
                                 {{(totalDebitNCC ? totalDebitNCC : 0 ) | number}}</div>
+                            <a (click)="redirectTo('ncc-debit-report')" class="position-absolute btn text-info">Chi tiết
+                                >></a>
                         </div>
                     </div>
-                    <div class="w-50 h-100 pl-3">
-                        <div class="w-100 h-100 bg-white p-3 text-center border border-secondary rounded">
-                            <div class="text-top font-weight-bold">PHẢI THU</div>
-                            <div class="text-bottom font-weight-bold text-danger">
+                    <div class="w-50 h-100 pl-2">
+                        <div class="position-relative bg-white p-4 text-center border border-secondary rounded">
+                            <div class="text-top font-weight-bold font-size">PHẢI THU</div>
+                            <div class="text-bottom font-weight-bold text-danger font-size">
                                 {{(totalDebitCustomer ? totalDebitCustomer : 0) | number}}</div>
+                            <a (click)="redirectTo('customer-debit-report')" class="position-absolute btn text-info">Chi
+                                tiết >></a>
                         </div>
                     </div>
                 </div>
-                <div class="content-right-child pb-3">
-                    <div class="h-100 w-100  text-center bg-white p-2 border border-secondary rounded">
-                        <div class=" w-100 h-30 font-weight-bold">BÁO CÁO TIỀN MẶT - NGÂN HÀNG
+                <div class="pb-3">
+                    <div class="position-relative text-center bg-white p-3 border border-secondary rounded">
+                        <div class="pb-2 font-weight-bold">BÁO CÁO TIỀN MẶT - NGÂN HÀNG
                         </div>
-                        <div class=" w-100 h-70 d-flex">
-                            <div class="w-50 h-100 border-right">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">TIỀN MẶT</div>
+                        <div class="d-flex">
+                            <div class="border-right flex">
+                                <div class=" text-center">
+                                    <div class="text-top font-weight-bold text-danger">TIỀN MẶT</div>
                                     <div class="text-bottom font-weight-bold text-primary">
                                         {{(moneyledger ? moneyledger : 0) | number}}</div>
                                 </div>
                             </div>
-                            <div class="w-50 h-100">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">NGÂN HÀNG</div>
+                            <div class="flex">
+                                <div class=" text-center">
+                                    <div class="text-top font-weight-bold text-danger">NGÂN HÀNG</div>
                                     <div class="text-bottom font-weight-bold text-primary">
                                         {{(moneyBank ? moneyBank : 0) | number}}</div>
                                 </div>
                             </div>
                         </div>
+                        <a (click)="redirectTo('money-report')" class="position-absolute btn text-info">Chi tiết >></a>
                     </div>
                 </div>
-                <div class="content-right-child pb-3">
-                    <div class="h-100 w-100  text-center bg-white p-2 border border-secondary rounded">
-                        <div class=" w-100 h-30 font-weight-bold">BÁO CÁO KHÁCH HÀNG CŨ - MỚI
+                <div class="pb-3">
+                    <div class="position-relative text-center bg-white p-3 border border-secondary rounded">
+                        <div class="pb-2 font-weight-bold">BÁO CÁO KHÁCH HÀNG CŨ - MỚI
                         </div>
-                        <div class=" w-100 h-70 d-flex">
-                            <div class="w-50 h-100 border-right">
-                                <div class="w-100 h-100  text-center">
+                        <div class="d-flex">
+                            <div class="border-right flex">
+                                <div class=" text-center">
                                     <div class="text-top font-weight-bold">KHÁCH HÀNG CŨ</div>
                                     <div class="text-bottom font-weight-bold text-primary">
                                         {{customerReport ? customerReport.customerOld : 0}}</div>
                                 </div>
                             </div>
-                            <div class="w-50 h-100">
-                                <div class="w-100 h-100  text-center">
+                            <div class="flex">
+                                <div class="text-center">
                                     <div class="text-top font-weight-bold">KHÁCH HÀNG MỚI</div>
                                     <div class="text-bottom font-weight-bold text-primary">
                                         {{customerReport ? customerReport.customerNew : 0}}</div>
                                 </div>
                             </div>
                         </div>
+                        <a (click)="redirectTo('new-old-customer-report')" class="position-absolute btn text-info
+                        ">Chi tiết >></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="h-50 w-100">
-        <kendo-chart>
-            <kendo-chart-title text="BÁO CÁO DOANH THU THEO NGÀY"></kendo-chart-title>
-            <kendo-chart-category-axis>
-                <kendo-chart-category-axis-item
-                    [categories]="['1', '2', '3', '4', '5', '6', '7','8', '9', '10', '11', '12', '13', '14','15', '16', '17', '18', '19', '20', '21','22', '23', '24', '25','26', '27', '28', '29', '30', '31']"
-                    [title]="{ text: 'Ngày' }">
-                </kendo-chart-category-axis-item>
-            </kendo-chart-category-axis>
-            <kendo-chart-series>
-                <kendo-chart-series-item type="column"
-                    [data]="[123, 276, 310, 212, 240, 156, 98, 310, 212, 240, 156, 98, 310, 212, 240, 156, 98, 310, 212, 240, 156, 98, 310, 212, 240, 156, 98, 310, 212, 240, 156]">
-                </kendo-chart-series-item>
-            </kendo-chart-series>
-        </kendo-chart>
-    </div>
-    <div class="h-50 w-100 mh-body">
-        <div class="header border border-secondary rounded">
+
+    <div class="col-12">
+        <div class="border border-secondary rounded col-12 d-flex">
             <div class="header-title">
                 BÁO CÁO THEO THÁNG
             </div>
             <div class="header-filter">
-                <kendo-combobox class="form-control" [data]="filteredCompanies" [textField]="'name'" [filterable]="true"
-                    #companyCbx formControlName="company" [valueField]="'id'">
+                <kendo-combobox (valueChange)="changeMonth()" class="form-control" [data]="listMonthOfYears"
+                    [textField]="'name'" [filterable]="false" #monthCbx formControlName="month" [valueField]="'id'">
                 </kendo-combobox>
             </div>
         </div>
-
-        <div class="content">
-            
-            <div class="h-50 w-100">
-                <div class="content-shape pr-3 pt-3">
-                    <div class="w-100 h-100 bg-white border border-secondary rounded p-3">
-                        <div class=" w-100 h-30 font-weight-bold">BÁO CÁO KẾT QUẢ KINH DOANH
-                        </div>
-                        <div class=" w-100 h-70 d-flex">
-                            <div class="w-50 h-100 border-right">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">DOANH THU</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalDoanhThu ? totalDoanhThu : 0) | number}}</div>
-                                </div>
-                            </div>
-                            <div class="w-50 h-100">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">CHI PHÍ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalChiPhi ? totalChiPhi : 0) | number}}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-shape pr-3 pt-3">
-                    <div class="w-100 h-100 bg-white border border-secondary rounded p-3">
-                        <div class=" w-100 h-30 font-weight-bold">BÁO CÁO CÔNG NỢ NCC
-                        </div>
-                        <div class=" w-100 h-70 d-flex">
-                            <div class="w-50 h-100 border-right">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">PHÁT SINH</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalDebitNCCByMonth ? totalDebitNCCByMonth : 0) | number}}</div>
-                                </div>
-                            </div>
-                            <div class="w-50 h-100">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">THANH TOÁN</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalCreditNCCByMonth ? totalCreditNCCByMonth : 0) | number}}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="row">
+            <div class="col-12 pt-3">
+                <div class="border border-secondary rounded">
+                    <app-sale-dashboard-report-chart-flow-month
+                        [dateTo]="dateTo"
+                        [dateFrom]="dateFrom"
+                        [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
+                    </app-sale-dashboard-report-chart-flow-month>
                 </div>
             </div>
-            <div class="h-50 w-100 ">
-                <div class="content-shape pl-3 pt-3">
-                    <div class="w-100 h-100 bg-white border border-secondary rounded p-3">
-                        <div class=" w-100 h-30 font-weight-bold">BÁO CÁO THU CHI
+            <div class="col-6 pt-3">
+                <div class="position-relative bg-white border border-secondary rounded p-3 mb-3 text-center">
+                    <div class="font-weight-bold">BÁO CÁO KẾT QUẢ KINH DOANH
+                    </div>
+                    <div class="d-flex">
+                        <div class="border-right flex">
+                            <div class=" text-center">
+                                <div class="text-top font-weight-bold">DOANH THU</div>
+                                <div class="text-bottom font-weight-bold text-success">
+                                    {{(totalDoanhThu ? totalDoanhThu : 0) | number}}</div>
+                            </div>
                         </div>
-                        <div class=" w-100 h-70 d-flex">
-                            <div class="w-50 h-100 border-right">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">THỰC THU</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalThu ? totalThu : 0) | number}}</div>
-                                </div>
-                            </div>
-                            <div class="w-50 h-100">
-                                <div class="w-100 h-100  text-center">
-                                    <div class="text-top font-weight-bold">THỰC CHI</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(totalChi ? totalChi : 0) | number}}</div>
-                                </div>
-                            </div>
+                        <div class=" text-center flex">
+                            <div class="text-top font-weight-bold">CHI PHÍ</div>
+                            <div class="text-bottom font-weight-bold text-danger">
+                                {{(totalChiPhi ? totalChiPhi : 0) | number}}</div>
                         </div>
                     </div>
+                    <a (click)="redirectTo('financial-report')" class="position-absolute btn text-info">Chi tiết >></a>
                 </div>
-                <div class="content-shape pl-3 pt-3 d-flex">
-                    <div class="content-shape-child  pr-3">
-                        <div class="w-100 h-100 bg-white border border-secondary rounded p-3">
-                            <div class=" w-100 h-30">
+                <div class="position-relative bg-white border border-secondary rounded p-3 text-center">
+                    <div class="font-weight-bold">BÁO CÁO CÔNG NỢ NCC
+                    </div>
+                    <div class="d-flex">
+                        <div class="border-right flex">
+                            <div class="text-center">
+                                <div class="text-top font-weight-bold">PHÁT SINH</div>
+                                <div class="text-bottom font-weight-bold text-success">
+                                    {{(totalDebitNCCByMonth ? totalDebitNCCByMonth : 0) | number}}</div>
                             </div>
-                            <div class=" w-100 h-70 d-flex">
-                                <div class="w-100 h-100 text-center">
-                                    <div class="text-top font-weight-bold">HOA HỒNG ĐIỀU TRỊ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{ (totalHoaHong ? totalHoaHong : 0) | number}}
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="text-center flex">
+                            <div class="text-top font-weight-bold">THANH TOÁN</div>
+                            <div class="text-bottom font-weight-bold text-danger">
+                                {{(totalCreditNCCByMonth ? totalCreditNCCByMonth : 0) | number}}</div>
                         </div>
                     </div>
-                    <!-- <div class="content-shape-child pl-3">
-                        <div class="w-100 h-100 bg-white border border-secondary rounded p-3">
-                            <div class=" w-100 h-30">
-                            </div>
-                            <div class=" w-100 h-70 d-flex">
-                                <div class="w-100 h-100 text-center">
-                                    <div class="text-top font-weight-bold">CHI PHÍ LABO</div>
-                                    <div class="text-bottom font-weight-bold text-primary">400000</div>
-                                </div>
+                    <a (click)="redirectTo('ncc-debit-report')" class="position-absolute btn text-info">Chi tiết >></a>
+                </div>
+            </div>
+            <div class="col-6 pt-3">
+                <div class="bg-white border border-secondary rounded mb-3 p-3 text-center">
+                    <div class="font-weight-bold">BÁO CÁO THU CHI
+                    </div>
+                    <div class="d-flex">
+                        <div class="border-right flex">
+                            <div class="position-relative text-center">
+                                <div class="text-top font-weight-bold">THỰC THU</div>
+                                <div class="text-bottom font-weight-bold text-success">
+                                    {{(totalThu ? totalThu : 0) | number}}</div>
+                                <a (click)="redirectTo('thu-report')" style="bottom: -20px;"
+                                    class="position-absolute btn text-info">Chi tiết
+                                    >></a>
                             </div>
                         </div>
-                    </div> -->
+                        <div class="position-relative flex text-center">
+                            <div class="text-top font-weight-bold">THỰC CHI</div>
+                            <div class="text-bottom font-weight-bold text-danger">
+                                {{(totalChi ? totalChi : 0) | number}}</div>
+                            <a (click)="redirectTo('chi-report')" style="bottom: -20px;"
+                                class="position-absolute btn text-info">Chi tiết
+                                >></a>
+                        </div>
+                    </div>
+
                 </div>
+                <div class="position-relative bg-white border border-secondary rounded p-cu">
+                    <div class="text-center">
+                        <div class="text-top font-weight-bold">HOA HỒNG ĐIỀU TRỊ</div>
+                        <div class="text-bottom font-weight-bold text-success">
+                            {{ (totalHoaHong ? totalHoaHong : 0) | number}}
+                        </div>
+                    </div>
+                    <a (click)="redirectTo('hoa-hong-report')" class="position-absolute btn text-info">Chi tiết >></a>
+                </div>
+
             </div>
         </div>
     </div>
