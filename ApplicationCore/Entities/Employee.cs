@@ -74,7 +74,7 @@ namespace ApplicationCore.Entities
         public HrPayrollStructureType StructureType { get; set; }
 
         /// <summary>
-        /// Tiền lương theo tháng, nếu StructureType.WageType == monthly
+        /// Tiền lương theo tháng, lương cơ bản theo hợp đồng
         /// </summary>
         public decimal? Wage { get; set; }
 
@@ -93,5 +93,28 @@ namespace ApplicationCore.Entities
         /// Mã vân tay
         /// </summary>
         public string EnrollNumber { get; set; }
+
+        /// <summary>
+        /// Số ngày nghỉ/tháng
+        /// </summary>
+        public decimal? LeavePerMonth { get; set; }
+
+        /// <summary>
+        /// số giờ công chuẩn 1 ngày
+        /// </summary>
+        public decimal? RegularHour { get; set; }
+
+        /// <summary>
+        /// tỉ lệ lương tăng ca
+        /// </summary>
+        public decimal? OvertimeRate { get; set; }
+        /// <summary>
+        /// tỉ lệ lương ngày đi làm thêm
+        /// </summary>
+        public decimal? RestDayRate { get; set; }
+        /// <summary>
+        /// trợ cấp
+        /// </summary>
+        public decimal? Allowance { get; set; }
     }
 }
