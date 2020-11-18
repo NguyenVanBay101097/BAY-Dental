@@ -18,6 +18,7 @@ export class RevenueReportResultDetails {
     name: string;
     month: number;
     day: number;
+    year: number;
 }
 
 export class RevenueReportSearch {

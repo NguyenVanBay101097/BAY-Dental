@@ -3,24 +3,17 @@
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
     <kendo-chart-series>
-        <kendo-chart-series-item *ngIf="reportViewOldYears && reportViewOldYears.length > 0" type="column"
-            [data]="reportViewOldYears" field="data" [dashType]="longDash" categoryField="month" [style]="'smooth'"
-            [name]="oldYear">
-            <kendo-chart-series-item-tooltip>
-                <ng-template let-dataItem="dataItem">
-                    Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
-                    <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
-                </ng-template>
-            </kendo-chart-series-item-tooltip>
-        </kendo-chart-series-item>
-        <kendo-chart-series-item *ngIf="reportViewCurYears && reportViewCurYears.length > 0" type="column"
-            [data]="reportViewCurYears" field="data" categoryField="month" [style]="'smooth'" [name]="curYear">
-            <kendo-chart-series-item-tooltip>
-                <ng-template let-dataItem="dataItem">
-                    Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
-                    <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
-                </ng-template>
-            </kendo-chart-series-item-tooltip>
-        </kendo-chart-series-item>
+        <ng-container
+            *ngIf="reportViewYearDicts[curYear] && reportViewYearDicts[curYear].length > 0 && reportViewYearDicts[oldYear] && reportViewYearDicts[oldYear].length > 0">
+            <kendo-chart-series-item *ngFor="let item of listYears" type="column" [data]="reportViewYearDicts[item]"
+                field="data" categoryField="month" [style]="'smooth'" [name]="'Năm '+item">
+                <kendo-chart-series-item-tooltip>
+                    <ng-template let-dataItem="dataItem">
+                        Doanh thu tháng <b>{{dataItem.month}}/{{dataItem.year}}</b>:
+                        <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
+                    </ng-template>
+                </kendo-chart-series-item-tooltip>
+            </kendo-chart-series-item>
+        </ng-container>
     </kendo-chart-series>
 </kendo-chart>
