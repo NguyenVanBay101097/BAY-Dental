@@ -333,6 +333,21 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   }
 
+  deleteTimeKeeping(evt,date,employee) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa chấm công vào ${this.intl.formatDate(new Date(date), "EEEE dd/MM/yyyy")} của nhân viên ${employee.name}`;
+    modalRef.componentInstance.title = "Xóa chấm công";
+    modalRef.result.then(() => {
+      this.timeKeepingService.deleteChamCong(evt.id).subscribe(
+        () => {
+          var val = [];
+          val.push(employee);
+          this.loadAllChamCong(val);
+        }
+      )
+    });
+  }
+
   setupWordEntryType() {
     this.router.navigateByUrl("time-keepings/types");
   }
@@ -391,6 +406,15 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         this.getDateMonthList();
       });
     });
+  }
+
+  checkOverTime(value){
+    if (value !== undefined) {
+      if (value.overTime) {
+        return true;
+      }
+      return false;
+    }
   }
 
   createFullMonthTimeKeeping() {

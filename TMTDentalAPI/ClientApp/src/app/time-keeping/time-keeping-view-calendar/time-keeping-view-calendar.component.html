@@ -85,23 +85,24 @@
         <tbody>
             <ng-container *ngFor="let empl of listEmployeies">
                 <tr>
-                    <td rowspan="2" class="oe_kanban_label_Emp">{{empl.name}}</td>
+                    <th  class="oe_kanban_label_Emp">{{empl.name}}</th>
                     <!-- <th scope="row" style="min-width: 200px;"></th> -->
                     <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                         <div class="oe_kanban_content">
                             <app-time-keeping-popover [line]="date"
-                                (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)">
+                                (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)" (removeTime)="deleteTimeKeeping($event,date.date,empl)">
                             </app-time-keeping-popover>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
-                        <div class="oe_kanban_content_timeOver">
+                        <div class="oe_kanban_content_timeOver" *ngIf="checkOverTime(date.chamCongs[0])">
                             <span>{{getOverTime(date.chamCongs[0])}}</span>
                         </div>
                     </td>
                 </tr>
+                <!-- <tr>
+                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
+                       
+                    </td>
+                </tr> -->
             </ng-container>
 
         </tbody>

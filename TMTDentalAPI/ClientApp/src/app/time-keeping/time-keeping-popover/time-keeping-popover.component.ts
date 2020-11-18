@@ -17,6 +17,8 @@ export class TimeKeepingPopoverComponent implements OnInit {
   title: 'Thêm chấm công';
   @Input() line: any;
   @Output() formDate = new EventEmitter<any>();
+  @Output() removeTime = new EventEmitter<any>();
+
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   constructor(
@@ -72,6 +74,13 @@ export class TimeKeepingPopoverComponent implements OnInit {
     res.overTimeHour = res.overTimeHourType === 'orther' ? res.overTimeHour : parseInt(res.overTimeHourType);
     res.id = res.id ? res.id : null;
     this.formDate.emit(res);
+    this.popover.close();
+  }
+
+  onRemoveTimeKeeping(){
+    debugger
+    var res = this.formGroup.value;
+    this.removeTime.emit(res);
     this.popover.close();
   }
 
