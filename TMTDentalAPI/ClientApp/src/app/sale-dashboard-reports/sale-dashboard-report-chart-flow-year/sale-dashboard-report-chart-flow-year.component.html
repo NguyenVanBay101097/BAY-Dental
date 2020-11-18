@@ -1,9 +1,9 @@
 <kendo-chart class="mh-chart-year p-3">
-    <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU NĂM SO VỚI CÙNG KỲ">
+    <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU DỊCH VỤ NĂM SO VỚI CÙNG KỲ">
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
     <kendo-chart-series>
-        <kendo-chart-series-item *ngIf="reportViewOldYears && reportViewOldYears.length > 0" type="line"
+        <kendo-chart-series-item *ngIf="reportViewOldYears && reportViewOldYears.length > 0" type="column"
             [data]="reportViewOldYears" field="data" [dashType]="longDash" categoryField="month" [style]="'smooth'"
             [name]="oldYear">
             <kendo-chart-series-item-tooltip>
@@ -13,7 +13,7 @@
                 </ng-template>
             </kendo-chart-series-item-tooltip>
         </kendo-chart-series-item>
-        <kendo-chart-series-item *ngIf="reportViewCurYears && reportViewCurYears.length > 0" type="line"
+        <kendo-chart-series-item *ngIf="reportViewCurYears && reportViewCurYears.length > 0" type="column"
             [data]="reportViewCurYears" field="data" categoryField="month" [style]="'smooth'" [name]="curYear">
             <kendo-chart-series-item-tooltip>
                 <ng-template let-dataItem="dataItem">

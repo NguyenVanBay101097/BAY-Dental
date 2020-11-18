@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { observable, Observable } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
-import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
@@ -138,15 +138,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
   // filter by company
 
   loadDebitNCC() {
-    var val = new AccountCommonPartnerReportSearch();
+    var val = new AccountCommonPartnerReportSearchV2();
     val.resultSelection = "supplier";
     val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-    this.reportService.getSummary(val).subscribe(res => {
-      var total = aggregateBy(res, this.aggregates);
-      if (total && total['end']) {
-        this.totalDebitNCC = total['end'].sum
-      } else {
-        this.totalDebitNCC = 0;
+    this.reportService.getSummaryPartner(val).subscribe(res => {
+      if (res) {
+        this.totalDebitNCC = (res.debit - res.credit) * -1;
       }
     }, err => {
       console.log(err);
@@ -154,15 +151,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadDebitCustomer() {
-    var val = new AccountCommonPartnerReportSearch();
+    var val = new AccountCommonPartnerReportSearchV2();
     val.resultSelection = "customer";
     val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-    this.reportService.getSummary(val).subscribe(res => {
-      var total = aggregateBy(res, this.aggregates);
-      if (total && total['end']) {
-        this.totalDebitCustomer = total['end'].sum
-      } else {
-        this.totalDebitCustomer = 0;
+    this.reportService.getSummaryPartner(val).subscribe(res => {
+      if (res) {
+        this.totalDebitCustomer = res.debit - res.credit;
       }
     }, err => {
       console.log(err);

@@ -3,7 +3,7 @@
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
     <kendo-chart-series>
-        <kendo-chart-series-item *ngIf="reportViewDateOfMonth && reportViewDateOfMonth.length > 0" type="column"
+        <kendo-chart-series-item *ngIf="reportViewDateOfMonth && reportViewDateOfMonth.length > 0" type="line"
             [data]="reportViewDateOfMonth" field="data" [dashType]="longDash" categoryField="day" [style]="'smooth'"
             [name]="'Tháng ' + month">
             <kendo-chart-series-item-tooltip>

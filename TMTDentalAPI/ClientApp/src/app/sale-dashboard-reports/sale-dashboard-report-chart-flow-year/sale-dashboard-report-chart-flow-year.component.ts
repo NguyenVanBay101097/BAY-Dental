@@ -58,7 +58,7 @@ export class SaleDashboardReportChartFlowYearComponent implements OnInit, OnChan
   defindMonthOfYear() {
     this.reportViewOldYears = [];
     this.reportViewCurYears = [];
-    for (let index = 1; index <= new Date().getMonth() + 1; index++) {
+    for (let index = 1; index <= 12; index++) {
       var obj = {
         month: index,
         data: 0,
