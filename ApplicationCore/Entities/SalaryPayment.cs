@@ -37,7 +37,7 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// advance : tạm ứng
-        /// salaries: chi lương
+        /// salary: chi lương
         /// </summary>
         public string Type { get; set; }
 
@@ -45,6 +45,7 @@ namespace ApplicationCore.Entities
         /// Số tiền
         /// </summary>
         public decimal Amount { get; set; }
+
 
         /// <summary>
         /// Mô tả
