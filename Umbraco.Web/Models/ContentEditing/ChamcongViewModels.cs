@@ -104,4 +104,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
         public Guid WorkEntryTypeId { get; set; }
     }
+
+    public class TaoChamCongNguyenThangViewModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+    }
 }

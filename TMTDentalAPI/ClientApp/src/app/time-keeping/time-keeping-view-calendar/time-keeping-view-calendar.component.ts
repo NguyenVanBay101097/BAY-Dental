@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { Router } from '@angular/router';
-import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged, ChamCongSave } from '../time-keeping.service';
+import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged, ChamCongSave, TaoChamCongNguyenThangViewModel } from '../time-keeping.service';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
 import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
@@ -390,6 +390,40 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
         });
         this.getDateMonthList();
       });
+    });
+  }
+
+  createFullMonthTimeKeeping() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.body = `Bạn muốn chấm công đi làm cho tất cả nhân viên`;
+    modalRef.componentInstance.title = "Chấm công nguyên tháng";
+    modalRef.result.then(() => {
+      var now = new Date(new Date().toDateString());
+      var res = new TaoChamCongNguyenThangViewModel();
+      res.year = now.getFullYear();
+      res.month = now.getMonth() + 1;
+
+      this.timeKeepingService.createFullMonthTimeKeeping(res).subscribe(
+        rs => {
+          debugger
+          var val = [];
+          if(rs.length > 0)
+          {
+            rs.forEach(item => {
+              val.push(item);
+            });   
+          }
+                        
+          this.loadAllChamCong(val);
+          this.notificationService.show({
+            content: 'Thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }
+      )
     });
   }
 

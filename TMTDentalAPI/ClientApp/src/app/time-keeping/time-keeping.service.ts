@@ -8,7 +8,7 @@ export class ChamCongSave {
   employeeId: string;
   type: string;
   overTime: string;
-  overTimeHour:number;
+  overTimeHour: number;
   date: Date;
   status: string;
 }
@@ -34,7 +34,7 @@ export class ChamCongBasic {
   status: string;
   hourWorked: number;
   date: string;
-  type:string;
+  type: string;
   employee: EmployeeBasic;
   employeeId: string;
   workEntryTypeId: string;
@@ -65,6 +65,11 @@ export class ChamCongPagging {
   totalItems: number;
   limit: number;
   items: ChamCongBasic[]
+}
+
+export class TaoChamCongNguyenThangViewModel {
+  year: number;
+  month: number;
 }
 
 @Injectable({
@@ -124,5 +129,9 @@ export class TimeKeepingService {
   }
   timeKeepingForAll(val) {
     return this.http.post(this.base_api + this.apiUrl + '/TimeKeepingForAll', val);
+  }
+
+  createFullMonthTimeKeeping(val): Observable<any[]> {
+    return this.http.post<any[]>(this.base_api + this.apiUrl + '/FullMonthTimeKeeping', val);
   }
 }

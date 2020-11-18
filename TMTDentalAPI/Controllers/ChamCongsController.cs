@@ -152,6 +152,17 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.ChamCong.Create")]
+        public async Task<IActionResult> FullMonthTimeKeeping(TaoChamCongNguyenThangViewModel val)
+        {
+            _unitOfWork.BeginTransaction();
+            var res = await _chamCongService.CreateFullMonthTimekeeping(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+
         //[HttpPost("[action]")]
         //public async Task<IActionResult> ExportExcelFile(employeePaged val)
         //{
