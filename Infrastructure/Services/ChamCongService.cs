@@ -752,7 +752,7 @@ namespace Infrastructure.Services
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
             await base.UpdateAsync(entities);
-            await CheckChamCong(entities);
+           // await CheckChamCong(entities);
         }
 
         public async Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val)
