@@ -21,6 +21,8 @@ namespace Infrastructure.Services
         T GetById(object id);
         Task<T> GetByIdAsync(object id);
 
+        Task<IEnumerable<T>> GetList(IEnumerable<Guid> ids, int limit = 200);
+
         T Create(T entity);
         Task<T> CreateAsync(T entity);
         Task<IEnumerable<T>> CreateAsync(IEnumerable<T> entities);

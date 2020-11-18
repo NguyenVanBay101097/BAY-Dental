@@ -420,49 +420,35 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleReportPartnerItem>> GetReportPartner(SaleReportPartnerSearch val)
         {
             //Thông kê tình hình điều trị của khách hàng, tính số phiếu điều trị, lần cuối điều trị, để từ đó lọc những khách hàng mới hay cũ
-
+            var saleObj = GetService<ISaleOrderService>();
             var companyId = CompanyId;
-            var query = _context.SaleReports.Where(x => x.CompanyId == companyId);
-            query = query.Where(x => !x.IsQuotation.HasValue || x.IsQuotation == false);
-            var query2 = query.GroupBy(x => new
+
+            var states = new string[] { "draft", "cancel" };
+            var query = saleObj.SearchQuery(x => x.CompanyId == companyId && !states.Contains(x.State) && (!x.IsQuotation.HasValue || x.IsQuotation == false));
+            var data = await query.GroupBy(x => x.PartnerId).Select(x => new SaleReportPartnerItem
             {
-                PartnerName = x.Partner.Name,
-                PartnerPhone = x.Partner.Phone,
-            }).Select(x => new SaleReportPartnerItem
-            {
-                PartnerName = x.Key.PartnerName,
-                PartnerPhone = x.Key.PartnerPhone,
+                PartnerId = x.Key,
                 OrderCount = x.Count(),
-                LastDateOrder = x.Max(s => s.Date)
-            });
+                LastDateOrder = x.Max(s => s.DateOrder)
+            }).ToListAsync();
 
-            var now = DateTime.Now;
-            if (val.MonthsFrom.HasValue)
-            {
-                var dateFrom = now.AddMonths(-val.MonthsFrom.Value);
-                query2 = query2.Where(x => x.LastDateOrder <= dateFrom);
-            }
-
-            if (val.MonthsTo.HasValue)
-            {
-                var dateTo = now.AddMonths(-val.MonthsTo.Value);
-                query2 = query2.Where(x => x.LastDateOrder >= dateTo);
-            }
-
-            if (!string.IsNullOrEmpty(val.Search))
-            {
-                query2 = query2.Where(x => x.PartnerName.Contains(val.Search) || x.PartnerPhone.Contains(val.Search));
-            }
-
-            var list = await query2.ToListAsync();
+            var partner_ids = data.Select(x => x.PartnerId).ToList();
+            var partnerObj = GetService<IPartnerService>();
+            var partners = await partnerObj.GetList(partner_ids);
+            var partnerDict = partners.ToDictionary(x => x.Id, x => x);
 
             var result = new List<SaleReportPartnerItem>();
-            foreach (var item in list)
+            foreach (var item in data)
             {
                 if (val.PartnerDisplay == "new" && item.OrderCount != 1)
                     continue;
                 if (val.PartnerDisplay == "old" && item.OrderCount == 1)
                     continue;
+                var partner = partnerDict[item.PartnerId];
+                item.PartnerName = partner.Name;
+                item.PartnerPhone = partner.Phone;
+                item.PartnerDisplayName = partner.DisplayName;
+
                 result.Add(item);
             }
 

@@ -8,6 +8,11 @@ namespace ApplicationCore.Entities
 {
     public class AppTenant: AdminBaseEntity
     {
+        public AppTenant()
+        {
+            Version = "1.0";
+        }
+
         public string Name { get; set; }
 
         public string Email { get; set; }
@@ -22,5 +27,7 @@ namespace ApplicationCore.Entities
         /// Ngay het han
         /// </summary>
         public DateTime? DateExpired { get; set; }
+
+        public string Version { get; set; }
     }
 }

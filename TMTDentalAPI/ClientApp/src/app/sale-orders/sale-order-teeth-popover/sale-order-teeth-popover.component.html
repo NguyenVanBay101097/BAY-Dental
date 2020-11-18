@@ -1,20 +1,8 @@
 <span class="d-flex">
-    <span>
-        <span *ngFor="let teeth of this.lineTeeth; let i = index">{{teeth.Name}} {{i !== this.lineTeeth.length - 1? ',': ''}}</span>
-<span>{{lineDiagnostic ? (this.lineTeeth.length>0?'; ':'') + lineDiagnostic : ''}}</span>&nbsp;
-</span>
-<a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
-    <!-- <span *ngFor="let teeth of teethSelected" class="badge badge-primary mr-1">{{teeth.Name}}</span> -->
-    <!-- <span *ngFor="let teeth of teethSelected" style="position: relative;">
-        <span style="font-size: 11px; position: absolute; color: white; left:
-            3px;">{{teeth.name}}</span>
-        <i class="fas fa-tooth text-info mr-1" style="font-size: 20px;"></i>
-    </span> -->
-    <!-- <span *ngIf="!teethSelected || teethSelected.length ==0">
-        <i class="fas fa-tooth text-info"></i>
-    </span> -->
-    <i class="far fa-edit text-info"></i>
-</a>
+    {{showInfo()}}
+    <a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+        <i class="far fa-edit text-info"></i>
+    </a>
 </span>
 
 <ng-template #popTitle>
@@ -45,12 +33,14 @@
                 <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
             </div>
         </div>
-        <div class="teeth-map">
-            <table class="table">
+        <div class="teeth-map mb-2">
+            <table class="table table-sm">
                 <tr *ngFor="let ham of hamList | keyvalue">
                     <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
-                        <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
-                            {{rang.Name}}
+                        <div class="tooth-wrapper">
+                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                                {{rang.Name}}
+                            </div>
                         </div>
                     </td>
                 </tr>

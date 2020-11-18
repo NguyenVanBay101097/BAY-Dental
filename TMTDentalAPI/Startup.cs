@@ -49,6 +49,7 @@ using Microsoft.Net.Http.Headers;
 using ApplicationCore.Utilities;
 using TMTDentalAPI.ActionFilters;
 using TMTDentalAPI.OdataControllers;
+using Serilog;
 
 namespace TMTDentalAPI
 {
@@ -551,6 +552,9 @@ namespace TMTDentalAPI
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSerilogRequestLogging();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();

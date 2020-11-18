@@ -69,6 +69,21 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     }
   }
 
+  
+  showInfo() {
+    var list = [];
+    if (this.lineTeeth.length) {
+      list.push(this.lineTeeth.map(x => x.Name).join(','));
+    }
+
+    if (this.line.Diagnostic) {
+      list.push(this.line.Diagnostic);
+    }
+
+    return list.join('; ');
+  }
+
+
   loadToothCategories() {
     // return this.toothCategoryService.getAll().subscribe(
     //   result => {

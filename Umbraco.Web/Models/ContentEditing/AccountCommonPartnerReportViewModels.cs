@@ -37,6 +37,40 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
     }
 
+    public class AccountCommonPartnerReportSearchV2
+    {
+        public AccountCommonPartnerReportSearchV2()
+        {
+            ResultSelection = "customer";
+            //Display = "all";
+            Display = "not_zero";
+        }
+        /// <summary>
+        /// Từ ngày
+        /// </summary>
+        public DateTime? FromDate { get; set; }
+
+        /// <summary>
+        /// Đến ngày
+        /// </summary>
+        public DateTime? ToDate { get; set; }
+        /// <summary>
+        /// Đối tác
+        /// </summary>
+        public IEnumerable<Guid> PartnerIds { get; set; } = new List<Guid>();
+
+        public string ResultSelection { get; set; }
+
+        public string Display { get; set; }
+
+        public string Search { get; set; }
+
+        /// <summary>
+        /// Force company
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+    }
+
     public class AccountCommonPartnerReportItem
     {
         public Guid PartnerId { get; set; }

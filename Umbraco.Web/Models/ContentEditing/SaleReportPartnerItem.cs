@@ -13,5 +13,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? OrderCount { get; set; }
 
         public DateTime? LastDateOrder { get; set; }
+
+        public Guid PartnerId { get; set; }
+
+        public string PartnerDisplayName { get; set; }
     }
 }
