@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Utilities;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -241,7 +242,7 @@ namespace Infrastructure.Services
             return list2;
         }
 
-        public async Task _SumDebit(AccountCommonPartnerReportSearchV2 data)
+        public IQueryable<AccountMoveLine> _GetPartnerReportQuery(AccountCommonPartnerReportSearchV2 data)
         {
             string[] accountTypes = new string[] { "receivable", "payable" };
             if (data.ResultSelection == "customer")
@@ -262,6 +263,22 @@ namespace Infrastructure.Services
             query = query.Where(x => accountTypes.Contains(x.Account.InternalType));
             if (data.PartnerIds.Any())
                 query = query.Where(x => x.PartnerId.HasValue && data.PartnerIds.Contains(x.PartnerId.Value));
+            return query;
+        }
+
+        public async Task<AccountCommonPartnerReportSearchV2Result> ReportSumaryPartner(AccountCommonPartnerReportSearchV2 val)
+        {
+            var query = _GetPartnerReportQuery(val);
+            var saleOrderObj = (ISaleOrderService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderService));
+            var countSaleOrder = await saleOrderObj.SearchQuery(x => val.PartnerIds.Contains(x.PartnerId)).CountAsync();
+            var result = await query.Select(x => new AccountCommonPartnerReportSearchV2Result
+            {
+                Debit = query.Sum(s => s.Debit),
+                Credit = query.Sum(s => s.Credit),
+                CountSaleOrder = countSaleOrder,
+                InitialBalance = query.Sum(s => s.Debit) - query.Sum(s => s.Credit)
+            }).FirstOrDefaultAsync();
+            return result;
         }
     }
 }

@@ -41,9 +41,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public AccountCommonPartnerReportSearchV2()
         {
-            ResultSelection = "customer";
-            //Display = "all";
-            Display = "not_zero";
+            ResultSelection = "customer_supplier";
         }
         /// <summary>
         /// Từ ngày
@@ -54,21 +52,31 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Đến ngày
         /// </summary>
         public DateTime? ToDate { get; set; }
+
         /// <summary>
         /// Đối tác
         /// </summary>
         public IEnumerable<Guid> PartnerIds { get; set; } = new List<Guid>();
 
+        /// <summary>
+        /// 1.customer : force Customer
+        /// 2.supplier : force Supplier
+        /// 3.customer_supplier : All customer and supplier
+        /// </summary>
         public string ResultSelection { get; set; }
-
-        public string Display { get; set; }
-
-        public string Search { get; set; }
 
         /// <summary>
         /// Force company
         /// </summary>
         public Guid? CompanyId { get; set; }
+    }
+
+    public class AccountCommonPartnerReportSearchV2Result
+    {
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
+        public int CountSaleOrder { get; set; }
+        public decimal InitialBalance { get; set; }
     }
 
     public class AccountCommonPartnerReportItem
