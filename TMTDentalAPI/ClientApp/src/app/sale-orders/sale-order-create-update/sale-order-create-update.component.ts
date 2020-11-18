@@ -474,12 +474,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   onApplyDiscount(val: any) {
     if (this.saleOrderId) {
-      this.discountDefault = val;
-      this.discountDefault.saleOrderId = this.saleOrderId;
-      this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
-        this.loadRecord();
-      }, (error) => {
-        this.errorService.show(error);
+      this.saveRecord().subscribe(() => {
+        this.discountDefault = val;
+        this.discountDefault.saleOrderId = this.saleOrderId;
+        this.saleOrderService.applyDiscountDefault(this.discountDefault).subscribe(() => {
+          this.loadRecord();
+        }, (error) => {
+          this.errorService.show(error);
+        });
       });
     }
     else {
@@ -510,16 +512,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   getDiscountNumber(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
     if (discountType == 'fixed') {
-      return line.get('discountFixed').value;
+      return line.get('DiscountFixed').value;
     } else {
-      return line.get('discount').value;
+      return line.get('Discount').value;
     }
   }
 
   getDiscountTypeDisplay(line: FormGroup) {
-    var discountType = line.get('discountType') ? line.get('discountType').value : 'percentage';
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
     if (discountType == 'fixed') {
       return "";
     } else {

@@ -225,9 +225,9 @@
                                                         </kendo-numerictextbox>
                                                     </td>
                                                     <td class="text-right">
-                                                        <span
-                                                            *ngIf="stateControl.value !== 'draft'">{{ line.get('DiscountFixed').value | number }}
-                                                            {{line.get('DiscountType').value !== 'percentage'?'%':''}}</span>
+                                                        <span *ngIf="stateControl.value !== 'draft'">
+                                                            {{ getDiscountNumber(line) | number }}{{getDiscountTypeDisplay(line)}}
+                                                        </span>
                                                         <span *ngIf="stateControl.value === 'draft'">
                                                             <app-sale-order-line-discount-odata-popover
                                                                 [line]="line.value"

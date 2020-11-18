@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
-import { AccountCommonPartnerReport, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService } from 'src/app/promotion-programs/promotion-program.service';
@@ -32,6 +33,7 @@ export class PartnerOverviewComponent implements OnInit {
   search: string;
 
   constructor(
+    private authService: AuthService,
     private activeRoute: ActivatedRoute,
     private PartnerOdataService: PartnersService,
     private partnerService: PartnerService,
@@ -74,7 +76,11 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   loadReport() {
-    this.accountCommonPartnerReportService.getSummaryByPartner(this.partnerId).subscribe(
+    var val = new AccountCommonPartnerReportSearchV2();
+    val.partnerIds.push(this.partnerId);
+    val.companyId = this.authService.userInfo.companyId;
+    val.resultSelection = "customer";
+    this.accountCommonPartnerReportService.getSummaryPartner(val).subscribe(
       result => {
         this.accountCommonPartnerReport = result
       }
@@ -89,7 +95,7 @@ export class PartnerOverviewComponent implements OnInit {
     val.offset = 0;
     val.programType = 'promotion_program';
     this.saleCouponProgramService.getPaged(val).subscribe((res: any) => {
-    this.promotions = res.items;
+      this.promotions = res.items;
     });
   }
 

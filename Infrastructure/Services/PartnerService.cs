@@ -283,30 +283,7 @@ namespace Infrastructure.Services
         private async Task<string> GenerateUniqueRef(string type = "customer")
         {
             var seqObj = GetService<IIRSequenceService>();
-            if (type == "customer")
-            {
-                var code = await seqObj.NextByCode(type);
-                var count = 0;
-                while ((await SearchQuery(x => x.Customer == true && x.Ref == code).CountAsync()) > 0 && count < 100)
-                {
-                    code = await seqObj.NextByCode(type);
-                }
-
-                return code;
-            }
-            else if (type == "supplier")
-            {
-                var code = await seqObj.NextByCode(type);
-                var count = 0;
-                while ((await SearchQuery(x => x.Supplier == true && x.Ref == code).CountAsync()) > 0 && count < 100)
-                {
-                    code = await seqObj.NextByCode(type);
-                }
-
-                return code;
-            }
-
-            return string.Empty;
+            return await seqObj.NextByCode(type);
         }
 
         private async Task _CheckUniqueRef(IEnumerable<Partner> self)

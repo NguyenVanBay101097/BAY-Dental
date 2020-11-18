@@ -37,6 +37,17 @@ export class AccountCommonPartnerReportSearch {
     search: string;
 }
 
+export class AccountCommonPartnerReportSearchV2 {
+    constructor() {
+        this.partnerIds = [];
+    }
+    fromDate: string;
+    toDate: string;
+    partnerIds: string[];
+    resultSelection: string;
+    companyId: string;
+}
+
 export class AccountCommonPartnerReport {
     partnerId: string;
     debit: number;
@@ -54,8 +65,8 @@ export class AccountCommonPartnerReportService {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSummary", val);
     }
 
-    getSummaryByPartner(id: string): Observable<AccountCommonPartnerReport> {
-        return this.http.get<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryByPartner/" + id);
+    getSummaryPartner(val: AccountCommonPartnerReportSearchV2): Observable<AccountCommonPartnerReport> {
+        return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {

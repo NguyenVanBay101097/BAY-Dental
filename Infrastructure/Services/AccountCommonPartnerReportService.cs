@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -189,7 +191,7 @@ namespace Infrastructure.Services
                     End = end,
                     PartnerName = value.PartnerName,
                     PartnerPhone = value.PartnerPhone,
-                }); ;
+                });
             }
             return res;
         }
@@ -238,6 +240,45 @@ namespace Infrastructure.Services
             }
 
             return list2;
+        }
+
+        public IQueryable<AccountMoveLine> _GetPartnerReportQuery(AccountCommonPartnerReportSearchV2 data)
+        {
+            string[] accountTypes = new string[] { "receivable", "payable" };
+            if (data.ResultSelection == "customer")
+                accountTypes = new string[] { "receivable" };
+            else if (data.ResultSelection == "supplier")
+                accountTypes = new string[] { "payable" };
+
+            if (data.FromDate.HasValue)
+                data.FromDate = data.FromDate.Value.AbsoluteBeginOfDate();
+            if (data.ToDate.HasValue)
+                data.ToDate = data.ToDate.Value.AbsoluteEndOfDate();
+
+            var date_from = data.FromDate;
+            var date_to = data.ToDate;
+
+            var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: data.CompanyId);
+            query = query.Where(x => accountTypes.Contains(x.Account.InternalType));
+            if (data.PartnerIds.Any())
+                query = query.Where(x => x.PartnerId.HasValue && data.PartnerIds.Contains(x.PartnerId.Value));
+            return query;
+        }
+
+        public async Task<AccountCommonPartnerReportSearchV2Result> ReportSumaryPartner(AccountCommonPartnerReportSearchV2 val)
+        {
+            var query = _GetPartnerReportQuery(val);
+            var saleOrderObj = (ISaleOrderService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderService));
+            var countSaleOrder = await saleOrderObj.SearchQuery(x => val.PartnerIds.Contains(x.PartnerId)).CountAsync();
+            var result = await query.Select(x => new AccountCommonPartnerReportSearchV2Result
+            {
+                Debit = query.Sum(s => s.Debit),
+                Credit = query.Sum(s => s.Credit),
+                CountSaleOrder = countSaleOrder,
+                InitialBalance = query.Sum(s => s.Debit) - query.Sum(s => s.Credit)
+            }).FirstOrDefaultAsync();
+            return result;
         }
     }
 }
