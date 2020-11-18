@@ -1,4 +1,4 @@
-<div class="row px-3 py-3 overflow-auto " [formGroup]="formGroup">
+<div class="row px-3 py-3 overflow-y-auto overflow-x-hidden " [formGroup]="formGroup">
     <div class="col-12">
         <div class="border border-secondary rounded col-12 d-flex">
             <div class="header-title">
@@ -97,17 +97,17 @@
                 BÁO CÁO THEO THÁNG
             </div>
             <div class="header-filter">
-                <kendo-combobox (valueChange)="changeMonth()" class="form-control" [data]="listMonthOfYears"
-                    [textField]="'name'" [filterable]="false" #monthCbx formControlName="month" [valueField]="'id'">
-                </kendo-combobox>
+                <div class="float-right">
+                    <b>Thời gian </b>
+                    <kendo-datepicker (valueChange)="changeMonth()" [format]="'MM-yyyy'" formControlName="month"
+                        [bottomView]="'year'"></kendo-datepicker>
+                </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12 pt-3">
                 <div class="border border-secondary rounded">
-                    <app-sale-dashboard-report-chart-flow-month
-                        [dateTo]="dateTo"
-                        [dateFrom]="dateFrom"
+                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom"
                         [companyId]="formGroup.get('company') && formGroup.get('company').value ? formGroup.get('company').value.id : ''">
                     </app-sale-dashboard-report-chart-flow-month>
                 </div>

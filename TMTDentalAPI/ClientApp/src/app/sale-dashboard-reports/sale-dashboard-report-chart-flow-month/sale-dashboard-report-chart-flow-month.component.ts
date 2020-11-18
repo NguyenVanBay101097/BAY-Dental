@@ -19,13 +19,14 @@ export class SaleDashboardReportChartFlowMonthComponent implements OnInit, OnCha
   ngOnChanges(changes: SimpleChanges): void {
     if (this.dateFrom && this.dateTo) {
       this.loadData();
+      this.month = new Date(this.dateFrom).getMonth() + 1;
     }
   }
 
-  month: Date;
+  month: number;
 
   ngOnInit() {
-    this.month = new Date(this.dateFrom);
+    this.month = new Date(this.dateFrom).getMonth() + 1;
     if (this.dateFrom && this.dateTo) {
       this.loadData();
     }
@@ -48,7 +49,6 @@ export class SaleDashboardReportChartFlowMonthComponent implements OnInit, OnCha
   }
 
   defindDateOfMonth(details) {
-    debugger
     this.reportViewDateOfMonth = [];
     for (let index = 1; index <= new Date(this.dateTo).getDate(); index++) {
       var obj = {

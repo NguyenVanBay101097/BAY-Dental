@@ -60,20 +60,6 @@ export class SaleDashboardReportFormComponent implements OnInit {
   reportLedgerBank: any;
   moneyledger: number;
   moneyBank: number;
-  listMonthOfYears: any[] = [
-    { id: 1, name: "Tháng 1", value: 1 },
-    { id: 2, name: "Tháng 2", value: 2 },
-    { id: 3, name: "Tháng 3", value: 3 },
-    { id: 4, name: "Tháng 4", value: 4 },
-    { id: 5, name: "Tháng 5", value: 5 },
-    { id: 6, name: "Tháng 6", value: 6 },
-    { id: 7, name: "Tháng 7", value: 7 },
-    { id: 8, name: "Tháng 8", value: 8 },
-    { id: 9, name: "Tháng 9", value: 9 },
-    { id: 10, name: "Tháng 10", value: 10 },
-    { id: 11, name: "Tháng 11", value: 11 },
-    { id: 12, name: "Tháng 12", value: 12 },
-  ]
   public reportCurrentYears: any[];
   public reportOldYears: any[];
 
@@ -99,8 +85,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       company: null,
-      month: { id: new Date().getMonth() + 1, name: `Tháng ${new Date().getMonth() + 1}`, value: new Date().getMonth() + 1 },
+      month: new Date,
     });
+
     this.dateTo = this.intlService.formatDate(this.monthEnd, "yyyy-MM-ddT23:59");
     this.dateFrom = this.intlService.formatDate(this.monthStart, "yyyy-MM-dd");
 
@@ -113,12 +100,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.filteredCompanies = rs.items;
         this.companyCbx.loading = false;
       });
-
     this.loadCompany();
     this.loadAllData();
   }
-
-
 
   loadAllData() {
     this.loadDebitNCC();
@@ -207,7 +191,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.customerReport = result;
       },
       error => {
-
+        console.log(error);
       }
     );
   }
@@ -215,8 +199,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
   // filter by month and company
 
   changeMonth() {
-    this.dateFrom = this.intlService.formatDate(new Date(new Date().getFullYear(), this.formGroup.get('month').value.value - 1, 1), "yyyy-MM-dd");
-    this.dateTo = this.intlService.formatDate(new Date(new Date().getFullYear(), this.formGroup.get('month').value.value, 0), "yyyy-MM-dd");
+    var month = this.formGroup.get('month') && this.formGroup.get('month').value ? this.formGroup.get('month').value.getMonth() : 0
+    this.dateFrom = this.intlService.formatDate(new Date(new Date().getFullYear(), month, 1), "yyyy-MM-dd");
+    this.dateTo = this.intlService.formatDate(new Date(new Date().getFullYear(), month + 1, 0), "yyyy-MM-dd");
     this.loadByMonthAndCompany();
   }
 

@@ -5,7 +5,7 @@
     <kendo-chart-series>
         <kendo-chart-series-item *ngIf="reportViewDateOfMonth && reportViewDateOfMonth.length > 0" type="column"
             [data]="reportViewDateOfMonth" field="data" [dashType]="longDash" categoryField="day" [style]="'smooth'"
-            [name]="'Tháng ' + month.getMonth()">
+            [name]="'Tháng ' + month">
             <kendo-chart-series-item-tooltip>
                 <ng-template let-dataItem="dataItem">
                     Doanh thu ngày <b>{{dataItem.day}}/{{dataItem.month}}/{{dataItem.year}}</b>:
