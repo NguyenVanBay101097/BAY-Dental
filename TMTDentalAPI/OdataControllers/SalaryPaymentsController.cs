@@ -16,8 +16,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+
     public class SalaryPaymentsController : BaseController
     {
         private readonly IPartnerService _partnerService;
@@ -44,7 +43,6 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
-        [HttpGet]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery());
@@ -84,6 +82,36 @@ namespace TMTDentalAPI.OdataControllers
 
             await _unitOfWork.BeginTransactionAsync();
             await _salaryPaymentService.UpdateSalaryPayment(key, val);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.ActionConfirm(ids);
+            _unitOfWork.Commit();         
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.ActionCancel(ids);
             _unitOfWork.Commit();
 
             return NoContent();
