@@ -79,8 +79,8 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
 
-  actionConfirm(val: PaySlipRunConfirmViewModel ) {
-    return this.http.post(this.base_api + this.apiUrl + '/ActionConfirm', val);
+  actionConfirm(id) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionConfirm/' + id, null);
   }
 
   actionDone(ids : string[]) {

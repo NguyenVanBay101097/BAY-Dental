@@ -101,71 +101,15 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task ActionConfirm(PaySlipRunConfirmViewModel val)
+        public async Task ActionConfirm(Guid id)
         {
             var payslipObj = GetService<IHrPayslipService>();
-            var employeeObj = GetService<IEmployeeService>();
-            var paysliprun = await SearchQuery(x => x.Id == val.PayslipRunId.Value).Include(x => x.Slips).FirstOrDefaultAsync();
+            var paysliprun = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
+            // ghi sổ
 
-            var payslips = new List<HrPayslip>();
-            foreach (var emp in val.EmpIds)
-            {
-                //lấy mặc định của 1 phiếu lương
-                var payslip = new HrPayslip();
-                payslip.CompanyId = paysliprun.CompanyId;
-                payslip.DateFrom = paysliprun.DateStart;
-                payslip.DateTo = paysliprun.DateEnd;
-                payslip.EmployeeId = emp;
-                payslip.PayslipRunId = paysliprun.Id;
-
-                //sự kiện onchange employee trên payslip
-                var changemp = await payslipObj.OnChangeEmployee(payslip.EmployeeId, payslip.DateFrom, payslip.DateTo);
-                payslip.Name = changemp.Name;
-                payslip.StructureTypeId = changemp.StructureTypeId;
-                foreach (var item in changemp.WorkedDayLines)
-                {
-                    payslip.WorkedDaysLines.Add(new HrPayslipWorkedDays
-                    {
-                        Name = item.Name,
-                        NumberOfDays = item.NumberOfDays,
-                        NumberOfHours = item.NumberOfHours,
-                        Amount = item.Amount,
-                        WorkEntryTypeId = item.WorkEntryTypeId
-                    });
-                }
-
-                //xử lý structure
-                payslip.StructId = val.StructureId;
-                if (!payslip.StructId.HasValue)
-                {
-                    if (!payslip.StructureTypeId.HasValue)
-                    {
-                        var employee = await employeeObj.GetByIdAsync(payslip.EmployeeId);
-                        throw new Exception($"Nhân viên {employee.Name} chưa thiết lập loại mẫu lương");
-                    }
-
-                    var structureObj = GetService<IHrPayrollStructureService>();
-                    var structure = await structureObj.SearchQuery(x => x.TypeId == payslip.StructureTypeId && x.RegularPay == true).FirstOrDefaultAsync();
-                    if (structure == null)
-                    {
-                        var structureTypeObj = GetService<IHrPayrollStructureTypeService>();
-                        var structureType = await structureTypeObj.GetByIdAsync(payslip.StructureTypeId);
-                        throw new Exception($"Không tìm thấy mẫu lương thông dụng cho loại {structureType.Name}");
-                    }
-                      
-                    payslip.StructId = structure.Id;
-                }
-
-                payslips.Add(payslip);
-            }
-
-            await payslipObj.CreateAsync(payslips);
-
-            await payslipObj.ComputeSheet(payslips.Select(x => x.Id));
-
-            paysliprun.State = "confirm";
+            paysliprun.State = "done";
             await UpdateAsync(paysliprun);
         }
 

@@ -15,7 +15,7 @@ namespace Infrastructure.Services
         Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id);
         Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val);
         Task UpdatePayslipRun(Guid id, HrPayslipRunSave val);
-        Task ActionConfirm(PaySlipRunConfirmViewModel val);
+        Task ActionConfirm(Guid id);
 
         Task ActionDone(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);

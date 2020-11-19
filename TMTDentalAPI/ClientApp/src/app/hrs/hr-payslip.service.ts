@@ -74,6 +74,7 @@ export class HrPayslipSaveDefaultValue {
     number = null;
     employeeId = null;
     employee = null;
+    employeeNameSearch = null;
     state = 'draft';
     companyId = null;
     daySalary = null;
@@ -92,6 +93,7 @@ export class HrPayslipSaveDefaultValue {
     amercementMoney = null;
     netSalary = null;
     isCheck = false;
+    isHidden = false;
 }
 
 // line

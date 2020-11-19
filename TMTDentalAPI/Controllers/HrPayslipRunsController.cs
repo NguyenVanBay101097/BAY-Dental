@@ -72,13 +72,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]/{id}")]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Update")]
-        public async Task<IActionResult> ActionConfirm(PaySlipRunConfirmViewModel val)
+        public async Task<IActionResult> ActionConfirm(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            await _payslipRunService.ActionConfirm(val);
+            await _payslipRunService.ActionConfirm(id);
 
             _unitOfWork.Commit();
 
