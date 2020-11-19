@@ -32,5 +32,7 @@ namespace ApplicationCore.Entities
         /// lương tháng nào năm nào?
         /// </summary>
         public DateTime? Date { get; set; }
+        public Guid? MoveId { get; set; }
+        public AccountMove Move { get; set; }
     }
 }

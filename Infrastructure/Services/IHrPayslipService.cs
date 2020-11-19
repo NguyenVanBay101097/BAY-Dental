@@ -22,5 +22,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<HrPayslipLineBasic>> GetLines(Guid id);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task UpdatePayslip(Guid id, HrPayslipSave val);
+        Task<AccountJournal> InsertAccountJournalIfNotExists();
     }
 }
