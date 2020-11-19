@@ -23,8 +23,6 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    [Route("odata/[controller]")]
-    [ApiController]
     public class SaleOrdersController : BaseController
     {
         private readonly ISaleOrderService _saleOrderService;
