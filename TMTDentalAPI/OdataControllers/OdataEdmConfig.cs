@@ -27,6 +27,9 @@ namespace TMTDentalAPI.OdataControllers
             .Function("GetDisplay")
             .Returns<PartnerDisplay>();
 
+            builder.EntityType<PartnerViewModel>()
+            .Function("GetSaleOrders")
+            .ReturnsCollectionFromEntitySet<SaleOrderViewModel>("SaleOrders");
 
             #endregion
             #region PartnerCategories
@@ -36,7 +39,6 @@ namespace TMTDentalAPI.OdataControllers
 
             #region Products
             builder.EntitySet<ProductViewModel>("Products");
-
             #endregion
 
             #region Employees
@@ -78,7 +80,16 @@ namespace TMTDentalAPI.OdataControllers
                 .Collection
              .Function("DefaultGet")
              .Returns<SaleOrderDisplay>();
+
+            builder.EntityType<SaleOrderViewModel>()
+             .Function("GetSaleOrderLines")
+             .Returns<SaleOrderDisplay>();
+
             #endregion
+
+            //#region
+            //builder.EntitySet<SaleOrderLineViewModel>("SaleOrderLines");
+            //#endregion
 
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
@@ -93,7 +104,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
-           
+
             #endregion
 
 

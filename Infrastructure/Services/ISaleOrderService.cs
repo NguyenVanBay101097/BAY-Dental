@@ -52,6 +52,8 @@ namespace Infrastructure.Services
 
         Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
+        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
+
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
 
         Task ActionUnlock(IEnumerable<Guid> ids);

@@ -6,35 +6,43 @@
     </div>
 
     <div class="kendo-grid-data">
-        <kendo-grid [data]="gridData" [height]="300" [pageSize]="limit" [resizable]="true" [skip]="skip" [loading]="loading">
-            <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name" title="Số phiếu" width="100">
+        <kendo-grid [data]="gridData" [height]="300" [resizable]="true" [loading]="loading">
+            <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
+                title="Số phiếu" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <a class="text-primary" (click)="chossesSaleOrder(dataItem.id)">{{dataItem.name}}</a>
+                    <a class="text-primary" (click)="chossesSaleOrder(dataItem.Id)">{{dataItem.Name}}</a>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="dateOrder" title="Ngày lập phiếu" width="120">
+            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
+                field="DateOrder" title="Ngày lập phiếu" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.dateOrder | date:'short'}}
+                    {{dataItem.DateOrder | date:'short'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="amountTotal" title="Tổng tiền" width="120">
+            <kendo-grid-column class="text-right"
+                [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="AmountTotal"
+                title="Tổng tiền" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.amountTotal | number}}
+                    {{dataItem.AmountTotal | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="residual" title="Còn lại" width="120">
+            <kendo-grid-column class="text-right"
+                [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="Residual"
+                title="Còn lại" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.residual | number}}
+                    {{dataItem.Residual | number}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="state" title="Trạng thái" width="100">
+            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="State"
+                title="Trạng thái" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <span *ngIf="dataItem.state === 'draft'">Nháp</span>
-                    <span *ngIf="dataItem.state === 'done'">Hoàn thành</span>
-                    <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
+                    <span *ngIf="dataItem.state === 'Draft'">Nháp</span>
+                    <span *ngIf="dataItem.state === 'Done'">Hoàn thành</span>
+                    <span *ngIf="dataItem.state === 'Sale'">Đang điều trị</span>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
+            <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#"
+                width="40">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteItem(dataItem)">
                         <span class="k-icon k-i-delete"></span>
@@ -42,7 +50,7 @@
                 </ng-template>
             </kendo-grid-column>
             <div *kendoGridDetailTemplate="let dataItem">
-                <app-partner-overview-sale-order-line [saleOrderId]="dataItem.id">
+                <app-partner-overview-sale-order-line [saleOrderId]="dataItem.Id">
                 </app-partner-overview-sale-order-line>
             </div>
         </kendo-grid>

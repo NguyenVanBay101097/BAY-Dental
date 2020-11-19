@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -12,7 +12,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
   templateUrl: './partner-overview-treatment.component.html',
   styleUrls: ['./partner-overview-treatment.component.css']
 })
-export class PartnerOverviewTreatmentComponent implements OnInit {
+export class PartnerOverviewTreatmentComponent implements OnInit, OnChanges {
 
   thTable_saleOrders = [
     { name: 'Số phiếu' },
@@ -20,6 +20,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     { name: 'Tổng tiền' },
     { name: 'Còn nợ' }
   ]
+  @Input() saleOrders: SaleOrderBasic[];
   @Input() partnerId: string;
 
   gridData: GridDataResult;
@@ -33,9 +34,17 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private modalService: NgbModal
   ) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.loadData();
+  }
 
   ngOnInit() {
-    this.loadDataFromApi();
+    setTimeout(() => {
+      if (this.saleOrders.length > 0) {
+        this.loadData();
+      }
+    }, 300);
+    // this.loadDataFromApi();
   }
 
   chossesSaleOrder(id) {
@@ -46,12 +55,19 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
     }
   }
 
+  loadData() {
+    this.gridData = {
+      data: this.saleOrders,
+      total: this.saleOrders && this.saleOrders.length ? this.saleOrders.length : 0
+    };
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new SaleOrderPaged();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.partnerId = this.partnerId;
+    // val.partnerId = this.partnerId;
     this.saleOrderService.getPaged(val).pipe(
       map((response: any) =>
         (<GridDataResult>{

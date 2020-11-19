@@ -65,6 +65,17 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(res);
         }
 
+        [EnableQuery]
+        public async Task<IActionResult> GetSaleOrderLines([FromODataUri] Guid key)
+        {
+            var res = await _saleOrderService.GetSaleOrderLineBySaleOrder(key);
+            if (res == null)
+            {
+                return NotFound();
+            }
+            return Ok(res);
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> DefaultGet([FromQuery] SaleOrderDefaultGet val)
         {

@@ -1,17 +1,17 @@
 <kendo-grid [data]="gridData" [loading]="loading">
-    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
         title="Tên dịch vụ">
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="teeth"
         title="Răng">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <div *ngIf="dataItem.teeth">
-                <span *ngFor="let teeth of dataItem.teeth" class="badge badge-primary mr-1">{{teeth.name}}</span>
+            <div *ngIf="dataItem.Teeth">
+                <span *ngFor="let rang of dataItem.Teeth" class="badge badge-primary mr-1">{{rang.Name}}</span>
             </div>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="employee.name" title="Bác sĩ">
+        field="Employee.Name" title="Bác sĩ">
     </kendo-grid-column>
 
     <!-- <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="priceUnit"
