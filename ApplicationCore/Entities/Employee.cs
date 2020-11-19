@@ -47,6 +47,9 @@ namespace ApplicationCore.Entities
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
+
         /// <summary>
         /// Là bác sĩ
         /// </summary>
