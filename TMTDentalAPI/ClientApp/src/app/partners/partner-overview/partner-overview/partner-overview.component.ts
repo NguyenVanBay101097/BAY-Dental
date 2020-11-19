@@ -1,6 +1,6 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
@@ -33,6 +33,11 @@ export class PartnerOverviewComponent implements OnInit {
   skip = 0;
   search: string;
 
+  //for report
+  debit: number = 0;
+  credit: number = 0;
+  saleCount: number = 0;
+
   constructor(
     private authService: AuthService,
     private activeRoute: ActivatedRoute,
@@ -41,7 +46,8 @@ export class PartnerOverviewComponent implements OnInit {
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
     private saleOrderLineService: SaleOrderLineService,
     private saleOrderService: SaleOrderService,
-    private saleCouponProgramService: SaleCouponProgramService
+    private saleCouponProgramService: SaleCouponProgramService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -79,9 +85,17 @@ export class PartnerOverviewComponent implements OnInit {
     this.PartnerOdataService.getSaleOrderByPartner(val).subscribe(
       result => {
         this.saleOrders = result['value'];
-        this.accountCommonPartnerReport.countSaleOrder = result['@odata.count'];
+        this.saleCount = result['@odata.count'];
       }
     )
+  }
+
+  createNewSaleOrder() {
+    this.router.navigate(['sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
+  }
+
+  onDeleteSaleOrder() {
+    this.getSaleOrders();
   }
 
   getSaleQoutation() {
@@ -101,11 +115,10 @@ export class PartnerOverviewComponent implements OnInit {
     val.resultSelection = "customer";
     this.accountCommonPartnerReportService.getSummaryPartner(val).subscribe(
       result => {
-        this.accountCommonPartnerReport = result
+        this.debit = result.debit;
+        this.credit = result.credit;
       }
     )
-    this.GetPartner();
-    this.loadCustomerAppointment();
   }
 
   loadPromotion() {

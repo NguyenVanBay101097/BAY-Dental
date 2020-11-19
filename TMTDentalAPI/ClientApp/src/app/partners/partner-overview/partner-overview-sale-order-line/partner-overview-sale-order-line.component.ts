@@ -26,9 +26,7 @@ export class PartnerOverviewSaleOrderLineComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.saleOrderId) {
-      this.loadDataFromOData();
-    }
+    this.loadDataFromOData();
   }
 
   loadDataFromOData() {
@@ -46,17 +44,6 @@ export class PartnerOverviewSaleOrderLineComponent implements OnInit {
           data: result && result['value'],
           total: result['@odata.count']
         };
-        this.loading = false;
-      }, () => {
-        this.loading = false;
-      });
-  }
-
-  loadFromApi() {
-    this.loading = true;
-    this.saleOrderlineService.getDisplayBySaleOrder(this.saleOrderId).subscribe(
-      result => {
-        this.gridData = result;
         this.loading = false;
       }, () => {
         this.loading = false;
