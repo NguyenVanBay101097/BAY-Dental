@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { SalaryPaymentPaged, SalaryPaymentService } from '../salary-payment.service';
+import { SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -44,7 +44,7 @@ export class SalaryPaymentListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.type;
-    this.salaryPaymentService.getPaged(val).pipe(
+    this.salaryPaymentService.getView(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
