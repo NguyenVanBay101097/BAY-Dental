@@ -269,16 +269,14 @@ namespace Infrastructure.Services
         public async Task<AccountCommonPartnerReportSearchV2Result> ReportSumaryPartner(AccountCommonPartnerReportSearchV2 val)
         {
             var query = _GetPartnerReportQuery(val);
-            var saleOrderObj = (ISaleOrderService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderService));
-            var countSaleOrder = await saleOrderObj.SearchQuery(x => val.PartnerIds.Contains(x.PartnerId)).CountAsync();
-            var result = await query.Select(x => new AccountCommonPartnerReportSearchV2Result
+            var data = await query.GroupBy(x => 0).Select(x => new AccountCommonPartnerReportSearchV2Result
             {
-                Debit = query.Sum(s => s.Debit),
-                Credit = query.Sum(s => s.Credit),
-                CountSaleOrder = countSaleOrder,
-                InitialBalance = query.Sum(s => s.Debit) - query.Sum(s => s.Credit)
+                Debit = x.Sum(s => s.Debit),
+                Credit = x.Sum(s => s.Credit),
+                InitialBalance = x.Sum(s => s.Debit) - x.Sum(s => s.Credit)
             }).FirstOrDefaultAsync();
-            return result;
+
+            return data;
         }
     }
 }

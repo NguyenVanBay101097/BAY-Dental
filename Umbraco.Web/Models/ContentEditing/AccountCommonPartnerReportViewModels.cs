@@ -75,7 +75,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
-        public int CountSaleOrder { get; set; }
         public decimal InitialBalance { get; set; }
     }
 

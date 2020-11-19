@@ -15,4 +15,8 @@ export class SaleOrdersOdataService extends ODataService {
     defaultGet(p?: any) {
         return this.http.get(`${this.BASE_URL}${this.tableName}/DefaultGet`, { params: new HttpParams({ fromObject: p || {} }) });
     }
+
+    public getSaleOrderLines(val) {
+        return this.getFunction(val.id, val.func, val.options);
+    }
 }

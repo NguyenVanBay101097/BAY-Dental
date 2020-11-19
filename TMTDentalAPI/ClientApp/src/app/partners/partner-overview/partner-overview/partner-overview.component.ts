@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
@@ -25,7 +26,7 @@ export class PartnerOverviewComponent implements OnInit {
   customerAppointment: AppointmentDisplay;
   saleQuotations: SaleOrderLineDisplay;
   promotions: SaleCouponProgramBasic[] = [];
-
+  saleOrders: SaleOrderBasic[] = [];
   limit = 20;
   listSaleOrder: SaleOrderBasic[] = [];
   accountCommonPartnerReport: AccountCommonPartnerReport = new AccountCommonPartnerReport();
@@ -49,6 +50,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadCustomerAppointment();
     // this.getSaleQoutation();
     // this.loadPromotion();
+    this.getSaleOrders();
     this.loadReport();
   }
 
@@ -63,6 +65,23 @@ export class PartnerOverviewComponent implements OnInit {
       rs => {
         this.customerAppointment = rs;
       });
+  }
+
+  getSaleOrders() {
+    var val = {
+      id: this.partnerId,
+      func: "GetSaleOrders",
+      options: {
+        params: new HttpParams().set('$count', 'true').set('$orderby', 'dateOrder desc')
+      }
+    }
+
+    this.PartnerOdataService.getSaleOrderByPartner(val).subscribe(
+      result => {
+        this.saleOrders = result['value'];
+        this.accountCommonPartnerReport.countSaleOrder = result['@odata.count'];
+      }
+    )
   }
 
   getSaleQoutation() {
