@@ -84,6 +84,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? DaySalary { get; set; }
         /// <summary>
+        /// số ngày công thực tế
+        /// </summary>
+        public decimal? WorkedDay { get; set; }
+        /// <summary>
         /// tổng lương cơ bản dựa trên lương 1 ngày
         /// </summary>
         public decimal? TotalBasicSalary { get; set; }
@@ -131,10 +135,6 @@ namespace ApplicationCore.Entities
         /// tiền bị phạt
         /// </summary>
         public decimal? AmercementMoney { get; set; }
-        /// <summary>
-        /// tiền tạm ứng
-        /// </summary>
-        public decimal? AdvanceMoney { get; set; }
         /// <summary>
         /// tiền thực nhận: bằng totalsalary + commission - amercement - advance
         /// </summary>

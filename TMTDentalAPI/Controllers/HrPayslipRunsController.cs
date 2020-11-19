@@ -85,6 +85,32 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]/{id}")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Update")]
+        public async Task<IActionResult> CreatePayslipByRunId(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _payslipRunService.CreatePayslipByRunId(id);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]/{id}")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Update")]
+        public async Task<IActionResult> ComputeSalaryByRunId(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _payslipRunService.ComputeSalaryByRunId(id);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Update")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
@@ -140,6 +166,7 @@ namespace TMTDentalAPI.Controllers
             res.CompanyId = CompanyId;
             res.DateStart = startDate;
             res.DateEnd = endDate;
+            res.Date = date;
 
             return Ok(res);
         }

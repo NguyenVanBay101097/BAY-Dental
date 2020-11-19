@@ -15,7 +15,9 @@ namespace ApplicationCore.Entities
         }
 
         public string Name { get; set; }
-
+        /// <summary>
+        /// draft, confirm, done
+        /// </summary>
         public string State { get; set; }
 
         public DateTime DateStart { get; set; }
@@ -27,8 +29,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<HrPayslip> Slips { get; set; } = new List<HrPayslip>();
         /// <summary>
-        /// lương tháng nào?
+        /// lương tháng nào năm nào?
         /// </summary>
-        public int Month { get; set; }
+        public DateTime? Date { get; set; }
     }
 }

@@ -99,4 +99,12 @@ export class HrPaysliprunService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
+  CreatePayslipByRunId(id) {
+    return this.http.post(this.base_api + this.apiUrl + '/CreatePayslipByRunId/' + id, null);
+  }
+
+  ReComputeSalary(id) {
+    return this.http.post(this.base_api + this.apiUrl + '/ComputeSalaryByRunId/' + id, null);
+  }
+
 }

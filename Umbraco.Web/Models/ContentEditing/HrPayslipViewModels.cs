@@ -26,6 +26,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class HrPayslipSave
     {
+        public Guid Id { get; set; }
         public Guid? StructId { get; set; }
 
         public string Name { get; set; }
@@ -47,6 +48,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
 
         public Guid? StructureTypeId { get; set; }
+        public decimal? DaySalary { get; set; }
+        public decimal? WorkedDay { get; set; }
+        public decimal? TotalBasicSalary { get; set; }
+        public decimal? OverTimeHour { get; set; }
+        public decimal? OverTimeHourSalary { get; set; }
+        public decimal? OverTimeDay { get; set; }
+        public decimal? OverTimeDaySalary { get; set; }
+        public decimal? Allowance { get; set; }
+        public decimal? OtherAllowance { get; set; }
+        public decimal? RewardSalary { get; set; }
+        public decimal? HolidayAllowance { get; set; }
+        public decimal? TotalSalary { get; set; }
+        public decimal? CommissionSalary { get; set; }
+        public decimal? AmercementMoney { get; set; }
+        public decimal? NetSalary { get; set; }
     }
 
     public class HrPayslipDisplay
@@ -78,6 +94,22 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
         public Guid? PayslipRunId { get; set; }
+        public decimal? DaySalary { get; set; }
+        public decimal? WorkedDay { get; set; }
+        public decimal? TotalBasicSalary { get; set; }
+        public decimal? OverTimeHour { get; set; }
+        public decimal? OverTimeHourSalary { get; set; }
+        public decimal? OverTimeDay { get; set; }
+        public decimal? OverTimeDaySalary { get; set; }
+        public decimal? Allowance { get; set; }
+        public decimal? OtherAllowance { get; set; }
+        public decimal? RewardSalary { get; set; }
+        public decimal? HolidayAllowance { get; set; }
+        public decimal? TotalSalary { get; set; }
+        public decimal? CommissionSalary { get; set; }
+        public decimal? AmercementMoney { get; set; }
+        public decimal? NetSalary { get; set; }
+
     }
 
     public class HrPayslipOnChangeEmployee

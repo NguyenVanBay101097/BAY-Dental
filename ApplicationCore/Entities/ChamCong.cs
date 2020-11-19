@@ -51,8 +51,8 @@ namespace ApplicationCore.Entities
         public WorkEntryType WorkEntryType { get; set; }
 
         ///version 2
-        
-        /// 3 loai : đi làm , nữa ngày , nghỉ
+
+        /// work : đi làm - halfaday : nửa ngày - off : ngh
         public string Type { get; set; }
 
         /// <summary>

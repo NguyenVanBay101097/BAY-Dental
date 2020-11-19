@@ -43,7 +43,7 @@ export class PermissionDirective implements OnInit {
   }
 
   private checkPermission() {
-    let hasPermission = true;
+    let hasPermission = false;
 
     if (this.allPermissions) {
       for (const checkPermission of this.permissions) {
@@ -51,6 +51,8 @@ export class PermissionDirective implements OnInit {
         if (!permissionFound) {
           hasPermission = false;
           break;
+        } else {
+          hasPermission = true;
         }
       }
     }

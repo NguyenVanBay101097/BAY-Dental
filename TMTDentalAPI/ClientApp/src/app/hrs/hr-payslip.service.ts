@@ -68,6 +68,31 @@ export class HrPayslipDisplay {
     state: string;
     lines: HrPayslipLineDisplay[];
 }
+export class HrPayslipSaveDefaultValue {
+    id = null;
+    name = null;
+    number = null;
+    employeeId = null;
+    employee = null;
+    state = 'draft';
+    companyId = null;
+    daySalary = null;
+    workedDay = null;
+    totalBasicSalary = null;
+    overTimeHour = null;
+    overTimeHourSalary = null;
+    overTimeDay = null;
+    overTimeDaySalary  = null;
+    allowance  = null;
+    otherAllowance  = null;
+    rewardSalary = null;
+    holidayAllowance = null;
+    totalSalary = null;
+    commissionSalary = null;
+    amercementMoney = null;
+    netSalary = null;
+    isCheck = false;
+}
 
 // line
 export class HrPayslipLineDisplay {
