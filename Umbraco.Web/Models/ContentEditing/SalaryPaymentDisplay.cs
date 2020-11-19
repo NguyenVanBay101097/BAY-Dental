@@ -2,26 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    public class SalaryPayment : BaseEntity
+    public class SalaryPaymentDisplay
     {
-        /// <summary>
-        /// Chi nhánh
-        /// </summary>
-        public Guid? CompanyId { get; set; }
-        public Company Company { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Ngày lập phiếu
         /// </summary>
         public DateTime Date { get; set; }
-
-        /// <summary>
-        /// Sổ nhật ký: tiền mặt, ngân hàng
-        /// </summary>
-        public Guid JournalId { get; set; }
-        public AccountJournal Journal { get; set; }
 
         /// <summary>
         /// draft: Nháp
@@ -41,24 +31,21 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Type { get; set; }
 
+        public Guid? EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+
+        public Guid? JournalId { get; set; }
+        public AccountJournalSimple Journal { get; set; }
+
         /// <summary>
         /// Số tiền
         /// </summary>
         public decimal Amount { get; set; }
-
-        /// <summary>
-        /// nhân viên
-        /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public Employee Employee { get; set; }
 
 
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
-
-
-        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
     }
 }

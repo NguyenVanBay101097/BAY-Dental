@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class CreateTableSalaryPayment : Migration
+    public partial class CreateTableSalarypayments : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,6 +33,7 @@ namespace Infrastructure.Data.Migrations
                     Name = table.Column<string>(nullable: true),
                     Type = table.Column<string>(nullable: true),
                     Amount = table.Column<decimal>(nullable: false),
+                    EmployeeId = table.Column<Guid>(nullable: true),
                     Reason = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -48,6 +49,12 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_SalaryPayments_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SalaryPayments_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -83,6 +90,11 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_SalaryPayments_CreatedById",
                 table: "SalaryPayments",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalaryPayments_EmployeeId",
+                table: "SalaryPayments",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalaryPayments_JournalId",
