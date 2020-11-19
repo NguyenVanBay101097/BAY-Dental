@@ -12,5 +12,8 @@ namespace Infrastructure.Services
     {
         Task<SalaryPayment> CreateSalaryPayment(SalaryPaymentSave val);
         Task UpdateSalaryPayment(Guid id, SalaryPaymentSave val);
+        Task InsertModelsIfNotExists();
+        Task ActionConfirm(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
     }
 }

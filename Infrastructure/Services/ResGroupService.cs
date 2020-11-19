@@ -297,6 +297,9 @@ namespace Infrastructure.Services
 
             var loaiThuChiObj = GetService<ILoaiThuChiService>();
             await loaiThuChiObj.InsertModelsIfNotExists();
+
+            var salaryPaymentObj = GetService<ISalaryPaymentService>();
+            await salaryPaymentObj.InsertModelsIfNotExists();
         }
 
         public async Task ResetSecurityData()
