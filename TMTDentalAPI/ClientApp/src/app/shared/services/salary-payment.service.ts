@@ -6,16 +6,13 @@ import { ODataService } from './odata.service';
 
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService extends ODataService {
-    constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SalaryPayment"); }
+    constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SalaryPayments"); }
 
     public getView(state: any, options?: any): void {
-        this.fetch(this.tableName + '/GetView', state, options || {})
+        this.fetch(this.tableName, state, options || {})
             .pipe(
                 map((data: GridDataResult) => {
-                    data.data = data.data.map(x => {
-                        x.Tags = x.Tags ? JSON.parse(x.Tags) : [];
-                        return x;
-                    });
+                  
                     return data;
                 })
             )
@@ -23,9 +20,4 @@ export class SalaryPaymentService extends ODataService {
                 super.next(x);
             });
     }
-
-    public getDisplay(id: string) {
-        return this.http.get(`${this.BASE_URL}${this.tableName}(${id})/GetDisplay`);
-    }
-
 }
