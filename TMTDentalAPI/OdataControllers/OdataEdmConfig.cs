@@ -85,11 +85,13 @@ namespace TMTDentalAPI.OdataControllers
 
             builder.EntityType<SalaryPaymentVm>()
                       .Collection
-                   .Function("ActionConfirm");
+                   .Function("ActionConfirm")
+                   .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                      .Collection
-                  .Function("ActionCancel");
+                  .Function("ActionCancel")
+                  .Returns<bool>();
 
             #endregion
 

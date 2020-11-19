@@ -148,7 +148,9 @@ namespace Infrastructure.Services
         {
             var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))
                  .Include(x => x.Company)
-                 .Include(x => x.Journal)             
+                 .Include(x => x.Journal)
+                 .Include(x => x.Employee)
+                 .Include("Employee.Partner")
                  .Include(x => x.MoveLines)
                  .ToListAsync();
 
@@ -236,6 +238,7 @@ namespace Infrastructure.Services
                         AccountId = accDebit334.Id,
                         Account = accDebit334,
                         Move = move,
+                        PartnerId = phieu.Employee.PartnerId.HasValue ? phieu.Employee.PartnerId : null
                     },
                     new AccountMoveLine
                     {
@@ -245,6 +248,7 @@ namespace Infrastructure.Services
                         AccountId = accCredit642.Id,
                         Account = accCredit642,
                         Move = move,
+                        PartnerId = phieu.Employee.PartnerId.HasValue ? phieu.Employee.PartnerId : null
                     },
                 };
 
@@ -252,9 +256,9 @@ namespace Infrastructure.Services
 
                 all_move_vals.Add(move);
             }
-            
+
             return all_move_vals;
-           
+
         }
 
         public async Task<AccountAccount> getAccount334()
@@ -268,7 +272,7 @@ namespace Infrastructure.Services
             acc334 = await accountObj.SearchQuery(x => x.Code == "334" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (acc334 != null)
             {
-                 acc334 = new AccountAccount
+                acc334 = new AccountAccount
                 {
                     Name = "Phải trả người lao động",
                     Code = "334",
