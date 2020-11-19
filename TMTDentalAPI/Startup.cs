@@ -422,6 +422,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ResourceCalendarLeaveProfile());
                 mc.AddProfile(new TCareMessageTemplateProfile());
                 mc.AddProfile(new TCareConfigProfile());
+                mc.AddProfile(new SalaryPaymentProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
