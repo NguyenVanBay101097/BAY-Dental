@@ -120,7 +120,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         });
     } else {
       this.hrPaysliprunService.ReComputeSalary(this.id).subscribe(() => {
-        this.notify('success', 'lưu thành công');
+        this.notify('success', 'tính lương thành công');
         this.loadRecord();
       });
     }

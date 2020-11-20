@@ -305,14 +305,16 @@ namespace Infrastructure.Services
                 var allCommission = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
                 commission = allCommission.FirstOrDefault(x => x.EmployeeId == emp.Id);
             }
-
+            
             payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
 
             payslip.WorkedDay = chamCongs.Where(x => x.Type == "work").Count();
-            payslip.ActualLeavePerMonth = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;
-            payslip.LeavePerMonthUnpaid = emp.LeavePerMonth.GetValueOrDefault() - payslip.ActualLeavePerMonth.GetValueOrDefault();
-            payslip.LeavePerMonthUnpaid = payslip.LeavePerMonthUnpaid > 0 ? payslip.LeavePerMonthUnpaid : 0;
-            payslip.OverTimeDay = Math.Round(emp.LeavePerMonth.GetValueOrDefault() - payslip.ActualLeavePerMonth.GetValueOrDefault(), 2);
+
+            payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year,date.Value.Month) - payslip.WorkedDay;
+            payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
+
+            var ngaythucnghi = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;
+            payslip.OverTimeDay = Math.Round(emp.LeavePerMonth.GetValueOrDefault() - ngaythucnghi, 2);
             payslip.OverTimeDay = payslip.OverTimeDay > 0 ? payslip.OverTimeDay : 0;
             payslip.TotalBasicSalary = Math.Round(((payslip.WorkedDay.GetValueOrDefault() - payslip.OverTimeDay.GetValueOrDefault()) * payslip.DaySalary.GetValueOrDefault()), 2);
 
