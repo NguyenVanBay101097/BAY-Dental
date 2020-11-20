@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace Infrastructure.Services
             if (res == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");
             // get user
-            var userManager = (Microsoft.AspNetCore.Identity.UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
+            var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
             var user = await userManager.FindByIdAsync(UserId);
             res.User = _mapper.Map<ApplicationUserSimple>(user);
             return res;
