@@ -6,17 +6,7 @@
             </li>-->
             <li class="active">
                 <span>Bảng lương nhân viên</span>
-                <div class="mt-3 mb-1">
-                    <!-- <div class="d-flex mb-1" style="max-width: 385px;">
-        <label class="d-inline-flex align-items-center mr-1">Tên</label>
-        <input formControlName="name" placeholder="nhập tên bảng lương..." type="text" class="form-control mb-1">
-    </div> -->
-                    <div class="d-flex">
-                        <label class="d-inline-flex align-items-center mr-1">Theo tháng</label>
-                        <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
-                        <button *ngIf="state == 'confirm'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
-                    </div>
-                </div>
+
             </li>
         </ol>
     </div>
@@ -48,6 +38,17 @@
                 </div>
             </div>
             <div class="o_form_sheet w-100 mw-100">
+                <div class="mt-3 mb-1">
+                    <!-- <div class="d-flex mb-1" style="max-width: 385px;">
+        <label class="d-inline-flex align-items-center mr-1">Tên</label>
+        <input formControlName="name" placeholder="nhập tên bảng lương..." type="text" class="form-control mb-1">
+    </div> -->
+                    <div class="d-flex">
+                        <label class="d-inline-flex align-items-center mr-1">Theo tháng</label>
+                        <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
+                        <button *ngIf="state == 'confirm'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
+                    </div>
+                </div>
                 <div class="o_content w-100">
                     <ng-container *ngIf="!id; else elseTemplate">
                         <div class="d-flex justify-content-center">
