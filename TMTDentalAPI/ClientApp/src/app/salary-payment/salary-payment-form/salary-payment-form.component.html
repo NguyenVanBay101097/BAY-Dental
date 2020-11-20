@@ -1,1 +1,93 @@
-<p>salary-payment-form works!</p>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg overflow-hidden">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="Name"
+                                        placeholder="Không nhập sẽ tự phát sinh" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="DateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        #journalCbx formControlName="Journal" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người nhận
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true"
+                                        #employeeCbx formControlName="Employee" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control" formControlName="Reason"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

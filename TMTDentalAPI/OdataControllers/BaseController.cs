@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    //[Route("odata/[controller]")]
-    //[Authorize]
-    //[ApiController]
+ 
     public class BaseController : ODataController
     {
         protected string UserId

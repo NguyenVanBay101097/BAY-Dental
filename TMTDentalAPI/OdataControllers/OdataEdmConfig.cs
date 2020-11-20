@@ -108,6 +108,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
+            builder.ComplexType<SalaryPaymentSave>();
 
             #endregion
 

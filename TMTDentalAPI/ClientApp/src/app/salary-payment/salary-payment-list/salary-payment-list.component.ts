@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
 import { SalaryPaymentBindingDirective } from 'src/app/shared/directives/salary-payment-binding.directive';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
+import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -33,8 +34,12 @@ export class SalaryPaymentListComponent implements OnInit {
     params: {}
   };
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
-    private salaryPaymentService: SalaryPaymentService, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private modalService: NgbModal, 
+    private salaryPaymentService: SalaryPaymentService, 
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -68,8 +73,15 @@ export class SalaryPaymentListComponent implements OnInit {
         ]
       });
     }
-
     return filter;
+  }
 
+  createItem() {
+    let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Phiếu tạm ứng';
+    modalRef.result.then(() => {
+      this.refreshData();
+    }, () => {
+    });
   }
 }

@@ -17,6 +17,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public DateTime Date { get; set; }
+
         /// <summary>
         /// Sổ nhật ký: tiền mặt, ngân hàng
         /// </summary>
