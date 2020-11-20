@@ -103,6 +103,21 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (!ModelState.IsValid)
