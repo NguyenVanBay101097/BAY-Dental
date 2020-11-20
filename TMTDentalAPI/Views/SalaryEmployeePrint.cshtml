@@ -1,0 +1,240 @@
+﻿@model Umbraco.Web.Models.ContentEditing.HrPayslipRunDisplay;
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/custom.css" />
+
+    <style>
+        body {
+            font-size: 18px;
+        }
+
+        .table td, .table th {
+            border-top: unset !important;
+        }
+
+        .active {
+            background-color: #adb5bd;
+        }
+
+        .page-break {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body>
+    @if (Model.Slips != null && Model.Slips.Count() > 0)
+    {
+        foreach (var slip in Model.Slips)
+        {
+            <div class="px-3 py-3 overflow-auto page-break">
+                <div class="px-3">
+                    <div class="row border border-secondary">
+                        <div class="col-4">
+                            <div class="border-right" style="text-align: center; padding: 15px;">
+                                <div class="logo">
+                                    <img class="logo-image" src="./assets/images/user.png" alt="">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-8">
+                            <div class="title" style="text-align: center; padding: 15px;">
+                                <h3>PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</h3>
+                                <p>@(Model.Date.HasValue ? Model.Date.Value.ToString("MM/yyyy") : "")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-90 w-100 pt-3">
+                    <div class="h-30 w-100 body-content d-flex">
+                        <div class="h-100 w-50 pr-2">
+                            <h4>Bảng thông tin nhân viên</h4>
+                            <table class="table table-bordered  table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Nhân viên</td>
+                                        <td>@(slip.Employee != null ? slip.Employee.Name : "")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mã nhân viên</td>
+                                        <td>@(slip.Employee != null ? slip.Employee.Ref : "")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lương/tháng</td>
+                                        <td>@(slip.Employee != null && slip.Employee.Wage.HasValue ? slip.Employee.Wage.Value : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Số ngày nghỉ/tháng</td>
+                                        <td>@(slip.Employee != null && slip.Employee.LeavePerMonth.HasValue ? slip.Employee.LeavePerMonth.Value : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Số giờ làm/ngày</td>
+                                        <td>@(slip.Employee != null && slip.Employee.RegularHour.HasValue ? slip.Employee.RegularHour.Value : 0)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="h-100 w-50 pl-2">
+                            <h4>Chấm công</h4>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Nội dung</th>
+                                        <th>Sô ngày</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Số ngày công</td>
+                                        <td>@(slip.WorkedDay.HasValue ? slip.WorkedDay.Value : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Số ngày nghỉ</td>
+                                        <td>@(slip.WorkedDay.HasValue ? slip.WorkedDay.Value : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ngày nghỉ không lương</td>
+                                        <td>@(slip.Employee != null ? slip.Employee.RegularHour : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ngày làm thêm</td>
+                                        <td>@(slip.OverTimeDay.HasValue ? slip.OverTimeDay.Value : 0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Số giờ tăng ca</td>
+                                        <td>@(slip.OverTimeHour.HasValue ? slip.OverTimeHour.Value : 0)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="h-60 w-100 pt-3">
+                        <div class="d-flex">
+                            <div class="w-50">
+                                <h4>Chi tiết lương</h4>
+                            </div>
+                            <div class="w-50">
+                                <h4 class="float-right">ĐVT: VNĐ</h4>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr class="bg-info font-weight-bold">
+                                    <th scope="col">STT</th>
+                                    <th scope="col">Nội dung</th>
+                                    <th scope="col">Số lượng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Lương cơ bản</td>
+                                    <td>@(slip.TotalBasicSalary.HasValue ? slip.TotalBasicSalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Lương tăng ca</td>
+                                    <td>@(slip.OverTimeHourSalary.HasValue ? slip.OverTimeHourSalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Lương làm thêm</td>
+                                    <td>@(slip.OverTimeDaySalary.HasValue ? slip.OverTimeDaySalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Phụ cấp xác định</td>
+                                    <td>@(slip.Employee != null && slip.Employee.Allowance.HasValue ? slip.Employee.Allowance.Value : 0)</td>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Phụ cấp khác</td>
+                                    <td>@(slip.OtherAllowance.HasValue ? slip.OtherAllowance.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Thưởng</td>
+                                    <td>@(slip.RewardSalary.HasValue ? slip.RewardSalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Phụ cấp lễ tết</td>
+                                    <td>@(slip.HolidayAllowance.HasValue ? slip.HolidayAllowance.Value : 0)</td>
+                                </tr>
+                                <tr class="bg-info font-weight-bold">
+                                    <td></td>
+                                    <td>Tổng lương</td>
+                                    <td>@(slip.TotalSalary.HasValue ? slip.TotalSalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Hoa hồng</td>
+                                    <td>@(slip.CommissionSalary.HasValue ? slip.CommissionSalary.Value : 0)</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Phạt</td>
+                                    <td>@(slip.AmercementMoney.HasValue ? slip.AmercementMoney.Value : 0)</td>
+                                </tr>
+                                @* chưa có phần tạm ứng, tạm thời để tạm ứng = 0 *@
+                                <tr>
+                                    <td>10</td>
+                                    <td>Tạm ứng</td>
+                                    <td>0</td>  
+                                </tr>
+                                <tr class="bg-info font-weight-bold">
+                                    <td></td>
+                                    <td>Thực lĩnh</td>
+                                    <td>@(slip.AmercementMoney.HasValue ? slip.AmercementMoney.Value : 0)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="h-10 w-100 pt-2">
+                        <table class="table border-none">
+                            <tr>
+                                <th class="text-center">Người lập phiếu</th>
+                                <th class="text-center">
+                                    Thứ..., Ngày...tháng...năm...
+                                    <p>Người lao động</p>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th class="text-center">
+                                    Đặng Thế Tài
+                                </th>
+                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name : "")</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+
+    <script defer>
+        function triggerPrint(event) {
+            window.removeEventListener('load', triggerPrint, false);
+            setTimeout(function () {
+                window.print();
+                setTimeout(function () { window.close(); }, 0);
+            }, 0);
+        }
+        window.addEventListener('load', triggerPrint, false);
+    </script>
+</body>
+</html>`

@@ -20,18 +20,20 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IHrPayslipRunService _payslipRunService;
         private readonly IMapper _mapper;
+        private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public HrPayslipRunsController(IHrPayslipRunService payslipRunService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        public HrPayslipRunsController(IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _payslipRunService = payslipRunService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _view = view;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
-        public async Task<IActionResult> Get([FromQuery]HrPayslipRunPaged val)
+        public async Task<IActionResult> Get([FromQuery] HrPayslipRunPaged val)
         {
             var result = await _payslipRunService.GetPagedResultAsync(val);
             return Ok(result);
@@ -43,6 +45,16 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _payslipRunService.GetHrPayslipRunForDisplay(id);
             return Ok(res);
+        }
+
+
+        [HttpGet("HrPayslipRun/{id}/PrintAll")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Print")]
+        public async Task<IActionResult> PrintAll(Guid id)
+        {
+            var res = await _payslipRunService.GetHrPayslipRunForDisplay(id);
+            var html = _view.Render("SalaryEmployeePrint", res);
+            return Ok(new printData() { html = html });
         }
 
         [HttpPost]
@@ -142,7 +154,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Salary.HrPayslipRun.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var paySlip = await _payslipRunService.SearchQuery(x => x.Id == id).Include(x=>x.Slips).FirstOrDefaultAsync();
+            var paySlip = await _payslipRunService.SearchQuery(x => x.Id == id).Include(x => x.Slips).FirstOrDefaultAsync();
             if (paySlip == null)
                 return BadRequest();
 

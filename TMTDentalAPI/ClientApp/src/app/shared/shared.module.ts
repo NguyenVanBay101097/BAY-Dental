@@ -64,6 +64,7 @@ import { ProductServiceCuDialogComponent } from '../products/product-service-cu-
 import { ReceptionDashboardComponent } from './components/reception-dashboard/reception-dashboard.component';
 import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
 import { PermissionDirective } from './permission.directive';
+import { PrintSalaryEmpComponent } from './print-salary-emp/print-salary-emp.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +99,7 @@ import { PermissionDirective } from './permission.directive';
     SelectUomProductDialogComponent,
     ImageFileUploadComponent,
     ToaThuocPrintComponent,
-    ImportSampleDataComponent, 
+    ImportSampleDataComponent,
     AccountPaymentPrintComponent,
     CheckAddressButtonComponent,
     PartnerProfilePrintComponent,
@@ -114,16 +115,17 @@ import { PermissionDirective } from './permission.directive';
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
-    PartnersBindingDirective, 
+    PartnersBindingDirective,
     ReceptionDashboardComponent,
-    PartnerTitleCuDialogComponent, 
+    PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
     PartnersBindingDirective,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent,
     ProductServiceCuDialogComponent,
-    PermissionDirective
+    PermissionDirective,
+    PrintSalaryEmpComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -169,10 +171,10 @@ import { PermissionDirective } from './permission.directive';
     PartnerCustomerCuDialogComponent,
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
-    PartnersBindingDirective, 
+    PartnersBindingDirective,
     ReceptionDashboardComponent,
     PartnerPhonePopoverComponent,
-    
+    PrintSalaryEmpComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent,
@@ -186,7 +188,7 @@ import { PermissionDirective } from './permission.directive';
     MyCustomKendoModule,
     FormsModule,
     MyCustomNgbModule,
-    CalendarModule ,
+    CalendarModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
         'm': 59
@@ -216,6 +218,6 @@ import { PermissionDirective } from './permission.directive';
     PartnerPhonePopoverComponent,
     ProductServiceCuDialogComponent
   ],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule { }

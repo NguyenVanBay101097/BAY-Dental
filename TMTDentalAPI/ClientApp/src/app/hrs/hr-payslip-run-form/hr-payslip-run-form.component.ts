@@ -56,6 +56,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
         this.patchValue(result);
+        console.log(result);
       });
     }
   }
@@ -68,13 +69,13 @@ export class HrPayslipRunFormComponent implements OnInit {
         const fg = this.fb.group(new HrPayslipSaveDefaultValue());
         fg.patchValue(e);
         this.slipsFormArray.push(fg);
-        e.employeeNameSearch = e.employee.name  + ' ' + this.RemoveVietnamese(e.employee.name);
+        e.employeeNameSearch = e.employee.name + ' ' + this.RemoveVietnamese(e.employee.name);
       });
     } else {
       result.slips = [];
     }
     console.log(result);
-    
+
     this.FormGroup.patchValue(result);
   }
 
@@ -181,9 +182,9 @@ export class HrPayslipRunFormComponent implements OnInit {
       .replace(/-$/, "");
     return text;
   }
-  
+
   onSearchEmployee(e) {
-  this.search = this.search.trim();
+    this.search = this.search.trim();
   }
 
   checkAll(e) {
@@ -211,5 +212,18 @@ export class HrPayslipRunFormComponent implements OnInit {
       case 'draft':
         return 'Nháp';
     }
+  }
+
+  printAllEmpSalary() {
+    this.hrPaysliprunService.printAllEmpSalary(this.id).subscribe(
+      result => {
+        console.log(result);
+        var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+        popupWin.document.open();
+  
+        popupWin.document.write(result['html']);
+        popupWin.document.close();
+      }
+    )
   }
 }

@@ -40,6 +40,28 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeCategoryBasic Category { get; set; }
         public decimal? Wage { get; set; }
         public Guid? StructureTypeId { get; set; }
+        /// <summary>
+        /// Số ngày nghỉ/tháng
+        /// </summary>
+        public decimal? LeavePerMonth { get; set; }
+
+        /// <summary>
+        /// số giờ công chuẩn 1 ngày
+        /// </summary>
+        public decimal? RegularHour { get; set; }
+
+        /// <summary>
+        /// tỉ lệ lương tăng ca
+        /// </summary>
+        public decimal? OvertimeRate { get; set; }
+        /// <summary>
+        /// tỉ lệ lương ngày đi làm thêm
+        /// </summary>
+        public decimal? RestDayRate { get; set; }
+        /// <summary>
+        /// trợ cấp
+        /// </summary>
+        public decimal? Allowance { get; set; }
     }
 
     public class EmployeeDisplay
