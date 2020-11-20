@@ -113,21 +113,21 @@
                                             <td>{{item.get('overTimeDaySalary').value | number }}</td>
                                             <td>{{item.get('allowance').value | number }}</td>
                                             <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done'" style="max-width: 120px;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
+                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done'" style="max-width: 120px;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done'" style="max-width: 120px;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td [hidden]="isCompact">{{item.get('totalSalary').value | number }}</td>
                                             <td>{{item.get('commissionSalary').value | number }}</td>
                                             <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done'" style="max-width: 120px;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td class="b-sticky-right">{{item.get('netSalary').value | number}}</td>

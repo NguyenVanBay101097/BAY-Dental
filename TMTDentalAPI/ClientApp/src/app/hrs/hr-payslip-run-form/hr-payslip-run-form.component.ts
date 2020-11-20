@@ -39,8 +39,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     });
 
     this.route.queryParamMap.subscribe(params => {
-      console.log(new Date());
-
       this.id = params.get('id');
       if (!this.id) {
         this.hrPaysliprunService.CheckExist(new Date()).subscribe((res: any) => {
@@ -81,8 +79,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     } else {
       result.slips = [];
     }
-    console.log(result);
-
     this.FormGroup.patchValue(result);
   }
 
@@ -226,5 +222,26 @@ export class HrPayslipRunFormComponent implements OnInit {
       case 'draft':
         return 'Nháp';
     }
+  }
+
+  onExport() {
+    const payslipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
+    this.hrPaysliprunService.ExportExcelFile(payslipIds).subscribe((res: any) => {
+      const filename = 'danh_sach_phieu_luong';
+      const newBlob = new Blob([res], {
+        type:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      const data = window.URL.createObjectURL(newBlob);
+      const link = document.createElement('a');
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 }

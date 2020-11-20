@@ -40,6 +40,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeCategoryBasic Category { get; set; }
         public decimal? Wage { get; set; }
         public Guid? StructureTypeId { get; set; }
+        public decimal? Allowance { get; set; }
+
     }
 
     public class EmployeeDisplay

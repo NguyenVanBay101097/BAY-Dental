@@ -14,7 +14,7 @@ export class HrPayslipRunBasic {
   state: string;
 }
 
-export class HrPayslipRunDisplay{
+export class HrPayslipRunDisplay {
   id: string;
   name: string;
   dateStart: string;
@@ -45,13 +45,13 @@ export class HrPayslipRunSave {
   state: string;
 }
 
-export class PaySlipRunConfirmViewModel{
+export class PaySlipRunConfirmViewModel {
   payslipRunId: string;
   structureId: string;
   empIds: string[];
 }
 
-export class HrPayslipRunDefaultGet{
+export class HrPayslipRunDefaultGet {
   state: string;
 }
 
@@ -71,11 +71,11 @@ export class HrPaysliprunService {
     return this.http.get<HrPayslipRunDisplay>(this.base_api + this.apiUrl + '/' + id);
   }
 
-  default(val: HrPayslipRunDefaultGet){
-    return this.http.post(this.base_api + this.apiUrl + '/DefaultGet' , val);
+  default(val: HrPayslipRunDefaultGet) {
+    return this.http.post(this.base_api + this.apiUrl + '/DefaultGet', val);
   }
 
-  create(val: HrPayslipRunSave ) {
+  create(val: HrPayslipRunSave) {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
 
@@ -83,11 +83,11 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/ActionConfirm/' + id, null);
   }
 
-  actionDone(ids : string[]) {
+  actionDone(ids: string[]) {
     return this.http.post(this.base_api + this.apiUrl + '/ActionDone', ids);
   }
 
-  actionCancel(ids : string[]) {
+  actionCancel(ids: string[]) {
     return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
   }
 
@@ -109,6 +109,13 @@ export class HrPaysliprunService {
 
   CheckExist(d: Date) {
     return this.http.post(this.base_api + this.apiUrl + '/CheckExist?date=' + d.toISOString(), null);
+  }
+
+  ExportExcelFile(payslipIds: string[]) {
+    return this.http.post(
+      this.base_api + this.apiUrl + '/ExportExcelFile', payslipIds,
+      { responseType: 'blob' }
+    );
   }
 
 }
