@@ -63,6 +63,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? CommissionSalary { get; set; }
         public decimal? AmercementMoney { get; set; }
         public decimal? NetSalary { get; set; }
+        public decimal? ActualLeavePerMonth { get; set; }
+        public decimal? LeavePerMonthUnpaid { get; set; }
     }
 
     public class HrPayslipDisplay
@@ -109,6 +111,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? CommissionSalary { get; set; }
         public decimal? AmercementMoney { get; set; }
         public decimal? NetSalary { get; set; }
+        public decimal? ActualLeavePerMonth { get; set; }
+        public decimal? LeavePerMonthUnpaid { get; set; }
 
     }
 

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201119094051_Bay_add_accountmove_into_sliprun")]
+    partial class Bay_add_accountmove_into_sliprun
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2709,9 +2711,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AccountMoveId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("ActualLeavePerMonth")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal?>("Allowance")
                         .HasColumnType("decimal(18,2)");
 
@@ -2747,9 +2746,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("LeavePerMonthUnpaid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()

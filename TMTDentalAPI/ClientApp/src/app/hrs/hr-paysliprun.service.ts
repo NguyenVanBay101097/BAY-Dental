@@ -107,6 +107,10 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/ComputeSalaryByRunId/' + id, null);
   }
 
+  CheckExist(d: Date) {
+    return this.http.post(this.base_api + this.apiUrl + '/CheckExist?date=' + d.toISOString(), null);
+  }
+
   printAllEmpSalary(id) {
     return this.http.get(this.base_api + this.apiUrl + `/HrPayslipRun/${id}/PrintAll`);
   }

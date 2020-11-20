@@ -19,5 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public DateTime? Date { get; set; }
         public IEnumerable<HrPayslipDisplay> Slips { get; set; } = new List<HrPayslipDisplay>();
+        public ApplicationUserSimple User { get; set; }
+
     }
 }

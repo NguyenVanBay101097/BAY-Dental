@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201118113646_CreateTableSalarypayments")]
+    partial class CreateTableSalarypayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1504,12 +1506,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("OverTime")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("OverTimeHour")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
@@ -1518,9 +1514,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("TimeOut")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("WorkEntryTypeId")
                         .HasColumnType("uniqueidentifier");
@@ -2024,9 +2017,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Allowance")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
 
@@ -2066,15 +2056,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("LeavePerMonth")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("OvertimeRate")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("PartnerId")
                         .HasColumnType("uniqueidentifier");
@@ -2084,12 +2068,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Ref")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("RegularHour")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("RestDayRate")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("StartWorkDate")
                         .HasColumnType("datetime2");
@@ -2709,18 +2687,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("AccountMoveId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("ActualLeavePerMonth")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Allowance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("AmercementMoney")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("CommissionSalary")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -2736,51 +2702,21 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("DateTo")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("DaySalary")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("HolidayAllowance")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("LeavePerMonthUnpaid")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("NetSalary")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("OtherAllowance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("OverTimeDay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("OverTimeDaySalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("OverTimeHour")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("OverTimeHourSalary")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<Guid?>("PayslipRunId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("RewardSalary")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
@@ -2792,15 +2728,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalBasicSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("WorkedDay")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("WriteById")
@@ -2903,9 +2830,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -2917,9 +2841,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("MoveId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -2936,8 +2857,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("MoveId");
 
                     b.HasIndex("WriteById");
 
@@ -9924,11 +9843,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
-                        .WithMany()
-                        .HasForeignKey("MoveId")
-                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

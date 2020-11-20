@@ -39,9 +39,17 @@ export class HrPayslipRunFormComponent implements OnInit {
     });
 
     this.route.queryParamMap.subscribe(params => {
+      console.log(new Date());
+
       this.id = params.get('id');
       if (!this.id) {
-        this.getDefault();
+        this.hrPaysliprunService.CheckExist(new Date()).subscribe((res: any) => {
+          if (res && res.id) {
+            this.router.navigateByUrl('hr/payslip-run/form?id=' + res.id);
+          } else {
+            this.getDefault();
+          }
+        });
       } else {
         this.loadRecord();
       }
@@ -147,10 +155,17 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onConfirm() {
     if (this.id) {
-      this.hrPaysliprunService.actionConfirm(this.id).subscribe(() => {
-        this.notify('success', 'lưu thành công');
-        this.loadRecord();
+      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Xác nhận bảng lương';
+      modalRef.componentInstance.body = 'Bạn chắc chắn xác nhận bảng lương?';
+      modalRef.componentInstance.body2 = ' bạn sẽ không thể điều chỉnh sau khi xác nhận.';
+      modalRef.result.then(() => {
+        this.hrPaysliprunService.actionConfirm(this.id).subscribe(() => {
+          this.notify('success', 'bảng lương xác nhận thành công');
+          this.loadRecord();
+        });
       });
+
     }
   }
 
