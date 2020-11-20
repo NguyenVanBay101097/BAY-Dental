@@ -59,6 +59,11 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
+            var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
+            if(isExist == true)
+            {
+                throw new Exception("đã tồn tại bảng lương của tháng "+ val.Date.Value.Month);
+            }
             var payslipRun = _mapper.Map<HrPayslipRun>(val);
 
             return await CreateAsync(payslipRun);
