@@ -22,5 +22,6 @@ namespace Infrastructure.Services
 
         Task CreatePayslipByRunId(Guid id);
         Task ComputeSalaryByRunId(Guid id);
+        Task<HrPayslipRun> CheckExist(DateTime date);
     }
 }

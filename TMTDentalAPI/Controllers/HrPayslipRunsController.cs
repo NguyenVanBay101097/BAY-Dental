@@ -170,5 +170,16 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CheckExist([FromQuery] DateTime? date)
+        {
+            if (date == null)
+            {
+                throw new Exception("phải chọn ngày để kiểm tra bảng lương");
+            }
+            var res = await _payslipRunService.CheckExist(date.Value);
+            return Ok(res);
+        }
     }
 }

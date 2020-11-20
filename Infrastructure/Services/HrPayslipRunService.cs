@@ -49,6 +49,10 @@ namespace Infrastructure.Services
             var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");
+            // get user
+            var userManager = (Microsoft.AspNetCore.Identity.UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
+            var user = await userManager.FindByIdAsync(UserId);
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
             return res;
         }
 
@@ -304,9 +308,10 @@ namespace Infrastructure.Services
             payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
 
             payslip.WorkedDay = chamCongs.Where(x => x.Type == "work").Count();
-
-            var ngaythucnghi = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;
-            payslip.OverTimeDay = Math.Round(emp.LeavePerMonth.GetValueOrDefault() - ngaythucnghi, 2);
+            payslip.ActualLeavePerMonth = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;
+            payslip.LeavePerMonthUnpaid = emp.LeavePerMonth.GetValueOrDefault() - payslip.ActualLeavePerMonth.GetValueOrDefault();
+            payslip.LeavePerMonthUnpaid = payslip.LeavePerMonthUnpaid > 0 ? payslip.LeavePerMonthUnpaid : 0;
+            payslip.OverTimeDay = Math.Round(emp.LeavePerMonth.GetValueOrDefault() - payslip.ActualLeavePerMonth.GetValueOrDefault(), 2);
             payslip.OverTimeDay = payslip.OverTimeDay > 0 ? payslip.OverTimeDay : 0;
             payslip.TotalBasicSalary = Math.Round(((payslip.WorkedDay.GetValueOrDefault() - payslip.OverTimeDay.GetValueOrDefault()) * payslip.DaySalary.GetValueOrDefault()), 2);
 
@@ -337,6 +342,11 @@ namespace Infrastructure.Services
                 await ComputeSalary(item, null, null, paysliprun.Date);
             }
             await UpdateAsync(paysliprun);
+        }
+
+        public async Task<HrPayslipRun> CheckExist(DateTime date)
+        {
+            return await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year).FirstOrDefaultAsync();
         }
     }
 

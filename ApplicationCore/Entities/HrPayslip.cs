@@ -139,5 +139,13 @@ namespace ApplicationCore.Entities
         /// tiền thực nhận: bằng totalsalary + commission - amercement - advance
         /// </summary>
         public decimal? NetSalary { get; set; }
+        /// <summary>
+        /// số ngày nghỉ thực tế của tháng đó
+        /// </summary>
+        public decimal? ActualLeavePerMonth { get; set; }
+        /// <summary>
+        /// số ngày nghỉ không lương
+        /// </summary>
+        public decimal? LeavePerMonthUnpaid { get; set; }
     }
 }
