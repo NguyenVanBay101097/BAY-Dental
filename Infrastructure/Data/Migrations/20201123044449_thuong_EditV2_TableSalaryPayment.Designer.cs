@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201123044449_thuong_EditV2_TableSalaryPayment")]
+    partial class thuong_EditV2_TableSalaryPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1499,12 +1501,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("OverTime")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("OverTimeHour")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
@@ -1513,9 +1509,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("TimeOut")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("WorkEntryTypeId")
                         .HasColumnType("uniqueidentifier");
