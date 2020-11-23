@@ -39,6 +39,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerService _partnerService;
         private readonly BirthdayMessageJobService _birthdayMessageJobService;
         private readonly ITCareJobService _tcareJobService;
+        private readonly IApplicationRoleFunctionService _applicationRoleFunctionService;
 
         private readonly CatalogDbContext _context;
 
@@ -47,6 +48,7 @@ namespace TMTDentalAPI.Controllers
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
             IMailSender mailSender, IAsyncRepository<UserRefreshToken> userRefreshTokenRepository,
             IUserService userService, IPartnerService partnerService, BirthdayMessageJobService birthdayMessageJobService,
+            IApplicationRoleFunctionService applicationRoleFunctionService,
             ITCareJobService tcareJobService)
         {
             _userManager = userManager;
@@ -59,6 +61,7 @@ namespace TMTDentalAPI.Controllers
             _partnerService = partnerService;
             _birthdayMessageJobService = birthdayMessageJobService;
             _tcareJobService = tcareJobService;
+            _applicationRoleFunctionService = applicationRoleFunctionService;
         }
 
         [AllowAnonymous]
@@ -313,6 +316,13 @@ namespace TMTDentalAPI.Controllers
             };
 
             return Ok(user);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPermission()
+        {
+            var res = await _applicationRoleFunctionService.GetPermission();
+            return Ok(res);
         }
     }
 

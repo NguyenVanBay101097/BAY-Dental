@@ -1,5 +1,5 @@
 import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -15,26 +15,26 @@ import { UserSimple } from 'src/app/users/user-simple';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-employee-create-update',
   templateUrl: './employee-create-update.component.html',
-  styleUrls: ['./employee-create-update.component.css']
+  styleUrls: ['./employee-create-update.component.css'],
 })
-export class EmployeeCreateUpdateComponent implements OnInit {
-  @ViewChild("structureTypeCbx", { static: true }) structureTypeCbx: ComboBoxComponent;
-
+export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   constructor(private fb: FormBuilder,
     private employeeService: EmployeeService,
     private structureTypeService: HrPayrollStructureTypeService,
     private empCategService: EmpCategoryService,
     public activeModal: NgbActiveModal,
-    private modalService: NgbModal,
+    private modalService: NgbModal, private notificationService: NotificationService,
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('commissionCbx', { static: true }) commissionCbx: ComboBoxComponent;
+  @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -42,6 +42,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
   title = 'Nhân viên';
   isDoctor: boolean;
   isAssistant: boolean;
+  isShowSalary = false;
 
   filteredstructureTypes: HrPayrollStructureTypeSimple[] = [];
   categoriesList: EmployeeCategoryBasic[] = [];
@@ -70,7 +71,12 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       wage: 0,
       hourlyWage: 0,
       startWorkDate: null,
-      enrollNumber: null
+      enrollNumber: null,
+      leavePerMonth: null,
+      regularHour: null,
+      overtimeRate: null,
+      restDayRate: null,
+      allowance: null
     });
 
     setTimeout(() => {
@@ -79,14 +85,7 @@ export class EmployeeCreateUpdateComponent implements OnInit {
       this.loadUsers();
       this.loadstructureTypes();
 
-      this.commissionCbx.filterChange.asObservable().pipe(
-        debounceTime(300),
-        tap(() => (this.commissionCbx.loading = true)),
-        switchMap(value => this.searchCommissions(value))
-      ).subscribe(result => {
-        this.listCommissions = result.items;
-        this.commissionCbx.loading = false;
-      });
+     
 
       this.userCbx.filterChange.asObservable().pipe(
         debounceTime(300),
@@ -97,17 +96,17 @@ export class EmployeeCreateUpdateComponent implements OnInit {
         this.userCbx.loading = false;
       });
 
-      this.structureTypeCbx.filterChange
-        .asObservable()
-        .pipe(
-          debounceTime(300),
-          tap(() => (this.structureTypeCbx.loading = true)),
-          switchMap((value) => this.searchstructureTypes(value))
-        )
-        .subscribe((result) => {
-          this.filteredstructureTypes = result;
-          this.structureTypeCbx.loading = false;
-        });
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.commissionCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.commissionCbx.loading = true)),
+      switchMap(value => this.searchCommissions(value))
+    ).subscribe(result => {
+      this.listCommissions = result.items;
+      this.commissionCbx.loading = false;
     });
   }
 
@@ -175,18 +174,34 @@ export class EmployeeCreateUpdateComponent implements OnInit {
     value.startWorkDate = value.startWorkDate ? this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd') : null;
 
     this.isChange = true;
-    this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
-      rs => {
-        if (this.empId) {
-          this.activeModal.close(true);
-        } else {
-          this.activeModal.close(rs);
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = this.empId? 'Sửa nhân viên':'Thêm nhân viên';
+    modalRef.componentInstance.body = this.empId? 'Bạn có chắc chắn muốn sửa nhân viên?':'Bạn có chắc chắn thêm nhân viên?';
+    modalRef.result.then(() => {
+      this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
+        rs => {
+          this.notify('success', 'thành công');
+          if (this.empId) {
+            this.activeModal.close(true);
+          } else {
+            this.activeModal.close(rs);
+          }
+        },
+        er => {
+          console.log(er);
         }
-      },
-      er => {
-        console.log(er);
-      }
-    );
+      );
+    });
+  }
+
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
   }
 
   get structureTypeValue() {
@@ -293,5 +308,9 @@ export class EmployeeCreateUpdateComponent implements OnInit {
         console.log(er);
       }
     )
+  }
+
+  toggleVisibility(e){
+    this.isShowSalary= e.target.checked;
   }
 }

@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IApplicationRoleFunctionService: IBaseService<ApplicationRoleFunction>
     {
         Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions);
+        Task<GetPermission> GetPermission();
     }
 }
