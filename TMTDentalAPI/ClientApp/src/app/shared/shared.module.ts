@@ -65,6 +65,7 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
 import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
 import { PermissionDirective } from './permission.directive';
 import { PrintSalaryEmpComponent } from './print-salary-emp/print-salary-emp.component';
+import { SalaryPaymentBindingDirective } from './directives/salary-payment-binding.directive';
 
 @NgModule({
   declarations: [
@@ -125,7 +126,9 @@ import { PrintSalaryEmpComponent } from './print-salary-emp/print-salary-emp.com
     PrintSaleOrderComponent,
     ProductServiceCuDialogComponent,
     PermissionDirective,
-    PrintSalaryEmpComponent
+    PrintSalaryEmpComponent,
+    ProductServiceCuDialogComponent, 
+    SalaryPaymentBindingDirective
   ],
   exports: [
     ConfirmDialogComponent,
@@ -178,7 +181,9 @@ import { PrintSalaryEmpComponent } from './print-salary-emp/print-salary-emp.com
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent,
-    PermissionDirective
+    PermissionDirective,
+    PrintSaleOrderComponent,
+    SalaryPaymentBindingDirective
   ],
   imports: [
     CommonModule,

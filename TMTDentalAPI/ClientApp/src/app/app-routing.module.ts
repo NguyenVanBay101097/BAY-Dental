@@ -29,6 +29,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'salary-payment',
+    loadChildren: () => import('./salary-payment/salary-payment.module').then(m => m.SalaryPaymentModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'time-keepings',
     loadChildren: () => import('./time-keeping/time-keeping.module').then(m => m.TimeKeepingModule),
     canActivate: [AuthGuard]
