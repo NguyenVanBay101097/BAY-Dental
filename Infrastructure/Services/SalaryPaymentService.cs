@@ -62,12 +62,20 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
         {
             var listSalaryPayment = new List<SalaryPayment>();
+            var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
             foreach(var item in vals)
             {
-                var salaryPayment = _mapper.Map<SalaryPayment>(item);
+                var salaryPayment = new SalaryPayment();
+                salaryPayment.JournalId = item.JournalId.Value;
+                salaryPayment.Date = item.Date;
+                salaryPayment.EmployeeId = item.EmployeeId;
+                salaryPayment.Reason = item.Reason;
+                salaryPayment.Amount = item.Amount.Value;
+                salaryPayment.State = "draft";
+                salaryPayment.Type = "salary";
 
                 if (string.IsNullOrEmpty(salaryPayment.Name))
                 {
@@ -96,7 +104,10 @@ namespace Infrastructure.Services
 
                 salaryPayment.CompanyId = CompanyId;
 
-                listSalaryPayment.Add(salaryPayment);
+                await CreateAsync(salaryPayment);
+
+                salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
+
             }
 
             await CreateAsync(listSalaryPayment);

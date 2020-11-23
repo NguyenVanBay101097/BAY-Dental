@@ -36,9 +36,9 @@ export class SalaryPaymentFormComponent implements OnInit {
     private salaryPaymentService: SalaryPaymentService,
     private authService: AuthService,
     private accountJournalService: AccountJournalService,
-    private employeeService: EmployeeService, 
+    private employeeService: EmployeeService,
     private intlService: IntlService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -46,7 +46,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       DateObj: [null, Validators.required],
       Journal: [null, Validators.required],
       Employee: [null, Validators.required],
-      Amount:[0, Validators.required],
+      Amount: [0, Validators.required],
       Reason: null,
       Type: 'advance'
     });
@@ -65,17 +65,21 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   loadData() {
-    this.salaryPaymentService.get(this.id, null).subscribe(
-      (result) => {
+    this.salaryPaymentService.getIdSP(this.id).subscribe(
+      (result) => {        
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
         // this.formGroup.get('name').patchValue(result.Name);
-        if (result.Employee) {
+        if (result.Employee) {         
+          result.Employee.id = result.Employee.Id;
+          result.Employee.name = result.Employee.Name;
           this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], "id");
         }
 
         if (result.Journal) {
+          result.Journal.id = result.Journal.Id;
+          result.Journal.name = result.Journal.Name;
           this.filteredJournals = _.unionBy(this.filteredJournals, [result.Journal], "id");
         }
 
@@ -137,23 +141,23 @@ export class SalaryPaymentFormComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
- 
+
     const salaryPayment = Object.assign({}, this.formGroup.value);
     salaryPayment.JournalId = salaryPayment.Journal.id;
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
     salaryPayment.Type = salaryPayment.Type;
     // this.activeModal.close(salaryPayment);
-    if(this.id){
-      this.salaryPaymentService.update(this.id,salaryPayment).subscribe(
+    if (this.id) {
+      this.salaryPaymentService.update(this.id, salaryPayment).subscribe(
         () => {
-          
+
         },
         (error) => {
           console.log(error);
         }
       );
-    }else{   
+    } else {
       this.salaryPaymentService.create(salaryPayment).subscribe(
         (result) => {
           this.activeModal.close(result);
@@ -163,10 +167,10 @@ export class SalaryPaymentFormComponent implements OnInit {
         }
       );
     }
-   
+
   }
 
-  actionConfirm(){
+  actionConfirm() {
 
   }
 }
