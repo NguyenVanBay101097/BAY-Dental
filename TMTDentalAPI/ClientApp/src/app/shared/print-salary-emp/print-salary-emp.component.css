@@ -1,0 +1,25 @@
+.logo {
+    padding: 30px;
+}
+
+.logo-image {
+    max-width: 10%;
+}
+
+.title {
+    padding: 15px;
+    text-align: center;
+}
+
+.active {
+    background-color: rgb(89, 118, 156);
+}
+
+.flex {
+    flex: 1 1 auto;
+}
+
+.page-break {
+    page-break-inside: avoid;
+}
+

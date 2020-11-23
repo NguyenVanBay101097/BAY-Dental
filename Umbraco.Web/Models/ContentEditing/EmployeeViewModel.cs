@@ -38,5 +38,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? HourlyWage { get; set; }
         public DateTime? StartWorkDate { get; set; }
         public string EnrollNumber { get; set; }
+        public decimal? LeavePerMonth { get; set; }
+        public decimal? RegularHour { get; set; }
+        public decimal? OvertimeRate { get; set; }
+        public decimal? RestDayRate { get; set; }
+        public decimal? Allowance { get; set; }
     }
 }

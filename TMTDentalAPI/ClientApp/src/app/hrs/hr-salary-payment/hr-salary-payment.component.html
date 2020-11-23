@@ -1,0 +1,55 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mb-0">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Ngày</th>
+                                <th class="text-center">Phương thức</th>
+                                <th class="text-center">Người nhận</th>
+                                <th class="text-center">Số tiền thực lĩnh</th>
+                                <th class="text-center">Nội dung</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let control of paymentFA.controls; index as i">
+                                <td class="text-center">
+                                    {{control.get('Date').value | date:'dd/MM/yyyy'}}
+                                </td>
+                                <td class="text-center">
+                                    <select name="" formControlName="Journal" id=""></select>
+                                </td>
+                                <td class="text-center">
+                                    {{control.get('Employee').value?.Name}}
+                                </td>
+                                <td class="text-center">
+                                    {{control.get('Amount').value | number}}
+                                </td>
+                                <td class="text-center">
+                                    <input type="text" class="form-control" formControlName="Reason">
+                                </td>
+                                <td class="text-center">
+                                    <i class="far fa-trash-alt"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác Nhận</button>
+    <button type="button" class="btn btn-primary" (click)="onSaveAndPrint()" accesskey="s">Xác Nhận Và In</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+</footer>

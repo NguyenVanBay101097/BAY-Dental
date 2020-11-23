@@ -29,7 +29,7 @@ namespace TMTDentalAPI.Controllers
         //api get phan trang loai thu , chi
         [HttpGet]
         [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
-        public async Task<IActionResult> GetLoaiThuChi([FromQuery]PhieuThuChiPaged val)
+        public async Task<IActionResult> GetLoaiThuChi([FromQuery] PhieuThuChiPaged val)
         {
             var res = await _phieuThuChiService.GetPhieuThuChiPagedResultAsync(val);
             return Ok(res);
@@ -43,6 +43,16 @@ namespace TMTDentalAPI.Controllers
             if (res == null)
                 return NotFound();
 
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        public async Task<IActionResult> ReportPhieuThuChi([FromQuery] PhieuThuChiSearch val)
+        {
+            if (val == null || !ModelState.IsValid)
+                return BadRequest();
+            var res = await _phieuThuChiService.ReportPhieuThuChi(val);
             return Ok(res);
         }
 

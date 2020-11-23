@@ -87,9 +87,25 @@ namespace TMTDentalAPI.OdataControllers
 
             #endregion
 
-            //#region
-            //builder.EntitySet<SaleOrderLineViewModel>("SaleOrderLines");
-            //#endregion
+            #region SalaryPayments
+            builder.EntitySet<SalaryPaymentVm>("SalaryPayments");
+
+            builder.EntityType<SalaryPaymentVm>()
+                      .Collection
+                   .Function("ActionConfirm")
+                   .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                     .Collection
+                  .Function("ActionCancel")
+                  .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Function("CreateMultiSalaryPayment")
+                .Returns<bool>();
+
+            #endregion
 
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
@@ -104,6 +120,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
+            
 
             #endregion
 

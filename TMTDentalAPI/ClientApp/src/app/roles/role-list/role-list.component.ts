@@ -11,6 +11,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { UserService, UserPaged } from 'src/app/users/user.service';
+import { AuthResource } from 'src/app/auth/auth.resource';
 
 const indexChecked = (keys, index) => keys.filter(k => k === index).length > 0;
 
@@ -42,6 +43,7 @@ export class RoleListComponent implements OnInit {
 
   constructor(private roleService: RoleService, private router: Router, private fb: FormBuilder,
     private webService: WebService, private notificationService: NotificationService, private modalService: NgbModal,
+    private authResource: AuthResource,
     private userService: UserService) { }
 
   ngOnInit() {
@@ -233,7 +235,7 @@ export class RoleListComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-
+        this.loadPermission();
         this.loadRoles(result.id);
       });
     } else {
@@ -245,10 +247,16 @@ export class RoleListComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-
+        this.loadPermission();
         this.loadRoles(this.id);
       });
     }
+  }
+
+  loadPermission() {
+    this.authResource.getPermission().subscribe((res: any) => {
+      localStorage.setItem('user_permission', JSON.stringify(res));
+    });
   }
 }
 

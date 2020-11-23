@@ -13,6 +13,7 @@ import { TimeKeepingImportFileComponent } from './time-keeping-import-file/time-
 import { HrsModule } from '../hrs/hrs.module';
 import { TimeKeepingDateFilterComponent } from './time-keeping-date-filter/time-keeping-date-filter.component';
 import { TimeKeepingForallDialogComponent } from './time-keeping-forall-dialog/time-keeping-forall-dialog.component';
+import { TimeKeepingPopoverComponent } from './time-keeping-popover/time-keeping-popover.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TimeKeepingForallDialogComponent } from './time-keeping-forall-dialog/t
     TimeKeepingSettingDialogComponent,
     TimeKeepingImportFileComponent,
     TimeKeepingDateFilterComponent,
-    TimeKeepingForallDialogComponent
+    TimeKeepingForallDialogComponent,
+    TimeKeepingPopoverComponent
   ],
   imports: [
     CommonModule,

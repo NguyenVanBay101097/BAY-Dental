@@ -11,7 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public ChamCongProfile()
         {
-            CreateMap<ChamCongSave, ChamCong>() ;
+            CreateMap<ChamCongSave, ChamCong>();
             CreateMap<ChamCong, ChamCongDisplay>();
          
         }

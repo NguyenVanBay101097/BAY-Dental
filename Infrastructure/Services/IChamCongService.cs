@@ -28,5 +28,7 @@ namespace Infrastructure.Services
         //Task<IEnumerable<ChamCongDisplay>> ExportFile(employeePaged val);
         Task TaoChamCongNguyenNgay(TaoChamCongNguyenNgayViewModel val);
 
+        Task<IEnumerable<EmployeeSimple>> CreateFullMonthTimekeeping(TaoChamCongNguyenThangViewModel val);
+
     }
 }

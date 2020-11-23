@@ -31,6 +31,7 @@
 .oe_kanban_content {
     cursor: pointer;
     position: relative;
+    text-align:center;
 }
 
 .o_content {
@@ -63,6 +64,7 @@
 
 .table td {
     padding: 2px !important;
+    vertical-align: middle;
 }
 
 .title_month {
@@ -124,4 +126,17 @@
     white-space: pre;
     overflow: hidden;
     padding: 4px;
+}
+
+.oe_kanban_content_timeOver{
+    min-height: 20px;
+}
+
+.oe_kanban_content_timeOver{
+    text-align: center;
+  }
+.oe_kanban_label_Emp{
+    min-width: 200px;
+    vertical-align : middle;
+    text-align:center;
 }

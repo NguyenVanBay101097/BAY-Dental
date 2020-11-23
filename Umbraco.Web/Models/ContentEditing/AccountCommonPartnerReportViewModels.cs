@@ -35,6 +35,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Display { get; set; }
 
         public string Search { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class AccountCommonPartnerReportSearchV2

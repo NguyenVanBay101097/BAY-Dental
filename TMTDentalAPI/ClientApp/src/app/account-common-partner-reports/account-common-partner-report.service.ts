@@ -33,6 +33,7 @@ export class AccountCommonPartnerReportSearch {
     partnerId: string;
     resultSelection: string;
     display: string;
+    companyId:string;
     search: string;
 }
 

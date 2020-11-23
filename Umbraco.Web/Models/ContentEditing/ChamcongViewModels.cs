@@ -27,7 +27,20 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? TimeOut { get; set; }
 
-        public Guid WorkEntryTypeId { get; set; }
+        //public Guid WorkEntryTypeId { get; set; }
+
+        public string Type { get; set; }
+
+        public DateTime? Date { get; set; }
+        /// <summary>
+        /// tăng ca
+        /// </summary>
+        public bool OverTime { get; set; }
+
+        /// <summary>
+        /// số giờ tăng ca
+        /// </summary>
+        public decimal? OverTimeHour { get; set; }
 
         public Guid CompanyId { get; set; }
     }
@@ -37,15 +50,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public Guid EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
 
         public DateTime? TimeIn { get; set; }
 
         public DateTime? TimeOut { get; set; }
 
+        public DateTime? Date { get; set; }
+
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeBasic WorkEntryType { get; set; }
 
         public Guid CompanyId { get; set; }
+
+        public string Type { get; set; }
+
+        /// <summary>
+        /// tăng ca
+        /// </summary>
+        public bool OverTime { get; set; }
+
+        /// <summary>
+        /// số giờ tăng ca
+        /// </summary>
+        public decimal? OverTimeHour { get; set; }
     }
 
     public class ChamCongExportExcell
@@ -75,5 +103,11 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime Date { get; set; }
         public Guid WorkEntryTypeId { get; set; }
+    }
+
+    public class TaoChamCongNguyenThangViewModel
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
     }
 }

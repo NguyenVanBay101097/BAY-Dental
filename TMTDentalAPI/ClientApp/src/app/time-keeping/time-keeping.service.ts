@@ -6,11 +6,10 @@ import { WorkEntryType } from '../work-entry-types/work-entry-type.service';
 
 export class ChamCongSave {
   employeeId: string;
-  timeIn: string;
-  timeOut: string;
-  date: string;
-  hourWorked: number;
-  workEntryTypeId: string;
+  type: string;
+  overTime: string;
+  overTimeHour: number;
+  date: Date;
   status: string;
 }
 
@@ -35,6 +34,7 @@ export class ChamCongBasic {
   status: string;
   hourWorked: number;
   date: string;
+  type: string;
   employee: EmployeeBasic;
   employeeId: string;
   workEntryTypeId: string;
@@ -67,6 +67,11 @@ export class ChamCongPagging {
   items: ChamCongBasic[]
 }
 
+export class TaoChamCongNguyenThangViewModel {
+  year: number;
+  month: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -74,8 +79,8 @@ export class TimeKeepingService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/ChamCongs";
-  create(val): Observable<ChamCongSave> {
-    return this.http.post<ChamCongSave>(this.base_api + this.apiUrl, val);
+  create(val) {
+    return this.http.post<ChamCongBasic>(this.base_api + this.apiUrl, val);
   }
 
   update(id, val) {
@@ -124,5 +129,9 @@ export class TimeKeepingService {
   }
   timeKeepingForAll(val) {
     return this.http.post(this.base_api + this.apiUrl + '/TimeKeepingForAll', val);
+  }
+
+  createFullMonthTimeKeeping(val): Observable<any[]> {
+    return this.http.post<any[]>(this.base_api + this.apiUrl + '/FullMonthTimeKeeping', val);
   }
 }

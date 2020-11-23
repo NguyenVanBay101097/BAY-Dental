@@ -44,7 +44,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Lương',
       icon: 'fas fa-money-bill-alt',
       children: [
-        { name: 'Đợt lương', link: '/hr/payslip-runs' },
+        { name: 'Đợt lương', link: '/hr/payslip-run/form' },
         { name: 'Phiếu lương', link: '/hr/payslips' },
         { name: 'Chấm công', link: 'time-keepings' },
         { name: 'Loại mẫu lương', link: '/hr/payroll-structure-types' },
@@ -53,6 +53,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Thời gian làm việc', link: '/resource-calendars' },
         // { name: 'Cấu hình lương', link: '/hr/salary-configs' },
         { name: 'Báo cáo thanh toán lương', link: 'hr/salary-reports' }
+        { name: 'Quản lý tạm ứng - chi lương', link: '/salary-payment' },
       ],
     },
     {
@@ -144,6 +145,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
       children: [
+        { name: 'Sale dashboard report', link: '/sale-dashboard-reports' },
         { name: 'Kết quả kinh doanh', link: '/financial-report' },
         { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank' },
         { name: 'Thống kê doanh thu', link: '/revenue-report' },

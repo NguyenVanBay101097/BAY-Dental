@@ -30,6 +30,7 @@ import { HrSalaryConfigService } from './hr-salary-config.service';
 import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-report-list.component';
 import { HrSalaryReportDetailComponent } from './hr-salary-report-detail/hr-salary-report-detail.component';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
     HrSalaryConfigCreateUpdateComponent,
     HrSalaryReportListComponent,
     HrSalaryReportDetailComponent,
+    HrSalaryPaymentComponent,
   ],
   imports: [
     CommonModule,
@@ -70,7 +72,7 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent
+    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent, HrSalaryPaymentComponent
   ]
 })
 export class HrsModule { }
