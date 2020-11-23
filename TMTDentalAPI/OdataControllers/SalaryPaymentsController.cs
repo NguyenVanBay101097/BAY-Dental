@@ -16,7 +16,8 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
 {
-
+    [Route("odata/[controller]")]
+    [ApiController]
     public class SalaryPaymentsController : BaseController
     {
         private readonly IPartnerService _partnerService;

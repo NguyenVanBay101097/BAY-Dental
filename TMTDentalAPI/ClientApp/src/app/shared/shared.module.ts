@@ -63,6 +63,7 @@ import { ReceptionDashboardComponent } from './components/reception-dashboard/re
 import { CalendarModule } from '@progress/kendo-angular-dateinputs';
 import { ProductServiceCuDialogComponent } from '../products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.component';
+import { SalaryPaymentBindingDirective } from './directives/salary-payment-binding.directive';
 
 @NgModule({
   declarations: [
@@ -121,7 +122,8 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     PrintSaleOrderComponent,
-    ProductServiceCuDialogComponent
+    ProductServiceCuDialogComponent, 
+    SalaryPaymentBindingDirective
   ],
   exports: [
     ConfirmDialogComponent,
@@ -173,7 +175,8 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
     
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
-    PrintSaleOrderComponent
+    PrintSaleOrderComponent,
+    SalaryPaymentBindingDirective
   ],
   imports: [
     CommonModule,
