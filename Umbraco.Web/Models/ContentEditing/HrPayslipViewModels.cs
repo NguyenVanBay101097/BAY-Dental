@@ -46,7 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<HrPayslipLineSave> Lines { get; set; } = new List<HrPayslipLineSave>();
 
         public Guid CompanyId { get; set; }
-
+        public bool IsCheck { get; set; }
         public Guid? StructureTypeId { get; set; }
         public decimal? DaySalary { get; set; }
         public decimal? WorkedDay { get; set; }

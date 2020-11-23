@@ -66,7 +66,7 @@ namespace Infrastructure.Services
 
         public async Task UpdatePayslipRun(Guid id, HrPayslipRunSave val)
         {
-            var paySlipRun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).FirstOrDefaultAsync();
+            var paySlipRun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).Include(x => x.Company).FirstOrDefaultAsync();
             if (paySlipRun == null)
                 throw new Exception("Đợt lương không tồn tại");
 
@@ -112,12 +112,12 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var amlObj = GetService<IAccountMoveLineService>();
 
-            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x=> x.Employee).FirstOrDefaultAsync();
+            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
             // ghi sổ
             var move = await PreparePayslipMove(paysliprun);
-                amlObj.PrepareLines(move.Lines);
+            amlObj.PrepareLines(move.Lines);
 
             await moveObj.CreateMoves(new List<AccountMove> { move });
             await moveObj.ActionPost(new List<AccountMove> { move });
@@ -151,8 +151,8 @@ namespace Infrastructure.Services
             var lines = new List<AccountMoveLine>();
             foreach (var slip in slipRun.Slips)
             {
-                    var balance = slip.NetSalary.Value;
-                    var items = new List<AccountMoveLine>()
+                var balance = slip.NetSalary.Value;
+                var items = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
@@ -175,7 +175,7 @@ namespace Infrastructure.Services
                         Move = move,
                     },
                 };
-                    lines.AddRange(items);
+                lines.AddRange(items);
             }
             move.Lines = lines;
 
@@ -305,12 +305,12 @@ namespace Infrastructure.Services
                 var allCommission = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
                 commission = allCommission.FirstOrDefault(x => x.EmployeeId == emp.Id);
             }
-            
+
             payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
 
             payslip.WorkedDay = chamCongs.Where(x => x.Type == "work").Count();
 
-            payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year,date.Value.Month) - payslip.WorkedDay;
+            payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay;
             payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
 
             var ngaythucnghi = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;

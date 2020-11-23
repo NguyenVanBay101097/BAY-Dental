@@ -18,7 +18,7 @@
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons" *ngIf="state != 'draft'">
                     <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
-                    <i (click)="PrintPayslip()" class="fas fa-print text-primary btn-icon"></i>
+                    <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
                     <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
                     <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
                     <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
@@ -145,4 +145,3 @@
         </div>
     </form>
 </div>
-<app-print-salary-emp class="d-none"></app-print-salary-emp>

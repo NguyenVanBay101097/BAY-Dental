@@ -1,7 +1,7 @@
 import { HrPayslipService, HrPayslipPaged, HrPayslipSave, HrPayslipDisplay, HrPayslipSaveDefaultValue } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { HrPaysliprunService, HrPayslipRunDefaultGet } from '../hr-paysliprun.service';
+import { HrPaysliprunService, HrPayslipRunDefaultGet, HrPayslipRunDisplay } from '../hr-paysliprun.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -11,6 +11,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { map } from 'rxjs/operators';
 import { validate, validator } from 'fast-json-patch';
+import { error } from 'protractor';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -64,7 +65,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
         this.patchValue(result);
-        console.log(result);
       });
     }
   }
@@ -230,14 +230,25 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   printAllEmpSalary() {
-    this.hrPaysliprunService.printAllEmpSalary(this.id).subscribe(
+
+    var value = this.getFormData();
+    this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
       result => {
-        console.log(result);
-        var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
-        popupWin.document.open();
-  
-        popupWin.document.write(result['html']);
-        popupWin.document.close();
+        if (result && result['html']) {
+          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+          popupWin.document.open();
+
+          popupWin.document.write(result['html']);
+          popupWin.document.close();
+        } else {
+          this.notificationService.show({
+            content: "Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục",
+            hideAfter: 5000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: "error", icon: true }
+          });
+        }
       }
     )
   }

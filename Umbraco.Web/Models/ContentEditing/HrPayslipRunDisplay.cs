@@ -15,6 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateEnd { get; set; }
 
         public Guid CompanyId { get; set; }
+        public CompanyBasic Company { get; set; }
 
         public string State { get; set; }
         public DateTime? Date { get; set; }

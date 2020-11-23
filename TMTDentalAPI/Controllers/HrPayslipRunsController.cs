@@ -23,7 +23,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public HrPayslipRunsController(IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        public HrPayslipRunsController(ICompanyService companyService, IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _payslipRunService = payslipRunService;
             _mapper = mapper;
@@ -48,13 +48,23 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpGet("HrPayslipRun/{id}/PrintAll")]
+        [HttpPut("{id}/[action]")]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Print")]
-        public async Task<IActionResult> PrintAll(Guid id)
+        public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
         {
+            var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
+            await _payslipRunService.UpdatePayslipRun(id, val);
             var res = await _payslipRunService.GetHrPayslipRunForDisplay(id);
-            var html = _view.Render("SalaryEmployeePrint", res);
-            return Ok(new printData() { html = html });
+            if (ids != null && ids.Any())
+            {
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
+                var html = _view.Render("SalaryEmployeePrint", res);
+                return Ok(new printData() { html = html });
+            }
+            else
+            {
+                return Ok(new printData() { html = null });
+            }
         }
 
         [HttpPost]
