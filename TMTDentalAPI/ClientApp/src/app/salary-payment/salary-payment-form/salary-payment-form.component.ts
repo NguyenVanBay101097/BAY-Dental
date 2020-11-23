@@ -48,6 +48,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       Employee: [null, Validators.required],
       Amount: 0,
       Reason: null,
+      Type: 'advance'
     });
 
     setTimeout(() => {
@@ -72,7 +73,7 @@ export class SalaryPaymentFormComponent implements OnInit {
         if (result.Employee) {
           this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], "id");
         }
-        
+
         if (result.Journal) {
           this.filteredJournals = _.unionBy(this.filteredJournals, [result.Journal], "id");
         }
@@ -140,7 +141,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     salaryPayment.JournalId = salaryPayment.Journal.id;
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
-
+    salaryPayment.Type = salaryPayment.Type;
     // this.activeModal.close(salaryPayment);
     if(this.id){
       this.salaryPaymentService.update(this.id,salaryPayment).subscribe(

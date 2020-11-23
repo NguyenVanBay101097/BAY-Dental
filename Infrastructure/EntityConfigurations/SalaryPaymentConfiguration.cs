@@ -23,6 +23,10 @@ namespace Infrastructure.EntityConfigurations
             .WithMany()
             .HasForeignKey(x => x.CompanyId);
 
+            builder.HasOne(x => x.Move)
+            .WithMany()
+            .HasForeignKey(x => x.MoveId);
+
             builder.HasOne(x => x.CreatedBy)
            .WithMany()
            .HasForeignKey(x => x.CreatedById);

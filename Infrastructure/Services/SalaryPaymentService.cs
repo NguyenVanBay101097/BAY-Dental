@@ -194,7 +194,6 @@ namespace Infrastructure.Services
                  .Include(x => x.Journal)
                  .Include(x => x.Employee)
                  .Include("Employee.Partner")
-                 .Include(x => x.MoveLines)
                  .ToListAsync();
 
             var moveObj = GetService<IAccountMoveService>();
@@ -204,19 +203,18 @@ namespace Infrastructure.Services
                 if (salaryPayment.State != "draft")
                     throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
 
-                var moves = await _PrepareSalaryPaymentMoves(salaryPayments);
+                var move = await _PrepareSalaryPaymentMoves(salaryPayment);
 
                 var amlObj = GetService<IAccountMoveLineService>();
-                foreach (var move in moves)
                     amlObj.PrepareLines(move.Lines);
 
-                await moveObj.CreateMoves(moves);
-                await moveObj.ActionPost(moves);
+                await moveObj.CreateMoves(new List<AccountMove>() { move});
+                await moveObj.ActionPost(new List<AccountMove>() { move });
 
-                foreach (var move in moves)
-                    amlObj.ComputeMoveNameState(move.Lines);
+                amlObj.ComputeMoveNameState(move.Lines);
 
                 salaryPayment.State = "posted";
+                salaryPayment.MoveId = move.Id;
             }
 
             await UpdateAsync(salaryPayments);
@@ -227,49 +225,46 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
 
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).ToListAsync();
 
             foreach (var phieu in self)
             {
-                var move_ids = phieu.MoveLines.Select(x => x.MoveId).Distinct().ToList();
-                await moveObj.ButtonCancel(move_ids);
-                await moveObj.Unlink(move_ids);
-
+                await moveObj.ButtonCancel(new List<Guid>() { phieu.MoveId.Value });
+                await moveObj.Unlink(new List<Guid>() { phieu.MoveId.Value });
                 phieu.State = "draft";
             }
 
             await UpdateAsync(self);
         }
 
-        private async Task<IList<AccountMove>> _PrepareSalaryPaymentMoves(IList<SalaryPayment> val)
+        private async Task<AccountMove> _PrepareSalaryPaymentMoves(SalaryPayment val)
         {
             var all_move_vals = new List<AccountMove>();
             var accDebit334 = await getAccount334();
             var accCredit642 = await getAccount642();
-            foreach (var phieu in val)
-            {
+         
 
                 var accountJournalObj = GetService<IAccountJournalService>();
 
-                var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany($"{phieu.Journal.Type}", phieu.CompanyId.Value);
+                var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany($"{val.Journal.Type}", val.CompanyId.Value);
 
 
                 var move = new AccountMove
                 {
                     JournalId = accountJournal.Id,
                     Journal = accountJournal,
-                    CompanyId = phieu.CompanyId,
+                    CompanyId = val.CompanyId,
                 };
 
                 var rec_pay_line_name = "/";
-                if (phieu.Type == "advance")
+                if (val.Type == "advance")
                     rec_pay_line_name = "tạm ứng";
-                else if (phieu.Type == "salary")
+                else if (val.Type == "salary")
                     rec_pay_line_name = "chi lương";
 
 
-                var liquidity_line_name = phieu.Name;
-                var balance = phieu.Amount;
+                var liquidity_line_name = val.Name;
+                var balance = val.Amount;
                 var lines = new List<AccountMoveLine>()
                 {
 
@@ -281,7 +276,7 @@ namespace Infrastructure.Services
                         AccountId = accDebit334.Id,
                         Account = accDebit334,
                         Move = move,
-                        PartnerId = phieu.Employee.PartnerId.HasValue ? phieu.Employee.PartnerId : null
+                        PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                     new AccountMoveLine
                     {
@@ -291,16 +286,13 @@ namespace Infrastructure.Services
                         AccountId = accCredit642.Id,
                         Account = accCredit642,
                         Move = move,
-                        PartnerId = phieu.Employee.PartnerId.HasValue ? phieu.Employee.PartnerId : null
+                        PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                 };
 
                 move.Lines = lines;
 
-                all_move_vals.Add(move);
-            }
-
-            return all_move_vals;
+            return move;
 
         }
 

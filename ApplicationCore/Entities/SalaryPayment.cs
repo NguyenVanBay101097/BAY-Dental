@@ -59,6 +59,8 @@ namespace ApplicationCore.Entities
         public string Reason { get; set; }
 
 
-        public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+        public Guid? MoveId { get; set; }
+        public AccountMove Move { get; set; }
+
     }
 }

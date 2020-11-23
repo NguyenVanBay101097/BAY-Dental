@@ -34,6 +34,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [HttpGet]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery());
@@ -78,50 +79,50 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.ActionConfirm(ids);
-            _unitOfWork.Commit();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    await _salaryPaymentService.ActionConfirm(ids);
+        //    _unitOfWork.Commit();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
-            _unitOfWork.Commit();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
+        //    _unitOfWork.Commit();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.ActionCancel(ids);
-            _unitOfWork.Commit();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    await _salaryPaymentService.ActionCancel(ids);
+        //    _unitOfWork.Commit();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remove(Guid id)
