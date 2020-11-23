@@ -62,6 +62,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? TotalSalary { get; set; }
         public decimal? CommissionSalary { get; set; }
         public decimal? AmercementMoney { get; set; }
+        public decimal? AdvancePayment { get; set; }
         public decimal? NetSalary { get; set; }
         public decimal? ActualLeavePerMonth { get; set; }
         public decimal? LeavePerMonthUnpaid { get; set; }
@@ -110,6 +111,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? TotalSalary { get; set; }
         public decimal? CommissionSalary { get; set; }
         public decimal? AmercementMoney { get; set; }
+        public decimal? AdvancePayment { get; set; }
         public decimal? NetSalary { get; set; }
         public decimal? ActualLeavePerMonth { get; set; }
         public decimal? LeavePerMonthUnpaid { get; set; }

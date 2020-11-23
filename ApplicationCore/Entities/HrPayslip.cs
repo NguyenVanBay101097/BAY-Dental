@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Phiếu lương
     /// </summary>
-    public class HrPayslip: BaseEntity
+    public class HrPayslip : BaseEntity
     {
         public HrPayslip()
         {
@@ -131,6 +131,11 @@ namespace ApplicationCore.Entities
         /// lương hoa hồng
         /// </summary>
         public decimal? CommissionSalary { get; set; }
+        /// <summary>
+        /// tạm ứng lương
+        /// </summary>
+        public decimal? AdvancePayment { get; set; }
+
         /// <summary>
         /// tiền bị phạt
         /// </summary>

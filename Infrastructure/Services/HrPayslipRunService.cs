@@ -156,7 +156,7 @@ namespace Infrastructure.Services
             var lines = new List<AccountMoveLine>();
             foreach (var slip in slipRun.Slips)
             {
-                var balance = slip.NetSalary.Value;
+                var balance = slip.NetSalary.Value + slip.AdvancePayment.GetValueOrDefault();
                 var items = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
@@ -210,15 +210,20 @@ namespace Infrastructure.Services
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var payslipObj = GetService<IHrPayslipService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Slips).ToListAsync();
+            var moveObj = GetService<IAccountMoveService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.Move).ThenInclude(x=>x.Lines).ToListAsync();
 
+            var listMove = new List<AccountMove>();
+            var listMoveLine = new List<AccountMoveLine>();
             foreach (var run in payslipruns)
             {
-                await payslipObj.ActionCancel(run.Slips.Select(x => x.Id));
-                await payslipObj.Unlink(run.Slips.Select(x => x.Id));
-                run.State = "draft";
+                listMove.Add(run.Move);
+                listMoveLine.AddRange(run.Move.Lines);
+                run.State = "confirm";
             }
+            await moveObj.DeleteAsync(listMove);
+            await moveLineObj.DeleteAsync(listMoveLine);
 
             await UpdateAsync(payslipruns);
         }
@@ -242,6 +247,7 @@ namespace Infrastructure.Services
             var employeeObj = GetService<IEmployeeService>();
             var ccObj = GetService<IChamCongService>();
             var commissionObj = GetService<ICommissionSettlementService>();
+            var advanceObj = GetService<ISalaryPaymentService>();
 
             //get all resource
             var emps = await employeeObj.SearchQuery(x => x.Active == true).ToListAsync();
@@ -252,6 +258,9 @@ namespace Infrastructure.Services
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
+            var Alladvances = await advanceObj.SearchQuery(x=> emps.Select(e=>e.Id).Any(c=> c == x.EmployeeId)
+            & x.Type =="advance" & x.Date.Month == paysliprun.Date.Value.Month
+            & x.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
 
             //validate
             if (paysliprun == null)
@@ -271,8 +280,9 @@ namespace Infrastructure.Services
                 //tính toán các khoản lương
                 var chamCongs = allChamcongs.Where(x => x.EmployeeId == emp.Id);
                 var commission = commissions.FirstOrDefault(x => x.EmployeeId == emp.Id);
+                var advance = Alladvances.Where(x => x.EmployeeId == emp.Id);
 
-                await ComputeSalary(payslip, chamCongs, commission, paysliprun.Date.Value);
+                await ComputeSalary(payslip, chamCongs, commission, advance, paysliprun.Date.Value);
 
                 payslips.Add(payslip);
             }
@@ -284,11 +294,12 @@ namespace Infrastructure.Services
             await UpdateAsync(paysliprun);
         }
 
-        public async Task ComputeSalary(HrPayslip payslip, IEnumerable<ChamCong> chamCongs = null, CommissionSettlementReportOutput commission = null, DateTime? date = null)
+        public async Task ComputeSalary(HrPayslip payslip, IEnumerable<ChamCong> chamCongs = null, CommissionSettlementReportOutput commission = null, IEnumerable<SalaryPayment> advances = null, DateTime? date = null)
         {
             var empObj = GetService<IEmployeeService>();
             var ccObj = GetService<IChamCongService>();
             var commissionObj = GetService<ICommissionSettlementService>();
+            var advanceObj = GetService<ISalaryPaymentService>();
             date = date.HasValue ? date : DateTime.Now;
 
             var emp = payslip.Employee;
@@ -309,6 +320,12 @@ namespace Infrastructure.Services
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
                 var allCommission = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
                 commission = allCommission.FirstOrDefault(x => x.EmployeeId == emp.Id);
+            }
+            if(advances == null)
+            {
+                advances = await advanceObj.SearchQuery(c => c.EmployeeId == emp.Id
+             & c.Type == "advance" & c.Date.Month == date.Value.Month
+            & c.Date.Year == date.Value.Year).ToListAsync();
             }
 
             payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
@@ -334,7 +351,8 @@ namespace Infrastructure.Services
 
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 2);
             payslip.AmercementMoney = 0;
-            payslip.NetSalary = payslip.TotalSalary + payslip.CommissionSalary - payslip.AmercementMoney.Value;
+            payslip.AdvancePayment = advances.Sum(x=>x.Amount);
+            payslip.NetSalary = payslip.TotalSalary + payslip.CommissionSalary - payslip.AmercementMoney.Value - payslip.AdvancePayment;
 
         }
 
@@ -347,7 +365,7 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
             foreach (var item in paysliprun.Slips)
             {
-                await ComputeSalary(item, null, null, paysliprun.Date);
+                await ComputeSalary(item, null, null,null, paysliprun.Date);
             }
             await UpdateAsync(paysliprun);
         }

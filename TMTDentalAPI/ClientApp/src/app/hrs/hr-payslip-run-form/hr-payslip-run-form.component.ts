@@ -181,6 +181,21 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
   }
 
+  actionCancel() {
+    if(this.id) {
+      const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy bảng lương';
+      modalRef.componentInstance.body = 'Bạn chắc chắn muốn hủy bảng lương?';
+      modalRef.result.then(() => {
+        this.hrPaysliprunService.actionCancel([this.id]).subscribe(() => {
+          this.notify('success', 'Bảng lương đã được hủy thành công!');
+          this.loadRecord();
+        });
+      });
+
+    }
+  }
+
   onChangeDate(e) {
     const newName = `Bảng lương tháng ${e.getMonth() + 1} năm ${e.getFullYear()}`;
     this.FormGroup.get('name').setValue(newName);
