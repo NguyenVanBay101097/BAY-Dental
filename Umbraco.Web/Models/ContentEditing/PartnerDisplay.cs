@@ -43,9 +43,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty + "_")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty + "_")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty + "_")}";
             }
             set { }
         }
@@ -78,7 +78,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string HistoriesString
         {
-            get {
+            get
+            {
                 var list = new List<string>();
                 foreach (var item in this.Histories)
                 {

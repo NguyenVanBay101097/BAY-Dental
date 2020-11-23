@@ -21,6 +21,8 @@ export class PartnerOverviewInfoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.partner);
+    
   }
 
   onAvatarUploaded(data: any) {
