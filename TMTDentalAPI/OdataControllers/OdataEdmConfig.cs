@@ -82,7 +82,6 @@ namespace TMTDentalAPI.OdataControllers
 
             #region SalaryPayments
             builder.EntitySet<SalaryPaymentVm>("SalaryPayments");
-           
 
             builder.EntityType<SalaryPaymentVm>()
                       .Collection
@@ -114,7 +113,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
-            builder.ComplexType<SalaryPaymentSave>();
+            
 
             #endregion
 

@@ -112,17 +112,15 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     );
   }
 
-   
 
-    public get(id: any, obj: any | null): Observable<any> {
-        var a = this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
-        return a;
-    }
 
-    public create(value: any) {
-          
-        return this.http.post(`${this.BASE_URL}${this.tableName}`, value);
-    }
+  public get(id: any, obj: any | null): Observable<any> {
+    return this.http.get(`${this.BASE_URL}${this.tableName}(${id})`, { params: new HttpParams({ fromObject: obj }) });
+  }
+
+  public create(value: any) {
+    return this.http.post(`${this.BASE_URL}${this.tableName}`, value);
+  }
 
   public update(id: any, value: any) {
     return this.http.put(`${this.BASE_URL}${this.tableName}(${id})`, value);

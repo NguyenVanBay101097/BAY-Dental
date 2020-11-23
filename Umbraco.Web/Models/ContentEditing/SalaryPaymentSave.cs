@@ -46,7 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Số tiền
         /// </summary>
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
 
         /// <summary>

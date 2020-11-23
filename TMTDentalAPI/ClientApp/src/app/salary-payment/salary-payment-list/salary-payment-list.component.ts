@@ -8,6 +8,7 @@ import { SalaryPaymentService } from 'src/app/shared/services/salary-payment.ser
 import { SalaryPaymentBindingDirective } from 'src/app/shared/directives/salary-payment-binding.directive';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -35,9 +36,9 @@ export class SalaryPaymentListComponent implements OnInit {
   };
 
   constructor(
-    private route: ActivatedRoute, 
-    private modalService: NgbModal, 
-    private salaryPaymentService: SalaryPaymentService, 
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private salaryPaymentService: SalaryPaymentService,
     private router: Router
   ) { }
 
@@ -83,5 +84,44 @@ export class SalaryPaymentListComponent implements OnInit {
       this.refreshData();
     }, () => {
     });
+  }
+
+  editItem(item) {
+    let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    modalRef.componentInstance.title = "Sửa: " + (item.type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.id = item.id;
+    modalRef.result.then(
+      () => {
+        this.refreshData();
+      },
+      () => { }
+    );
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    modalRef.componentInstance.title = "Xóa: " + (item.type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.result.then(
+      () => {
+        this.salaryPaymentService.delete(item.id).subscribe(
+          () => {
+            this.refreshData();
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      },
+      () => { }
+    );
+  }
+
+  stateGet(value) {
+    switch (value) {
+      case "draft":
+        return "Nháp";
+      case "posted":
+        return "Đã vào sổ";
+    }
   }
 }
