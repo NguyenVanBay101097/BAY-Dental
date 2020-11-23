@@ -12,6 +12,9 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { map } from 'rxjs/operators';
 import { validate, validator } from 'fast-json-patch';
 import { error } from 'protractor';
+import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
+import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
+import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -44,7 +47,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.id = params.get('id');
       this.date = new Date(params.get('date')) || new Date();
       if (!this.id) {
-       this.checkExist();
+        this.checkExist();
       } else {
         this.loadRecord();
       }
@@ -81,16 +84,16 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   checkExist() {
-    const d =  this.dateFC.value || new Date();
-    
+    const d = this.dateFC.value || new Date();
+
     this.hrPaysliprunService.CheckExist(d).subscribe((res: any) => {
       if (res && res.id) {
         this.router.navigateByUrl('hr/payslip-run/form?id=' + res.id);
       } else {
         if (this.id) {
-        this.router.navigateByUrl('hr/payslip-run/form?date=' + d.toISOString());
+          this.router.navigateByUrl('hr/payslip-run/form?date=' + d.toISOString());
         } else {
-        this.getDefault();
+          this.getDefault();
         }
       }
     });
@@ -282,6 +285,33 @@ export class HrPayslipRunFormComponent implements OnInit {
         // For Firefox it is necessary to delay revoking the ObjectURL
         window.URL.revokeObjectURL(data);
       }, 100);
+    });
+  }
+
+  onPayment() {
+    const payslips = this.slipsFormArray.value.filter(x => x.isCheck === true);
+    const payments = [];
+    payslips.forEach((slip: HrPayslipSaveDefaultValue) => {
+      const payment: SalaryPaymentSave = {
+        Amount: slip.netSalary,
+        CompanyId: slip.companyId,
+        Date: this.dateFC.value,
+        Employee: slip.employee,
+        EmployeeId: slip.employeeId,
+        Journal: null,
+        JournalId: null,
+        Name: slip.name,
+        Reason: `Chi lương tháng ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`,
+        State: 'draft',
+        Type: 'salary'
+      };
+      payments.push(payment);
+    });
+    const modalRef = this.modalService.open(HrSalaryPaymentComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`;
+    modalRef.componentInstance.payments = payments;
+    modalRef.result.then((res: any) => {
+
     });
   }
 }

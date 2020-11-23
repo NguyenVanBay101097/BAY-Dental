@@ -30,11 +30,11 @@
                 <div class="o_form_statusbar" *ngIf="id">
                     <div class="o_statusbar_buttons">
                         <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
-                        <i (click)="PrintPayslip()" class="fas fa-print text-primary btn-icon"></i>
+                        <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
                         <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
                         <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
                         <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
-                        <button *ngIf="state === 'done'" type="button" (click)="onExportPayment()" class="btn btn-sm btn-primary">Chi lương</button>
+                        <button *ngIf="state === 'done'" type="button" (click)="onPayment()" class="btn btn-sm btn-primary">Chi lương</button>
                         <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
                     </div>
                     <div class="o_statusbar_status o_field_widget o_readonly_modifier">
