@@ -12,9 +12,9 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { map } from 'rxjs/operators';
 import { validate, validator } from 'fast-json-patch';
 import { error } from 'protractor';
-import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
 import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
 import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
+import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',

@@ -66,7 +66,7 @@ import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent
+    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent, HrSalaryPaymentComponent
   ]
 })
 export class HrsModule { }
