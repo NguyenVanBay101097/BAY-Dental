@@ -91,6 +91,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Begin { get; set; }
 
+        public decimal BasicSalary { get; set; }
+
         public decimal Debit { get; set; }
 
         public decimal Credit { get; set; }

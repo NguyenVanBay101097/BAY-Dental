@@ -240,7 +240,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
     val.fromDate = this.dateFrom;
-    val.toDate = this.dateTo; val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
+    val.toDate = this.dateTo; 
+    val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportService.getSummary(val).subscribe(res => {
       var total = aggregateBy(res, this.aggregates);
       if (total) {

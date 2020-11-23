@@ -8,6 +8,7 @@ export class AccountCommonPartnerReportItem {
     partnerRef: string;
     partnerPhone: string;
     begin: number;
+    basicSalary: number;
     debit: number;
     credit: number;
     end: number;
@@ -33,8 +34,8 @@ export class AccountCommonPartnerReportSearch {
     partnerId: string;
     resultSelection: string;
     display: string;
-    companyId:string;
     search: string;
+    companyId: string;
 }
 
 export class AccountCommonPartnerReportSearchV2 {
@@ -67,6 +68,10 @@ export class AccountCommonPartnerReportService {
 
     getSummaryPartner(val: AccountCommonPartnerReportSearchV2): Observable<AccountCommonPartnerReport> {
         return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
+    }
+
+    getReportSalaryEmployee(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem> {
+        return this.http.post<AccountCommonPartnerReportItem>(this.baseApi + this.apiUrl + "/GetSalaryReportEmployee", val);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {

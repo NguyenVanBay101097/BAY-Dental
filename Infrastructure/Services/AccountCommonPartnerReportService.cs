@@ -59,7 +59,7 @@ namespace Infrastructure.Services
 
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
 
-            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted",companyId:val.CompanyId);
+            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
             query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
             (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
 
@@ -279,6 +279,38 @@ namespace Infrastructure.Services
             return data;
         }
 
+        public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSalaryEmployee(AccountCommonPartnerReportSearch val)
+        {
+            if (val.FromDate.HasValue)
+                val.FromDate = val.FromDate.Value.AbsoluteBeginOfDate();
+            if (val.ToDate.HasValue)
+                val.ToDate = val.ToDate.Value.AbsoluteEndOfDate();
+            var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, state: "posted", companyId: val.CompanyId);
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+            query = query.Where(x => x.Account.Code.Equals("334"));
 
+            var list = await query
+               .GroupBy(x => new
+               {
+                   PartnerId = x.Partner.Id,
+                   PartnerName = x.Partner.Name,
+                   PartnerRef = x.Partner.Ref,
+                   Type = x.Account.InternalType
+               })
+               .Select(x => new
+               {
+                   PartnerId = x.Key.PartnerId,
+                   PartnerName = x.Key.PartnerName,
+                   PartnerRef = x.Key.PartnerRef,
+                   Details = x.ToList()
+               }).ToListAsync();
+            return null;
+        }
     }
+
 }

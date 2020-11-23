@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AccountCommonEmployeeReportResult, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReportItem, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 
@@ -17,7 +17,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
 })
 export class HrSalaryReportListComponent implements OnInit {
   loading = false;
-  items: AccountCommonEmployeeReportResult[];
+  items: AccountCommonPartnerReportItem[];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -89,17 +89,15 @@ export class HrSalaryReportListComponent implements OnInit {
     if (this.search) {
       val.search = this.search;
     }
-
-    val.resultSelection = this.resultSelection;
-
-    this.reportService.getSummary(val).subscribe(res => {
-      this.items = res;
-      this.total = aggregateBy(this.items, this.aggregates);
-      this.loadItems();
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
+    this.reportService.getReportSalaryEmployee(val).subscribe(res => {
+      console.log(res);
+      //   this.items = res;
+      //   this.total = aggregateBy(this.items, this.aggregates);
+      //   this.loadItems();
+      //   this.loading = false;
+      // }, err => {
+      //   console.log(err);
+      //   this.loading = false;
     })
   }
 
