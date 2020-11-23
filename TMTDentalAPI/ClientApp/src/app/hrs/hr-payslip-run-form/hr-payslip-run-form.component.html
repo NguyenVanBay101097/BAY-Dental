@@ -1,147 +1,149 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full">
-        <ol class="breadcrumb">
-            <!--<li>
+<div [formGroup]="FormGroup">
+    <div class="o_cp_controller">
+        <div class="o_control_panel o_breadcrumb_full">
+            <ol class="breadcrumb">
+                <!--<li>
                 <a routerLink="/hr/payslip-runs">Đợt lương </a>
             </li>-->
-            <li class="active">
-                <span>Bảng lương nhân viên</span>
+                <li class="active">
+                    <span>Bảng lương nhân viên</span>
 
-            </li>
-        </ol>
-    </div>
-</div>
-
-<div class="o_content w-100">
-    <form class="o_form_view w-100" [formGroup]="FormGroup">
-        <div class="o_form_sheet_bg w-100">
-            <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons" *ngIf="state != 'draft'">
-                    <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
-                    <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
-                    <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
-                    <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
-                    <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
-                    <button *ngIf="state === 'done'" type="button" (click)="onExportPayment()" class="btn btn-sm btn-primary">Chi lương</button>
-                    <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
+                </li>
+            </ol>
+            <div class="mt-3 mb-1">
+                <!-- <div class="d-flex mb-1" style="max-width: 385px;">
+<label class="d-inline-flex align-items-center mr-1">Tên</label>
+<input formControlName="name" placeholder="nhập tên bảng lương..." type="text" class="form-control mb-1">
+</div> -->
+                <div class="d-flex">
+                    <label class="d-inline-flex align-items-center mr-1">Theo tháng</label>
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
+                    <!-- <button *ngIf="state == 'confirm'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button> -->
                 </div>
-                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="state !== 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'done'" [class.btn-secondary]="state !== 'done'" type="button">
+            </div>
+        </div>
+    </div>
+
+    <div class="o_content w-100">
+        <div class="o_form_view w-100">
+            <div class="o_form_sheet_bg w-100">
+                <div class="o_form_statusbar" *ngIf="id">
+                    <div class="o_statusbar_buttons">
+                        <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
+                        <i (click)="PrintPayslip()" class="fas fa-print text-primary btn-icon"></i>
+                        <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
+                        <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
+                        <button *ngIf="state === 'done'" type="button" (click)="onExportPayment()" class="btn btn-sm btn-primary">Chi lương</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
+                    </div>
+                    <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                        <button [disabled]="state !== 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'done'" [class.btn-secondary]="state !== 'done'" type="button">
               Xác nhận
             </button>
-                    <button [disabled]="state !== 'confirm'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'confirm' || state === 'draft'" [class.btn-secondary]="state !== 'confirm'" type="button">
+                        <button [disabled]="state !== 'confirm'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'confirm'" [class.btn-secondary]="state !== 'confirm'" type="button">
               Chờ xác nhận
             </button>
-                    <!-- <button [disabled]="state !== 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'draft'" [class.btn-secondary]="state !== 'draft'" type="button">
+                        <!-- <button [disabled]="state !== 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'draft'" [class.btn-secondary]="state !== 'draft'" type="button">
               Nháp
             </button> -->
-                </div>
-            </div>
-            <div class="o_form_sheet w-100 mw-100">
-                <div class="mt-3 mb-1">
-                    <!-- <div class="d-flex mb-1" style="max-width: 385px;">
-        <label class="d-inline-flex align-items-center mr-1">Tên</label>
-        <input formControlName="name" placeholder="nhập tên bảng lương..." type="text" class="form-control mb-1">
-    </div> -->
-                    <div class="d-flex">
-                        <label class="d-inline-flex align-items-center mr-1">Theo tháng</label>
-                        <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
-                        <!-- <button *ngIf="state == 'confirm'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button> -->
                     </div>
                 </div>
-                <div class="o_content w-100">
-                    <ng-container *ngIf="!id; else elseTemplate">
-                        <div class="d-flex justify-content-center">
-                            <div>
-                                <p>
-                                    <label for="">Bảng lương tháng 11/2020 chưa có.</label> <br>
-                                    <label for="">Vui lòng bấm nút "Tính Lương" bên dưới để khởi tạo.</label>
-                                </p>
-                                <div class="d-flex justify-content-center">
-                                    <button *ngIf="state == 'draft'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
+                <div class="o_form_sheet w-100 mw-100" [ngClass]="{'my-0': !id}">
+                    <div class="o_content w-100">
+                        <ng-container *ngIf="!id; else elseTemplate">
+                            <div class="d-flex justify-content-center">
+                                <div class="text-center">
+                                    <p>
+                                        <label for="">Bảng lương tháng {{dateFC.value?.getMonth()+1}}/{{dateFC.value?.getFullYear()}} chưa có.</label> <br>
+                                        <label for="">Vui lòng bấm nút "Tính Lương" bên dưới để khởi tạo.</label>
+                                    </p>
+                                    <div class="d-flex justify-content-center">
+                                        <button *ngIf="state == 'confirm'" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </ng-container>
-                    <ng-template #elseTemplate>
-                        <div class="d-flex">
-                            <input placeholder="tìm kiếm nhân viên....." [(ngModel)]="search" (ngModelChange)="onSearchEmployee($event)" ngmodelchan [ngModelOptions]="{standalone: true}" type="text" style="max-width: 385px; border-radius: 0;" class="form-control mb-1">
-                            <div class="form-check ml-auto">
-                                <input [(ngModel)]="isCompact" [ngModelOptions]="{standalone: true}" type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Bảng lương rút gọn</label>
+                        </ng-container>
+                        <ng-template #elseTemplate>
+                            <div class="d-flex">
+                                <input placeholder="tìm kiếm nhân viên....." [(ngModel)]="search" (ngModelChange)="onSearchEmployee($event)" [ngModelOptions]="{standalone: true}" type="text" style="max-width: 385px; border-radius: 0;" class="form-control mb-1">
+                                <div class="form-check ml-auto">
+                                    <input [(ngModel)]="isCompact" [ngModelOptions]="{standalone: true}" type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <label class="form-check-label" for="exampleCheck1">Bảng lương rút gọn</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="overflow-auto">
-                            <table class="table b-table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th class="b-sticky-left" style="min-width: 50px;">
-                                            <input class="mr-1" *ngIf="state == 'confirm'" (click)="checkAll($event)" type="checkbox" />
-                                        </th>
-                                        <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
-                                        <th [hidden]="isCompact" style="min-width: 120px;">Lương ngày</th>
-                                        <th [hidden]="isCompact" style="min-width: 90px;">Số ngày</th>
-                                        <th style="min-width: 120px;">Lương</th>
-                                        <th [hidden]="isCompact" style="min-width: 90px;">Tăng ca</th>
-                                        <th style="min-width: 135px;">Lương tăng ca</th>
-                                        <th [hidden]="isCompact" style="min-width: 145px;">Ngày làm thêm</th>
-                                        <th style="min-width: 150px;">Lương làm thêm</th>
-                                        <th style="min-width: 160px;">Phụ cấp xác định</th>
-                                        <th style="min-width: 120px;">Phụ cấp khác</th>
-                                        <th style="min-width: 100px;">Thưởng</th>
-                                        <th style="min-width: 160px;">Phụ cấp lễ tết</th>
-                                        <th [hidden]="isCompact" style="min-width: 120px;">Cộng lương</th>
-                                        <th style="min-width: 100px;">Hoa hồng</th>
-                                        <th style="min-width: 50px;">Phạt</th>
-                                        <th class="b-sticky-right" style="min-width: 100px;">Thực lĩnh</th>
-                                        <!-- <th style="min-width: 110px;">Trạng thái</th> -->
-                                    </tr>
-                                </thead>
-                                <tbody formArrayName="slips">
-                                    <ng-container *ngFor="let item of slipsFormArray.controls; let i = index">
-                                        <tr [formGroupName]="i" [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
-                                            <td class="b-sticky-left">
-                                                <input class="mr-1" *ngIf="state == 'confirm'" formControlName="isCheck" type="checkbox">
-                                            </td>
-                                            <td class="b-sticky-left2">{{item.get('employee').value.name}}</td>
-                                            <td [hidden]="isCompact">{{item.get('daySalary').value | number }}</td>
-                                            <td [hidden]="isCompact">{{item.get('workedDay').value | number }}</td>
-                                            <td>{{item.get('totalBasicSalary').value | number }}</td>
-                                            <td [hidden]="isCompact">{{item.get('overTimeHour').value | number }}</td>
-                                            <td>{{item.get('overTimeHourSalary').value| number }}</td>
-                                            <td [hidden]="isCompact">{{item.get('overTimeDay').value | number }}</td>
-                                            <td>{{item.get('overTimeDaySalary').value | number }}</td>
-                                            <td>{{item.get('allowance').value | number }}</td>
-                                            <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                            <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                            <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                            <td [hidden]="isCompact">{{item.get('totalSalary').value | number }}</td>
-                                            <td>{{item.get('commissionSalary').value | number }}</td>
-                                            <td>
-                                                <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                            <td class="b-sticky-right">{{item.get('netSalary').value | number}}</td>
-                                            <!-- <td *ngIf="item.get('state').value == 'draft'">nháp</td> -->
+                            <div class="overflow-auto">
+                                <table class="table b-table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="b-sticky-left" style="min-width: 50px;">
+                                                <input class="mr-1" (click)="checkAll($event)" type="checkbox" />
+                                            </th>
+                                            <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
+                                            <th [hidden]="isCompact" style="min-width: 120px;">Lương ngày</th>
+                                            <th [hidden]="isCompact" style="min-width: 90px;">Số ngày</th>
+                                            <th style="min-width: 120px;">Lương</th>
+                                            <th [hidden]="isCompact" style="min-width: 90px;">Tăng ca</th>
+                                            <th style="min-width: 135px;">Lương tăng ca</th>
+                                            <th [hidden]="isCompact" style="min-width: 145px;">Ngày làm thêm</th>
+                                            <th style="min-width: 150px;">Lương làm thêm</th>
+                                            <th style="min-width: 160px;">Phụ cấp xác định</th>
+                                            <th style="min-width: 120px;">Phụ cấp khác</th>
+                                            <th style="min-width: 100px;">Thưởng</th>
+                                            <th style="min-width: 160px;">Phụ cấp lễ tết</th>
+                                            <th [hidden]="isCompact" style="min-width: 120px;">Cộng lương</th>
+                                            <th style="min-width: 100px;">Hoa hồng</th>
+                                            <th style="min-width: 50px;">Phạt</th>
+                                            <th class="b-sticky-right" style="min-width: 100px;">Thực lĩnh</th>
+                                            <!-- <th style="min-width: 110px;">Trạng thái</th> -->
                                         </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
-                        </div>
-                    </ng-template>
+                                    </thead>
+                                    <tbody formArrayName="slips">
+                                        <ng-container *ngFor="let item of slipsFormArray.controls; let i = index">
+                                            <tr [formGroupName]="i" [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
+                                                <td class="b-sticky-left">
+                                                    <input class="mr-1" formControlName="isCheck" type="checkbox">
+                                                </td>
+                                                <td class="b-sticky-left2">{{item.get('employee').value.name}}</td>
+                                                <td [hidden]="isCompact">{{item.get('daySalary').value | number }}</td>
+                                                <td [hidden]="isCompact">{{item.get('workedDay').value | number }}</td>
+                                                <td>{{item.get('totalBasicSalary').value | number }}</td>
+                                                <td [hidden]="isCompact">{{item.get('overTimeHour').value | number }}</td>
+                                                <td>{{item.get('overTimeHourSalary').value| number }}</td>
+                                                <td [hidden]="isCompact">{{item.get('overTimeDay').value | number }}</td>
+                                                <td>{{item.get('overTimeDaySalary').value | number }}</td>
+                                                <td>{{item.get('allowance').value | number }}</td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td [hidden]="isCompact">{{item.get('totalSalary').value | number }}</td>
+                                                <td>{{item.get('commissionSalary').value | number }}</td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="max-width: 120px;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td class="b-sticky-right">{{item.get('netSalary').value | number}}</td>
+                                                <!-- <td *ngIf="item.get('state').value == 'draft'">nháp</td> -->
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ng-template>
 
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-    </form>
+    </div>
 </div>

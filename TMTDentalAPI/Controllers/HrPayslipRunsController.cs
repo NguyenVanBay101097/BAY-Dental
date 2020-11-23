@@ -173,8 +173,8 @@ namespace TMTDentalAPI.Controllers
             if (paySlip == null)
                 return BadRequest();
 
-            if (paySlip.State != "draft")
-                throw new Exception("Đợt lương ở trạng thái nháp mới có thể xóa");
+            if (paySlip.State != "confirm")
+                throw new Exception("Đợt lương ở trạng thái chờ xác nhận mới có thể xóa");
 
             await _payslipRunService.DeleteAsync(paySlip);
 
@@ -193,7 +193,8 @@ namespace TMTDentalAPI.Controllers
             res.CompanyId = CompanyId;
             res.DateStart = startDate;
             res.DateEnd = endDate;
-            res.Date = date;
+            //res.Date = date;
+            res.State = "confirm";
 
             return Ok(res);
         }
