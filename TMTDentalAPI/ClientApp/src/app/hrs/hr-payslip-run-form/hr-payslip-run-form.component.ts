@@ -22,6 +22,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   FormGroup: FormGroup;
   isCompact = false;
   search: string = '';
+  date: Date;
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
     private route: ActivatedRoute, private modalService: NgbModal,
@@ -33,21 +34,16 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.FormGroup = this.fb.group({
       name: [null, Validators.required],
       companyId: null,
-      state: 'draft',
+      state: 'confirm',
       date: [null, Validators.required],
       slips: this.fb.array([])
     });
 
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
+      this.date = new Date(params.get('date')) || new Date();
       if (!this.id) {
-        this.hrPaysliprunService.CheckExist(new Date()).subscribe((res: any) => {
-          if (res && res.id) {
-            this.router.navigateByUrl('hr/payslip-run/form?id=' + res.id);
-          } else {
-            this.getDefault();
-          }
-        });
+       this.checkExist();
       } else {
         this.loadRecord();
       }
@@ -57,6 +53,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   get state() { return this.FormGroup.get('state').value; }
   get name() { return this.FormGroup.get('name').value; }
   get slipsFormArray() { return this.FormGroup.get('slips') as FormArray; }
+  get dateFC() { return this.FormGroup.get('date') as FormArray; }
 
   loadRecord() {
     if (this.id) {
@@ -74,7 +71,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         const fg = this.fb.group(new HrPayslipSaveDefaultValue());
         fg.patchValue(e);
         this.slipsFormArray.push(fg);
-        e.employeeNameSearch = e.employee.name + ' ' + this.RemoveVietnamese(e.employee.name);
+        e.employeeNameSearch = e.employee.name.toLowerCase() + ' ' + this.RemoveVietnamese(e.employee.name);
       });
     } else {
       result.slips = [];
@@ -82,11 +79,27 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.FormGroup.patchValue(result);
   }
 
+  checkExist() {
+    const d =  this.dateFC.value || new Date();
+    
+    this.hrPaysliprunService.CheckExist(d).subscribe((res: any) => {
+      if (res && res.id) {
+        this.router.navigateByUrl('hr/payslip-run/form?id=' + res.id);
+      } else {
+        if (this.id) {
+        this.router.navigateByUrl('hr/payslip-run/form?date=' + d.toISOString());
+        } else {
+        this.getDefault();
+        }
+      }
+    });
+  }
+
   getDefault() {
     const val = new HrPayslipRunDefaultGet();
-    val.state = 'draft';
     this.hrPaysliprunService.default(val).subscribe((result: any) => {
-      const d = new Date(result.date);
+      const d = result.date ? new Date(result.date) : this.date;
+      result.date = d;
       const newName = `Bảng lương tháng ${d.getMonth() + 1} năm ${d.getFullYear()}`;
       result.name = newName;
       this.patchValue(result);
@@ -167,6 +180,8 @@ export class HrPayslipRunFormComponent implements OnInit {
   onChangeDate(e) {
     const newName = `Bảng lương tháng ${e.getMonth() + 1} năm ${e.getFullYear()}`;
     this.FormGroup.get('name').setValue(newName);
+    this.dateFC.setValue(e);
+    this.checkExist();
   }
 
   RemoveVietnamese(text) {
@@ -194,7 +209,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   onSearchEmployee(e) {
-    this.search = this.search.trim();
+    this.search = this.search.trim().toLocaleLowerCase();
   }
 
   checkAll(e) {

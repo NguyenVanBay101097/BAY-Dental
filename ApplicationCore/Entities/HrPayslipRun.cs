@@ -11,12 +11,12 @@ namespace ApplicationCore.Entities
     {
         public HrPayslipRun()
         {
-            State = "draft";
+            State = "confirm";
         }
 
         public string Name { get; set; }
         /// <summary>
-        /// draft, confirm, done
+        /// confirm(chờ xác nhận), done(hoàn thành, đã xác nhận)
         /// </summary>
         public string State { get; set; }
 
