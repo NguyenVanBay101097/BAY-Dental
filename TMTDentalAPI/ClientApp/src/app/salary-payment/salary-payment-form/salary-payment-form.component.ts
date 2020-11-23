@@ -46,7 +46,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       DateObj: [null, Validators.required],
       Journal: [null, Validators.required],
       Employee: [null, Validators.required],
-      Amount: 0,
+      Amount:[0, Validators.required],
       Reason: null,
       Type: 'advance'
     });
@@ -67,7 +67,8 @@ export class SalaryPaymentFormComponent implements OnInit {
   loadData() {
     this.salaryPaymentService.get(this.id, null).subscribe(
       (result) => {
-        console.log(result);
+        let date = new Date(result.Date);
+        this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
         // this.formGroup.get('name').patchValue(result.Name);
         if (result.Employee) {
@@ -152,13 +153,10 @@ export class SalaryPaymentFormComponent implements OnInit {
           console.log(error);
         }
       );
-    }else{
-      var value = {
-        name: "vãi nồi "
-      }
-      this.salaryPaymentService.create(value).subscribe(
+    }else{   
+      this.salaryPaymentService.create(salaryPayment).subscribe(
         (result) => {
-          
+          this.activeModal.close(result);
         },
         (error) => {
           console.log(error);
@@ -166,5 +164,9 @@ export class SalaryPaymentFormComponent implements OnInit {
       );
     }
    
+  }
+
+  actionConfirm(){
+
   }
 }

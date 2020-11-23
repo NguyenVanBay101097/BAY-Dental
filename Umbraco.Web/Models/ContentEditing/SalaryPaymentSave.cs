@@ -23,13 +23,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Sổ nhật ký: tiền mặt, ngân hàng
         /// </summary>
         public Guid? JournalId { get; set; }
-        public AccountJournalSimple Journal { get; set; }
+       // public AccountJournalSimple Journal { get; set; }
 
         /// <summary>
         /// nhân viên
         /// </summary>
         public Guid? EmployeeId { get; set; }
-        public EmployeeSimple Employee { get; set; }
+       // public EmployeeSimple Employee { get; set; }
 
         /// <summary>
         /// draft: Nháp

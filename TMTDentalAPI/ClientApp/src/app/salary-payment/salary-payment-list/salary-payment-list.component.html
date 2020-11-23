@@ -2,7 +2,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span>Phiếu tạm ứng/ chi lương</span>
+                <span>Phiếu tạm ứng, chi lương</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -30,21 +30,29 @@
         [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Date" title="Ngày lập phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.date | date: 'shortDate'}}
+                {{dataItem.Date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Name" title="Mã" width="100"></kendo-grid-column>
-        <kendo-grid-column field="Type" title="Loại phiếu" width="120"></kendo-grid-column>
-        <kendo-grid-column field="JournalName" title="Phương thức" width="120"></kendo-grid-column>
+        <kendo-grid-column field="Type" title="Loại phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getType(dataItem.Type)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="JournalName" title="Phương thức" width="120">
+            <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.get('Journal').name.value}}
+            </ng-template> -->
+        </kendo-grid-column>
         <kendo-grid-column field="EmployeeName" title="Nhân viên" width="120"></kendo-grid-column>
         <kendo-grid-column field="Amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.amount | number}}
+                {{dataItem.Amount | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="State" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{stateGet(dataItem.state)}}
+                {{stateGet(dataItem.State)}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="100">

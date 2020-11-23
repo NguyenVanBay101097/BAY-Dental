@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
@@ -45,7 +46,21 @@ namespace TMTDentalAPI.OdataControllers
         [EnableQuery]
         public SingleResult<SalaryPaymentVm> Get([FromODataUri] Guid key)
         {
-            var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery(x => x.Id == key));
+
+            var results = _salaryPaymentService.SearchQuery(x => x.Id == key).Select(x => new SalaryPaymentVm
+            {
+                Id = x.Id,             
+                Name = x.Name,   
+                Date = x.Date,
+                EmployeeId = x.EmployeeId,
+                Employee = _mapper.Map<EmployeeSimple>(x.Employee),
+                JournalId = x.JournalId,
+                journal = _mapper.Map<AccountJournalSimple>(x.Journal),
+                Amount = x.Amount,
+                Reason = x.Reason,
+                Type = x.Type,
+                State = x.State              
+            });       
             return SingleResult.Create(results);
         }
 
@@ -79,55 +94,55 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    await _salaryPaymentService.ActionConfirm(ids);
-        //    _unitOfWork.Commit();
-
-        //    return NoContent();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
-        //    _unitOfWork.Commit();
-
-        //    return NoContent();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    await _salaryPaymentService.ActionCancel(ids);
-        //    _unitOfWork.Commit();
-
-        //    return NoContent();
-        //}
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Remove(Guid id)
+        [HttpPost]
+        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
-            var salaryPayment = await _salaryPaymentService.GetByIdAsync(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.ActionConfirm(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _salaryPaymentService.ActionCancel(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete([FromODataUri] Guid key)
+        {
+            var salaryPayment = await _salaryPaymentService.GetByIdAsync(key);
             if (salaryPayment.State == "posted")
                 throw new Exception("Bạn không thể xóa phiếu khi đã ghi sổ");
 

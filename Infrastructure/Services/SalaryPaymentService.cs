@@ -56,6 +56,8 @@ namespace Infrastructure.Services
 
             salaryPayment.CompanyId = CompanyId;
 
+            await CheckEmployeePartner(salaryPayment);
+
             return await CreateAsync(salaryPayment);
         }
 
@@ -142,13 +144,13 @@ namespace Infrastructure.Services
             await UpdateAsync(salaryPayment);
         }
 
-        public override async Task<SalaryPayment> CreateAsync(SalaryPayment entity)
+
+        public async Task CheckEmployeePartner(SalaryPayment val)
         {
             var employeeObj = GetService<IEmployeeService>();
             var partnerObj = GetService<IPartnerService>();
-            var model = await base.CreateAsync(entity);
 
-            var employee = await employeeObj.SearchQuery(x => x.Id == entity.Id).FirstOrDefaultAsync();
+            var employee = await employeeObj.SearchQuery(x => x.Id == val.EmployeeId).FirstOrDefaultAsync();
             if (!employee.PartnerId.HasValue)
             {
                 var partner = new Partner()
@@ -162,31 +164,11 @@ namespace Infrastructure.Services
                 employee.PartnerId = partner.Id;
                 await employeeObj.UpdateAsync(employee);
             }
-            return model;
+
+            val.EmployeeId = employee.Id;
+
         }
-
-        public override async Task UpdateAsync(SalaryPayment entity)
-        {
-            var employeeObj = GetService<IEmployeeService>();
-            var partnerObj = GetService<IPartnerService>();
-            await base.UpdateAsync(entity);
-
-            var employee = await employeeObj.SearchQuery(x => x.Id == entity.Id).FirstOrDefaultAsync();
-            if (!employee.PartnerId.HasValue)
-            {
-                var partner = new Partner()
-                {
-                    Name = employee.Name,
-                    Customer = false,
-                    Supplier = false,
-                };
-
-                await partnerObj.CreateAsync(partner);
-                employee.PartnerId = partner.Id;
-                await employeeObj.UpdateAsync(employee);
-            }
-        }
-
+     
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
             var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))

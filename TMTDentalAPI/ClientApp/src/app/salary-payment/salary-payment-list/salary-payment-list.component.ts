@@ -88,8 +88,8 @@ export class SalaryPaymentListComponent implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Sửa: " + (item.type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
-    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.title = "Sửa: " + (item.Type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.id = item.Id;
     modalRef.result.then(
       () => {
         this.refreshData();
@@ -100,10 +100,10 @@ export class SalaryPaymentListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: " + (item.type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.title = "Xóa: " + (item.Type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
     modalRef.result.then(
       () => {
-        this.salaryPaymentService.delete(item.id).subscribe(
+        this.salaryPaymentService.delete(item.Id).subscribe(
           () => {
             this.refreshData();
           },
@@ -122,6 +122,15 @@ export class SalaryPaymentListComponent implements OnInit {
         return "Nháp";
       case "posted":
         return "Đã vào sổ";
+    }
+  }
+
+  getType(value) {
+    switch (value) {
+      case "advance":
+        return "Tạm ứng";
+      case "salary":
+        return "Chi lương";
     }
   }
 }

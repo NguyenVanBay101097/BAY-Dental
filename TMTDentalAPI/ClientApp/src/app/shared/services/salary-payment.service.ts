@@ -12,7 +12,7 @@ export class SalaryPaymentService extends ODataService {
         this.fetch(this.tableName, state, options || {})
             .pipe(
                 map((data: GridDataResult) => {
-                  
+                  debugger
                     return data;
                 })
             )
