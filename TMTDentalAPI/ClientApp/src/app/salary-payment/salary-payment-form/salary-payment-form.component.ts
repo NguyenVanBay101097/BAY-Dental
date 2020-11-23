@@ -152,7 +152,10 @@ export class SalaryPaymentFormComponent implements OnInit {
         }
       );
     }else{
-      this.salaryPaymentService.create(salaryPayment).subscribe(
+      var value = {
+        name: "vãi nồi "
+      }
+      this.salaryPaymentService.create(value).subscribe(
         (result) => {
           
         },

@@ -34,6 +34,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [HttpGet]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery());
@@ -42,12 +43,12 @@ namespace TMTDentalAPI.OdataControllers
 
 
         [EnableQuery]
+        [HttpGet]
         public SingleResult<SalaryPaymentVm> Get([FromODataUri] Guid key)
         {
             var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery(x => x.Id == key));
             return SingleResult.Create(results);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Post(SalaryPaymentSave model)
@@ -78,7 +79,7 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             if (!ModelState.IsValid)
@@ -93,7 +94,7 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
         {
             if (!ModelState.IsValid)
@@ -108,7 +109,7 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (!ModelState.IsValid)
