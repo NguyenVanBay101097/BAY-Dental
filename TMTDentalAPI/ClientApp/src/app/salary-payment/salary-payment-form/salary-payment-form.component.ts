@@ -69,9 +69,14 @@ export class SalaryPaymentFormComponent implements OnInit {
         console.log(result);
         this.formGroup.patchValue(result);
         // this.formGroup.get('name').patchValue(result.Name);
-        if (result.employee) {
-          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.employee], "id");
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], "id");
         }
+        
+        if (result.Journal) {
+          this.filteredJournals = _.unionBy(this.filteredJournals, [result.Journal], "id");
+        }
+
       },
       (error) => {
         console.log(error);
@@ -102,14 +107,14 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadEmployees() {
     this.searchEmployees().subscribe((result) => {
-      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, "id");
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result, "id");
     });
   }
 
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
     val.search = filter || "";
-    return this.employeeService.getEmployeePaged(val);
+    return this.employeeService.getEmployeeSimpleList(val);
   }
 
   filterChangeCombobox() {
@@ -121,7 +126,7 @@ export class SalaryPaymentFormComponent implements OnInit {
         switchMap((val) => this.searchEmployees(val.toString().toLowerCase()))
       )
       .subscribe((result) => {
-        this.filteredEmployees = result.items;
+        this.filteredEmployees = result;
         this.employeeCbx.loading = false;
       });
   }
@@ -130,20 +135,32 @@ export class SalaryPaymentFormComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
-    var salaryPayment = this.formGroup.value;
+ 
+    const salaryPayment = Object.assign({}, this.formGroup.value);
     salaryPayment.JournalId = salaryPayment.Journal.id;
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
 
-    console.log(salaryPayment);
-    this.salaryPaymentService.create(salaryPayment).subscribe(
-      (result) => {
-        
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    // this.activeModal.close(salaryPayment);
+    if(this.id){
+      this.salaryPaymentService.update(this.id,salaryPayment).subscribe(
+        () => {
+          
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }else{
+      this.salaryPaymentService.create(salaryPayment).subscribe(
+        (result) => {
+          
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+   
   }
 }

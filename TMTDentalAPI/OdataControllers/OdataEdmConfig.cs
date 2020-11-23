@@ -93,6 +93,11 @@ namespace TMTDentalAPI.OdataControllers
                   .Function("ActionCancel")
                   .Returns<bool>();
 
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Function("CreateMultiSalaryPayment")
+                .Returns<bool>();
+
             #endregion
 
             #region ComplexType
@@ -108,7 +113,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
-            builder.ComplexType<SalaryPaymentSave>();
+            
 
             #endregion
 

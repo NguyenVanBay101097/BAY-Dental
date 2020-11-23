@@ -60,6 +60,50 @@ namespace Infrastructure.Services
         }
 
 
+        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        {
+            var listSalaryPayment = new List<SalaryPayment>();
+            foreach(var item in vals)
+            {
+                var salaryPayment = _mapper.Map<SalaryPayment>(item);
+
+                if (string.IsNullOrEmpty(salaryPayment.Name))
+                {
+                    var seqObj = GetService<IIRSequenceService>();
+                    if (salaryPayment.Type == "advance")
+                    {
+                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
+                        if (string.IsNullOrEmpty(salaryPayment.Name))
+                        {
+                            await _InsertSalaryPaymentAdvanceSequence();
+                            salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
+                        }
+                    }
+                    else if (salaryPayment.Type == "salary")
+                    {
+                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
+                        if (string.IsNullOrEmpty(salaryPayment.Name))
+                        {
+                            await _InsertSalaryPaymentSalarySequence();
+                            salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
+                        }
+                    }
+                    else
+                        throw new Exception("Not support");
+                }
+
+                salaryPayment.CompanyId = CompanyId;
+
+                listSalaryPayment.Add(salaryPayment);
+            }
+
+            await CreateAsync(listSalaryPayment);
+
+            /// xac nhan 
+            var ids = listSalaryPayment.Select(x => x.Id).ToList();
+            await ActionConfirm(ids);
+        }
+
 
 
 
@@ -70,7 +114,7 @@ namespace Infrastructure.Services
             {
                 Name = "Phiếu tạm ứng",
                 Code = "salarypayment.advance",
-                Prefix = "ADVANCE/{yyyy}/",
+                Prefix = "AVC/{yyyy}/",
                 Padding = 4
             });
         }
@@ -82,7 +126,7 @@ namespace Infrastructure.Services
             {
                 Name = "Phiếu chi lương",
                 Code = "salarypayment.salary",
-                Prefix = "PAYWAGE/{yyyy}/",
+                Prefix = "PW/{yyyy}/",
                 Padding = 4
             });
         }
@@ -118,7 +162,6 @@ namespace Infrastructure.Services
                 employee.PartnerId = partner.Id;
                 await employeeObj.UpdateAsync(employee);
             }
-
             return model;
         }
 
