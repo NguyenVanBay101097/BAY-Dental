@@ -151,7 +151,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     if (this.id) {
       this.salaryPaymentService.update(this.id, salaryPayment).subscribe(
         () => {
-
+          this.activeModal.close();
         },
         (error) => {
           console.log(error);
@@ -171,6 +171,15 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   actionConfirm() {
-
+    if(this.id){
+      this.salaryPaymentService.actionConfirm([this.id]).subscribe(
+        () => {
+          this.activeModal.close();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
   }
 }

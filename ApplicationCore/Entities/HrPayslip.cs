@@ -152,5 +152,14 @@ namespace ApplicationCore.Entities
         /// số ngày nghỉ không lương
         /// </summary>
         public decimal? LeavePerMonthUnpaid { get; set; }
+
+        /// <summary>
+        /// phiếu chi lương
+        /// </summary>
+        public Guid? SalaryPaymentId { get; set; }
+        public SalaryPayment SalaryPayment { get; set; }
+
+
+
     }
 }

@@ -44,7 +44,11 @@
                 {{dataItem.get('journal').value.Name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="EmployeeName" title="Nhân viên" width="120"></kendo-grid-column>
+        <kendo-grid-column field="Employee" title="Nhân viên" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.get('Employee').value.Name}}
+            </ng-template>          
+        </kendo-grid-column>
         <kendo-grid-column field="Amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.Amount | number}}

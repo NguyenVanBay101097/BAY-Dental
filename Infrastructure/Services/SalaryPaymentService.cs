@@ -76,6 +76,7 @@ namespace Infrastructure.Services
                 salaryPayment.Amount = item.Amount.Value;
                 salaryPayment.State = "draft";
                 salaryPayment.Type = "salary";
+                salaryPayment.CompanyId = CompanyId;
 
                 if (string.IsNullOrEmpty(salaryPayment.Name))
                 {
@@ -102,19 +103,31 @@ namespace Infrastructure.Services
                         throw new Exception("Not support");
                 }
 
-                salaryPayment.CompanyId = CompanyId;
+                
 
                 await CreateAsync(salaryPayment);
+
+                await ActionConfirm(new List<Guid>() { salaryPayment.Id});
 
                 salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
 
             }
 
-            await CreateAsync(listSalaryPayment);
+            var hrPayslipObj = GetService<IHrPayslipService>();
+            var hrpayslipIds = vals.Select(x => x.HrPayslipId).ToList();
+            var hrPayslips = await hrPayslipObj.SearchQuery(x=> hrpayslipIds.Contains(x.Id)).ToListAsync();
+            var hrPayslipDict = hrPayslips.ToDictionary(x => x.Id, x => x);
 
-            /// xac nhan 
-            var ids = listSalaryPayment.Select(x => x.Id).ToList();
-            await ActionConfirm(ids);
+            ///update salary payment
+            foreach(var item in salaryPaymentDict)
+            {
+                if (!hrPayslipDict.ContainsKey(item.Key))
+                    continue;
+                var hrPayslip = hrPayslipDict[item.Key];
+                hrPayslip.SalaryPaymentId = item.Value.Id;
+            }
+
+            await hrPayslipObj.UpdateAsync(hrPayslips);
         }
 
 
