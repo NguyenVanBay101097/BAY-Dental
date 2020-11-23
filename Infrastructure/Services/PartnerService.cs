@@ -1941,6 +1941,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
             }
 
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.CompanyId == val.CompanyId.Value));
+
             var saleOrderObj = GetService<ISaleOrderService>();
 
             var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
@@ -1949,7 +1952,8 @@ namespace Infrastructure.Services
 
             var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId))
                 .GroupBy(x => x.PartnerId)
-                .Select(x => new {
+                .Select(x => new
+                {
                     PartnerId = x.Key,
                     PartnerCount = x.Count()
                 })

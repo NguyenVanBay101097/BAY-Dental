@@ -20,11 +20,11 @@ namespace TMTDentalAPI.Controllers
             _reportService = reportService;
         }
 
-        [HttpGet("GetSummaryByPartner/{id}")]
+        [HttpPost("GetSummaryPartner")]
         [CheckAccess(Actions = "Report.AccountPartner")]
-        public async Task<IActionResult> GetSummaryByPartner(Guid id)
+        public async Task<IActionResult> GetSummaryPartner(AccountCommonPartnerReportSearchV2 val)
         {
-            var res = await _reportService.ReportSumaryByPartner(id);
+            var res = await _reportService.ReportSumaryPartner(val);
             return Ok(res);
         }
 
