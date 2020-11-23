@@ -6,11 +6,10 @@ import { WorkEntryType } from '../work-entry-types/work-entry-type.service';
 
 export class ChamCongSave {
   employeeId: string;
-  timeIn: string;
-  timeOut: string;
-  date: string;
-  hourWorked: number;
-  workEntryTypeId: string;
+  type: string;
+  overTime: string;
+  overTimeHour:number;
+  date: Date;
   status: string;
 }
 
@@ -35,6 +34,7 @@ export class ChamCongBasic {
   status: string;
   hourWorked: number;
   date: string;
+  type:string;
   employee: EmployeeBasic;
   employeeId: string;
   workEntryTypeId: string;

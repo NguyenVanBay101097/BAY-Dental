@@ -13,13 +13,13 @@ using System.Text;
 
 namespace ApplicationCore.Utilities
 {
-    public class ViewRender
+    public class ViewRenderService : IViewRenderService
     {
         private IRazorViewEngine _viewEngine;
         private ITempDataProvider _tempDataProvider;
         private IServiceProvider _serviceProvider;
 
-        public ViewRender(
+        public ViewRenderService(
             IRazorViewEngine viewEngine,
             ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider)
@@ -29,7 +29,7 @@ namespace ApplicationCore.Utilities
             _serviceProvider = serviceProvider;
         }
 
-        public string Render<TModel>(string name, TModel model)
+        public string Render<T>(string name, T model) 
         {
             var actionContext = GetActionContext();
 
@@ -47,7 +47,7 @@ namespace ApplicationCore.Utilities
                 var viewContext = new ViewContext(
                     actionContext,
                     view,
-                    new ViewDataDictionary<TModel>(
+                    new ViewDataDictionary<T>(
                         metadataProvider: new EmptyModelMetadataProvider(),
                         modelState: new ModelStateDictionary())
                     {

@@ -4,6 +4,20 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { ODataService } from './odata.service';
 
+export class SalaryPaymentSave {
+    CompanyId: string;
+    Name: string;
+    Date: Date;
+    JournalId: string;
+    Journal: any;
+    EmployeeId: string;
+    Employee: any;
+    State: string;
+    Type: string;
+    Amount: number;
+    Reason: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService extends ODataService {
     constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SalaryPayments"); }
@@ -12,8 +26,8 @@ export class SalaryPaymentService extends ODataService {
        
         this.fetch(this.tableName, state, options || {})
             .pipe(
-                map((data: GridDataResult) => {   
-                    console.log(data);             
+                map((data: GridDataResult) => {
+
                     return data;
                 })
             )

@@ -31,20 +31,26 @@ namespace Infrastructure.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions)
+        public async Task<GetPermission> GetPermission()
         {
-            if (IsUserRoot)
-                return new ApplicationRoleFunctionHasAccessResult() { Access = true };
-
             var key = $"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{UserId}";
 
-            //get list permission
-            var permissionList = await _cache.GetOrCreateAsync(key, async entry =>
+            var permission = await _cache.GetOrCreateAsync(key, async entry =>
             {
                 var res = await SearchQuery(x => x.Role.UserRoles.Any(y => y.UserId == UserId)).Select(x => x.Func).ToListAsync();
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);
                 return res;
             });
+            return new GetPermission() { IsUserRoot = IsUserRoot, Permission = permission };
+        }
+
+        public async Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions)
+        {
+            if (IsUserRoot)
+                return new ApplicationRoleFunctionHasAccessResult() { Access = true };
+
+            //get list permission
+            var permissionList = (await GetPermission()).Permission;
 
             //check, sử dụng indexOf == 0
             var access = functions.All(x => permissionList.Any(s => x.IndexOf(s) == 0));
@@ -58,7 +64,7 @@ namespace Infrastructure.Services
                     var fileContent = reader.ReadToEnd();
                     var features = JsonConvert.DeserializeObject<List<PermissionTreeViewModel>>(fileContent);
 
-                    foreach(var func in functions_2)
+                    foreach (var func in functions_2)
                     {
                         var function = features.SelectMany(x => x.Children).FirstOrDefault(x => func.IndexOf(x.Permission) != -1);
                         if (function == null)
@@ -80,5 +86,11 @@ namespace Infrastructure.Services
         public bool Access { get; set; }
 
         public string Error { get; set; }
+    }
+
+    public class GetPermission
+    {
+        public bool IsUserRoot { get; set; }
+        public List<string> Permission { get; set; }
     }
 }
