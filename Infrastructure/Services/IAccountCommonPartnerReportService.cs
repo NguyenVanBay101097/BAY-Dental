@@ -11,5 +11,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val);
         Task<IEnumerable<AccountCommonPartnerReportItemDetail>> ReportDetail(AccountCommonPartnerReportItem val);
         Task<AccountCommonPartnerReport> ReportSumaryByPartner(Guid partnerId);
+        Task<AccountCommonPartnerReportSearchV2Result> ReportSumaryPartner(AccountCommonPartnerReportSearchV2 data);
     }
 }

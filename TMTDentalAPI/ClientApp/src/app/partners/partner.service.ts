@@ -109,6 +109,7 @@ export class PartnerImageViewModel {
 
 export class PartnerCustomerReportInput {
     dateFrom: string;
+    companyId: string;
     dateTo: string;
 }
 

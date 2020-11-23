@@ -13,7 +13,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class RevenueReportService: IRevenueReportService
+    public class RevenueReportService : IRevenueReportService
     {
         private readonly CatalogDbContext _context;
         protected readonly IHttpContextAccessor _httpContextAccessor;
@@ -46,7 +46,6 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var account_type_revenue = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
-
             if (val.DateFrom.HasValue)
                 val.DateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
             if (val.DateTo.HasValue)
@@ -95,7 +94,8 @@ namespace Infrastructure.Services
             }
             if (val.GroupBy == "date:quarter")
             {
-                result.Details = await query.GroupBy(x => new {
+                result.Details = await query.GroupBy(x => new
+                {
                     x.Date.Value.Year,
                     QuarterOfYear = (x.Date.Value.Month - 1) / 3,
                 })
@@ -113,7 +113,8 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:month" || val.GroupBy == "date")
             {
-                result.Details = await query.GroupBy(x => new {
+                result.Details = await query.GroupBy(x => new
+                {
                     x.Date.Value.Year,
                     x.Date.Value.Month,
                 })
@@ -145,7 +146,8 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:day")
             {
-                result.Details = await query.GroupBy(x => new {
+                result.Details = await query.GroupBy(x => new
+                {
                     x.Date.Value.Year,
                     x.Date.Value.Month,
                     x.Date.Value.Day,
@@ -165,7 +167,8 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "date:year")
             {
-                result.Details = await query.GroupBy(x => new {
+                result.Details = await query.GroupBy(x => new
+                {
                     x.Date.Value.Year,
                 })
                    .Select(x => new RevenueReportResultDetail
@@ -179,10 +182,13 @@ namespace Infrastructure.Services
                 foreach (var item in result.Details)
                     item.Name = new DateTime(item.Year, 1, 1).ToString("yyyy");
             }
+
             if (val.GroupBy == "salesman")
             {
-                result.Details = await query.GroupBy(x => new { 
-                    x.SalesmanId, x.Salesman.Name 
+                result.Details = await query.GroupBy(x => new
+                {
+                    x.SalesmanId,
+                    x.Salesman.Name
                 })
                     .Select(x => new RevenueReportResultDetail
                     {

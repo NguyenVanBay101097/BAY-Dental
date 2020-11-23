@@ -87,6 +87,7 @@ export class PartnerPaged {
     limit: number;
     customer: boolean;
     employee: boolean;
+    companyId:string;
     supplier: boolean;
     search: string;
     categoryId: string;

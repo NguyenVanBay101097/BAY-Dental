@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
+import { RealRevenueReportResult } from '../real-revenue-report/real-revenue-report.service';
 
 export class RevenueReportResult {
     debit: number;
@@ -15,6 +16,9 @@ export class RevenueReportResultDetails {
     credit: number;
     balance: number;
     name: string;
+    month: number;
+    day: number;
+    year: number;
 }
 
 export class RevenueReportSearch {
