@@ -29,6 +29,7 @@ import { HrSalaryConfigCreateUpdateComponent } from './hr-salary-config-create-u
 import { HrSalaryConfigService } from './hr-salary-config.service';
 import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-report-list.component';
 import { HrSalaryReportDetailComponent } from './hr-salary-report-detail/hr-salary-report-detail.component';
+import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { HrSalaryReportDetailComponent } from './hr-salary-report-detail/hr-sala
     CommonModule,
     HrsRoutingModule,
     MyCustomKendoModule,
+    AccountCommonPartnerReportsModule,
     ReactiveFormsModule,
     FormsModule,
     LayoutModule,

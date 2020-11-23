@@ -25,7 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Ref { get; set; }
 
         public string Gender { get; set; }
-        public string GenderConvert
+        public string GenderConvertcom
         {
             get
             {

@@ -52,7 +52,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Loại chấm công', link: '/work-entry-types' },
         { name: 'Thời gian làm việc', link: '/resource-calendars' },
         // { name: 'Cấu hình lương', link: '/hr/salary-configs' },
-        // { name: 'Báo cáo nợ lương', link: 'hr/salary-reports' }
+        { name: 'Báo cáo thanh toán lương', link: 'hr/salary-reports' }
       ],
     },
     {

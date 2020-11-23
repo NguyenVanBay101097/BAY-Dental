@@ -2,7 +2,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span>Báo cáo công nợ lương</span>
+                <span>Báo cáo thanh toán lương</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -25,18 +25,16 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="partnerName" title="Tên">
+        <kendo-grid-column field="partnerName" title="Tên nhân viên">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerRef" title="Mã">
+        <kendo-grid-column field="partnerRef" title="Mã nhân viên">
         </kendo-grid-column>
-        <kendo-grid-column field="partnerPhone" title="Số điện thoại">
-        </kendo-grid-column>
-        <kendo-grid-column field="begin" class="text-right" title="Nợ đầu kỳ">
+        <kendo-grid-column field="begin" class="text-right" title="Đầu kỳ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.begin | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="debit" class="text-right" title="Phát sinh">
+        <kendo-grid-column field="debit" class="text-right" title="Lương">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.debit | number}}
             </ng-template>
@@ -46,7 +44,7 @@
                 {{dataItem.credit | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="end" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-bold">
+        <kendo-grid-column field="end" class="text-right" title="Cuối kỳ" footerClass="text-right font-weight-bold">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.end | number}}
             </ng-template>
