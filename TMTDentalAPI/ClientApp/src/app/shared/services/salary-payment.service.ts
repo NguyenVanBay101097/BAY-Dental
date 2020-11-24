@@ -18,6 +18,14 @@ export class SalaryPaymentSave {
     Reason: string;
 }
 
+export class SalaryPaymentIds {
+   Ids: string[];
+}
+
+export class SalaryPaymentSalary {
+    MultiSalaryPayments: any[];
+ }
+
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService extends ODataService {
     constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SalaryPayments"); }
@@ -43,7 +51,21 @@ export class SalaryPaymentService extends ODataService {
     }
 
     public actionConfirm(ids:any){
-        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids );
+        var val = new SalaryPaymentIds();
+        val.Ids = ids;
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', val );
+    }
+
+    public actionMultiSalaryPayment(val:any){
+        var res = new SalaryPaymentSalary();
+        res.MultiSalaryPayments = val;
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/CreateMultiSalaryPayment', res );
+    }
+
+    public onPrint(ids:any){
+        var val = new SalaryPaymentIds();
+        val.Ids = ids;
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/PrintSalaryPayment', val );
     }
 
 }

@@ -1,3 +1,4 @@
+import { State } from '@progress/kendo-data-query';
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
@@ -24,6 +25,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   id: string;
+  salaryPayment: any;
   filteredJournals: any = [];
   filteredEmployees: EmployeeSimple[] = [];
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
@@ -48,7 +50,8 @@ export class SalaryPaymentFormComponent implements OnInit {
       Employee: [null, Validators.required],
       Amount: [0, Validators.required],
       Reason: null,
-      Type: 'advance'
+      Type: 'advance',
+      CompanyId:null
     });
 
     setTimeout(() => {
@@ -66,7 +69,8 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
-      (result) => {        
+      (result) => {   
+        this.salaryPayment = result;     
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
@@ -142,16 +146,20 @@ export class SalaryPaymentFormComponent implements OnInit {
       return false;
     }
 
+    debugger
     const salaryPayment = Object.assign({}, this.formGroup.value);
     salaryPayment.JournalId = salaryPayment.Journal.id;
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
     salaryPayment.Type = salaryPayment.Type;
+    salaryPayment.CompanyId = this.salaryPayment.CompanyId ? salaryPayment.CompanyId : null;
     // this.activeModal.close(salaryPayment);
     if (this.id) {
       this.salaryPaymentService.update(this.id, salaryPayment).subscribe(
         () => {
-          this.activeModal.close();
+          this.id = this.id;
+          this.loadData();
+          this.printSalaryPayment(this.id);
         },
         (error) => {
           console.log(error);
@@ -159,8 +167,10 @@ export class SalaryPaymentFormComponent implements OnInit {
       );
     } else {
       this.salaryPaymentService.create(salaryPayment).subscribe(
-        (result) => {
-          this.activeModal.close(result);
+        (result : any) => {
+          this.id = result.Id;
+          this.loadData();
+          this.printSalaryPayment(this.id);
         },
         (error) => {
           console.log(error);
@@ -172,7 +182,6 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   actionConfirm() {
     if(this.id){
-      debugger
       this.salaryPaymentService.actionConfirm([this.id]).subscribe(
         () => {
           this.activeModal.close();
@@ -182,5 +191,21 @@ export class SalaryPaymentFormComponent implements OnInit {
         }
       );
     }
+  }
+
+  printSalaryPayment(ids) {  
+    this.salaryPaymentService.onPrint([ids]).subscribe(
+      result => {
+        if (result && result['html']) {
+          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+          popupWin.document.open();
+
+          popupWin.document.write(result['html']);
+          popupWin.document.close();
+        } else {
+          
+        }
+      }
+    )
   }
 }
