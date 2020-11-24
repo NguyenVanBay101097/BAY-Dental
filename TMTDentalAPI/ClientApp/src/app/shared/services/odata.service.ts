@@ -89,7 +89,7 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     if (options.expand) {
       queryStr = queryStr + "&$expand=" + options.expand;
     }
-
+    
     if (queryStr) {
       // encode everything which looks like a GUID
       var guid = /('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')/gi;

@@ -47,5 +47,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
+        /// <summary>
+        /// để hiện thị chứ ko có lưu vào db, 1 phiếu lương có 1 chi lương
+        /// </summary>
+        public Guid? HrPayslipId { get; set; }
+
     }
 }

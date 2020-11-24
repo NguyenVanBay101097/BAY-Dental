@@ -386,25 +386,38 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<SalaryPaymentSave>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        public async Task<IEnumerable<SalaryPaymentDisplay>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
-            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
-                .Include(x => x.Slips.Where(y => val.PayslipIds.Contains(y.Id))).FirstOrDefaultAsync();
+            var JournalObj = GetService<IAccountJournalService>();
+            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId).Include("Slips.SalaryPayment")
+                .Include(x => x.Slips).ThenInclude(x=>x.Employee).Select(x => new
+                {
+                    Date = x.Date,
+                    Slips = x.Slips.Where(y => val.PayslipIds.Contains(y.Id))
+                }).FirstOrDefaultAsync();
+            var journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery(x => x.Name.ToLower().Contains("tiền mặt"))).FirstOrDefaultAsync();
+            if (journal == null)
+            {
+                journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery()).FirstOrDefaultAsync();
+            }
 
             if (slipRun == null) throw new Exception("không tồn tại đợt lương!");
-            var payments = new List<SalaryPaymentSave>();
+            var payments = new List<SalaryPaymentDisplay>();
             foreach (var slip in slipRun.Slips)
             {
-                payments.Add(new SalaryPaymentSave()
+                if (slip.SalaryPayment != null) continue;
+                payments.Add(new SalaryPaymentDisplay()
                 {
-                    Amount = slip.NetSalary,
-                    CompanyId = slip.CompanyId,
+                    Amount = slip.NetSalary.GetValueOrDefault(),
                     Date = slipRun.Date.Value,
                     EmployeeId = slip.EmployeeId,
-                    JournalId = null,
+                    Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
+                    JournalId = journal.Id,
+                    Journal = journal,
                     Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
-                    Type = "advance"
+                    Type = "advance",
+                    HrPayslipId = slip.Id
                 });
             }
             return payments;

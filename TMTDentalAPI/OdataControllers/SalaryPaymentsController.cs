@@ -106,13 +106,14 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
+        public async Task<IActionResult> CreateMultiSalaryPayment(ODataActionParameters parameters)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var vals = parameters["vals"] as IEnumerable<MultiSalaryPaymentVm>;
             await _unitOfWork.BeginTransactionAsync();
             await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
             _unitOfWork.Commit();
