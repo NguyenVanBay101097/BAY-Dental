@@ -74,7 +74,7 @@ namespace Infrastructure.Services
                 salaryPayment.EmployeeId = item.EmployeeId;
                 salaryPayment.Reason = item.Reason;
                 salaryPayment.Amount = item.Amount.Value;
-                salaryPayment.State = "draft";
+                salaryPayment.State = "waitting";
                 salaryPayment.Type = "salary";
                 salaryPayment.CompanyId = CompanyId;
 
@@ -164,7 +164,7 @@ namespace Infrastructure.Services
                 throw new Exception("Phiếu không tồn tại");
 
             salaryPayment = _mapper.Map(val, salaryPayment);
-
+            await CheckEmployeePartner(salaryPayment);
             await UpdateAsync(salaryPayment);
         }
 
@@ -182,6 +182,10 @@ namespace Infrastructure.Services
                     Name = employee.Name,
                     Customer = false,
                     Supplier = false,
+                    CompanyId = employee.CompanyId,
+                    Phone = employee.Phone,
+                    Ref = employee.Ref,
+                    Email = employee.Email
                 };
 
                 await partnerObj.CreateAsync(partner);

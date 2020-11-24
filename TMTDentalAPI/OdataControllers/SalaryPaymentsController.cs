@@ -131,8 +131,8 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> Delete([FromODataUri] Guid key)
         {
             var salaryPayment = await _salaryPaymentService.GetByIdAsync(key);
-            if (salaryPayment.State == "posted")
-                throw new Exception("Bạn không thể xóa phiếu khi đã ghi sổ");
+            if (salaryPayment.State == "done")
+                throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
 
             if (salaryPayment == null)
                 return NotFound();

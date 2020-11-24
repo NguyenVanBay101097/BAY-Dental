@@ -24,8 +24,8 @@ namespace ApplicationCore.Entities
         public AccountJournal Journal { get; set; }
 
         /// <summary>
-        /// draft: Nháp
-        /// posted: Đã vào sổ
+        /// waitting: chờ xác nhận
+        /// done: xác nhận
         /// </summary>
         public string State { get; set; }
 

@@ -122,10 +122,10 @@ export class SalaryPaymentListComponent implements OnInit {
 
   stateGet(value) {
     switch (value) {
-      case "draft":
-        return "Nháp";
+      case "waitting":
+        return "Chờ xác nhận";
       case "posted":
-        return "Đã vào sổ";
+        return "Xác nhận";
     }
   }
 

@@ -2,19 +2,19 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span>Phiếu tạm ứng, chi lương</span>
+                <span>Quản lý tạm ứng, chi lương</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã" type="text"
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
-                    Tạo tạm ứng
+                    Tạm ứng lương
                 </button>
             </div>
             <div class="o_cp_sidebar">
@@ -28,44 +28,48 @@
 <div class="o_content">
     <kendo-grid salaryPaymentBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" 
         [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
-        <kendo-grid-column field="Date" title="Ngày lập phiếu" width="120">
+        <kendo-grid-column field="Name" title="Mã Phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.Name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Date" title="Ngày" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.Date | date: 'shortDate'}}
             </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="Name" title="Mã" width="100"></kendo-grid-column>
+        </kendo-grid-column> 
+        <kendo-grid-column title="Người nhận" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.Employee.Name}}
+            </ng-template>          
+        </kendo-grid-column>     
         <kendo-grid-column field="Type" title="Loại phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getType(dataItem.Type)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="journal" title="Phương thức" width="120">
+        <kendo-grid-column title="Phương thức" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.get('journal').value.Name}}
+                {{dataItem.journal.Name}}
             </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="Employee" title="Nhân viên" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.get('Employee').value.Name}}
-            </ng-template>          
         </kendo-grid-column>
         <kendo-grid-column field="Amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.Amount | number}}
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column>     
         <kendo-grid-column field="State" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.State)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-command-column title="Thao tác" width="100">
+        <!-- <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                         class="far fa-edit"></i></button>
                 <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i title="Xóa"
                         class="far fa-trash-alt"></i></button>
             </ng-template>
-        </kendo-grid-command-column>
+        </kendo-grid-command-column> -->
     </kendo-grid>
 </div>
