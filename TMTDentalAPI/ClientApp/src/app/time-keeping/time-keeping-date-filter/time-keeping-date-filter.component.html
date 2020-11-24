@@ -4,13 +4,10 @@
         Lọc theo tháng:
         <span>{{getMonthFilter()}}</span>
     </button>
-    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
-        <button class="dropdown-item" *ngFor="let option of optionMonths" type="button"
-            (click)="onSelectMonth(option)">{{option.text}}</button>
-        <div class="dropdown-divider"></div>
-        <div class="px-4 pb-3">
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">    
+        <div class="px-1">
             <div class="form-group">
-                <label>Tùy chọn</label>
+                <!-- <label>Tùy chọn</label> -->
                 <div class="input-group">
                     <kendo-datepicker
                     [bottomView]="'year'"
@@ -21,5 +18,11 @@
                 </div>
             </div>
         </div>
+        <!-- <button class="dropdown-item" *ngFor="let option of optionMonths" type="button"
+            (click)="onSelectMonth(option)">{{option.text}}</button> -->
+        <!-- <div class="dropdown-divider"></div>
+        <div class="px-4 pb-3">
+           
+        </div> -->
     </div>
 </div>

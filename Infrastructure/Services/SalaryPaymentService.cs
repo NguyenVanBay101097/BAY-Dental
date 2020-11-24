@@ -198,9 +198,9 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task ActionConfirm(IEnumerable<GuidClass> ids)
+        public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var salaryPayments = await SearchQuery(x => ids.Select(s=>s.Id).Contains(x.Id))
+            var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
                  .Include(x => x.Employee)
