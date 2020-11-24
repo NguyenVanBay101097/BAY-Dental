@@ -263,7 +263,8 @@ namespace Infrastructure.Services
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
-            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) && c.Type == "advance"
+            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) 
+            && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
             && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
 
@@ -316,8 +317,8 @@ namespace Infrastructure.Services
             if (chamCongs == null)
             {
                 chamCongs = await ccObj.SearchQuery(c => c.EmployeeId == emp.Id
-            & c.Date.Value.Month == date.Value.Month
-            & c.Date.Value.Year == date.Value.Year).ToListAsync();
+            && c.Date.Value.Month == date.Value.Month
+            && c.Date.Value.Year == date.Value.Year).ToListAsync();
             }
             if (commission == null)
             {
@@ -329,8 +330,8 @@ namespace Infrastructure.Services
             if (advances == null)
             {
                 advances = await advanceObj.SearchQuery(c => c.EmployeeId == emp.Id
-             & c.Type == "advance" & c.Date.Month == date.Value.Month
-            & c.Date.Year == date.Value.Year).ToListAsync();
+             && c.Type == "advance" && c.State == "done" && c.Date.Month == date.Value.Month
+            && c.Date.Year == date.Value.Year).ToListAsync();
             }
 
             payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
