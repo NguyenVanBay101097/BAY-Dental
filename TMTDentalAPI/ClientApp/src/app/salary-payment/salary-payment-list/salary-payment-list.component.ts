@@ -32,7 +32,8 @@ export class SalaryPaymentListComponent implements OnInit {
   };
   gridSort = [];
   advanceFilter: any = {
-    params: {}
+    params: {},
+    expand : "Employee,Journal",
   };
 
   constructor(
@@ -47,7 +48,7 @@ export class SalaryPaymentListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.dataBinding.filter = this.generateFilter();
+        this.dataBinding.filter = this.generateFilter();       
         this.refreshData();
       });
   }
@@ -55,6 +56,8 @@ export class SalaryPaymentListComponent implements OnInit {
   updateFilter() {
     this.gridFilter = this.generateFilter();
   }
+
+
 
   refreshData() {
     this.dataBinding.rebind();
@@ -72,6 +75,7 @@ export class SalaryPaymentListComponent implements OnInit {
         filters: [
           { field: "Name", operator: "contains", value: this.search }
         ]
+       
       });
     }
     return filter;
@@ -118,10 +122,10 @@ export class SalaryPaymentListComponent implements OnInit {
 
   stateGet(value) {
     switch (value) {
-      case "draft":
-        return "Nháp";
+      case "waitting":
+        return "Chờ xác nhận";
       case "posted":
-        return "Đã vào sổ";
+        return "Xác nhận";
     }
   }
 

@@ -31,6 +31,10 @@ namespace Infrastructure.EntityConfigurations
                .WithMany()
                .HasForeignKey(x => x.StructureTypeId);
 
+            builder.HasOne(x => x.SalaryPayment)
+            .WithMany()
+            .HasForeignKey(x => x.SalaryPaymentId);
+
             builder.HasOne(x => x.AccountMove)
                .WithMany()
                .HasForeignKey(x => x.AccountMoveId)
@@ -39,6 +43,8 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.PayslipRun)
                .WithMany(x => x.Slips)
                .HasForeignKey(x => x.PayslipRunId);
+
+            
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
