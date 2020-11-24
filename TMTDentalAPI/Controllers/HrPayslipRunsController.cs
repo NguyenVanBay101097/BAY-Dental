@@ -217,7 +217,7 @@ namespace TMTDentalAPI.Controllers
             string groupSep = cul.NumberFormat.CurrencyGroupSeparator;
             var stream = new MemoryStream();
             var data = await _mapper.ProjectTo<HrPayslipDisplay>(_payslipServie.SearchQuery(x => payslipIds.Contains(x.Id))
-                .Include(x=>x.Employee)).ToListAsync();
+                .Include(x=>x.Employee).Include(x=>x.SalaryPayment)).ToListAsync();
             byte[] fileContent;
 
             using (var package = new ExcelPackage(stream))
@@ -241,7 +241,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 15].Value = "Phạt";
                 worksheet.Cells[1, 16].Value = "Tạm ứng";
                 worksheet.Cells[1, 17].Value = "Thực lĩnh";
-                //worksheet.Cells[1, 18].Value = "Phiếu chi";
+                worksheet.Cells[1, 18].Value = "Phiếu chi";
                 worksheet.Cells["A1:Q1"].Style.Font.Bold = true;
 
                 var row = 2;
@@ -264,7 +264,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 15].Value = item.AmercementMoney.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
                     worksheet.Cells[row, 16].Value = item.AdvancePayment.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture); ;
                     worksheet.Cells[row, 17].Value = item.NetSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    //worksheet.Cells[1, 18].Value = "Phiếu chi";
+                    worksheet.Cells[1, 18].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "";
 
                     //format
                     //worksheet.Cells[row, 2].Style.Numberformat.Format = "#,#";

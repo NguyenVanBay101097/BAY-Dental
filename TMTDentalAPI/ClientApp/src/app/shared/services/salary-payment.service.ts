@@ -19,11 +19,8 @@ export class SalaryPaymentSave {
 }
 
 export class SalaryPaymentSaveDefault {
-    CompanyId = null;
-    Name = null;
     Date = null;
     JournalId = null;
-    Journal = null;
     EmployeeId = null;
     Employee = null;
     State = null;
@@ -63,6 +60,13 @@ export class SalaryPaymentService extends ODataService {
 
     public defaulCreateBy(val: any) {
         return this.http.post(`${this.BASE_URL}${this.tableName}/DefaulCreateBy`, val);
+    }
+
+    public createMultiSalaryPayment(val: any[]) {
+        const v = {
+            vals: val
+        };
+        return this.http.post(`${this.BASE_URL}${this.tableName}/CreateMultiSalaryPayment`, v);
     }
 
 }

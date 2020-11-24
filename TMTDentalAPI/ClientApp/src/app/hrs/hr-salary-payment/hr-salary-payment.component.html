@@ -25,9 +25,9 @@
                                     {{control.get('Date').value | date:'dd/MM/yyyy'}}
                                 </td>
                                 <td class="text-center">
-                                    <select (change)="onChangeJournal($event)" class="form-control" formControlName="Journal">
+                                    <select class="form-control" formControlName="JournalId">
                                         <option
-                                        *ngFor="let journal of filteredJournals" [value]="journal">{{journal.name}}</option>
+                                        *ngFor="let journal of filteredJournals" [ngValue]="journal.Id">{{journal.Name}}</option>
                                     </select>
                                 </td>
                                 <td class="text-center">

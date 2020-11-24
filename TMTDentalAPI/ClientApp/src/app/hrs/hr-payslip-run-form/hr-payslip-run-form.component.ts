@@ -313,7 +313,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`;
     modalRef.componentInstance.defaultPara = {PayslipRunId: this.id, PayslipIds: slipIds};
     modalRef.result.then((res: any) => {
-
+      this.loadRecord();
     });
   }
 }

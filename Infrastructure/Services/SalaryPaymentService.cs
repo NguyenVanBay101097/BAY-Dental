@@ -210,7 +210,7 @@ namespace Infrastructure.Services
 
             foreach (var salaryPayment in salaryPayments)
             {
-                if (salaryPayment.State != "draft")
+                if (salaryPayment.State != "waitting")
                     throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
 
                 var move = await _PrepareSalaryPaymentMoves(salaryPayment);
@@ -390,7 +390,7 @@ namespace Infrastructure.Services
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
             var JournalObj = GetService<IAccountJournalService>();
-            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
+            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId).Include("Slips.SalaryPayment")
                 .Include(x => x.Slips).ThenInclude(x=>x.Employee).Select(x => new
                 {
                     Date = x.Date,
@@ -406,17 +406,18 @@ namespace Infrastructure.Services
             var payments = new List<SalaryPaymentDisplay>();
             foreach (var slip in slipRun.Slips)
             {
+                if (slip.SalaryPayment != null) continue;
                 payments.Add(new SalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),
-                    CompanyId = slip.CompanyId,
                     Date = slipRun.Date.Value,
                     EmployeeId = slip.EmployeeId,
                     Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
                     JournalId = journal.Id,
                     Journal = journal,
                     Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
-                    Type = "advance"
+                    Type = "advance",
+                    HrPayslipId = slip.Id
                 });
             }
             return payments;

@@ -104,6 +104,10 @@ namespace TMTDentalAPI.OdataControllers
             .ReturnsCollection<SalaryPaymentDisplay>();
             #endregion
 
+            #region AccountJournal
+            builder.EntitySet<AccountJournalViewModel>("AccountJournals");
+            #endregion
+
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
             builder.ComplexType<EmployeeBasic>();
@@ -124,6 +128,7 @@ namespace TMTDentalAPI.OdataControllers
 
             #endregion
 
+           
 
             return builder.GetEdmModel();
         }
