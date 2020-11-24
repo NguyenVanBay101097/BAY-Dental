@@ -54,4 +54,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Reason { get; set; }
     }
+
+    public class SalaryPaymentDefaultGetModel
+    {
+        public Guid? PayslipRunId { get; set; }
+        public IEnumerable<Guid> PayslipIds { get; set; }
+    }
 }

@@ -27,6 +27,8 @@ export class HrPayslipRunFormComponent implements OnInit {
   isCompact = false;
   search: string = '';
   date: Date;
+  isNotChiluong:boolean = true;
+
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
     private route: ActivatedRoute, private modalService: NgbModal,
@@ -45,7 +47,7 @@ export class HrPayslipRunFormComponent implements OnInit {
 
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
-      this.date = new Date(params.get('date')) || new Date();
+      this.date = params.get('date')? new Date(params.get('date')) : new Date();
       if (!this.id) {
         this.checkExist();
       } else {
@@ -62,6 +64,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   loadRecord() {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
+        // check is exist chi luong?
         this.patchValue(result);
       });
     }
@@ -102,7 +105,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   getDefault() {
     const val = new HrPayslipRunDefaultGet();
     this.hrPaysliprunService.default(val).subscribe((result: any) => {
-      const d = result.date ? new Date(result.date) : this.date;
+      const d = this.date ? this.date : new Date(result.date);
       result.date = d;
       const newName = `Bảng lương tháng ${d.getMonth() + 1} năm ${d.getFullYear()}`;
       result.name = newName;

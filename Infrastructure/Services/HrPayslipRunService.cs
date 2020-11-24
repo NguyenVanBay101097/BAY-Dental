@@ -60,9 +60,9 @@ namespace Infrastructure.Services
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
             var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
-            if(isExist == true)
+            if (isExist == true)
             {
-                throw new Exception("đã tồn tại bảng lương của tháng "+ val.Date.Value.Month);
+                throw new Exception("đã tồn tại bảng lương của tháng " + val.Date.Value.Month);
             }
             var payslipRun = _mapper.Map<HrPayslipRun>(val);
 
@@ -117,7 +117,8 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var amlObj = GetService<IAccountMoveLineService>();
 
-            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee).FirstOrDefaultAsync();
+            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee)
+                .ThenInclude(x=> x.Partner).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
             // ghi sổ
@@ -161,7 +162,7 @@ namespace Infrastructure.Services
                 {
                     new AccountMoveLine
                     {
-                        Name =  slip.Name,
+                        Name =  "Lương tháng "+move.Date.ToString("MM/yyyy"),
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         AccountId = accountJournal.DefaultDebitAccount.Id,
@@ -171,7 +172,7 @@ namespace Infrastructure.Services
                     },
                     new AccountMoveLine
                     {
-                        Name = slip.Name,
+                        Name = "Lương tháng "+move.Date.ToString("MM/yyyy"),
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         AccountId = accountJournal.DefaultCreditAccount.Id,
@@ -212,7 +213,7 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.Move).ThenInclude(x=>x.Lines).ToListAsync();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).ThenInclude(x => x.Lines).ToListAsync();
 
             var listMove = new List<AccountMove>();
             var listMoveLine = new List<AccountMoveLine>();
@@ -222,8 +223,8 @@ namespace Infrastructure.Services
                 listMoveLine.AddRange(run.Move.Lines);
                 run.State = "confirm";
             }
-            await moveObj.DeleteAsync(listMove);
             await moveLineObj.DeleteAsync(listMoveLine);
+            await moveObj.DeleteAsync(listMove);
 
             await UpdateAsync(payslipruns);
         }
@@ -251,16 +252,17 @@ namespace Infrastructure.Services
 
             //get all resource
             var emps = await employeeObj.SearchQuery(x => x.Active == true).ToListAsync();
+            var empIds = emps.Select(x => x.Id).ToList();
             var paysliprun = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            var allChamcongs = await ccObj.SearchQuery(c => emps.Select(x => x.Id).Any(x => x == c.EmployeeId)
-            & c.Date.Value.Month == paysliprun.Date.Value.Month
-            & c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
+            var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
+            && c.Date.Value.Month == paysliprun.Date.Value.Month
+            && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
-            var Alladvances = await advanceObj.SearchQuery(x=> emps.Select(e=>e.Id).Any(c=> c == x.EmployeeId)
-            & x.Type =="advance" & x.Date.Month == paysliprun.Date.Value.Month
-            & x.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
+            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) && c.Type == "advance"
+            && c.Date.Month == paysliprun.Date.Value.Month
+            && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
 
             //validate
             if (paysliprun == null)
@@ -321,7 +323,7 @@ namespace Infrastructure.Services
                 var allCommission = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = payslip.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth, EmployeeId = emp.Id });
                 commission = allCommission.FirstOrDefault(x => x.EmployeeId == emp.Id);
             }
-            if(advances == null)
+            if (advances == null)
             {
                 advances = await advanceObj.SearchQuery(c => c.EmployeeId == emp.Id
              & c.Type == "advance" & c.Date.Month == date.Value.Month
@@ -351,7 +353,7 @@ namespace Infrastructure.Services
 
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 2);
             payslip.AmercementMoney = 0;
-            payslip.AdvancePayment = advances.Sum(x=>x.Amount);
+            payslip.AdvancePayment = advances.Sum(x => x.Amount);
             payslip.NetSalary = payslip.TotalSalary + payslip.CommissionSalary - payslip.AmercementMoney.Value - payslip.AdvancePayment;
 
         }
@@ -365,7 +367,7 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
             foreach (var item in paysliprun.Slips)
             {
-                await ComputeSalary(item, null, null,null, paysliprun.Date);
+                await ComputeSalary(item, null, null, null, paysliprun.Date);
             }
             await UpdateAsync(paysliprun);
         }
