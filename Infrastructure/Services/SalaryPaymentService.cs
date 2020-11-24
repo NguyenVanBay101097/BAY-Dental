@@ -186,6 +186,7 @@ namespace Infrastructure.Services
                     Phone = employee.Phone,
                     Ref = employee.Ref,
                     Email = employee.Email
+
                 };
 
                 await partnerObj.CreateAsync(partner);
@@ -223,7 +224,7 @@ namespace Infrastructure.Services
 
                 amlObj.ComputeMoveNameState(move.Lines);
 
-                salaryPayment.State = "posted";
+                salaryPayment.State = "done";
                 salaryPayment.MoveId = move.Id;
             }
 
@@ -241,7 +242,7 @@ namespace Infrastructure.Services
             {
                 await moveObj.ButtonCancel(new List<Guid>() { phieu.MoveId.Value });
                 await moveObj.Unlink(new List<Guid>() { phieu.MoveId.Value });
-                phieu.State = "draft";
+                phieu.State = "waitting";
             }
 
             await UpdateAsync(self);
@@ -266,11 +267,11 @@ namespace Infrastructure.Services
                 CompanyId = val.CompanyId,
             };
 
-            var rec_pay_line_name = "/";
-            if (val.Type == "advance")
-                rec_pay_line_name = "tạm ứng";
-            else if (val.Type == "salary")
-                rec_pay_line_name = "chi lương";
+                var rec_pay_line_name = "/";
+                if (val.Type == "advance")
+                    rec_pay_line_name = val.Name + " " + "tạm ứng";
+                else if (val.Type == "salary")
+                    rec_pay_line_name = val.Name + " " + "chi lương";
 
 
             var liquidity_line_name = val.Name;
@@ -286,6 +287,7 @@ namespace Infrastructure.Services
                         AccountId = accDebit334.Id,
                         Account = accDebit334,
                         Move = move,
+                        Ref = val.Name,
                         PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                     new AccountMoveLine
@@ -296,6 +298,7 @@ namespace Infrastructure.Services
                         AccountId = accCredit642.Id,
                         Account = accCredit642,
                         Move = move,
+                        Ref = val.Name,
                         PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                 };

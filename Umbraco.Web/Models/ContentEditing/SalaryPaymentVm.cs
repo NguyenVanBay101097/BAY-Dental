@@ -14,6 +14,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
+        public Guid? CompanyId { get; set; }
+
         /// <summary>
         /// draft: Nháp
         /// posted: Đã vào sổ
@@ -59,7 +61,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
-        public Guid? CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
         public CompanyBasic Company { get; set; }
 
 
@@ -88,23 +90,27 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string AmountString
         {
-            get
-            {
-
-                var amountText = StringUtils.ChuyenSo(Amount.ToString()); 
-                return amountText;
-            }
-            set { }
+            get;set;
         }
 
         public string UserName { get; set; }
 
-        public Guid? CreateById { get; set; }
+        public string CreatedById { get; set; }
 
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
+    }
+
+    public class SalaryPaymentIds
+    {
+        public ICollection<Guid> Ids { get; set; } = new List<Guid>();
+    }
+
+    public class SalaryPaymentSalary
+    {
+        public ICollection<MultiSalaryPaymentVm> MultiSalaryPayments { get; set; } = new List<MultiSalaryPaymentVm>();
     }
 
     public class SalaryPaymentBasic

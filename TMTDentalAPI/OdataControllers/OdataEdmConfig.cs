@@ -96,9 +96,9 @@ namespace TMTDentalAPI.OdataControllers
             //      .CollectionParameter<Guid>("ids");
 
             builder.EntityType<SalaryPaymentVm>()
-                .Collection
-                  .Action("ActionConfirm")
-             .Returns<bool>();
+                      .Collection
+                   .Action("ActionConfirm")
+                    .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                      .Collection
@@ -108,7 +108,12 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SalaryPaymentVm>()
                    .Collection
                 .Action("CreateMultiSalaryPayment")
-                .CollectionParameter<MultiSalaryPaymentVm>("vals");
+                 .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Action("PrintSalaryPayment")
+                 .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                .Collection

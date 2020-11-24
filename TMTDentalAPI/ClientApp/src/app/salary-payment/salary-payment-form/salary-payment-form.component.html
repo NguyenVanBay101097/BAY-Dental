@@ -11,15 +11,14 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
-                            <tr>
+                            <tr *ngIf="id">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Mã phiếu
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="Name"
-                                        placeholder="Không nhập sẽ tự phát sinh" />
+                                    <span class="form-control"> {{salaryPayment.Name}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -87,7 +86,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>
+    <!-- <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button> -->
     <button type="button" *ngIf="id" class="btn btn-primary" (click)="actionConfirm()">Xác nhận</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
