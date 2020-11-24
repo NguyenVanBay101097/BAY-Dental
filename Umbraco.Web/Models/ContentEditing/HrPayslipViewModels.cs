@@ -115,6 +115,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? NetSalary { get; set; }
         public decimal? ActualLeavePerMonth { get; set; }
         public decimal? LeavePerMonthUnpaid { get; set; }
+        public SalaryPaymentBasic SalaryPayment { get; set; }
 
     }
 

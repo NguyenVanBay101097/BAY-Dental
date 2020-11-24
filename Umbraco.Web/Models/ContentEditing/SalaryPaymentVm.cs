@@ -48,4 +48,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Reason { get; set; }
     }
+
+    public class SalaryPaymentBasic
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+    }
 }
