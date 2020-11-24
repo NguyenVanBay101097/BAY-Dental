@@ -290,6 +290,8 @@ namespace Infrastructure.Services
             var date_to = val.ToDate;
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var empObj = (IEmployeeService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IEmployeeService));
+            var empDicts = empObj.SearchQuery(x => true).ToDictionary(x => x.PartnerId, x => x.Wage);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -305,7 +307,6 @@ namespace Infrastructure.Services
                     PartnerName = x.Partner.Name,
                     PartnerRef = x.Partner.Ref,
                     PartnerPhone = x.Partner.Phone,
-                    Type = x.Account.InternalType
                 })
                 .Select(x => new
                 {
@@ -313,115 +314,10 @@ namespace Infrastructure.Services
                     PartnerName = x.Key.PartnerName,
                     PartnerRef = x.Key.PartnerRef,
                     PartnerPhone = x.Key.PartnerPhone,
-                    x.Key.Type,
-                    InitialBalance = x.Sum(s => s.Debit - s.Credit),
+                   
                 }).ToListAsync();
 
-            foreach (var item in list)
-            {
-                if (!dict.ContainsKey(item.PartnerId))
-                {
-                    dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
-                    {
-                        PartnerId = item.PartnerId,
-                        PartnerName = item.PartnerName,
-                        PartnerRef = item.PartnerRef,
-                        PartnerPhone = item.PartnerPhone,
-                        ResultSelection = val.ResultSelection,
-                        DateFrom = date_from,
-                        DateTo = date_to
-                    });
-                }
-
-                if (item.Type == "receivable")
-                    dict[item.PartnerId].Begin = item.InitialBalance;
-                else if (item.Type == "payable")
-                    dict[item.PartnerId].Begin = -item.InitialBalance;
-            }
-
-            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
-            query2 = query2.Where(x => x.Account.Code.Equals("334"));
-
-            if (!string.IsNullOrWhiteSpace(val.Search))
-            {
-                query2 = query2.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
-            }
-
-            var list2 = await query2
-                      .GroupBy(x => new
-                      {
-                          PartnerId = x.Partner.Id,
-                          PartnerName = x.Partner.Name,
-                          PartnerRef = x.Partner.Ref,
-                          PartnerPhone = x.Partner.Phone,
-                          Type = x.Account.InternalType
-                      })
-                    .Select(x => new
-                    {
-                        PartnerId = x.Key.PartnerId,
-                        PartnerName = x.Key.PartnerName,
-                        PartnerRef = x.Key.PartnerRef,
-                        PartnerPhone = x.Key.PartnerPhone,
-                        x.Key.Type,
-                        Debit = x.Sum(s => s.Debit),
-                        Credit = x.Sum(s => s.Credit),
-                    }).ToListAsync();
-
-            foreach (var item in list2)
-            {
-                if (!dict.ContainsKey(item.PartnerId))
-                {
-                    dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
-                    {
-                        PartnerId = item.PartnerId,
-                        PartnerName = item.PartnerName,
-                        PartnerRef = item.PartnerRef,
-                        PartnerPhone = item.PartnerPhone,
-                        ResultSelection = val.ResultSelection,
-                        DateFrom = date_from,
-                        DateTo = date_to
-                    });
-                }
-
-                if (item.Type == "receivable")
-                {
-                    dict[item.PartnerId].Debit = item.Debit;
-                    dict[item.PartnerId].Credit = item.Credit;
-                }
-                else if (item.Type == "payable")
-                {
-                    dict[item.PartnerId].Debit = item.Credit;
-                    dict[item.PartnerId].Credit = item.Debit;
-                }
-            }
-
-            var res = new List<AccountCommonPartnerReportItem>();
-            foreach (var item in dict)
-            {
-                var begin = dict[item.Key].Begin;
-                var debit = dict[item.Key].Debit;
-                var credit = dict[item.Key].Credit;
-                var end = begin + debit - credit;
-                if (val.Display == "not_zero" && end <= 0.00001M)
-                    continue;
-                var value = item.Value;
-                res.Add(new AccountCommonPartnerReportItem
-                {
-                    PartnerId = item.Key,
-                    DateFrom = date_from,
-                    DateTo = date_to,
-                    ResultSelection = val.ResultSelection,
-                    PartnerRef = value.PartnerRef,
-                    Begin = begin,
-                    Debit = debit,
-                    Credit = credit,
-                    End = end,
-                    PartnerName = value.PartnerName,
-                    PartnerPhone = value.PartnerPhone,
-                });
-            }
-            return res;
+            return null;
         }
     }
 

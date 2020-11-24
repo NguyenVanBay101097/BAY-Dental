@@ -91,13 +91,13 @@ export class HrSalaryReportListComponent implements OnInit {
     }
     this.reportService.getReportSalaryEmployee(val).subscribe(res => {
       console.log(res);
-      //   this.items = res;
-      //   this.total = aggregateBy(this.items, this.aggregates);
-      //   this.loadItems();
-      //   this.loading = false;
-      // }, err => {
-      //   console.log(err);
-      //   this.loading = false;
+      this.items = res;
+      this.total = aggregateBy(this.items, this.aggregates);
+      this.loadItems();
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
     })
   }
 

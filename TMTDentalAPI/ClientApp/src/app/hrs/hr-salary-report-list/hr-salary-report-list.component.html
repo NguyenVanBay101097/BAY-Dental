@@ -34,9 +34,14 @@
                 {{dataItem.begin | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="debit" class="text-right" title="Lương">
+        <kendo-grid-column field="debit" class="text-right" title="Nợ">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.debit | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="basicSalary" class="text-right" title="Lương">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.basicSalary | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="credit" class="text-right" title="Thanh toán">

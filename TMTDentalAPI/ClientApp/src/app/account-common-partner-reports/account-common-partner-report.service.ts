@@ -70,8 +70,8 @@ export class AccountCommonPartnerReportService {
         return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
     }
 
-    getReportSalaryEmployee(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem> {
-        return this.http.post<AccountCommonPartnerReportItem>(this.baseApi + this.apiUrl + "/GetSalaryReportEmployee", val);
+    getReportSalaryEmployee(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem[]> {
+        return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSalaryReportEmployee", val);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {
