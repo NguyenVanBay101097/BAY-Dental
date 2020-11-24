@@ -27,7 +27,6 @@ export class SalaryPaymentService extends ODataService {
         this.fetch(this.tableName, state, options || {})
             .pipe(
                 map((data: GridDataResult) => {
-                    console.log(data);
                     return data;
                 })
             )
@@ -44,7 +43,7 @@ export class SalaryPaymentService extends ODataService {
     }
 
     public actionConfirm(ids:any){
-        return this.http.post(`${this.BASE_URL}${this.tableName}/ActionConfirm`, ids);
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids );
     }
 
 }
