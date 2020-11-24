@@ -286,7 +286,7 @@ namespace Infrastructure.Services
             var date_to = val.ToDate.HasValue ? val.ToDate.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
-            var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, state: "posted", companyId: val.CompanyId);
+            var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, initBal: true, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
                 query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||

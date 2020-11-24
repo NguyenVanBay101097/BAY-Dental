@@ -66,7 +66,7 @@ namespace Infrastructure.Services
         {
             var listSalaryPayment = new List<SalaryPayment>();
             var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
-            foreach(var item in vals)
+            foreach (var item in vals)
             {
                 var salaryPayment = new SalaryPayment();
                 salaryPayment.JournalId = item.JournalId.Value;
@@ -103,11 +103,11 @@ namespace Infrastructure.Services
                         throw new Exception("Not support");
                 }
 
-                
+
 
                 await CreateAsync(salaryPayment);
 
-                await ActionConfirm(new List<Guid>() { salaryPayment.Id});
+                //await ActionConfirm(new List<Guid>() { salaryPayment.Id });
 
                 salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
 
@@ -115,11 +115,11 @@ namespace Infrastructure.Services
 
             var hrPayslipObj = GetService<IHrPayslipService>();
             var hrpayslipIds = vals.Select(x => x.HrPayslipId).ToList();
-            var hrPayslips = await hrPayslipObj.SearchQuery(x=> hrpayslipIds.Contains(x.Id)).ToListAsync();
+            var hrPayslips = await hrPayslipObj.SearchQuery(x => hrpayslipIds.Contains(x.Id)).ToListAsync();
             var hrPayslipDict = hrPayslips.ToDictionary(x => x.Id, x => x);
 
             ///update salary payment
-            foreach(var item in salaryPaymentDict)
+            foreach (var item in salaryPaymentDict)
             {
                 if (!hrPayslipDict.ContainsKey(item.Key))
                     continue;
@@ -196,10 +196,10 @@ namespace Infrastructure.Services
             val.EmployeeId = employee.Id;
 
         }
-     
-        public async Task ActionConfirm(IEnumerable<Guid> ids)
+
+        public async Task ActionConfirm(IEnumerable<GuidClass> ids)
         {
-            var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))
+            var salaryPayments = await SearchQuery(x => ids.Select(s=>s.Id).Contains(x.Id))
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
                  .Include(x => x.Employee)
@@ -210,15 +210,15 @@ namespace Infrastructure.Services
 
             foreach (var salaryPayment in salaryPayments)
             {
-                if (salaryPayment.State != "draft")
+                if (salaryPayment.State != "waitting")
                     throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
 
                 var move = await _PrepareSalaryPaymentMoves(salaryPayment);
 
                 var amlObj = GetService<IAccountMoveLineService>();
-                    amlObj.PrepareLines(move.Lines);
+                amlObj.PrepareLines(move.Lines);
 
-                await moveObj.CreateMoves(new List<AccountMove>() { move});
+                await moveObj.CreateMoves(new List<AccountMove>() { move });
                 await moveObj.ActionPost(new List<AccountMove>() { move });
 
                 amlObj.ComputeMoveNameState(move.Lines);
@@ -252,30 +252,30 @@ namespace Infrastructure.Services
             var all_move_vals = new List<AccountMove>();
             var accDebit334 = await getAccount334();
             var accCredit642 = await getAccount642();
-         
-
-                var accountJournalObj = GetService<IAccountJournalService>();
-
-                var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany($"{val.Journal.Type}", val.CompanyId.Value);
 
 
-                var move = new AccountMove
-                {
-                    JournalId = accountJournal.Id,
-                    Journal = accountJournal,
-                    CompanyId = val.CompanyId,
-                };
+            var accountJournalObj = GetService<IAccountJournalService>();
 
-                var rec_pay_line_name = "/";
-                if (val.Type == "advance")
-                    rec_pay_line_name = "tạm ứng";
-                else if (val.Type == "salary")
-                    rec_pay_line_name = "chi lương";
+            var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany($"{val.Journal.Type}", val.CompanyId.Value);
 
 
-                var liquidity_line_name = val.Name;
-                var balance = val.Amount;
-                var lines = new List<AccountMoveLine>()
+            var move = new AccountMove
+            {
+                JournalId = accountJournal.Id,
+                Journal = accountJournal,
+                CompanyId = val.CompanyId,
+            };
+
+            var rec_pay_line_name = "/";
+            if (val.Type == "advance")
+                rec_pay_line_name = "tạm ứng";
+            else if (val.Type == "salary")
+                rec_pay_line_name = "chi lương";
+
+
+            var liquidity_line_name = val.Name;
+            var balance = val.Amount;
+            var lines = new List<AccountMoveLine>()
                 {
 
                      new AccountMoveLine
@@ -300,7 +300,7 @@ namespace Infrastructure.Services
                     },
                 };
 
-                move.Lines = lines;
+            move.Lines = lines;
 
             return move;
 
@@ -396,14 +396,15 @@ namespace Infrastructure.Services
             var payments = new List<SalaryPaymentSave>();
             foreach (var slip in slipRun.Slips)
             {
-                payments.Add(new SalaryPaymentSave() { 
-                Amount = slip.NetSalary,
-                CompanyId = slip.CompanyId,
-                Date = slipRun.Date.Value,
-                EmployeeId = slip.EmployeeId,
-                JournalId = null,
-                Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
-                Type = "advance"
+                payments.Add(new SalaryPaymentSave()
+                {
+                    Amount = slip.NetSalary,
+                    CompanyId = slip.CompanyId,
+                    Date = slipRun.Date.Value,
+                    EmployeeId = slip.EmployeeId,
+                    JournalId = null,
+                    Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
+                    Type = "advance"
                 });
             }
             return payments;

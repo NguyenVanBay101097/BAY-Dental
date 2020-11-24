@@ -11,8 +11,10 @@
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
-        <div class="o_cp_left">
+        <div class="o_cp_left" [formGroup]="formGroup">
             <div class="o_cp_buttons">
+                <kendo-datepicker (valueChange)="changeMonth()" [format]="'MM-yyyy'" formControlName="month"
+                    [bottomView]="'year'"></kendo-datepicker>
             </div>
             <div class="o_cp_sidebar">
             </div>

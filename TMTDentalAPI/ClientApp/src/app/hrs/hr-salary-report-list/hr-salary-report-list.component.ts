@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -21,14 +22,15 @@ export class HrSalaryReportListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  dateFrom: Date;
-  dateTo: Date;
+  date: Date = new Date();
+  dateFrom: Date = new Date(this.date.getFullYear(), this.date.getMonth(), 1);;
+  dateTo: Date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
   searchPartner: PartnerSimple;
   resultSelection: string;
 
   search: string;
   searchUpdate = new Subject<string>();
-
+  formGroup: FormGroup;
   public total: any;
   public aggregates: any[] = [
     { field: 'end', aggregate: 'sum' },
@@ -38,12 +40,12 @@ export class HrSalaryReportListComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
-    private partnerService: PartnerService, private route: ActivatedRoute) { }
+    private partnerService: PartnerService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit() {
-    var date = new Date();
-    this.dateFrom = new Date(date.getFullYear(), date.getMonth(), 1);
-    this.dateTo = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    this.formGroup = this.fb.group({
+      month: this.dateFrom
+    })
 
     this.route.queryParamMap.subscribe(params => {
       this.resultSelection = params.get('result_selection');
@@ -100,6 +102,14 @@ export class HrSalaryReportListComponent implements OnInit {
       this.loading = false;
     })
   }
+
+  changeMonth() {
+    var month = this.formGroup.get('month') && this.formGroup.get('month').value ? this.formGroup.get('month').value.getMonth() : 0
+    this.dateFrom = new Date(new Date().getFullYear(), month, 1);
+    this.dateTo = new Date(new Date().getFullYear(), month + 1, 0);
+    this.loadDataFromApi();
+  }
+
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;

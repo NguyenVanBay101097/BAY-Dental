@@ -91,16 +91,15 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActionConfirm(ODataActionParameters parameters)
+        public async Task<IActionResult> ActionConfirm([FromBody] IEnumerable<GuidClass> ids)   
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var ids = parameters["ids"];
             await _unitOfWork.BeginTransactionAsync();
-           // await _salaryPaymentService.ActionConfirm(ids);
+            await _salaryPaymentService.ActionConfirm(ids);
             _unitOfWork.Commit();
 
             return NoContent();

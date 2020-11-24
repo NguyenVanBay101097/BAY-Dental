@@ -66,12 +66,12 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
-      (result) => {        
+      (result) => {
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
         // this.formGroup.get('name').patchValue(result.Name);
-        if (result.Employee) {         
+        if (result.Employee) {
           result.Employee.id = result.Employee.Id;
           result.Employee.name = result.Employee.Name;
           this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], "id");
@@ -171,9 +171,12 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   actionConfirm() {
-    if(this.id){
+    if (this.id) {
       debugger
-      this.salaryPaymentService.actionConfirm([this.id]).subscribe(
+      var ids = {
+        id: this.id
+      }
+      this.salaryPaymentService.actionConfirm([ids]).subscribe(
         () => {
           this.activeModal.close();
         },
