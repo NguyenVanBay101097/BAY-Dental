@@ -96,7 +96,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SalaryPaymentVm>()
                    .Collection
                 .Action("CreateMultiSalaryPayment")
-                .Returns<bool>();
+                .CollectionParameter<MultiSalaryPaymentVm>("vals");
 
             #endregion
 
