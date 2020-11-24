@@ -24,8 +24,7 @@ export class HrSalaryReportDetailComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-
-    this.reportService.getDetail(this.item).subscribe(res => {
+    this.reportService.getReportSalaryEmployeeDetail(this.item).subscribe(res => {
       this.details = res;
       this.loadItems();
       this.loading = false;

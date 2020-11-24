@@ -91,8 +91,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Begin { get; set; }
 
-        public decimal BasicSalary { get; set; }
-
         public decimal Debit { get; set; }
 
         public decimal Credit { get; set; }
@@ -102,6 +100,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
 
         public string ResultSelection { get; set; }
     }

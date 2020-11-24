@@ -281,17 +281,11 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSalaryEmployee(AccountCommonPartnerReportSearch val)
         {
-            if (val.FromDate.HasValue)
-                val.FromDate = val.FromDate.Value.AbsoluteBeginOfDate();
-            if (val.ToDate.HasValue)
-                val.ToDate = val.ToDate.Value.AbsoluteEndOfDate();
-
-            var date_from = val.FromDate;
-            var date_to = val.ToDate;
+            var today = DateTime.Today;
+            var date_from = val.FromDate.HasValue ? val.FromDate.Value : new DateTime(today.Year, today.Month, 1);
+            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
-            var empObj = (IEmployeeService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IEmployeeService));
-            var empDicts = empObj.SearchQuery(x => true).ToDictionary(x => x.PartnerId, x => x.Wage);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -301,23 +295,157 @@ namespace Infrastructure.Services
             query = query.Where(x => x.Account.Code.Equals("334"));
 
             var list = await query
-                .GroupBy(x => new
-                {
-                    PartnerId = x.Partner.Id,
-                    PartnerName = x.Partner.Name,
-                    PartnerRef = x.Partner.Ref,
-                    PartnerPhone = x.Partner.Phone,
-                })
-                .Select(x => new
-                {
-                    PartnerId = x.Key.PartnerId,
-                    PartnerName = x.Key.PartnerName,
-                    PartnerRef = x.Key.PartnerRef,
-                    PartnerPhone = x.Key.PartnerPhone,
-                   
-                }).ToListAsync();
+               .GroupBy(x => new
+               {
+                   PartnerId = x.Partner.Id,
+                   PartnerName = x.Partner.Name,
+                   PartnerRef = x.Partner.Ref,
+                   PartnerPhone = x.Partner.Phone,
+                   Type = x.Account.InternalType
+               })
+               .Select(x => new
+               {
+                   PartnerId = x.Key.PartnerId,
+                   PartnerName = x.Key.PartnerName,
+                   PartnerRef = x.Key.PartnerRef,
+                   PartnerPhone = x.Key.PartnerPhone,
+                   x.Key.Type,
+                   InitialBalance = x.Sum(s => s.Debit - s.Credit),
+               }).ToListAsync();
 
-            return null;
+            foreach (var item in list)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerRef = item.PartnerRef,
+                        PartnerPhone = item.PartnerPhone,
+                        ResultSelection = val.ResultSelection,
+                        DateFrom = date_from,
+                        DateTo = date_to
+                    });
+                }
+                dict[item.PartnerId].Begin = -item.InitialBalance;
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
+            query2 = query2.Where(x => x.Account.Code.Equals("334"));
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query2 = query2.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var list2 = await query2
+                      .GroupBy(x => new
+                      {
+                          PartnerId = x.Partner.Id,
+                          PartnerName = x.Partner.Name,
+                          PartnerRef = x.Partner.Ref,
+                          PartnerPhone = x.Partner.Phone,
+                          Type = x.Account.InternalType
+                      })
+                    .Select(x => new
+                    {
+                        PartnerId = x.Key.PartnerId,
+                        PartnerName = x.Key.PartnerName,
+                        PartnerRef = x.Key.PartnerRef,
+                        PartnerPhone = x.Key.PartnerPhone,
+                        x.Key.Type,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                    }).ToListAsync();
+
+            foreach (var item in list2)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerRef = item.PartnerRef,
+                        PartnerPhone = item.PartnerPhone,
+                        ResultSelection = val.ResultSelection,
+                        DateFrom = date_from,
+                        DateTo = date_to
+                    });
+                }
+
+                dict[item.PartnerId].Debit = item.Credit;
+                dict[item.PartnerId].Credit = item.Debit;
+            }
+
+            var res = new List<AccountCommonPartnerReportItem>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                var end = begin + debit - credit;
+                var value = item.Value;
+                res.Add(new AccountCommonPartnerReportItem
+                {
+                    PartnerId = item.Key,
+                    DateFrom = date_from,
+                    DateTo = date_to,
+                    ResultSelection = val.ResultSelection,
+                    PartnerRef = value.PartnerRef,
+                    Begin = begin,
+                    Debit = debit,
+                    CompanyId = value.CompanyId,
+                    Credit = credit,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                });
+            }
+            return res;
+        }
+
+        public async Task<IEnumerable<AccountCommonPartnerReportItemDetail>> ReportSalaryEmployeeDetail(AccountCommonPartnerReportItem val)
+        {
+            var date_from = val.DateFrom;
+            var date_to = val.DateTo;
+            var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+
+            var sign = -1;
+            decimal begin = 0;
+            var res = new List<AccountCommonPartnerReportItemDetail>();
+
+            if (date_from.HasValue)
+            {
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
+                query = query.Where(x => x.Account.Code.Equals("334") && x.PartnerId == val.PartnerId);
+                begin = (await query.SumAsync(x => x.Debit - x.Credit)) * sign;
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
+            query2 = query2.Where(x => x.Account.Code.Equals("334") && x.PartnerId == val.PartnerId);
+            var list2 = query2.OrderBy(x => x.DateCreated)
+                    .Select(x => new AccountCommonPartnerReportItemDetail
+                    {
+                        Date = x.Date,
+                        MoveName = x.Move.Name,
+                        Name = x.Name,
+                        Ref = x.Move.Ref,
+                        Debit = x.Credit,
+                        Credit = x.Debit
+                    }).ToList();
+
+
+            foreach (var item in list2)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return list2;
         }
     }
 
