@@ -7,25 +7,28 @@
     <div class="o_form_view">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_group mb-0">
+                <div class="o_group mb-0" [formGroup]="paymentForm">
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th class="text-center">Ngày</th>
-                                <th class="text-center">Phương thức</th>
-                                <th class="text-center">Người nhận</th>
-                                <th class="text-center">Số tiền thực lĩnh</th>
-                                <th class="text-center">Nội dung</th>
-                                <th class="text-center">Thao tác</th>
+                                <th style="min-width: 100px;" class="text-center">Ngày</th>
+                                <th style="min-width: 150px;" class="text-center">Phương thức</th>
+                                <th style="min-width: 100px;" class="text-center">Người nhận</th>
+                                <th style="min-width: 100px;" class="text-center">Số tiền thực lĩnh</th>
+                                <th style="min-width: 100px;" class="text-center">Nội dung</th>
+                                <th style="min-width: 100px;" class="text-center">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr *ngFor="let control of paymentFA.controls; index as i">
+                        <tbody formArrayName="paymentFA">
+                            <tr *ngFor="let control of paymentFA.controls; index as i" formGroupName="{{i}}">
                                 <td class="text-center">
                                     {{control.get('Date').value | date:'dd/MM/yyyy'}}
                                 </td>
                                 <td class="text-center">
-                                    <select name="" formControlName="Journal" id=""></select>
+                                    <select (change)="onChangeJournal($event)" class="form-control" formControlName="Journal">
+                                        <option
+                                        *ngFor="let journal of filteredJournals" [value]="journal">{{journal.name}}</option>
+                                    </select>
                                 </td>
                                 <td class="text-center">
                                     {{control.get('Employee').value?.Name}}

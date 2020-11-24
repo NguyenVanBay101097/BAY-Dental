@@ -18,12 +18,26 @@ export class SalaryPaymentSave {
     Reason: string;
 }
 
+export class SalaryPaymentSaveDefault {
+    CompanyId = null;
+    Name = null;
+    Date = null;
+    JournalId = null;
+    Journal = null;
+    EmployeeId = null;
+    Employee = null;
+    State = null;
+    Type = null;
+    Amount = null;
+    Reason = null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService extends ODataService {
     constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SalaryPayments"); }
 
     public getView(state: any, options?: any): void {
-       
+
         this.fetch(this.tableName, state, options || {})
             .pipe(
                 map((data: GridDataResult) => {
@@ -36,15 +50,19 @@ export class SalaryPaymentService extends ODataService {
             });
     }
 
-    public getIdSP(id:any){        
+    public getIdSP(id: any) {
         var obj = {
-            $expand : "Employee,Journal",
+            $expand: "Employee,Journal",
         };
-        return this.get(id,obj);
+        return this.get(id, obj);
     }
 
-    public actionConfirm(ids:any){
+    public actionConfirm(ids: any) {
         return this.http.post(`${this.BASE_URL}${this.tableName}/ActionConfirm`, ids);
+    }
+
+    public defaulCreateBy(val: any) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}/DefaulCreateBy`, val);
     }
 
 }

@@ -47,5 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
+        public Guid? CompanyId { get; set; }
+
     }
 }
