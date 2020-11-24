@@ -47,9 +47,12 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee)).FirstOrDefaultAsync();
+            var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)
+                .Include("Slips.SalaryPayment").Include(x => x.Slips).ThenInclude(x => x.Employee))
+                .FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");
+            res.IsExistSalaryPayment = res.Slips.Any(x=> x.SalaryPayment != null);
             // get user
             var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
             var user = await userManager.FindByIdAsync(UserId);

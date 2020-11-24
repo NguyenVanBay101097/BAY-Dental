@@ -140,14 +140,13 @@ namespace TMTDentalAPI.OdataControllers
             await _salaryPaymentService.DeleteAsync(salaryPayment);
             return NoContent();
         }
-        
-        //[HttpPost]
-        //public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
-        //{
-        //    //var res = await _salaryPaymentService.DefaulCreateBy(val);
-        //    return Ok();
-        //}
 
+        [HttpPost]
+        public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        {
+            var res = await _salaryPaymentService.DefaulCreateBy(val);
+            return Ok(res);
+        }
 
     }
 }

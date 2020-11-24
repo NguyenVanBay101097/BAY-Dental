@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { HrPaysliprunService, HrPayslipRunDefaultGet, HrPayslipRunDisplay } from '../hr-paysliprun.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
@@ -27,7 +27,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   isCompact = false;
   search: string = '';
   date: Date;
-  isNotChiluong:boolean = true;
+  isExistSalaryPayment:boolean = false;
 
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
@@ -64,7 +64,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   loadRecord() {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
-        // check is exist chi luong?
+        this.isExistSalaryPayment = result.IsExistSalaryPayment;
         this.patchValue(result);
       });
     }

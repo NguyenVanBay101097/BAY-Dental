@@ -16,5 +16,6 @@ namespace Infrastructure.Services
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
         Task CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals);
+        Task<IEnumerable<SalaryPaymentSave>> DefaulCreateBy(SalaryPaymentDefaultGetModel val);
     }
 }

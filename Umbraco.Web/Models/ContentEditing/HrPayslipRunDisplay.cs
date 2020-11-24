@@ -21,6 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
         public IEnumerable<HrPayslipDisplay> Slips { get; set; } = new List<HrPayslipDisplay>();
         public ApplicationUserSimple User { get; set; }
+        public bool IsExistSalaryPayment { get; set; }
 
     }
 }
