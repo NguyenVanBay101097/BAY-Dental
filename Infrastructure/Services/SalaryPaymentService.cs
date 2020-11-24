@@ -399,8 +399,11 @@ namespace Infrastructure.Services
                 payments.Add(new SalaryPaymentSave() { 
                 Amount = slip.NetSalary,
                 CompanyId = slip.CompanyId,
-                //Date = slipRun.Date,
-                //EmployeeId
+                Date = slipRun.Date.Value,
+                EmployeeId = slip.EmployeeId,
+                JournalId = null,
+                Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
+                Type = "advance"
                 });
             }
             return payments;
