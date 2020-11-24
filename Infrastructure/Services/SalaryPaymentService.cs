@@ -186,6 +186,7 @@ namespace Infrastructure.Services
                     Phone = employee.Phone,
                     Ref = employee.Ref,
                     Email = employee.Email
+
                 };
 
                 await partnerObj.CreateAsync(partner);
