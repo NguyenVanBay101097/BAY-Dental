@@ -93,7 +93,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SalaryPaymentVm>()
                       .Collection
                    .Action("ActionConfirm")
-                   .Returns<bool>();
+                  .CollectionParameter<Guid>("ids");
 
             builder.EntityType<SalaryPaymentVm>()
                      .Collection

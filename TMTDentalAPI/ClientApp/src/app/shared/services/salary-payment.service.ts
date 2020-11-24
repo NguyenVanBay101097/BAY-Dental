@@ -44,7 +44,7 @@ export class SalaryPaymentService extends ODataService {
     }
 
     public actionConfirm(ids:any){
-        return this.http.post(`${this.BASE_URL}${this.tableName}/ActionConfirm`, ids);
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids );
     }
 
 }
