@@ -193,7 +193,7 @@ namespace TMTDentalAPI.Controllers
             res.CompanyId = CompanyId;
             res.DateStart = startDate;
             res.DateEnd = endDate;
-            //res.Date = date;
+            res.Date = date;
             res.State = "confirm";
 
             return Ok(res);

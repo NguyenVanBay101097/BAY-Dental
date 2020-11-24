@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 
@@ -16,7 +17,8 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   constructor(
     private accountJournalService: AccountJournalService,
-    private authService: AuthService
+    private authService: AuthService,
+    private activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {

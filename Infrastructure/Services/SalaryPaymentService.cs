@@ -385,5 +385,28 @@ namespace Infrastructure.Services
                 });
             }
         }
+
+        public async Task<IEnumerable<SalaryPaymentSave>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        {
+            var slipRunObj = GetService<IHrPayslipRunService>();
+            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
+                .Include(x => x.Slips.Where(y => val.PayslipIds.Contains(y.Id))).FirstOrDefaultAsync();
+
+            if (slipRun == null) throw new Exception("không tồn tại đợt lương!");
+            var payments = new List<SalaryPaymentSave>();
+            foreach (var slip in slipRun.Slips)
+            {
+                payments.Add(new SalaryPaymentSave() { 
+                Amount = slip.NetSalary,
+                CompanyId = slip.CompanyId,
+                Date = slipRun.Date.Value,
+                EmployeeId = slip.EmployeeId,
+                JournalId = null,
+                Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
+                Type = "advance"
+                });
+            }
+            return payments;
+        }
     }
 }

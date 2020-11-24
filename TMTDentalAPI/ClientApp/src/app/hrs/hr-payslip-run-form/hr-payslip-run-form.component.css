@@ -61,6 +61,14 @@
     z-index: 3;
 }
 
+.b-sticky-right2 {
+    position: sticky;
+    right: 110px;
+    background-color: #f9f9f9;
+    border: 1px solid #dee2e6;
+    z-index: 3;
+}
+
 .table-th-sticky th {
     position: sticky;
     top: -1px;

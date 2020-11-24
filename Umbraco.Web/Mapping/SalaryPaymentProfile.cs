@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public SalaryPaymentProfile()
         {
             CreateMap<SalaryPayment, SalaryPaymentVm>();
+            CreateMap<SalaryPayment, SalaryPaymentBasic>();
             CreateMap<SalaryPayment, SalaryPaymentPrintVm>();
 
             CreateMap<SalaryPayment, SalaryPaymentSave>();
