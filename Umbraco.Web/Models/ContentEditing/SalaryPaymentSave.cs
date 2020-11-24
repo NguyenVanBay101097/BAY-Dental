@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SalaryPaymentSave
     {
         public SalaryPaymentSave(){
-            State = "draft";
+            State = "waitting";
         }
 
         /// <summary>
@@ -29,11 +29,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// nhân viên
         /// </summary>
         public Guid? EmployeeId { get; set; }
-       // public EmployeeSimple Employee { get; set; }
+        // public EmployeeSimple Employee { get; set; }
 
         /// <summary>
-        /// draft: Nháp
-        /// posted: Đã vào sổ
+        /// waitting: chờ xác nhận
+        /// done: xác nhận
         /// </summary>
         public string State { get; set; }
 

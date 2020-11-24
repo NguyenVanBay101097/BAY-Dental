@@ -62,12 +62,21 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
         {
             var listSalaryPayment = new List<SalaryPayment>();
+            var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
             foreach(var item in vals)
             {
-                var salaryPayment = _mapper.Map<SalaryPayment>(item);
+                var salaryPayment = new SalaryPayment();
+                salaryPayment.JournalId = item.JournalId.Value;
+                salaryPayment.Date = item.Date;
+                salaryPayment.EmployeeId = item.EmployeeId;
+                salaryPayment.Reason = item.Reason;
+                salaryPayment.Amount = item.Amount.Value;
+                salaryPayment.State = "waitting";
+                salaryPayment.Type = "salary";
+                salaryPayment.CompanyId = CompanyId;
 
                 if (string.IsNullOrEmpty(salaryPayment.Name))
                 {
@@ -94,16 +103,31 @@ namespace Infrastructure.Services
                         throw new Exception("Not support");
                 }
 
-                salaryPayment.CompanyId = CompanyId;
+                
 
-                listSalaryPayment.Add(salaryPayment);
+                await CreateAsync(salaryPayment);
+
+                await ActionConfirm(new List<Guid>() { salaryPayment.Id});
+
+                salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
+
             }
 
-            await CreateAsync(listSalaryPayment);
+            var hrPayslipObj = GetService<IHrPayslipService>();
+            var hrpayslipIds = vals.Select(x => x.HrPayslipId).ToList();
+            var hrPayslips = await hrPayslipObj.SearchQuery(x=> hrpayslipIds.Contains(x.Id)).ToListAsync();
+            var hrPayslipDict = hrPayslips.ToDictionary(x => x.Id, x => x);
 
-            /// xac nhan 
-            var ids = listSalaryPayment.Select(x => x.Id).ToList();
-            await ActionConfirm(ids);
+            ///update salary payment
+            foreach(var item in salaryPaymentDict)
+            {
+                if (!hrPayslipDict.ContainsKey(item.Key))
+                    continue;
+                var hrPayslip = hrPayslipDict[item.Key];
+                hrPayslip.SalaryPaymentId = item.Value.Id;
+            }
+
+            await hrPayslipObj.UpdateAsync(hrPayslips);
         }
 
 
@@ -140,7 +164,7 @@ namespace Infrastructure.Services
                 throw new Exception("Phiếu không tồn tại");
 
             salaryPayment = _mapper.Map(val, salaryPayment);
-
+            await CheckEmployeePartner(salaryPayment);
             await UpdateAsync(salaryPayment);
         }
 
@@ -158,6 +182,10 @@ namespace Infrastructure.Services
                     Name = employee.Name,
                     Customer = false,
                     Supplier = false,
+                    CompanyId = employee.CompanyId,
+                    Phone = employee.Phone,
+                    Ref = employee.Ref,
+                    Email = employee.Email
                 };
 
                 await partnerObj.CreateAsync(partner);
