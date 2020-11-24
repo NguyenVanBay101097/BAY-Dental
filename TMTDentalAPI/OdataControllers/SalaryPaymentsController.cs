@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SaasKit.Multitenancy;
 using Umbraco.Web.Models.ContentEditing;
@@ -21,16 +23,22 @@ namespace TMTDentalAPI.OdataControllers
     {
         private readonly IMapper _mapper;
         private readonly ISalaryPaymentService _salaryPaymentService;
+        private readonly IViewRenderService _view;
+        private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
         public SalaryPaymentsController(
             IMapper mapper,
             ISalaryPaymentService salaryPaymentService,
+            IViewRenderService view,
+            IUserService userService,
             IUnitOfWorkAsync unitOfWork
           )
         {
             _mapper = mapper;         
             _salaryPaymentService = salaryPaymentService;
+            _view = view;
+            _userService = userService;
             _unitOfWork = unitOfWork;
         }
 
@@ -83,28 +91,30 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        public async Task<IActionResult> ActionConfirm(ODataActionParameters parameters)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var ids = parameters["ids"];
             await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.ActionConfirm(ids);
+           //await _salaryPaymentService.ActionConfirm(ids);
             _unitOfWork.Commit();
 
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
+        public async Task<IActionResult> CreateMultiSalaryPayment(ODataActionParameters parameters)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            var vals = parameters["vals"] as IEnumerable<MultiSalaryPaymentVm>;
             await _unitOfWork.BeginTransactionAsync();
             await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
             _unitOfWork.Commit();
@@ -127,6 +137,24 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Print(IEnumerable<Guid> ids)
+        {
+            var salaryPayments = await _salaryPaymentService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var prints = _mapper.Map<IEnumerable<SalaryPaymentPrintVm>>(salaryPayments);
+            foreach (var print in prints)
+                print.UserName = _userService.GetByIdAsync(print.CreateById.Value.ToString()).Result.UserName;
+            if (ids != null && ids.Any())
+            {             
+                var html = _view.Render("SalaryPaymentPrintVm", prints);
+                return Ok(new printData() { html = html });
+            }
+            else
+            {
+                return Ok(new printData() { html = null });
+            }
+        }
+
         [HttpDelete]
         public async Task<IActionResult> Delete([FromODataUri] Guid key)
         {
@@ -147,6 +175,8 @@ namespace TMTDentalAPI.OdataControllers
             var res = await _salaryPaymentService.DefaulCreateBy(val);
             return Ok(res);
         }
+
+
 
     }
 }

@@ -172,6 +172,7 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   actionConfirm() {
     if(this.id){
+      debugger
       this.salaryPaymentService.actionConfirm([this.id]).subscribe(
         () => {
           this.activeModal.close();

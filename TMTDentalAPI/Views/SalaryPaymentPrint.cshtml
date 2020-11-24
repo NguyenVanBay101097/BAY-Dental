@@ -1,0 +1,132 @@
+﻿@model IEnumerable<Umbraco.Web.Models.ContentEditing.SalaryPaymentPrintVm>
+
+@{
+    Layout = null;
+}
+
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/custom.css" />
+
+    <style>
+        .body {
+            font-size: 18px;
+        }
+
+        .table td, .table th {
+            border-top: unset !important;
+        }
+
+        .active {
+            background-color: #adb5bd;
+        }
+
+        .page-break {
+            page-break-inside: avoid;
+        }
+
+        .logo-image {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    @if (Model != null && Model.Count() > 0)
+    {
+        var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+        foreach (var item in Model)
+        {
+            <div class="body px-3 py-3 overflow-auto page-break">
+                <div class="px-3">
+                    <div class="row border border-secondary">
+                        <div class="col-4">
+                            <div class="border-right" style="text-align: center;">
+                                <div class="logo">
+                                    <img class="logo-image" src="@item.Company.Logo" alt="">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-8">
+                            <div class="title" style="text-align: center; padding: 15px;">
+                                <h3>PHIẾU CHI</h3>
+                                <p>@(item.Date.ToLongDateString())</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-90 w-100 pt-3">
+                    <div class="h-30 w-100 body-content d-flex">
+                        <div class="h-100 w-50 pr-2">                          
+                            <table class="table table-bordered  table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Người nhận : </td>
+                                        <td>@(item.Employee != null ? item.Employee.Name : "")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Loại chi : </td>
+                                        <td>@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@(item.Type == "advance" ? "Số tiền tạm ứng" : "Số tiền thực lĩnh") : </td>
+                                        <td>@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Phương thức : </td>
+                                        <td>@(item.journal.Name)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bằng chữ : </td>
+                                        <td>@(item.AmountString)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>                      
+                    </div>               
+                    <div class="h-10 w-100 pt-2">
+                        <table class="table border-none">
+                            <tr>
+                                <th class="text-center">Người lập phiếu</th>
+                                <th class="text-center">
+                                    Thứ..., Ngày...tháng...năm...
+                                    <p>Người lao động</p>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th class="text-center">
+                                    @(item.UserName)
+                                </th>
+                                <th class="text-center">@(item.Employee !=null ? item.Employee.Name : "")</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+
+    <script defer>
+        function triggerPrint(event) {
+            window.removeEventListener('load', triggerPrint, false);
+            setTimeout(function () {
+                window.print();
+                setTimeout(function () { window.close(); }, 0);
+            }, 0);
+        }
+        window.addEventListener('load', triggerPrint, false);
+    </script>
+</body>
+</html>`

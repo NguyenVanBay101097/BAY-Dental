@@ -57,8 +57,8 @@ export class SalaryPaymentService extends ODataService {
         return this.get(id, obj);
     }
 
-    public actionConfirm(ids: any) {
-        return this.http.post(`${this.BASE_URL}${this.tableName}/ActionConfirm`, ids);
+    public actionConfirm(ids:any){
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids );
     }
 
     public defaulCreateBy(val: any) {
