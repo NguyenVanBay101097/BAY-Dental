@@ -92,17 +92,17 @@ namespace TMTDentalAPI.OdataControllers
 
             builder.EntityType<SalaryPaymentVm>()
                       .Collection
-                   .Function("ActionConfirm")
+                   .Action("ActionConfirm")
                    .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                      .Collection
-                  .Function("ActionCancel")
+                  .Action("ActionCancel")
                   .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                    .Collection
-                .Function("CreateMultiSalaryPayment")
+                .Action("CreateMultiSalaryPayment")
                 .Returns<bool>();
 
             #endregion

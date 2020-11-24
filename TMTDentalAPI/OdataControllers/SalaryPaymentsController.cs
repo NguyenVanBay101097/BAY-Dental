@@ -47,20 +47,8 @@ namespace TMTDentalAPI.OdataControllers
         public SingleResult<SalaryPaymentVm> Get([FromODataUri] Guid key)
         {
 
-            var results = _salaryPaymentService.SearchQuery(x => x.Id == key).Select(x => new SalaryPaymentVm
-            {
-                Id = x.Id,             
-                Name = x.Name,   
-                Date = x.Date,
-                EmployeeId = x.EmployeeId,
-                Employee = _mapper.Map<EmployeeSimple>(x.Employee),
-                JournalId = x.JournalId,
-                journal = _mapper.Map<AccountJournalSimple>(x.Journal),
-                Amount = x.Amount,
-                Reason = x.Reason,
-                Type = x.Type,
-                State = x.State              
-            });       
+            var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery(x => x.Id == key));
+
             return SingleResult.Create(results);
         }
 
@@ -110,7 +98,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<SalaryPaymentSave> vals)
+        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
         {
             if (!ModelState.IsValid)
             {
@@ -143,8 +131,8 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> Delete([FromODataUri] Guid key)
         {
             var salaryPayment = await _salaryPaymentService.GetByIdAsync(key);
-            if (salaryPayment.State == "posted")
-                throw new Exception("Bạn không thể xóa phiếu khi đã ghi sổ");
+            if (salaryPayment.State == "done")
+                throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
 
             if (salaryPayment == null)
                 return NotFound();
