@@ -392,7 +392,7 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
 
 
-            if (paysliprun.Slips.Count() > 0) return;
+            if (!paysliprun.Slips.Any()) return;
             // get all source
             var payslipObj = GetService<IHrPayslipService>();
             var employeeObj = GetService<IEmployeeService>();
