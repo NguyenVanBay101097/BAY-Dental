@@ -143,7 +143,7 @@ namespace TMTDentalAPI.OdataControllers
             foreach (var print in salaryPayments)
             {
                 print.UserName = _userService.GetByIdAsync(print.CreatedById).Result.UserName;
-                print.AmountString = StringUtils.ChuyenSo(Convert.ToInt32(print.Amount).ToString());
+                print.AmountString = AmountToText.amount_to_text(print.Amount);
             }
 
             if (val.Ids != null && val.Ids.Any())

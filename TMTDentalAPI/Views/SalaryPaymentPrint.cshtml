@@ -51,7 +51,7 @@
                 <div class="px-3">
                     <div class="row border border-secondary">
                         <div class="col-8">
-                            <div class="border-right" style="text-align: center;">
+                            <div style="text-align: center;">
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="logo">
@@ -60,7 +60,14 @@
                                     </div>
                                     <div class="col-8">
                                         <div class="title" style="text-align: center; padding: 15px;">
-                                            <h3>PHIẾU CHI</h3>
+                                            @if (item.Type == "advance")
+                                            {
+                                                <h3>PHIẾU TẠM ỨNG</h3>
+                                            }
+                                            else
+                                            {
+                                                <h3>PHIẾU CHI LƯƠNG</h3>
+                                            }
                                             <h4> Ngày @item.Date.Day tháng @item.Date.Month năm @item.Date.Year</h4>
                                         </div>
                                     </div>
@@ -70,70 +77,46 @@
                         </div>
                         <div class="col-4">
                             <div class="title" style="text-align: center; padding: 15px;">
-                                <h3 class="text-center">Mã PHIẾU </h3>
-                            </div>
-                            <div class="title" style="text-align: center; padding: 15px; style=" border-top: solid 1px"">
-                                <h3 class="text-center">@(item.Name) </h3>
-
+                                <h3 class="text-center">MÃ PHIẾU</h3>
+                                <h4>@(item.Name)</h4>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="h-90 w-100 pt-3 ml-2">
                     <div class="h-30 w-100 body-content d-flex">
-                        <div class="h-100 w-50 pr-2">
-                            @*<form>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Người nhận :</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-plaintext">@(item.Employee != null ? item.Employee.Name : "")</p>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-2 col-form-label">Loại chi :</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-plaintext">@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</p>
-                                    </div>
-                                </div>
-                            </form>*@
+                        <div class="h-100 pr-2">
                             <table class="table border-none table-sm">
                                 <tbody>
                                     <tr>
-                                        <td class="titleName"><h4>Người nhận :</h4> </td>
+                                        <td class="titleName"><h4>Người nhận:</h4> </td>
                                         <td><p class="description">@(item.Employee != null ? item.Employee.Name : "")</p></td>
                                     </tr>
                                     <tr>
-                                        <td class="titleName"><h4>Loại chi : </h4></td>
-                                        <td><p class="description">@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</p></td>
+                                        <td class="titleName"><h4>Số tiền:</h4></td>
+                                        <td><p class="description">@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0")</p></td>
                                     </tr>
                                     <tr>
-                                        <td class="titleName"><h4>@(item.Type == "advance" ? "Số tiền tạm ứng" : "Số tiền thực lĩnh") : </h4> </td>
-                                        <td><p class="description">@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0") VNĐ</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="titleName"><h4>Phương thức :</h4> </td>
+                                        <td class="titleName"><h4>Phương thức:</h4> </td>
                                         <td><p class="description">@(item.journal.Name)</p></td>
                                     </tr>
                                     <tr>
-                                        <td class="titleName"><h4>Bằng chữ :</h4> </td>
-                                        <td><p class="description">@(item.AmountString) đồng</p></td>
+                                        <td class="titleName"><h4>Bằng chữ:</h4> </td>
+                                        <td><p class="description">@(item.AmountString)</p></td>
                                     </tr>
                                     <tr>
-                                        <td class="titleName"><h4>Nội dung :</h4> </td>
+                                        <td class="titleName"><h4>Nội dung:</h4> </td>
                                         <td><p class="description">@(item.Reason) </p></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>                      
                     </div>               
-                    <div class="h-10 w-100 pt-2">
+                    <div class="h-10 w-100 pt-3">
                         <table class="table border-none">
                             <tr>
                                 <th class="text-center">Người lập phiếu</th>
-                                <th class="text-center">
-                                    Thứ..., Ngày...tháng...năm...
-                                    <p>Người lao động</p>
-                                </th>
+                                <th class="text-center">Người nhận</th>
                             </tr>
                             <tr>
                                 <th></th>
@@ -155,17 +138,5 @@
             </div>
         }
     }
-
-
-    <script defer>
-        function triggerPrint(event) {
-            window.removeEventListener('load', triggerPrint, false);
-            setTimeout(function () {
-                window.print();
-                setTimeout(function () { window.close(); }, 0);
-            }, 0);
-        }
-        window.addEventListener('load', triggerPrint, false);
-    </script>
 </body>
 </html>`

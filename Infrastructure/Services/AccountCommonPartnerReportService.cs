@@ -356,8 +356,8 @@ namespace Infrastructure.Services
                         PartnerRef = x.Key.PartnerRef,
                         PartnerPhone = x.Key.PartnerPhone,
                         x.Key.Type,
-                        Debit = x.Sum(s => s.Debit),
-                        Credit = x.Sum(s => s.Credit),
+                        Debit = x.Sum(s => s.Credit),
+                        Credit = x.Sum(s => s.Debit),
                     }).ToListAsync();
 
             foreach (var item in list2)
