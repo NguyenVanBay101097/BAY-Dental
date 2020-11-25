@@ -33,7 +33,7 @@ export class SalaryPaymentListComponent implements OnInit {
   gridSort = [];
   advanceFilter: any = {
     params: {},
-    expand : "Employee,Journal",
+    // expand : "Employee,Journal",
   };
 
   constructor(
@@ -91,6 +91,7 @@ export class SalaryPaymentListComponent implements OnInit {
   }
 
   editItem(item) {
+    debugger
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Sửa: " + (item.Type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
     modalRef.componentInstance.id = item.Id;
@@ -119,6 +120,8 @@ export class SalaryPaymentListComponent implements OnInit {
       () => { }
     );
   }
+
+
 
   stateGet(value) {
     switch (value) {

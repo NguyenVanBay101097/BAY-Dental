@@ -1,6 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.close()"
         tabindex="-1">×</button>
 </header>
 
@@ -89,6 +89,6 @@
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>
     <!-- <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button> -->
     <button type="button" *ngIf="id" class="btn btn-primary" (click)="actionConfirm()">Xác nhận</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.close()"
         accesskey="q">Đóng</button>
 </footer>
