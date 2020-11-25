@@ -23,40 +23,42 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public override async Task<IEnumerable<SalaryPayment>> CreateAsync(IEnumerable<SalaryPayment> self)
+        {
+            foreach (var payment in self)
+            {
+                if (string.IsNullOrEmpty(payment.Name))
+                {
+                    var seqObj = GetService<IIRSequenceService>();
+                    if (payment.Type == "advance")
+                    {
+                        payment.Name = await seqObj.NextByCode("salarypayment.advance");
+                        if (string.IsNullOrEmpty(payment.Name))
+                        {
+                            await _InsertSalaryPaymentAdvanceSequence();
+                            payment.Name = await seqObj.NextByCode("salarypayment.advance");
+                        }
+                    }
+                    else if (payment.Type == "salary")
+                    {
+                        payment.Name = await seqObj.NextByCode("salarypayment.salary");
+                        if (string.IsNullOrEmpty(payment.Name))
+                        {
+                            await _InsertSalaryPaymentSalarySequence();
+                            payment.Name = await seqObj.NextByCode("salarypayment.salary");
+                        }
+                    }
+                }
+            }
+
+            return await base.CreateAsync(self);
+        }
 
 
         public async Task<SalaryPayment> CreateSalaryPayment(SalaryPaymentSave val)
         {
             var salaryPayment = _mapper.Map<SalaryPayment>(val);
-
-            if (string.IsNullOrEmpty(salaryPayment.Name))
-            {
-                var seqObj = GetService<IIRSequenceService>();
-                if (salaryPayment.Type == "advance")
-                {
-                    salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
-                    if (string.IsNullOrEmpty(salaryPayment.Name))
-                    {
-                        await _InsertSalaryPaymentAdvanceSequence();
-                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
-                    }
-                }
-                else if (salaryPayment.Type == "salary")
-                {
-                    salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
-                    if (string.IsNullOrEmpty(salaryPayment.Name))
-                    {
-                        await _InsertSalaryPaymentSalarySequence();
-                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
-                    }
-                }
-                else
-                    throw new Exception("Not support");
-            }
-
             salaryPayment.CompanyId = CompanyId;
-
-            await CheckEmployeePartner(salaryPayment);
 
             return await CreateAsync(salaryPayment);
         }
@@ -74,45 +76,16 @@ namespace Infrastructure.Services
                 salaryPayment.EmployeeId = item.EmployeeId;
                 salaryPayment.Reason = item.Reason;
                 salaryPayment.Amount = item.Amount.Value;
-                salaryPayment.State = "waitting";
+                salaryPayment.State = "waiting";
                 salaryPayment.Type = "salary";
                 salaryPayment.CompanyId = CompanyId;
 
-                if (string.IsNullOrEmpty(salaryPayment.Name))
-                {
-                    var seqObj = GetService<IIRSequenceService>();
-                    if (salaryPayment.Type == "advance")
-                    {
-                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
-                        if (string.IsNullOrEmpty(salaryPayment.Name))
-                        {
-                            await _InsertSalaryPaymentAdvanceSequence();
-                            salaryPayment.Name = await seqObj.NextByCode("salarypayment.advance");
-                        }
-                    }
-                    else if (salaryPayment.Type == "salary")
-                    {
-                        salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
-                        if (string.IsNullOrEmpty(salaryPayment.Name))
-                        {
-                            await _InsertSalaryPaymentSalarySequence();
-                            salaryPayment.Name = await seqObj.NextByCode("salarypayment.salary");
-                        }
-                    }
-                    else
-                        throw new Exception("Not support");
-                }
-
-
-
-                await CreateAsync(salaryPayment);
-
-                //await ActionConfirm(new List<Guid>() { salaryPayment.Id });
-
+                listSalaryPayment.Add(salaryPayment);
                 salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
-
-
             }
+
+            await CreateAsync(listSalaryPayment);
+            await ActionConfirm(listSalaryPayment.Select(x => x.Id).ToList());
 
             var hrPayslipObj = GetService<IHrPayslipService>();
             var hrpayslipIds = vals.Select(x => x.HrPayslipId).ToList();
@@ -130,13 +103,9 @@ namespace Infrastructure.Services
 
             await hrPayslipObj.UpdateAsync(hrPayslips);
 
-
             var salaryPaymentIds = hrPayslips.Select(x => x.SalaryPaymentId.Value).ToList();
-
             return salaryPaymentIds;
         }
-
-
 
 
         private async Task _InsertSalaryPaymentAdvanceSequence()
@@ -210,14 +179,13 @@ namespace Infrastructure.Services
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
                  .Include(x => x.Employee)
-                 .Include("Employee.Partner")
                  .ToListAsync();
 
             var moveObj = GetService<IAccountMoveService>();
 
             foreach (var salaryPayment in salaryPayments)
             {
-                if (salaryPayment.State != "waitting")
+                if (salaryPayment.State != "waiting")
                     throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
 
                 var move = await _PrepareSalaryPaymentMoves(salaryPayment);
@@ -248,71 +216,94 @@ namespace Infrastructure.Services
             {
                 await moveObj.ButtonCancel(new List<Guid>() { phieu.MoveId.Value });
                 await moveObj.Unlink(new List<Guid>() { phieu.MoveId.Value });
-                phieu.State = "waitting";
+                phieu.State = "waiting";
             }
 
             await UpdateAsync(self);
         }
 
-        private async Task<AccountMove> _PrepareSalaryPaymentMoves(SalaryPayment val)
+        private async Task<AccountMove> _PrepareSalaryPaymentMoves(SalaryPayment payment)
         {
-            var all_move_vals = new List<AccountMove>();
             var accDebit334 = await getAccount334();
-            var accCredit642 = await getAccount642();
-
-
-            var accountJournalObj = GetService<IAccountJournalService>();
-
-            var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany($"{val.Journal.Type}", val.CompanyId.Value);
-
+            var liquidity_line_account = payment.Journal.DefaultDebitAccount;
+            var partnerId = await GetPartnerForMoveLine(payment);
 
             var move = new AccountMove
             {
-                JournalId = accountJournal.Id,
-                Journal = accountJournal,
-                CompanyId = val.CompanyId,
+                Date = payment.Date,
+                Ref = payment.Reason,
+                JournalId = payment.JournalId,
+                Journal = payment.Journal,
+                PartnerId = partnerId,
+                CompanyId = payment.CompanyId,
             };
 
             var rec_pay_line_name = "/";
-            if (val.Type == "advance")
-                rec_pay_line_name = val.Name + " " + "tạm ứng";
-            else if (val.Type == "salary")
-                rec_pay_line_name = val.Name + " " + "chi lương";
+            if (payment.Type == "advance")
+                rec_pay_line_name = payment.Name + " " + "Tạm ứng";
+            else if (payment.Type == "salary")
+                rec_pay_line_name = payment.Name + " " + "Chi lương";
 
-
-            var liquidity_line_name = val.Name;
-            var balance = val.Amount;
+            var liquidity_line_name = payment.Name;
+            var balance = payment.Amount;
             var lines = new List<AccountMoveLine>()
+            {
+                new AccountMoveLine
                 {
-
-                     new AccountMoveLine
-                    {
-                        Name =  rec_pay_line_name,
-                        Debit = balance > 0 ? balance : 0,
-                        Credit = balance < 0 ? -balance : 0,
-                        AccountId = accDebit334.Id,
-                        Account = accDebit334,
-                        Move = move,
-                        Ref = val.Name,
-                        PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
-                    },
-                    new AccountMoveLine
-                    {
-                        Name = liquidity_line_name,
-                        Debit = balance < 0 ? -balance : 0,
-                        Credit = balance > 0 ? balance : 0,
-                        AccountId = accCredit642.Id,
-                        Account = accCredit642,
-                        Move = move,
-                        Ref = val.Name,
-                        PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
-                    },
-                };
+                    Name =  rec_pay_line_name,
+                    Debit = balance > 0 ? balance : 0,
+                    Credit = balance < 0 ? -balance : 0,
+                    AccountId = accDebit334.Id,
+                    Account = accDebit334,
+                    Move = move,
+                    Ref = payment.Name,
+                    PartnerId = partnerId
+                },
+                new AccountMoveLine
+                {
+                    Name = liquidity_line_name,
+                    Debit = balance < 0 ? -balance : 0,
+                    Credit = balance > 0 ? balance : 0,
+                    AccountId = liquidity_line_account.Id,
+                    Account = liquidity_line_account,
+                    Move = move,
+                    Ref = payment.Name,
+                    PartnerId = partnerId
+                },
+            };
 
             move.Lines = lines;
 
             return move;
 
+        }
+
+        private async Task<Guid> GetPartnerForMoveLine(SalaryPayment payment)
+        {
+            if (payment.Employee.PartnerId.HasValue)
+                return payment.Employee.PartnerId.Value;
+
+            var partnerObj = GetService<IPartnerService>();
+            var employeeObj = GetService<IEmployeeService>();
+
+            var employee = payment.Employee;
+            var partner = new Partner()
+            {
+                Name = employee.Name,
+                Customer = false,
+                Supplier = false,
+                CompanyId = employee.CompanyId,
+                Phone = employee.Phone,
+                Ref = employee.Ref,
+                Email = employee.Email,
+                Employee = true
+            };
+
+            await partnerObj.CreateAsync(partner);
+            employee.PartnerId = partner.Id;
+            await employeeObj.UpdateAsync(employee);
+
+            return partner.Id;
         }
 
         public async Task<AccountAccount> getAccount334()

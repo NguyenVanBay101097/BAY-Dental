@@ -32,7 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         // public EmployeeSimple Employee { get; set; }
 
         /// <summary>
-        /// waitting: chờ xác nhận
+        /// waiting: chờ xác nhận
         /// done: xác nhận
         /// </summary>
         public string State { get; set; }
