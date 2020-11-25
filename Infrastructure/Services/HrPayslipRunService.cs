@@ -147,33 +147,35 @@ namespace Infrastructure.Services
             var irModelDataObj = GetService<IIRModelDataService>();
 
             var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany("payroll", slipRun.CompanyId);
-            if (accountJournal == null)
-                accountJournal = await slipObj.InsertAccountJournalIfNotExists();
-            var acc334 = accountObj.SearchQuery(x => x.CompanyId == CompanyId && x.Code == "334").FirstOrDefault();
-            if (acc334 == null)
-            {
-                var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
-                acc334 = new AccountAccount
-                {
-                    Name = "Phải trả người lao động",
-                    Code = "334",
-                    InternalType = currentLiabilities.Type,
-                    UserTypeId = currentLiabilities.Id,
-                    CompanyId = CompanyId,
-                };
+            //if (accountJournal == null)
+            //    accountJournal = await slipObj.InsertAccountJournalIfNotExists();
 
-                await accountObj.CreateAsync(acc334);
-            }
+            //var acc334 = accountObj.SearchQuery(x => x.CompanyId == CompanyId && x.Code == "334").FirstOrDefault();
+            //if (acc334 == null)
+            //{
+            //    var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+            //    acc334 = new AccountAccount
+            //    {
+            //        Name = "Phải trả người lao động",
+            //        Code = "334",
+            //        InternalType = currentLiabilities.Type,
+            //        UserTypeId = currentLiabilities.Id,
+            //        CompanyId = CompanyId,
+            //    };
 
+            //    await accountObj.CreateAsync(acc334);
+            //}
+
+            var acc334 = await accountObj.GetAccount334CurrentCompany();
 
             //tạo 1 move cho toàn bộ bảng lương
             var move = new AccountMove
             {
-                Date = DateTime.Now,
                 JournalId = accountJournal.Id,
                 Journal = accountJournal,
                 CompanyId = slipRun.CompanyId,
             };
+
             // tạo moveline cho từng phiếu lương, 1 phiếu 2 line
             var lines = new List<AccountMoveLine>();
             foreach (var slip in slipRun.Slips)
@@ -183,7 +185,7 @@ namespace Infrastructure.Services
                 {
                     new AccountMoveLine
                     {
-                        Name =  "Lương tháng "+move.Date.ToString("MM/yyyy"),
+                        Name =  "Lương tháng " + move.Date.ToString("MM/yyyy"),
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         AccountId = acc334.Id,
@@ -193,7 +195,7 @@ namespace Infrastructure.Services
                     },
                     new AccountMoveLine
                     {
-                        Name = "Lương tháng "+move.Date.ToString("MM/yyyy"),
+                        Name = "Lương tháng " + move.Date.ToString("MM/yyyy"),
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         AccountId = accountJournal.DefaultCreditAccount.Id,
