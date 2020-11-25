@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SalaryPaymentSave
     {
         public SalaryPaymentSave(){
-            State = "waitting";
+            State = "waiting";
         }
 
         /// <summary>
