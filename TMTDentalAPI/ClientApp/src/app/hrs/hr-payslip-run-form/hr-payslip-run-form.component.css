@@ -59,11 +59,14 @@
     background-color: #f9f9f9;
     border: 1px solid #dee2e6;
     z-index: 3;
+    min-width: 132px;
+    max-width: 132px;
+    overflow-wrap: break-word;
 }
 
 .b-sticky-right2 {
     position: sticky;
-    right: 130px;
+    right: 132px;
     background-color: #f9f9f9;
     border: 1px solid #dee2e6;
     z-index: 3;

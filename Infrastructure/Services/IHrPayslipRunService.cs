@@ -20,8 +20,8 @@ namespace Infrastructure.Services
         Task ActionDone(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
 
-        Task CreatePayslipByRunId(Guid id);
+        Task<HrPayslipRunDisplay> CreatePayslipByRunId(Guid id);
         Task ComputeSalaryByRunId(Guid id);
-        Task<HrPayslipRun> CheckExist(DateTime date);
+        Task<HrPayslipRunDisplay> CheckExist(DateTime date);
     }
 }

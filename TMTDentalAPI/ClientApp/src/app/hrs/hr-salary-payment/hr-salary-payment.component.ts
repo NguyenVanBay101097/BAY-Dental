@@ -14,7 +14,7 @@ import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } fro
 })
 export class HrSalaryPaymentComponent implements OnInit {
   @Input() defaultPara: any;
-  isEnable = true;
+  isDisable = false;
 
   filteredJournals: any;
   // paymentFA: FormArray;
@@ -43,6 +43,9 @@ export class HrSalaryPaymentComponent implements OnInit {
   get paymentFA() { return this.paymentForm.get('paymentFA') as FormArray; }
 
   loadDefaultRecord() {
+    if (!this.defaultPara.PayslipIds || !this.defaultPara.PayslipIds.length) {
+      this.isDisable = true;
+    }
     if (this.defaultPara) {
       this.paymentService.defaulCreateBy(this.defaultPara).subscribe((res: any) => {
         this.paymentFA.clear();
@@ -51,7 +54,10 @@ export class HrSalaryPaymentComponent implements OnInit {
           fg.patchValue(e);
           this.paymentFA.push(fg);
         });
-      }
+      },
+        (error: any) => {
+          this.isDisable = true;
+        }
       );
     }
   }

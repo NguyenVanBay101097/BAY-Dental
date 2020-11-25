@@ -72,11 +72,11 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       hourlyWage: 0,
       startWorkDate: null,
       enrollNumber: null,
-      leavePerMonth: null,
-      regularHour: null,
-      overtimeRate: null,
-      restDayRate: null,
-      allowance: null
+      leavePerMonth: 0,
+      regularHour: 8,
+      overtimeRate: 150,
+      restDayRate: 100,
+      allowance: 0
     });
 
     setTimeout(() => {

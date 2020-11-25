@@ -143,10 +143,28 @@ namespace Infrastructure.Services
 
             var accountJournalObj = GetService<IAccountJournalService>();
             var slipObj = GetService<IHrPayslipService>();
+            var accountObj = GetService<IAccountAccountService>();
+            var irModelDataObj = GetService<IIRModelDataService>();
 
             var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany("payroll", slipRun.CompanyId);
             if (accountJournal == null)
                 accountJournal = await slipObj.InsertAccountJournalIfNotExists();
+            var acc334 = accountObj.SearchQuery(x=> x.CompanyId == CompanyId && x.Code == "334").FirstOrDefault();
+            if (acc334 != null)
+            {
+                var currentLiabilities = await irModelDataObj.GetRef < AccountAccountType >("account.data_account_type_current_liabilities");
+                acc334 = new AccountAccount
+                {
+                    Name = "Phải trả người lao động",
+                    Code = "334",
+                    InternalType = currentLiabilities.Type,
+                    UserTypeId = currentLiabilities.Id,
+                    CompanyId = CompanyId,
+                };
+
+                await accountObj.CreateAsync(acc334);
+            }
+
 
             //tạo 1 move cho toàn bộ bảng lương
             var move = new AccountMove
@@ -160,24 +178,24 @@ namespace Infrastructure.Services
             var lines = new List<AccountMoveLine>();
             foreach (var slip in slipRun.Slips)
             {
-                var balance = slip.NetSalary.Value + slip.AdvancePayment.GetValueOrDefault();
+                var balance = slip.TotalSalary.GetValueOrDefault();
                 var items = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
                         Name =  "Lương tháng "+move.Date.ToString("MM/yyyy"),
-                        Debit = balance > 0 ? balance : 0,
-                        Credit = balance < 0 ? -balance : 0,
-                        AccountId = accountJournal.DefaultDebitAccount.Id,
-                        Account = accountJournal.DefaultDebitAccount,
+                        Debit = balance < 0 ? -balance : 0,
+                        Credit = balance > 0 ? balance : 0,
+                        AccountId = acc334.Id,
+                        Account = acc334,
                         PartnerId = slip.Employee.PartnerId,
                         Move = move,
                     },
                     new AccountMoveLine
                     {
                         Name = "Lương tháng "+move.Date.ToString("MM/yyyy"),
-                        Debit = balance < 0 ? -balance : 0,
-                        Credit = balance > 0 ? balance : 0,
+                        Debit = balance > 0 ? balance : 0,
+                        Credit = balance < 0 ? -balance : 0,
                         AccountId = accountJournal.DefaultCreditAccount.Id,
                         Account = accountJournal.DefaultCreditAccount,
                         PartnerId = slip.Employee.PartnerId,
@@ -216,12 +234,14 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Move).ThenInclude(x => x.Lines).ToListAsync();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include("Slips.SalaryPayment")
+                .Include(x => x.Move).ThenInclude(x => x.Lines).ToListAsync();
 
             var listMove = new List<AccountMove>();
             var listMoveLine = new List<AccountMoveLine>();
             foreach (var run in payslipruns)
             {
+                if (run.Slips.Any(x => x.SalaryPayment != null)) throw new Exception("đã có phiếu lương được chi lương nên không thể hủy!");
                 listMove.Add(run.Move);
                 listMoveLine.AddRange(run.Move.Lines);
                 run.State = "confirm";
@@ -245,7 +265,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task CreatePayslipByRunId(Guid id)
+        public async Task<HrPayslipRunDisplay> CreatePayslipByRunId(Guid id)
         {
             var payslipObj = GetService<IHrPayslipService>();
             var employeeObj = GetService<IEmployeeService>();
@@ -298,6 +318,7 @@ namespace Infrastructure.Services
 
             paysliprun.State = "confirm";
             await UpdateAsync(paysliprun);
+            return await this.GetHrPayslipRunForDisplay(paysliprun.Id);
         }
 
         public async Task ComputeSalary(HrPayslip payslip, IEnumerable<ChamCong> chamCongs = null, CommissionSettlementReportOutput commission = null, IEnumerable<SalaryPayment> advances = null, DateTime? date = null)
@@ -351,13 +372,14 @@ namespace Infrastructure.Services
             payslip.OverTimeDaySalary = Math.Round((payslip.OverTimeDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault() * (emp.RestDayRate.GetValueOrDefault() / 100)), 0);
             payslip.Allowance = emp.Allowance.GetValueOrDefault();
 
-            payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
-                + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault();
-
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 0);
             payslip.AmercementMoney = 0;
+
+            payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
+               + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault()
+               + payslip.CommissionSalary - payslip.AmercementMoney.Value;
             payslip.AdvancePayment = advances.Sum(x => x.Amount);
-            payslip.NetSalary = payslip.TotalSalary + payslip.CommissionSalary - payslip.AmercementMoney.Value - payslip.AdvancePayment;
+            payslip.NetSalary = payslip.TotalSalary - payslip.AdvancePayment;
 
         }
 
@@ -375,9 +397,11 @@ namespace Infrastructure.Services
             await UpdateAsync(paysliprun);
         }
 
-        public async Task<HrPayslipRun> CheckExist(DateTime date)
+        public async Task<HrPayslipRunDisplay> CheckExist(DateTime date)
         {
-            return await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year).FirstOrDefaultAsync();
+            var run = await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year).FirstOrDefaultAsync();
+            if(run == null) { return null; }
+            return await this.GetHrPayslipRunForDisplay(run.Id);
         }
     }
 

@@ -1495,3 +1495,7 @@ span.char-count {
 .teeth-popover-width {
     min-width: 548px !important;
 }
+
+.k-notification-group {
+    z-index: 2147483647;
+}
