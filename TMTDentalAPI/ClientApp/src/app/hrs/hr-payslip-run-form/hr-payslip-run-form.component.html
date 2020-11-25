@@ -9,8 +9,7 @@
             <div class="mt-2 mb-1">
                 <div class="d-flex">
                     <label class="d-inline-flex align-items-center mr-2">Tháng</label>
-                    <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2"
-                        [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
                 </div>
             </div>
         </div>
@@ -23,27 +22,18 @@
                     <div class="o_statusbar_buttons">
                         <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
                         <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
-                        <button type="button" *ngIf="state != 'done'" (click)="onSave()"
-                            class="btn btn-sm btn-primary">Lưu</button>
-                        <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()"
-                            class="btn btn-sm btn-primary">Xác nhận</button>
+                        <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
                         <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
-                        <button *ngIf="state === 'done'" type="button" (click)="onPayment()"
-                            class="btn btn-sm btn-primary">Chi lương</button>
-                        <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()"
-                            class="btn btn-sm btn-primary">Làm mới</button>
-                        <button *ngIf="state === 'done' && !isExistSalaryPayment" type="button" (click)="actionCancel()"
-                            class="btn btn-sm btn-danger">Hủy</button>
+                        <button *ngIf="state === 'done'" type="button" (click)="onPayment()" class="btn btn-sm btn-primary">Chi lương</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
+                        <button *ngIf="state === 'done' && !isExistSalaryPayment" type="button" (click)="actionCancel()" class="btn btn-sm btn-danger">Hủy</button>
                     </div>
                     <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                        <button [disabled]="state !== 'done'" class="btn o_arrow_button disabled"
-                            [class.btn-primary]="state === 'done'" [class.btn-secondary]="state !== 'done'"
-                            type="button">
+                        <button [disabled]="state !== 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'done'" [class.btn-secondary]="state !== 'done'" type="button">
                             Xác nhận
                         </button>
-                        <button [disabled]="state !== 'confirm'" class="btn o_arrow_button disabled"
-                            [class.btn-primary]="state === 'confirm'" [class.btn-secondary]="state !== 'confirm'"
-                            type="button">
+                        <button [disabled]="state !== 'confirm'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'confirm'" [class.btn-secondary]="state !== 'confirm'" type="button">
                             Chờ xác nhận
                         </button>
                         <!-- <button [disabled]="state !== 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'draft'" [class.btn-secondary]="state !== 'draft'" type="button">
@@ -59,7 +49,8 @@
                                     <p>
                                         <label for="">Bảng lương tháng
                                             {{dateFC.value?.getMonth()+1}}/{{dateFC.value?.getFullYear()}} chưa
-                                            có.</label> <br>
+                                            có. Bạn có thể khởi tạo bảng</label> <br>
+                                        <label for="">lương từ ngày 01/2/2035</label> <br>
                                         <label for="">Vui lòng bấm nút "Tính Lương" bên dưới để khởi tạo.</label>
                                     </p>
                                     <div class="d-flex justify-content-center">
@@ -70,12 +61,9 @@
                         </ng-container>
                         <ng-template #elseTemplate>
                             <div class="d-flex">
-                                <input placeholder="tìm kiếm nhân viên....." [(ngModel)]="search"
-                                    (ngModelChange)="onSearchEmployee($event)" [ngModelOptions]="{standalone: true}"
-                                    type="text" style="max-width: 385px; border-radius: 0;" class="form-control mb-1">
+                                <input placeholder="tìm kiếm nhân viên....." [(ngModel)]="search" (ngModelChange)="onSearchEmployee($event)" [ngModelOptions]="{standalone: true}" type="text" style="max-width: 385px; border-radius: 0;" class="form-control mb-1">
                                 <div class="form-check ml-auto">
-                                    <input [(ngModel)]="isCompact" [ngModelOptions]="{standalone: true}" type="checkbox"
-                                        class="form-check-input" id="exampleCheck1">
+                                    <input [(ngModel)]="isCompact" [ngModelOptions]="{standalone: true}" type="checkbox" class="form-check-input" id="exampleCheck1">
                                     <label class="form-check-label" for="exampleCheck1">Bảng lương rút gọn</label>
                                 </div>
                             </div>
@@ -108,8 +96,7 @@
                                     </thead>
                                     <tbody formArrayName="slips">
                                         <ng-container *ngFor="let item of slipsFormArray.controls; let i = index">
-                                            <tr [formGroupName]="i"
-                                                [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
+                                            <tr [formGroupName]="i" [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
                                                 <td class="b-sticky-left">
                                                     <input class="mr-1" formControlName="isCheck" type="checkbox">
                                                 </td>
@@ -125,34 +112,22 @@
                                                 <td>{{item.get('overTimeDaySalary').value | number }}</td>
                                                 <td>{{item.get('allowance').value | number }}</td>
                                                 <td>
-                                                    <kendo-numerictextbox
-                                                        [attr.disabled]="state == 'done' ? true : null"
-                                                        style="width: 100%;" formControlName="otherAllowance"
-                                                        [format]="'n0'" [min]="0">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>
-                                                    <kendo-numerictextbox
-                                                        [attr.disabled]="state == 'done' ? true : null"
-                                                        style="width: 100%;" formControlName="rewardSalary"
-                                                        [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>
-                                                    <kendo-numerictextbox
-                                                        [attr.disabled]="state == 'done' ? true : null"
-                                                        style="width: 100%;" formControlName="holidayAllowance"
-                                                        [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td [hidden]="isCompact">{{item.get('totalSalary').value | number }}
                                                 </td>
                                                 <td>{{item.get('commissionSalary').value | number }}</td>
                                                 <td>
-                                                    <kendo-numerictextbox
-                                                        [attr.disabled]="state == 'done' ? true : null"
-                                                        style="width: 100%;" formControlName="amercementMoney"
-                                                        [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>{{item.get('advancePayment').value | number}}</td>
