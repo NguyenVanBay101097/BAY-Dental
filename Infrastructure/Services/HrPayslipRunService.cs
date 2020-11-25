@@ -62,6 +62,8 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
+            if (DateTime.Now.Month <= val.Date.Value.Month && DateTime.Now.Year >= val.Date.Value.Year) throw new Exception("bạn không được phép tạo bảng lương "+ val.Date.Value.ToString("MM/yyyy"));
+
             var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
             if (isExist == true)
             {

@@ -172,11 +172,7 @@
                                     <td>Phụ cấp lễ tết</td>
                                     <td>@(slip.HolidayAllowance.HasValue ? string.Format(info, "{0:0,0}", slip.HolidayAllowance.Value) : "0")</td>
                                 </tr>
-                                <tr class="bg-info font-weight-bold">
-                                    <td></td>
-                                    <td>Tổng lương</td>
-                                    <td>@(slip.TotalSalary.HasValue ? string.Format(info, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
-                                </tr>
+
                                 <tr>
                                     <td>8</td>
                                     <td>Hoa hồng</td>
@@ -187,11 +183,15 @@
                                     <td>Phạt</td>
                                     <td>@(slip.AmercementMoney.HasValue ? string.Format(info, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
                                 </tr>
-                                @* chưa có phần tạm ứng, tạm thời để tạm ứng = 0 *@
+                                <tr class="bg-info font-weight-bold">
+                                    <td></td>
+                                    <td>Tổng lương</td>
+                                    <td>@(slip.TotalSalary.HasValue ? string.Format(info, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
+                                </tr>
                                 <tr>
                                     <td>10</td>
                                     <td>Tạm ứng</td>
-                                    <td>0</td>
+                                    <td>@(slip.AdvancePayment.HasValue ? string.Format(info, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
                                 </tr>
                                 <tr class="bg-info font-weight-bold">
                                     <td></td>
@@ -206,7 +206,7 @@
                             <tr>
                                 <th class="text-center">Người lập phiếu</th>
                                 <th class="text-center">
-                                    Thứ..., Ngày...tháng...năm...
+                                    @string.Format(info, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
                                     <p>Người lao động</p>
                                 </th>
                             </tr>
@@ -220,9 +220,9 @@
                             </tr>
                             <tr>
                                 <th class="text-center">
-                                    @(Model.User != null ? Model.User.Name : "")
+                                    @(Model.User != null ? Model.User.Name.ToUpper(info) : "")
                                 </th>
-                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name : "")</th>
+                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(info) : "")</th>
                             </tr>
                         </table>
                     </div>

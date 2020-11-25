@@ -100,7 +100,7 @@ namespace TMTDentalAPI.Controllers
 
             if (employee == null)
                 return NotFound();
-
+            await _employeeService.updateSalary(val, employee);
             employee = _mapper.Map(val, employee);
             UpdatePartnerToEmployee(employee);
             await _employeeService.UpdateAsync(employee);

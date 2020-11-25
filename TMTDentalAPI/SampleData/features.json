@@ -609,7 +609,7 @@
         "Children": [
           {
             "Name": "Thông tin tính lương",
-            "Permission": "Catalog.Employee.UpdateSalary"
+            "Permission": "Catalog.Employee.Salary.Update"
           },
           {
             "Name": "Xem",
