@@ -62,7 +62,7 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
+        public async Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
         {
             var listSalaryPayment = new List<SalaryPayment>();
             var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
@@ -111,6 +111,7 @@ namespace Infrastructure.Services
 
                 salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
 
+
             }
 
             var hrPayslipObj = GetService<IHrPayslipService>();
@@ -128,6 +129,11 @@ namespace Infrastructure.Services
             }
 
             await hrPayslipObj.UpdateAsync(hrPayslips);
+
+
+            var salaryPaymentIds = hrPayslips.Select(x => x.SalaryPaymentId.Value).ToList();
+
+            return salaryPaymentIds;
         }
 
 
@@ -267,11 +273,11 @@ namespace Infrastructure.Services
                 CompanyId = val.CompanyId,
             };
 
-                var rec_pay_line_name = "/";
-                if (val.Type == "advance")
-                    rec_pay_line_name = val.Name + " " + "tạm ứng";
-                else if (val.Type == "salary")
-                    rec_pay_line_name = val.Name + " " + "chi lương";
+            var rec_pay_line_name = "/";
+            if (val.Type == "advance")
+                rec_pay_line_name = val.Name + " " + "tạm ứng";
+            else if (val.Type == "salary")
+                rec_pay_line_name = val.Name + " " + "chi lương";
 
 
             var liquidity_line_name = val.Name;
@@ -394,7 +400,7 @@ namespace Infrastructure.Services
             var slipRunObj = GetService<IHrPayslipRunService>();
             var JournalObj = GetService<IAccountJournalService>();
             var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId).Include("Slips.SalaryPayment")
-                .Include(x => x.Slips).ThenInclude(x=>x.Employee).Select(x => new
+                .Include(x => x.Slips).ThenInclude(x => x.Employee).Select(x => new
                 {
                     Date = x.Date,
                     Slips = x.Slips.Where(y => val.PayslipIds.Contains(y.Id))

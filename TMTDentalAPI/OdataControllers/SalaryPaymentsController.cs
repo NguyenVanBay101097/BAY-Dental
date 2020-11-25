@@ -35,7 +35,7 @@ namespace TMTDentalAPI.OdataControllers
             IUnitOfWorkAsync unitOfWork
           )
         {
-            _mapper = mapper;         
+            _mapper = mapper;
             _salaryPaymentService = salaryPaymentService;
             _view = view;
             _userService = userService;
@@ -97,7 +97,7 @@ namespace TMTDentalAPI.OdataControllers
             {
                 return BadRequest(ModelState);
             }
-          
+
             await _unitOfWork.BeginTransactionAsync();
             await _salaryPaymentService.ActionConfirm(val.Ids);
             _unitOfWork.Commit();
@@ -112,12 +112,12 @@ namespace TMTDentalAPI.OdataControllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
+            var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
             _unitOfWork.Commit();
 
-            return NoContent();
+            return Ok(ids);
         }
 
         [HttpPost]
@@ -139,15 +139,15 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> PrintSalaryPayment([FromBody] SalaryPaymentIds val)
         {
             var salaries = await _salaryPaymentService.SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
-            var salaryPayments = _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => val.Ids.Contains(x.Id))).ToList();         
+            var salaryPayments = _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => val.Ids.Contains(x.Id))).ToList();
             foreach (var print in salaryPayments)
             {
                 print.UserName = _userService.GetByIdAsync(print.CreatedById).Result.UserName;
                 print.AmountString = StringUtils.ChuyenSo(Convert.ToInt32(print.Amount).ToString());
             }
-                
+
             if (val.Ids != null && val.Ids.Any())
-            {             
+            {
                 var html = _view.Render("SalaryPaymentPrint", salaryPayments);
                 return Ok(new printData() { html = html });
             }
