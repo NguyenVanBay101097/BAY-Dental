@@ -1,5 +1,5 @@
-<kendo-grid [data]="gridData" [loading]="loading" [scrollable]="'none'" (pageChange)="pageChange($event)"
-    [navigable]="true" kendoGridFocusable>
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
     <kendo-grid-column field="date" title="Ngày">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.date | date: 'shortDate'}}

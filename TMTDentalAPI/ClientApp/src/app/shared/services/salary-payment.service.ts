@@ -47,7 +47,6 @@ export class SalaryPaymentService extends ODataService {
         this.fetch(this.tableName, state, options || {})
             .pipe(
                 map((data: GridDataResult) => {
-
                     return data;
                 })
             )
@@ -57,10 +56,8 @@ export class SalaryPaymentService extends ODataService {
     }
 
     public getIdSP(id: any) {
-        var obj = {
-            $expand: "Employee,Journal",
-        };
-        return this.get(id, obj);
+        
+        return this.get(id,null);
     }
 
     public actionConfirm(ids:any){
