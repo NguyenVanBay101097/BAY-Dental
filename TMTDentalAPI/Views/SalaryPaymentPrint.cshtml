@@ -31,6 +31,14 @@
         .logo-image {
             min-width: 150px;
         }
+
+        .titleName{
+            width: 200px;
+        }
+
+        .description {
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -42,46 +50,77 @@
             <div class="body px-3 py-3 overflow-auto page-break">
                 <div class="px-3">
                     <div class="row border border-secondary">
-                        <div class="col-4">
+                        <div class="col-8">
                             <div class="border-right" style="text-align: center;">
-                                <div class="logo">
-                                    <img class="logo-image" src="@item.Company.Logo" alt="">
-                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="logo">
+                                            <img class="logo-image" src="@item.Company.Logo" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="title" style="text-align: center; padding: 15px;">
+                                            <h3>PHIẾU CHI</h3>
+                                            <h4> Ngày @item.Date.Day tháng @item.Date.Month năm @item.Date.Year</h4>
+                                        </div>
+                                    </div>
+                                </div>                                                          
                             </div>
 
                         </div>
-                        <div class="col-8">
+                        <div class="col-4">
                             <div class="title" style="text-align: center; padding: 15px;">
-                                <h3>PHIẾU CHI</h3>
-                                <p>@(item.Date.ToLongDateString())</p>
+                                <h3 class="text-center">Mã PHIẾU </h3>
+                            </div>
+                            <div class="title" style="text-align: center; padding: 15px; style=" border-top: solid 1px"">
+                                <h3 class="text-center">@(item.Name) </h3>
+
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="h-90 w-100 pt-3">
+                <div class="h-90 w-100 pt-3 ml-2">
                     <div class="h-30 w-100 body-content d-flex">
-                        <div class="h-100 w-50 pr-2">                          
-                            <table class="table table-bordered  table-sm">
+                        <div class="h-100 w-50 pr-2">
+                            @*<form>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Người nhận :</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-plaintext">@(item.Employee != null ? item.Employee.Name : "")</p>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">Loại chi :</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-plaintext">@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</p>
+                                    </div>
+                                </div>
+                            </form>*@
+                            <table class="table border-none table-sm">
                                 <tbody>
                                     <tr>
-                                        <td>Người nhận : </td>
-                                        <td>@(item.Employee != null ? item.Employee.Name : "")</td>
+                                        <td class="titleName"><h4>Người nhận :</h4> </td>
+                                        <td><p class="description">@(item.Employee != null ? item.Employee.Name : "")</p></td>
                                     </tr>
                                     <tr>
-                                        <td>Loại chi : </td>
-                                        <td>@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</td>
+                                        <td class="titleName"><h4>Loại chi : </h4></td>
+                                        <td><p class="description">@(item.Type == "advance" ? "Tạm ứng" : "Chi lương")</p></td>
                                     </tr>
                                     <tr>
-                                        <td>@(item.Type == "advance" ? "Số tiền tạm ứng" : "Số tiền thực lĩnh") : </td>
-                                        <td>@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0")</td>
+                                        <td class="titleName"><h4>@(item.Type == "advance" ? "Số tiền tạm ứng" : "Số tiền thực lĩnh") : </h4> </td>
+                                        <td><p class="description">@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0") VNĐ</p></td>
                                     </tr>
                                     <tr>
-                                        <td>Phương thức : </td>
-                                        <td>@(item.journal.Name)</td>
+                                        <td class="titleName"><h4>Phương thức :</h4> </td>
+                                        <td><p class="description">@(item.journal.Name)</p></td>
                                     </tr>
                                     <tr>
-                                        <td>Bằng chữ : </td>
-                                        <td>@(item.AmountString)</td>
+                                        <td class="titleName"><h4>Bằng chữ :</h4> </td>
+                                        <td><p class="description">@(item.AmountString) đồng</p></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="titleName"><h4>Nội dung :</h4> </td>
+                                        <td><p class="description">@(item.Reason) </p></td>
                                     </tr>
                                 </tbody>
                             </table>

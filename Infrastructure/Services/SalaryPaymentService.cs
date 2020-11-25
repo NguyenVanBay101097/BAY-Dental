@@ -62,7 +62,7 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
+        public async Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
         {
             var listSalaryPayment = new List<SalaryPayment>();
             var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
@@ -111,6 +111,7 @@ namespace Infrastructure.Services
 
                 salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
 
+
             }
 
             var hrPayslipObj = GetService<IHrPayslipService>();
@@ -128,6 +129,11 @@ namespace Infrastructure.Services
             }
 
             await hrPayslipObj.UpdateAsync(hrPayslips);
+
+
+            var salaryPaymentIds = hrPayslips.Select(x => x.SalaryPaymentId.Value).ToList();
+
+            return salaryPaymentIds;
         }
 
 
@@ -186,6 +192,7 @@ namespace Infrastructure.Services
                     Phone = employee.Phone,
                     Ref = employee.Ref,
                     Email = employee.Email
+
                 };
 
                 await partnerObj.CreateAsync(partner);
@@ -197,9 +204,9 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task ActionConfirm(IEnumerable<GuidClass> ids)
+        public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var salaryPayments = await SearchQuery(x => ids.Select(s=>s.Id).Contains(x.Id))
+            var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))
                  .Include(x => x.Company)
                  .Include(x => x.Journal)
                  .Include(x => x.Employee)
@@ -223,7 +230,7 @@ namespace Infrastructure.Services
 
                 amlObj.ComputeMoveNameState(move.Lines);
 
-                salaryPayment.State = "posted";
+                salaryPayment.State = "done";
                 salaryPayment.MoveId = move.Id;
             }
 
@@ -241,7 +248,7 @@ namespace Infrastructure.Services
             {
                 await moveObj.ButtonCancel(new List<Guid>() { phieu.MoveId.Value });
                 await moveObj.Unlink(new List<Guid>() { phieu.MoveId.Value });
-                phieu.State = "draft";
+                phieu.State = "waitting";
             }
 
             await UpdateAsync(self);
@@ -268,9 +275,9 @@ namespace Infrastructure.Services
 
             var rec_pay_line_name = "/";
             if (val.Type == "advance")
-                rec_pay_line_name = "tạm ứng";
+                rec_pay_line_name = val.Name + " " + "tạm ứng";
             else if (val.Type == "salary")
-                rec_pay_line_name = "chi lương";
+                rec_pay_line_name = val.Name + " " + "chi lương";
 
 
             var liquidity_line_name = val.Name;
@@ -286,6 +293,7 @@ namespace Infrastructure.Services
                         AccountId = accDebit334.Id,
                         Account = accDebit334,
                         Move = move,
+                        Ref = val.Name,
                         PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                     new AccountMoveLine
@@ -296,6 +304,7 @@ namespace Infrastructure.Services
                         AccountId = accCredit642.Id,
                         Account = accCredit642,
                         Move = move,
+                        Ref = val.Name,
                         PartnerId = val.Employee.PartnerId.HasValue ? val.Employee.PartnerId : null
                     },
                 };
@@ -386,25 +395,38 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<SalaryPaymentSave>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        public async Task<IEnumerable<SalaryPaymentDisplay>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
-            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
-                .Include(x => x.Slips.Where(y => val.PayslipIds.Contains(y.Id))).FirstOrDefaultAsync();
+            var JournalObj = GetService<IAccountJournalService>();
+            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId).Include("Slips.SalaryPayment")
+                .Include(x => x.Slips).ThenInclude(x => x.Employee).Select(x => new
+                {
+                    Date = x.Date,
+                    Slips = x.Slips.Where(y => val.PayslipIds.Contains(y.Id))
+                }).FirstOrDefaultAsync();
+            var journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery(x => x.Name.ToLower().Contains("tiền mặt"))).FirstOrDefaultAsync();
+            if (journal == null)
+            {
+                journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery()).FirstOrDefaultAsync();
+            }
 
             if (slipRun == null) throw new Exception("không tồn tại đợt lương!");
-            var payments = new List<SalaryPaymentSave>();
+            var payments = new List<SalaryPaymentDisplay>();
             foreach (var slip in slipRun.Slips)
             {
-                payments.Add(new SalaryPaymentSave()
+                if (slip.SalaryPayment != null) throw new Exception(@$"{slip.Employee.Name} đã chi lương");
+                payments.Add(new SalaryPaymentDisplay()
                 {
-                    Amount = slip.NetSalary,
-                    CompanyId = slip.CompanyId,
+                    Amount = slip.NetSalary.GetValueOrDefault(),
                     Date = slipRun.Date.Value,
                     EmployeeId = slip.EmployeeId,
-                    JournalId = null,
+                    Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
+                    JournalId = journal.Id,
+                    Journal = journal,
                     Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
-                    Type = "advance"
+                    Type = "advance",
+                    HrPayslipId = slip.Id
                 });
             }
             return payments;

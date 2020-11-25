@@ -96,9 +96,9 @@ namespace TMTDentalAPI.OdataControllers
             //      .CollectionParameter<Guid>("ids");
 
             builder.EntityType<SalaryPaymentVm>()
-                .Collection
-                  .Action("ActionConfirm")
-             .Returns<bool>();
+                      .Collection
+                   .Action("ActionConfirm")
+                    .Returns<bool>();
 
             builder.EntityType<SalaryPaymentVm>()
                      .Collection
@@ -108,8 +108,21 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SalaryPaymentVm>()
                    .Collection
                 .Action("CreateMultiSalaryPayment")
-                .Returns<bool>();
+                 .Returns<bool>();
 
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Action("PrintSalaryPayment")
+                 .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+               .Collection
+            .Action("DefaulCreateBy")
+            .ReturnsCollection<SalaryPaymentDisplay>();
+            #endregion
+
+            #region AccountJournal
+            builder.EntitySet<AccountJournalViewModel>("AccountJournals");
             #endregion
 
             #region ComplexType
@@ -125,10 +138,14 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
-            
+            builder.ComplexType<SalaryPaymentDisplay>();
+            builder.ComplexType<EmployeeSimple>();
+            builder.ComplexType<AccountJournalSimple>();
+
 
             #endregion
 
+           
 
             return builder.GetEdmModel();
         }

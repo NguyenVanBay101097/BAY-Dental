@@ -334,28 +334,27 @@ namespace Infrastructure.Services
             && c.Date.Year == date.Value.Year).ToListAsync();
             }
 
-            payslip.DaySalary = Math.Round((emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault())), 2);
+            payslip.DaySalary = (emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()));
 
-            payslip.WorkedDay = chamCongs.Where(x => x.Type == "work").Count();
+            payslip.WorkedDay = Math.Min(chamCongs.Where(x => x.Type == "work").Count() + (chamCongs.Where(x=> x.Type == "halfaday").Count()/2)
+                , DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault());
 
             payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay;
             payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
 
-            var ngaythucnghi = emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count() + chamCongs.Where(x => x.Type == "halfaday").Count() * 2;
-            payslip.OverTimeDay = Math.Round(emp.LeavePerMonth.GetValueOrDefault() - ngaythucnghi, 2);
-            payslip.OverTimeDay = payslip.OverTimeDay > 0 ? payslip.OverTimeDay : 0;
-            payslip.TotalBasicSalary = Math.Round(((payslip.WorkedDay.GetValueOrDefault() - payslip.OverTimeDay.GetValueOrDefault()) * payslip.DaySalary.GetValueOrDefault()), 2);
+            payslip.OverTimeDay = Math.Max((emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count()), 0);
+            payslip.TotalBasicSalary = Math.Round(payslip.WorkedDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault(), 0);
 
-            payslip.OverTimeHour = Math.Round(chamCongs.Where(x => x.OverTime == true).Sum(x => x.OverTimeHour.GetValueOrDefault()), 2);
-            payslip.OverTimeHourSalary = emp.RegularHour.GetValueOrDefault() == 0 ? 0 : Math.Round(((payslip.DaySalary.GetValueOrDefault() / emp.RegularHour.GetValueOrDefault()) * (emp.OvertimeRate.GetValueOrDefault() / 100) * payslip.OverTimeHour.GetValueOrDefault()), 2);
+            payslip.OverTimeHour = chamCongs.Where(x => x.OverTime == true).Sum(x => x.OverTimeHour.GetValueOrDefault());
+            payslip.OverTimeHourSalary = emp.RegularHour.GetValueOrDefault() == 0 ? 0 : Math.Round(((payslip.DaySalary.GetValueOrDefault() / emp.RegularHour.GetValueOrDefault()) * (emp.OvertimeRate.GetValueOrDefault() / 100) * payslip.OverTimeHour.GetValueOrDefault()), 0);
 
-            payslip.OverTimeDaySalary = Math.Round((payslip.OverTimeDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault() * (emp.RestDayRate.GetValueOrDefault() / 100)), 2);
+            payslip.OverTimeDaySalary = Math.Round((payslip.OverTimeDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault() * (emp.RestDayRate.GetValueOrDefault() / 100)), 0);
             payslip.Allowance = emp.Allowance.GetValueOrDefault();
 
             payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
                 + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault();
 
-            payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 2);
+            payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 0);
             payslip.AmercementMoney = 0;
             payslip.AdvancePayment = advances.Sum(x => x.Amount);
             payslip.NetSalary = payslip.TotalSalary + payslip.CommissionSalary - payslip.AmercementMoney.Value - payslip.AdvancePayment;

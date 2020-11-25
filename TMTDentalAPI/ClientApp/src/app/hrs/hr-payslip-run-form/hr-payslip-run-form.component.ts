@@ -66,6 +66,8 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
         this.isExistSalaryPayment = result.IsExistSalaryPayment;
         this.patchValue(result);
+        console.log(result);
+        
       });
     }
   }
@@ -307,29 +309,13 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   onPayment() {
-    const payslips = this.slipsFormArray.value.filter(x => x.isCheck === true);
-    const payments = [];
-    payslips.forEach((slip: HrPayslipSaveDefaultValue) => {
-      const payment: SalaryPaymentSave = {
-        Amount: slip.netSalary,
-        CompanyId: slip.companyId,
-        Date: this.dateFC.value,
-        Employee: slip.employee,
-        EmployeeId: slip.employeeId,
-        Journal: null,
-        JournalId: null,
-        Name: slip.name,
-        Reason: `Chi lương tháng ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`,
-        State: 'draft',
-        Type: 'salary'
-      };
-      payments.push(payment);
-    });
-    const modalRef = this.modalService.open(HrSalaryPaymentComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`;
-    modalRef.componentInstance.payments = payments;
-    modalRef.result.then((res: any) => {
+    const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
 
+    const modalRef = this.modalService.open(HrSalaryPaymentComponent, {size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`;
+    modalRef.componentInstance.defaultPara = {PayslipRunId: this.id, PayslipIds: slipIds};
+    modalRef.result.then((res: any) => {
+      this.loadRecord();
     });
   }
 }
