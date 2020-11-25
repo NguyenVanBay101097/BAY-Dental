@@ -184,8 +184,8 @@ namespace Infrastructure.Services
                     new AccountMoveLine
                     {
                         Name =  "Lương tháng "+move.Date.ToString("MM/yyyy"),
-                        Debit = balance > 0 ? balance : 0,
-                        Credit = balance < 0 ? -balance : 0,
+                        Debit = balance < 0 ? -balance : 0,
+                        Credit = balance > 0 ? balance : 0,
                         AccountId = acc334.Id,
                         Account = acc334,
                         PartnerId = slip.Employee.PartnerId,
@@ -194,8 +194,8 @@ namespace Infrastructure.Services
                     new AccountMoveLine
                     {
                         Name = "Lương tháng "+move.Date.ToString("MM/yyyy"),
-                        Debit = balance < 0 ? -balance : 0,
-                        Credit = balance > 0 ? balance : 0,
+                        Debit = balance > 0 ? balance : 0,
+                        Credit = balance < 0 ? -balance : 0,
                         AccountId = accountJournal.DefaultCreditAccount.Id,
                         Account = accountJournal.DefaultCreditAccount,
                         PartnerId = slip.Employee.PartnerId,
