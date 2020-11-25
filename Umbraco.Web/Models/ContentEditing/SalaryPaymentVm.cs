@@ -38,7 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeSimple Employee { get; set; }
 
         public Guid? JournalId { get; set; }
-        public AccountJournalSimple journal {get;set;}
+        public AccountJournalSimple Journal {get;set;}
 
         /// <summary>
         /// Số tiền
