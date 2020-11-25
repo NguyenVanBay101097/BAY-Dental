@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class SalaryPayment : BaseEntity
     {
+        public SalaryPayment()
+        {
+            State = "waiting";
+        }
+
         /// <summary>
         /// Chi nhánh
         /// </summary>

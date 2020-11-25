@@ -86,7 +86,7 @@
 </div>
 
 <footer class="modal-footer"> 
-    <div *ngIf="salaryPayment ? salaryPayment.State === 'waitting' : '';else other_content">
+    <div *ngIf="salaryPayment ? salaryPayment.State === 'waiting' : '';else other_content">
         <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>       
         <button type="button" *ngIf="id" class="btn btn-primary ml-1" (click)="actionConfirm()">Xác nhận</button>
     </div>  
