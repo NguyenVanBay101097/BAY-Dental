@@ -178,5 +178,21 @@ namespace Infrastructure.Services
             //}
             await base.UpdateAsync(entity);
         }
+
+        public async Task updateSalary(EmployeeDisplay val, Employee emp)
+        {
+            var roleObj = GetService<IApplicationRoleFunctionService>();
+            var accessResult = await roleObj.HasAccess(new string[] { "Catalog.Employee.Salary.Update" });
+            if (!accessResult.Access)
+            {
+                val.Wage = emp.Wage;
+                val.HourlyWage = emp.HourlyWage;
+                val.LeavePerMonth = emp.LeavePerMonth;
+                val.RegularHour = emp.RegularHour;
+                val.OvertimeRate = emp.OvertimeRate;
+                val.RestDayRate = emp.RestDayRate;
+                val.Allowance = emp.Allowance;
+            }
+        }
     }
 }
