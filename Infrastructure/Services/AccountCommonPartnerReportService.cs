@@ -433,8 +433,8 @@ namespace Infrastructure.Services
                         MoveName = x.Move.Name,
                         Name = x.Name,
                         Ref = x.Move.Ref,
-                        Debit = x.Debit,
-                        Credit = x.Credit
+                        Debit = x.Credit,
+                        Credit = x.Debit
                     }).ToList();
 
 
