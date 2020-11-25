@@ -400,7 +400,7 @@ namespace Infrastructure.Services
             var commissionObj = GetService<ICommissionSettlementService>();
             var advanceObj = GetService<ISalaryPaymentService>();
 
-            var empIds = paysliprun.Slips.Select(x => x.Employee.Id);
+            var empIds = paysliprun.Slips.Select(x => x.EmployeeId);
             var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
             && c.Date.Value.Month == paysliprun.Date.Value.Month
             && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
@@ -413,8 +413,10 @@ namespace Infrastructure.Services
             && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
             foreach (var item in paysliprun.Slips)
             {
-                await ComputeSalary(item, null, null, null, paysliprun.Date);
-                //await ComputeSalary(payslip, chamCongs, commission, advance, paysliprun.Date.Value);
+                var chamCongs = allChamcongs.Where(x => x.EmployeeId == item.EmployeeId);
+                var commission = commissions.FirstOrDefault(x => x.EmployeeId == item.EmployeeId);
+                var advance = Alladvances.Where(x => x.EmployeeId == item.EmployeeId);
+                await ComputeSalary(item, chamCongs, commission, advance, paysliprun.Date);
             }
 
 
