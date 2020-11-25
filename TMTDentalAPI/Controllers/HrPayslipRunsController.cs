@@ -242,7 +242,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 16].Value = "Tạm ứng";
                 worksheet.Cells[1, 17].Value = "Thực lĩnh";
                 worksheet.Cells[1, 18].Value = "Phiếu chi";
-                worksheet.Cells["A1:Q1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:R1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in data)
@@ -264,7 +264,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 15].Value = item.AmercementMoney.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
                     worksheet.Cells[row, 16].Value = item.AdvancePayment.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture); ;
                     worksheet.Cells[row, 17].Value = item.NetSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[1, 18].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "";
+                    worksheet.Cells[row, 18].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "Chưa chi";
 
                     //format
                     //worksheet.Cells[row, 2].Style.Numberformat.Format = "#,#";

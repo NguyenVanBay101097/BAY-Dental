@@ -52,9 +52,19 @@ export class HrPayslipRunFormComponent implements OnInit {
   get name() { return this.FormGroup.get('name').value; }
   get slipsFormArray() { return this.FormGroup.get('slips') as FormArray; }
   get dateFC() { return this.FormGroup.get('date') as FormArray; }
+  get dateNext() {
+    if (!this.dateFC.value) {
+      return new Date();
+    }
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(this.dateFC.value.getMonth() + 1);
+    return d;
+  }
 
   patchValue(result) {
     if (!result) {
+      this.FormGroup.get('id').reset();
       return;
     }
     this.isExistSalaryPayment = result.isExistSalaryPayment;
