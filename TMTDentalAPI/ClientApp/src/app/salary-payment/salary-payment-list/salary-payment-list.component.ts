@@ -127,8 +127,8 @@ export class SalaryPaymentListComponent implements OnInit {
     switch (value) {
       case "waitting":
         return "Chờ xác nhận";
-      case "posted":
-        return "Xác nhận";
+      case "done":
+        return "Đã xác nhận";
     }
   }
 

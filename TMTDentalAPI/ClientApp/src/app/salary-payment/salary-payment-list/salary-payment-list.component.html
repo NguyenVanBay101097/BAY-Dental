@@ -31,7 +31,7 @@
         <kendo-grid-column field="Name" title="Mã Phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng" (click)="editItem(dataItem)">
+                    <a class="text-primary" (click)="editItem(dataItem)">
                          {{dataItem.Name}}
                     </a>
                 </div>
@@ -47,22 +47,22 @@
                 {{dataItem.Employee.Name}}
             </ng-template>          
         </kendo-grid-column>     
-        <kendo-grid-column field="Type" class="text-center" title="Loại phiếu" width="120">
+        <kendo-grid-column field="Type" title="Loại phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getType(dataItem.Type)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Phương thức" class="text-right"  width="120">
+        <kendo-grid-column title="Phương thức" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.Journal.Name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Amount" title="Số tiền" class="text-center" width="120">
+        <kendo-grid-column field="Amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.Amount | number}}
             </ng-template>
         </kendo-grid-column>     
-        <kendo-grid-column field="State" title="Trạng thái" class="text-center" width="120">
+        <kendo-grid-column field="State" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{stateGet(dataItem.State)}}
             </ng-template>

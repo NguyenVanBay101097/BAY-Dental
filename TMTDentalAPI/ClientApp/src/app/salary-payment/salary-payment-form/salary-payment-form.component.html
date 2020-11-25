@@ -18,7 +18,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span class="form-control"> {{salaryPayment.Name}}</span>
+                                    <span style="font-weight: 600;">{{salaryPayment.Name}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -86,9 +86,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>
-    <!-- <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button> -->
-    <button type="button" *ngIf="id" class="btn btn-primary" (click)="actionConfirm()">Xác nhận</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.close()"
+    <button type="button" *ngIf="!salaryPayment || salaryPayment.State != 'done'" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">Lưu và In</button>
+    <button type="button" *ngIf="id && salaryPayment && salaryPayment.State != 'done'" class="btn btn-primary btn-sm" (click)="actionConfirm()">Xác nhận</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel btn-sm" (click)="activeModal.close()"
         accesskey="q">Đóng</button>
 </footer>
