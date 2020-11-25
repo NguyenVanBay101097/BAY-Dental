@@ -70,6 +70,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
       (result) => {   
+        debugger
         this.salaryPayment = result;     
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
