@@ -54,6 +54,9 @@
                                     <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true"
                                         #employeeCbx formControlName="Employee" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.Employee.errors && (f.Employee.touched || f.Employee.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.Employee.errors.required">Vui lòng chọn người nhận</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -65,6 +68,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount">
                                     </kendo-numerictextbox>
+                                    <div *ngIf="f.Amount.errors && (f.Amount.touched || f.Amount.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.Amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
