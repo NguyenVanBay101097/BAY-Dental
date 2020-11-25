@@ -52,7 +52,7 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");
-            res.IsExistSalaryPayment = res.Slips.Any(x=> x.SalaryPayment != null);
+            res.IsExistSalaryPayment = res.Slips.Any(x => x.SalaryPayment != null);
             // get user
             var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
             var user = await userManager.FindByIdAsync(UserId);
@@ -121,7 +121,7 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
 
             var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee)
-                .ThenInclude(x=> x.Partner).FirstOrDefaultAsync();
+                .ThenInclude(x => x.Partner).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
             // ghi sổ
@@ -149,10 +149,10 @@ namespace Infrastructure.Services
             var accountJournal = await accountJournalObj.GetJournalByTypeAndCompany("payroll", slipRun.CompanyId);
             if (accountJournal == null)
                 accountJournal = await slipObj.InsertAccountJournalIfNotExists();
-            var acc334 = accountObj.SearchQuery(x=> x.CompanyId == CompanyId && x.Code == "334").FirstOrDefault();
-            if (acc334 != null)
+            var acc334 = accountObj.SearchQuery(x => x.CompanyId == CompanyId && x.Code == "334").FirstOrDefault();
+            if (acc334 == null)
             {
-                var currentLiabilities = await irModelDataObj.GetRef < AccountAccountType >("account.data_account_type_current_liabilities");
+                var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
                 acc334 = new AccountAccount
                 {
                     Name = "Phải trả người lao động",
@@ -283,7 +283,7 @@ namespace Infrastructure.Services
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
-            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) 
+            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
             && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
             && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
@@ -357,7 +357,7 @@ namespace Infrastructure.Services
 
             payslip.DaySalary = (emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()));
 
-            payslip.WorkedDay = Math.Min(chamCongs.Where(x => x.Type == "work").Count() + (chamCongs.Where(x=> x.Type == "halfaday").Count()/2)
+            payslip.WorkedDay = Math.Min(chamCongs.Where(x => x.Type == "work").Count() + (chamCongs.Where(x => x.Type == "halfaday").Count() / 2)
                 , DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault());
 
             payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay;
@@ -367,9 +367,9 @@ namespace Infrastructure.Services
             payslip.TotalBasicSalary = Math.Round(payslip.WorkedDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault(), 0);
 
             payslip.OverTimeHour = chamCongs.Where(x => x.OverTime == true).Sum(x => x.OverTimeHour.GetValueOrDefault());
-            payslip.OverTimeHourSalary = emp.RegularHour.GetValueOrDefault() == 0 ? 0 : Math.Round(((payslip.DaySalary.GetValueOrDefault() / emp.RegularHour.GetValueOrDefault()) * (emp.OvertimeRate.GetValueOrDefault() / 100) * payslip.OverTimeHour.GetValueOrDefault()), 0);
+            payslip.OverTimeHourSalary = emp.RegularHour.GetValueOrDefault() == 0 ? 0 : Math.Round(((payslip.DaySalary.GetValueOrDefault() / (emp.RegularHour ?? 8)) * ((emp.OvertimeRate ?? 150) / 100) * payslip.OverTimeHour.GetValueOrDefault()), 0);
 
-            payslip.OverTimeDaySalary = Math.Round((payslip.OverTimeDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault() * (emp.RestDayRate.GetValueOrDefault() / 100)), 0);
+            payslip.OverTimeDaySalary = Math.Round((payslip.OverTimeDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault() * ((emp.RestDayRate ?? 100) / 100)), 0);
             payslip.Allowance = emp.Allowance.GetValueOrDefault();
 
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 0);
@@ -390,17 +390,43 @@ namespace Infrastructure.Services
             //validate
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
+
+
+            if (!paysliprun.Slips.Any()) return;
+            // get all source
+            var payslipObj = GetService<IHrPayslipService>();
+            var employeeObj = GetService<IEmployeeService>();
+            var ccObj = GetService<IChamCongService>();
+            var commissionObj = GetService<ICommissionSettlementService>();
+            var advanceObj = GetService<ISalaryPaymentService>();
+
+            var empIds = paysliprun.Slips.Select(x => x.EmployeeId);
+            var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
+            && c.Date.Value.Month == paysliprun.Date.Value.Month
+            && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
+            var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+            var commissions = await commissionObj.GetReport(new CommissionSettlementReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
+            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
+            && c.Type == "advance" && c.State == "done"
+            && c.Date.Month == paysliprun.Date.Value.Month
+            && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
             foreach (var item in paysliprun.Slips)
             {
-                await ComputeSalary(item, null, null, null, paysliprun.Date);
+                var chamCongs = allChamcongs.Where(x => x.EmployeeId == item.EmployeeId);
+                var commission = commissions.FirstOrDefault(x => x.EmployeeId == item.EmployeeId);
+                var advance = Alladvances.Where(x => x.EmployeeId == item.EmployeeId);
+                await ComputeSalary(item, chamCongs, commission, advance, paysliprun.Date);
             }
+
+
             await UpdateAsync(paysliprun);
         }
 
         public async Task<HrPayslipRunDisplay> CheckExist(DateTime date)
         {
             var run = await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year).FirstOrDefaultAsync();
-            if(run == null) { return null; }
+            if (run == null) { return null; }
             return await this.GetHrPayslipRunForDisplay(run.Id);
         }
     }
