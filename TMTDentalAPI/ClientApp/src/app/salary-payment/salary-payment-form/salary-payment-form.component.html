@@ -93,6 +93,9 @@
     <ng-template #other_content>
         <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button>
     </ng-template>
+    <div *ngIf="!salaryPayment">
+        <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu và In</button>  
+    </div>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.close()"
         accesskey="q">Đóng</button>
 </footer>
