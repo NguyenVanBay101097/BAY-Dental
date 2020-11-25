@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import { EmployeeService } from "src/app/employees/employee.service";
 import { debounceTime, switchMap, tap } from "rxjs/operators";
 import { IntlService } from '@progress/kendo-angular-intl';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -39,7 +40,8 @@ export class SalaryPaymentFormComponent implements OnInit {
     private authService: AuthService,
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -70,6 +72,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
       (result) => {   
+        debugger
         this.salaryPayment = result;     
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
@@ -196,13 +199,9 @@ export class SalaryPaymentFormComponent implements OnInit {
     this.salaryPaymentService.onPrint([ids]).subscribe(
       result => {
         if (result && result['html']) {
-          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
-          popupWin.document.open();
-
-          popupWin.document.write(result['html']);
-          popupWin.document.close();
+          this.printService.print(result['html']);
         } else {
-          
+          alert('Có lỗi xảy ra, thử lại sau');
         }
       }
     )

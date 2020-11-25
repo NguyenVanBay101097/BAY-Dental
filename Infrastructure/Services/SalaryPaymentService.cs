@@ -324,7 +324,7 @@ namespace Infrastructure.Services
             var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
             var acc334 = new AccountAccount();
             acc334 = await accountObj.SearchQuery(x => x.Code == "334" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            if (acc334 != null)
+            if (acc334 == null)
             {
                 acc334 = new AccountAccount
                 {
@@ -351,7 +351,7 @@ namespace Infrastructure.Services
             var expensesType = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
             var acc642 = new AccountAccount();
             acc642 = await accountObj.SearchQuery(x => x.Code == "642" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            if (acc642 != null)
+            if (acc642 == null)
             {
                 acc642 = new AccountAccount
                 {
