@@ -39,7 +39,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     private authService: AuthService,
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
-    private intlService: IntlService
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       Amount: [0, Validators.required],
       Reason: null,
       Type: 'advance',
-      CompanyId:null
+      CompanyId: null
     });
 
     setTimeout(() => {
@@ -69,8 +69,8 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
-      (result) => {   
-        this.salaryPayment = result;     
+      (result) => {
+        this.salaryPayment = result;
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
@@ -151,7 +151,8 @@ export class SalaryPaymentFormComponent implements OnInit {
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
     salaryPayment.Type = salaryPayment.Type;
-    salaryPayment.CompanyId = this.salaryPayment.CompanyId ? salaryPayment.CompanyId : null;
+    // salaryPayment.CompanyId = this.salaryPayment && this.salaryPayment.CompanyId ? salaryPayment.CompanyId : null;
+    salaryPayment.CompanyId = this.authService.userInfo.companyId;
     // this.activeModal.close(salaryPayment);
     if (this.id) {
       this.salaryPaymentService.update(this.id, salaryPayment).subscribe(
@@ -166,7 +167,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       );
     } else {
       this.salaryPaymentService.create(salaryPayment).subscribe(
-        (result : any) => {
+        (result: any) => {
           this.id = result.Id;
           this.loadData();
           this.printSalaryPayment(this.id);
@@ -180,7 +181,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   actionConfirm() {
-    if(this.id){
+    if (this.id) {
       this.salaryPaymentService.actionConfirm([this.id]).subscribe(
         () => {
           this.activeModal.close();
@@ -192,7 +193,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     }
   }
 
-  printSalaryPayment(ids) {  
+  printSalaryPayment(ids) {
     this.salaryPaymentService.onPrint([ids]).subscribe(
       result => {
         if (result && result['html']) {
@@ -202,7 +203,7 @@ export class SalaryPaymentFormComponent implements OnInit {
           popupWin.document.write(result['html']);
           popupWin.document.close();
         } else {
-          
+
         }
       }
     )

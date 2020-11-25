@@ -8,6 +8,7 @@ import { aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AccountCommonPartnerReportItem, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 
@@ -39,8 +40,14 @@ export class HrSalaryReportListComponent implements OnInit {
   filteredPartners: PartnerSimple[];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
-  constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
-    private partnerService: PartnerService, private route: ActivatedRoute, private fb: FormBuilder) { }
+  constructor(
+    private reportService: AccountCommonPartnerReportService,
+    private intlService: IntlService,
+    private partnerService: PartnerService,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -88,6 +95,7 @@ export class HrSalaryReportListComponent implements OnInit {
     val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.partnerId = this.searchPartner ? this.searchPartner.id : null;
+    val.companyId = this.authService.userInfo.companyId;
     if (this.search) {
       val.search = this.search;
     }

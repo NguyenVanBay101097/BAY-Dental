@@ -45,7 +45,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-money-bill-alt',
       children: [
         { name: 'Đợt lương', link: '/hr/payslip-run/form' },
-        { name: 'Phiếu lương', link: '/hr/payslips' },
+        // { name: 'Phiếu lương', link: '/hr/payslips' },
         { name: 'Chấm công', link: 'time-keepings' },
         // { name: 'Loại mẫu lương', link: '/hr/payroll-structure-types' },
         // { name: 'Mẫu lương', link: '/hr/payroll-structures' },
