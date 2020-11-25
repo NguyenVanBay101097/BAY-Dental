@@ -177,7 +177,7 @@ namespace Infrastructure.Services
         {
             var salaryPayments = await SearchQuery(x => ids.Contains(x.Id))
                  .Include(x => x.Company)
-                 .Include(x => x.Journal)
+                 .Include("Journal.DefaultDebitAccount")
                  .Include(x => x.Employee)
                  .ToListAsync();
 
