@@ -51,9 +51,6 @@ export class HrSalaryPaymentComponent implements OnInit {
           this.paymentFA.push(fg);
         });
 
-        // thông báo lỗi mấy cái đã chi lương
-        const allIds = this.defaultPara.PayslipIds;
-        const paymentIds = res.value.map(x => x.HrPayslipId);
       });
     }
   }
@@ -100,12 +97,7 @@ export class HrSalaryPaymentComponent implements OnInit {
   }
   onSave() {
     const val = this.paymentFA.value;
-    val.forEach(e => {
-      delete e.Employee;
-      delete e.State;
-      delete e.Type;
-    });
-    this.paymentService.createMultiSalaryPayment(val).subscribe(() => {
+    this.paymentService.actionMultiSalaryPayment(val).subscribe(() => {
       this.notify('success', 'xác nhận thành công');
       this.activeModal.close();
     });
@@ -113,14 +105,22 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   onSaveAndPrint() {
     const val = this.paymentFA.value;
-    val.forEach(e => {
-      delete e.Employee;
-      delete e.State;
-      delete e.Type;
-    });
-    this.paymentService.createMultiSalaryPayment(val).subscribe(() => {
+    this.paymentService.actionMultiSalaryPayment(val).subscribe((res: any) => {
       this.notify('success', 'xác nhận thành công');
       this.activeModal.close();
+      if (!res.value) {
+        this.notify('error', 'không có phiếu chi lương để in');
+      }
+      this.paymentService.onPrint(res.value).subscribe(
+        result => {
+          const popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+          popupWin.document.open();
+
+          popupWin.document.write(result['html']);
+          popupWin.document.close();
+        }
+      );
+
     });
   }
 

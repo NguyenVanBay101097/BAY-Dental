@@ -27,6 +27,7 @@ export class SalaryPaymentSaveDefault {
     Type = null;
     Amount = null;
     Reason = null;
+    HrPayslipId = null;
 }
 
 export class SalaryPaymentIds {
@@ -83,12 +84,4 @@ export class SalaryPaymentService extends ODataService {
     public defaulCreateBy(val: any) {
         return this.http.post(`${this.BASE_URL}${this.tableName}/DefaulCreateBy`, val);
     }
-
-    public createMultiSalaryPayment(val: any[]) {
-        const v = {
-            vals: val
-        };
-        return this.http.post(`${this.BASE_URL}${this.tableName}/CreateMultiSalaryPayment`, v);
-    }
-
 }
