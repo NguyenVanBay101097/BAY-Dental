@@ -66,6 +66,8 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
         this.isExistSalaryPayment = result.IsExistSalaryPayment;
         this.patchValue(result);
+        console.log(result);
+        
       });
     }
   }
