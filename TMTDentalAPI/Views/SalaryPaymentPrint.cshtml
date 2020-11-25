@@ -116,7 +116,10 @@
                         <table class="table border-none">
                             <tr>
                                 <th class="text-center">Người lập phiếu</th>
-                                <th class="text-center">Người nhận</th>
+                                <th class="text-center">
+                                     @(string.Format(info, "{0:dddd}", item.Date)), Ngày @item.Date.Day tháng @item.Date.Month năm @item.Date.Year
+                                    <p>Người nhận</p>
+                                </th>
                             </tr>
                             <tr>
                                 <th></th>
