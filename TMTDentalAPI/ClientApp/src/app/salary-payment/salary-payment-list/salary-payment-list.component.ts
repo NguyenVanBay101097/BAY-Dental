@@ -33,7 +33,7 @@ export class SalaryPaymentListComponent implements OnInit {
   gridSort = [];
   advanceFilter: any = {
     params: {},
-    // expand : "Employee,Journal",
+    expand : "Employee,Journal",
   };
 
   constructor(
