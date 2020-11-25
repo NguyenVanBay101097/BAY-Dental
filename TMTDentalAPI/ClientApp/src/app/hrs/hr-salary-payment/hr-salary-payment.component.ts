@@ -120,10 +120,11 @@ export class HrSalaryPaymentComponent implements OnInit {
       }
       this.paymentService.onPrint(res.value).subscribe(
         result => {
-          const popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
           popupWin.document.open();
 
           popupWin.document.write(result['html']);
+          popupWin.print();
           popupWin.document.close();
         }
       );

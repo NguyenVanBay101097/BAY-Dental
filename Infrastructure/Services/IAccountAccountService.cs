@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<AccountAccount> GetAccountReceivableCurrentCompany();
         Task<AccountAccount> GetAccountPayableCurrentCompany();
         Task<AccountAccount> GetAccountIncomeCurrentCompany();
+        Task<AccountAccount> GetAccount334CurrentCompany();
     }
 }
