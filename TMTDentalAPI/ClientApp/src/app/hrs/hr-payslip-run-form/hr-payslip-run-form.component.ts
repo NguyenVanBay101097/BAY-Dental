@@ -22,12 +22,11 @@ import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.servic
   styleUrls: ['./hr-payslip-run-form.component.css']
 })
 export class HrPayslipRunFormComponent implements OnInit {
-  id: string;
   FormGroup: FormGroup;
   isCompact = false;
   search: string = '';
-  date: Date;
   isExistSalaryPayment:boolean = false;
+  payslipRun: any;
 
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
@@ -38,41 +37,27 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   ngOnInit() {
     this.FormGroup = this.fb.group({
-      name: [null, Validators.required],
+      id: [null],
+      name: [null],
       companyId: null,
       state: 'confirm',
-      date: [null, Validators.required],
+      date: [new Date(), Validators.required],
       slips: this.fb.array([])
     });
-
-    this.route.queryParamMap.subscribe(params => {
-      this.id = params.get('id');
-      this.date = params.get('date')? new Date(params.get('date')) : new Date();
-      if (!this.id) {
-        this.checkExist();
-      } else {
-        this.loadRecord();
-      }
-    });
+    this.checkExist();
   }
 
   get state() { return this.FormGroup.get('state').value; }
+  get id() { return this.FormGroup.get('id').value; }
   get name() { return this.FormGroup.get('name').value; }
   get slipsFormArray() { return this.FormGroup.get('slips') as FormArray; }
   get dateFC() { return this.FormGroup.get('date') as FormArray; }
 
-  loadRecord() {
-    if (this.id) {
-      this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
-        this.isExistSalaryPayment = result.IsExistSalaryPayment;
-        this.patchValue(result);
-        console.log(result);
-        
-      });
-    }
-  }
-
   patchValue(result) {
+    if (!result) {
+      return;
+    }
+    this.isExistSalaryPayment = result.isExistSalaryPayment;
     result.date = new Date(result.date);
     if (result.slips) {
       this.slipsFormArray.clear();
@@ -88,30 +73,24 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.FormGroup.patchValue(result);
   }
 
+  loadRecord() {
+    if (this.id) {
+      this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
+      this.payslipRun = result;
+      this.patchValue(result);
+      });
+    }
+  }
+
   checkExist() {
     const d = this.dateFC.value || new Date();
 
     this.hrPaysliprunService.CheckExist(d).subscribe((res: any) => {
-      if (res && res.id) {
-        this.router.navigateByUrl('hr/payslip-run/form?id=' + res.id);
-      } else {
-        if (this.id) {
-          this.router.navigateByUrl('hr/payslip-run/form?date=' + d.toISOString());
-        } else {
-          this.getDefault();
-        }
+      if (!res) {
+        this.getDefault();
       }
-    });
-  }
-
-  getDefault() {
-    const val = new HrPayslipRunDefaultGet();
-    this.hrPaysliprunService.default(val).subscribe((result: any) => {
-      const d = this.date ? this.date : new Date(result.date);
-      result.date = d;
-      const newName = `Bảng lương tháng ${d.getMonth() + 1} năm ${d.getFullYear()}`;
-      result.name = newName;
-      this.patchValue(result);
+      this.payslipRun = res;
+      this.patchValue(res);
     });
   }
 
@@ -119,6 +98,16 @@ export class HrPayslipRunFormComponent implements OnInit {
     const val = this.FormGroup.value;
     val.date = this.intlService.formatDate(val.date, 'yyyy-MM-ddTHH:mm');
     return val;
+  }
+  getDefault() {
+    const val = new HrPayslipRunDefaultGet();
+    this.hrPaysliprunService.default(val).subscribe((result: any) => {
+      const d = this.dateFC.value || new Date(result.date);
+      result.date = d;
+      const newName = `Bảng lương tháng ${d.getMonth() + 1} năm ${d.getFullYear()}`;
+      result.name = newName;
+      this.patchValue(result);
+    });
   }
 
   ComputeSalary() {
@@ -130,8 +119,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (!this.id) {
       this.hrPaysliprunService.create(val)
         .subscribe((result: any) => {
-          this.hrPaysliprunService.CreatePayslipByRunId(result.id).subscribe(() => {
-            this.router.navigateByUrl('hr/payslip-run/form?id=' + result.id);
+          this.hrPaysliprunService.CreatePayslipByRunId(result.id).subscribe((res: any) => {
+            this.payslipRun = res;
+            this.patchValue(res);
           });
         }, err => {
           console.log(err);
@@ -153,8 +143,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (!this.id) {
       this.hrPaysliprunService.create(val)
         .subscribe((result: any) => {
-          this.hrPaysliprunService.CreatePayslipByRunId(result.id).subscribe(() => {
-            this.router.navigateByUrl('hr/payslip-run/form?id=' + result.id);
+          this.hrPaysliprunService.CreatePayslipByRunId(result.id).subscribe((res: any) => {
+            this.payslipRun = res;
+            this.patchValue(res);
           });
         }, err => {
           console.log(err);

@@ -52,7 +52,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác Nhận</button>
-    <button type="button" class="btn btn-primary" (click)="onSaveAndPrint()" accesskey="s">Xác Nhận Và In</button>
+    <button type="button" [disabled]="isDisable" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác Nhận</button>
+    <button type="button" [disabled]="isDisable" class="btn btn-primary" (click)="onSaveAndPrint()" accesskey="s">Xác Nhận Và In</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>
