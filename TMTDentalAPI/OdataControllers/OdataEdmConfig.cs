@@ -90,10 +90,6 @@ namespace TMTDentalAPI.OdataControllers
             #region SalaryPayments
             builder.EntitySet<SalaryPaymentVm>("SalaryPayments");
 
-            //builder.EntityType<SalaryPaymentVm>()
-            //          .Collection
-            //       .Action("ActionConfirm")
-            //      .CollectionParameter<Guid>("ids");
 
             builder.EntityType<SalaryPaymentVm>()
                       .Collection
@@ -145,7 +141,7 @@ namespace TMTDentalAPI.OdataControllers
 
             #endregion
 
-           
+
 
             return builder.GetEdmModel();
         }

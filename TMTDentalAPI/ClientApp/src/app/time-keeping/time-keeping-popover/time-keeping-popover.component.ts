@@ -99,7 +99,10 @@ export class TimeKeepingPopoverComponent implements OnInit {
     var res = this.formGroup.value;
     if (this.getOverTimeHourType !== 'orther') {
       res.overTimeHour = null;
+    }else{
+      res.overTimeHour = 0;
     }
+    
     this.formGroup.patchValue(res);
   }
 

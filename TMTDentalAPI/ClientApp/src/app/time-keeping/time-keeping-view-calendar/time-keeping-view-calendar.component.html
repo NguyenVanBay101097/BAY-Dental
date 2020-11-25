@@ -22,8 +22,10 @@
             </div>
             <div class="o_cp_sidebar">
                 <div class="float-left">
-                    <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
-                    </app-time-keeping-date-filter>
+                    <div class="filterDatetime">
+                        <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
+                        </app-time-keeping-date-filter>
+                    </div>                
                 </div>
             </div>
         </div>
@@ -98,11 +100,7 @@
                         </div>
                     </td>
                 </tr>
-                <!-- <tr>
-                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
-                       
-                    </td>
-                </tr> -->
+            
             </ng-container>
 
         </tbody>
