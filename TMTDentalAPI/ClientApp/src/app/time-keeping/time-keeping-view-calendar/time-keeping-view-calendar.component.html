@@ -71,13 +71,13 @@
                 <th scope="col" *ngFor="let date of dateList">
                     <div class="o_kanban_header">
                         <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
-                            <!-- <span class="o_column_title">{{date | date: 'EE'}}</span> -->
-                            <span class="o_column_title"> {{date | date: 'dd'}}</span>
+                            <p class="o_column_title_thread">{{date | date: 'E'}}</p>
+                            <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
                         </div>
                         <div class="o_kanban_header_title text-success"
                             *ngIf="date.toDateString() == today.toDateString()">
-                            <!-- <span class="o_column_title">{{date | date: 'EE'}}</span> -->
-                            <span class="o_column_title"> {{date | date: 'dd'}}</span>
+                            <p class="o_column_title_thread">{{date | date: 'E'}}</p>
+                            <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
                         </div>
                     </div>
                 </th>
