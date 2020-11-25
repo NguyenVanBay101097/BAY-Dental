@@ -118,11 +118,11 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            await _payslipRunService.CreatePayslipByRunId(id);
+            var res = await _payslipRunService.CreatePayslipByRunId(id);
 
             _unitOfWork.Commit();
 
-            return NoContent();
+            return Ok(res);
         }
 
         [HttpPost("[action]/{id}")]
