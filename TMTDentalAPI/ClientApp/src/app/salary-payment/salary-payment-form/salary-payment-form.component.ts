@@ -31,6 +31,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   filteredEmployees: EmployeeSimple[] = [];
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
+  submitted = false;
 
   constructor(
     private fb: FormBuilder,
@@ -144,9 +145,11 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }
+
 
     const salaryPayment = Object.assign({}, this.formGroup.value);
     salaryPayment.JournalId = salaryPayment.Journal.id;
@@ -204,5 +207,9 @@ export class SalaryPaymentFormComponent implements OnInit {
         }
       }
     )
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 }
