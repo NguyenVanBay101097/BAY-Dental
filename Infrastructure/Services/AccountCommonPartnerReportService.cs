@@ -325,6 +325,7 @@ namespace Infrastructure.Services
                         PartnerPhone = item.PartnerPhone,
                         ResultSelection = val.ResultSelection,
                         DateFrom = date_from,
+
                         DateTo = date_to
                     });
                 }
@@ -356,8 +357,8 @@ namespace Infrastructure.Services
                         PartnerRef = x.Key.PartnerRef,
                         PartnerPhone = x.Key.PartnerPhone,
                         x.Key.Type,
-                        Debit = x.Sum(s => s.Credit),
-                        Credit = x.Sum(s => s.Debit),
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
                     }).ToListAsync();
 
             foreach (var item in list2)
