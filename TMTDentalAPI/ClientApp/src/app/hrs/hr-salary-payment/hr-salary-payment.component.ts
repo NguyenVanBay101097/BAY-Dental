@@ -14,6 +14,7 @@ import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } fro
 })
 export class HrSalaryPaymentComponent implements OnInit {
   @Input() defaultPara: any;
+  isEnable = true;
 
   filteredJournals: any;
   // paymentFA: FormArray;
@@ -50,8 +51,8 @@ export class HrSalaryPaymentComponent implements OnInit {
           fg.patchValue(e);
           this.paymentFA.push(fg);
         });
-
-      });
+      }
+      );
     }
   }
 
