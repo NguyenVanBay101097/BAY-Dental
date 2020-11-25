@@ -47,6 +47,14 @@
 
   }
 
+  input[value="off"][type="radio"]:checked+label {
+    background-color: #ec173a;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: aliceblue;
+
+  }
+
   .timekeeping-popover-width{
       min-width: 500px !important;
   }
@@ -104,4 +112,12 @@
   padding-left: 5px;
   font-size: 1rem;
   color: #212529;
+}
+
+.danger {
+  background-color: #f12748;
+}
+
+.default {
+  background-color: #007bff;
 }

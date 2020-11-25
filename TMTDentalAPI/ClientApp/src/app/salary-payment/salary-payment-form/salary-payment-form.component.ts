@@ -151,7 +151,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
     salaryPayment.Type = salaryPayment.Type;
-    salaryPayment.CompanyId = this.salaryPayment.CompanyId ? salaryPayment.CompanyId : null;
+    salaryPayment.CompanyId = this.authService.userInfo.companyId;
     // this.activeModal.close(salaryPayment);
     if (this.id) {
       this.salaryPaymentService.update(this.id, salaryPayment).subscribe(

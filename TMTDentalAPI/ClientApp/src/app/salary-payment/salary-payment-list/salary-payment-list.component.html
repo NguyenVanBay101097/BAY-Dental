@@ -54,7 +54,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Phương thức" class="text-right"  width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.journal.Name}}
+                {{dataItem.Journal.Name}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Amount" title="Số tiền" class="text-center" width="120">
@@ -67,13 +67,13 @@
                 {{stateGet(dataItem.State)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-command-column title="Thao tác" width="100">
+        <!-- <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                         class="far fa-edit"></i></button>
                 <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i title="Xóa"
                         class="far fa-trash-alt"></i></button>
             </ng-template>
-        </kendo-grid-command-column>
+        </kendo-grid-command-column> -->
     </kendo-grid>
 </div>
