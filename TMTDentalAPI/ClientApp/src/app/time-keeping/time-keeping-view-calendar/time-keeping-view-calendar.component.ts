@@ -36,6 +36,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   dictEmpCCs: { [id: string]: ChamCongBasic[] } = {};
   searchUpdate = new Subject<string>();
   search: string;
+  date: Date;
 
 
   public today: Date = new Date(new Date().toDateString());
@@ -210,6 +211,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   onDateSearchChange(event) {
     this.monthStart = event.dateFrom;
     this.monthEnd = event.dateTo;
+    this.date = event.date;
     this.getDateMonthList();
   }
 
@@ -423,13 +425,13 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     modalRef.componentInstance.title = "Chấm công nguyên tháng";
     modalRef.result.then(() => {
       var now = new Date(new Date().toDateString());
+      var date = this.date ? this.date : now;
       var res = new TaoChamCongNguyenThangViewModel();
-      res.year = now.getFullYear();
-      res.month = now.getMonth() + 1;
+      res.year = date.getFullYear();
+      res.month = date.getMonth() + 1;
 
       this.timeKeepingService.createFullMonthTimeKeeping(res).subscribe(
-        rs => {
-          debugger
+        rs => {         
           var val = [];
           if(rs.length > 0)
           {

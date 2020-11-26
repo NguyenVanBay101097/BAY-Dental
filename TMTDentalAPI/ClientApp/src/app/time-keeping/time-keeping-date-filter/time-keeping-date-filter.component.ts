@@ -67,7 +67,7 @@ export class TimeKeepingDateFilterComponent implements OnInit {
   }
 
   onChangeData() {
-    this.searchChange.emit({ dateFrom: this.dateFrom, dateTo: this.dateTo });
+    this.searchChange.emit({ dateFrom: this.dateFrom, dateTo: this.dateTo , date: this.otherDate });
     this.myDrop.close();
   }
 }
