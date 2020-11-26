@@ -64,7 +64,9 @@ namespace Infrastructure.Services
         {
             DateTime dayone = new DateTime(val.Date.Value.AddMonths(1).Year, val.Date.Value.AddMonths(1).Month, 1);
             if (DateTime.Now < dayone) 
-                throw new Exception("Bạn không được phép tạo bảng lương "+ val.Date.Value.ToString("MM/yyyy"));
+                throw new Exception(@$"Bảng lương tháng {val.Date.Value.ToString("MM/yyyy")} chỉ có thể tạo từ ngày {dayone.ToString("dd/MM/yyyy")}");
+
+            var ccObj = GetService<IChamCongService>();
 
             var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
             if (isExist == true)
