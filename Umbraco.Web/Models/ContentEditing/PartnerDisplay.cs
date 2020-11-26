@@ -43,9 +43,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty + "_")}/" +
-                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty + "_")}/" +
-                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty + "_")}";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
             }
             set { }
         }
