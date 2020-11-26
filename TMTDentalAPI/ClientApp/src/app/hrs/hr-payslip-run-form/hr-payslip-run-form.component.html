@@ -121,7 +121,7 @@
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td>{{item.get('commissionSalary').value | number }}</td>
+                                                <td class="text-right">{{item.get('commissionSalary').value | number }}</td>
                                                 <td>
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
                                                     </kendo-numerictextbox>

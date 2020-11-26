@@ -369,7 +369,7 @@ namespace Infrastructure.Services
             payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay;
             payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
 
-            payslip.OverTimeDay = Math.Max((emp.LeavePerMonth.GetValueOrDefault() - chamCongs.Where(x => x.Type == "off").Count()), 0);
+            payslip.OverTimeDay = Math.Max(payslip.WorkedDay.Value - (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()), 0);
             payslip.TotalBasicSalary = Math.Round(payslip.WorkedDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault(), 0);
 
             payslip.OverTimeHour = chamCongs.Where(x => x.OverTime == true).Sum(x => x.OverTimeHour.GetValueOrDefault());
