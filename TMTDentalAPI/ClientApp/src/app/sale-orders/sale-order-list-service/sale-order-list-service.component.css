@@ -41,7 +41,6 @@ tbody>.cursor:hover {
 
 .sticky-table {
     width: 100% !important;
-    text-align: center !important;
     border-collapse: separate !important;
     /* Don't collapse */
     border-spacing: 0 !important;
