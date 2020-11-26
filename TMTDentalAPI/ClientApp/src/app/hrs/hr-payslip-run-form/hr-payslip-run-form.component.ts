@@ -68,6 +68,7 @@ export class HrPayslipRunFormComponent implements OnInit {
       this.FormGroup.get('id').reset();
       return;
     }
+    this.checkAll = false;
     this.isExistSalaryPayment = result.isExistSalaryPayment;
     result.date = new Date(result.date);
     if (result.slips) {
