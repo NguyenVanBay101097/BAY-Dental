@@ -20,10 +20,11 @@ export class HrSalaryPaymentComponent implements OnInit {
   filteredJournals: any;
   // paymentFA: FormArray;
   paymentForm: FormGroup;
+  title: string;
 
   constructor(
     private authService: AuthService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private paymentService: SalaryPaymentService,
     private fb: FormBuilder,
     private journalService: AccountJournalService,
