@@ -28,7 +28,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="DateObj">
+                                    <kendo-datepicker formControlName="DateObj" [disableControl]="checkIsDisable(id)">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -38,8 +38,8 @@
                                         Phương thức
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                <td colspan="1" style="width: 100%;" >
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" [disableControl]="checkIsDisable(id)"
                                         #journalCbx formControlName="Journal" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
@@ -51,7 +51,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true" [disableControl]="checkIsDisable(id)"
                                         #employeeCbx formControlName="Employee" [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.Employee.errors && (f.Employee.touched || f.Employee.dirty || submitted)" class="text-danger">
@@ -66,7 +66,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount" [disableControl]="checkIsDisable(id)">
                                     </kendo-numerictextbox>
                                     <div *ngIf="f.Amount.errors && (f.Amount.touched || f.Amount.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.Amount.errors.required">Vui lòng nhập số tiền ứng</div>
@@ -80,7 +80,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control" formControlName="Reason"></textarea>
+                                    <textarea  class="form-control" [disableControl]="checkIsDisable(id)" formControlName="Reason"></textarea>
                                 </td>
                             </tr>
                         </tbody>

@@ -197,6 +197,14 @@ export class SalaryPaymentFormComponent implements OnInit {
     }
   }
 
+  checkIsDisable(id){
+    if(id && this.salaryPayment && this.salaryPayment.State !== 'waiting'){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   printSalaryPayment(ids) {  
     this.salaryPaymentService.onPrint([ids]).subscribe(
       result => {
