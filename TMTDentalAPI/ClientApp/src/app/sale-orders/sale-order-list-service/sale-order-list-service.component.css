@@ -6,14 +6,6 @@
     flex: 1 1 100%;
 }
 
-.sticky-th {
-    position: sticky;
-    z-index: 3;
-    top: -1px;
-    border: 1px solid #dee2e6 !important;
-    background-color: #f9f9f9;
-}
-
 .has-search .form-control {
     padding-left: 2.375rem;
 }
@@ -45,4 +37,33 @@ tbody>.cursor:hover {
 .size-text-14 {
     font-size: 13.5px;
     border-radius: 0;
+}
+
+.sticky-table {
+    width: 100% !important;
+    text-align: center !important;
+    border-collapse: separate !important;
+    /* Don't collapse */
+    border-spacing: 0 !important;
+}
+
+.sticky-table .sticky-th {
+    /* Apply both top and bottom borders to the <th> */
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #f9f9f9 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-td {
+    /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
+    /* Apply a left border on the first <td> or <th> in a row */
+    border-left: 1px solid #dee2e6 !important;
 }
