@@ -5,6 +5,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AccountJournalService } from 'src/app/shared/services/account-journal.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
@@ -26,7 +27,8 @@ export class HrSalaryPaymentComponent implements OnInit {
     private paymentService: SalaryPaymentService,
     private fb: FormBuilder,
     private journalService: AccountJournalService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -120,12 +122,7 @@ export class HrSalaryPaymentComponent implements OnInit {
       }
       this.paymentService.onPrint(res.value).subscribe(
         result => {
-          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
-          popupWin.document.open();
-
-          popupWin.document.write(result['html']);
-          popupWin.print();
-          popupWin.document.close();
+          this.printService.print2(result['html']);
         }
       );
 
@@ -140,6 +137,12 @@ export class HrSalaryPaymentComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: Style, icon: true }
     });
+  }
+
+  onRemovePayment(i) {
+  this.paymentFA.removeAt(i);
+  console.log(this.paymentFA);
+  
   }
 
 }
