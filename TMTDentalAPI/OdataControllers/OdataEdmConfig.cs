@@ -32,6 +32,7 @@ namespace TMTDentalAPI.OdataControllers
             .ReturnsCollectionFromEntitySet<SaleOrderViewModel>("SaleOrders");
 
             #endregion
+
             #region PartnerCategories
             builder.EntitySet<PartnerCategoryViewModel>("PartnerCategories");
 
