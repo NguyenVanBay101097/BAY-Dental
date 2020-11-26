@@ -29,6 +29,8 @@ export class SalaryPaymentFormComponent implements OnInit {
   salaryPayment: any;
   filteredJournals: any = [];
   filteredEmployees: EmployeeSimple[] = [];
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
   submitted = false;
