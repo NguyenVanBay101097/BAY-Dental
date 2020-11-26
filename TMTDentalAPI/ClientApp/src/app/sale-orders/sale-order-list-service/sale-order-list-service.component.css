@@ -10,6 +10,7 @@ th {
     position: sticky;
     top: -1px;
     border: 1px solid #dee2e6;
+    background-color: #f9f9f9;
 }
 
 .has-search .form-control {
