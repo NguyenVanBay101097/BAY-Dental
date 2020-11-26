@@ -6,10 +6,12 @@
     flex: 1 1 100%;
 }
 
-th {
+.sticky-th {
     position: sticky;
+    z-index: 3;
     top: -1px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #dee2e6 !important;
+    background-color: #f9f9f9;
 }
 
 .has-search .form-control {
