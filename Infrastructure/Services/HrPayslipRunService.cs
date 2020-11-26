@@ -379,7 +379,7 @@ namespace Infrastructure.Services
             payslip.Allowance = emp.Allowance.GetValueOrDefault();
 
             payslip.CommissionSalary = commission == null ? 0 : Math.Round(commission.Amount.GetValueOrDefault(), 0);
-            payslip.AmercementMoney = 0;
+            payslip.AmercementMoney = payslip.AmercementMoney ?? 0;
 
             payslip.TotalSalary = payslip.TotalBasicSalary + payslip.OverTimeHourSalary + payslip.OverTimeDaySalary + payslip.Allowance
                + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault()
