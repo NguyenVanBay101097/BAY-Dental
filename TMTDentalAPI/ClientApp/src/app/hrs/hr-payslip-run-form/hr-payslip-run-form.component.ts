@@ -25,8 +25,9 @@ export class HrPayslipRunFormComponent implements OnInit {
   FormGroup: FormGroup;
   isCompact = false;
   search: string = '';
-  isExistSalaryPayment:boolean = false;
+  isExistSalaryPayment: boolean = false;
   payslipRun: any;
+  checkAll = false;
 
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
@@ -86,8 +87,8 @@ export class HrPayslipRunFormComponent implements OnInit {
   loadRecord() {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
-      this.payslipRun = result;
-      this.patchValue(result);
+        this.payslipRun = result;
+        this.patchValue(result);
       });
     }
   }
@@ -188,7 +189,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   }
 
   actionCancel() {
-    if(this.id) {
+    if (this.id) {
       const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Hủy bảng lương';
       modalRef.componentInstance.body = 'Bạn chắc chắn muốn hủy bảng lương?';
@@ -237,7 +238,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.search = this.search.trim().toLocaleLowerCase();
   }
 
-  checkAll(e) {
+  onCheckAll(e) {
     const val = e.target.checked;
     this.slipsFormArray.controls.forEach(control => {
       control.get('isCheck').patchValue(val);
@@ -312,11 +313,18 @@ export class HrPayslipRunFormComponent implements OnInit {
   onPayment() {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
 
-    const modalRef = this.modalService.open(HrSalaryPaymentComponent, {size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
-    modalRef.componentInstance.defaultPara = {PayslipRunId: this.id, PayslipIds: slipIds};
+    modalRef.componentInstance.defaultPara = { PayslipRunId: this.id, PayslipIds: slipIds };
     modalRef.result.then((res: any) => {
       this.loadRecord();
     });
+  }
+
+  onCheckItem(i, val) {
+    if (this.checkAll === true) {
+      this.checkAll = false;
+    }
+    this.slipsFormArray.controls[i].get('isCheck').setValue(val);
   }
 }

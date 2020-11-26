@@ -70,7 +70,7 @@
                                     <thead>
                                         <tr>
                                             <th class="b-sticky-left" style="min-width: 50px;">
-                                                <input class="mr-1" (click)="checkAll($event)" type="checkbox" />
+                                                <input class="mr-1" [(ngModel)]="checkAll" [ngModelOptions]="{standalone: true}" (click)="onCheckAll($event)" type="checkbox" />
                                             </th>
                                             <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
                                             <th [hidden]="isCompact" class="text-right" style="min-width: 120px;">Lương ngày</th>
@@ -96,7 +96,7 @@
                                         <ng-container *ngFor="let item of slipsFormArray.controls; let i = index">
                                             <tr [formGroupName]="i" [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
                                                 <td class="b-sticky-left">
-                                                    <input class="mr-1" formControlName="isCheck" type="checkbox">
+                                                    <input class="mr-1" (click)="onCheckItem(i,$event.target.checked)" formControlName="isCheck" type="checkbox">
                                                 </td>
                                                 <td class="b-sticky-left2">{{item.get('employee').value.name}}</td>
                                                 <td [hidden]="isCompact" class="text-right">{{item.get('daySalary').value | number }}</td>
