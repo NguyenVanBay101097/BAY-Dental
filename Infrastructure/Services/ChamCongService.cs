@@ -42,16 +42,16 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery(x => true);
             if (val.From.HasValue)
-                query = query.Where(x => x.TimeIn >= val.From);
+                query = query.Where(x => x.Date.Value >= val.From);
             if (val.To.HasValue)
-                query = query.Where(x => x.TimeIn <= val.To);
+                query = query.Where(x => x.Date.Value <= val.To);
 
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Take(val.Limit).Skip(val.Offset);
 
-            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.Include(x => x.WorkEntryType).ToListAsync());
+            var items = _mapper.Map<IEnumerable<ChamCongDisplay>>(await query.ToListAsync());
 
             return new PagedResult2<ChamCongDisplay>(totalItems, val.Offset, val.Limit)
             {
@@ -684,40 +684,40 @@ namespace Infrastructure.Services
             foreach (var val in vals)
             {
                 // Thời gian vào không được trống
-                if (!val.TimeIn.HasValue)
-                    throw new Exception("Thời gian vào không được bỏ trống.");
+                //if (!val.TimeIn.HasValue)
+                //    throw new Exception("Thời gian vào không được bỏ trống.");
 
                 // Thời giân vào không được lớn hơn thời gian ra 
                 if (val.TimeOut.HasValue && val.TimeOut < val.TimeIn)
                     throw new Exception("Thời gian ra không được nhỏ hơn thời gian vào");
 
                 // Khoảng thời gian của các chấm công không được trùng lên nhau
-                var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
-                {
-                    var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
-                }
+                //var cc_truoc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && val.TimeIn > x.TimeIn && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                //if (cc_truoc != null && cc_truoc.TimeOut.HasValue && cc_truoc.TimeOut > val.TimeIn)
+                //{
+                //    var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //    throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc {val.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                //}
 
-                if (!val.TimeOut.HasValue)
-                {
-                    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
-                    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
-                    if (cc != null)
-                    {
-                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
-                    }
-                }
-                else
-                {
-                    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
-                    if (cc_sau != null && cc_sau != cc_truoc)
-                    {
-                        var emp = await empObj.GetByIdAsync(val.EmployeeId);
-                        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
-                    }
-                }
+                //if (!val.TimeOut.HasValue)
+                //{
+                //    // Không được phép có 2 chấm công chưa có giờ ra của 1 nhân viên 
+                //    var cc = await SearchQuery(x => x.EmployeeId == val.EmployeeId && !x.TimeOut.HasValue && val.Id != x.Id).FirstOrDefaultAsync();
+                //    if (cc != null)
+                //    {
+                //        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này chưa check-out từ lúc {cc.TimeIn.Value:dd/MM/yyyy HH:mm}");
+                //    }
+                //}
+                //else
+                //{
+                //    var cc_sau = await SearchQuery(x => x.EmployeeId == val.EmployeeId && x.TimeIn < val.TimeOut && x.Id != val.Id).OrderByDescending(x => x.TimeIn).FirstOrDefaultAsync();
+                //    if (cc_sau != null && cc_sau != cc_truoc)
+                //    {
+                //        var emp = await empObj.GetByIdAsync(val.EmployeeId);
+                //        throw new Exception($"Không thể tạo chấm công cho nhân viên {emp.Name}, nhân viên này đã có check-in vào lúc ({val.TimeIn.Value:dd/MM/yyyy HH:mm})");
+                //    }
+                //}
             }
 
         }
@@ -745,14 +745,14 @@ namespace Infrastructure.Services
         public override async Task<IEnumerable<ChamCong>> CreateAsync(IEnumerable<ChamCong> entities)
         {
             await base.CreateAsync(entities);
-            await CheckChamCong(entities);
+            // await CheckChamCong(entities);
             return entities;
         }
 
         public override async Task UpdateAsync(IEnumerable<ChamCong> entities)
         {
             await base.UpdateAsync(entities);
-            await CheckChamCong(entities);
+           // await CheckChamCong(entities);
         }
 
         public async Task<ChamCongDefaultGetResult> DefaultGet(ChamCongDefaultGetPost val)
@@ -790,7 +790,7 @@ namespace Infrastructure.Services
 
             // lấy danh sách ngày nghỉ lễ
             var leaves = await leaveObj.SearchQuery(x => x.CalendarId == calendarId.Value && x.DateFrom <= dateTo && x.DateFrom >= dateFrom).ToListAsync();
-            if (!leaves.Any()) 
+            if (!leaves.Any())
                 return;
 
             // lấy attendanceinterval
@@ -853,7 +853,7 @@ namespace Infrastructure.Services
             var chamcongsToAdd = new List<ChamCong>();
             foreach (var emp in empList)
             {
-                if (emp.StructureType == null) 
+                if (emp.StructureType == null)
                     throw new Exception($"Nhân viên {emp.Name} chưa thiết lập loại mẫu lương!");
 
                 //get chu kì làm việc của ngày đó của nhân viên đó
@@ -875,6 +875,64 @@ namespace Infrastructure.Services
 
             //create list chamcongs
             await CreateAsync(chamcongsToAdd);
+        }
+
+        public async Task<IEnumerable<EmployeeSimple>> CreateFullMonthTimekeeping(TaoChamCongNguyenThangViewModel val)
+        {
+            ///get all employee in company and active true
+            var employeeObj = GetService<IEmployeeService>();
+            var employees = await employeeObj.SearchQuery(x => x.CompanyId == CompanyId && x.Active).ToListAsync();
+            ///get all date in month
+            var dates = GetDates(val.Year, val.Month);
+            //var tasks = employees.Select(x => AddTimeKeepings(x, dates));
+            //var results = await Task.WhenAll(tasks);
+
+            var timekeepings = new List<ChamCong>();
+            foreach (var employee in employees)
+            {
+                var items = await AddTimeKeepings(employee, dates);
+                timekeepings.AddRange(items);
+            }
+
+            await CreateAsync(timekeepings);
+
+            var emps = timekeepings.Select(x => x.Employee).Distinct().ToList();
+            var empsimples = _mapper.Map<IEnumerable<EmployeeSimple>>(emps);
+
+            return empsimples;
+
+        }
+
+        public async Task<IEnumerable<ChamCong>> AddTimeKeepings(Employee emp, IEnumerable<DateTime> dates)
+        {
+            var timekeepings = new List<ChamCong>();
+            var empTimekeepings = await SearchQuery(x => x.EmployeeId == emp.Id).ToListAsync();
+            var empTimekeepingdict = empTimekeepings.ToDictionary(x => x.Date.Value, x => x);
+
+            foreach (var date in dates)
+            {
+
+                if (empTimekeepingdict.ContainsKey(date))
+                    continue;
+
+                timekeepings.Add(new ChamCong
+                {
+                    EmployeeId = emp.Id,
+                    Date = date,
+                    CompanyId = emp.CompanyId.Value,
+                    Type = "work"
+                });
+
+            }
+
+            return timekeepings;
+        }
+
+        public static List<DateTime> GetDates(int year, int month)
+        {
+            return Enumerable.Range(1, DateTime.DaysInMonth(year, month))  // Days: 1, 2 ... 31 etc.
+                             .Select(day => new DateTime(year, month, day)) // Map each day to a date
+                             .ToList(); // Load dates into a list
         }
 
         public override ISpecification<ChamCong> RuleDomainGet(IRRule rule)

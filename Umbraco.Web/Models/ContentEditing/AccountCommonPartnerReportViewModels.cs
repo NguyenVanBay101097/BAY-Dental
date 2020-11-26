@@ -35,6 +35,48 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Display { get; set; }
 
         public string Search { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class AccountCommonPartnerReportSearchV2
+    {
+        public AccountCommonPartnerReportSearchV2()
+        {
+            ResultSelection = "customer_supplier";
+        }
+        /// <summary>
+        /// Từ ngày
+        /// </summary>
+        public DateTime? FromDate { get; set; }
+
+        /// <summary>
+        /// Đến ngày
+        /// </summary>
+        public DateTime? ToDate { get; set; }
+
+        /// <summary>
+        /// Đối tác
+        /// </summary>
+        public IEnumerable<Guid> PartnerIds { get; set; } = new List<Guid>();
+
+        /// <summary>
+        /// 1.customer : force Customer
+        /// 2.supplier : force Supplier
+        /// 3.customer_supplier : All customer and supplier
+        /// </summary>
+        public string ResultSelection { get; set; }
+
+        /// <summary>
+        /// Force company
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class AccountCommonPartnerReportSearchV2Result
+    {
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
+        public decimal InitialBalance { get; set; }
     }
 
     public class AccountCommonPartnerReportItem
@@ -58,6 +100,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
 
         public string ResultSelection { get; set; }
     }

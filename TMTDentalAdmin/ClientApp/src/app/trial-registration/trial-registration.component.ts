@@ -21,7 +21,7 @@ export class TrialRegistrationComponent implements OnInit {
       email: [null, [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       companyName: ['', Validators.required],
-      hostName: ['', [Validators.required, Validators.pattern('^[a-z0-9]*$'), Validators.minLength(6)]],
+      hostName: ['', [Validators.required, Validators.pattern('^[a-z0-9]*$'), Validators.minLength(4)]],
       userName: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: null,

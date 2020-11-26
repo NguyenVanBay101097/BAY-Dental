@@ -54,7 +54,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CompanyName { get; set; }
 
         [Required]
-        [MinLength(6)]
+        [MinLength(4)]
         public string Hostname { get; set; }
 
         [Required]

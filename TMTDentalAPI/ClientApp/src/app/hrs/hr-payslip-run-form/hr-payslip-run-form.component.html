@@ -1,188 +1,150 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel o_breadcrumb_full">
-        <ol class="breadcrumb">
-            <li>
-                <a routerLink="/hr/payslip-runs">Đợt lương </a>
-            </li>
-            <li class="active">
-                <span *ngIf="itemId">{{paysliprun.name}}</span>
-                <span *ngIf="!itemId">Mới</span>
-            </li>
-        </ol>
-    </div>
-</div>
-
-<div class="o_content">
-    <form class="o_form_view" [formGroup]="myForm">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons">
-                    <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
-                        (click)="addPayslips()">
-                        Tạo phiếu lương
-                    </button>
-                    <button *ngIf="['confirm'].indexOf(paysliprun.state) !== -1" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionDone()">
-                        Xác nhận
-                    </button>
-                    <button type="button" accesskey="1"
-                        *ngIf="itemId && ['draft', 'confirm'].indexOf(paysliprun.state) !== -1"
-                        class="btn btn-primary btn-sm" (click)="addPayslips()">
-                        Tạo phiếu lương
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
-                        *ngIf="['draft'].indexOf(paysliprun.state) !== -1" (click)="onSave()">
-                        Lưu nháp
-                    </button>
-                    <button *ngIf="['done', 'confirm'].indexOf(paysliprun.state) !== -1" type="button"
-                        class="btn btn-danger btn-sm" (click)="actionCancel()">
-                        Hủy đợt lương
-                    </button>
-                    <button *ngIf="itemId" type="button" class="btn btn-secondary btn-sm" (click)="createNew()">
-                        Thêm mới
-                    </button>
-                </div>
-                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="paysliprun.state !== 'done'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paysliprun.state === 'done'"
-                        [class.btn-secondary]="paysliprun.state !== 'done'" type="button">
-                        Hoàn thành
-                    </button>
-                    <button [disabled]="paysliprun.state !== 'confirm'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paysliprun.state === 'confirm'"
-                        [class.btn-secondary]="paysliprun.state !== 'confirm'" type="button">
-                        Chờ xác nhận
-                    </button>
-                    <button [disabled]="paysliprun.state !== 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paysliprun.state === 'draft'"
-                        [class.btn-secondary]="paysliprun.state !== 'draft'" type="button">
-                        Nháp
-                    </button>
+<div [formGroup]="FormGroup">
+    <div class="o_cp_controller">
+        <div class="o_control_panel o_breadcrumb_full">
+            <ol class="breadcrumb">
+                <li class="active">
+                    <span>Bảng lương nhân viên</span>
+                </li>
+            </ol>
+            <div class="mt-2 mb-1">
+                <div class="d-flex">
+                    <label class="d-inline-flex align-items-center mr-2">Tháng</label>
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" formControlName="date" class="mr-2" [bottomView]="'year'" [format]="'MM yyyy'"></kendo-datepicker>
                 </div>
             </div>
-            <div class="o_form_sheet">
-                <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Tên </label>
-                    <h1>
-                        <input type="text" [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1"
-                            class="form-control" required formControlName="name" />
-                        <span *ngIf="['confirm','done'].indexOf(paysliprun.state) !== -1">{{paysliprun.name}}</span>
-                    </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty )" class="text-danger">
-                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+        </div>
+    </div>
+
+    <div class="o_content w-100">
+        <div class="o_form_view w-100">
+            <div class="o_form_sheet_bg w-100">
+                <div class="o_form_statusbar" *ngIf="payslipRun">
+                    <div class="o_statusbar_buttons">
+                        <!-- <i [routerLink]="'/hr/payslip-runs'" class="fas fa-arrow-circle-left text-primary btn-icon"></i> -->
+                        <i (click)="printAllEmpSalary()" class="fas fa-print text-primary btn-icon"></i>
+                        <button type="button" *ngIf="state != 'done'" (click)="onSave()" class="btn btn-sm btn-primary">Lưu</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="onConfirm()" class="btn btn-sm btn-primary">Xác nhận</button>
+                        <button type="button" (click)="onExport()" class="btn btn-sm btn-primary">Xuất file</button>
+                        <button *ngIf="state === 'done'" type="button" (click)="onPayment()" class="btn btn-sm btn-primary">Chi lương</button>
+                        <button *ngIf="state === 'confirm'" type="button" (click)="ComputeSalary()" class="btn btn-sm btn-primary">Làm mới</button>
+                        <button *ngIf="state === 'done' && !isExistSalaryPayment" type="button" (click)="actionCancel()" class="btn btn-sm btn-danger">Hủy</button>
+                    </div>
+                    <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                        <button [disabled]="state !== 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'done'" [class.btn-secondary]="state !== 'done'" type="button">
+                            Xác nhận
+                        </button>
+                        <button [disabled]="state !== 'confirm'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'confirm'" [class.btn-secondary]="state !== 'confirm'" type="button">
+                            Chờ xác nhận
+                        </button>
+                        <!-- <button [disabled]="state !== 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="state === 'draft'" [class.btn-secondary]="state !== 'draft'" type="button">
+              Nháp
+            </button> -->
                     </div>
                 </div>
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ngày bắt đầu
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateStartObj"
-                                        [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
-                                    </kendo-datepicker>
-                                    <span
-                                        [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateStart | date: 'dd/MM/yyyy'}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ngày kết thúc
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateEndObj"
-                                        [class.d-none]="['confirm','done'].indexOf(paysliprun.state) !== -1">
-                                    </kendo-datepicker>
-                                    <span
-                                        [class.d-none]="paysliprun.state == 'draft'">{{paysliprun.dateEnd | date: 'dd/MM/yyyy'}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="o_content" [class.d-none]="paysliprun.state == 'draft'">
-                    <h5 class="o_form_label">
-                        Danh sách phiếu lương
-                    </h5>
-                    <kendo-grid [data]="payslipGridData" [pageable]="true" [pageSize]="limit" [skip]="skip"
-                        [loading]="loading" (pageChange)="pageChange($event)" class="mt-2">
+                <div class="o_form_sheet w-100 mw-100" [ngClass]="{'my-0 d-flex align-items-center': !payslipRun}">
+                    <div class="o_content w-100">
+                        <ng-container *ngIf="!payslipRun; else elseTemplate">
+                            <div class="text-center">
+                                <p>
+                                    <label for="">Bảng lương tháng
+                                                <span class="font-weight-600">{{dateFC.value.getMonth()+1}}/{{dateFC.value?.getFullYear()}}</span> chưa
+                                                có. Bạn có thể khởi tạo bảng</label> <br>
+                                    <label for="">lương từ ngày <span class="font-weight-600"> {{ dateNext | date:'dd/MM/yyyy'}}</span></label> <br>
+                                    <label for="">Vui lòng bấm nút <span class="font-weight-600">"Tính Lương"</span> bên dưới để khởi tạo.</label>
+                                </p>
+                                <div class="d-flex justify-content-center">
+                                    <button *ngIf="!payslipRun" (click)="ComputeSalary()" class="btn btn-sm btn-info">Tính lương</button>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #elseTemplate>
+                            <div class="d-flex">
+                                <input placeholder="Tìm kiếm nhân viên..." [(ngModel)]="search" (ngModelChange)="onSearchEmployee($event)" [ngModelOptions]="{standalone: true}" type="text" style="max-width: 385px; border-radius: 0;" class="form-control mb-1">
+                                <div class="form-check ml-auto">
+                                    <input [(ngModel)]="isCompact" [ngModelOptions]="{standalone: true}" type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <label class="form-check-label" for="exampleCheck1">Bảng lương rút gọn</label>
+                                </div>
+                            </div>
+                            <div class="overflow-auto">
+                                <table class="table b-table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="b-sticky-left" style="min-width: 50px;">
+                                                <input class="mr-1" [(ngModel)]="checkAll" [ngModelOptions]="{standalone: true}" (click)="onCheckAll($event)" type="checkbox" />
+                                            </th>
+                                            <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
+                                            <th [hidden]="isCompact" class="text-right" style="min-width: 120px;">Lương ngày</th>
+                                            <th [hidden]="isCompact" style="min-width: 90px;">Số ngày</th>
+                                            <th class="text-right" style="min-width: 120px;">Lương</th>
+                                            <th [hidden]="isCompact" style="min-width: 90px;">Tăng ca</th>
+                                            <th class="text-right" style="min-width: 135px;">Lương tăng ca</th>
+                                            <th [hidden]="isCompact" style="min-width: 145px;">Ngày làm thêm</th>
+                                            <th class="text-right" style="min-width: 150px;">Lương làm thêm</th>
+                                            <th class="text-right" style="min-width: 160px;">Phụ cấp xác định</th>
+                                            <th style="min-width: 150px;">Phụ cấp khác</th>
+                                            <th style="min-width: 160px;">Thưởng</th>
+                                            <th style="min-width: 160px;">Phụ cấp lễ tết</th>
+                                            <th class="text-right" style="min-width: 100px;">Hoa hồng</th>
+                                            <th style="min-width: 150px;">Phạt</th>
+                                            <th class="text-right" [hidden]="isCompact" style="min-width: 120px;">Tổng lương</th>
+                                            <th class="text-right" style="min-width: 100px;">Tạm ứng</th>
+                                            <th class="text-right" class="b-sticky-right2" style="min-width: 100px;">Thực lĩnh</th>
+                                            <th class="b-sticky-right">Phiếu chi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="slips">
+                                        <ng-container *ngFor="let item of slipsFormArray.controls; let i = index">
+                                            <tr [formGroupName]="i" [ngClass]="{'hidden': this.search && this.search.trim() !== '' && !item.get('employeeNameSearch').value.includes(this.search)}">
+                                                <td class="b-sticky-left">
+                                                    <input class="mr-1" (click)="onCheckItem(i,$event.target.checked)" formControlName="isCheck" type="checkbox">
+                                                </td>
+                                                <td class="b-sticky-left2">{{item.get('employee').value.name}}</td>
+                                                <td [hidden]="isCompact" class="text-right">{{item.get('daySalary').value | number }}</td>
+                                                <td [hidden]="isCompact" class="text-right">{{item.get('workedDay').value | number }}</td>
+                                                <td class="text-right">{{item.get('totalBasicSalary').value | number }}</td>
+                                                <td [hidden]="isCompact">{{item.get('overTimeHour').value | number }}
+                                                </td>
+                                                <td class="text-right">{{item.get('overTimeHourSalary').value| number }}</td>
+                                                <td [hidden]="isCompact">{{item.get('overTimeDay').value | number }}
+                                                </td>
+                                                <td class="text-right">{{item.get('overTimeDaySalary').value | number }}</td>
+                                                <td class="text-right">{{item.get('allowance').value | number }}</td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="otherAllowance" [format]="'n0'" [min]="0">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="rewardSalary" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="holidayAllowance" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td>{{item.get('commissionSalary').value | number }}</td>
+                                                <td>
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="autoCorrect">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td class="text-right" [hidden]="isCompact">{{item.get('totalSalary').value | number }}
+                                                </td>
+                                                <td class="text-right">{{item.get('advancePayment').value | number}}</td>
+                                                <td class="b-sticky-right2 text-right">{{item.get('netSalary').value | number}}
+                                                </td>
+                                                <td class="b-sticky-right">
+                                                    {{item.get('salaryPayment').value? item.get('salaryPayment').value?.name : 'Chưa chi' }}
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ng-template>
 
-                        <kendo-grid-column field="number" title="Số phiếu">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <a class="text-primary" *ngIf="dataItem.id"
-                                    (click)="detailItem(dataItem.id)">{{dataItem.number}}</a>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="employeeName" title="Nhân viên">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.employeeName }}
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="dateFrom" title="Từ ngày">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.dateFrom | date:"shortDate" }}
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="dateTo" title="Đến ngày">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.dateTo | date:"shortDate"}}
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="state" title="Trạng thái">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <span>{{convertState(dataItem.state)}}</span>
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column [headerStyle]="{'text-align': 'right'}" class="text-right"
-                            footerClass="text-right font-weight-bold" title="Tổng tiền">
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.totalAmount | number}}
-                            </ng-template>
-                        </kendo-grid-column>
-                        <kendo-grid-column field="id">
-                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                                Thao tác
-                            </ng-template>
-                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <button kendoButton (click)="detailItem(dataItem.id)"
-                                    class="btn btn-success btn-sm mr-2"><i title="Sửa" class="far fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm" title="Xóa" (click)="removelItem(dataItem.id)">
-                                    <span class="far fa-trash-alt"></span></button>
-                            </ng-template>
-                        </kendo-grid-column>
-                    </kendo-grid>
+                    </div>
                 </div>
-                <div class="o_group" [class.d-none]="paysliprun.state == 'draft'">
-                    <table class="o_group o_inner_group o_group_col_8">
-                    </table>
-                    <table class="o_group o_inner_group oe_subtotal_footer oe_right o_group_col_4">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label pb-0 pl-3">
-                                    <label class="o_form_label oe_subtotal_footer_separator">
-                                        Tổng tiền
-                                    </label>
-                                </td>
-                                <td colspan="1">
-                                    <span
-                                        class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{total | number}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+
             </div>
-
         </div>
-    </form>
+    </div>
 </div>

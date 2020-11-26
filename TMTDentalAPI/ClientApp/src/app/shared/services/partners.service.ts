@@ -39,4 +39,11 @@ export class PartnersService extends ODataService {
         });
     }
 
+    public getSaleOrderByPartner(val: any) {
+        return this.getFunction(val.id, val.func, val.options)
+    }
+
+    public getSaleOrderLineByPartner(val: any) {
+        return this.getFunction(val.id, val.func)
+    }
 }

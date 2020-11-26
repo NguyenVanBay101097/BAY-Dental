@@ -16,4 +16,6 @@ export class PartnerOverviewReportComponent implements OnInit {
   ngOnInit() {
 
   }
+
+  
 }

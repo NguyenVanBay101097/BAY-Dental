@@ -27,6 +27,9 @@ namespace TMTDentalAPI.OdataControllers
             .Function("GetDisplay")
             .Returns<PartnerDisplay>();
 
+            builder.EntityType<PartnerViewModel>()
+            .Function("GetSaleOrders")
+            .ReturnsCollectionFromEntitySet<SaleOrderViewModel>("SaleOrders");
 
             #endregion
             #region PartnerCategories
@@ -36,7 +39,6 @@ namespace TMTDentalAPI.OdataControllers
 
             #region Products
             builder.EntitySet<ProductViewModel>("Products");
-
             #endregion
 
             #region Employees
@@ -78,6 +80,45 @@ namespace TMTDentalAPI.OdataControllers
                 .Collection
              .Function("DefaultGet")
              .Returns<SaleOrderDisplay>();
+
+            builder.EntityType<SaleOrderViewModel>()
+             .Function("GetSaleOrderLines")
+             .Returns<SaleOrderDisplay>();
+
+            #endregion
+
+            #region SalaryPayments
+            builder.EntitySet<SalaryPaymentVm>("SalaryPayments");
+
+
+            builder.EntityType<SalaryPaymentVm>()
+                      .Collection
+                   .Action("ActionConfirm")
+                    .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                     .Collection
+                  .Action("ActionCancel")
+                  .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Action("CreateMultiSalaryPayment")
+                 .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+                   .Collection
+                .Action("PrintSalaryPayment")
+                 .Returns<bool>();
+
+            builder.EntityType<SalaryPaymentVm>()
+               .Collection
+            .Action("DefaulCreateBy")
+            .ReturnsCollection<SalaryPaymentDisplay>();
+            #endregion
+
+            #region AccountJournal
+            builder.EntitySet<AccountJournalViewModel>("AccountJournals");
             #endregion
 
             #region ComplexType
@@ -93,8 +134,13 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
             builder.ComplexType<ToothCategoryBasic>();
-           
+            builder.ComplexType<SalaryPaymentDisplay>();
+            builder.ComplexType<EmployeeSimple>();
+            builder.ComplexType<AccountJournalSimple>();
+
+
             #endregion
+
 
 
             return builder.GetEdmModel();

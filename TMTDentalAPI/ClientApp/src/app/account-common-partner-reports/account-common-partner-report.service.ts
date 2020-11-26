@@ -8,6 +8,7 @@ export class AccountCommonPartnerReportItem {
     partnerRef: string;
     partnerPhone: string;
     begin: number;
+    basicSalary: number;
     debit: number;
     credit: number;
     end: number;
@@ -34,6 +35,18 @@ export class AccountCommonPartnerReportSearch {
     resultSelection: string;
     display: string;
     search: string;
+    companyId: string;
+}
+
+export class AccountCommonPartnerReportSearchV2 {
+    constructor() {
+        this.partnerIds = [];
+    }
+    fromDate: string;
+    toDate: string;
+    partnerIds: string[];
+    resultSelection: string;
+    companyId: string;
 }
 
 export class AccountCommonPartnerReport {
@@ -53,8 +66,16 @@ export class AccountCommonPartnerReportService {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSummary", val);
     }
 
-    getSummaryByPartner(id: string): Observable<AccountCommonPartnerReport> {
-        return this.http.get<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryByPartner/" + id);
+    getSummaryPartner(val: AccountCommonPartnerReportSearchV2): Observable<AccountCommonPartnerReport> {
+        return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
+    }
+
+    getReportSalaryEmployee(val: AccountCommonPartnerReportSearch): Observable<AccountCommonPartnerReportItem[]> {
+        return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSalaryReportEmployee", val);
+    }
+
+    getReportSalaryEmployeeDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {
+        return this.http.post<AccountCommonPartnerReportItemDetail[]>(this.baseApi + this.apiUrl + "/ReportSalaryEmployeeDetail", val);
     }
 
     getDetail(val: AccountCommonPartnerReportItem): Observable<AccountCommonPartnerReportItemDetail[]> {

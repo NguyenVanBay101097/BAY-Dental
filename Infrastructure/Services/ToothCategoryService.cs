@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ToothCategoryBasic>> GetAllBasic()
         {
-            var categories = await SearchQuery(orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
+            var categories = await SearchQuery(orderBy: x => x.OrderBy(s => s.Sequence)).ToListAsync();
             var res = _mapper.Map<IEnumerable<ToothCategoryBasic>>(categories);
             return res;
         }

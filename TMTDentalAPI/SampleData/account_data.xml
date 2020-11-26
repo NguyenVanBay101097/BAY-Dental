@@ -258,8 +258,9 @@
       <field name="code">SALARY</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_642" />
-      <field name="default_credit_account_id" ref="account.data_account_334" />
+      <field name="default_credit_account_id" ref="account.data_account_642" />
     </record>
+
 
     <!-- ir.property -->
     <record model="ir.property" id="property_account_income_categ_id">

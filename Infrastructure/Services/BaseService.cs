@@ -110,6 +110,25 @@ namespace Infrastructure.Services
             return await _repository.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<TEntity>> GetList(IEnumerable<Guid> ids, int limit = 200)
+        {
+            var ids_distinct = ids.Distinct().ToList();
+
+            var offset = 0;
+            var sub_ids = ids_distinct.Skip(offset).Take(limit).ToList();
+            var res = new List<TEntity>();
+            while (sub_ids.Count > 0)
+            {
+                var items = await SearchQuery(x => sub_ids.Contains(x.Id)).ToListAsync();
+                res.AddRange(items);
+
+                offset += limit;
+                sub_ids = ids_distinct.Skip(offset).Take(limit).ToList();
+            }
+
+            return res;
+        }
+
         public async Task<IReadOnlyList<TEntity>> ListAsync(ISpecification<TEntity> spec)
         {
             return await _repository.ListAsync(spec);

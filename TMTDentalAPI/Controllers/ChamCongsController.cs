@@ -98,6 +98,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ChamCongSave val)
         {
             var chamcong = _mapper.Map<ChamCong>(val);
+            chamcong.CompanyId = CompanyId;
             await _unitOfWork.BeginTransactionAsync();
             await _chamCongService.CreateAsync(chamcong);
             _unitOfWork.Commit();
@@ -150,6 +151,17 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return Ok();
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.ChamCong.Create")]
+        public async Task<IActionResult> FullMonthTimeKeeping(TaoChamCongNguyenThangViewModel val)
+        {
+            _unitOfWork.BeginTransaction();
+            var res = await _chamCongService.CreateFullMonthTimekeeping(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
 
         //[HttpPost("[action]")]
         //public async Task<IActionResult> ExportExcelFile(employeePaged val)

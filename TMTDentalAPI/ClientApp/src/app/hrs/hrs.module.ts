@@ -27,6 +27,10 @@ import { EmployeeService } from '../employees/employee.service';
 import { HrPayslipDateFilterComponent } from './hr-payslip-date-filter/hr-payslip-date-filter.component';
 import { HrSalaryConfigCreateUpdateComponent } from './hr-salary-config-create-update/hr-salary-config-create-update.component';
 import { HrSalaryConfigService } from './hr-salary-config.service';
+import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-report-list.component';
+import { HrSalaryReportDetailComponent } from './hr-salary-report-detail/hr-salary-report-detail.component';
+import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
+import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.component';
 
 @NgModule({
   declarations: [
@@ -43,11 +47,15 @@ import { HrSalaryConfigService } from './hr-salary-config.service';
     SelectEmployeeDialogComponent,
     HrPayslipDateFilterComponent,
     HrSalaryConfigCreateUpdateComponent,
+    HrSalaryReportListComponent,
+    HrSalaryReportDetailComponent,
+    HrSalaryPaymentComponent,
   ],
   imports: [
     CommonModule,
     HrsRoutingModule,
     MyCustomKendoModule,
+    AccountCommonPartnerReportsModule,
     ReactiveFormsModule,
     FormsModule,
     LayoutModule,
@@ -64,7 +72,7 @@ import { HrSalaryConfigService } from './hr-salary-config.service';
   ],
   entryComponents: [
     HrSalaryRuleCrudDialogComponent, HrPayrollStructureTypeCreateComponent,
-    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent
+    HrPayslipRunConfirmDialogComponent, SelectEmployeeDialogComponent, HrSalaryPaymentComponent
   ]
 })
 export class HrsModule { }

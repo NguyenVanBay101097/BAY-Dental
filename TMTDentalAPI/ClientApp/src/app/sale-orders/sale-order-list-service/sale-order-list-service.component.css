@@ -10,7 +10,6 @@ th {
     position: sticky;
     top: -1px;
     border: 1px solid #dee2e6;
-    background-color: #f9f9f9;
 }
 
 .has-search .form-control {
@@ -31,4 +30,17 @@ th {
     text-align: center;
     pointer-events: none;
     color: #aaa;
+}
+
+tbody>.cursor:hover {
+    background-color: #c1c1c1;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.size-text-14 {
+    font-size: 13.5px;
+    border-radius: 0;
 }

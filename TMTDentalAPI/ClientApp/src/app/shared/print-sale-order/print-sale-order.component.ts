@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, SimpleChange } from '@angular/core';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 
 @Component({
   selector: 'app-print-sale-order',
@@ -17,7 +16,7 @@ export class PrintSaleOrderComponent implements OnInit {
     this.saleOrderPrint = item;
     setTimeout(() => {
       var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
-      var popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+      var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
       popupWin.document.open();
       popupWin.document.write(`
           <html>
@@ -26,7 +25,19 @@ export class PrintSaleOrderComponent implements OnInit {
               <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
               <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
             </head>
-        <body onload="window.print();window.close()">${printContents}</body>
+          <body>
+          ${printContents}
+          <script defer>
+            function triggerPrint(event) {
+              window.removeEventListener('load', triggerPrint, false);
+              setTimeout(function() {
+                window.print();
+                setTimeout(function() { window.close(); }, 0);
+              }, 0);
+            }
+            window.addEventListener('load', triggerPrint, false);
+          </script>
+          </body>
           </html>`
       );
       popupWin.document.close();

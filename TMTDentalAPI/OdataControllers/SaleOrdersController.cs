@@ -48,6 +48,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [HttpGet]
         public SingleResult<SaleOrderViewModel> Get([FromODataUri] Guid key)
         {
             var results = _mapper.ProjectTo<SaleOrderViewModel>(_saleOrderService.SearchQuery(x => x.Id == key));
@@ -58,6 +59,18 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
         {
             var res = await _saleOrderService.GetDisplayAsync(key);
+            if (res == null)
+            {
+                return NotFound();
+            }
+            return Ok(res);
+        }
+
+        [EnableQuery]
+        [HttpGet]
+        public async Task<IActionResult> GetSaleOrderLines([FromODataUri] Guid key)
+        {
+            var res = await _saleOrderService.GetSaleOrderLineBySaleOrder(key);
             if (res == null)
             {
                 return NotFound();
@@ -111,5 +124,6 @@ namespace TMTDentalAPI.OdataControllers
 
             return NoContent();
         }
+
     }
 }

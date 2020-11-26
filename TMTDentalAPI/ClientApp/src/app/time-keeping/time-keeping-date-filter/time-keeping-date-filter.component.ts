@@ -35,6 +35,7 @@ export class TimeKeepingDateFilterComponent implements OnInit {
       { text: 'Tháng này', value: this.currentDate },
       { text: 'Tháng trước', value: this.lastDate }
     ];
+    this.otherDate = this.currentDate;
   }
 
   onSelectMonth(e) {
@@ -66,7 +67,7 @@ export class TimeKeepingDateFilterComponent implements OnInit {
   }
 
   onChangeData() {
-    this.searchChange.emit({ dateFrom: this.dateFrom, dateTo: this.dateTo });
+    this.searchChange.emit({ dateFrom: this.dateFrom, dateTo: this.dateTo , date: this.otherDate });
     this.myDrop.close();
   }
 }

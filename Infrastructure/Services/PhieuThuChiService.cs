@@ -325,5 +325,27 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        public async Task<IEnumerable<ReportPhieuThuChi>> ReportPhieuThuChi(PhieuThuChiSearch val)
+        {
+            var query = SearchQuery(x => x.State == "posted");
+            if (!string.IsNullOrEmpty(val.Type) && (val.Type == "chi" || val.Type == "chi"))
+                query = query.Where(x => x.Type.Equals(val.Type));
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
+            var list = await query.Select(x => new ReportPhieuThuChi
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Amount = x.Amount,
+                Type = x.Type
+            }).ToListAsync();
+            return list;
+        }
     }
 }

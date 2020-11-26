@@ -1093,6 +1093,13 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var res = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            return res;
+        }
+
         public async Task<SaleOrder> GetSaleOrderWithLines(Guid id)
         {
             return await SearchQuery(x => x.Id == id)

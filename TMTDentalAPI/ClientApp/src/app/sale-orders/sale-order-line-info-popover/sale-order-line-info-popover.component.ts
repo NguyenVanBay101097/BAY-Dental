@@ -18,7 +18,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   hamList: { [key: string]: {} };
   teethSelected: ToothDisplay[] = [];
   listTeeths: ToothDisplay[] = [];
-  filteredToothCategories: ToothCategoryBasic[] = [];
+  filteredToothCategories: any[] = [];
   toolCateg: ToothCategoryBasic = new ToothCategoryBasic();
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
@@ -82,12 +82,12 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   loadToothCategories() {
     return this.toothCategoryService.getAll().subscribe(
       result => {
-        this.filteredToothCategories = result;
+        this.filteredToothCategories = result;      
         if (this.line.get('toothCategory').value == null) {
-          this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[1])
-          this.onChangeToothCategory(this.filteredToothCategories[1]);
-          this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[1].id);
-          this.line.get('toothCategory').patchValue(this.filteredToothCategories[1]);
+          this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[0])
+          this.onChangeToothCategory(this.filteredToothCategories[0]);
+          this.line.get('toothCategoryId').patchValue(this.filteredToothCategories[0].id);
+          this.line.get('toothCategory').patchValue(this.filteredToothCategories[0]);
         }
       }
     );

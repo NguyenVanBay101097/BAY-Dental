@@ -1,8 +1,10 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
-import { AccountCommonPartnerReport, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AppointmentDisplay } from 'src/app/appointment/appointment';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { PromotionProgramBasic, PromotionProgramPaged, PromotionProgramService } from 'src/app/promotion-programs/promotion-program.service';
@@ -24,21 +26,28 @@ export class PartnerOverviewComponent implements OnInit {
   customerAppointment: AppointmentDisplay;
   saleQuotations: SaleOrderLineDisplay;
   promotions: SaleCouponProgramBasic[] = [];
-
+  saleOrders: SaleOrderBasic[] = [];
   limit = 20;
   listSaleOrder: SaleOrderBasic[] = [];
   accountCommonPartnerReport: AccountCommonPartnerReport = new AccountCommonPartnerReport();
   skip = 0;
   search: string;
 
+  //for report
+  debit: number = 0;
+  credit: number = 0;
+  saleCount: number = 0;
+
   constructor(
+    private authService: AuthService,
     private activeRoute: ActivatedRoute,
     private PartnerOdataService: PartnersService,
     private partnerService: PartnerService,
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
     private saleOrderLineService: SaleOrderLineService,
     private saleOrderService: SaleOrderService,
-    private saleCouponProgramService: SaleCouponProgramService
+    private saleCouponProgramService: SaleCouponProgramService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -47,6 +56,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadCustomerAppointment();
     // this.getSaleQoutation();
     // this.loadPromotion();
+    this.getSaleOrders();
     this.loadReport();
   }
 
@@ -63,6 +73,31 @@ export class PartnerOverviewComponent implements OnInit {
       });
   }
 
+  getSaleOrders() {
+    var val = {
+      id: this.partnerId,
+      func: "GetSaleOrders",
+      options: {
+        params: new HttpParams().set('$count', 'true').set('$orderby', 'dateOrder desc')
+      }
+    }
+
+    this.PartnerOdataService.getSaleOrderByPartner(val).subscribe(
+      result => {
+        this.saleOrders = result['value'];
+        this.saleCount = result['@odata.count'];
+      }
+    )
+  }
+
+  createNewSaleOrder() {
+    this.router.navigate(['sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
+  }
+
+  onDeleteSaleOrder() {
+    this.getSaleOrders();
+  }
+
   getSaleQoutation() {
     const val = new SaleOrderLinesPaged();
     val.Offset = 0;
@@ -74,13 +109,16 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   loadReport() {
-    this.accountCommonPartnerReportService.getSummaryByPartner(this.partnerId).subscribe(
+    var val = new AccountCommonPartnerReportSearchV2();
+    val.partnerIds.push(this.partnerId);
+    val.companyId = this.authService.userInfo.companyId;
+    val.resultSelection = "customer";
+    this.accountCommonPartnerReportService.getSummaryPartner(val).subscribe(
       result => {
-        this.accountCommonPartnerReport = result
+        this.debit = result.debit;
+        this.credit = result.credit;
       }
     )
-    this.GetPartner();
-    this.loadCustomerAppointment();
   }
 
   loadPromotion() {
@@ -89,7 +127,7 @@ export class PartnerOverviewComponent implements OnInit {
     val.offset = 0;
     val.programType = 'promotion_program';
     this.saleCouponProgramService.getPaged(val).subscribe((res: any) => {
-    this.promotions = res.items;
+      this.promotions = res.items;
     });
   }
 

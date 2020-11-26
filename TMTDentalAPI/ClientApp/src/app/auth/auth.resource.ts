@@ -101,4 +101,8 @@ export class AuthResource {
     logout(): void {
         this.isLoggedIn = false;
     }
+
+    getPermission() {
+        return this.http.get(this.baseApi + 'api/Account/GetPermission');
+    }
 }
