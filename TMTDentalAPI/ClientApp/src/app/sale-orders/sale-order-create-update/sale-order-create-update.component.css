@@ -56,16 +56,34 @@ th {
     border-left: 1px solid #dee2e6 !important;
 }
 
-.b-sticky-left {
+.b-sticky-left-th {
     position: sticky;
     left: 0;
     border: 1px solid #dee2e6;
     z-index: 3;
+    background-color: #6c757d!important;
 }
 
-.b-sticky-right {
+.b-sticky-right-th {
     position: sticky;
     right: 0;
+    background-color: #6c757d!important;
     border: 1px solid #dee2e6;
+    z-index: 3;
+}
+
+.b-sticky-left-td {
+    position: sticky;
+    left: 0;
+    border: 1px solid #f9f9f9;
+    z-index: 3;
+    background-color: white;
+}
+
+.b-sticky-right-td {
+    position: sticky;
+    right: 0;
+    background-color: white;
+    border: 1px solid #f9f9f9;
     z-index: 3;
 }
