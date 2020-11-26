@@ -410,12 +410,12 @@ namespace Infrastructure.Services
                 payments.Add(new SalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),
-                    Date = slipRun.Date.Value,
+                    Date = DateTime.Now,
                     EmployeeId = slip.EmployeeId,
                     Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
                     JournalId = journal.Id,
                     Journal = journal,
-                    Reason = "Chi lương tháng" + slipRun.Date.Value.ToString("MM/yyyy"),
+                    Reason = "Chi lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
                     Type = "advance",
                     HrPayslipId = slip.Id
                 });

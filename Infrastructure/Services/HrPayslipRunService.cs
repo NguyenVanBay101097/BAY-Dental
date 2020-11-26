@@ -62,12 +62,14 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
-            if (DateTime.Now.Month <= val.Date.Value.Month && DateTime.Now.Year >= val.Date.Value.Year) throw new Exception("bạn không được phép tạo bảng lương "+ val.Date.Value.ToString("MM/yyyy"));
+            DateTime dayone = new DateTime(val.Date.Value.AddMonths(1).Year, val.Date.Value.AddMonths(1).Month, 1);
+            if (DateTime.Now < dayone) 
+                throw new Exception("Bạn không được phép tạo bảng lương "+ val.Date.Value.ToString("MM/yyyy"));
 
             var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
             if (isExist == true)
             {
-                throw new Exception("đã tồn tại bảng lương của tháng " + val.Date.Value.Month);
+                throw new Exception("Đã tồn tại bảng lương của tháng " + val.Date.Value.Month);
             }
             var payslipRun = _mapper.Map<HrPayslipRun>(val);
 
@@ -141,7 +143,7 @@ namespace Infrastructure.Services
         private async Task<AccountMove> PreparePayslipMove(HrPayslipRun slipRun)
         {
             if (slipRun.State != "confirm")
-                throw new Exception("chỉ có ở trạng thái xác nhận mới được ghi vào sổ");
+                throw new Exception("Chỉ có ở trạng thái xác nhận mới được ghi vào sổ");
 
             var accountJournalObj = GetService<IAccountJournalService>();
             var slipObj = GetService<IHrPayslipService>();
@@ -175,7 +177,7 @@ namespace Infrastructure.Services
             {
                 JournalId = accountJournal.Id,
                 Journal = accountJournal,
-                CompanyId = slipRun.CompanyId,
+                CompanyId = slipRun.CompanyId
             };
 
             // tạo moveline cho từng phiếu lương, 1 phiếu 2 line
@@ -187,7 +189,7 @@ namespace Infrastructure.Services
                 {
                     new AccountMoveLine
                     {
-                        Name =  "Lương tháng " + move.Date.ToString("MM/yyyy"),
+                        Name =  "Lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         AccountId = acc334.Id,
@@ -197,7 +199,7 @@ namespace Infrastructure.Services
                     },
                     new AccountMoveLine
                     {
-                        Name = "Lương tháng " + move.Date.ToString("MM/yyyy"),
+                        Name = "Lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         AccountId = accountJournal.DefaultCreditAccount.Id,
@@ -245,7 +247,7 @@ namespace Infrastructure.Services
             var listMoveLine = new List<AccountMoveLine>();
             foreach (var run in payslipruns)
             {
-                if (run.Slips.Any(x => x.SalaryPayment != null)) throw new Exception("đã có phiếu lương được chi lương nên không thể hủy!");
+                if (run.Slips.Any(x => x.SalaryPayment != null)) throw new Exception("Đã có phiếu lương được chi lương nên không thể hủy!");
                 listMove.Add(run.Move);
                 listMoveLine.AddRange(run.Move.Lines);
                 run.State = "confirm";

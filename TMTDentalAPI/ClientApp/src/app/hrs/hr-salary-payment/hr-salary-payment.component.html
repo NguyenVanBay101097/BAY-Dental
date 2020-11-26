@@ -11,36 +11,38 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="min-width: 100px;" class="text-center">Ngày</th>
-                                <th style="min-width: 150px;" class="text-center">Phương thức</th>
-                                <th style="min-width: 100px;" class="text-center">Người nhận</th>
-                                <th style="min-width: 100px;" class="text-center">Số tiền thực lĩnh</th>
-                                <th style="min-width: 100px;" class="text-center">Nội dung</th>
-                                <th style="min-width: 100px;" class="text-center">Thao tác</th>
+                                <th style="min-width: 100px;" class="text-left">Ngày</th>
+                                <th style="min-width: 150px;" class="text-left">Phương thức</th>
+                                <th style="min-width: 100px;" class="text-left">Người nhận</th>
+                                <th style="min-width: 100px;" class="text-right">Số tiền</th>
+                                <th style="min-width: 100px;" class="text-left">Nội dung</th>
+                                <th style="min-width: 100px;" class="text-left">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody formArrayName="paymentFA">
                             <tr *ngFor="let control of paymentFA.controls; index as i" formGroupName="{{i}}">
-                                <td class="text-center">
+                                <td class="text-left">
                                     {{control.get('Date').value | date:'dd/MM/yyyy'}}
                                 </td>
-                                <td class="text-center">
+                                <td class="text-left">
                                     <select class="form-control" formControlName="JournalId">
                                         <option
                                         *ngFor="let journal of filteredJournals" [ngValue]="journal.Id">{{journal.Name}}</option>
                                     </select>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-left">
                                     {{control.get('Employee').value?.Name}}
                                 </td>
-                                <td class="text-center">
+                                <td class="text-right">
                                     {{control.get('Amount').value | number}}
                                 </td>
-                                <td class="text-center">
+                                <td class="text-left">
                                     <input type="text" class="form-control" formControlName="Reason">
                                 </td>
-                                <td class="text-center">
-                                    <i class="far fa-trash-alt"></i>
+                                <td class="text-left">
+                                    <button (click)="onRemovePayment(i)" class="btn btn-icon btn-sm btn-light" type="button">
+                                        <span class="k-icon k-i-delete"></span>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -52,7 +54,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" [disabled]="isDisable" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác Nhận</button>
-    <button type="button" [disabled]="isDisable" class="btn btn-primary" (click)="onSaveAndPrint()" accesskey="s">Xác Nhận Và In</button>
+    <button type="button" [disabled]="!this.paymentFA.controls.length" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác Nhận</button>
+    <button type="button" [disabled]="!this.paymentFA.controls.length" class="btn btn-primary" (click)="onSaveAndPrint()" accesskey="s">Xác Nhận Và In</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

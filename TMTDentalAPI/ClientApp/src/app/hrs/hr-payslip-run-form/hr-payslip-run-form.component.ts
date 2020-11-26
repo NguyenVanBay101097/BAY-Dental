@@ -313,7 +313,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
 
     const modalRef = this.modalService.open(HrSalaryPaymentComponent, {size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth()}/${this.dateFC.value.getFullYear()}`;
+    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
     modalRef.componentInstance.defaultPara = {PayslipRunId: this.id, PayslipIds: slipIds};
     modalRef.result.then((res: any) => {
       this.loadRecord();

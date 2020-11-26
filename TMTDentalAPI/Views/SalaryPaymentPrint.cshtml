@@ -5,141 +5,151 @@
 }
 
 
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/custom.css" />
+    <html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/custom.css" />
 
-    <style>
-        .body {
-            font-size: 18px;
-        }
+        <style>
+            .body {
+                font-size: 18px;
+            }
 
-        .table td, .table th {
-            border-top: unset !important;
-        }
+            .table td, .table th {
+                border-top: unset !important;
+            }
 
-        .active {
-            background-color: #adb5bd;
-        }
+            .active {
+                background-color: #adb5bd;
+            }
 
-        .page-break {
-            page-break-inside: avoid;
-        }
+            .page-break {
+                page-break-inside: avoid;
+            }
 
-        .logo-image {
-            min-width: 150px;
-        }
+            .logo-image {
+                min-width: 150px;
+            }
 
-        .titleName{
-            width: 200px;
-        }
+            .titleName {
+                width: 200px;
+            }
 
-        .description {
-            font-size: 1.5rem;
-        }
-    </style>
-</head>
-<body>
-    @if (Model != null && Model.Count() > 0)
-    {
-        var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
-        foreach (var item in Model)
+            .description {
+                font-size: 1.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        @if (Model != null && Model.Count() > 0)
         {
-            <div class="body px-3 py-3 overflow-auto page-break">
-                <div class="px-3">
-                    <div class="row border border-secondary">
-                        <div class="col-8">
-                            <div style="text-align: center;">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div class="logo">
-                                            <img class="logo-image" src="@item.Company.Logo" alt="">
+            var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+            foreach (var item in Model)
+            {
+                <div class="body px-3 py-3 overflow-auto page-break">
+                    <div class="px-3">
+                        <div class="row border border-secondary">
+                            <div class="col-8">
+                                <div style="text-align: center;">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="logo">
+                                                <img class="logo-image" src="@item.Company.Logo" alt="">
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="title" style="text-align: center; padding: 15px;">
+                                                @if (item.Type == "advance")
+                                                {
+                                                    <h3>PHIẾU TẠM ỨNG</h3>
+                                                }
+                                                else
+                                                {
+                                                    <h3>PHIẾU CHI LƯƠNG</h3>
+                                                }
+                                                <h4> Ngày @item.Date.Day tháng @item.Date.Month năm @item.Date.Year</h4>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-8">
-                                        <div class="title" style="text-align: center; padding: 15px;">
-                                            @if (item.Type == "advance")
-                                            {
-                                                <h3>PHIẾU TẠM ỨNG</h3>
-                                            }
-                                            else
-                                            {
-                                                <h3>PHIẾU CHI LƯƠNG</h3>
-                                            }
-                                            <h4> Ngày @item.Date.Day tháng @item.Date.Month năm @item.Date.Year</h4>
-                                        </div>
-                                    </div>
-                                </div>                                                          
-                            </div>
+                                </div>
 
-                        </div>
-                        <div class="col-4">
-                            <div class="title" style="text-align: center; padding: 15px;">
-                                <h3 class="text-center">MÃ PHIẾU</h3>
-                                <h4>@(item.Name)</h4>
+                            </div>
+                            <div class="col-4">
+                                <div class="title" style="text-align: center; padding: 15px;">
+                                    <h3 class="text-center">MÃ PHIẾU</h3>
+                                    <h4>@(item.Name)</h4>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="h-90 w-100 pt-3 ml-2">
-                    <div class="h-30 w-100 body-content d-flex">
-                        <div class="h-100 pr-2">
-                            <table class="table border-none table-sm">
-                                <tbody>
-                                    <tr>
-                                        <td class="titleName"><h4>Người nhận:</h4> </td>
-                                        <td><p class="description">@(item.Employee != null ? item.Employee.Name : "")</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="titleName"><h4>Số tiền:</h4></td>
-                                        <td><p class="description">@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0")</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="titleName"><h4>Phương thức:</h4> </td>
-                                        <td><p class="description">@(item.journal.Name)</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="titleName"><h4>Bằng chữ:</h4> </td>
-                                        <td><p class="description">@(item.AmountString)</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="titleName"><h4>Nội dung:</h4> </td>
-                                        <td><p class="description">@(item.Reason) </p></td>
-                                    </tr>
-                                </tbody>
+                    <div class="h-90 w-100 pt-3 ml-2">
+                        <div class="h-30 w-100 body-content d-flex">
+                            <div class="h-100 pr-2">
+                                <table class="table border-none table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="titleName"><h4>Người nhận:</h4> </td>
+                                            <td><p class="description">@(item.Employee != null ? item.Employee.Name : "")</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titleName"><h4>Số tiền:</h4></td>
+                                            <td><p class="description">@(item.Amount > 0 ? string.Format(info, "{0:0,0}", item.Amount) : "0")</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titleName"><h4>Phương thức:</h4> </td>
+                                            <td><p class="description">@(item.journal.Name)</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titleName"><h4>Bằng chữ:</h4> </td>
+                                            <td><p class="description">@(item.AmountString)</p></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="titleName"><h4>Nội dung:</h4> </td>
+                                            <td><p class="description">@(item.Reason) </p></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="h-10 w-100 pt-3">
+                            <table class="table border-none">
+                                <tr>
+                                    <th class="text-center">Người lập phiếu</th>
+                                    <th class="text-center">
+                                        @(string.Format(info, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                                        <p>Người nhận</p>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">
+                                        @(item.UserName)
+                                    </th>
+                                    <th class="text-center">@(item.Employee !=null ? item.Employee.Name : "")</th>
+                                </tr>
                             </table>
-                        </div>                      
-                    </div>               
-                    <div class="h-10 w-100 pt-3">
-                        <table class="table border-none">
-                            <tr>
-                                <th class="text-center">Người lập phiếu</th>
-                                <th class="text-center">
-                                     @(string.Format(info, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
-                                    <p>Người nhận</p>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th class="text-center">
-                                    @(item.UserName)
-                                </th>
-                                <th class="text-center">@(item.Employee !=null ? item.Employee.Name : "")</th>
-                            </tr>
-                        </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
-    }
-</body>
-</html>`
+        <script defer>
+            function triggerPrint(event) {
+                window.removeEventListener('load', triggerPrint, false);
+                setTimeout(function () {
+                    window.print();
+                    setTimeout(function () { window.close(); }, 0);
+                }, 0);
+            }
+            window.addEventListener('load', triggerPrint, false);
+        </script>
+    </body>
+    </html>`

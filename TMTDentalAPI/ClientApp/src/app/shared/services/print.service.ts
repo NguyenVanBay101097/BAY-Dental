@@ -29,4 +29,11 @@ export class PrintService {
     );
     popupWin.document.close();
   }
+
+  print2(html) {
+    var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
+    popupWin.document.open();
+    popupWin.document.write(html);
+    popupWin.document.close();
+  }
 }
