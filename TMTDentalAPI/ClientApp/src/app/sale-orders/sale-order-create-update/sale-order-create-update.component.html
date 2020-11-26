@@ -169,8 +169,8 @@
                                 <div class="overflow-auto mh-165">
                                     <table class="table b-table-border table-sm mb-0">
                                         <thead>
-                                            <tr class="bg-secondary text-white">
-                                                <th class="b-sticky-left-th" style="min-width: 200px;">Dịch vụ</th>
+                                            <tr>
+                                                <th class="b-sticky-left" style="min-width: 200px;">Dịch vụ</th>
                                                 <th style="min-width: 200px;">Răng, Chuẩn đoán</th>
                                                 <th style="min-width: 200px;">Bác sĩ</th>
                                                 <th style="min-width: 60px;" class="text-right">SL</th>
@@ -179,13 +179,13 @@
                                                 <th style="min-width: 100px;" class="text-right">Thành tiền</th>
                                                 <th style="min-width: 100px;" class="text-right">Thanh toán</th>
                                                 <th style="min-width: 100px;" class="text-right">Còn lại</th>
-                                                <th style="min-width: 50px;" class="text-center b-sticky-right-th">#</th>
+                                                <th style="min-width: 50px;" class="text-center b-sticky-right">#</th>
                                             </tr>
                                         </thead>
                                         <tbody formArrayName="OrderLines">
                                             <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                                 <tr [formGroupName]="i">
-                                                    <td class="b-sticky-left-td">{{line.get('Name').value }}</td>
+                                                    <td class="b-sticky-left">{{line.get('Name').value }}</td>
                                                     <td>
                                                         <app-sale-order-teeth-popover
                                                             *ngIf="filteredToothCategories && initialListTeeths"
@@ -244,7 +244,7 @@
                                                     <td class="text-right">
                                                         {{ line.get('AmountResidual').value | number }}
                                                     </td>
-                                                    <td class="text-right b-sticky-right-td">
+                                                    <td class="text-right b-sticky-right">
                                                         <button *ngIf="stateControl.value == 'draft'" type="button"
                                                             class="btn btn-icon btn-sm btn-light"
                                                             (click)="deleteLine(i)">
