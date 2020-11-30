@@ -128,7 +128,6 @@ namespace Infrastructure.Services
             //    irValueObj.SetDefault(model, field, field_type, value);
             //}
 
-            //Nếu bật tính năng tcare thì add recurring job chạy mỗi ngày với TCareRunAt, ngược lại remove recurring job
             foreach (var item in classified.Groups)
             {
                 var name = item.Name;
@@ -137,6 +136,8 @@ namespace Infrastructure.Services
                 if (implied_group == null)
                     continue;
                 var val = self.GetType().GetProperty(name).GetValue(self, null);
+                implied_group.ResGroupsUsersRels.Clear();
+                await groupObj.UpdateAsync(implied_group);
                 if (Equals(val, 1) || Equals(val, true))
                 {
                     foreach (var group in groups)
@@ -176,16 +177,7 @@ namespace Infrastructure.Services
                     //    implied_group.Users.Remove(user);
                     //}
                     //groupObj.Write(new List<ResGroup>() { implied_group }, users: users);
-
-                    if (name == "GroupTCare")
-                    {
-                        var db = _tenant != null ? _tenant.Hostname : "localhost";
-                        RecurringJob.RemoveIfExists($"tcare-{db}");
-                    }
                 }
-
-                implied_group.ResGroupsUsersRels.Clear();
-                await groupObj.UpdateAsync(implied_group);
             }
 
             var irConfigParameter = GetService<IIrConfigParameterService>();
