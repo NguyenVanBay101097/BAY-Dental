@@ -59,6 +59,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       CompanyId:null
     });
 
+    
     setTimeout(() => {
       this.loadFilteredJournals();
       this.loadEmployees();
@@ -100,8 +101,18 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   defaultGet() {
+    debugger
+    console.log(this.monthStart);
+    console.log(this.monthEnd);
     this.formGroup.get('DateObj').patchValue(new Date());
   }
+
+  getMonthEnd(){
+    var monthEnd  = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() + 1)).toDateString());
+    return monthEnd;
+  }
+
+
 
   loadFilteredJournals() {
     var val = new AccountJournalFilter();
