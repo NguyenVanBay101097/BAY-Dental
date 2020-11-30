@@ -100,10 +100,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     );
   }
 
-  defaultGet() {
-    debugger
-    console.log(this.monthStart);
-    console.log(this.monthEnd);
+  defaultGet() {  
     this.formGroup.get('DateObj').patchValue(new Date());
   }
 
