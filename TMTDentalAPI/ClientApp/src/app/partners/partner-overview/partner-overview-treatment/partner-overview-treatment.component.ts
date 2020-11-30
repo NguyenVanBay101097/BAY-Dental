@@ -25,6 +25,7 @@ export class PartnerOverviewTreatmentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
   }
 
   deleteItem(item) {
