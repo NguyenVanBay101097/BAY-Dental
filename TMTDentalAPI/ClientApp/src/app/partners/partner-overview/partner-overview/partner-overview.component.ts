@@ -86,8 +86,6 @@ export class PartnerOverviewComponent implements OnInit {
       result => {
         this.saleOrders = result['value'];
         this.saleCount = result['@odata.count'];
-        console.log(this.saleOrders);
-
       }
     )
   }
