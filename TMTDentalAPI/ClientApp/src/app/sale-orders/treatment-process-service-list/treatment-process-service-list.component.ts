@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
 
@@ -9,8 +8,8 @@ import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata
   styleUrls: ["./treatment-process-service-list.component.css"],
 })
 export class TreatmentProcessServiceListComponent implements OnInit {
-  formGroup: FormGroup;
   saleOrderId: string;
+  services: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -18,15 +17,18 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.saleOrderId = this.route.snapshot.paramMap.get("id");
-    debugger
+    this.saleOrderId = this.route.queryParams['value'].id;
+
     if (this.saleOrderId) {
-      this.saleOrderOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
-        (result) => {
-          console.log(result);
-        },
-        (error) => {}
-      );
+      this.saleOrderOdataService
+        .getDotKhamStepByOrderLine(this.saleOrderId)
+        .subscribe(
+          (result) => {
+            console.log(result);
+            this.services = result['value'];
+          },
+          (error) => {}
+        );
     }
   }
 }
