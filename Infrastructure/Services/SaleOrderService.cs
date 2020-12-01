@@ -2252,7 +2252,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    DotKhamSteps = x.DotKhamSteps.Select(s => new DotKhamStepBasic
+                    Steps = x.DotKhamSteps.Select(s => new DotKhamStepBasic
                     {
                         Id = s.Id,
                         Name = s.Name,

@@ -86,6 +86,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public async Task<IActionResult> GetDotKhamStepByOrderLine([FromODataUri] Guid key)
         {
             var res = await _saleOrderService.GetDotKhamStepByOrderLine(key);
