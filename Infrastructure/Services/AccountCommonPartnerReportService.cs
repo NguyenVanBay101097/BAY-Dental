@@ -19,32 +19,6 @@ namespace Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<AccountCommonPartnerReport> ReportSumaryByPartner(Guid partnerId)
-        {
-
-            var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
-            var saleOrderObj = (ISaleOrderService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(ISaleOrderService));
-            var countSaleOrder = await saleOrderObj.SearchQuery(x => x.PartnerId == partnerId).CountAsync();
-            string[] accountTypes = null;
-            accountTypes = new string[] { "receivable" };
-            var query = amlObj._QueryGet(initBal: true, state: "posted");
-            query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue && (x.PartnerId == partnerId));
-            var obj = await query
-               .GroupBy(x => new
-               {
-                   PartnerId = x.Partner.Id,
-               })
-               .Select(x => new AccountCommonPartnerReport
-               {
-                   PartnerId = x.Key.PartnerId,
-                   Debit = x.Sum(s => s.Debit),
-                   Credit = x.Sum(s => s.Credit),
-                   InitialBalance = x.Sum(s => s.Debit - s.Credit),
-                   CountSaleOrder = countSaleOrder
-               }).FirstOrDefaultAsync();
-            return obj;
-        }
-
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val)
         {
             var today = DateTime.Today;
