@@ -17,7 +17,7 @@ namespace ApplicationCore.Entities
 
         public int? Sequence { get; set; }
 
-        public string Name { get; set; }
+        public string NameStep { get; set; }
 
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
@@ -25,14 +25,18 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// dinh muc
         /// </summary>
-        public Guid? RoutingId { get; set; }
-        public Routing Routing { get; set; }
+        //public Guid? RoutingId { get; set; }
+        //public Routing Routing { get; set; }
 
         /// <summary>
         /// Nguoi chiu trach nhiem
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+
+
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLine SaleOrderLine { get; set; }
 
         /// <summary>
         /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
@@ -42,10 +46,24 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string State { get; set; }
 
-        public ICollection<DotKhamLineOperation> Operations { get; set; } = new List<DotKhamLineOperation>();
+        //public ICollection<DotKhamLineOperation> Operations { get; set; } = new List<DotKhamLineOperation>();
 
-        public DateTime? DateStart { get; set; }
+        //public DateTime? DateStart { get; set; }
 
-        public DateTime? DateFinished { get; set; }
+        //public DateTime? DateFinished { get; set; }
+
+
+        public string Note { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategory ToothCategory { get; set; }
+
+        /// <summary>
+        /// răng
+        /// </summary>
+        public ICollection<SaleOrderLineToothRel> SaleOrderLineToothRels { get; set; } = new List<SaleOrderLineToothRel>();
+
     }
 }

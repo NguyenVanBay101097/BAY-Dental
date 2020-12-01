@@ -159,13 +159,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.DotKham.User.Name.Contains(val.Search) ||
-                x.DotKham.AssistantUser.Name.Contains(val.Search) ||
                 x.DotKham.Partner.Name.Contains(val.Search) ||
                 x.Product.Name.Contains(val.Search));
             var items = await query.Select(x => new DotKhamStepReport
             {
-                Date = x.DotKham.Date,
-                AssistantName = x.DotKham.Assistant != null ? x.DotKham.Assistant.Name : "",
+                Date = x.DotKham.Date,             
                 DoctorName = x.DotKham.Doctor != null ? x.DotKham.Doctor.Name : "",
                 PartnerName = x.DotKham.Partner != null ? x.DotKham.Partner.Name : "",
                 ServiceName = x.Product != null ? x.Product.Name : "",

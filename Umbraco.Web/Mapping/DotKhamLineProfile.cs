@@ -17,8 +17,6 @@ namespace Umbraco.Web.Mapping
             CreateMap<DotKhamLineDisplay, DotKhamLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.DotKham, x => x.Ignore())
-                .ForMember(x => x.Routing, x => x.Ignore())
-                .ForMember(x => x.Operations, x => x.Ignore())
                 .ForMember(x => x.User, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
                 .ForMember(x => x.State, x => x.Ignore());

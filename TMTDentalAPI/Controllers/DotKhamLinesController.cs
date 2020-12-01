@@ -33,9 +33,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var line = await _dotKhamLineService.SearchQuery(x => x.Id == id).Include(x => x.Product)
-                .Include(x => x.User).Include(x => x.Operations)
-                .Include("Operations.Product")
-                .Include(x => x.Routing).FirstOrDefaultAsync();
+                .Include(x => x.User).FirstOrDefaultAsync();
             if (line == null)
             {
                 return NotFound();

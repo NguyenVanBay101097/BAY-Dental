@@ -31,7 +31,6 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x=>x.Doctor)
-                .Include(x => x.Assistant)
                 .Include(x => x.User)
                 .Include(x => x.SaleOrder)
                 .Include(x => x.Lines)
@@ -49,12 +48,12 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Steps).ToListAsync();
-            foreach (var dk in self)
-            {
-                if (dk.Steps.Any(x => x.IsDone))
-                    throw new Exception("Không thể xóa đợt khám đã có công đoạn hoàn thành");
-            }
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            //foreach (var dk in self)
+            //{
+            //    if (dk.Steps.Any(x => x.IsDone))
+            //        throw new Exception("Không thể xóa đợt khám đã có công đoạn hoàn thành");
+            //}
 
             await DeleteAsync(self);
         }
@@ -64,7 +63,6 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.InvoiceId == invoiceId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
                 .Include(x => x.User)
                 .Include(x=>x.Doctor)
-                .Include(x=>x.Assistant)
                 .ToListAsync();
         }
 
@@ -73,7 +71,6 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
                 .Include(x => x.User)
                 .Include(x => x.Doctor)
-                .Include(x => x.Assistant)
                 .ToListAsync();
         }
 

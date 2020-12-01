@@ -122,6 +122,16 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntitySet<AccountJournalViewModel>("AccountJournals");
             #endregion
 
+            #region DotKhams
+            builder.EntitySet<DotKhamVm>("DotKhams");
+
+            builder.EntityType<DotKhamVm>()
+                    .Collection
+                 .Action("GetAllDotKhamForSaleOrder")
+                 .Returns<bool>();
+
+            #endregion
+
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
             builder.ComplexType<EmployeeBasic>();
@@ -138,9 +148,14 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<SalaryPaymentDisplay>();
             builder.ComplexType<EmployeeSimple>();
             builder.ComplexType<AccountJournalSimple>();
+            builder.ComplexType<PartnerImageBasic>();
+            builder.ComplexType<DotKhamLineBasic>();
+
 
 
             #endregion
+
+
 
 
 

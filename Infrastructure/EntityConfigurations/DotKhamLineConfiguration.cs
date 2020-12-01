@@ -20,9 +20,9 @@ namespace Infrastructure.EntityConfigurations
                .WithMany()
                .HasForeignKey(x => x.ProductId);
 
-            builder.HasOne(x => x.Routing)
+            builder.HasOne(x => x.SaleOrderLine)
              .WithMany()
-             .HasForeignKey(x => x.RoutingId);
+             .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.User)
               .WithMany()

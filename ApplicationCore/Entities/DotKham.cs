@@ -41,12 +41,16 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// Nhân viên
+        /// 
         /// </summary>
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
 
-        public string Note { get; set; }
+        /// <summary>
+        /// Mô tả
+        /// </summary>
+        public string Reason { get; set; }
+
 
         /// <summary>
         /// Trạng thái
@@ -59,22 +63,28 @@ namespace ApplicationCore.Entities
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
 
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
         public Guid? DoctorId { get; set; }
         public Employee Doctor { get; set; }
 
-        public Guid? AssistantId { get; set; }
-        public Employee Assistant { get; set; }
+        //public Guid? AssistantId { get; set; }
+        //public Employee Assistant { get; set; }
 
         public Guid? AppointmentId { get; set; }
         public Appointment Appointment { get; set; }
 
-        public string AssistantUserId { get; set; }
-        public ApplicationUser AssistantUser { get; set; }
+        //public string AssistantUserId { get; set; }
+        //public ApplicationUser AssistantUser { get; set; }
 
         public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
 
-        public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
+        //public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
 
+        /// <summary>
+        /// hình ảnh
+        /// </summary>
         public ICollection<PartnerImage> DotKhamImages { get; set; } = new List<PartnerImage>();
     }
 }

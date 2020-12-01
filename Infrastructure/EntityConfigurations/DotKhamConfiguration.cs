@@ -48,13 +48,13 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.DoctorId);
 
-            builder.HasOne(x => x.Assistant)
-                .WithMany()
-                .HasForeignKey(x => x.AssistantId);
+            //builder.HasOne(x => x.Assistant)
+            //    .WithMany()
+            //    .HasForeignKey(x => x.AssistantId);
 
-            builder.HasOne(x => x.AssistantUser)
-                .WithMany()
-                .HasForeignKey(x => x.AssistantUserId);
+            //builder.HasOne(x => x.AssistantUser)
+            //    .WithMany()
+            //    .HasForeignKey(x => x.AssistantUserId);
         }
     }
 }
