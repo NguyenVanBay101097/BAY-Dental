@@ -29,7 +29,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker  [min]="monthStart" [navigation]="false"
-                                    [max]="monthEnd" formControlName="DateObj" [disableControl]="checkIsDisable(id)">
+                                    [max]="monthEnd" formControlName="DateObj" [rangeValidation]="true" [disableControl]="checkIsDisable(id)">
                                     </kendo-datepicker>
                                     <div *ngIf="f.DateObj.errors" class="text-danger">
                                         <div>Chọn ngày trong khoảng {{monthStart | date:'dd/MM/yyyy'}} - {{monthEnd | date:'dd/MM/yyyy'}}</div>
