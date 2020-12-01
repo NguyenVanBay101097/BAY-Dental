@@ -11,6 +11,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
     }
 
+    public class DotKhamStepBasic
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public Guid? ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+        public Guid? OrderLineId { get; set; }
+        public SaleOrderLineBasic OrderLine { get; set; }
+        public bool IsDone { get; set; }
+
+    }
+
     public class DotKhamStepDisplay
     {
         public DotKhamStepDisplay()

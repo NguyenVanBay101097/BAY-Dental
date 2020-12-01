@@ -85,6 +85,13 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(res);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetDotKhamStepByOrderLine([FromODataUri] Guid key)
+        {
+            var res = await _saleOrderService.GetDotKhamStepByOrderLine(key);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(SaleOrderSave model)
         {
