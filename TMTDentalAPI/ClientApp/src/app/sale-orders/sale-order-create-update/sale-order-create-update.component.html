@@ -317,8 +317,9 @@
 
                     <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel"
                         aria-labelledby="profile-tab">
-                        <app-sale-order-dotkham-list *ngIf="saleOrder && saleOrder.Id" [saleOrder]="saleOrder">
-                        </app-sale-order-dotkham-list>
+                        <app-treatment-process-service-list></app-treatment-process-service-list>
+                        <!-- <app-sale-order-dotkham-list *ngIf="saleOrder && saleOrder.Id" [saleOrder]="saleOrder">
+                        </app-sale-order-dotkham-list> -->
                     </div>
 
                     <!-- <div class="tab-pane" *ngIf="saleOrder.state != 'draft'" id="labo" role="tabpanel"
