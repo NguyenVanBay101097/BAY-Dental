@@ -14,6 +14,19 @@ namespace Umbraco.Web.Mapping
             CreateMap<DotKham, DotKhamBasic>();
 
             CreateMap<DotKham, DotKhamVm>();
+            CreateMap<DotKhamVm, DotKham>()
+                 .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Name, x => x.Ignore())
+                .ForMember(x => x.Invoice, x => x.Ignore())
+                .ForMember(x => x.SaleOrder, x => x.Ignore())
+                .ForMember(x => x.Partner, x => x.Ignore())
+                .ForMember(x => x.Lines, x => x.Ignore())
+                .ForMember(x => x.User, x => x.Ignore())
+                .ForMember(x => x.State, x => x.Ignore())
+                .ForMember(x => x.Company, x => x.Ignore())
+                .ForMember(x => x.Doctor, x => x.Ignore())
+                .ForMember(x => x.Appointment, x => x.Ignore());
+
 
             CreateMap<DotKham, DotKhamDisplay>();
             CreateMap<DotKhamDisplay, DotKham>()

@@ -55,6 +55,21 @@ namespace TMTDentalAPI.OdataControllers
             return SingleResult.Create(results);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateOrUpdateDotKham([FromBody] DotKhamVm val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _dotkhamService.CreateOrUpdateDotKham(val);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> GetAllDotKhamForSaleOrder([FromBody] GetAllDotKhamVm val)
@@ -71,5 +86,11 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(results);
 
         }
+
+
+
+       
+
+
     }
 }

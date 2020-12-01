@@ -22,5 +22,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<DotKhamBasic>> GetDotKhamBasicsForSaleOrder(Guid saleOrderId);
 
         Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id);
+
+        Task CreateOrUpdateDotKham(DotKhamVm val);
     }
 }

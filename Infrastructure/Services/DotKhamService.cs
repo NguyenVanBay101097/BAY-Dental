@@ -74,6 +74,89 @@ namespace Infrastructure.Services
                 .ToListAsync();
         }
 
+        public async Task CreateOrUpdateDotKham(DotKhamVm val)
+        {
+            var dotKham = _mapper.Map<DotKham>(val);
+
+            SaveLines(val, dotKham);
+
+            SaveDotKhamImages(val, dotKham);
+
+            if (val.Id == Guid.Empty)
+            {
+                await CreateAsync(dotKham);
+            }
+            else
+            {
+                await UpdateAsync(dotKham);
+            }
+
+        }
+
+        private void SaveLines(DotKhamVm val, DotKham dotkham)
+        {
+            //remove line
+            var lineToRemoves = new List<DotKhamLine>();
+            foreach (var existLine in dotkham.Lines)
+            {
+                if (!val.Lines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                dotkham.Lines.Remove(line);
+            }
+
+            int sequence = 1;
+            foreach (var line in val.Lines)
+                line.Sequence = sequence++;
+
+            foreach (var line in val.Lines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    dotkham.Lines.Add(_mapper.Map<DotKhamLine>(line));
+                }
+                else
+                {
+                    _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
+                }
+            }
+
+        }
+
+        private void SaveDotKhamImages(DotKhamVm val, DotKham dotkham)
+        {
+            //remove line
+            var lineToRemoves = new List<PartnerImage>();
+            foreach (var existLine in dotkham.DotKhamImages)
+            {
+                if (!val.DotKhamImages.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                dotkham.DotKhamImages.Remove(line);
+            }
+ 
+            foreach (var img in val.DotKhamImages)
+            {
+                if (img.Id == Guid.Empty)
+                {
+                    dotkham.DotKhamImages.Add(_mapper.Map<PartnerImage>(img));
+                }
+                else
+                {
+                    _mapper.Map(img, dotkham.DotKhamImages.SingleOrDefault(c => c.Id == img.Id));
+                }
+            }
+
+        }
+
+
+
         public async Task<IEnumerable<DotKhamBasic>> GetDotKhamBasicsForSaleOrder(Guid saleOrderId)
         {
             return await _mapper.ProjectTo<DotKhamBasic>(SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
@@ -83,19 +166,20 @@ namespace Infrastructure.Services
         public async override Task<DotKham> CreateAsync(DotKham entity)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            entity.Name = await sequenceService.NextByCode("dot.kham");
+            entity.Name = entity.Name;
             if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
             {
-                await InsertDotKhamSequence();
-                entity.Name = await sequenceService.NextByCode("dot.kham");
+                entity.Name = "Đợt khám";
+                //await InsertDotKhamSequence();
+                //entity.Name = await sequenceService.NextByCode("dot.kham");
             }
 
-            if (entity.SaleOrderId.HasValue)
-            {
-                var saleObj = GetService<ISaleOrderService>();
-                var order = await saleObj.GetByIdAsync(entity.SaleOrderId.Value);
-                entity.PartnerId = order.PartnerId;
-            }
+            //if (entity.SaleOrderId.HasValue)
+            //{
+            //    var saleObj = GetService<ISaleOrderService>();
+            //    var order = await saleObj.GetByIdAsync(entity.SaleOrderId.Value);
+            //    entity.PartnerId = order.PartnerId;
+            //}
 
             await base.CreateAsync(entity);
             return entity;
