@@ -151,10 +151,7 @@ namespace TMTDentalAPI.OdataControllers
                  .Action("GetAllDotKhamForSaleOrder")
                  .Returns<bool>();
 
-            builder.EntityType<DotKhamVm>()
-                  .Collection
-               .Action("CreateOrUpdateDotKham")
-               .Returns<bool>();
+           
 
 
             #endregion
@@ -178,6 +175,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<AccountJournalSimple>();
             builder.ComplexType<PartnerImageBasic>();
             builder.ComplexType<DotKhamDisplay>();
+            builder.ComplexType<DotKhamLineDisplay>();
 
 
 
