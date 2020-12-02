@@ -149,11 +149,11 @@ namespace TMTDentalAPI.OdataControllers
             if (val.Ids != null && val.Ids.Any())
             {
                 var html = _view.Render("SalaryPaymentPrint", salaryPayments);
-                return Ok(new printData() { html = html });
+                return Ok(new PrintData() { html = html });
             }
             else
             {
-                return Ok(new printData() { html = null });
+                return Ok(new PrintData() { html = null });
             }
         }
 

@@ -118,4 +118,8 @@ export class PhieuThuChiService {
   reportPhieuThuChi(val: any): Observable<PhieuThuChiReport[]> {
     return this.http.get<PhieuThuChiReport[]>(this.baseApi + this.apiUrl + '/ReportPhieuThuChi', { params: val });
   }
+
+  getPrint(id: string) {
+    return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
+  }
 }

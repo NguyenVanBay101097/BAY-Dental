@@ -8,6 +8,7 @@ import { PhieuThuChiFormComponent } from '../phieu-thu-chi-form/phieu-thu-chi-fo
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { loaiThuChiBasic } from 'src/app/loai-thu-chi/loai-thu-chi.service';
 import { PhieuThuChiService, PhieuThuChiPaged } from '../phieu-thu-chi.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-phieu-thu-chi-list',
@@ -26,7 +27,8 @@ export class PhieuThuChiListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   
   constructor(private route: ActivatedRoute, private modalService: NgbModal, 
-    private phieuThuChiService: PhieuThuChiService, private router: Router) { }
+    private phieuThuChiService: PhieuThuChiService, private router: Router,
+    private printService: PrintService) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -113,6 +115,12 @@ export class PhieuThuChiListComponent implements OnInit {
       }, () => {
       });
     }, () => {
+    });
+  }
+
+  printItem(id) {
+    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
     });
   }
 }
