@@ -58,4 +58,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       this.dotkhams = res.data;
     });
   }
+
+  onCreateDotKham() {
+    
+  }
 }

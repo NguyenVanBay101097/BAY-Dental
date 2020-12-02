@@ -68,6 +68,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
    if (this.dotkham) {
     this.dotkham.Date = new Date(this.dotkham.Date);
     this.dotkham.DotKhamImages.forEach(e => {
+      const imgFG = this.fb.group(e);
+      this.imgsFA.push(imgFG);
     });
     this.dotkhamForm.patchValue(this.dotkham);
    }
