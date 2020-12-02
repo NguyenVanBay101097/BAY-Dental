@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20201201084008_thuong_Update_DotKham")]
-    partial class thuong_Update_DotKham
+    [Migration("20201202030829_thuong_Update_Dotkham")]
+    partial class thuong_Update_Dotkham
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1752,6 +1752,9 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AccountInvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1768,9 +1771,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
@@ -1791,13 +1791,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountInvoiceId");
 
                     b.HasIndex("AppointmentId");
 
@@ -1807,13 +1806,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("InvoiceId");
-
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("SaleOrderId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("WriteById");
 
@@ -1828,9 +1823,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
@@ -1856,15 +1848,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
 
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ToothCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -1877,10 +1860,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("SaleOrderLineId");
-
-                    b.HasIndex("ToothCategoryId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("WriteById");
 
@@ -1936,6 +1915,21 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("DotKhamLineOperations");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.DotKhamLineToothRel", b =>
+                {
+                    b.Property<Guid>("LineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToothId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LineId", "ToothId");
+
+                    b.HasIndex("ToothId");
+
+                    b.ToTable("DotKhamLineToothRels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.DotKhamStep", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1948,16 +1942,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DotKhamId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("InvoicesId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDone")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsInclude")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastUpdated")
@@ -1970,7 +1955,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int?>("Order")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ProductId")
+                    b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SaleLineId")
@@ -1979,19 +1964,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("SaleOrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("State")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
-
-                    b.HasIndex("DotKhamId");
-
-                    b.HasIndex("InvoicesId");
 
                     b.HasIndex("ProductId");
 
@@ -6701,12 +6679,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ToothId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("DotKhamLineId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("SaleLineId", "ToothId");
-
-                    b.HasIndex("DotKhamLineId");
 
                     b.HasIndex("ToothId");
 
@@ -9479,6 +9452,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.DotKham", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.AccountInvoice", null)
+                        .WithMany("DotKhams")
+                        .HasForeignKey("AccountInvoiceId");
+
                     b.HasOne("ApplicationCore.Entities.Appointment", "Appointment")
                         .WithMany()
                         .HasForeignKey("AppointmentId");
@@ -9497,10 +9474,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("DoctorId");
 
-                    b.HasOne("ApplicationCore.Entities.AccountInvoice", "Invoice")
-                        .WithMany("DotKhams")
-                        .HasForeignKey("InvoiceId");
-
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany("DotKhams")
                         .HasForeignKey("PartnerId");
@@ -9508,10 +9481,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "SaleOrder")
                         .WithMany("DotKhams")
                         .HasForeignKey("SaleOrderId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -9527,7 +9496,7 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.DotKham", "DotKham")
                         .WithMany("Lines")
                         .HasForeignKey("DotKhamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
@@ -9537,14 +9506,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany()
                         .HasForeignKey("SaleOrderLineId");
-
-                    b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
-                        .WithMany()
-                        .HasForeignKey("ToothCategoryId");
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -9570,25 +9531,30 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.DotKhamLineToothRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.DotKhamLine", "Line")
+                        .WithMany("ToothRels")
+                        .HasForeignKey("LineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
+                        .WithMany()
+                        .HasForeignKey("ToothId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.DotKhamStep", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("ApplicationCore.Entities.DotKham", "DotKham")
-                        .WithMany()
-                        .HasForeignKey("DotKhamId");
-
-                    b.HasOne("ApplicationCore.Entities.AccountInvoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoicesId");
-
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleLine")
                         .WithMany("DotKhamSteps")
@@ -11472,10 +11438,6 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineToothRel", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.DotKhamLine", null)
-                        .WithMany("SaleOrderLineToothRels")
-                        .HasForeignKey("DotKhamLineId");
-
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleLine")
                         .WithMany("SaleOrderLineToothRels")
                         .HasForeignKey("SaleLineId")

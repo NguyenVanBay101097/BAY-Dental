@@ -25,33 +25,6 @@ namespace Infrastructure.Services
             _productStepService = productStepService;
         }
 
-        public async Task MarkProgress(IEnumerable<Guid> ids)
-        {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            foreach(var line in self)
-            {
-                line.State = "progress";
-            }
-
-            await UpdateAsync(self);
-        }
-
-        public async Task MarkDone(IEnumerable<Guid> ids)
-        {
-            var self = await SearchQuery(x => ids.Contains(x.Id))              
-                .ToListAsync();
-            foreach (var line in self)
-            {
-                line.State = "done";
-                //foreach(var op in line.Operations)
-                //{
-                //    op.State = "done";
-                //}
-            }
-
-            await UpdateAsync(self);
-        }
-
         public async Task CheckDone(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -69,7 +42,7 @@ namespace Infrastructure.Services
 
         public override async Task<IEnumerable<DotKhamLine>> CreateAsync(IEnumerable<DotKhamLine> entities)
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 //if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
                 //{
@@ -102,46 +75,17 @@ namespace Infrastructure.Services
             //}
         }
 
-        public async Task<IEnumerable<DotKhamLineBasic>> GetAllForDotKham(Guid dotKhamId)
-        {
-            var lines = await SearchQuery(x => x.DotKhamId == dotKhamId).Include(x => x.Product)
-                .Include(x => x.User).OrderBy(x => x.Sequence).ToListAsync();
-            var res = _mapper.Map<IEnumerable<DotKhamLineBasic>>(lines);
-            return res;
-        }
-
         public async Task<IEnumerable<IEnumerable<DotKhamLineBasic>>> GetAllForDotKham2(Guid dotKhamId)
         {
-            var lines = await SearchQuery(x => x.DotKhamId == dotKhamId).Include(x => x.Product).GroupBy(x => x.ProductId).Select(y=>y.ToList()).ToListAsync();
+            var lines = await SearchQuery(x => x.DotKhamId == dotKhamId).Include(x => x.Product).GroupBy(x => x.ProductId).Select(y => y.ToList()).ToListAsync();
             var res = _mapper.Map<IEnumerable<IEnumerable<DotKhamLineBasic>>>(lines);
             return res;
-        }
-
-        public async Task ChangeRouting(DotKhamLineChangeRouting val)
-        {
-            var dkl = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
-            if (dkl.State != "draft")
-                throw new Exception("Bạn chỉ có thể đổi quy trình khi ở trạng thái chưa tiến hành");
-            var routingObj = GetService<IRoutingService>();
-            var routing = await routingObj.SearchQuery(x => x.Id == val.RoutingId && x.ProductId == dkl.ProductId).Include(x => x.Lines).FirstOrDefaultAsync();
-            //xóa tất cả các line cũ và thêm lại từ routing mới
-            //dkl.Operations.Clear();
-            //foreach(var line in routing.Lines)
-            //{
-            //    dkl.Operations.Add(new DotKhamLineOperation
-            //    {
-            //        ProductId = line.ProductId,
-            //        Sequence = line.Sequence,
-            //    });
-            //}
-
-            await UpdateAsync(dkl);
         }
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            foreach(var line in self)
+            foreach (var line in self)
             {
                 await _GenerateOperations(line);
             }
@@ -173,6 +117,6 @@ namespace Infrastructure.Services
 
             var opObj = GetService<IDotKhamLineOperationService>();
             await opObj.CreateAsync(ops);
-        }        
+        }
     }
 }

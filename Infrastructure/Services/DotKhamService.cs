@@ -26,21 +26,6 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<DotKham> GetDotKhamForDisplayAsync(Guid id)
-        {
-            return await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
-                .Include(x=>x.Doctor)
-                .Include(x => x.User)
-                .Include(x => x.SaleOrder)
-                .Include(x => x.Lines)
-                .Include(x => x.Appointment)
-                .Include("Lines.Product")
-                .Include("Lines.Operations")
-                .Include("Lines.Operations.Product")
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id)
         {
             return await _mapper.ProjectTo<DotKhamDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -58,18 +43,9 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
         }
 
-        public async Task<IEnumerable<DotKham>> GetDotKhamsForInvoice(Guid invoiceId)
-        {
-            return await SearchQuery(x => x.InvoiceId == invoiceId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
-                .Include(x => x.User)
-                .Include(x=>x.Doctor)
-                .ToListAsync();
-        }
-
         public async Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId)
         {
             return await SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
-                .Include(x => x.User)
                 .Include(x => x.Doctor)
                 .ToListAsync();
         }
@@ -140,7 +116,7 @@ namespace Infrastructure.Services
             {
                 dotkham.DotKhamImages.Remove(line);
             }
- 
+
             foreach (var img in val.DotKhamImages)
             {
                 if (img.Id == Guid.Empty)
@@ -185,21 +161,6 @@ namespace Infrastructure.Services
             return entity;
         }
 
-        public async Task ActionConfirm(Guid id)
-        {
-            var dotKham = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Invoice)
-                .Include("Invoice.InvoiceLines")
-                .FirstOrDefaultAsync();
-            var routingObj = GetService<IRoutingService>();
-            var dotKhamStepObj = GetService<IDotKhamStepService>();
-            var productStepObj = GetService<IProductStepService>();
-            var dotKhamSteps = new List<DotKhamStep>();
-
-            dotKham.State = "confirmed";
-            await UpdateAsync(dotKham);            
-        }
-
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -218,7 +179,7 @@ namespace Infrastructure.Services
             if (val.AppointmentId.HasValue)
                 query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit)) 
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
