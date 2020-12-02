@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<DotKhamStep, DotKhamStepSimple>();
             CreateMap<DotKhamStep, DotKhamStepBasic>();
+            CreateMap<DotKhamStep, DotmKhamStepVM>();
 
             CreateMap<DotKhamStepDisplay, DotKhamStep>()
                 .ForMember(x => x.DotKham, x => x.Ignore())
