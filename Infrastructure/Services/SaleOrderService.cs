@@ -1852,13 +1852,6 @@ namespace Infrastructure.Services
                         residual -= invoice.AmountResidual;
                 }
 
-                var lines = order.OrderLines.Where(x => x.IsRewardLine).ToList();
-                foreach (var line in lines)
-                {
-                    residual += line.PriceSubTotal;
-                }
-
-
                 order.Residual = residual;
             }
         }

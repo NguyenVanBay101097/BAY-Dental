@@ -115,14 +115,6 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("{id}/ActionConfirm")]
-        public async Task<IActionResult> ActionConfirm(Guid id)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            await _dotKhamService.ActionConfirm(id);
-            _unitOfWork.Commit();
-            return NoContent();
-        }
 
         [HttpPost("DefaultGet")]
         public async Task<IActionResult> DefaultGet(DotKhamDefaultGet val)
@@ -135,13 +127,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetToaThuocs(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocsForDotKham(id);
-            return Ok(res);
-        }
-
-        [HttpPost("{id}/GetDotKhamLines")]
-        public async Task<IActionResult> GetDotKhamLines(Guid id)
-        {
-            var res = await _dotKhamLineService.GetAllForDotKham(id);
             return Ok(res);
         }
 
@@ -170,31 +155,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetAppointments(Guid id)
         {
             var res = await _laboOrderLineService.GetAllForDotKham(id);
-            return Ok(res);
-        }
-
-        [HttpGet("{id}/VisibleSteps")]
-        public async Task<IActionResult> VisibleSteps(Guid id, string show = "dotkham")
-        {
-            var steps = await _dotKhamStepService.GetVisibleSteps(id, show);
-            var res = _mapper.Map<IEnumerable<DotKhamStepDisplay>>(steps);
-            return Ok(res);
-        }
-
-        [HttpGet("{id}/VisibleSteps2")]
-        public async Task<IActionResult> VisibleSteps2(Guid id, string show = "dotkham")
-        {
-            var steps = await _dotKhamStepService.GetVisibleSteps2(id, show);
-            var res = _mapper.Map<IEnumerable<IEnumerable<DotKhamStepDisplay>>>(steps);
-            return Ok(res);
-        }
-
-        //Lấy đợt hẹn duy nhất của đợt khám
-        [HttpGet("GetAppointmentDotKham")]
-        public async Task<IActionResult> GetAppointmentDotKham(Guid id, string show = "dotkham")
-        {
-            var steps = await _dotKhamStepService.GetVisibleSteps2(id, show);
-            var res = _mapper.Map<IEnumerable<IEnumerable<DotKhamStepDisplay>>>(steps);
             return Ok(res);
         }
 

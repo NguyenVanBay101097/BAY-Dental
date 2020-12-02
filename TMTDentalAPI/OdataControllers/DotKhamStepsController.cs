@@ -35,13 +35,13 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(results);
         }
 
-        [EnableQuery]
-        [HttpGet]
-        public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
-        {
-            var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
-            return SingleResult.Create(results);
-        }
+        //[EnableQuery]
+        //[HttpGet]
+        //public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
+        //{
+        //    var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
+        //    return SingleResult.Create(results);
+        //}
 
         [HttpPatch]
         public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)

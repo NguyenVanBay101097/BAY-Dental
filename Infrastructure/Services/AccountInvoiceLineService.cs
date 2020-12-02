@@ -131,13 +131,14 @@ namespace Infrastructure.Services
         //Lấy các product trong hóa đơn theo id của đợt khám
         public async Task<IEnumerable<AccountInvoiceLineSimple>> GetDotKhamInvoiceLine(Guid id)
         {
-            var dotKhamObj = GetService<IDotKhamService>();
-            var invoice = await dotKhamObj.GetByIdAsync(id);
-            var accInvLines = await SearchQuery(x => x.InvoiceId == invoice.InvoiceId).ToListAsync();
+            //var dotKhamObj = GetService<IDotKhamService>();
+            //var invoice = await dotKhamObj.GetByIdAsync(id);
+            //var accInvLines = await SearchQuery(x => x.InvoiceId == invoice.InvoiceId).ToListAsync();
 
-            var res = _mapper.Map<IEnumerable<AccountInvoiceLineSimple>>(accInvLines);
+            //var res = _mapper.Map<IEnumerable<AccountInvoiceLineSimple>>(accInvLines);
 
-            return res;
+            //return res;
+            return null;
         }
         
         public async Task<PagedResult2<AccountInvoiceLineDisplay>> GetPagedResultAsync(AccountInvoiceLinesPaged val)

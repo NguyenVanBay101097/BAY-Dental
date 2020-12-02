@@ -2,42 +2,37 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApplicationCore.Entities
+namespace Umbraco.Web.Models.ContentEditing
 {
-    /// <summary>
-    /// Tien trinh dieu tri
-    /// </summary>
-    public class DotKham : BaseEntity
+    public class DotKhamVm
     {
-        public DotKham()
-        {
-            State = "draft";
-            Date = DateTime.Now;
-        }
-
+        public Guid Id { get; set; }
         /// <summary>
-        /// Mã đợt khám
+        /// Ma tien trinh
         /// </summary>
         public string Name { get; set; }
 
+
         public Guid? SaleOrderId { get; set; }
-        public SaleOrder SaleOrder { get; set; }
+        public SaleOrderBasic SaleOrder { get; set; }
 
         /// <summary>
-        /// Khách hàng lấy từ SaleOrder
+        /// Khách hàng lấy từ invoice
         /// </summary>
         public Guid? PartnerId { get; set; }
-        public Partner Partner { get; set; }
+        public PartnerSimple Partner { get; set; }
 
         /// <summary>
         /// Ngày khám
         /// </summary>
         public DateTime Date { get; set; }
 
+
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
+
 
         /// <summary>
         /// Trạng thái
@@ -48,22 +43,27 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
-        public Company Company { get; set; }
+        public CompanySimple Company { get; set; }
 
         /// <summary>
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
-        public Employee Doctor { get; set; }
+        public EmployeeSimple Doctor { get; set; }
 
-        public Guid? AppointmentId { get; set; }
-        public Appointment Appointment { get; set; }
 
-        public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
+        public ICollection<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
+
+        //public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
 
         /// <summary>
         /// hình ảnh
         /// </summary>
-        public ICollection<PartnerImage> DotKhamImages { get; set; } = new List<PartnerImage>();
+        public ICollection<PartnerImageBasic> DotKhamImages { get; set; } = new List<PartnerImageBasic>();
+    }
+
+    public class GetAllDotKhamVm
+    {
+        public ICollection<Guid> OrderIds { get; set; } = new List<Guid>(); 
     }
 }
