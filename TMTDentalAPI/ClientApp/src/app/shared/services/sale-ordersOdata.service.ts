@@ -20,7 +20,7 @@ export class SaleOrdersOdataService extends ODataService {
         return this.getFunction(val.id, val.func, val.options);
     }
     
-    public getDotKhamStepByOrderLine(id: string) {
+    public getDotKhamStepByOrderLine(id: any) {
         return this.getFunction(id, 'GetDotKhamStepByOrderLine');
     }
 }
