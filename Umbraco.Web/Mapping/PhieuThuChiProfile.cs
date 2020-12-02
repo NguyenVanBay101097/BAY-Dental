@@ -20,8 +20,7 @@ namespace Umbraco.Web.Mapping
                  .ForMember(x => x.Journal, x => x.Ignore());
 
             CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
+            CreateMap<PhieuThuChi, PhieuThuChiPrintVM>();
         }
-
-
     }
 }
