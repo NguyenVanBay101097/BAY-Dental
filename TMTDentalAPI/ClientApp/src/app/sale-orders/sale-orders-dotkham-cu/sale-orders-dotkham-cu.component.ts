@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { validator } from 'fast-json-patch';
+import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
@@ -64,6 +65,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   loadRecord() {
    if (this.dotkham) {
+     console.log(this.dotkham);
+     
     this.dotkham.Date = new Date(this.dotkham.Date);
     this.dotkhamForm.patchValue(this.dotkham);
    }
@@ -71,7 +74,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   searchEmp(val) {
     const state = {
-      take: 10,
+      take: 20,
       filter: {
         logic: 'and',
         filters: [
@@ -89,6 +92,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     this.searchEmp('').subscribe(
       (result: any) => {
         this.empList = result.data;
+        this.empList = _.unionBy(this.empList, [this.dotkham.Doctor], 'Id');
       }
     );
   }
@@ -100,7 +104,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     formData.append('file', file);
 
     this.webService.uploadImage(formData).subscribe((result: any) => {
-      // this.imgs.push(result);
+      
     });
   }
 

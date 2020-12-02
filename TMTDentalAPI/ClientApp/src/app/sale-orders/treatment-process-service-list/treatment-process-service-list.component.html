@@ -2,12 +2,12 @@
     <div class="w-30 h-100">
         <div *ngFor="let service of services">
             <h5>{{service.Name}}</h5>
-            <div>Răng: 
+            <div>Răng:
                 <span *ngFor="let tooth of service.Teeth">{{tooth.Name}} </span>
             </div>
             <div>Chuẩn đoán: </div>
             <h5>
-                Tiến trình điều trị 
+                Tiến trình điều trị
                 <span class="text-primary"><i class="fas fa-edit"></i></span>
             </h5>
             <table class="table table-sm text-center">
@@ -34,7 +34,7 @@
             </table>
         </div>
     </div>
-    <div class="w-70 h-100">
-        Của chị 7
+    <div class="w-70 h-100 overflow-auto">
+        <app-sale-orders-dotkham-cu *ngFor="let dk of dotkhams" [dotkham]="dk" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
     </div>
 </div>

@@ -260,8 +260,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel"
-                        aria-labelledby="profile-tab">
+                    <div class="tab-pane h-100" *ngIf="saleOrder.State != 'draft'" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <app-treatment-process-service-list></app-treatment-process-service-list>
                         <!-- <app-sale-order-dotkham-list *ngIf="saleOrder && saleOrder.Id" [saleOrder]="saleOrder">
                         </app-sale-order-dotkham-list> -->

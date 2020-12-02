@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
 
 @Component({
@@ -10,10 +11,13 @@ import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata
 export class TreatmentProcessServiceListComponent implements OnInit {
   saleOrderId: string;
   services: any;
+  dotkhams: any[];
+  activeDotkham: any;
 
   constructor(
     private route: ActivatedRoute,
-    private saleOrderOdataService: SaleOrdersOdataService
+    private saleOrderOdataService: SaleOrdersOdataService,
+    private dotkhamOdataService: DotkhamOdataService
   ) {}
 
   ngOnInit() {
@@ -30,5 +34,28 @@ export class TreatmentProcessServiceListComponent implements OnInit {
           (error) => {}
         );
     }
+
+    this.loadDotKhamList();
+  }
+
+  loadDotKhamList() {
+    if ( !this.saleOrderId) {
+      return;
+    }
+    const state = {
+      take: 10,
+      filter: {
+        logic: 'SaleOrderId',
+        filters: [
+          { field: 'SaleOrderId', operator: 'eq', value: this.saleOrderId }
+        ]
+      }
+    };
+    const options = {
+      // expand: 'DotKhamImages'
+    };
+    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
+      this.dotkhams = res.data;
+    });
   }
 }
