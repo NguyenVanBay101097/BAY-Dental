@@ -56,7 +56,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrUpdateDotKham([FromBody] DotKhamVm val)
+        public async Task<IActionResult> Post(DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)
             {
@@ -64,11 +64,27 @@ namespace TMTDentalAPI.OdataControllers
             }
 
             await _unitOfWork.BeginTransactionAsync();
-            await _dotkhamService.CreateOrUpdateDotKham(val);
+            var res = await _dotkhamService.CreateDotKham(val);
+            var viewdotkham = _mapper.Map<DotKhamVm>(res);
+            _unitOfWork.Commit();
+
+            return Ok(viewdotkham);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PUT([FromODataUri] Guid key, DotKhamSaveVm val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _dotkhamService.UpdateDotKham(key, val);
             _unitOfWork.Commit();
 
             return NoContent();
         }
+
+
 
 
         //[HttpPost]
@@ -89,7 +105,7 @@ namespace TMTDentalAPI.OdataControllers
 
 
 
-       
+
 
 
     }

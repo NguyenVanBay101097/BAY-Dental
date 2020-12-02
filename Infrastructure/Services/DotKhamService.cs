@@ -50,27 +50,33 @@ namespace Infrastructure.Services
                 .ToListAsync();
         }
 
-        public async Task CreateOrUpdateDotKham(DotKhamVm val)
+        public async Task<DotKham> CreateDotKham(DotKhamSaveVm val)
         {
             var dotKham = _mapper.Map<DotKham>(val);
 
             SaveLines(val, dotKham);
 
             SaveDotKhamImages(val, dotKham);
+            await CreateAsync(dotKham);
 
-            if (val.Id == Guid.Empty)
-            {
-               
-                await CreateAsync(dotKham);
-            }
-            else
-            {
-                await UpdateAsync(dotKham);
-            }
+            return dotKham;
+            
+        }
+
+        public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
+        {
+            var dotKham =  await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            dotKham = _mapper.Map(val, dotKham);
+
+            SaveLines(val, dotKham);
+
+            SaveDotKhamImages(val, dotKham);
+
+            await UpdateAsync(dotKham);
 
         }
 
-        private void SaveLines(DotKhamVm val, DotKham dotkham)
+        private void SaveLines(DotKhamSaveVm val, DotKham dotkham)
         {
             //remove line
             var lineToRemoves = new List<DotKhamLine>();
@@ -123,7 +129,7 @@ namespace Infrastructure.Services
 
         }
 
-        private void SaveDotKhamImages(DotKhamVm val, DotKham dotkham)
+        private void SaveDotKhamImages(DotKhamSaveVm val, DotKham dotkham)
         {
             //remove line
             var lineToRemoves = new List<PartnerImage>();
@@ -163,13 +169,13 @@ namespace Infrastructure.Services
         public async override Task<DotKham> CreateAsync(DotKham entity)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            entity.Name = entity.Name;
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
-            {
-                entity.Name = "Đợt khám";
-                //await InsertDotKhamSequence();
-                //entity.Name = await sequenceService.NextByCode("dot.kham");
-            }
+            //entity.Name = entity.Name;
+            //if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            //{
+            //    entity.Name = "Đợt khám";
+            //    //await InsertDotKhamSequence();
+            //    //entity.Name = await sequenceService.NextByCode("dot.kham");
+            //}
 
             //if (entity.SaleOrderId.HasValue)
             //{
