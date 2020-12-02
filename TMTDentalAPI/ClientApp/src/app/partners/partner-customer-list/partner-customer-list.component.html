@@ -42,7 +42,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip" style="max-height: 550px;" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
+    <kendo-grid partnersBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Id" width="100" [locked]="true">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
@@ -94,11 +94,11 @@
         </kendo-grid-column>
         <kendo-grid-column field="Comment" title="Ghi chú" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
+        <!-- <kendo-grid-column field="lastAppointmentDate" title="Lịch hẹn tiếp theo/gần đây" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.LastAppointmentDate | date: 'HH:mm - EEEE, dd/MM/yyyy'}}
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column> -->
 
         <!-- <div *kendoGridDetailTemplate="let dataItem">
             <ul class="nav nav-tabs" id="myTab" role="tablist">

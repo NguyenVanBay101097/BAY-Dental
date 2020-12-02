@@ -1216,4 +1216,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   paymentOutput(e) {
     this.loadRecord();
   }
+
+  isLaboLine(line: FormGroup) {
+    return line.get('ProductIsLabo') && line.get('ProductIsLabo').value;
+  }
 }
