@@ -6,6 +6,7 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-crea
 import { DotkhamOdataService, DotKhamVm } from 'src/app/shared/services/dotkham-odata.service';
 import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -23,8 +24,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     private dotKhamStepsOdataService: DotKhamStepsOdataService,
     private dotkhamOdataService: DotkhamOdataService,
     private saleOrderOdataService: SaleOrdersOdataService,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
     this.saleOrderId = this.route.queryParams['value'].id;
@@ -41,7 +43,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   checkStatusDotKhamStep(step) {
-    step.IsDone= !step.IsDone;
+    step.IsDone = !step.IsDone;
     var value = {
       Id: step.Id,
       IsDone: step.IsDone
@@ -57,7 +59,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   loadDotKhamList() {
-    if ( !this.saleOrderId) {
+    if (!this.saleOrderId) {
       return;
     }
     const state = {
@@ -72,18 +74,27 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     const options = {
       // expand: 'Lines'
     };
-    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {      
+    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
       this.dotkhams = res.data;
-      console.log(this.dotkhams);
-      
     });
   }
 
   onCreateDotKham() {
+    if (this.activeDotkham) {
+      return;
+    }
     const dotkham = new DotKhamVm();
     dotkham.Date = new Date();
     dotkham.Name = 'Đợt khám ' + (this.dotkhams.length + 1);
     dotkham.SaleOrderId = this.saleOrderId;
+    dotkham.CompanyId = this.authService.userInfo.companyId;
     this.dotkhams.unshift(dotkham);
+    this.activeDotkham = dotkham;
+  }
+
+  cancelDotkham(dotkham) {
+    const index = this.dotkhams.indexOf(dotkham);
+    this.dotkhams.splice(index, 1);
+    this.activeDotkham = null;
   }
 }

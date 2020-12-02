@@ -10,17 +10,17 @@ export class DotKhamVm {
   PartnerId: string;
   Partner: any;
   Date: any;
-  Reason: string;
+  Reason = '';
   State: string;
   CompanyId: string;
   DoctorId: string;
   Doctor: any;
-  Lines: any;
-  Steps: any;
-  DotKhamImages: any;
+  Lines: any[] = [];
+  Steps: any[] = [];
+  DotKhamImages: any[] = [];
 }
 
-export class DotKhamLineDisplay{
+export class DotKhamLineDisplay {
   Id: string;
   Name: string;
   DotKhamId: string;
@@ -35,5 +35,9 @@ export class DotKhamLineDisplay{
   providedIn: 'root'
 })
 export class DotkhamOdataService extends ODataService {
-  constructor(http: HttpClient,  @Inject('BASE_API') baseUrl: string) {super(http, baseUrl, 'DotKhams'); }
+  constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, 'DotKhams'); }
+
+  createOrUpdateDotKham(val) {
+    return this.http.post(`${this.BASE_URL}${this.tableName}` + '/CreateOrUpdateDotKham', val);
+  }
 }
