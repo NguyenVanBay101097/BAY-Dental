@@ -3,9 +3,10 @@ import { ActivatedRoute } from "@angular/router";
 import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
-import { DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
+import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -51,10 +52,33 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       (result) => {
         console.log(result);
       },
-      (error) => { }
+      (error) => {}
     );
 
     this.loadDotKhamList();
+  }
+
+  editTreatmentProcess(service) {
+    let modalRef = this.modalService.open(TreatmentProcessServiceDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.service = service;
+
+    modalRef.result.then((result) => {
+
+    }, 
+    (error) => {}
+    );
+  }
+
+  sendDotKhamStep(step) {
+    console.log(step);
+    const line = new DotKhamLineDisplay();
+    line.Name = step.Name;
+    line.DotKhamId = this.dotkham.Id;
+    line.ProductId = step.ProductId;
+    line.Product = step.Product;
+    line.State = 'draft';
+    line.Sequence = this.dotkham.Lines.length + 1;
+    //add line nay vao trong Lines cuar active
   }
 
   loadDotKhamList() {
