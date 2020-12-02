@@ -6,6 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderLineViewModel
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public string State { get; set; }
@@ -25,7 +26,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public EmployeeBasic Employee { get; set; }
         public decimal PriceTotal { get; set; }
+        public Guid ToothCategoryId { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+        public IEnumerable<DotKhamStepBasic> Steps { get; set; } = new List<DotKhamStepBasic>();
     }
 }

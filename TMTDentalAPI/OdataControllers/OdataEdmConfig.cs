@@ -88,7 +88,11 @@ namespace TMTDentalAPI.OdataControllers
 
             builder.EntityType<SaleOrderViewModel>()
             .Action("GetDotKhamStepByOrderLine")
-            .Returns<SaleOrderLineBasicViewModel>();
+            .ReturnsFromEntitySet<SaleOrderLineViewModel>("SaleOrderLines");
+            #endregion
+
+            #region SaleOrderLines
+            builder.EntitySet<SaleOrderLineViewModel>("SaleOrderLines");
 
             #endregion
 
@@ -98,6 +102,10 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<DotmKhamStepVM>()
                 .Collection
                 .Action("ActionDone");
+
+            builder.EntityType<DotmKhamStepVM>()
+                .Collection
+                .Action("UpdateList");
 
             #endregion
 
