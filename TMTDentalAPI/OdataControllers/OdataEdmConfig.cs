@@ -92,6 +92,15 @@ namespace TMTDentalAPI.OdataControllers
 
             #endregion
 
+            #region DotKhamSteps
+            builder.EntitySet<DotmKhamStepVM>("DotKhamSteps");
+
+            builder.EntityType<DotmKhamStepVM>()
+                .Collection
+                .Action("ActionDone");
+
+            #endregion
+
             #region SalaryPayments
             builder.EntitySet<SalaryPaymentVm>("SalaryPayments");
 

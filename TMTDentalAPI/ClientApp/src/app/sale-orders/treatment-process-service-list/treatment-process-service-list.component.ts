@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
@@ -19,8 +20,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private saleOrderOdataService: SaleOrdersOdataService,
+    private dotKhamStepsOdataService: DotKhamStepsOdataService,
     private dotkhamOdataService: DotkhamOdataService,
+    private saleOrderOdataService: SaleOrdersOdataService,
     private modalService: NgbModal
   ) {}
 
@@ -28,16 +30,28 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.saleOrderId = this.route.queryParams['value'].id;
 
     if (this.saleOrderId) {
-      this.saleOrderOdataService
-        .getDotKhamStepByOrderLine(this.saleOrderId)
-        .subscribe(
-          (result) => {
-            console.log(result);
-            this.services = result['value'];
-          },
-          (error) => {}
-        );
+      this.saleOrderOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
+        (result) => {
+          console.log(result);
+          this.services = result['value'];
+        },
+        (error) => { }
+      );
     }
+  }
+
+  checkStatusDotKhamStep(step) {
+    step.IsDone= !step.IsDone;
+    var value = {
+      Id: step.Id,
+      IsDone: step.IsDone
+    }
+    this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
+      (result) => {
+        console.log(result);
+      },
+      (error) => { }
+    );
 
     this.loadDotKhamList();
   }
