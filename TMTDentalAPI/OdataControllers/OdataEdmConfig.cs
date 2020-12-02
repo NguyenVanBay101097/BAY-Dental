@@ -86,6 +86,10 @@ namespace TMTDentalAPI.OdataControllers
              .Function("GetSaleOrderLines")
              .Returns<SaleOrderDisplay>();
 
+            builder.EntityType<SaleOrderViewModel>()
+            .Function("GetDotKhamStepByOrderLine")
+            .Returns<SaleOrderLineBasicViewModel>();
+
             #endregion
 
             #region SalaryPayments
@@ -150,6 +154,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<SaleOrderLineDisplay>();
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
+            builder.ComplexType<DotKhamStepBasic>();
             builder.ComplexType<ToothCategoryBasic>();
             builder.ComplexType<SalaryPaymentDisplay>();
             builder.ComplexType<EmployeeSimple>();

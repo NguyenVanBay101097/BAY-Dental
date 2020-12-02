@@ -1,0 +1,40 @@
+<div class="w-100 h-100 d-flex">
+    <div class="w-30 h-100">
+        <div *ngFor="let service of services">
+            <h5>{{service.Name}}</h5>
+            <div>Răng: 
+                <span *ngFor="let tooth of service.Teeth">{{tooth.Name}} </span>
+            </div>
+            <div>Chuẩn đoán: </div>
+            <h5>
+                Tiến trình điều trị 
+                <span class="text-primary"><i class="fas fa-edit"></i></span>
+            </h5>
+            <table class="table table-sm text-center">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nội dung</th>
+                        <th>Hoàn thành</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let step of service.Steps; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{step.Name}}</td>
+                        <td>
+                            <input type="checkbox" [value]="step.IsDone">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm">Điều trị</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="w-70 h-100">
+        Của chị 7
+    </div>
+</div>
