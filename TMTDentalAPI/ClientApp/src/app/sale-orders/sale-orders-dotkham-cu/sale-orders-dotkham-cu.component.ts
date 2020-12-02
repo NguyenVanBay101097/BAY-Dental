@@ -6,6 +6,7 @@ import { validator } from 'fast-json-patch';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
+import { DotKhamLineDisplay } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 
@@ -61,17 +62,26 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     });
   }
 
+  get Name() {return this.dotkhamForm.get('Name').value; }
   get imgsFA() {return this.dotkhamForm.get('DotKhamImages') as FormArray; }
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
 
   loadRecord() {
    if (this.dotkham) {
     this.dotkham.Date = new Date(this.dotkham.Date);
+    this.imgsFA.clear();
+    this.linesFA.clear();
     this.dotkham.DotKhamImages.forEach(e => {
       const imgFG = this.fb.group(e);
       this.imgsFA.push(imgFG);
     });
+    this.dotkham.Lines.forEach(e => {
+      const imgFG = this.fb.group(e);
+      this.linesFA.push(imgFG);
+    });
     this.dotkhamForm.patchValue(this.dotkham);
+    console.log(this.dotkhamForm);
+    
    }
   }
 
@@ -124,9 +134,22 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   }
 
+  onApllyLine(e) {
+    const line = new DotKhamLineDisplay();
+    line.Name = e.Name;
+    line.DotKhamId = this.dotkham.Id;
+    line.ProductId = e.ProductId;
+    line.Product = e.Product;
+    line.State = 'draft';
+    line.Sequence = this.dotkham.Lines.length + 1;
+    const lineFG = this.fb.group(e);
+    this.linesFA.push(lineFG);
+  }
+
   onSave() {
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
+    console.log(val);
   }
 
   onCancel() {
