@@ -16,21 +16,15 @@ namespace ApplicationCore.Entities
         }
 
         /// <summary>
-        /// Ma tien trinh
+        /// Mã đợt khám
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Hóa đơn điều trị
-        /// </summary>
-        public Guid? InvoiceId { get; set; }
-        public AccountInvoice Invoice { get; set; }
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
 
         /// <summary>
-        /// Khách hàng lấy từ invoice
+        /// Khách hàng lấy từ SaleOrder
         /// </summary>
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
@@ -41,16 +35,9 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
-
-        /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
-
 
         /// <summary>
         /// Trạng thái
@@ -69,18 +56,10 @@ namespace ApplicationCore.Entities
         public Guid? DoctorId { get; set; }
         public Employee Doctor { get; set; }
 
-        //public Guid? AssistantId { get; set; }
-        //public Employee Assistant { get; set; }
-
         public Guid? AppointmentId { get; set; }
         public Appointment Appointment { get; set; }
 
-        //public string AssistantUserId { get; set; }
-        //public ApplicationUser AssistantUser { get; set; }
-
         public ICollection<DotKhamLine> Lines { get; set; } = new List<DotKhamLine>();
-
-        //public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
 
         /// <summary>
         /// hình ảnh

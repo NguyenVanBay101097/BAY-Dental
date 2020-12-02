@@ -71,21 +71,21 @@ namespace TMTDentalAPI.OdataControllers
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> GetAllDotKhamForSaleOrder([FromBody] GetAllDotKhamVm val)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> GetAllDotKhamForSaleOrder([FromBody] GetAllDotKhamVm val)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            await _unitOfWork.BeginTransactionAsync();
-            var results = _mapper.ProjectTo<DotKhamVm>(_dotkhamService.SearchQuery(x => val.OrderIds.Contains(x.SaleOrderId.Value)));          
-            _unitOfWork.Commit();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    var results = _mapper.ProjectTo<DotKhamVm>(_dotkhamService.SearchQuery(x => val.OrderIds.Contains(x.SaleOrderId.Value)));          
+        //    _unitOfWork.Commit();
 
-            return Ok(results);
+        //    return Ok(results);
 
-        }
+        //}
 
 
 

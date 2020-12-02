@@ -17,10 +17,6 @@ namespace Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.ProductId);
 
-            //builder.HasOne(x => x.DotKham)
-            //    .WithMany(x => x.Steps)
-            //    .HasForeignKey(x => x.DotKhamId);
-
             builder.HasOne(x => x.SaleLine)
              .WithMany(x => x.DotKhamSteps)
              .HasForeignKey(x => x.SaleLineId);
@@ -28,10 +24,6 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.SaleOrder)
                 .WithMany()
                 .HasForeignKey(x => x.SaleOrderId);
-
-            builder.HasOne(x => x.Invoice)
-                .WithMany()
-                .HasForeignKey(x => x.InvoicesId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
