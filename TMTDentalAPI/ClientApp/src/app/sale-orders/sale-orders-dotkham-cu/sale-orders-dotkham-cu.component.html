@@ -48,7 +48,8 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea [readonly]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <textarea *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <p *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{reason}}</p>
         </div>
         <div class="image mt-2">
             <div class="d-flex justify-content-between">

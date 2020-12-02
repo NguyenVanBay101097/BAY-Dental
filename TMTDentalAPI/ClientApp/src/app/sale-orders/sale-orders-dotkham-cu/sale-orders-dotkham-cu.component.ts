@@ -24,6 +24,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
   @Output() activeDotkhamChange = new EventEmitter<any>();
+  @Output() removeDotKham = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -74,6 +75,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
   get dotkhamDate() { return this.dotkhamForm.get('Date').value; }
   get employee() { return this.dotkhamForm.get('Doctor').value; }
+  get reason() { return this.dotkhamForm.get('Reason').value; }
 
   loadRecord() {
     if (this.dotkham) {
@@ -164,7 +166,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     val.CompanyId = this.authService.userInfo.companyId;
-debugger;
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
@@ -182,7 +183,8 @@ debugger;
 
   onCancel() {
     this.dotkhamChange.emit(this.dotkham);
-    this.activeDotkhamChange.emit(null);
+    this.activeDotkhamChange.emit(this.dotkham);
+    this.removeDotKham.emit();
   }
 
   onClose() {

@@ -27,7 +27,7 @@
                             <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
                         </td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm">Điều trị</button>
+                            <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm" (click)="sendDotKhamStep(step)">Điều trị</button>
                         </td>
                     </tr>
                 </tbody>
@@ -40,7 +40,7 @@
             <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
         <div class="flex-1-1-100 overflow-auto">
-            <app-sale-orders-dotkham-cu *ngFor="let dk of dotkhams" (cancelDotkham)="cancelDotkham($event)" [dotkham]="dk" (dotkhamChange)="dk = $event" [activeDotkham]="activeDotkham" (activeDotkhamChange)="activeDotkham = $event"></app-sale-orders-dotkham-cu>
+            <app-sale-orders-dotkham-cu *ngFor="let dk of dotkhams" (cancelDotkham)="cancelDotkham($event)" [dotkham]="dk" (dotkhamChange)="dk = $event" [activeDotkham]="activeDotkham" (activeDotkhamChange)="activeDotkhamChange($event)" (removeDotKham)="removeDotKham($event)"></app-sale-orders-dotkham-cu>
         </div>
     </div>
 </div>
