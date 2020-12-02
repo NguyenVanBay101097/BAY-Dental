@@ -50,27 +50,31 @@ namespace Infrastructure.Services
                 .ToListAsync();
         }
 
-        public async Task CreateOrUpdateDotKham(DotKhamVm val)
+        public async Task CreateDotKham(DotKhamSaveVm val)
         {
             var dotKham = _mapper.Map<DotKham>(val);
 
             SaveLines(val, dotKham);
 
             SaveDotKhamImages(val, dotKham);
+            await CreateAsync(dotKham);
+            
+        }
 
-            if (val.Id == Guid.Empty)
-            {
-               
-                await CreateAsync(dotKham);
-            }
-            else
-            {
-                await UpdateAsync(dotKham);
-            }
+        public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
+        {
+            var dotKham =  await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            dotKham = _mapper.Map(val, dotKham);
+
+            SaveLines(val, dotKham);
+
+            SaveDotKhamImages(val, dotKham);
+
+            await UpdateAsync(dotKham);
 
         }
 
-        private void SaveLines(DotKhamVm val, DotKham dotkham)
+        private void SaveLines(DotKhamSaveVm val, DotKham dotkham)
         {
             //remove line
             var lineToRemoves = new List<DotKhamLine>();
@@ -123,7 +127,7 @@ namespace Infrastructure.Services
 
         }
 
-        private void SaveDotKhamImages(DotKhamVm val, DotKham dotkham)
+        private void SaveDotKhamImages(DotKhamSaveVm val, DotKham dotkham)
         {
             //remove line
             var lineToRemoves = new List<PartnerImage>();

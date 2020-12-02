@@ -16,9 +16,24 @@ export class DotKhamVm {
   DoctorId: string;
   Doctor: any;
   Lines: any[] = [];
-  Steps: any[] = [];
   DotKhamImages: any[] = [];
 }
+
+export class DotKhamSaveVm {
+   Name: string;
+   SaleOrderId: string;
+   SaleOrder: any;
+   PartnerId: string;
+   Partner: any;
+   Date: any;
+   Reason = '';
+   State: string;
+   CompanyId: string;
+   DoctorId: string;
+   Doctor: any;
+   Lines: any[] = [];
+   DotKhamImages: any[] = [];
+ }
 
 export class DotKhamLineDisplay {
   Id: string;
@@ -38,6 +53,7 @@ export class DotkhamOdataService extends ODataService {
   constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, 'DotKhams'); }
 
   createOrUpdateDotKham(val) {
+    debugger
     return this.http.post(`${this.BASE_URL}${this.tableName}` + '/CreateOrUpdateDotKham', val);
   }
 }
