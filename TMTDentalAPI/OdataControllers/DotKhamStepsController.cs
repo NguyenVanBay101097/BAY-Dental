@@ -35,23 +35,23 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(results);
         }
 
-        [EnableQuery]
-        [HttpGet]
-        public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
-        {
-            var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
-            return SingleResult.Create(results);
-        }
+        //[EnableQuery]
+        //[HttpGet]
+        //public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
+        //{
+        //    var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
+        //    return SingleResult.Create(results);
+        //}
 
-        [HttpPatch]
-        public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)
-        {
-            var dotkham = await _dotKhamStepService.GetByIdAsync(key);
-            if (dotkham == null)
-                return NotFound();
-            dotkham.IsDone = val.IsDone;
-            await _dotKhamStepService.UpdateAsync(dotkham);
-            return NoContent();
-        }
+        //[HttpPatch]
+        //public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)
+        //{
+        //    var dotkham = await _dotKhamStepService.GetByIdAsync(key);
+        //    if (dotkham == null)
+        //        return NotFound();
+        //    dotkham.IsDone = val.IsDone;
+        //    await _dotKhamStepService.UpdateAsync(dotkham);
+        //    return NoContent();
+        //}
     }
 }

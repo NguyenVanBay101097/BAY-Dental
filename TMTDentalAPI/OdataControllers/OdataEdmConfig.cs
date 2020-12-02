@@ -87,7 +87,7 @@ namespace TMTDentalAPI.OdataControllers
              .Returns<SaleOrderDisplay>();
 
             builder.EntityType<SaleOrderViewModel>()
-            .Action("GetDotKhamStepByOrderLine")
+            .Function("GetDotKhamStepByOrderLine")
             .Returns<SaleOrderLineBasicViewModel>();
 
             #endregion
