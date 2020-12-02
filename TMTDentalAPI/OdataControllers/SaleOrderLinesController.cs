@@ -16,7 +16,7 @@ namespace TMTDentalAPI.OdataControllers
 {
     [Route("odata/[controller]")]
     [ApiController]
-    public class SaleOrderLinesController : ControllerBase
+    public class SaleOrderLinesController : BaseController
     {
         private readonly ISaleOrderLineService _saleOrderLineService;
         private readonly IMapper _mapper;
