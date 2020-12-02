@@ -47,6 +47,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// done: hoàn thành
         /// </summary>
         public string State { get; set; }
+
+        public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 
     public class DotKhamLineChangeRouting

@@ -60,6 +60,7 @@ namespace Infrastructure.Services
 
             if (val.Id == Guid.Empty)
             {
+               
                 await CreateAsync(dotKham);
             }
             else
@@ -92,11 +93,31 @@ namespace Infrastructure.Services
             {
                 if (line.Id == Guid.Empty)
                 {
+                    var item = _mapper.Map<DotKhamLine>(line);
+                    foreach (var toothId in line.ToothIds)
+                    {
+                        item.ToothRels.Add(new DotKhamLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
                     dotkham.Lines.Add(_mapper.Map<DotKhamLine>(line));
                 }
                 else
                 {
-                    _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
+                   var res = _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
+                    if(res != null)
+                    {
+                        res.ToothRels.Clear();
+                        foreach (var toothId in line.ToothIds)
+                        {
+                            res.ToothRels.Add(new DotKhamLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
+                    }
+                  
                 }
             }
 
