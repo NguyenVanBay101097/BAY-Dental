@@ -29,6 +29,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   ngOnInit() {
     this.saleOrderId = this.route.queryParams['value'].id;
 
+    this.loadDotKhamList();
     if (this.saleOrderId) {
       this.saleOrderOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
         (result) => {
@@ -72,7 +73,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     const options = {
       // expand: 'DotKhamImages'
     };
-    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
+    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {      
       this.dotkhams = res.data;
     });
   }
