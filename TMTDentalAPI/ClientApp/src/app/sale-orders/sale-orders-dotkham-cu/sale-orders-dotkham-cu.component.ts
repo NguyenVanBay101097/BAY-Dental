@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
+import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 
 @Component({
   selector: 'app-sale-orders-dotkham-cu',
@@ -65,9 +66,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   loadRecord() {
    if (this.dotkham) {
-     console.log(this.dotkham);
-     
     this.dotkham.Date = new Date(this.dotkham.Date);
+    this.dotkham.DotKhamImages.forEach(e => {
+    });
     this.dotkhamForm.patchValue(this.dotkham);
    }
   }
@@ -99,17 +100,26 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   onFileChange(e) {
     const file_node = e.target;
     const file = file_node.files[0];
-
     const formData = new FormData();
     formData.append('file', file);
 
-    this.webService.uploadImage(formData).subscribe((result: any) => {
-      
+    this.webService.uploadImage(formData).subscribe((res: any) => {
+      const imgObj = new PartnerImageBasic();
+      imgObj.DotKhamId = this.dotkham.Id;
+      imgObj.Name = res.fileName;
+      imgObj.UploadId = res.fileUrl;
+      imgObj.PartnerId = this.dotkham.PartnerId;
+      const imgFG = this.fb.group(imgObj);
+      this.imgsFA.push(imgFG);
     });
   }
 
   onRemoveImg(i) {
    this.imgsFA.removeAt(i);
+  }
+
+  onEditDotkham() {
+
   }
 
   onSave() {
