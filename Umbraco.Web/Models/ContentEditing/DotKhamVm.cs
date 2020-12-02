@@ -7,17 +7,16 @@ namespace Umbraco.Web.Models.ContentEditing
     public class DotKhamVm
     {
         public Guid Id { get; set; }
+
         /// <summary>
-        /// Ma tien trinh
+        /// Mã đợt khám
         /// </summary>
         public string Name { get; set; }
 
-
         public Guid? SaleOrderId { get; set; }
-        public SaleOrderBasic SaleOrder { get; set; }
 
         /// <summary>
-        /// Khách hàng lấy từ invoice
+        /// Khách hàng lấy từ SaleOrder
         /// </summary>
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
@@ -27,12 +26,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
-
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
-
 
         /// <summary>
         /// Trạng thái
@@ -43,7 +40,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public Guid CompanyId { get; set; }
-        public CompanySimple Company { get; set; }
 
         /// <summary>
         /// Bác sĩ
@@ -51,15 +47,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DoctorId { get; set; }
         public EmployeeSimple Doctor { get; set; }
 
+        public Guid? AppointmentId { get; set; }
 
         public ICollection<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
-
-        //public ICollection<DotKhamStep> Steps { get; set; } = new List<DotKhamStep>();
 
         /// <summary>
         /// hình ảnh
         /// </summary>
         public ICollection<PartnerImageBasic> DotKhamImages { get; set; } = new List<PartnerImageBasic>();
+     
     }
 
     public class GetAllDotKhamVm
