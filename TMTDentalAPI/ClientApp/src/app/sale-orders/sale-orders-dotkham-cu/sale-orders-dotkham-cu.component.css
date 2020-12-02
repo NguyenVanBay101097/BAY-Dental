@@ -1,0 +1,26 @@
+.fa-trash-alt {
+    color: red;
+}
+
+.fa-trash-alt:hover {
+    cursor: pointer;
+    color: rgb(184, 93, 93);
+}
+
+.fa-edit:hover {
+    cursor: pointer;
+    color: rgb(89, 146, 201);
+}
+
+.close span {
+    color: red;
+}
+
+.img-item img {
+    position: relative;
+}
+
+.img-item .close {
+    position: absolute;
+    right: 15px;
+}

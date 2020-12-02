@@ -170,22 +170,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/GetDotKhamList")]
-        public async Task<IActionResult> GetDotKhamList(Guid id)
-        {
-            var dotKhams = await _dotKhamService.GetDotKhamsForInvoice(id);
-            var res = _mapper.Map<IEnumerable<DotKhamBasic>>(dotKhams);
-            return Ok(res);
-        }
-
-        [HttpGet("{id}/GetDotKhamList2")]
-        public async Task<IActionResult> GetDotKhamList2(Guid id)
-        {
-            var dotKhams = await _dotKhamService.GetDotKhamsForInvoice(id);
-            var res = _mapper.Map<IEnumerable<DotKhamDisplay>>(dotKhams);
-            return Ok(res);
-        }
-
         //Trả về danh sách những hóa đơn trạng thái khác draft để sử dụng cho combobox chọn hóa đơn điều trị
         [HttpGet("GetOpenPaid")]
         public async Task<IActionResult> GetOpenPaid(string search = "")

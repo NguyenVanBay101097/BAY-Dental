@@ -1,0 +1,76 @@
+<div class="border p-2 mt-2 mx-3" [formGroup]="dotkhamForm">
+    <div class="body">
+        <div class="info">
+            <div class="d-flex align-items-center">
+                <h5>Đợt khám 2</h5><i (click)="onEditDotkham()" class="far fa-edit text-info ml-2"></i>
+            </div>
+            <div class="d-flex k-justify-content-between">
+                <div>
+                    <label class="mr-1">Ngày:</label>
+                    <kendo-datepicker formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
+                </div>
+                <div>
+                    <label class="mr-1">Bác sĩ:</label>
+                    <kendo-combobox formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div class="operation mt-2">
+            <h6>Công đoạn thực hiện</h6>
+            <table class="table table-sm table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Dịch vụ</th>
+                        <th>Công đoạn</th>
+                        <th>Răng, Chi tiết điều trị</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="Lines">
+                    <ng-container *ngFor="let line of linesFA.controls; let i=index">
+                        <tr [formGroupName]="i">
+                            <td>Dich vu 1</td>
+                            <td>công đoạn 1</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span>fdasfasffakfl</span>
+                                    <i (click)="onEditLine()" class="far fa-edit text-info ml-auto"></i>
+                                </div>
+                            </td>
+                            <td><i (click)="onRemoveLine()" class="far fa-trash-alt"></i></td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div class="note">
+            <h6>Mô tả</h6>
+            <textarea formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
+        </div>
+        <div class="image mt-2">
+            <div class="d-flex justify-content-between">
+                <h5>Hình ảnh</h5>
+                <div>
+                    <button class="btn btn-sm btn-primary" (click)="inputFile.click()"><i class="fas fa-images mr-1"></i>Thêm hình</button>
+                    <input #inputFile class="o_input_file d-none" type="file" accept="image/*" (change)="onFileChange($event)">
+                </div>
+            </div>
+            <div class="row">
+                <ng-container formArrayName="DotKhamImages">
+                    <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class="img-item col-4">
+                        <img width="100%" src="{{img.get('UploadId').value}}" alt="">
+                        <button type="submit" (click)="onRemoveImg(i)" class="close">
+                    <span>&times;</span>
+                  </button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="footer d-flex mt-2">
+        <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
+        <button (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
+        <button (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
+    </div>
+</div>

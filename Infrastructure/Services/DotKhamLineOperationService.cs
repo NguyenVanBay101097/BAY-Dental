@@ -34,7 +34,7 @@ namespace Infrastructure.Services
             }
 
             var lineObj = GetService<IDotKhamLineService>();
-            await lineObj.CheckDone(lineIds.Distinct().ToList());
+            //await lineObj.CheckDone(lineIds.Distinct().ToList());
 
             await UpdateAsync(self);
         }

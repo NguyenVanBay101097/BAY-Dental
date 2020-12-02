@@ -31,6 +31,8 @@ import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-or
 import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-order-payment-list.component';
 import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
 import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
+import { TreatmentProcessServiceListComponent } from './treatment-process-service-list/treatment-process-service-list.component';
+import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,8 @@ import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-servic
     SaleOrderLineDiscountPopoverComponent,
     SaleOrderLineInfoPopoverComponent,
     SaleOrderFastListServiceComponent,
+    TreatmentProcessServiceListComponent,
+    SaleOrdersDotkhamCuComponent,
   ],
   imports: [
     CommonModule,

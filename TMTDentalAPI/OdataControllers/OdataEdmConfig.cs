@@ -86,6 +86,10 @@ namespace TMTDentalAPI.OdataControllers
              .Function("GetSaleOrderLines")
              .Returns<SaleOrderDisplay>();
 
+            builder.EntityType<SaleOrderViewModel>()
+            .Function("GetDotKhamStepByOrderLine")
+            .Returns<SaleOrderLineBasicViewModel>();
+
             #endregion
 
             #region SalaryPayments
@@ -122,6 +126,22 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntitySet<AccountJournalViewModel>("AccountJournals");
             #endregion
 
+            #region DotKhams
+            builder.EntitySet<DotKhamVm>("DotKhams");
+
+            builder.EntityType<DotKhamVm>()
+                    .Collection
+                 .Action("GetAllDotKhamForSaleOrder")
+                 .Returns<bool>();
+
+            builder.EntityType<DotKhamVm>()
+                  .Collection
+               .Action("CreateOrUpdateDotKham")
+               .Returns<bool>();
+
+
+            #endregion
+
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
             builder.ComplexType<EmployeeBasic>();
@@ -134,13 +154,19 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<SaleOrderLineDisplay>();
             builder.ComplexType<PartnerSimple>();
             builder.ComplexType<ToothDisplay>();
+            builder.ComplexType<DotKhamStepBasic>();
             builder.ComplexType<ToothCategoryBasic>();
             builder.ComplexType<SalaryPaymentDisplay>();
             builder.ComplexType<EmployeeSimple>();
             builder.ComplexType<AccountJournalSimple>();
+            builder.ComplexType<PartnerImageBasic>();
+            builder.ComplexType<DotKhamDisplay>();
+
 
 
             #endregion
+
+
 
 
 
