@@ -65,7 +65,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
-            var dotKham =  await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var dotKham =  await SearchQuery(x => x.Id == id).Include(x=>x.DotKhamImages).Include(x=>x.Lines).FirstOrDefaultAsync();
             dotKham = _mapper.Map(val, dotKham);
 
             SaveLines(val, dotKham);
