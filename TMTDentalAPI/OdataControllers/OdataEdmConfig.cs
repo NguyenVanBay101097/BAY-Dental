@@ -178,6 +178,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<AccountJournalSimple>();
             builder.ComplexType<PartnerImageBasic>();
             builder.ComplexType<DotKhamDisplay>();
+            builder.ComplexType<DotKhamLineDisplay>();
 
 
 
