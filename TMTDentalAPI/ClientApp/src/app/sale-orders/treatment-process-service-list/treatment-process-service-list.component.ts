@@ -18,9 +18,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private saleOrderOdataService: SaleOrdersOdataService, 
-    private dotKhamStepsOdataService: DotKhamStepsOdataService
-  ) { }
-    private saleOrderOdataService: SaleOrdersOdataService,
+    private dotKhamStepsOdataService: DotKhamStepsOdataService,
     private dotkhamOdataService: DotkhamOdataService
   ) {}
 
