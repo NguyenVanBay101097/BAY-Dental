@@ -50,7 +50,7 @@ namespace Infrastructure.Services
                 .ToListAsync();
         }
 
-        public async Task CreateDotKham(DotKhamSaveVm val)
+        public async Task<DotKham> CreateDotKham(DotKhamSaveVm val)
         {
             var dotKham = _mapper.Map<DotKham>(val);
 
@@ -58,6 +58,8 @@ namespace Infrastructure.Services
 
             SaveDotKhamImages(val, dotKham);
             await CreateAsync(dotKham);
+
+            return dotKham;
             
         }
 

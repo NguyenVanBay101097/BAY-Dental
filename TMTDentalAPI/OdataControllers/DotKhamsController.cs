@@ -64,10 +64,11 @@ namespace TMTDentalAPI.OdataControllers
             }
 
             await _unitOfWork.BeginTransactionAsync();
-            await _dotkhamService.CreateDotKham(val);
+            var res = await _dotkhamService.CreateDotKham(val);
+            var viewdotkham = _mapper.Map<DotKhamVm>(res);
             _unitOfWork.Commit();
 
-            return NoContent();
+            return Ok(viewdotkham);
         }
 
         [HttpPut]
