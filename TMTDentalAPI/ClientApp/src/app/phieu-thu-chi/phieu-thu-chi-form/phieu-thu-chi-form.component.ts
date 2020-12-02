@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { LoaiThuChiFormComponent } from 'src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-phieu-thu-chi-form',
@@ -36,7 +37,8 @@ export class PhieuThuChiFormComponent implements OnInit {
     private route: ActivatedRoute, private modalService: NgbModal,
     private accountJournalService: AccountJournalService, 
     private notificationService: NotificationService, 
-    private router: Router, private intlService: IntlService, private authService: AuthService) { }
+    private router: Router, private intlService: IntlService, private authService: AuthService,
+    private printService: PrintService) { }
 
   ngOnInit() {
     this.phieuThuChi = new Object();
@@ -216,6 +218,51 @@ export class PhieuThuChiFormComponent implements OnInit {
         console.log(err);
       })
     }
+  }
+
+  confirmAndPrint() {
+    if (!this.myForm.valid) {
+      return;
+    }
+
+    var val = this.myForm.value;
+    val.loaiThuChiId = val.loaiThuChi.id;
+    val.journalId = val.journal.id;
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+
+    this.phieuThuChiService.create(val).subscribe((result: any) => {
+      this.phieuThuChiService.actionConfirm([result.id]).subscribe(() => {
+        this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: result.id, type: this.type } });
+        this.printPhieu(result.id);
+      }, () => {
+        this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: result.id, type: this.type } });
+      });
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  printItem() {
+    this.printPhieu(this.itemId);
+  }
+
+  saveRecord() {
+    var val = this.myForm.value;
+    val.loaiThuChiId = val.loaiThuChi.id;
+    val.journalId = val.journal.id;
+    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+
+    if (!this.itemId) {
+      return this.phieuThuChiService.create(val);
+    } else {
+      return this.phieuThuChiService.update(this.itemId, val);
+    }
+  }
+
+  printPhieu(id: string) {
+    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
+    });
   }
 
   actionCancel() {
