@@ -32,6 +32,7 @@ import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-or
 import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
 import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
 import { TreatmentProcessServiceListComponent } from './treatment-process-service-list/treatment-process-service-list.component';
+import { TreatmentProcessServiceDialogComponent } from './treatment-process-service-dialog/treatment-process-service-dialog.component';
 import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 
 @NgModule({
@@ -60,6 +61,7 @@ import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orde
     SaleOrderLineInfoPopoverComponent,
     SaleOrderFastListServiceComponent,
     TreatmentProcessServiceListComponent,
+    TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
   ],
   imports: [
