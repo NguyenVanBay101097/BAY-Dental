@@ -58,6 +58,7 @@ export class TreatmentProcessServiceDialogComponent implements OnInit {
 
   delete(i) {
     this.steps.removeAt(i);
+    this.steps.markAsDirty();
   }
 
   add() {
@@ -67,6 +68,7 @@ export class TreatmentProcessServiceDialogComponent implements OnInit {
       Order: this.steps.length + 1, 
       IsDone: false
     }));
+    this.steps.markAsDirty();
   }
 
   getValueFormSave() {
