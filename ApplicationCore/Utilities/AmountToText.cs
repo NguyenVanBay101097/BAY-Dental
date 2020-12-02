@@ -117,7 +117,11 @@ namespace ApplicationCore.Utilities
                     word = vietname_number((long)decimal.Round(number, 0));
                 }
 
-                return word + " " + units_name;
+                var result = word + " " + units_name;
+
+                //in hoa chữ cái đầu tiên
+                result = char.ToUpper(result[0]) + result.Substring(1);
+                return result;
             }
 
             return string.Empty;

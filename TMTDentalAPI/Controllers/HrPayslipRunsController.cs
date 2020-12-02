@@ -64,11 +64,11 @@ namespace TMTDentalAPI.Controllers
             {
                 res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
                 var html = _view.Render("SalaryEmployeePrint", res);
-                return Ok(new printData() { html = html });
+                return Ok(new PrintData() { html = html });
             }
             else
             {
-                return Ok(new printData() { html = null });
+                return Ok(new PrintData() { html = null });
             }
         }
 

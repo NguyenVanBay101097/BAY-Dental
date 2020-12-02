@@ -117,7 +117,7 @@ namespace TMTDentalAPI.Controllers
 
             var html = _view.Render("ToathuocPrint", res);
 
-            return Ok(new printData() { html = html });
+            return Ok(new PrintData() { html = html });
         }
 
         private void SaveOrderLines(ToaThuocSave val, ToaThuoc order)
