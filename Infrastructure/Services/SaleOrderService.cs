@@ -2235,13 +2235,13 @@ namespace Infrastructure.Services
             return reward_string;
         }
 
-        public async Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key)
+        public async Task<IEnumerable<SaleOrderLineViewModel>> GetDotKhamStepByOrderLine(Guid key)
         {
             var lineObj = GetService<ISaleOrderLineService>();
             var lines = await lineObj.SearchQuery(x => x.OrderId == key)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .Include(x => x.DotKhamSteps)
-                .Select(x => new SaleOrderLineBasicViewModel
+                .Select(x => new SaleOrderLineViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -2252,7 +2252,6 @@ namespace Infrastructure.Services
                         IsDone = s.IsDone
                     }),
                     Diagnostic = x.Diagnostic,
-                    ToothCategoryId = x.ToothCategoryId,
                     Teeth = x.SaleOrderLineToothRels.Select(s => new ToothDisplay
                     {
                         Id = s.ToothId,

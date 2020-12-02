@@ -43,15 +43,17 @@ namespace TMTDentalAPI.OdataControllers
         //    return SingleResult.Create(results);
         //}
 
-        //[HttpPatch]
-        //public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)
-        //{
-        //    var dotkham = await _dotKhamStepService.GetByIdAsync(key);
-        //    if (dotkham == null)
-        //        return NotFound();
-        //    dotkham.IsDone = val.IsDone;
-        //    await _dotKhamStepService.UpdateAsync(dotkham);
-        //    return NoContent();
-        //}
+        [HttpPatch]
+        public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)
+        {
+            var dotkham = await _dotKhamStepService.GetByIdAsync(key);
+            if (dotkham == null)
+                return NotFound();
+            dotkham.IsDone = val.IsDone;
+            await _dotKhamStepService.UpdateAsync(dotkham);
+            return NoContent();
+        }
+
+        
     }
 }

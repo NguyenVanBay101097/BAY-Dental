@@ -41,6 +41,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
         public DotKhamSimple DotKham { get; set; }
 
+        public Guid SaleLineId { get; set; }
+        public SaleOrderLineBasic SaleLine { get; set; }
+
+        public Guid SaleOrderId { get; set; }
+        public SaleOrderBasic SaleOrder { get; set; }
+
         public Guid? InvoicesId { get; set; }
         public AccountInvoiceCbx Invoice { get; set; }
 
