@@ -169,13 +169,13 @@ namespace Infrastructure.Services
         public async override Task<DotKham> CreateAsync(DotKham entity)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            entity.Name = entity.Name;
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
-            {
-                entity.Name = "Đợt khám";
-                //await InsertDotKhamSequence();
-                //entity.Name = await sequenceService.NextByCode("dot.kham");
-            }
+            //entity.Name = entity.Name;
+            //if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            //{
+            //    entity.Name = "Đợt khám";
+            //    //await InsertDotKhamSequence();
+            //    //entity.Name = await sequenceService.NextByCode("dot.kham");
+            //}
 
             //if (entity.SaleOrderId.HasValue)
             //{
