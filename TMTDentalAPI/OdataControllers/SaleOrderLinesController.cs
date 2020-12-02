@@ -31,15 +31,13 @@ namespace TMTDentalAPI.OdataControllers
             var res = _mapper.ProjectTo<SaleOrderLineViewModel>(_saleOrderLineService.SearchQuery(x => true));
             return Ok(res);
         }
-            
-        [HttpGet]
-        public SingleResult<SaleOrderLineViewModel> Get([FromODataUri] Guid key)
-        {
-            var results = _mapper.ProjectTo<SaleOrderLineViewModel>(_saleOrderLineService.SearchQuery(x => x.Id == key));
-            return SingleResult.Create(results);
-        }
 
-        //[HttpPut]
-        //public async Task<IActionResult> 
+
+        //[EnableQuery]
+        //public SingleResult<SaleOrderLineViewModel> Get([FromODataUri] Guid key)
+        //{
+        //    var results = _mapper.ProjectTo<SaleOrderLineViewModel>(_saleOrderLineService.SearchQuery(x => x.Id == key));
+        //    return SingleResult.Create(results);
+        //}
     }
 }

@@ -36,7 +36,6 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         //[EnableQuery]
-        //[HttpGet]
         //public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
         //{
         //    var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));

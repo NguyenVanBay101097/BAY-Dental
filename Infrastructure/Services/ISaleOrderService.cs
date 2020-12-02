@@ -61,6 +61,6 @@ namespace Infrastructure.Services
         void _GetInvoiced(IEnumerable<SaleOrder> orders);
 
         Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val);
-        Task<IEnumerable<SaleOrderLineViewModel>> GetDotKhamStepByOrderLine(Guid key);
+        Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key);
     }
 }
