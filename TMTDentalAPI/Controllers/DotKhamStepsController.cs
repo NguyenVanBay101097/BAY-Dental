@@ -42,73 +42,6 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("Reorder/{index}")]
-        public async Task<IActionResult> Reorder(int index, List<DotKhamStepDisplay> list)
-        {
-            var productId = list[0].ProductId;
-            var invoiceId = list[0].InvoicesId;
-            for (var i=0; i< list.Count()-1; i++)
-            {
-                if(list[i].Order> list[i+1].Order)
-                {
-                    var a = list[i].Order;
-                    var b = list[i+1].Order;
-                    var query = await _dotKhamStepService.SearchQuery(x=> x.InvoicesId == invoiceId && x.ProductId == productId).ToListAsync();
-                    if (list[index].Order == b)
-                    {
-                        //Dời xuống
-                        var entity = query.Where(x=>x.Order==b).FirstOrDefault();
-                        for (var j =b+1;j<=a; j++)
-                        {
-                            var record = query.Where(x => x.Order == j).FirstOrDefault();
-                            record.Order = record.Order - 1;
-                            await _dotKhamStepService.UpdateAsync(record);
-                        }
-                        entity.Order = a;
-                        await _dotKhamStepService.UpdateAsync(entity);
-                    }
-                    else if (list[index].Order == a)
-                    {
-                        //Dời lên
-                        var entity = query.Where(x => x.Order == a).FirstOrDefault();
-                        for (var j = a - 1; j >= b; j--)
-                        {
-                            var record = query.Where(x => x.Order == j).FirstOrDefault();
-                            record.Order = record.Order + 1;
-                            await _dotKhamStepService.UpdateAsync(record);
-                        }
-                        entity.Order = b;
-                        await _dotKhamStepService.UpdateAsync(entity);
-                    }
-                }
-            }
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(DotKhamStepDisplay val)
-        {
-            if(val==null || !ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var res = _dotKhamStepService.SearchQuery(x => x.InvoicesId == val.InvoicesId && x.ProductId == val.ProductId).Max(x=>x.Order);
-            if (res.HasValue)
-            {
-                val.Order = res + 1;
-            }
-            else
-            {
-                val.Order = 1;
-            }
-            
-            var dkstep = _mapper.Map<DotKhamStep>(val);
-            await _dotKhamStepService.CreateAsync(dkstep);
-
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -131,26 +64,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AssignDotKham(DotKhamStepAssignDotKhamVM val)
-        {
-            if (val == null || !ModelState.IsValid)
-                return BadRequest();
-
-            await _dotKhamStepService.AssignDotKham(val);
-            return NoContent();
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ToggleIsDone(DotKhamStepSetDone val)
-        {
-            if (val == null || !ModelState.IsValid)
-                return BadRequest();
-
-            await _dotKhamStepService.ToggleIsDone(val);
-            return NoContent();
-        }
-
-        [HttpPost("[action]")]
         public async Task<IActionResult> CloneInsert(DotKhamStepCloneInsert val)
         {
             if (val == null || !ModelState.IsValid)
@@ -161,14 +74,6 @@ namespace TMTDentalAPI.Controllers
 
             var display = await _dotKhamStepService.GetDisplay(step.Id);
             return Ok(display);
-        }
-
-        [HttpGet("[action]")]
-        [CheckAccess(Actions = "Report.DotKham")]
-        public async Task<IActionResult> DotKhamStepReport([FromQuery] DotKhamStepPaged val)
-        {
-            var res = await _dotKhamStepService.DotKhamStepReport(val);
-            return Ok(res);
         }
     }
 }

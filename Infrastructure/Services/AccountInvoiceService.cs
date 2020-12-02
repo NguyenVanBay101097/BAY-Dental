@@ -434,7 +434,7 @@ namespace Infrastructure.Services
                                 list.Add(new DotKhamStep
                                 {
                                     Name = step.Name,
-                                    InvoicesId = invoice.Id,
+                                    //InvoicesId = invoice.Id,
                                     ProductId = line.ProductId.Value,
                                     Order = step.Order
                                 });
@@ -446,7 +446,7 @@ namespace Infrastructure.Services
                         list.Add(new DotKhamStep
                         {
                             Name = line.Product.Name,
-                            InvoicesId = invoice.Id,
+                            //InvoicesId = invoice.Id,
                             ProductId = line.ProductId.Value,
                             Order = 0
                         });
@@ -463,10 +463,10 @@ namespace Infrastructure.Services
             {
                 await dotKhamObj.CreateAsync(new DotKham
                 {
-                    InvoiceId = invoice.Id,
+                    //InvoiceId = invoice.Id,
                     PartnerId = invoice.PartnerId,
                     CompanyId = invoice.CompanyId,
-                    UserId = invoice.UserId,
+                    //UserId = invoice.UserId,
                 });
             }
         }
