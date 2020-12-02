@@ -135,7 +135,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onEditDotkham() {
+    if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
 
+    }
   }
 
   onApllyLine(e) {
@@ -156,9 +158,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     }
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
-    val.DoctorId = val.Doctor.Id;
-    console.log(val);
-
+    val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     this.dotkhamService.createOrUpdateDotKham(val).subscribe((res: any) => {
       this.notify('success', 'Lưu thành công');
       this.dotkham = res;
@@ -166,6 +166,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onCancel() {
+    debugger;
     this.cancelDotkham.emit(this.dotkham);
   }
 

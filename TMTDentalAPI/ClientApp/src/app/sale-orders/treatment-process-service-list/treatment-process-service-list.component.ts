@@ -89,10 +89,11 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     dotkham.SaleOrderId = this.saleOrderId;
     dotkham.CompanyId = this.authService.userInfo.companyId;
     this.dotkhams.unshift(dotkham);
-    this.activeDotkham = dotkham;
+    this.activeDotkham = Object.assign({}, dotkham);
   }
 
   cancelDotkham(dotkham) {
+    debugger;
     const index = this.dotkhams.indexOf(dotkham);
     this.dotkhams.splice(index, 1);
     this.activeDotkham = null;
