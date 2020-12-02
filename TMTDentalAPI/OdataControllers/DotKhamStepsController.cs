@@ -16,7 +16,7 @@ namespace TMTDentalAPI.OdataControllers
 {
     [Route("odata/[controller]")]
     [ApiController]
-    public class DotKhamStepsController : ControllerBase
+    public class DotKhamStepsController : BaseController
     {
         private readonly IDotKhamStepService _dotKhamStepService;
         private readonly IMapper _mapper;
@@ -35,12 +35,12 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(results);
         }
 
-        //[EnableQuery]
-        //public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
-        //{
-        //    var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
-        //    return SingleResult.Create(results);
-        //}
+        [EnableQuery]
+        public SingleResult<DotmKhamStepVM> Get([FromODataUri] Guid key)
+        {
+            var results = _mapper.ProjectTo<DotmKhamStepVM>(_dotKhamStepService.SearchQuery(x => x.Id == key));
+            return SingleResult.Create(results);
+        }
 
         [HttpPatch]
         public async Task<IActionResult> Patch([FromODataUri] Guid key, ActionDotKham val)
