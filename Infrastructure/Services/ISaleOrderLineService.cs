@@ -43,5 +43,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLine>> _ComputePaidResidual(IEnumerable<Guid> ids);
 
         Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id);
+        Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val);
     }
 }

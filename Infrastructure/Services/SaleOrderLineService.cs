@@ -515,5 +515,69 @@ namespace Infrastructure.Services
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
         }
+
+        public async Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val)
+        {
+            var dkStepobj = GetService<IDotKhamStepService>();
+            var productObj = GetService<IProductService>();
+            var productStepObj = GetService<IProductStepService>();
+            var line = await SearchQuery(x => x.Id == key).Include(x => x.DotKhamSteps).FirstOrDefaultAsync();
+            var valDict = val.Steps.ToDictionary(x => x.Id, x => x);
+            var dksAdd = new List<DotKhamStep>();
+            var dksRemove = new List<DotKhamStep>();
+            foreach (var item in line.DotKhamSteps.ToList())
+            {
+                if (!val.Steps.Any(x => x.Id == item.Id))
+                {
+                    dksRemove.Add(item);
+                    line.DotKhamSteps.Remove(item);
+                }
+
+                if (valDict.ContainsKey(item.Id))
+                {
+                    item.Name = valDict[item.Id].Name;
+                    item.Order = valDict[item.Id].Order;
+                }
+            }
+            foreach (var item in val.Steps)
+            {
+                if (!line.DotKhamSteps.Any(x => x.Id == item.Id))
+                {
+                    dksAdd.Add(new DotKhamStep
+                    {
+                        Id = item.Id,
+                        IsDone = item.IsDone,
+                        Name = item.Name,
+                        Order = item.Order,
+                        ProductId = line.ProductId,
+                        SaleLineId = line.Id,
+                        SaleOrderId = line.OrderId
+                    });
+                }
+            }
+
+            await dkStepobj.CreateAsync(dksAdd);
+            await dkStepobj.DeleteAsync(dksRemove);
+            await dkStepobj.UpdateAsync(line.DotKhamSteps.ToList());
+            if (val.Default)
+            {
+                var service = await productObj.SearchQuery(x => x.Id == line.ProductId).Include(x => x.Steps).FirstOrDefaultAsync();
+                var stepsAdd = new List<ProductStep>();
+                foreach (var item in val.Steps)
+                {
+                    stepsAdd.Add(new ProductStep
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Order = item.Order,
+                        Active = true,
+                        Default = true,
+                        ProductId = service.Id,
+                    });
+                }
+                await productStepObj.DeleteAsync(service.Steps.ToList());
+                await productStepObj.CreateAsync(stepsAdd);
+            }
+        }
     }
 }
