@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { validator } from 'fast-json-patch';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
@@ -31,13 +32,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     private fb: FormBuilder,
     private empService: EmployeesOdataService,
     private intelService: IntlService,
+    private authService: AuthService,
     private dotkhamService: DotkhamOdataService,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
     this.dotkhamForm = this.fb.group({
-      Id: null,
       Name: [null, Validators.required],
       SaleOrderId: [null],
       PartnerId: null,
@@ -49,7 +50,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
       DoctorId: null,
       Doctor: null,
       Lines: this.fb.array([]),
-      Steps: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
     });
 
@@ -155,11 +155,12 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
       return;
     }
     const val = this.dotkhamForm.value;
-    val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
+    val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
     val.DoctorId = val.Doctor.Id;
+    val.CompanyId = this.authService.userInfo.companyId;
     console.log(val);
 
-    this.dotkhamService.createOrUpdateDotKham(val).subscribe((res: any) => {
+    this.dotkhamService.create(val).subscribe((res: any) => {
       this.notify('success', 'Lưu thành công');
       this.dotkham = res;
     });
