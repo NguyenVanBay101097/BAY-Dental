@@ -2,17 +2,19 @@
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center">
-                <h5>{{Name}}</h5><i (click)="onEditDotkham()" class="far fa-edit text-info ml-2"></i>
+                <h5>{{Name}}</h5><i *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham" (click)="onEditDotkham()" class="far fa-edit text-info ml-2"></i>
             </div>
             <div class="d-flex k-justify-content-between">
                 <div>
                     <label class="mr-1">Ngày:</label>
-                    <kendo-datepicker formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
+                    <kendo-datepicker [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
+                    <label *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{dotkhamDate | date: 'shortDate'}}</label>
                 </div>
                 <div>
                     <label class="mr-1">Bác sĩ:</label>
-                    <kendo-combobox formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
+                    <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
                     </kendo-combobox>
+                    <label *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{employee?.Name}}</label>
                 </div>
             </div>
         </div>
@@ -35,10 +37,10 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <span>fdasfasffakfl</span>
-                                    <i (click)="onEditLine()" class="far fa-edit text-info ml-auto"></i>
+                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine()" class="far fa-edit text-info ml-auto"></i>
                                 </div>
                             </td>
-                            <td><i (click)="onRemoveLine()" class="far fa-trash-alt"></i></td>
+                            <td><i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onRemoveLine()" class="far fa-trash-alt"></i></td>
                         </tr>
                     </ng-container>
                 </tbody>
@@ -46,12 +48,12 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <textarea [readonly]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
         </div>
         <div class="image mt-2">
             <div class="d-flex justify-content-between">
                 <h5>Hình ảnh</h5>
-                <div>
+                <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham">
                     <button class="btn btn-sm btn-primary" (click)="inputFile.click()"><i class="fas fa-images mr-1"></i>Thêm hình</button>
                     <input #inputFile class="o_input_file d-none" type="file" accept="image/*" (change)="onFileChange($event)">
                 </div>
@@ -60,7 +62,7 @@
                 <ng-container formArrayName="DotKhamImages">
                     <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class="img-item col-4">
                         <img width="100%" src="{{img.get('UploadId').value}}" alt="">
-                        <button type="submit" (click)="onRemoveImg(i)" class="close">
+                        <button *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" type="submit" (click)="onRemoveImg(i)" class="close">
                     <span>&times;</span>
                   </button>
                     </div>
@@ -68,9 +70,9 @@
             </div>
         </div>
     </div>
-    <div class="footer d-flex mt-2">
+    <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="footer d-flex mt-2">
         <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
-        <button (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
-        <button (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
+        <button *ngIf="!Id" (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
+        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
     </div>
 </div>

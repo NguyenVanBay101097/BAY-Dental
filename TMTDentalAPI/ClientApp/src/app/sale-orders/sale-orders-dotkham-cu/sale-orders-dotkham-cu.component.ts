@@ -21,8 +21,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @Input() dotkham: any;
+  @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
-  @Output() cancelDotkham = new EventEmitter<any>();
+  @Output() activeDotkhamChange = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -39,6 +40,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   ngOnInit() {
     this.dotkhamForm = this.fb.group({
+      Id: null,
       Name: [null, Validators.required],
       SaleOrderId: [null],
       PartnerId: null,
@@ -66,9 +68,12 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     });
   }
 
+  get Id() { return this.dotkhamForm.get('Id').value; }
   get Name() { return this.dotkhamForm.get('Name').value; }
   get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
+  get dotkhamDate() { return this.dotkhamForm.get('Date').value; }
+  get employee() { return this.dotkhamForm.get('Doctor').value; }
 
   loadRecord() {
     if (this.dotkham) {
@@ -135,9 +140,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onEditDotkham() {
-    if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
-
-    }
+    this.checkAccess();
+    this.activeDotkhamChange.emit(this.dotkham);
   }
 
   onApllyLine(e) {
@@ -158,23 +162,38 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     }
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
-    val.DoctorId = val.Doctor.Id;
+    val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     val.CompanyId = this.authService.userInfo.companyId;
-    console.log(val);
-
-    this.dotkhamService.create(val).subscribe((res: any) => {
-      this.notify('success', 'Lưu thành công');
-      this.dotkham = res;
-    });
+debugger;
+    if (!this.Id) {
+      this.dotkhamService.create(val).subscribe((res: any) => {
+        this.notify('success', 'Lưu thành công');
+        this.dotkhamChange.emit(res);
+        this.loadRecord();
+        this.activeDotkhamChange.emit(null);
+      });
+    } else {
+      this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
+        this.notify('success', 'Lưu thành công');
+        this.activeDotkhamChange.emit(null);
+      });
+    }
   }
 
   onCancel() {
-    debugger;
-    this.cancelDotkham.emit(this.dotkham);
+    this.dotkhamChange.emit(this.dotkham);
+    this.activeDotkhamChange.emit(null);
   }
 
   onClose() {
-    this.cancelDotkham.emit();
+    this.activeDotkhamChange.emit(null);
+  }
+
+  checkAccess() {
+    if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
+      this.notify('error', 'Bạn phải hoàn tất đợt khám đang thao tác');
+      return;
+    }
   }
 
   notify(Style, Content) {

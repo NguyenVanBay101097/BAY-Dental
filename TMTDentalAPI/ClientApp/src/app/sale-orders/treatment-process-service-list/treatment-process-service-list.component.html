@@ -40,7 +40,7 @@
             <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
         <div class="flex-1-1-100 overflow-auto">
-            <app-sale-orders-dotkham-cu *ngFor="let dk of dotkhams" (cancelDotkham)="cancelDotkham($event)" [(dotkham)]="dk" [(activeDotkham)]="activeDotkham"></app-sale-orders-dotkham-cu>
+            <app-sale-orders-dotkham-cu *ngFor="let dk of dotkhams" (cancelDotkham)="cancelDotkham($event)" [dotkham]="dk" (dotkhamChange)="dk = $event" [activeDotkham]="activeDotkham" (activeDotkhamChange)="activeDotkham = $event"></app-sale-orders-dotkham-cu>
         </div>
     </div>
 </div>
