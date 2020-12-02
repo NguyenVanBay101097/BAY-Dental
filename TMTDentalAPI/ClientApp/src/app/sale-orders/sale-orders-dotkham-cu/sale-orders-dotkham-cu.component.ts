@@ -1,11 +1,13 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { validator } from 'fast-json-patch';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
+import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 
@@ -16,9 +18,10 @@ import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 })
 export class SaleOrdersDotkhamCuComponent implements OnInit {
 
-  @ViewChild('empCbx', {static: true}) empCbx: ComboBoxComponent;
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @Input() dotkham: any;
   @Input() activeDotkham: any;
+  @Output() cancelDotkham = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -27,7 +30,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     private webService: WebService,
     private fb: FormBuilder,
     private empService: EmployeesOdataService,
-    private intelService: IntlService
+    private intelService: IntlService,
+    private dotkhamService: DotkhamOdataService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -61,18 +66,27 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     });
   }
 
-  get imgsFA() {return this.dotkhamForm.get('DotKhamImages') as FormArray; }
+  get Name() { return this.dotkhamForm.get('Name').value; }
+  get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
 
   loadRecord() {
-   if (this.dotkham) {
-    this.dotkham.Date = new Date(this.dotkham.Date);
-    this.dotkham.DotKhamImages.forEach(e => {
-      const imgFG = this.fb.group(e);
-      this.imgsFA.push(imgFG);
-    });
-    this.dotkhamForm.patchValue(this.dotkham);
-   }
+    if (this.dotkham) {
+      this.dotkham.Date = new Date(this.dotkham.Date);
+      this.imgsFA.clear();
+      this.linesFA.clear();
+      this.dotkham.DotKhamImages.forEach(e => {
+        const imgFG = this.fb.group(e);
+        this.imgsFA.push(imgFG);
+      });
+      this.dotkham.Lines.forEach(e => {
+        const imgFG = this.fb.group(e);
+        this.linesFA.push(imgFG);
+      });
+      this.dotkhamForm.patchValue(this.dotkham);
+      console.log(this.dotkhamForm);
+
+    }
   }
 
   searchEmp(val) {
@@ -117,23 +131,55 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onRemoveImg(i) {
-   this.imgsFA.removeAt(i);
+    this.imgsFA.removeAt(i);
   }
 
   onEditDotkham() {
 
   }
 
+  onApllyLine(e) {
+    const line = new DotKhamLineDisplay();
+    line.Name = e.Name;
+    line.DotKhamId = this.dotkham.Id;
+    line.ProductId = e.ProductId;
+    line.Product = e.Product;
+    line.State = 'draft';
+    line.Sequence = this.dotkham.Lines.length + 1;
+    const lineFG = this.fb.group(e);
+    this.linesFA.push(lineFG);
+  }
+
   onSave() {
+    if (this.dotkhamForm.invalid) {
+      return;
+    }
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
+    val.DoctorId = val.Doctor.Id;
+    console.log(val);
+
+    this.dotkhamService.createOrUpdateDotKham(val).subscribe((res: any) => {
+      this.notify('success', 'Lưu thành công');
+      this.dotkham = res;
+    });
   }
 
   onCancel() {
-
+    this.cancelDotkham.emit(this.dotkham);
   }
 
   onClose() {
+    this.cancelDotkham.emit();
+  }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
   }
 }
