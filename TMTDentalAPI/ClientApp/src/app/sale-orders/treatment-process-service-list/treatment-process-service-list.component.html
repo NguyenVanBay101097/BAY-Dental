@@ -8,7 +8,7 @@
             <div>Chuẩn đoán: </div>
             <h5>
                 Tiến trình điều trị 
-                <span class="text-primary"><i class="fas fa-edit"></i></span>
+                <span class="text-primary cursor-pointer"><i class="fas fa-edit"></i></span>
             </h5>
             <table class="table table-sm text-center">
                 <thead>
@@ -24,7 +24,9 @@
                         <td>{{i + 1}}</td>
                         <td>{{step.Name}}</td>
                         <td>
-                            <input type="checkbox" [value]="step.IsDone">
+                            <input type="checkbox"
+                                [checked]="step.IsDone"
+                                (change)="checkStatusDotKhamStep(step.Id)">
                         </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-sm">Điều trị</button>

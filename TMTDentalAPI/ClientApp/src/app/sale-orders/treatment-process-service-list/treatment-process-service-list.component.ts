@@ -31,4 +31,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         );
     }
   }
+
+  checkStatusDotKhamStep(stepId) {
+    
+  }
 }
