@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   services: any;
   dotkhams: any[];
   activeDotkham: any;
+  // @ViewChild('dotkhamVC', {static: false}) dotkhamVC: any;
+  @ViewChildren("dotkhamVC") domReference: QueryList<any>;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,17 +75,23 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   sendDotKhamStep(service, step) {
+    if (!this.activeDotkham) {
+          this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
+        }
     const line = new DotKhamLineDisplay();
-    console.log(service);
-    console.log(step);
     line.Name = step.Name;
     line.DotKhamId = this.activeDotkham.Id;
     line.ProductId = service.Id;
-    line.Product = service.Name;
+    line.Product = service;
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
-    console.log(line);
+    this.activeDotkham.Reason = 'tesst123';
+  }
+
+  setActiveDk(dk, i) {
+    this.activeDotkham = dk;
+    console.log(this.dotkhams[i] === this.activeDotkham); 
   }
 
   loadDotKhamList() {
@@ -101,7 +109,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     };
     const options = {
       // expand: 'Lines'
-      // orderby: 'DateCreated desc'
+      orderby: 'DateCreated desc'
     };
     this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
       this.dotkhams = res.data;
@@ -121,20 +129,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.dotkhams.unshift(dotkham);
     this.activeDotkham = dotkham;
   }
-
-  // sendDotKhamStep(step) {
-  //   if (!this.activeDotkham) {
-  //     this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
-  //   }
-  //   const line = new DotKhamLineDisplay();
-  //   line.Name = 'step.Name';
-  //   line.DotKhamId = this.activeDotkham.Id;
-  //   line.ProductId = 'step.ProductId';
-  //   line.Product = 'step.Product';
-  //   line.State = 'draft';
-  //   line.Sequence = this.activeDotkham.Lines.length + 1;
-  //   this.activeDotkham.Lines.push(line);
-  // }
 
   dotkhamChange(e, i) {
     if (e.dotkham) {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -17,12 +17,13 @@ import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
   templateUrl: './sale-orders-dotkham-cu.component.html',
   styleUrls: ['./sale-orders-dotkham-cu.component.css']
 })
-export class SaleOrdersDotkhamCuComponent implements OnInit {
+export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
+  @Output() editBtnEvent = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -36,6 +37,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     private dotkhamService: DotkhamOdataService,
     private notificationService: NotificationService
   ) { }
+  ngDoCheck(): void {
+    console.log('a');
+    
+  }
 
   ngOnInit() {
     this.dotkhamForm = this.fb.group({
@@ -140,8 +145,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   onEditDotkham() {
     if (!this.checkAccess()) {
       return;
-    };
-    this.onEmitDotkham(this.dotkham, false, this.dotkham);
+    }
+
+    this.editBtnEvent.emit(null);
+    // this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
   onApllyLine(e) {
