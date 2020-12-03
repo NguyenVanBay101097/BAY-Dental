@@ -151,9 +151,17 @@ namespace TMTDentalAPI.OdataControllers
                  .Action("GetAllDotKhamForSaleOrder")
                  .Returns<bool>();
 
-           
 
 
+
+            #endregion
+
+            #region AccountPayments
+            builder.EntitySet<AccountPaymentViewModel>("AccountPayments");
+
+            builder.EntityType<AccountPaymentViewModel>()
+                .Function("GetPrint")
+                .Returns<PrintData>();
             #endregion
 
             #region ComplexType

@@ -2243,6 +2243,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
+
                     Steps = x.DotKhamSteps.OrderBy(s => s.Order).Select(s => new DotKhamStepBasic
                     {
                         Id = s.Id,
@@ -2250,6 +2251,7 @@ namespace Infrastructure.Services
                         IsDone = s.IsDone,
                         Order = s.Order
                     }),
+                    ProductId = x.ProductId,
                     Diagnostic = x.Diagnostic,
                     Teeth = x.SaleOrderLineToothRels.Select(s => new ToothDisplay
                     {
