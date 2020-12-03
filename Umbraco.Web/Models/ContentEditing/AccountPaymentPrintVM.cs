@@ -22,6 +22,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string CompanyAddress { get; set; }
 
+        public string CompanyLogo { get; set; }
+
         public string PartnerRef { get; set; }
 
         public string PartnerName { get; set; }
@@ -49,6 +51,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Communication { get; set; }
 
         public IEnumerable<AccountPaymentSaleOrderPrintVM> SaleOrders { get; set; } = new List<AccountPaymentSaleOrderPrintVM>();
+
+        public string UserName { get; set; }
     }
 
     public class AccountPaymentSaleOrderPrintVM

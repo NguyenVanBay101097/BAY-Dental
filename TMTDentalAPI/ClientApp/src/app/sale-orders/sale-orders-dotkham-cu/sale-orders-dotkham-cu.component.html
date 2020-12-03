@@ -26,21 +26,21 @@
                         <th>Dịch vụ</th>
                         <th>Công đoạn</th>
                         <th>Răng, Chi tiết điều trị</th>
-                        <th>Xóa</th>
+                        <th *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody formArrayName="Lines">
                     <ng-container *ngFor="let line of linesFA.controls; let i=index">
                         <tr [formGroupName]="i">
-                            <td>Dich vu 1</td>
-                            <td>công đoạn 1</td>
+                            <td>{{line.get('Product').value?.Name}}</td>
+                            <td>{{line.get('Name').value}}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <span>fdasfasffakfl</span>
-                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine()" class="far fa-edit text-info ml-auto"></i>
+                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine(i)" class="far fa-edit text-info ml-auto"></i>
                                 </div>
                             </td>
-                            <td><i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onRemoveLine()" class="far fa-trash-alt"></i></td>
+                            <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham"><i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i></td>
                         </tr>
                     </ng-container>
                 </tbody>

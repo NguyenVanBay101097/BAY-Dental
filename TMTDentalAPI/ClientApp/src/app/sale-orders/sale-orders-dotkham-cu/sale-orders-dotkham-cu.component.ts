@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -17,17 +18,17 @@ import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
   templateUrl: './sale-orders-dotkham-cu.component.html',
   styleUrls: ['./sale-orders-dotkham-cu.component.css']
 })
-export class SaleOrdersDotkhamCuComponent implements OnInit {
+export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
-  @Output() activeDotkhamChange = new EventEmitter<any>();
-  @Output() removeDotKham = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
+  kvDiffer: KeyValueDiffer<string, any>;
+  differ: IterableDiffer<any>;
 
   constructor(
     private webService: WebService,
@@ -36,10 +37,21 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     private intelService: IntlService,
     private authService: AuthService,
     private dotkhamService: DotkhamOdataService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private differs: KeyValueDiffers,
+    private iterableDiffers: IterableDiffers
   ) { }
+  ngDoCheck(): void {
+    const changes = this.differ.diff(this.dotkham.Lines);
+    if (changes) {
+      this.loadRecord();
+    }
+  }
 
   ngOnInit() {
+    this.kvDiffer = this.differs.find(this.dotkham).create();
+    this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
+
     this.dotkhamForm = this.fb.group({
       Id: null,
       Name: [null, Validators.required],
@@ -91,8 +103,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
         this.linesFA.push(imgFG);
       });
       this.dotkhamForm.patchValue(this.dotkham);
-      console.log(this.dotkhamForm);
-
     }
   }
 
@@ -142,20 +152,11 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onEditDotkham() {
-    this.checkAccess();
-    this.activeDotkhamChange.emit(this.dotkham);
-  }
+    if (!this.checkAccess()) {
+      return;
+    }
 
-  onApllyLine(e) {
-    const line = new DotKhamLineDisplay();
-    line.Name = e.Name;
-    line.DotKhamId = this.dotkham.Id;
-    line.ProductId = e.ProductId;
-    line.Product = e.Product;
-    line.State = 'draft';
-    line.Sequence = this.dotkham.Lines.length + 1;
-    const lineFG = this.fb.group(e);
-    this.linesFA.push(lineFG);
+    this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
   onSave() {
@@ -169,33 +170,33 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.dotkhamChange.emit(res);
+        this.dotkham = res;
+        this.onEmitDotkham(this.dotkham, false, null);
         this.loadRecord();
-        this.activeDotkhamChange.emit(null);
       });
     } else {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.activeDotkhamChange.emit(null);
+        this.dotkham = val;
+        this.onEmitDotkham(this.dotkham, false, null);
       });
     }
   }
 
   onCancel() {
-    this.dotkhamChange.emit(this.dotkham);
-    this.activeDotkhamChange.emit(this.dotkham);
-    this.removeDotKham.emit();
+    this.onEmitDotkham(this.dotkham, true, null);
   }
 
   onClose() {
-    this.activeDotkhamChange.emit(null);
+    this.onEmitDotkham(null, false, null);
   }
 
   checkAccess() {
     if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
       this.notify('error', 'Bạn phải hoàn tất đợt khám đang thao tác');
-      return;
+      return false;
     }
+    return true;
   }
 
   notify(Style, Content) {
@@ -206,5 +207,18 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: Style, icon: true }
     });
+  }
+
+  onEmitDotkham(dotkham, isDelete = false, activeDotkham) {
+    const e = {
+      dotkham,
+      isDelete,
+      activeDotkham
+    };
+    this.dotkhamChange.emit(e);
+  }
+
+  onRemoveLine(i) {
+    this.dotkham.Lines.splice(i, 1);
   }
 }

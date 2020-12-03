@@ -170,7 +170,7 @@ namespace Infrastructure.Services
                         EmployeeId = agent.EmployeeId,
                         BaseAmount = (rel.AmountPrepaid ?? 0),
                         Percentage = agent.Percentage,
-                        Amount = Math.Round((rel.AmountPrepaid ?? 0) * (agent.Percentage ?? 0) / 100) 
+                        Amount = Math.Round((rel.AmountPrepaid ?? 0) * (agent.Percentage ?? 0) / 100)
                     };
 
                     settlements.Add(settlement);
@@ -211,7 +211,7 @@ namespace Infrastructure.Services
             if (saleOrderIds.Any())
             {
                 var saleObj = GetService<ISaleOrderService>();
-                await saleObj.RecomputeResidual(saleOrderIds);               
+                await saleObj.RecomputeResidual(saleOrderIds);
             }
         }
 
@@ -736,7 +736,7 @@ namespace Infrastructure.Services
 
                 //remove những line amount prepaid = 0
                 var remove_lines = payment.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid == 0).ToList();
-                foreach(var line in remove_lines)
+                foreach (var line in remove_lines)
                     payment.SaleOrderLinePaymentRels.Remove(line);
             }
 
@@ -1118,9 +1118,13 @@ namespace Infrastructure.Services
 
         public async Task<AccountPaymentPrintVM> GetPrint(Guid id)
         {
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+
             var res = await SearchQuery(x => x.Id == id).Select(x => new AccountPaymentPrintVM
             {
                 CompanyName = x.Company.Name,
+                CompanyLogo = x.Company.Logo,
                 CompanyStreet = x.Company.Partner.Street,
                 CompanyCity = x.Company.Partner.CityName,
                 CompanyDistrict = x.Company.Partner.DistrictName,
@@ -1139,6 +1143,7 @@ namespace Infrastructure.Services
                 PartnerStreet = x.Partner.Street,
                 PartnerWard = x.Partner.WardName,
                 PaymentDate = x.PaymentDate,
+                UserName = user.Name,
                 SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
                 {
                     AmountTotal = s.SaleOrder.AmountTotal,
@@ -1174,6 +1179,7 @@ namespace Infrastructure.Services
                 tmp2.Add(res.PartnerCity);
 
             res.PartnerAddress = string.Join(", ", tmp2);
+
 
             return res;
         }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,6 +20,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   services: any;
   dotkhams: any[];
   activeDotkham: any;
+  // @ViewChild('dotkhamVC', {static: false}) dotkhamVC: any;
+  @ViewChildren("dotkhamVC") domReference: QueryList<any>;
 
   constructor(
     private route: ActivatedRoute,
@@ -77,10 +79,11 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   sendDotKhamStep(service, step) {
-    debugger;
+    if (!this.activeDotkham) {
+      this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
+      return;
+    }
     const line = new DotKhamLineDisplay();
-    console.log(service);
-    console.log(step);
     line.Name = step.Name;
     line.DotKhamId = this.activeDotkham.Id;
     line.ProductId = service.Id;
@@ -88,7 +91,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
-    console.log(line);
   }
 
   loadDotKhamList() {
@@ -115,6 +117,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   onCreateDotKham() {
     if (this.activeDotkham) {
+      this.notify('error', 'Vui lòng hoàn tất đợt khám đang thao tác');
       return;
     }
     const dotkham = new DotKhamVm();
@@ -126,13 +129,14 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.activeDotkham = dotkham;
   }
 
-  activeDotkhamChange(dotkham) {
-   this.activeDotkham = dotkham;
-  }
-
-  removeDotKham() {
-      const index = this.dotkhams.indexOf(this.activeDotkham);
-      this.dotkhams.splice(index, 1);
+  dotkhamChange(e, i) {
+    if (e.dotkham) {
+      this.dotkhams[i] = e.dotkham;
+    }
+    if (e.isDelete) {
+      this.dotkhams.splice(i, 1);
+    }
+    this.activeDotkham = e.activeDotkham;
   }
 
   notify(Style, Content) {
