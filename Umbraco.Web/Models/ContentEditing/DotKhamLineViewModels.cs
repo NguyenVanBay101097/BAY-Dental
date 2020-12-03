@@ -38,7 +38,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLineDisplay SaleOrderLine {get;set;}
+
         public int? Sequence { get; set; }
+
+        public string Note { get; set; }
 
         /// <summary>
         /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
@@ -48,7 +53,34 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
 
-        public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+    }
+
+    public class DotKhamLineSave
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public Guid DotKhamId { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
+
+        public Guid? ProductId { get; set; }
+
+        public int? Sequence { get; set; }
+
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
+        /// draft: chưa tiến hành
+        /// progress: đang tiến hành
+        /// done: hoàn thành
+        /// </summary>
+        public string State { get; set; }
+
+        public ICollection<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 
     public class DotKhamLineChangeRouting

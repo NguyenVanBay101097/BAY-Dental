@@ -95,7 +95,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div *ngIf="getOverTimeHourType === 'orther'">
-                            <kendo-numerictextbox style="width: 100%;" [min]="0" [spinners]="false"
+                            <kendo-numerictextbox style="width: 100%;" [min]="0" [max]="8" [spinners]="false" [autoCorrect]="true"
                             formControlName="overTimeHour" placeholder="Nhập số ..">
                         </kendo-numerictextbox>
                         </div>

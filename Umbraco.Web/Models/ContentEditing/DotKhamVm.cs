@@ -54,6 +54,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public ICollection<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
 
+
+       
+
         /// <summary>
         /// hình ảnh
         /// </summary>
@@ -107,7 +110,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? AppointmentId { get; set; }
 
-        public ICollection<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
+        public ICollection<DotKhamLineSave> Lines { get; set; } = new List<DotKhamLineSave>();
 
         /// <summary>
         /// hình ảnh

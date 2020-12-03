@@ -65,7 +65,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
-            var dotKham =  await SearchQuery(x => x.Id == id).Include(x=>x.DotKhamImages).Include(x=>x.Lines).FirstOrDefaultAsync();
+            var dotKham =  await SearchQuery(x => x.Id == id).Include(x=>x.DotKhamImages).Include(x=>x.Lines).Include("Lines.ToothRels").FirstOrDefaultAsync();
             dotKham = _mapper.Map(val, dotKham);
 
             SaveLines(val, dotKham);
@@ -100,6 +100,7 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<DotKhamLine>(line);
+                    item.NameStep = line.Name;
                     foreach (var toothId in line.ToothIds)
                     {
                         item.ToothRels.Add(new DotKhamLineToothRel
@@ -107,7 +108,7 @@ namespace Infrastructure.Services
                             ToothId = toothId
                         });
                     }
-                    dotkham.Lines.Add(_mapper.Map<DotKhamLine>(line));
+                    dotkham.Lines.Add(item);
                 }
                 else
                 {
