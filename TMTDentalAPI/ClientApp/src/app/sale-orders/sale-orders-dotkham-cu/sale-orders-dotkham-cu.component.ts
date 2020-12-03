@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
+import { DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
@@ -99,8 +100,23 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
         this.imgsFA.push(imgFG);
       });
       this.dotkham.Lines.forEach(e => {
-        const imgFG = this.fb.group(e);
-        this.linesFA.push(imgFG);
+        e.ToothIds = e.Teeth.map(x => x.Id);
+        const lineFG = this.fb.group({
+          Id: null,
+          NameStep: null,
+          DotKhamId: null,
+          ProductId: null,
+          Product: null,
+          Sequence: null,
+          State: null,
+          ToothIds: [],
+          Note: null,
+          Teeth: this.fb.array([]),
+          SaleOrderLineId: null,
+          SaleOrderLine: null
+        });
+        lineFG.patchValue(e);
+        this.linesFA.push(lineFG);
       });
       this.dotkhamForm.patchValue(this.dotkham);
     }
@@ -167,6 +183,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     val.CompanyId = this.authService.userInfo.companyId;
+    val.Lines.forEach(line => {
+      line.ToothIds = line.Teeth.map(x => x.Id);
+    });
+    
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
@@ -209,6 +229,11 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     });
   }
 
+  showLineTeeth(line: FormGroup) {
+    const teeth = line.get('Teeth').value;
+    return teeth.map(x => x.Name).join(', ');
+  }
+
   onEmitDotkham(dotkham, isDelete = false, activeDotkham) {
     const e = {
       dotkham,
@@ -220,5 +245,21 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   onRemoveLine(i) {
     this.dotkham.Lines.splice(i, 1);
+    console.log(this.dotkhamForm);
+
+  }
+
+  eventTeeth(line, lineControl) {
+    lineControl.patchValue(line);
+    lineControl.get('Teeth').clear();
+    line.Teeth.forEach(t => {
+      const g = this.fb.group(t);
+      lineControl.get('Teeth').push(g);
+    });
+    // lineControl.get('ToothIds').clear();
+    // line.Teeth.forEach(t => {
+    //   const g = this.fb.group(t.Id);
+    //   lineControl.get('ToothIds').push(g);
+    // });
   }
 }

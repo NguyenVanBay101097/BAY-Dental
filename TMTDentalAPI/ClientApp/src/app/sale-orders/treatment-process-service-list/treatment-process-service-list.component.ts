@@ -83,12 +83,22 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
       return;
     }
+
     const line = new DotKhamLineDisplay();
-    line.Name = step.Name;
+    line.NameStep = step.Name;
     line.DotKhamId = this.activeDotkham.Id;
     line.ProductId = service.ProductId;
+    line.Product = {
+      Id: service.ProductId,
+      Name: service.Name
+    };
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
+    line.SaleOrderLineId = service.Id;
+    line.SaleOrderLine = {Teeth: service.Teeth};
+    line.Teeth = [];
+    line.ToothIds = [];
+    line.Note = null;
     this.activeDotkham.Lines.push(line);
   }
 

@@ -20,30 +20,34 @@ export class DotKhamVm {
 }
 
 export class DotKhamSaveVm {
-   Name: string;
-   SaleOrderId: string;
-   SaleOrder: any;
-   PartnerId: string;
-   Partner: any;
-   Date: any;
-   Reason = '';
-   State: string;
-   CompanyId: string;
-   DoctorId: string;
-   Doctor: any;
-   Lines: any[] = [];
-   DotKhamImages: any[] = [];
- }
+  Name: string;
+  SaleOrderId: string;
+  SaleOrder: any;
+  PartnerId: string;
+  Partner: any;
+  Date: any;
+  Reason = '';
+  State: string;
+  CompanyId: string;
+  DoctorId: string;
+  Doctor: any;
+  Lines: any[] = [];
+  DotKhamImages: any[] = [];
+}
 
 export class DotKhamLineDisplay {
-  Id: string;
-  Name: string;
-  DotKhamId: string;
-  ProductId: string;
-  Product: any;
-  Sequence: number;
-  State: string;
-  ToothIds: string[];
+  Id: string ;
+  NameStep: string;
+  DotKhamId: string = null;
+  ProductId: string = null;
+  Product: any = null;
+  Sequence: number = null;
+  State: string = null;
+  ToothIds: string[] = [];
+  Note: string = null;
+  Teeth: any[] = [];
+  SaleOrderLineId: string = null;
+  SaleOrderLine: any = null;
 }
 
 @Injectable({

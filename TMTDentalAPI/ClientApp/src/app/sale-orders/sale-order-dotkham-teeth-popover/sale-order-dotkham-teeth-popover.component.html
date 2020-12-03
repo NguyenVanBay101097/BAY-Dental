@@ -1,0 +1,27 @@
+<!-- template popover -->
+<span class="d-flex">
+    <a popoverClass="teeth-popover-width" class="ml-auto" [ngbPopover]="popContent" [autoClose]="'outside'" [popoverTitle]="popTitle" (click)="togglePopover(popOver,line)" #popOver="ngbPopover" placement="left" triggers="manual" data-container="body">
+        <i class="far fa-edit text-info"></i>
+    </a>
+</span>
+
+<ng-template #popTitle>
+    <div class=" d-flex align-items-center d-inline-block">
+        <span>Răng, Chi tiết điều trị</span>
+        <button type="button" class="close ml-auto" (click)="popover.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+<ng-template #popContent>
+    <div [formGroup]="formGroup">
+        <h6>Răng</h6>
+        <label class="my-2">
+            <a (click)="onSelected(item)" [ngClass]="{'active': isSelected(item)}" class="p-2 border btn mr-2 item-rang" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
+        </label>
+        <h6> Chi tiết điều trị</h6>
+        <textarea formControlName='Note' class="form-control"></textarea>
+        <div class="d-flex mt-2">
+            <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
+            <button (click)="popover.close()" class="btn btn-sm btn-dark mr-2">Close</button>
+        </div>
+    </div>
+</ng-template>

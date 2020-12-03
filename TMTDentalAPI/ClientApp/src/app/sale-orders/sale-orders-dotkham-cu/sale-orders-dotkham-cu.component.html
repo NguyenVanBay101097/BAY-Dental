@@ -14,7 +14,7 @@
                     <label class="mr-1">Bác sĩ:</label>
                     <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
                     </kendo-combobox>
-                    <label *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{employee?.Name}}</label>
+                    <label style="min-width: 12.4em;" *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{employee?.Name}}</label>
                 </div>
             </div>
         </div>
@@ -33,14 +33,26 @@
                     <ng-container *ngFor="let line of linesFA.controls; let i=index">
                         <tr [formGroupName]="i">
                             <td>{{line.get('Product').value?.Name}}</td>
-                            <td>{{line.get('Name').value}}</td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <span>fdasfasffakfl</span>
-                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine(i)" class="far fa-edit text-info ml-auto"></i>
+                                {{line.get('NameStep').value}}
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap">
+
+                                    <div>
+                                        <div *ngIf="line.get('Teeth')?.value?.length">
+                                            {{showLineTeeth(line)}}
+                                        </div>
+                                        <div>
+                                            {{line.get('Note').value}}
+                                        </div>
+                                    </div>
+                                    <app-sale-order-dotkham-teeth-popover *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" [line]="line.value" (eventTeeth)="eventTeeth($event,line)"></app-sale-order-dotkham-teeth-popover>
                                 </div>
                             </td>
-                            <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham"><i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i></td>
+                            <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham">
+                                <i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i>
+                            </td>
                         </tr>
                     </ng-container>
                 </tbody>

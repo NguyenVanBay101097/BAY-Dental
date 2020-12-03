@@ -100,7 +100,7 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<DotKhamLine>(line);
-                    item.NameStep = line.Name;
+                    item.NameStep = line.NameStep;
                     foreach (var toothId in line.ToothIds)
                     {
                         item.ToothRels.Add(new DotKhamLineToothRel
