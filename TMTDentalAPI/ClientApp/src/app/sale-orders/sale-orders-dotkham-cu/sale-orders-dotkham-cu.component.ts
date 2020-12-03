@@ -42,15 +42,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private iterableDiffers: IterableDiffers
   ) { }
   ngDoCheck(): void {
-    // const changes = this.kvDiffer.diff(this.dotkham);
-    // console.log(changes);
-
     const changes = this.differ.diff(this.dotkham.Lines);
-    console.log(changes);
-  }
-
-  testChanges() {
-    this.dotkham.Reason = 'abcxyz';
+    if (changes) {
+      this.loadRecord();
+    }
   }
 
   ngOnInit() {
@@ -164,18 +159,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
-  onApllyLine(e) {
-    const line = new DotKhamLineDisplay();
-    line.Name = e.Name;
-    line.DotKhamId = this.dotkham.Id;
-    line.ProductId = e.ProductId;
-    line.Product = e.Product;
-    line.State = 'draft';
-    line.Sequence = this.dotkham.Lines.length + 1;
-    const lineFG = this.fb.group(e);
-    this.linesFA.push(lineFG);
-  }
-
   onSave() {
     if (this.dotkhamForm.invalid) {
       return;
@@ -233,5 +216,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       activeDotkham
     };
     this.dotkhamChange.emit(e);
+  }
+
+  onRemoveLine(i) {
+    this.dotkham.Lines.splice(i, 1);
   }
 }

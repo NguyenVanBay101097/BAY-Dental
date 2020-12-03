@@ -74,13 +74,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     );
   }
 
-  testChanges() {
-    this.activeDotkham.Reason = 'abcxyz';
-  }
-
   sendDotKhamStep(service, step) {
     if (!this.activeDotkham) {
       this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
+      return;
     }
     const line = new DotKhamLineDisplay();
     line.Name = step.Name;
@@ -90,7 +87,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
-    this.activeDotkham.Reason = 'abcxyz';
   }
 
   loadDotKhamList() {

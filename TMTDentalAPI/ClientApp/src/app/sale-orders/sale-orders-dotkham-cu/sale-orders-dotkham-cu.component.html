@@ -19,8 +19,6 @@
             </div>
         </div>
         <div class="operation mt-2">
-            <button type="button" (click)="testChanges()">Test</button>
-            {{this.dotkham?.Lines.length}}
             <h6>Công đoạn thực hiện</h6>
             <table class="table table-sm table-hover table-bordered">
                 <thead>
@@ -34,15 +32,15 @@
                 <tbody formArrayName="Lines">
                     <ng-container *ngFor="let line of linesFA.controls; let i=index">
                         <tr [formGroupName]="i">
-                            <td>Dich vu 1</td>
-                            <td>công đoạn 1</td>
+                            <td>{{line.get('Product').value?.Name}}</td>
+                            <td>{{line.get('Name').value}}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <span>fdasfasffakfl</span>
-                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine()" class="far fa-edit text-info ml-auto"></i>
+                                    <i *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" (click)="onEditLine(i)" class="far fa-edit text-info ml-auto"></i>
                                 </div>
                             </td>
-                            <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham"><i (click)="onRemoveLine()" class="far fa-trash-alt"></i></td>
+                            <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham"><i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i></td>
                         </tr>
                     </ng-container>
                 </tbody>
