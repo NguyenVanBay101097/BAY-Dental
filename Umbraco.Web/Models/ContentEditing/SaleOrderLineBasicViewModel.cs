@@ -9,7 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Diagnostic { get; set; }
-        public Guid? ToothCategoryId { get; set; }
+        public Guid? ProductId { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
         public IEnumerable<DotKhamStepBasic> Steps { get; set; } = new List<DotKhamStepBasic>();
     }

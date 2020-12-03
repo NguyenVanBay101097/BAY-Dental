@@ -5,6 +5,8 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-payment-list',
@@ -15,21 +17,22 @@ export class SaleOrderPaymentListComponent implements OnInit {
   @Input() saleOrderId: string;
   @Output() paymentOutput = new EventEmitter<any>();
 
-  @ViewChild("printComp", {static: true}) printComp: AccountPaymentPrintComponent;
   paymentsInfo: any = [];
 
   constructor(
     private saleOrderService: SaleOrderService,
     private paymentService: AccountPaymentService,
     private notificationService: NotificationService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private printService: PrintService,
+    private accountPaymentOdataService: AccountPaymentsOdataService
   ) { }
 
   ngOnInit() {
     this.loadPayments();
   }
   loadPayments() {
-    if(!this.saleOrderId) {
+    if (!this.saleOrderId) {
       return;
     }
     if (this.saleOrderId) {
@@ -60,8 +63,11 @@ export class SaleOrderPaymentListComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.printComp.print(result);
+    this.accountPaymentOdataService.getPrint(payment.accountPaymentId).subscribe(result => {
+      if (result) {
+        var html = result['html']
+        this.printService.printHtml(html);
+      }
     });
   }
 }
