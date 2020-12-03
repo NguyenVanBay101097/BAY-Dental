@@ -34,14 +34,16 @@
                                         <div class="mb-2">
                                             <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                                 [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                                formControlName="amount">
+                                                (valueChange)="enterMoney()" formControlName="amount">
                                             </kendo-numerictextbox>
                                         </div>
                                         <div>
-                                            <button type="button" class="btn btn-primary btn-sm ml-1" (click)="enterMoney()">
+                                            <!-- <button type="button" class="btn btn-primary btn-sm ml-1"
+                                                (click)="enterMoney()">
                                                 Nhập tiền
-                                            </button>
-                                            <button type="button" class="btn btn-primary btn-sm ml-1" (click)="payOff()">
+                                            </button> -->
+                                            <button type="button" class="btn btn-primary btn-sm ml-1"
+                                                (click)="payOff()">
                                                 Trả hết
                                             </button>
                                         </div>
@@ -102,9 +104,9 @@
                                     <td class="text-right align-middle">{{ line.get('amountResidual').value | number }}
                                     </td>
                                     <td class="text-right">
-                                        <kendo-numerictextbox
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true" style="max-width: 200px;"
-                                            formControlName="amountPrepaid" (valueChange)="changeMoneyLine(line)">
+                                        <kendo-numerictextbox [step]="1000" [format]="'n0'" [autoCorrect]="true"
+                                            style="max-width: 200px;" formControlName="amountPrepaid"
+                                            (valueChange)="changeMoneyLine(line)">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>
@@ -118,9 +120,9 @@
 </div>
 
 <footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
+        toán và in</button>
     <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
         toán</button>
-    <button type="button" *ngIf="showPrint" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
-        toán và in</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
 </footer>
