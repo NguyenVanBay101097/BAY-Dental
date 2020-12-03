@@ -9,6 +9,7 @@ import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-
 import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -30,7 +31,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     private saleOrdersOdataService: SaleOrdersOdataService,
     private modalService: NgbModal,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService, 
+    private errorService: AppSharedShowErrorService
   ) { }
 
   ngOnInit() {
@@ -46,9 +48,15 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         (result) => {
           this.services = result['value'];
         },
-        (error) => { }
+        (error) => { 
+          this.errorService.show(error);
+        }
       );
     }
+  }
+
+  formatTeethList(teethList) {
+    return teethList.map(x => x.Name).join(', ');
   }
 
   checkStatusDotKhamStep(step) {
@@ -58,10 +66,12 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       IsDone: step.IsDone
     }
     this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
-      (result) => {
-        console.log(result);
+      (result) => { 
+        this.notify('success', 'Đã hoàn thành tiến trình: ' + step.Name);
       },
-      (error) => {}
+      (error) => {
+        this.errorService.show(error);
+      }
     );
 
     this.loadDotKhamList();
@@ -72,9 +82,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     modalRef.componentInstance.service = service;
 
     modalRef.result.then((result) => {
+      this.notify('success', 'Đã lưu tiến trình điều trị');
       this.loadServiceList();
     }, 
-    (error) => {}
+    (error) => { }
     );
   }
 
