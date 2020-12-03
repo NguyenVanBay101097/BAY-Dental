@@ -23,8 +23,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
-  @Output() activeDotkhamChange = new EventEmitter<any>();
-  @Output() removeDotKham = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -91,8 +89,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
         this.linesFA.push(imgFG);
       });
       this.dotkhamForm.patchValue(this.dotkham);
-      console.log(this.dotkhamForm);
-
     }
   }
 
@@ -142,8 +138,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   }
 
   onEditDotkham() {
-    this.checkAccess();
-    this.activeDotkhamChange.emit(this.dotkham);
+    if (!this.checkAccess()) {
+      return;
+    };
+    this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
   onApllyLine(e) {
@@ -169,33 +167,33 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.dotkhamChange.emit(res);
+        this.dotkham = res;
+        this.onEmitDotkham(this.dotkham, false, null);
         this.loadRecord();
-        this.activeDotkhamChange.emit(null);
       });
     } else {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.activeDotkhamChange.emit(null);
+        this.dotkham = val;
+        this.onEmitDotkham(this.dotkham, false, null);
       });
     }
   }
 
   onCancel() {
-    this.dotkhamChange.emit(this.dotkham);
-    this.activeDotkhamChange.emit(this.dotkham);
-    this.removeDotKham.emit();
+    this.onEmitDotkham(this.dotkham, true, null);
   }
 
   onClose() {
-    this.activeDotkhamChange.emit(null);
+    this.onEmitDotkham(null, false, null);
   }
 
   checkAccess() {
     if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
       this.notify('error', 'Bạn phải hoàn tất đợt khám đang thao tác');
-      return;
+      return false;
     }
+    return true;
   }
 
   notify(Style, Content) {
@@ -206,5 +204,14 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: Style, icon: true }
     });
+  }
+
+  onEmitDotkham(dotkham, isDelete = false, activeDotkham) {
+    const e = {
+      dotkham,
+      isDelete,
+      activeDotkham
+    };
+    this.dotkhamChange.emit(e);
   }
 }
