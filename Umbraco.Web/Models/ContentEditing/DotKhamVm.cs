@@ -26,6 +26,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
+        public DateTime DateCreated { get; set; }
+        
+
         /// <summary>
         /// Mô tả
         /// </summary>
@@ -78,6 +81,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày khám
         /// </summary>
         public DateTime Date { get; set; }
+
+
 
         /// <summary>
         /// Mô tả
