@@ -120,21 +120,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.dotkhams.unshift(dotkham);
     this.activeDotkham = dotkham;
   }
-
-  sendDotKhamStep(step) {
-    if (!this.activeDotkham) {
-      this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
-    }
-    const line = new DotKhamLineDisplay();
-    line.Name = 'step.Name';
-    line.DotKhamId = this.activeDotkham.Id;
-    line.ProductId = 'step.ProductId';
-    line.Product = 'step.Product';
-    line.State = 'draft';
-    line.Sequence = this.activeDotkham.Lines.length + 1;
-    this.activeDotkham.Lines.push(line);
-  }
-
+  
   activeDotkhamChange(dotkham) {
    this.activeDotkham = dotkham;
   }
