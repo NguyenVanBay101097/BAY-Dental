@@ -91,6 +91,7 @@ import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orde
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
+    TreatmentProcessServiceDialogComponent
   ]
 })
 export class SaleOrdersModule { }
