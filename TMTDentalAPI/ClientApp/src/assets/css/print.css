@@ -76,7 +76,7 @@
   
   .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
-    padding: 0px 15px 15px 0;
+    padding: 0px 5px 5px 0px;
     min-width: 150px;
   }
   
@@ -369,7 +369,7 @@
   
   .o_form_view.o_print .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
-    padding: 0px 5px 5px 0;
+    padding: 0px 0px 0px 0px;
     min-width: 150px;
   }
   

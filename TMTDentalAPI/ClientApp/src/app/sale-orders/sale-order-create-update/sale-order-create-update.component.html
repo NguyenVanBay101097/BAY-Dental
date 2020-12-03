@@ -207,11 +207,11 @@
                                                     <td class="text-right">
                                                         {{ line.get('AmountResidual').value | number }}
                                                     </td>
-                                                    <td class="text-right b-sticky-right">
+                                                    <td class="text-center b-sticky-right">
                                                         <button *ngIf="stateControl.value == 'draft'" type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
                                                             <span class="k-icon k-i-delete"></span>
                                                         </button>
-                                                        <button *ngIf="stateControl.value == 'sale'" type="button" class="btn btn-icon btn-sm btn-light ml-2" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
+                                                        <button *ngIf="stateControl.value == 'sale' && isLaboLine(line)" type="button" class="btn btn-icon btn-sm btn-light ml-2" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
                                                             <i class="fas fa-tooth"></i>
                                                         </button>
                                                     </td>
