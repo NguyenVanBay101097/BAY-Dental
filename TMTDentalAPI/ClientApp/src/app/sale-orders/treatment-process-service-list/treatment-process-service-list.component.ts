@@ -75,7 +75,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     };
     const options = {
       // expand: 'Lines'
-      orderby: 'DateCreated desc'
+      // orderby: 'DateCreated desc'
     };
     this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
       this.dotkhams = res.data;
@@ -84,6 +84,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   onCreateDotKham() {
     if (this.activeDotkham) {
+      this.notify('error', 'Vui lòng hoàn tất đợt khám đang thao tác');
       return;
     }
     const dotkham = new DotKhamVm();
@@ -109,13 +110,14 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.activeDotkham.Lines.push(line);
   }
 
-  activeDotkhamChange(dotkham) {
-   this.activeDotkham = dotkham;
-  }
-
-  removeDotKham() {
-      const index = this.dotkhams.indexOf(this.activeDotkham);
-      this.dotkhams.splice(index, 1);
+  dotkhamChange(e, i) {
+    if (e.dotkham) {
+      this.dotkhams[i] = e.dotkham;
+    }
+    if (e.isDelete) {
+      this.dotkhams.splice(i, 1);
+    }
+    this.activeDotkham = e.activeDotkham;
   }
 
   notify(Style, Content) {
