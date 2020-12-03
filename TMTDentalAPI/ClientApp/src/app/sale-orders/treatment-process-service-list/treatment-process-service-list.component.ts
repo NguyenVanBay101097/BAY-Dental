@@ -76,10 +76,11 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     const line = new DotKhamLineDisplay();
     console.log(service);
     console.log(step);
+    debugger
     line.Name = step.Name;
     line.DotKhamId = this.activeDotkham.Id;
     line.ProductId = service.Id;
-    line.Product = service.Name;
+    line.Product = service;
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
