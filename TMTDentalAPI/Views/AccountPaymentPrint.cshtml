@@ -30,7 +30,7 @@
     <div class="text-center mt-3 mb-2">
         <h2>BIÊN LAI THANH TOÁN</h2>
     </div>
-    <div class="o_group">
+    <div class="o_group mb-0">
         <table class="o_group o_inner_group o_group_col_6">
             <tbody>
                 <tr>
@@ -52,7 +52,7 @@
                 <tr>
                     <td colspan="1" class="o_td_label">
                         <label class="o_form_label o_form_label_help">
-                            Sô tiền
+                            Số tiền
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:0,0}", Model.Amount))</td>
@@ -95,7 +95,7 @@
             {
                 <tr>
                     <td>@(item.Name)</td>
-                    <td>@(string.Format(info, "{0:dd/MM/yyyy HH:mm:ss}", item.DateOrder))</td>
+                    <td>@(string.Format(info, "{0:dd/MM/yyyy HH:mm}", item.DateOrder))</td>
                     <td class="text-right">@(item.AmountTotal.HasValue && item.AmountTotal != 0 ? string.Format(info, "{0:0,0}", item.AmountTotal.Value) : "0")</td>
                     <td class="text-right">@(string.Format(info, "{0:0,0}", (item.AmountTotal.HasValue && item.Residual.HasValue && (item.AmountTotal - item.Residual) != 0 ? (item.AmountTotal - item.Residual) : 0)))</td>
                     <td class="text-right">@(item.Residual.HasValue && item.Residual.Value != 0 ? string.Format(info, "{0:0,0}", item.Residual.Value) : "0")</td>
@@ -103,18 +103,24 @@
             }
         </tbody>
     </table>
-    <table class="table table_cus">
-        <thead>
-            <tr>
-                <th class="text-center w-50">Khách hàng</th>
-                <th class="text-center w-50">Người lập</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center w-50">@Model.PartnerName</td>
-                <td class="text-center w-50">@Model.UserName</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                Khách hàng <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.PartnerName</span>
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                Người lập <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.UserName</span>
+            </div>
+        </div>
+    </div>
 </div>
