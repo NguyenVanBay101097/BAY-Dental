@@ -104,7 +104,7 @@ export class SaleOrderListServiceComponent implements OnInit {
   }
 
   onSearch(val) {
-    val = val.trim();
+    val = val.trim().toLowerCase();
     if (val === '') {
       this.listProducts = this.totalListProducts;
       return;

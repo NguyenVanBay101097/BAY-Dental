@@ -6,6 +6,7 @@ import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-crea
 import { DotKhamLineDisplay, DotkhamOdataService, DotKhamVm } from 'src/app/shared/services/dotkham-odata.service';
 import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
 import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
+import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 
@@ -54,10 +55,35 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       (result) => {
         console.log(result);
       },
-      (error) => { }
+      (error) => {}
     );
 
     this.loadDotKhamList();
+  }
+
+  editTreatmentProcess(service) {
+    let modalRef = this.modalService.open(TreatmentProcessServiceDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.service = service;
+
+    modalRef.result.then((result) => {
+
+    }, 
+    (error) => {}
+    );
+  }
+
+  sendDotKhamStep(service, step) {
+    const line = new DotKhamLineDisplay();
+    console.log(service);
+    console.log(step);
+    line.Name = step.Name;
+    line.DotKhamId = this.activeDotkham.Id;
+    line.ProductId = service.Id;
+    line.Product = service.Name;
+    line.State = 'draft';
+    line.Sequence = this.activeDotkham.Lines.length + 1;
+    this.activeDotkham.Lines.push(line);
+    console.log(line);
   }
 
   loadDotKhamList() {
@@ -75,7 +101,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     };
     const options = {
       // expand: 'Lines'
-      orderby: 'DateCreated desc'
+      // orderby: 'DateCreated desc'
     };
     this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
       this.dotkhams = res.data;
@@ -84,6 +110,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   onCreateDotKham() {
     if (this.activeDotkham) {
+      this.notify('error', 'Vui lòng hoàn tất đợt khám đang thao tác');
       return;
     }
     const dotkham = new DotKhamVm();
@@ -95,27 +122,14 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.activeDotkham = dotkham;
   }
 
-  sendDotKhamStep(step) {
-    if (!this.activeDotkham) {
-      this.notify('error', 'Không có đợt khám để thêm công đoạn điều trị');
+  dotkhamChange(e, i) {
+    if (e.dotkham) {
+      this.dotkhams[i] = e.dotkham;
     }
-    const line = new DotKhamLineDisplay();
-    line.Name = 'step.Name';
-    line.DotKhamId = this.activeDotkham.Id;
-    line.ProductId = 'step.ProductId';
-    line.Product = 'step.Product';
-    line.State = 'draft';
-    line.Sequence = this.activeDotkham.Lines.length + 1;
-    this.activeDotkham.Lines.push(line);
-  }
-
-  activeDotkhamChange(dotkham) {
-   this.activeDotkham = dotkham;
-  }
-
-  removeDotKham() {
-      const index = this.dotkhams.indexOf(this.activeDotkham);
-      this.dotkhams.splice(index, 1);
+    if (e.isDelete) {
+      this.dotkhams.splice(i, 1);
+    }
+    this.activeDotkham = e.activeDotkham;
   }
 
   notify(Style, Content) {
