@@ -1,4 +1,4 @@
-import { KeyValueDiffer, KeyValueDiffers } from '@angular/core';
+import { IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
 import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -21,16 +21,15 @@ import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
-  _dotkham: any;
-  @Input() set dotkham(val) {this._dotkham = val; console.log('abcs');
-  }
-  get dotkham(){return this._dotkham;}
+  @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
 
   dotkhamForm: FormGroup;
   empList: any[];
   kvDiffer: KeyValueDiffer<string, any>;
+  differ: IterableDiffer<any>;
+
   constructor(
     private webService: WebService,
     private fb: FormBuilder,
@@ -39,11 +38,15 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private authService: AuthService,
     private dotkhamService: DotkhamOdataService,
     private notificationService: NotificationService,
-    private differs: KeyValueDiffers
+    private differs: KeyValueDiffers,
+    private iterableDiffers: IterableDiffers
   ) { }
   ngDoCheck(): void {
-    const changes = this.kvDiffer.diff(this.dotkham);
+    // const changes = this.kvDiffer.diff(this.dotkham);
     // console.log(changes);
+
+    const changes = this.differ.diff(this.dotkham.Lines);
+    console.log(changes);
   }
 
   testChanges() {
@@ -52,6 +55,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   ngOnInit() {
     this.kvDiffer = this.differs.find(this.dotkham).create();
+    this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
+
     this.dotkhamForm = this.fb.group({
       Id: null,
       Name: [null, Validators.required],
