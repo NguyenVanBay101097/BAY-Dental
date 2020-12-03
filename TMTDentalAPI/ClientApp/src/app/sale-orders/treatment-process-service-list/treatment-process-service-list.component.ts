@@ -27,7 +27,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     private route: ActivatedRoute,
     private dotKhamStepsOdataService: DotKhamStepsOdataService,
     private dotkhamOdataService: DotkhamOdataService,
-    private saleOrderOdataService: SaleOrdersOdataService,
+    private saleOrdersOdataService: SaleOrdersOdataService,
     private modalService: NgbModal,
     private authService: AuthService,
     private notificationService: NotificationService
@@ -36,9 +36,13 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   ngOnInit() {
     this.saleOrderId = this.route.queryParams['value'].id;
 
+    this.loadServiceList();
     this.loadDotKhamList();
+  }
+
+  loadServiceList() {
     if (this.saleOrderId) {
-      this.saleOrderOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
+      this.saleOrdersOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
         (result) => {
           this.services = result['value'];
         },
@@ -68,7 +72,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     modalRef.componentInstance.service = service;
 
     modalRef.result.then((result) => {
-
+      this.loadServiceList();
     }, 
     (error) => {}
     );
@@ -82,8 +86,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     const line = new DotKhamLineDisplay();
     line.Name = step.Name;
     line.DotKhamId = this.activeDotkham.Id;
-    line.ProductId = service.Id;
-    line.Product = service;
+    line.ProductId = service.ProductId;
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
