@@ -1186,7 +1186,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.print(result.html);
+      this.printService.printHtml(result.html);
     });
   }
   createProductToaThuoc() {

@@ -18,24 +18,24 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
+                     <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
+                        (click)="onSaveConfirm()">
+                        Xác nhận
+                    </button>
                     <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
                         (click)="confirmAndPrint()">
                         Xác nhận và in
                     </button>
-                    <!-- <button type="button" accesskey="1" *ngIf="!itemId" class="btn btn-primary btn-sm"
-                        (click)="onSaveConfirm()">
-                        Xác nhận
-                    </button> -->
                     <button type="button" accesskey="1" *ngIf="itemId && phieuThuChi.state == 'draft'"
                         class="btn btn-primary btn-sm" (click)="actionConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" accesskey="1" *ngIf="itemId && phieuThuChi.state == 'draft'"
+                    <button type="button" accesskey="1" *ngIf="itemId"
                         class="btn btn-secondary btn-sm" (click)="printItem()">
                         In phiếu
                     </button>
                     <button type="button" class="btn btn-secondary btn-sm" accesskey="s"
-                        *ngIf="phieuThuChi.state !== 'posted' && itemId" (click)="onSave()">
+                        *ngIf="phieuThuChi.state !== 'posted'" (click)="onSave()">
                         Lưu
                     </button>
                     <button *ngIf="phieuThuChi.state === 'posted'" type="button" class="btn btn-danger btn-sm"
@@ -132,8 +132,8 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        <span *ngIf="type === 'thu'">Người nộp tiền</span>
-                                        <span *ngIf="type === 'chi'">Người nhận tiền</span>
+                                        <span *ngIf="type === 'thu'">Người nộp</span>
+                                        <span *ngIf="type === 'chi'">Người nhận</span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
