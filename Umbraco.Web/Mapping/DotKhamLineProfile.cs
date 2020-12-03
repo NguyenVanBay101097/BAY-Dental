@@ -13,11 +13,19 @@ namespace Umbraco.Web.Mapping
         public DotKhamLineProfile()
         {
             CreateMap<DotKhamLine, DotKhamLineBasic>();
-            CreateMap<DotKhamLine, DotKhamLineDisplay>();
+            CreateMap<DotKhamLine, DotKhamLineDisplay>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.ToothRels.Select(m => m.Tooth)));
+
             CreateMap<DotKhamLineDisplay, DotKhamLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.DotKham, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore());
+
+            CreateMap<DotKhamLineSave, DotKhamLine>()
+              .ForMember(x => x.Id, x => x.Ignore())
+              .ForMember(x => x.DotKham, x => x.Ignore())
+              .ForMember(x => x.Product, x => x.Ignore());
+
             CreateMap<IGrouping<Guid?,DotKhamLine>, DotKhamLineBasic > ();
         }
     }

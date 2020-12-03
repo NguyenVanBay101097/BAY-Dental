@@ -21,18 +21,20 @@
                         <tbody formArrayName="steps">
                             <ng-container *ngFor="let step of steps.controls; index as i">
                                 <tr [formGroupName]="i">
-                                    <td>{{ step.get('Order').value }}</td>
+                                    <td>{{i + 1}}</td>
                                     <td>
-                                        <input type="text" formControlName="Name">
+                                        <input type="text" formControlName="Name" placeholder="Điền nội dung ...">
                                     </td>
-                                    <td class="text-right">
-                                        <span>
-                                            <span (click)="orderUp(i)"><i class="fas fa-caret-up"></i></span>
-                                            <span (click)="orderDown(i)"><i class="fas fa-caret-down"></i></span>
-                                        </span>
-                                        <button type="button" class="btn btn-light btn-sm" (click)="delete(i)">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <span class="d-flex flex-column mr-1">
+                                                <button type="button" class="btn btn-light btn-sm py-0 d-flex" (click)="orderUp(i)"><i class="fas fa-angle-up"></i></button>
+                                                <button type="button" class="btn btn-light btn-sm py-0 d-flex" (click)="orderDown(i)"><i class="fas fa-angle-down"></i></button>
+                                            </span>
+                                            <button type="button" class="btn btn-light btn-sm" (click)="delete(i)">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </ng-container>
@@ -59,6 +61,6 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="save()">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
 </footer>

@@ -1,37 +1,43 @@
 <div class="w-100 h-100 d-flex">
-    <div class="w-30 h-100 overflow-auto">
-        <div *ngFor="let service of services">
-            <h5>{{service.Name}}</h5>
-            <div>Răng:
-                <span *ngFor="let tooth of service.Teeth">{{tooth.Name}} </span>
+    <div class="w-30 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center mb-2">
+            <h5>Danh sách dịch vụ</h5>
+        </div>
+        <div class="overflow-auto">
+            <div *ngFor="let service of services" class="border rounded bg-white p-2 mb-2">
+                <h5>{{service.Name}}</h5>
+                <div>Răng:
+                    <span>{{formatTeethList(service.Teeth)}} </span>
+                </div>
+                <div>Chuẩn đoán: </div>
+                <h5>
+                    Tiến trình điều trị 
+                    <span class="text-primary cursor-pointer" (click)="editTreatmentProcess(service)"><i class="fas fa-edit"></i></span>
+                </h5>
+                <table class="table table-sm table-bordered text-center table-thead-nowrap">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Nội dung</th>
+                            <th>Hoàn thành</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let step of service.Steps; index as i">
+                            <td>{{step.Order}}</td>
+                            <td>{{step.Name}}</td>
+                            <td>
+                                <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
+                            </td>
+                            <td>
+                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm"
+                                    (click)="sendDotKhamStep(service, step)">Điều trị</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div>Chuẩn đoán: </div>
-            <h5>
-                Tiến trình điều trị
-                <span class="text-primary cursor-pointer" (click)="editTreatmentProcess(service)"><i class="fas fa-edit"></i></span>
-            </h5>
-            <table class="table table-sm table-bordered text-center">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Nội dung</th>
-                        <th>Hoàn thành</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let step of service.Steps; index as i">
-                        <td>{{step.Order}}</td>
-                        <td>{{step.Name}}</td>
-                        <td>
-                            <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
-                        </td>
-                        <td>
-                            <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm" (click)="sendDotKhamStep(service, step)">Điều trị</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
     <div class="w-70 h-100 d-flex flex-column border-left">

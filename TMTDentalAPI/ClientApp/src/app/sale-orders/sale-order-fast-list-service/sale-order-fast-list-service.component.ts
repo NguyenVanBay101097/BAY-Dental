@@ -52,7 +52,7 @@ export class SaleOrderFastListServiceComponent implements OnInit {
 
   loadDataDefault() {
     var val = new ProductPaged();
-    val.limit = this.limit;
+    val.limit = 1000;
     val.offset = this.skip;
     val.search = this.search || "";
     val.type2 = "service";

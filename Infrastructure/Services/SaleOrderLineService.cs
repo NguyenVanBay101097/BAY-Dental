@@ -522,9 +522,30 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
             var productStepObj = GetService<IProductStepService>();
             var line = await SearchQuery(x => x.Id == key).Include(x => x.DotKhamSteps).FirstOrDefaultAsync();
-            var valDict = val.Steps.ToDictionary(x => x.Id, x => x);
             var dksAdd = new List<DotKhamStep>();
             var dksRemove = new List<DotKhamStep>();
+
+            foreach (var item in val.Steps.ToList())
+            {
+                if (!item.Id.HasValue)
+                {
+                    dksAdd.Add(new DotKhamStep
+                    {
+                        Id = GuidComb.GenerateComb(),
+                        IsDone = item.IsDone,
+                        Name = item.Name,
+                        Order = item.Order,
+                        ProductId = line.ProductId,
+                        SaleLineId = line.Id,
+                        SaleOrderId = line.OrderId
+                    });
+
+                    val.Steps.Remove(item);
+                }
+            }
+
+            var valDict = val.Steps.ToDictionary(x => x.Id, x => x);
+
             foreach (var item in line.DotKhamSteps.ToList())
             {
                 if (!val.Steps.Any(x => x.Id == item.Id))
@@ -539,22 +560,7 @@ namespace Infrastructure.Services
                     item.Order = valDict[item.Id].Order;
                 }
             }
-            foreach (var item in val.Steps)
-            {
-                if (!line.DotKhamSteps.Any(x => x.Id == item.Id))
-                {
-                    dksAdd.Add(new DotKhamStep
-                    {
-                        Id = item.Id,
-                        IsDone = item.IsDone,
-                        Name = item.Name,
-                        Order = item.Order,
-                        ProductId = line.ProductId,
-                        SaleLineId = line.Id,
-                        SaleOrderId = line.OrderId
-                    });
-                }
-            }
+
 
             await dkStepobj.CreateAsync(dksAdd);
             await dkStepobj.DeleteAsync(dksRemove);
@@ -567,7 +573,7 @@ namespace Infrastructure.Services
                 {
                     stepsAdd.Add(new ProductStep
                     {
-                        Id = item.Id,
+                        Id = item.Id.HasValue ? item.Id.Value : GuidComb.GenerateComb(),
                         Name = item.Name,
                         Order = item.Order,
                         Active = true,
