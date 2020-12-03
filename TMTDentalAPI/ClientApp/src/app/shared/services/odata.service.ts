@@ -89,6 +89,13 @@ export abstract class ODataService extends BehaviorSubject<GridDataResult | null
     if (options.expand) {
       queryStr = queryStr + "&$expand=" + options.expand;
     }
+
+    if (options.select) {
+      queryStr = queryStr + "&$select=" + options.select;
+    }
+    if (options.orderby) {
+      queryStr = queryStr + "&$orderby=" + options.orderby;
+    }
     
     if (queryStr) {
       // encode everything which looks like a GUID

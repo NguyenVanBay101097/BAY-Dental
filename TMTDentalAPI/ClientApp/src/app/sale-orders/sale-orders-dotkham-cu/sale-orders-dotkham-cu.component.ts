@@ -1,3 +1,4 @@
+import { KeyValueDiffer, KeyValueDiffers } from '@angular/core';
 import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -20,14 +21,16 @@ import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
-  @Input() dotkham: any;
+  _dotkham: any;
+  @Input() set dotkham(val) {this._dotkham = val; console.log('abcs');
+  }
+  get dotkham(){return this._dotkham;}
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
-  @Output() editBtnEvent = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
-
+  kvDiffer: KeyValueDiffer<string, any>;
   constructor(
     private webService: WebService,
     private fb: FormBuilder,
@@ -35,14 +38,20 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private intelService: IntlService,
     private authService: AuthService,
     private dotkhamService: DotkhamOdataService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private differs: KeyValueDiffers
   ) { }
   ngDoCheck(): void {
-    console.log('a');
-    
+    const changes = this.kvDiffer.diff(this.dotkham);
+    // console.log(changes);
+  }
+
+  testChanges() {
+    this.dotkham.Reason = 'abcxyz';
   }
 
   ngOnInit() {
+    this.kvDiffer = this.differs.find(this.dotkham).create();
     this.dotkhamForm = this.fb.group({
       Id: null,
       Name: [null, Validators.required],
@@ -147,8 +156,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       return;
     }
 
-    this.editBtnEvent.emit(null);
-    // this.onEmitDotkham(this.dotkham, false, this.dotkham);
+    this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
   onApllyLine(e) {

@@ -86,12 +86,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     line.State = 'draft';
     line.Sequence = this.activeDotkham.Lines.length + 1;
     this.activeDotkham.Lines.push(line);
-    this.activeDotkham.Reason = 'tesst123';
-  }
-
-  setActiveDk(dk, i) {
-    this.activeDotkham = dk;
-    console.log(this.dotkhams[i] === this.activeDotkham); 
   }
 
   loadDotKhamList() {
