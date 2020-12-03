@@ -13,7 +13,9 @@
 }
 
 .close span {
-    color: red;
+    color: black;
+    font-size: larger;
+    font-weight: bolder;
 }
 
 .img-item img {
@@ -22,5 +24,6 @@
 
 .img-item .close {
     position: absolute;
-    right: 15px;
+    right: 12px;
+    top: -10px;
 }
