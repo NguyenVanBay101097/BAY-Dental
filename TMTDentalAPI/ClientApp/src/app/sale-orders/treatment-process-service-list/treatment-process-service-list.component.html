@@ -34,8 +34,7 @@
                                 <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
                             </td>
                             <td>
-                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm"
-                                    (click)="sendDotKhamStep(service, step)">Điều trị</button>
+                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm" (click)="sendDotKhamStep(service, step)">Điều trị</button>
                             </td>
                         </tr>
                     </tbody>
@@ -48,8 +47,17 @@
             <h5 class="mb-0">Danh sách đợt khám</h5>
             <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
-        <div class="section-body">
-            <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk" (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
+        <div class="flex-1-1-100 overflow-auto">
+            <ng-container *ngIf="dotkhams.length">
+                <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk" (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
+            </ng-container>
+            <!-- <ng-container *ngIf="!dotkhams.length">
+                <div style="min-height: 100%;" class="d-flex justify-content-center align-items-center w-100 h-100">
+                     <img width="100%" height="100%" src="../../../assets/images/background/bg-dotkham.jpg" alt="">
+                    <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+                </div>
+            </ng-container> -->
+
         </div>
     </div>
 </div>

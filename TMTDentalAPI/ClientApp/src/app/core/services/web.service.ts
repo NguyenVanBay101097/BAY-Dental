@@ -10,6 +10,10 @@ export class WebService {
         return this.http.post(this.baseApi + this.apiUrl + "/UploadImage", data);
     }
 
+    uploadImages(data: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UploadImages", data);
+    }
+
     impottSampleData(params) {
         return this.http.get(this.baseApi + this.apiUrl + '/ImportSampleData', { params: params })
     }

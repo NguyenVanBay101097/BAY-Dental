@@ -1,29 +1,49 @@
 <div [ngClass]="{'active': this.activeDotkham && this.activeDotkham === this.dotkham}" class="border rounded bg-white p-2 mb-2 dotkham" [formGroup]="dotkhamForm">
     <div class="body">
         <div class="info">
-            <div class="d-flex align-items-center justify-content-between mb-1">
+            <div class="d-flex align-items-center justify-content-between">
                 <h5>{{Name}}</h5>
                 <div>
                     <button *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
                     <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="footer d-flex align-items-center">
                         <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
                         <button *ngIf="!Id" (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
-                        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
+                        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm bg-close mr-2">Đóng</button>
                     </div>
                 </div>
             </div>
-            <div class="d-flex k-justify-content-between">
-                <div>
-                    <label class="mr-1">Ngày:</label>
-                    <kendo-datepicker [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
-                    <label *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{dotkhamDate | date: 'shortDate'}}</label>
-                </div>
-                <div>
-                    <label class="mr-1">Bác sĩ:</label>
-                    <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
-                    </kendo-combobox>
-                    <label style="min-width: 12.4em;" *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{employee?.Name}}</label>
-                </div>
+            <div class="o_group my-0">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label b_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày:
+                                </label>
+                            </td>
+                            <td colspan="1" class="b-td-value" style="width: 100%;">
+                                <kendo-datepicker [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
+                                <span *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{dotkhamDate | date: 'shortDate'}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label b_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Bác sĩ:
+                                </label>
+                            </td>
+                            <td colspan="1" class="b-td-value" style="width: 100%;">
+                                <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham !== this.dotkham" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
+                                </kendo-combobox>
+                                <span style="min-width: 12.4em;" *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{employee?.Name}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="operation mt-2">
@@ -68,23 +88,39 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea [readonly]="!this.activeDotkham || this.activeDotkham != this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <textarea *ngIf="this.activeDotkham && this.activeDotkham == this.dotkham" formControlName="Reason" rows="2" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <label *ngIf="!this.activeDotkham || this.activeDotkham != this.dotkham">
+                {{reason}}
+            </label>
         </div>
         <div class="image mt-2">
-            <div class="d-flex justify-content-between">
-                <h5>Hình ảnh</h5>
-                <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham">
-                    <button class="btn btn-sm btn-primary" (click)="inputFile.click()"><i class="fas fa-images mr-1"></i>Thêm hình</button>
-                    <input #inputFile class="o_input_file d-none" type="file" accept="image/*" (change)="onFileChange($event)">
-                </div>
-            </div>
-            <div class="row">
+            <h6>Hình ảnh</h6>
+            <div class="o_attachments_previews">
                 <ng-container formArrayName="DotKhamImages">
-                    <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class="img-item col-4">
-                        <img width="100%" src="{{img.get('UploadId').value}}" alt="">
-                        <button *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" type="submit" (click)="onRemoveImg(i)" class="close">
-                    <span>&times;</span>
-                  </button>
+                    <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image" id="{{img.value.Name}}" [style.background-image]="'url('+ img.value.UploadId + '?width=240&height=240)'">
+                                </div>
+                                <div class="o_image_overlay o_attachment_view">
+                                    <span *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.Name}}"></span>
+                                    <span class="o_attachment_title text-white">{{img.value.Name}}</span>
+                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{webContentApi}}/{{img.value.UploadId}}">
+                                        <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div [formGroupName]="i" class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="btn-img" (click)="inputFile.click()">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image d-flex align-items-center justify-content-center">
+                                    <img width="50%" height="50%" src="/assets/images/placeholder.png" alt="">
+                                    <input #inputFile class="o_input_file d-none" type="file" multiple="multiple" accept="image/*" (change)="onFileChange($event)">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </ng-container>
             </div>

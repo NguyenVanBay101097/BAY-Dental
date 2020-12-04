@@ -19,7 +19,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class TreatmentProcessServiceListComponent implements OnInit {
   saleOrderId: string;
   services: any;
-  dotkhams: any[];
+  dotkhams: any[] = [];
   activeDotkham: any;
   // @ViewChild('dotkhamVC', {static: false}) dotkhamVC: any;
   @ViewChildren("dotkhamVC") domReference: QueryList<any>;

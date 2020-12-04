@@ -18,16 +18,6 @@
     font-weight: bolder;
 }
 
-.img-item img {
-    position: relative;
-}
-
-.img-item .close {
-    position: absolute;
-    right: 12px;
-    top: -10px;
-}
-
 .dotkham {
     background: #FFFFFF;
     border: 2px solid #DDDDDD;
@@ -41,4 +31,91 @@
 
 textarea[readonly] {
     background-color: #FFFFFF;
+}
+
+.btn-img:hover {
+    cursor: pointer;
+}
+
+.btn-img {
+    background: #E9ECEF;
+}
+
+.bg-close {
+    background-color: #6C757D;
+    color: white;
+}
+
+.bg-close:hover {
+    background-color: #282a2b;
+}
+
+@media only screen and (max-width: 1366px) {
+    .b_td_label {
+        min-width: 100px !important;
+    }
+    .b-td-value {
+        padding-right: 20px !important;
+    }
+}
+
+
+/* image */
+
+.view-img {
+    overflow: auto;
+    padding: 0 10px;
+}
+
+.o_attachments_date_separator {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+    border-bottom: 1px solid #ced4da;
+}
+
+.o_attachments_previews>.o_attachment {
+    width: 33.33333333%;
+}
+
+.oe_chatter .o_mail_chatter_attachments .o_chatter_attachment {
+    padding: 0px;
+}
+
+.image-title {
+    padding: 10px 15px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 24px;
+    color: #0B92F3;
+}
+
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 3px;
+    border-radius: 8px;
+}
+
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
