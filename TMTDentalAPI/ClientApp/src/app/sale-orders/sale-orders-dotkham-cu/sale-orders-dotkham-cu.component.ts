@@ -116,6 +116,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
           SaleOrderLine: null
         });
         lineFG.patchValue(e);
+        e.Teeth.forEach(t => {
+          const teethFG = this.fb.group(t);
+          (lineFG.get('Teeth') as FormArray).push(teethFG);
+        });
         this.linesFA.push(lineFG);
       });
       this.dotkhamForm.patchValue(this.dotkham);
@@ -185,8 +189,11 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     val.CompanyId = this.authService.userInfo.companyId;
     val.Lines.forEach(line => {
       line.ToothIds = line.Teeth.map(x => x.Id);
+      if (!line.Id) {
+        delete line.Id;
+      }
     });
-    
+
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
@@ -197,8 +204,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     } else {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.dotkham = val;
-        this.onEmitDotkham(this.dotkham, false, null);
+        this.dotkhamService.get(this.Id, null).subscribe((res2: any) => {
+          this.dotkham = res2;
+          this.onEmitDotkham(this.dotkham, false, null);
+        });
       });
     }
   }
@@ -256,6 +265,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       const g = this.fb.group(t);
       lineControl.get('Teeth').push(g);
     });
+    this.dotkham.Lines = this.dotkhamForm.value.Lines;
     // lineControl.get('ToothIds').clear();
     // line.Teeth.forEach(t => {
     //   const g = this.fb.group(t.Id);
