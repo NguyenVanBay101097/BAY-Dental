@@ -20,6 +20,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<DotKhamSaveVm, DotKham>()               
                 .ForMember(x => x.Lines, x => x.Ignore())
                 .ForMember(x => x.DotKhamImages, x => x.Ignore())
+                .ForMember(x => x.Doctor, x => x.Ignore())
                 .ForMember(x => x.State, x => x.Ignore())
                 .ForMember(x => x.Company, x => x.Ignore())
                 .ForMember(x => x.Appointment, x => x.Ignore());
