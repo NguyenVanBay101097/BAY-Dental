@@ -1,32 +1,35 @@
-<div class="w-100 h-100 d-flex">
-    <div class="w-30 h-100 d-flex flex-column">
-        <div class="d-flex align-items-center mb-2">
-            <h5>Danh sách dịch vụ</h5>
+<div class="section">
+    <div class="section-left">
+        <div class="section-header">
+            <h5 class="mb-0">Danh sách dịch vụ</h5>
+            <button class="btn btn-sm btn-primary opacity-0">None</button>
         </div>
-        <div class="overflow-auto">
-            <div *ngFor="let service of services" class="border rounded bg-white p-2 mb-2">
+        <div class="section-body">
+            <div *ngFor="let service of services; index as i" class="border rounded bg-white p-2 mb-2">
                 <h5>{{service.Name}}</h5>
                 <div>Răng:
                     <span>{{formatTeethList(service.Teeth)}} </span>
                 </div>
                 <div>Chuẩn đoán: </div>
-                <h5>
-                    Tiến trình điều trị
-                    <span class="text-primary cursor-pointer" (click)="editTreatmentProcess(service)"><i class="fas fa-edit"></i></span>
-                </h5>
-                <table class="table table-sm table-bordered text-center table-thead-nowrap">
+                <div class="d-flex justify-content-between mt-2 mb-1">
+                    <h5 class="mb-0">Tiến trình điều trị </h5>
+                    <button type="button" class="btn btn-sm btn-success" (click)="editTreatmentProcess(service)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <table class="table table-sm table-bordered text-center table-thead-nowrap mb-0">
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Nội dung</th>
+                            <th class="text-left">Nội dung</th>
                             <th>Hoàn thành</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let step of service.Steps; index as i">
-                            <td>{{step.Order}}</td>
-                            <td>{{step.Name}}</td>
+                        <tr *ngFor="let step of service.Steps; index as j">
+                            <td>{{j + 1}}</td>
+                            <td class="text-left">{{step.Name}}</td>
                             <td>
                                 <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
                             </td>
@@ -39,10 +42,10 @@
             </div>
         </div>
     </div>
-    <div class="w-70 h-100 d-flex flex-column border-left">
-        <div class="d-flex align-items-center justify-content-between flex-0-0-auto mx-3 mb-2">
-            <h5>Danh sách đợt khám</h5>
-            <button *ngIf="dotkhams.length" (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+    <div class="section-right">
+        <div class="section-header section-right-header">
+            <h5 class="mb-0">Danh sách đợt khám</h5>
+            <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
         <div class="flex-1-1-100 overflow-auto">
             <ng-container *ngIf="dotkhams.length">

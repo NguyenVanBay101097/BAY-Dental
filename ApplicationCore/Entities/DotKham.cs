@@ -15,6 +15,8 @@ namespace ApplicationCore.Entities
             Date = DateTime.Now;
         }
 
+        public int? Sequence { get; set; }
+
         /// <summary>
         /// Mã đợt khám
         /// </summary>

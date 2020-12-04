@@ -1,0 +1,130 @@
+﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPrintVM
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div class="o_form_view">
+    <div class="media">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="mr-3" src="@Model.Company.Logo" style="max-width: 200px" alt="@Model.Company.Name">
+        }
+        <div class="media-body">
+            <h5 class="mt-0">@Model.Company.Name</h5>
+        </div>
+    </div>
+    <div class="text-center">
+        <h1>PHIẾU ĐIỀU TRỊ NHANH</h1>
+
+        <span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>
+    </div>
+    <div class="o_group">
+        <table class="o_group o_inner_group">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Khách hàng
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.PartnerName
+                    </td>
+                </tr>
+                @if (!string.IsNullOrEmpty(Model.PartnerPhone))
+                {
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.PartnerPhone
+                        </td>
+                    </tr>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.PartnerAddress))
+                {
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.PartnerAddress
+                        </td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+        </table>
+      
+    </div>
+    <div class="o_group">
+        @foreach (var line in Model.OrderLines)
+        {
+            <table class="o_group o_inner_group table">
+                <thead>
+                    <tr class="bg-info font-weight-bold">
+                        <th scope="col">Dịch vụ</th>
+                        <th scope="col">Số lương</th>
+                        <th scope="col">Đơn giá</th>
+                        <th scope="col">Giảm</th>
+                        <th scope="col">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="1" style="width: 100%;">
+                            @line.ProductName
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" style="width: 100%;">
+                            @line.PriceUnit
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td colspan="1" style="width: 100%;">
+                            @if (line.DiscountType == "percentage")
+                            {
+                                @line.Discount
+                            }
+                            else if (line.DiscountType == "fixed")
+                            {
+                                @line.DiscountFixed
+                            }
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" style="width: 100%;">
+                            @line.PriceSubTotal
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        }
+    </div>
+    <div class="row">
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+                Người lập phiếu
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+            <span>@Model.PartnerName</span>
+            </div>
+        </div>
+    </div>
+</div>

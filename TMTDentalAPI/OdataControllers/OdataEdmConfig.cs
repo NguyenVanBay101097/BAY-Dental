@@ -78,6 +78,10 @@ namespace TMTDentalAPI.OdataControllers
              .Returns<SaleOrderDisplay>();
 
             builder.EntityType<SaleOrderViewModel>()
+            .Function("GetDotKhamListIds")
+            .Returns<bool>();
+
+            builder.EntityType<SaleOrderViewModel>()
                 .Collection
              .Function("DefaultGet")
              .Returns<SaleOrderDisplay>();
@@ -151,6 +155,9 @@ namespace TMTDentalAPI.OdataControllers
                  .Action("GetAllDotKhamForSaleOrder")
                  .Returns<bool>();
 
+           builder.EntityType<DotKhamVm>()
+          .Function("GetInfo")
+          .Returns<DotKhamDisplayVm>();
 
 
 
@@ -185,6 +192,9 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<DotKhamDisplay>();
             builder.ComplexType<DotKhamLineDisplay>();
             builder.ComplexType<ProductSimple>();
+            builder.ComplexType<SaleOrderLineDisplay>();
+            builder.ComplexType<DotKhamDisplayVm>();
+            builder.ComplexType<PartnerImageDisplay>();
 
 
 

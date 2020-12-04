@@ -28,13 +28,15 @@ namespace TMTDentalAPI.OdataControllers
     public class SaleOrdersController : BaseController
     {
         private readonly ISaleOrderService _saleOrderService;
+        private readonly IDotKhamService _dotKhamService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService,
+        public SaleOrdersController(ISaleOrderService saleOrderService, IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _saleOrderService = saleOrderService;
+            _dotKhamService = dotKhamService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -133,5 +135,16 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDotKhamListIds([FromODataUri] Guid key)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            //return ve list<Guid>;
+            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).Select(x=>x.Id).ToListAsync();
+
+            return Ok(dotKhamIds);
+        }
     }
 }
