@@ -16,6 +16,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<DotKham, DotKhamVm>();
             CreateMap<DotKhamVm, DotKham>();
 
+            CreateMap<DotKham, DotKhamDisplayVm>();
+
             CreateMap<DotKham, DotKhamSaveVm>();
             CreateMap<DotKhamSaveVm, DotKham>()               
                 .ForMember(x => x.Lines, x => x.Ignore())

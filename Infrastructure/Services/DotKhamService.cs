@@ -91,9 +91,7 @@ namespace Infrastructure.Services
                 dotkham.Lines.Remove(line);
             }
 
-            int sequence = 1;
-            foreach (var line in val.Lines)
-                line.Sequence = sequence++;
+            int sequence = 1;        
 
             foreach (var line in val.Lines)
             {
@@ -101,6 +99,7 @@ namespace Infrastructure.Services
                 {
                     var item = _mapper.Map<DotKhamLine>(line);
                     item.NameStep = line.NameStep;
+                    item.Sequence = sequence++;
                     foreach (var toothId in line.ToothIds)
                     {
                         item.ToothRels.Add(new DotKhamLineToothRel
@@ -115,6 +114,7 @@ namespace Infrastructure.Services
                    var res = _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
                     if(res != null)
                     {
+                        res.Sequence = sequence++;
                         res.ToothRels.Clear();
                         foreach (var toothId in line.ToothIds)
                         {
@@ -149,7 +149,9 @@ namespace Infrastructure.Services
             {
                 if (img.Id == Guid.Empty)
                 {
-                    dotkham.DotKhamImages.Add(_mapper.Map<PartnerImage>(img));
+                    var image = _mapper.Map<PartnerImage>(img);
+                    image.PartnerId = dotkham.PartnerId;
+                    dotkham.DotKhamImages.Add(image);
                 }
                 else
                 {
@@ -170,20 +172,19 @@ namespace Infrastructure.Services
         public async override Task<DotKham> CreateAsync(DotKham entity)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            //entity.Name = entity.Name;
-            //if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
-            //{
-            //    entity.Name = "Đợt khám";
-            //    //await InsertDotKhamSequence();
-            //    //entity.Name = await sequenceService.NextByCode("dot.kham");
-            //}
+            entity.Name = await sequenceService.NextByCode("dot.kham");
+            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            {
+                await InsertDotKhamSequence();
+                entity.Name = await sequenceService.NextByCode("dot.kham");
+            }
 
-            //if (entity.SaleOrderId.HasValue)
-            //{
-            //    var saleObj = GetService<ISaleOrderService>();
-            //    var order = await saleObj.GetByIdAsync(entity.SaleOrderId.Value);
-            //    entity.PartnerId = order.PartnerId;
-            //}
+            if (entity.SaleOrderId.HasValue)
+            {
+                var saleObj = GetService<ISaleOrderService>();
+                var order = await saleObj.GetByIdAsync(entity.SaleOrderId.Value);
+                entity.PartnerId = order.PartnerId;
+            }
 
             await base.CreateAsync(entity);
             return entity;

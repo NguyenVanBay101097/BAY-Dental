@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
@@ -19,6 +20,8 @@ namespace TMTDentalAPI.OdataControllers
     {
         private readonly IMapper _mapper;
         private readonly IDotKhamService _dotkhamService;
+        private readonly IDotKhamLineService _dotKhamLineService;
+        private readonly IPartnerImageService _partnerImageService;
         private readonly IViewRenderService _view;
         private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
@@ -26,6 +29,8 @@ namespace TMTDentalAPI.OdataControllers
         public DotKhamsController(
            IMapper mapper,
            IDotKhamService doikhamService,
+           IDotKhamLineService dotKhamLineService,
+           IPartnerImageService partnerImageService,
            IViewRenderService view,
            IUserService userService,
            IUnitOfWorkAsync unitOfWork
@@ -33,6 +38,8 @@ namespace TMTDentalAPI.OdataControllers
         {
             _mapper = mapper;
             _dotkhamService = doikhamService;
+            _dotKhamLineService = dotKhamLineService;
+            _partnerImageService = partnerImageService;
             _view = view;
             _userService = userService;
             _unitOfWork = unitOfWork;
@@ -53,6 +60,32 @@ namespace TMTDentalAPI.OdataControllers
             var results = _mapper.ProjectTo<DotKhamVm>(_dotkhamService.SearchQuery(x => x.Id == key));
 
             return SingleResult.Create(results);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInfo([FromODataUri] Guid key)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            //function return complex type
+            var dotkham = await _dotkhamService.SearchQuery(x => x.Id == key).Select(x => new DotKhamDisplayVm { 
+                Date = x.Date,
+                Doctor = x.Doctor != null ? new EmployeeSimple
+                {
+                    Id = x.Doctor.Id,
+                    Name = x.Doctor.Name
+                } : null,
+                Id = x.Id
+            }).FirstOrDefaultAsync();
+
+            if (dotkham == null)
+                return NotFound();
+
+            dotkham.Lines = _mapper.Map<IEnumerable<DotKhamLineDisplay>>(await _dotKhamLineService.SearchQuery(x => x.DotKhamId == key).OrderBy(x=>x.Sequence).ToListAsync());
+            dotkham.DotKhamImages = _mapper.Map<IEnumerable<PartnerImageDisplay>>(await _partnerImageService.SearchQuery(x => x.DotkhamId.Value == key).ToListAsync());
+
+            return Ok(dotkham);
         }
 
         [HttpPost]
@@ -84,29 +117,6 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> GetAllDotKhamForSaleOrder([FromBody] GetAllDotKhamVm val)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    var results = _mapper.ProjectTo<DotKhamVm>(_dotkhamService.SearchQuery(x => val.OrderIds.Contains(x.SaleOrderId.Value)));          
-        //    _unitOfWork.Commit();
-
-        //    return Ok(results);
-
-        //}
-
-
-
-
-
-
+       
     }
 }
