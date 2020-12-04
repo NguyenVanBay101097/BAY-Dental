@@ -10,6 +10,7 @@ import { TreatmentProcessServiceDialogComponent } from '../treatment-process-ser
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -32,7 +33,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     private modalService: NgbModal,
     private authService: AuthService,
     private notificationService: NotificationService, 
-    private errorService: AppSharedShowErrorService
+    private errorService: AppSharedShowErrorService,
   ) { }
 
   ngOnInit() {
@@ -119,22 +120,35 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     if (!this.saleOrderId) {
       return;
     }
-    const state = {
-      take: 10,
-      filter: {
-        logic: 'SaleOrderId',
-        filters: [
-          { field: 'SaleOrderId', operator: 'eq', value: this.saleOrderId }
-        ]
-      }
-    };
-    const options = {
-      // expand: 'Lines'
-      orderby: 'DateCreated desc'
-    };
-    this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
-      this.dotkhams = res.data;
+    
+    this.saleOrdersOdataService.getDotKhamListIds(this.saleOrderId).subscribe((res: any) => {
+      const obs = res.value.map(id => {
+        return this.dotkhamOdataService.getInfo(id);
+      });
+
+      forkJoin(obs).subscribe((result: any) => {
+        this.dotkhams = result;
+        console.log(result);
+        
+      });
     });
+    
+    // const state = {
+    //   take: 10,
+    //   filter: {
+    //     logic: 'SaleOrderId',
+    //     filters: [
+    //       { field: 'SaleOrderId', operator: 'eq', value: this.saleOrderId }
+    //     ]
+    //   }
+    // };
+    // const options = {
+    //   // expand: 'Lines'
+    //   orderby: 'DateCreated desc'
+    // };
+    // this.dotkhamOdataService.fetch2(state, options).subscribe((res: any) => {
+    //   this.dotkhams = res.data;
+    // });
   }
 
   onCreateDotKham() {
@@ -144,7 +158,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     }
     const dotkham = new DotKhamVm();
     dotkham.Date = new Date();
-    dotkham.Name = 'Đợt khám ' + (this.dotkhams.length + 1);
+    dotkham.Sequence = this.dotkhams.length + 1;
     dotkham.SaleOrderId = this.saleOrderId;
     dotkham.CompanyId = this.authService.userInfo.companyId;
     this.dotkhams.unshift(dotkham);

@@ -2,7 +2,7 @@
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center justify-content-between">
-                <h5>{{Name}}</h5>
+                <h5>Đợt khám {{Sequence}}</h5>
                 <div>
                     <button *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
                     <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="footer d-flex align-items-center">
@@ -18,7 +18,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label b_td_label">
                                 <label class="o_form_label o_form_label_help">
-                                    Ngày:
+                                    Ngày
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
@@ -33,7 +33,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label b_td_label">
                                 <label class="o_form_label o_form_label_help">
-                                    Bác sĩ:
+                                    Bác sĩ
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
@@ -112,7 +112,7 @@
                             </div>
                         </div>
                     </div>
-                    <div [formGroupName]="i" class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                    <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                         <div class="btn-img" (click)="inputFile.click()">
                             <div class="o_image_box">
                                 <div class="o_attachment_image d-flex align-items-center justify-content-center">
