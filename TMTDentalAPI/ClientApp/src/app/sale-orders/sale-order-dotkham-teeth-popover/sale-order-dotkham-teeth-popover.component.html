@@ -16,7 +16,7 @@
         <div class="d-flex align-items-center">
             <h6>Răng:</h6>
             <label class="ml-2">
-            <a (click)="onSelected(item)" [ngClass]="{'active': isSelected(item)}" class="p-2 border btn my-2 mr-2 item-rang" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
+            <a (click)="onSelected(item)" [ngClass]="{'active': isSelected(item)}" class="btn-sm border btn mt-1 mr-2" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
         </label>
         </div>
         <h6> Chi tiết điều trị</h6>

@@ -63,7 +63,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
     this.dotkhamForm = this.fb.group({
       Id: null,
-      Name: [null, Validators.required],
+      Sequence: [null, Validators.required],
       SaleOrderId: [null],
       PartnerId: null,
       Date: [new Date(), Validators.required],
@@ -91,7 +91,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   get Id() { return this.dotkhamForm.get('Id').value; }
-  get Name() { return this.dotkhamForm.get('Name').value; }
+  get Sequence() { return this.dotkhamForm.get('Sequence').value; }
   get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
   get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
   get dotkhamDate() { return this.dotkhamForm.get('Date').value; }

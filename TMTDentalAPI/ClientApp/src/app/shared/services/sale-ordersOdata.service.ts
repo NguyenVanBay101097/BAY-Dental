@@ -23,4 +23,8 @@ export class SaleOrdersOdataService extends ODataService {
     public getDotKhamStepByOrderLine(id: any) {
         return this.getFunction(id, 'GetDotKhamStepByOrderLine');
     }
+
+    getDotKhamListIds(id: any) {
+        return this.getFunction(id, 'GetDotKhamListIds');
+    }
 }

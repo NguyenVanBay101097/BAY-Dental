@@ -4,7 +4,8 @@ import { ODataService } from './odata.service';
 
 export class DotKhamVm {
   Id: string;
-  Name: string;
+  // Name: string;
+  Sequence: number;
   SaleOrderId: string;
   SaleOrder: any;
   PartnerId: string;
@@ -20,7 +21,8 @@ export class DotKhamVm {
 }
 
 export class DotKhamSaveVm {
-  Name: string;
+  // Name: string;
+  Sequence: number;
   SaleOrderId: string;
   SaleOrder: any;
   PartnerId: string;
@@ -59,5 +61,9 @@ export class DotkhamOdataService extends ODataService {
   createOrUpdateDotKham(val) {
     debugger
     return this.http.post(`${this.BASE_URL}${this.tableName}` + '/CreateOrUpdateDotKham', val);
+  }
+
+  getInfo(id: any) {
+    return this.getFunction(id, 'GetInfo');
   }
 }
