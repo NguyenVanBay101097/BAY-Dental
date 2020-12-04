@@ -2,8 +2,11 @@
     .w-#{$i * 5} {width: #{$i * 5 + '%'};}
     .h-#{$i * 5} {height: #{$i * 5 + '%'};}
 }
-.table-thead-align-top > thead > tr > th {vertical-align: top;}
-.table-tbody-align-top > tbody > tr > td {vertical-align: top;}
+.cursor-pointer {cursor: pointer;}
+.table-thead-ver-align-top thead > tr > th {vertical-align: top;}
+.table-tbody-ver-align-top tbody > tr > td {vertical-align: top;}
+.table-thead-ver-align-middle thead > tr > th {vertical-align: middle;}
+.table-tbody-ver-align-middle tbody > tr > td {vertical-align: middle;}
 .text-nowrap {white-space: nowrap;}
 .table-thead-nowrap > thead > tr > th {white-space: nowrap;}
 .table-tbody-nowrap > tbody > tr > td {white-space: nowrap;}

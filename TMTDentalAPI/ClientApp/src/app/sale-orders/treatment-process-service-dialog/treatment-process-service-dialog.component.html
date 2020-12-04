@@ -8,13 +8,13 @@
     <form class="o_form_view o_form_editable" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_group">
+                <div>
                     <h5>Công đoạn điều trị</h5>
-                    <table class="table table-sm table-bordered text-center">
+                    <table class="table table-sm text-center table-tbody-ver-align-middle border-bottom">
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Nội dung</th>
+                                <th>Công đoạn</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -23,17 +23,15 @@
                                 <tr [formGroupName]="i">
                                     <td>{{i + 1}}</td>
                                     <td>
-                                        <input type="text" formControlName="Name" placeholder="Điền nội dung ...">
+                                        <input type="text" class="form-control" formControlName="Name" placeholder="Nhập công đoạn ...">
                                     </td>
                                     <td>
-                                        <div class="d-flex justify-content-center">
-                                            <span class="d-flex flex-column mr-1">
-                                                <button type="button" class="btn btn-light btn-sm py-0 d-flex" (click)="orderUp(i)"><i class="fas fa-angle-up"></i></button>
-                                                <button type="button" class="btn btn-light btn-sm py-0 d-flex" (click)="orderDown(i)"><i class="fas fa-angle-down"></i></button>
+                                        <div class="d-flex align-items-center justify-content-around">
+                                            <span class="d-flex flex-column">
+                                                <a class="py-0 d-flex text-primary" [class.disabled]="i == 0" (click)="orderUp(i)"><i class="fas fa-chevron-up"></i></a>
+                                                <a class="py-0 d-flex text-primary" [class.disabled]="i == steps.length - 1" (click)="orderDown(i)"><i class="fas fa-chevron-down"></i></a>
                                             </span>
-                                            <button type="button" class="btn btn-light btn-sm" (click)="delete(i)">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <a class="text-danger" (click)="delete(i)"><i class="fas fa-trash-alt"></i></a>
                                         </div>
                                     </td>
                                 </tr>

@@ -67,7 +67,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     }
     this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
       (result) => { 
-        this.notify('success', 'Đã hoàn thành tiến trình: ' + step.Name);
+        if (step.IsDone) {
+          this.notify('success', 'Đã hoàn thành tiến trình: ' + step.Name);
+        }
       },
       (error) => {
         this.errorService.show(error);
