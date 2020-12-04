@@ -62,7 +62,7 @@ namespace TMTDentalAPI.OdataControllers
             return SingleResult.Create(results);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<IActionResult> GetInfo([FromODataUri] Guid key)
         {
             if (!ModelState.IsValid)
