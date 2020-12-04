@@ -16,6 +16,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<PartnerImageSave, PartnerImage>();
 
             CreateMap<PartnerImage, PartnerImageDisplay>();
+            CreateMap<PartnerImageDisplay, PartnerImage>();
         }
     }
 }

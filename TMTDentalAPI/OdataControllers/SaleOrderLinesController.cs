@@ -57,5 +57,22 @@ namespace TMTDentalAPI.OdataControllers
             var results = _mapper.ProjectTo<SaleOrderLineViewModel>(_saleOrderLineService.SearchQuery(x => x.Id == key));
             return SingleResult.Create(results);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetTeethList([FromODataUri] Guid key)
+        {
+            //
+            var line = await _saleOrderLineService.SearchQuery(x => x.Id == key).Select(x => new SaleOrderLineViewModel
+            {
+                Teeth = x.SaleOrderLineToothRels.Select(x => new ToothDisplay
+                {
+                    Id = x.ToothId,
+                    Name = x.Tooth.Name
+                })
+            }).FirstOrDefaultAsync();  
+            
+            return Ok(line.Teeth);
+
+        }
     }
 }

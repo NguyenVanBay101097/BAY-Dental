@@ -6,4 +6,7 @@ import { ODataService } from './odata.service';
 export class SaleOrderLinesOdataService extends ODataService {
     constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "SaleOrderLines"); }
 
+    getTeethList(id: any) {
+        return this.getFunction(id, 'GetTeethList');
+    }
 }
