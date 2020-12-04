@@ -84,7 +84,7 @@ namespace TMTDentalAPI.OdataControllers
             if (dotkham == null)
                 return NotFound();
 
-            dotkham.Lines = _mapper.Map<IEnumerable<DotKhamLineDisplay>>(await _dotKhamLineService.SearchQuery(x => x.DotKhamId == key).OrderBy(x=>x.Sequence).ToListAsync());
+            dotkham.Lines = _mapper.Map<IEnumerable<DotKhamLineDisplay>>(await _dotKhamLineService.SearchQuery(x => x.DotKhamId == key).Include(x=>x.Product).Include(x=>x.ToothRels).OrderBy(x=>x.Sequence).ToListAsync());
             dotkham.DotKhamImages = _mapper.Map<IEnumerable<PartnerImageDisplay>>(await _partnerImageService.SearchQuery(x => x.DotkhamId.Value == key).ToListAsync());
 
             return Ok(dotkham);
