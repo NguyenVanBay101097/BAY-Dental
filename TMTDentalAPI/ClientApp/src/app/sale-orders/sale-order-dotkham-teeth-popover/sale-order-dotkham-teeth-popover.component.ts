@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { SaleOrderLinesOdataService } from 'src/app/shared/services/sale-order-linesOdata.service';
 
 @Component({
   selector: 'app-sale-order-dotkham-teeth-popover',
@@ -16,18 +17,20 @@ export class SaleOrderDotkhamTeethPopoverComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: any;
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private saleOrderLineService: SaleOrderLinesOdataService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
      Note: null
     });
-    this.reLoad();
   }
 
   reLoad() {
-    this.allTeeth = this.line.SaleOrderLine.Teeth;
+    this.saleOrderLineService.getTeethList(this.line.SaleOrderLineId).subscribe((res: any) => {
+      this.allTeeth = res.Value;
+    });
     this.formGroup.patchValue(this.line);
     if (this.line.Teeth) {
       this.teethSelected = Object.assign([], this.line.Teeth);
