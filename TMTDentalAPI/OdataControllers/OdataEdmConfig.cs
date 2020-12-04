@@ -98,6 +98,10 @@ namespace TMTDentalAPI.OdataControllers
             #region SaleOrderLines
             builder.EntitySet<SaleOrderLineViewModel>("SaleOrderLines");
 
+            builder.EntityType<SaleOrderLineViewModel>()
+           .Function("GetTeethList")
+           .Returns<bool>();
+
             #endregion
 
             #region DotKhamSteps
