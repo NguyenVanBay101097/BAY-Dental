@@ -50,7 +50,7 @@
             <h5 class="mb-0">Danh sách đợt khám</h5>
             <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
-        <div class="flex-1-1-100 overflow-auto">
+        <div class="section-body">
             <ng-container *ngIf="dotkhams.length">
                 <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk" (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
             </ng-container>
