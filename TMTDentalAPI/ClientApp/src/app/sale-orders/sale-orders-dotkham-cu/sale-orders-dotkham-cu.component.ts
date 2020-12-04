@@ -54,7 +54,26 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       const linesFA = this.dotkhamForm.get('Lines') as FormArray;
       linesFA.clear();
       this.dotkham.Lines.forEach(line => {
-        const lineFG = this.fb.group(line);
+        debugger;
+        const lineFG = this.fb.group({
+          Id: null,
+          NameStep: null,
+          DotKhamId: null,
+          ProductId: null,
+          Product: null,
+          Sequence: null,
+          State: null,
+          ToothIds: [],
+          Note: null,
+          Teeth: this.fb.array([]),
+          SaleOrderLineId: null,
+          SaleOrderLine: null
+        });
+        lineFG.patchValue(line);
+        line.Teeth.forEach(t => {
+          const teethFG = this.fb.group(t);
+          (lineFG.get('Teeth') as FormArray).push(teethFG);
+        });
         linesFA.push(lineFG);
       });
     }
@@ -203,7 +222,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     val.CompanyId = this.authService.userInfo.companyId;
     val.Lines.forEach(line => {
-      line.ToothIds = line.Teeth.map(x => x.Id);
+      line.ToothIds = line.Teeth.length ? line.Teeth.map(x => x.Id) : [];
       if (!line.Id) {
         delete line.Id;
       }
@@ -212,7 +231,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     if (!this.Id) {
       this.dotkhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.dotkhamService.get(res.Id, null).subscribe((res2: any) => {
+        this.dotkhamService.getInfo(res.Id).subscribe((res2: any) => {
           this.dotkham = res2;
           this.onEmitDotkham(this.dotkham, false, null);
           this.loadRecord();
@@ -221,7 +240,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     } else {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
-        this.dotkhamService.get(this.Id, null).subscribe((res2: any) => {
+        this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
           debugger;
           this.dotkham = res2;
           this.onEmitDotkham(this.dotkham, false, null);

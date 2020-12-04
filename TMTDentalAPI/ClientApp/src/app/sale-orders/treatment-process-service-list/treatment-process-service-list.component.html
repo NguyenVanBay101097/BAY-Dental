@@ -34,8 +34,7 @@
                                 <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
                             </td>
                             <td>
-                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm"
-                                    (click)="sendDotKhamStep(service, step)">
+                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm" (click)="sendDotKhamStep(service, step)">
                                     <i class="fas fa-angle-double-right"></i>
                                 </button>
                             </td>
@@ -48,10 +47,10 @@
     <div class="section-right">
         <div class="section-header section-right-header">
             <h5 class="mb-0">Danh sách đợt khám</h5>
-            <button *ngIf="dotkhams.length" (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+            <button *ngIf="dotkhams.length > 0" (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
         <div class="section-body">
-            <ng-container *ngIf="dotkhams.length">
+            <ng-container *ngIf="dotkhams.length > 0 ; else empty">
                 <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk" (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
             </ng-container>
             <ng-template #empty>
