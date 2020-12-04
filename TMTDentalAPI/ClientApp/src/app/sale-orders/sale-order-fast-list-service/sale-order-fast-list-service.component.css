@@ -17,3 +17,17 @@
 .table tbody tr:hover {
   background-color: #007bff91;
 }
+
+.sticky-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  /* Don't collapse */
+  border-spacing: 0 !important;
+}
+
+.sticky-table .sticky-th {
+  /* Apply both top and bottom borders to the <th> */
+  position: sticky !important;
+  top: 0 !important;
+
+}

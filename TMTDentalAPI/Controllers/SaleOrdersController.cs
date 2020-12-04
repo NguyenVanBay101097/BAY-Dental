@@ -409,7 +409,18 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrintSaleOrder(Guid id)
+        {
+            var phieu = await _saleOrderService.GetPrint(id);
+            if (phieu == null)
+                return NotFound();
 
+            var html = _viewRenderService.Render("SaleOrderPrint", phieu);
+
+            return Ok(new PrintData() { html = html });
+        }
 
     }
 }
