@@ -13,6 +13,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Name { get; set; }
 
+        public int? Sequence { get; set; }
+
         public Guid? SaleOrderId { get; set; }
 
         /// <summary>
@@ -71,6 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
+        public int? Sequence { get; set; }
+
         /// <summary>
         /// Ngày khám
         /// </summary>
@@ -100,6 +104,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày khám
         /// </summary>
         public DateTime Date { get; set; }
+
+        public int? Sequence { get; set; }
 
         /// <summary>
         /// Mô tả

@@ -76,7 +76,8 @@ namespace TMTDentalAPI.OdataControllers
                     Id = x.Doctor.Id,
                     Name = x.Doctor.Name
                 } : null,
-                Id = x.Id
+                Id = x.Id,
+                Sequence = x.Sequence
             }).FirstOrDefaultAsync();
 
             if (dotkham == null)
