@@ -1,6 +1,7 @@
 import { IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
 import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -10,9 +11,11 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
+import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-sale-orders-dotkham-cu',
@@ -30,6 +33,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   empList: any[];
   kvDiffer: KeyValueDiffer<string, any>;
   differ: IterableDiffer<any>;
+  webImageApi: string;
+  webContentApi: string;
 
   constructor(
     private webService: WebService,
@@ -40,7 +45,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private dotkhamService: DotkhamOdataService,
     private notificationService: NotificationService,
     private differs: KeyValueDiffers,
-    private iterableDiffers: IterableDiffers
+    private iterableDiffers: IterableDiffers,
+    private modalService: NgbModal
   ) { }
   ngDoCheck(): void {
     const changes = this.differ.diff(this.dotkham.Lines);
@@ -50,6 +56,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   ngOnInit() {
+    this.webImageApi = environment.uploadDomain + 'api/Web/Image';
+    this.webContentApi = environment.uploadDomain + 'api/Web/Content';
     this.kvDiffer = this.differs.find(this.dotkham).create();
     this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
 
@@ -152,18 +160,21 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
   onFileChange(e) {
     const file_node = e.target;
-    const file = file_node.files[0];
     const formData = new FormData();
-    formData.append('file', file);
+    for (var i = 0; i < file_node.files.length; i++) {
+      formData.append('files', file_node.files[i]);
+    }
 
-    this.webService.uploadImage(formData).subscribe((res: any) => {
-      const imgObj = new PartnerImageBasic();
-      imgObj.DotKhamId = this.dotkham.Id;
-      imgObj.Name = res.fileName;
-      imgObj.UploadId = res.fileUrl;
-      imgObj.PartnerId = this.dotkham.PartnerId;
-      const imgFG = this.fb.group(imgObj);
-      this.imgsFA.push(imgFG);
+    this.webService.uploadImages(formData).subscribe((res: any) => {
+      res.forEach(img => {
+        const imgObj = new PartnerImageBasic();
+        imgObj.DotKhamId = this.dotkham.Id;
+        imgObj.Name = img.fileName;
+        imgObj.UploadId = img.fileUrl;
+        imgObj.PartnerId = this.dotkham.PartnerId;
+        const imgFG = this.fb.group(imgObj);
+        this.imgsFA.push(imgFG);
+      });
     });
   }
 
@@ -207,6 +218,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
         this.dotkhamService.get(this.Id, null).subscribe((res2: any) => {
+          debugger;
           this.dotkham = res2;
           this.onEmitDotkham(this.dotkham, false, null);
         });
@@ -273,5 +285,18 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     //   const g = this.fb.group(t.Id);
     //   lineControl.get('ToothIds').push(g);
     // });
+  }
+
+  onViewImg(imgObj: PartnerImageBasic) {
+    const modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
+    const img = {
+      id: imgObj.Id,
+      name: imgObj.Name,
+      date: imgObj.Date,
+      note: imgObj.Note,
+      uploadId: imgObj.UploadId
+    };
+    modalRef.componentInstance.partnerImages = [];
+    modalRef.componentInstance.partnerImageSelected = img;
   }
 }

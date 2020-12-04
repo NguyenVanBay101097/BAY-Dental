@@ -201,6 +201,13 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadImages(IList<IFormFile> files)
+        {
+            var result = await _uploadService.UploadBinaryAsync(files);
+            return Ok(result);
+        }
+
         [HttpGet("[action]")]
         public IActionResult Features()
         {

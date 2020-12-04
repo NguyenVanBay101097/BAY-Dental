@@ -1499,3 +1499,7 @@ span.char-count {
 .k-notification-group {
     z-index: 2147483647;
 }
+
+.dotkham-teeth-popover-width {
+    min-width: 300px !important;
+}

@@ -1,7 +1,7 @@
 <!-- template popover -->
 <span class="d-flex">
-    <a popoverClass="teeth-popover-width" class="ml-auto" [ngbPopover]="popContent" [autoClose]="'outside'" [popoverTitle]="popTitle" (click)="togglePopover(popOver,line)" #popOver="ngbPopover" placement="left" triggers="manual" data-container="body">
-        <i class="far fa-edit icon-edit"></i>
+    <a popoverClass="dotkham-teeth-popover-width" class="ml-auto" [ngbPopover]="popContent" [autoClose]="'outside'" [popoverTitle]="popTitle" (click)="togglePopover(popOver,line)" #popOver="ngbPopover" placement="left" triggers="manual" data-container="body">
+        <i class="fas fa-edit icon-edit"></i>
     </a>
 </span>
 
@@ -13,15 +13,17 @@
 </ng-template>
 <ng-template #popContent>
     <div [formGroup]="formGroup">
-        <h6>Răng</h6>
-        <label class="my-2">
-            <a (click)="onSelected(item)" [ngClass]="{'active': isSelected(item)}" class="p-2 border btn mr-2 item-rang" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
+        <div class="d-flex align-items-center">
+            <h6>Răng:</h6>
+            <label class="ml-2">
+            <a (click)="onSelected(item)" [ngClass]="{'active': isSelected(item)}" class="p-2 border btn my-2 mr-2 item-rang" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
         </label>
+        </div>
         <h6> Chi tiết điều trị</h6>
         <textarea formControlName='Note' class="form-control"></textarea>
         <div class="d-flex mt-2">
             <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
-            <button (click)="popover.close()" class="btn btn-sm btn-dark mr-2">Close</button>
+            <button (click)="popover.close()" class="btn btn-sm bg-close mr-2">Close</button>
         </div>
     </div>
 </ng-template>
