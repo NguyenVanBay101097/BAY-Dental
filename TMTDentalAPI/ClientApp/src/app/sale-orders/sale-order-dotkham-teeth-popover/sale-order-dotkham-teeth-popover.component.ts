@@ -29,7 +29,7 @@ export class SaleOrderDotkhamTeethPopoverComponent implements OnInit {
 
   reLoad() {
     this.saleOrderLineService.getTeethList(this.line.SaleOrderLineId).subscribe((res: any) => {
-      this.allTeeth = res.Value;
+      this.allTeeth = res.value;
     });
     this.formGroup.patchValue(this.line);
     if (this.line.Teeth) {
