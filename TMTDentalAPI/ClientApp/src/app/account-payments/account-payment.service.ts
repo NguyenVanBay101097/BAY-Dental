@@ -85,7 +85,5 @@ export class AccountPaymentService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
     }
 
-    getPrintSaleOrderFast(id: string){
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrderFast');
-    }
+   
 }

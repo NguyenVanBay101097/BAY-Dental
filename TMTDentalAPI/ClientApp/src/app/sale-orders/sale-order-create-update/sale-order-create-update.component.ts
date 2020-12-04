@@ -645,13 +645,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printSaleOrder() {
     if (this.saleOrderId) {
-      this.saleOrderService.getPrint(this.saleOrderId).subscribe((result: any) => {
-        this.saleOrderPrint = result;
-        setTimeout(() => {
-          var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
-          this.printService.print(printContents);
-          this.saleOrderPrint = null;
-        });
+      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
       });
     }
   }

@@ -136,17 +136,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [AllowAnonymous]
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetPrintSaleOrderFast(Guid id)
-        {
-            var phieu = await _paymentService.GetPrint(id);
-            if (phieu == null)
-                return NotFound();
-
-            var html = _viewRenderService.Render("SaleOrderFastPrint", phieu);
-
-            return Ok(new PrintData() { html = html });
-        }
+      
     }
 }

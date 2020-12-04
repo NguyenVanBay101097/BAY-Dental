@@ -131,16 +131,5 @@
     <div class="container body-content">
         @RenderBody()
     </div>
-
-    <script defer>
-        function triggerPrint(event) {
-            window.removeEventListener('load', triggerPrint, false);
-            setTimeout(function () {
-                window.print();
-                setTimeout(function () { window.close(); }, 0);
-            }, 0);
-        }
-        window.addEventListener('load', triggerPrint, false);
-    </script>
 </body>
 </html>
