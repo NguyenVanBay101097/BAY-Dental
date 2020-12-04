@@ -184,6 +184,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerImageBasic>();
             builder.ComplexType<DotKhamDisplay>();
             builder.ComplexType<DotKhamLineDisplay>();
+            builder.ComplexType<ProductSimple>();
             builder.ComplexType<SaleOrderLineDisplay>();
 
 

@@ -1,0 +1,12 @@
+.teeth-popover-width {
+    min-width: 400px;
+}
+
+.active {
+    background-color: rgb(116, 156, 218);
+}
+
+.item-rang:hover {
+    cursor: pointer;
+    background-color: rgb(48, 94, 163);
+}

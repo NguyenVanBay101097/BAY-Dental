@@ -199,7 +199,7 @@ namespace Umbraco.Web.Models.ContentEditing
             get
             {
                 if (Gender == "male")
-                    return "Name";
+                    return "Nam";
                 else if (Gender == "female")
                     return "Nữ";
                 else

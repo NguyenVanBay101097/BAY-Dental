@@ -34,7 +34,7 @@
                                         <div class="mb-2">
                                             <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                                 [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                                (valueChange)="enterMoney()" formControlName="amount">
+                                                (blur)="enterMoney()" formControlName="amount">
                                             </kendo-numerictextbox>
                                         </div>
                                         <div>
@@ -42,7 +42,7 @@
                                                 (click)="enterMoney()">
                                                 Nhập tiền
                                             </button> -->
-                                            <button type="button" class="btn btn-primary btn-sm ml-1"
+                                            <button type="button" class="btn btn-primary btn-sm"
                                                 (click)="payOff()">
                                                 Trả hết
                                             </button>

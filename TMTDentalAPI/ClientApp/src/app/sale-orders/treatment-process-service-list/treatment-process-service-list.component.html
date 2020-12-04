@@ -7,7 +7,7 @@
             <div *ngFor="let service of services" class="border rounded bg-white p-2 mb-2">
                 <h5>{{service.Name}}</h5>
                 <div>Răng:
-                    <span *ngFor="let tooth of service.Teeth">{{tooth.Name}} </span>
+                    <span>{{formatTeethList(service.Teeth)}} </span>
                 </div>
                 <div>Chuẩn đoán: </div>
                 <h5>
