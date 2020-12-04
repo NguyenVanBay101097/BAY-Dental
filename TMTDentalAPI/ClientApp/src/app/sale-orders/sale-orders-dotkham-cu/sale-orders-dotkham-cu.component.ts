@@ -51,7 +51,12 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   ngDoCheck(): void {
     const changes = this.differ.diff(this.dotkham.Lines);
     if (changes) {
-      this.loadRecord();
+      const linesFA = this.dotkhamForm.get('Lines') as FormArray;
+      linesFA.clear();
+      this.dotkham.Lines.forEach(line => {
+        const lineFG = this.fb.group(line);
+        linesFA.push(lineFG);
+      });
     }
   }
 
@@ -108,7 +113,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
         this.imgsFA.push(imgFG);
       });
       this.dotkham.Lines.forEach(e => {
-        e.ToothIds = e.Teeth.map(x => x.Id);
         const lineFG = this.fb.group({
           Id: null,
           NameStep: null,
@@ -235,7 +239,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   checkAccess() {
-    if (this.activeDotkham && this.activeDotkham !== this.dotkham) {
+    if (this.activeDotkham && this.activeDotkham.Sequence !== this.dotkham.Sequence) {
       this.notify('error', 'Bạn phải hoàn tất đợt khám đang thao tác');
       return false;
     }
