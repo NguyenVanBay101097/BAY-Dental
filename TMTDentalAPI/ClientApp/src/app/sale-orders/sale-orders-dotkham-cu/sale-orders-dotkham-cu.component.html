@@ -1,8 +1,16 @@
-<div class="border p-2 mt-2 mx-3" [formGroup]="dotkhamForm">
+<div [ngClass]="{'active': this.activeDotkham && this.activeDotkham === this.dotkham}" class="border rounded bg-white p-2 mb-2 dotkham" [formGroup]="dotkhamForm">
     <div class="body">
         <div class="info">
-            <div class="d-flex align-items-center">
-                <h5>{{Name}}</h5><i *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham" (click)="onEditDotkham()" class="far fa-edit text-info ml-2"></i>
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <h5>{{Name}}</h5>
+                <div>
+                    <button *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
+                    <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="footer d-flex align-items-center">
+                        <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
+                        <button *ngIf="!Id" (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
+                        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
+                    </div>
+                </div>
             </div>
             <div class="d-flex k-justify-content-between">
                 <div>
@@ -47,7 +55,7 @@
                                             {{line.get('Note').value}}
                                         </div>
                                     </div>
-                                    <app-sale-order-dotkham-teeth-popover *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" [line]="line.value" (eventTeeth)="eventTeeth($event,line)"></app-sale-order-dotkham-teeth-popover>
+                                    <app-sale-order-dotkham-teeth-popover *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" [line]="line.value" (eventTeeth)="eventTeeth($event,line, i)"></app-sale-order-dotkham-teeth-popover>
                                 </div>
                             </td>
                             <td *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham">
@@ -60,8 +68,7 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
-            <p *ngIf="!this.activeDotkham || this.activeDotkham !== this.dotkham">{{reason}}</p>
+            <textarea [readonly]="!this.activeDotkham || this.activeDotkham != this.dotkham" formControlName="Reason" rows="3" placeholder="nhập mô tả..." class="form-control"></textarea>
         </div>
         <div class="image mt-2">
             <div class="d-flex justify-content-between">
@@ -82,10 +89,5 @@
                 </ng-container>
             </div>
         </div>
-    </div>
-    <div *ngIf="this.activeDotkham && this.activeDotkham === this.dotkham" class="footer d-flex mt-2">
-        <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
-        <button *ngIf="!Id" (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
-        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm btn-dark mr-2">Đóng</button>
     </div>
 </div>

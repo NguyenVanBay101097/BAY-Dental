@@ -27,3 +27,18 @@
     right: 12px;
     top: -10px;
 }
+
+.dotkham {
+    background: #FFFFFF;
+    border: 2px solid #DDDDDD;
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+.active {
+    border-color: #007BFF !important;
+}
+
+textarea[readonly] {
+    background-color: #FFFFFF;
+}
