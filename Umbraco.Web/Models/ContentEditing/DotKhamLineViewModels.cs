@@ -58,7 +58,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class DotKhamLineSave
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         public string NameStep { get; set; }
 
