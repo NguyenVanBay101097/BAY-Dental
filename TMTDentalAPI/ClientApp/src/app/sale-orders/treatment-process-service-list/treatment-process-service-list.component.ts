@@ -203,6 +203,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     dotkham.Date = new Date();
     dotkham.Sequence = this.dotkhams.length + 1;
     componentRef.instance.dotkham = dotkham;
+    this.dotkhams.push(dotkham);
 
     componentRef.instance.setEditModeActive(true);
     this.activeDotKhamRef = componentRef;
@@ -235,11 +236,18 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     });
 
     componentRef.instance.btnCancelEvent.subscribe(() => {
-      this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
-        componentRef.instance.setEditModeActive(false);
-        dotkham = result;
+      if (!dotkham.Id) {
+        viewContainerRef.remove(0);
         this.activeDotKhamRef = null;
-      });
+        this.dotkhams.splice(0, 1);
+      } else {
+        this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+          componentRef.instance.setEditModeActive(false);
+          dotkham = result;
+          this.activeDotKhamRef = null;
+        });
+      }
+    
     });
 
     this.activeDotkham = dotkham;
