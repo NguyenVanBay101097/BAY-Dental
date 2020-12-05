@@ -20,7 +20,7 @@ namespace Infrastructure.Services
 
         Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id);
 
-        Task<DotKham> CreateDotKham(DotKhamSaveVm val);
+        Task<DotKham> CreateDotKham(Guid saleOrderId, DotKhamSaveVm val);
         Task UpdateDotKham(Guid id, DotKhamSaveVm val);
     }
 }

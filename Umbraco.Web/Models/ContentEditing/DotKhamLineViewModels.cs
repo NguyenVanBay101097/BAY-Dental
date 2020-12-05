@@ -42,18 +42,23 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
     }
 
-    public class DotKhamLineSave
+
+    public class DotKhamLineSaveVM
     {
         public Guid Id { get; set; }
 
         public string NameStep { get; set; }
 
+        //Chi su dung cho nhung line Id = Guid.Emplty
         public Guid? SaleOrderLineId { get; set; }
 
+        //dung de tao
         public Guid? ProductId { get; set; }
 
+        //dung de update
         public string Note { get; set; }
 
+        //dung de update
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 

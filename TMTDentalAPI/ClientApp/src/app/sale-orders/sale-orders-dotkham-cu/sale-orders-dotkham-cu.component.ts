@@ -1,3 +1,4 @@
+import { SaleOrderService } from './../../core/services/sale-order.service';
 import { IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
 import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,6 +17,8 @@ import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 import { environment } from 'src/environments/environment';
+import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sale-orders-dotkham-cu',
@@ -35,14 +38,17 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   differ: IterableDiffer<any>;
   webImageApi: string;
   webContentApi: string;
+  saleOrderId: string;
 
   constructor(
     private webService: WebService,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private empService: EmployeesOdataService,
     private intelService: IntlService,
     private authService: AuthService,
     private dotkhamService: DotkhamOdataService,
+    private orderOdataService: SaleOrdersOdataService,
     private notificationService: NotificationService,
     private differs: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
@@ -54,7 +60,6 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       const linesFA = this.dotkhamForm.get('Lines') as FormArray;
       linesFA.clear();
       this.dotkham.Lines.forEach(line => {
-        debugger;
         const lineFG = this.fb.group({
           Id: null,
           NameStep: null,
@@ -84,7 +89,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';
     this.kvDiffer = this.differs.find(this.dotkham).create();
     this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
-
+    this.saleOrderId = this.route.queryParams['value'].id;
     this.dotkhamForm = this.fb.group({
       Id: null,
       Sequence: [null, Validators.required],
@@ -229,7 +234,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     });
 
     if (!this.Id) {
-      this.dotkhamService.create(val).subscribe((res: any) => {
+      this.orderOdataService.createDotkham(this.saleOrderId, val).subscribe((res: any) => {
+        debugger
         this.notify('success', 'Lưu thành công');
         this.dotkhamService.getInfo(res.Id).subscribe((res2: any) => {
           this.dotkham = res2;
