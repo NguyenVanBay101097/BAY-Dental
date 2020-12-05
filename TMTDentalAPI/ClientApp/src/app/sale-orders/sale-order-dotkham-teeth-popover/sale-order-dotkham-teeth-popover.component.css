@@ -1,8 +1,3 @@
-.active {
-    background-color: #6C757D;
-    color: white;
-}
-
 .item-rang:hover {
     cursor: pointer;
     /* background-color: rgb(48, 94, 163); */
@@ -19,4 +14,9 @@
 
 .bg-close:hover {
     background-color: #464b50;
+}
+
+.t_teeth_selected {
+    background-color: #007bff!important;
+    color: #fff!important;
 }

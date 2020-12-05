@@ -34,7 +34,8 @@
                                 <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
                             </td>
                             <td>
-                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm" (click)="sendDotKhamStep(service, step)">
+                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm"
+                                    (click)="sendDotKhamStep(service, step)">
                                     <i class="fas fa-angle-double-right"></i>
                                 </button>
                             </td>
@@ -47,21 +48,23 @@
     <div class="section-right">
         <div class="section-header section-right-header">
             <h5 class="mb-0">Danh sách đợt khám</h5>
-            <button *ngIf="dotkhams.length > 0" (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+            <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
         </div>
-        <div [ngClass]="{'d-flex justify-content-center align-items-center h-100': dotkhams.length == 0}" class="section-body overflow-auto">
-            <ng-container *ngIf="dotkhams.length > 0 ; else empty">
-                <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk" (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham"></app-sale-orders-dotkham-cu>
+        <div class="section-body overflow-auto">
+            <ng-template anchorHost></ng-template>
+            <!-- <ng-container *ngIf="dotkhams.length > 0 ; else empty">
+                <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk"
+                    (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham" (btnSaveEvent)="onDkSaveEvent($event, dk)">
+                </app-sale-orders-dotkham-cu>
             </ng-container>
             <ng-template #empty>
-                <div style="width: 35%;">
-                    <img width="100%" height="100%" src="../../../assets/images/background/bg-dotkham.svg" alt="">
+                <div>
+                    <img class="img-fluid" src="/assets/images/background/bg-dotkham.svg" alt="">
                     <div class="d-flex justify-content-center mt-2">
                         <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
                     </div>
                 </div>
-            </ng-template>
-
+            </ng-template> -->
         </div>
     </div>
 </div>

@@ -93,7 +93,8 @@ import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teet
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
-    TreatmentProcessServiceDialogComponent
+    TreatmentProcessServiceDialogComponent,
+    SaleOrdersDotkhamCuComponent
   ]
 })
 export class SaleOrdersModule { }

@@ -29,12 +29,16 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
 
+  @Output() btnSaveEvent = new EventEmitter<any>();
+
   dotkhamForm: FormGroup;
   empList: any[];
   kvDiffer: KeyValueDiffer<string, any>;
   differ: IterableDiffer<any>;
   webImageApi: string;
   webContentApi: string;
+  
+  editModeActive = false;
 
   constructor(
     private webService: WebService,
@@ -51,31 +55,45 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   ngDoCheck(): void {
     const changes = this.differ.diff(this.dotkham.Lines);
     if (changes) {
-      const linesFA = this.dotkhamForm.get('Lines') as FormArray;
-      linesFA.clear();
-      this.dotkham.Lines.forEach(line => {
-        debugger;
-        const lineFG = this.fb.group({
-          Id: null,
+      console.log('1');
+      changes.forEachOperation((record, previousIndex, currentIndex) => {
+        var item = record.item;
+        const linesFA = this.dotkhamForm.get('Lines') as FormArray;
+        var g = this.fb.group({
           NameStep: null,
-          DotKhamId: null,
           ProductId: null,
           Product: null,
-          Sequence: null,
-          State: null,
-          ToothIds: [],
           Note: null,
           Teeth: this.fb.array([]),
           SaleOrderLineId: null,
-          SaleOrderLine: null
         });
-        lineFG.patchValue(line);
-        line.Teeth.forEach(t => {
-          const teethFG = this.fb.group(t);
-          (lineFG.get('Teeth') as FormArray).push(teethFG);
-        });
-        linesFA.push(lineFG);
+
+        g.patchValue(item);
+        linesFA.push(g);
       });
+      // const linesFA = this.dotkhamForm.get('Lines') as FormArray;
+      // linesFA.clear();
+      // this.dotkham.Lines.forEach(line => {
+      //   const lineFG = this.fb.group({
+      //     NameStep: null,
+      //     DotKhamId: null,
+      //     ProductId: null,
+      //     Product: null,
+      //     Sequence: null,
+      //     State: null,
+      //     ToothIds: [],
+      //     Note: null,
+      //     Teeth: this.fb.array([]),
+      //     SaleOrderLineId: null,
+      //     SaleOrderLine: null
+      //   });
+      //   lineFG.patchValue(line);
+      //   line.Teeth.forEach(t => {
+      //     const teethFG = this.fb.group(t);
+      //     (lineFG.get('Teeth') as FormArray).push(teethFG);
+      //   });
+      //   linesFA.push(lineFG);
+      // });
     }
   }
 
@@ -86,16 +104,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
 
     this.dotkhamForm = this.fb.group({
-      Id: null,
-      Sequence: [null, Validators.required],
-      SaleOrderId: [null],
-      PartnerId: null,
       Date: [new Date(), Validators.required],
-      UserId: [null],
       Reason: [null],
-      State: 'draft',
-      CompanyId: null,
-      DoctorId: null,
       Doctor: null,
       Lines: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
@@ -114,6 +124,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     });
   }
 
+  setEditModeActive(val: boolean) {
+    this.editModeActive = val;
+  }
+
   get Id() { return this.dotkhamForm.get('Id').value; }
   get Sequence() { return this.dotkhamForm.get('Sequence').value; }
   get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
@@ -123,38 +137,41 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   get reason() { return this.dotkhamForm.get('Reason').value; }
 
   loadRecord() {
-    if (this.dotkham) {
-      this.dotkham.Date = new Date(this.dotkham.Date);
-      this.imgsFA.clear();
-      this.linesFA.clear();
-      this.dotkham.DotKhamImages.forEach(e => {
-        const imgFG = this.fb.group(e);
-        this.imgsFA.push(imgFG);
+    this.dotkhamForm.get('Date').setValue(new Date(this.dotkham.Date));
+    this.imgsFA.clear();
+    this.linesFA.clear();
+
+    this.dotkham.DotKhamImages.forEach(e => {
+      const imgFG = this.fb.group(e);
+      this.imgsFA.push(imgFG);
+    });
+
+    this.dotkham.Lines.forEach(e => {
+      const lineFG = this.fb.group({
+        Id: null,
+        NameStep: null,
+        DotKhamId: null,
+        ProductId: null,
+        Product: null,
+        Sequence: null,
+        State: null,
+        ToothIds: [],
+        Note: null,
+        Teeth: this.fb.array([]),
+        SaleOrderLineId: null,
+        SaleOrderLine: null
       });
-      this.dotkham.Lines.forEach(e => {
-        const lineFG = this.fb.group({
-          Id: null,
-          NameStep: null,
-          DotKhamId: null,
-          ProductId: null,
-          Product: null,
-          Sequence: null,
-          State: null,
-          ToothIds: [],
-          Note: null,
-          Teeth: this.fb.array([]),
-          SaleOrderLineId: null,
-          SaleOrderLine: null
-        });
-        lineFG.patchValue(e);
-        e.Teeth.forEach(t => {
-          const teethFG = this.fb.group(t);
-          (lineFG.get('Teeth') as FormArray).push(teethFG);
-        });
-        this.linesFA.push(lineFG);
+
+      lineFG.patchValue(e);
+
+      e.Teeth.forEach(t => {
+        const teethFG = this.fb.group(t);
+        (lineFG.get('Teeth') as FormArray).push(teethFG);
       });
-      this.dotkhamForm.patchValue(this.dotkham);
-    }
+      this.linesFA.push(lineFG);
+    });
+
+    // this.dotkhamForm.patchValue(this.dotkham);
   }
 
   searchEmp(val) {
@@ -220,33 +237,41 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     const val = this.dotkhamForm.value;
     val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
-    val.CompanyId = this.authService.userInfo.companyId;
+    // val.CompanyId = this.authService.userInfo.companyId;
     val.Lines.forEach(line => {
-      line.ToothIds = line.Teeth.length ? line.Teeth.map(x => x.Id) : [];
-      if (!line.Id) {
-        delete line.Id;
-      }
+      line.ToothIds = line.Teeth.map(x => x.Id);
     });
 
-    if (!this.Id) {
-      this.dotkhamService.create(val).subscribe((res: any) => {
-        this.notify('success', 'Lưu thành công');
-        this.dotkhamService.getInfo(res.Id).subscribe((res2: any) => {
-          this.dotkham = res2;
-          this.onEmitDotkham(this.dotkham, false, null);
-          this.loadRecord();
-        });
-      });
+    if (!this.dotkham.Id) {
+      this.btnSaveEvent.emit(val);
     } else {
       this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
         this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
-          debugger;
           this.dotkham = res2;
           this.onEmitDotkham(this.dotkham, false, null);
         });
       });
     }
+
+    // if (!this.Id) {
+    //   this.dotkhamService.create(val).subscribe((res: any) => {
+    //     this.notify('success', 'Lưu thành công');
+    //     this.dotkhamService.getInfo(res.Id).subscribe((res2: any) => {
+    //       this.dotkham = res2;
+    //       this.onEmitDotkham(this.dotkham, false, null);
+    //       this.loadRecord();
+    //     });
+    //   });
+    // } else {
+    //   this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
+    //     this.notify('success', 'Lưu thành công');
+    //     this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
+    //       this.dotkham = res2;
+    //       this.onEmitDotkham(this.dotkham, false, null);
+    //     });
+    //   });
+    // }
   }
 
   onCancel() {
@@ -290,9 +315,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   onRemoveLine(i) {
-    this.dotkham.Lines.splice(i, 1);
-    console.log(this.dotkhamForm);
-
+    this.linesFA.removeAt(i);
   }
 
   eventTeeth(line, lineControl, i) {

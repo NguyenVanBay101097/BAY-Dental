@@ -53,7 +53,7 @@ namespace Infrastructure.Services
         public async Task<DotKham> CreateDotKham(DotKhamSaveVm val)
         {
             var dotKham = _mapper.Map<DotKham>(val);
-
+            dotKham.CompanyId = CompanyId;
             SaveLines(val, dotKham);
 
             SaveDotKhamImages(val, dotKham);

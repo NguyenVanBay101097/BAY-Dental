@@ -2,13 +2,13 @@
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center justify-content-between">
-                <h5>Đợt khám {{Sequence}}</h5>
+                <h5>Đợt khám {{dotkham.Sequence}}</h5>
                 <div>
-                    <button *ngIf="!this.activeDotkham || this.activeDotkham.Sequence !== this.dotkham.Sequence" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
-                    <div *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence" class="footer d-flex align-items-center">
+                    <button *ngIf="!editModeActive" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
+                    <div *ngIf="editModeActive" class="footer d-flex align-items-center">
                         <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
-                        <button *ngIf="!Id" (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
-                        <button *ngIf="Id" (click)="onClose()" class="btn btn-sm bg-close mr-2">Đóng</button>
+                        <button (click)="onCancel()" class="btn btn-sm btn-danger mr-2">Hủy</button>
+                        <button (click)="onClose()" class="btn btn-sm bg-close mr-2">Đóng</button>
                     </div>
                 </div>
             </div>
@@ -22,8 +22,8 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-datepicker [hidden]="!this.activeDotkham || this.activeDotkham.Sequence != this.dotkham.Sequence" formControlName="Date" [format]="'dd MMMM yyyy'"></kendo-datepicker>
-                                <span *ngIf="!this.activeDotkham || this.activeDotkham.Sequence != this.dotkham.Sequence">{{dotkhamDate | date: 'shortDate'}}</span>
+                                <kendo-datepicker *ngIf="editModeActive" formControlName="Date"></kendo-datepicker>
+                                <span *ngIf="!editModeActive">{{dotkhamDate | date: 'shortDate'}}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -37,7 +37,7 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham.Sequence !== this.dotkham.Sequence" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="chọn bác sĩ...">
+                                <kendo-combobox [hidden]="!this.activeDotkham || this.activeDotkham.Sequence !== this.dotkham.Sequence" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="Chọn bác sĩ...">
                                 </kendo-combobox>
                                 <span style="min-width: 12.4em;" *ngIf="!this.activeDotkham || this.activeDotkham.Sequence !== this.dotkham.Sequence">{{employee?.Name}}</span>
                             </td>
@@ -54,7 +54,7 @@
                         <th>Dịch vụ</th>
                         <th>Công đoạn</th>
                         <th>Răng, Chi tiết điều trị</th>
-                        <th *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence">Thao tác</th>
+                        <th class="text-center" *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody formArrayName="Lines">
@@ -78,7 +78,7 @@
                                     <app-sale-order-dotkham-teeth-popover *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence" [line]="line.value" (eventTeeth)="eventTeeth($event,line, i)"></app-sale-order-dotkham-teeth-popover>
                                 </div>
                             </td>
-                            <td *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence">
+                            <td class="text-center" *ngIf="this.activeDotkham && this.activeDotkham.Sequence === this.dotkham.Sequence">
                                 <i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i>
                             </td>
                         </tr>
@@ -116,7 +116,7 @@
                         <div class="btn-img" (click)="inputFile.click()">
                             <div class="o_image_box">
                                 <div class="o_attachment_image d-flex align-items-center justify-content-center">
-                                    <img width="50%" height="50%" src="/assets/images/placeholder.png" alt="">
+                                    <img style="max-width: 100px;max-height: 100px;" src="/assets/images/placeholder.png" alt="">
                                     <input #inputFile class="o_input_file d-none" type="file" multiple="multiple" accept="image/*" (change)="onFileChange($event)">
                                 </div>
                             </div>

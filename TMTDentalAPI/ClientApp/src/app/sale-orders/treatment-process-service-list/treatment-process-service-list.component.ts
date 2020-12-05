@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
+import { Component, ComponentFactoryResolver, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { forkJoin } from 'rxjs';
+import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
+import { SaleOrdersDotkhamCuComponent } from '../sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -25,6 +27,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   // @ViewChild('dotkhamVC', {static: false}) dotkhamVC: any;
   @ViewChildren("dotkhamVC") domReference: QueryList<any>;
 
+  @ViewChild(AnchorHostDirective, { static: true }) anchorHost: AnchorHostDirective;
+
   constructor(
     private route: ActivatedRoute,
     private dotKhamStepsOdataService: DotKhamStepsOdataService,
@@ -32,8 +36,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     private saleOrdersOdataService: SaleOrdersOdataService,
     private modalService: NgbModal,
     private authService: AuthService,
-    private notificationService: NotificationService, 
+    private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService,
+    private componentFactoryResolver: ComponentFactoryResolver
   ) { }
 
   ngOnInit() {
@@ -49,7 +54,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         (result) => {
           this.services = result['value'];
         },
-        (error) => { 
+        (error) => {
           this.errorService.show(error);
         }
       );
@@ -67,7 +72,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       IsDone: step.IsDone
     }
     this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
-      (result) => { 
+      (result) => {
         if (step.IsDone) {
           this.notify('success', 'Đã hoàn thành tiến trình: ' + step.Name);
         }
@@ -87,8 +92,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     modalRef.result.then((result) => {
       this.notify('success', 'Đã lưu tiến trình điều trị');
       this.loadServiceList();
-    }, 
-    (error) => { }
+    },
+      (error) => { }
     );
   }
 
@@ -100,19 +105,19 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
     const line = new DotKhamLineDisplay();
     line.NameStep = step.Name;
-    line.DotKhamId = this.activeDotkham.Id;
+    // line.DotKhamId = this.activeDotkham.Id;
     line.ProductId = service.ProductId;
     line.Product = {
       Id: service.ProductId,
       Name: service.Name
     };
-    line.State = 'draft';
-    line.Sequence = this.activeDotkham.Lines.length + 1;
+    // line.State = 'draft';
+    // line.Sequence = this.activeDotkham.Lines.length + 1;
     line.SaleOrderLineId = service.Id;
-    line.SaleOrderLine = {Teeth: service.Teeth};
-    line.Teeth = [];
-    line.ToothIds = [];
-    line.Note = null;
+    // line.SaleOrderLine = { Teeth: service.Teeth };
+    // line.Teeth = [];
+    // line.ToothIds = [];
+    // line.Note = null;
     this.activeDotkham.Lines.push(line);
   }
 
@@ -120,7 +125,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     if (!this.saleOrderId) {
       return;
     }
-    
+
     this.saleOrdersOdataService.getDotKhamListIds(this.saleOrderId).subscribe((res: any) => {
       const obs = res.value.map(id => {
         return this.dotkhamOdataService.getInfo(id);
@@ -128,11 +133,17 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
       forkJoin(obs).subscribe((result: any) => {
         this.dotkhams = result;
-        console.log(result);
-        
+
+        this.dotkhams.forEach(dotkham => {
+          const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SaleOrdersDotkhamCuComponent);
+          const viewContainerRef = this.anchorHost.viewContainerRef;
+      
+          const componentRef = viewContainerRef.createComponent<SaleOrdersDotkhamCuComponent>(componentFactory);
+          componentRef.instance.dotkham = dotkham;
+        });
       });
     });
-    
+
     // const state = {
     //   take: 10,
     //   filter: {
@@ -152,17 +163,49 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   onCreateDotKham() {
-    if (this.activeDotkham) {
-      this.notify('error', 'Vui lòng hoàn tất đợt khám đang thao tác');
-      return;
-    }
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SaleOrdersDotkhamCuComponent);
+
+    const viewContainerRef = this.anchorHost.viewContainerRef;
+
+    const componentRef = viewContainerRef.createComponent<SaleOrdersDotkhamCuComponent>(componentFactory, 0);
+
     const dotkham = new DotKhamVm();
     dotkham.Date = new Date();
     dotkham.Sequence = this.dotkhams.length + 1;
-    dotkham.SaleOrderId = this.saleOrderId;
-    dotkham.CompanyId = this.authService.userInfo.companyId;
-    this.dotkhams.unshift(dotkham);
-    this.activeDotkham = dotkham;
+    componentRef.instance.dotkham = dotkham;
+
+    componentRef.instance.setEditModeActive(true);
+
+    // if (this.activeDotkham) {
+    //   this.notify('error', 'Vui lòng hoàn tất đợt khám đang thao tác');
+    //   return;
+    // }
+    // const dotkham = new DotKhamVm();
+    // dotkham.Date = new Date();
+    // dotkham.Sequence = this.dotkhams.length + 1;
+    // dotkham.SaleOrderId = this.saleOrderId;
+    // dotkham.CompanyId = this.authService.userInfo.companyId;
+    // this.dotkhams.unshift(dotkham);
+    // this.activeDotkham = dotkham;
+  }
+
+  onDkSaveEvent(val, dotkham) {
+    val.SaleOrderId = this.saleOrderId;
+    if (!val.Id) {
+      delete val['Id'];
+      this.dotkhamOdataService.create(val).subscribe((res: any) => {
+        this.notify('success', 'Lưu thành công');
+        if (!dotkham.Id) {
+          dotkham.Id = res.Id;
+        }
+        console.log(dotkham);
+      });
+    } else {
+      this.dotkhamOdataService.update(val.Id, val).subscribe((res: any) => {
+        this.notify('success', 'Lưu thành công');
+        console.log(dotkham);
+      });
+    }
   }
 
   dotkhamChange(e, i) {
