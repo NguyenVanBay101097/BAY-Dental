@@ -148,7 +148,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, DotKhamSaveVm val)
+        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key,[FromBody] DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)
             {
