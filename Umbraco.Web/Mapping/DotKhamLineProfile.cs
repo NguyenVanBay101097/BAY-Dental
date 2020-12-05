@@ -21,12 +21,15 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.DotKham, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore());
 
-            CreateMap<DotKhamLineSave, DotKhamLine>()
+            CreateMap<DotKhamLineSaveVM, DotKhamLine>()
               .ForMember(x => x.Id, x => x.Ignore())
+              .ForMember(x => x.SaleOrderLineId, x => x.Condition(s => s.Id == Guid.Empty))
+              .ForMember(x => x.NameStep, x => x.Condition(s => s.Id == Guid.Empty))
+              .ForMember(x => x.ProductId, x => x.Condition(s => s.Id == Guid.Empty))
               .ForMember(x => x.DotKham, x => x.Ignore())
               .ForMember(x => x.Product, x => x.Ignore());
 
-            CreateMap<IGrouping<Guid?,DotKhamLine>, DotKhamLineBasic > ();
+            CreateMap<IGrouping<Guid?, DotKhamLine>, DotKhamLineBasic>();
         }
     }
 }

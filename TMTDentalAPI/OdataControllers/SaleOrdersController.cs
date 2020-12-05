@@ -146,5 +146,21 @@ namespace TMTDentalAPI.OdataControllers
 
             return Ok(dotKhamIds);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, DotKhamSaveVm val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _dotKhamService.CreateDotKham(key,val);
+            var viewdotkham = _mapper.Map<DotKhamVm>(res);
+            _unitOfWork.Commit();
+
+            return Ok(viewdotkham);
+        }
     }
 }

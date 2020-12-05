@@ -50,22 +50,54 @@ namespace Infrastructure.Services
                 .ToListAsync();
         }
 
-        public async Task<DotKham> CreateDotKham(DotKhamSaveVm val)
+        public async Task<DotKham> CreateDotKham(Guid saleOrderId, DotKhamSaveVm val)
         {
+            var orderobj = GetService<ISaleOrderService>();
             var dotKham = _mapper.Map<DotKham>(val);
+            dotKham.Sequence = val.Sequence;
             dotKham.CompanyId = CompanyId;
-            SaveLines(val, dotKham);
+            dotKham.SaleOrderId = saleOrderId;
+            dotKham.PartnerId = await orderobj.SearchQuery(x=>x.Id == saleOrderId).Select(x=>x.PartnerId).FirstOrDefaultAsync();
 
-            SaveDotKhamImages(val, dotKham);
+            ///tạo lines
+            var sequence = 0;
+            foreach (var item in val.Lines)
+            {
+                var line = _mapper.Map<DotKhamLine>(item);
+                line.Sequence = sequence++;
+                foreach (var toothId in item.ToothIds)
+                {
+                    line.ToothRels.Add(new DotKhamLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+
+                dotKham.Lines.Add(line);
+            }
+
+            ///tạo dot kham images
+            foreach (var img in val.DotKhamImages)
+            {
+                var image = _mapper.Map<PartnerImage>(img);
+                image.PartnerId = dotKham.PartnerId;
+                dotKham.DotKhamImages.Add(image);
+            }
+
             await CreateAsync(dotKham);
-
             return dotKham;
             
         }
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
-            var dotKham =  await SearchQuery(x => x.Id == id).Include(x=>x.DotKhamImages).Include(x=>x.Lines).Include("Lines.ToothRels").FirstOrDefaultAsync();
+            var dotKham =  await SearchQuery(x => x.Id == id)
+                .Include(x=>x.DotKhamImages)
+                .Include(x=>x.Lines)
+                .Include("Lines.ToothRels")
+                .Include("Lines.Product")
+                .FirstOrDefaultAsync();
+
             dotKham = _mapper.Map(val, dotKham);
 
             SaveLines(val, dotKham);
@@ -97,8 +129,7 @@ namespace Infrastructure.Services
             {
                 if (line.Id == Guid.Empty)
                 {
-                    var item = _mapper.Map<DotKhamLine>(line);
-                    item.NameStep = line.NameStep;
+                    var item = _mapper.Map<DotKhamLine>(line);       
                     item.Sequence = sequence++;
                     foreach (var toothId in line.ToothIds)
                     {

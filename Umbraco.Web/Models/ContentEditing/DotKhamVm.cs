@@ -96,36 +96,37 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+
+    /// <summary>
+    /// class dung de save dot kham
+    /// </summary>
     public class DotKhamSaveVm
     {
-        public Guid? SaleOrderId { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Ngày khám
         /// </summary>
         public DateTime Date { get; set; }
 
-        public int? Sequence { get; set; }
-
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
 
-        public Guid CompanyId { get; set; }
+        public int? Sequence { get; set; }
 
         /// <summary>
         /// Bác sĩ
         /// </summary>
         public Guid? DoctorId { get; set; }
 
-        public ICollection<DotKhamLineSave> Lines { get; set; } = new List<DotKhamLineSave>();
+        public IEnumerable<DotKhamLineSaveVM> Lines { get; set; } = new List<DotKhamLineSaveVM>();
 
         /// <summary>
         /// hình ảnh
         /// </summary>
-        public ICollection<PartnerImageSave> DotKhamImages { get; set; } = new List<PartnerImageSave>();
-
+        public IEnumerable<PartnerImageSave> DotKhamImages { get; set; } = new List<PartnerImageSave>();
     }
 
     public class GetAllDotKhamVm
