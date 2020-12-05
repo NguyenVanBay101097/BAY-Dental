@@ -422,7 +422,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   createFullMonthTimeKeeping() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.body = `Bạn muốn chấm công đi làm cho tất cả nhân viên`;
-    modalRef.componentInstance.title = "Chấm công nguyên tháng";
+    modalRef.componentInstance.title = "Chấm công tháng";
     modalRef.result.then(() => {
       var now = new Date(new Date().toDateString());
       var date = this.date ? this.date : now;
