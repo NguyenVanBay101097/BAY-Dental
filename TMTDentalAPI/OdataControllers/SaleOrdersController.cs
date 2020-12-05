@@ -142,13 +142,13 @@ namespace TMTDentalAPI.OdataControllers
             if (!ModelState.IsValid)
                 return BadRequest();
             //return ve list<Guid>;
-            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).OrderByDescending(x=>x.Sequence).Select(x=>x.Id).ToListAsync();
+            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).OrderByDescending(x => x.Sequence).Select(x => x.Id).ToListAsync();
 
             return Ok(dotKhamIds);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, DotKhamSaveVm val)
+        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, [FromBody] DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)
             {
@@ -156,7 +156,7 @@ namespace TMTDentalAPI.OdataControllers
             }
 
             await _unitOfWork.BeginTransactionAsync();
-            var res = await _dotKhamService.CreateDotKham(key,val);
+            var res = await _dotKhamService.CreateDotKham(key, val);
             var viewdotkham = _mapper.Map<DotKhamVm>(res);
             _unitOfWork.Commit();
 

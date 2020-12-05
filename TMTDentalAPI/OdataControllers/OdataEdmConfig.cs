@@ -96,7 +96,7 @@ namespace TMTDentalAPI.OdataControllers
 
             builder.EntityType<SaleOrderViewModel>()
                 .Action("CreateDotKham")
-                .Returns<DotKhamDisplayVm>();
+                .ReturnsFromEntitySet<DotKhamVm>("DotKhams");
             #endregion
 
             #region SaleOrderLines
@@ -202,7 +202,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<ProductSimple>();
             builder.ComplexType<SaleOrderLineDisplay>();
             builder.ComplexType<DotKhamDisplayVm>();
-            builder.ComplexType<DotKhamSaveVm>();
+            //builder.ComplexType<DotKhamSaveVm>();
             builder.ComplexType<PartnerImageDisplay>();
             builder.ComplexType<DotKhamLineSaveVM>();
 

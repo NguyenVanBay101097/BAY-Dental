@@ -15,6 +15,7 @@ import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.c
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
+import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -30,6 +31,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   @Input() activeDotkham: any;
 
   @Output() btnSaveEvent = new EventEmitter<any>();
+  @Output() btnCancelEvent = new EventEmitter<any>();
+  @Output() btnEditEvent = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -50,27 +53,28 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private notificationService: NotificationService,
     private differs: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private saleOrdersOdataService: SaleOrdersOdataService
   ) { }
   ngDoCheck(): void {
     const changes = this.differ.diff(this.dotkham.Lines);
     if (changes) {
-      console.log('1');
-      changes.forEachOperation((record, previousIndex, currentIndex) => {
-        var item = record.item;
-        const linesFA = this.dotkhamForm.get('Lines') as FormArray;
-        var g = this.fb.group({
-          NameStep: null,
-          ProductId: null,
-          Product: null,
-          Note: null,
-          Teeth: this.fb.array([]),
-          SaleOrderLineId: null,
-        });
+      // console.log('1');
+      // changes.forEachOperation((record, previousIndex, currentIndex) => {
+      //   var item = record.item;
+      //   const linesFA = this.dotkhamForm.get('Lines') as FormArray;
+      //   var g = this.fb.group({
+      //     NameStep: null,
+      //     ProductId: null,
+      //     Product: null,
+      //     Note: null,
+      //     Teeth: this.fb.array([]),
+      //     SaleOrderLineId: null,
+      //   });
 
-        g.patchValue(item);
-        linesFA.push(g);
-      });
+      //   g.patchValue(item);
+      //   linesFA.push(g);
+      // });
       // const linesFA = this.dotkhamForm.get('Lines') as FormArray;
       // linesFA.clear();
       // this.dotkham.Lines.forEach(line => {
@@ -138,6 +142,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   loadRecord() {
     this.dotkhamForm.get('Date').setValue(new Date(this.dotkham.Date));
+    this.dotkhamForm.get('Doctor').setValue(this.dotkham.Doctor);
+    this.dotkhamForm.get('Reason').setValue(this.dotkham.Reason);
     this.imgsFA.clear();
     this.linesFA.clear();
 
@@ -223,11 +229,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   onEditDotkham() {
-    if (!this.checkAccess()) {
-      return;
-    }
+    // if (!this.checkAccess()) {
+    //   return;
+    // }
 
-    this.onEmitDotkham(this.dotkham, false, this.dotkham);
+    // this.editModeActive = true;
+    this.btnEditEvent.emit(null);
+    // this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
   onSave() {
@@ -243,15 +251,24 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     });
 
     if (!this.dotkham.Id) {
+      delete val['Id'];
+      val.Sequence = this.dotkham.Sequence;
+      // val.SaleOrderId = this.dotkham.SaleOrderId;
+      // this.saleOrdersOdataService.createDotkham(this.dotkham.SaleOrderId, val).subscribe((res: any) => {
+      //   this.notify('success', 'Lưu thành công');
+      //   this.editModeActive = false;
+      //   this.btnSaveEvent.emit(res);
+      // });
       this.btnSaveEvent.emit(val);
     } else {
-      this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
-        this.notify('success', 'Lưu thành công');
-        this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
-          this.dotkham = res2;
-          this.onEmitDotkham(this.dotkham, false, null);
-        });
-      });
+      // this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
+      //   this.notify('success', 'Lưu thành công');
+      //   this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
+      //     this.dotkham = res2;
+      //     this.onEmitDotkham(this.dotkham, false, null);
+      //   });
+      // });
+      this.btnSaveEvent.emit(val);
     }
 
     // if (!this.Id) {
@@ -275,7 +292,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   onCancel() {
-    this.onEmitDotkham(this.dotkham, true, null);
+    // this.onEmitDotkham(this.dotkham, true, null);
+    this.btnCancelEvent.emit(null);
   }
 
   onClose() {
