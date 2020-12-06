@@ -110,7 +110,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.dotkhamForm = this.fb.group({
       Date: [new Date(), Validators.required],
       Reason: [null],
-      Doctor: null,
+      Doctor: [null, Validators.required],
       Lines: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
     });
@@ -200,7 +200,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.searchEmp('').subscribe(
       (result: any) => {
         this.empList = result.data;
-        this.empList = _.unionBy(this.empList, [this.dotkham.Doctor], 'Id');
+        if (this.dotkham.Doctor) {
+          this.empList = _.unionBy(this.empList, [this.dotkham.Doctor], 'Id');
+        }
       }
     );
   }

@@ -1500,17 +1500,7 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                    else
-                    {
-                        list.Add(new DotKhamStep
-                        {
-                            Name = line.Product.Name,
-                            SaleLineId = line.Id,
-                            ProductId = line.ProductId.Value,
-                            Order = 0,
-                            SaleOrderId = order.Id,
-                        });
-                    }
+                  
                     await dotKhamStepService.CreateAsync(list);
                 }
             }
@@ -2259,6 +2249,9 @@ namespace Infrastructure.Services
                         Name = s.Tooth.Name,
                     })
                 }).ToListAsync();
+
+            //chỉ lấy những dịch vụ có danh sách công đoạn 
+            lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
         }
