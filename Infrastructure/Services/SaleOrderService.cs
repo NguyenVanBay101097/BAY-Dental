@@ -1646,7 +1646,6 @@ namespace Infrastructure.Services
             res.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
 
             var partnerObj = GetService<IPartnerService>();
-            res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
             res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
             return res;
         }

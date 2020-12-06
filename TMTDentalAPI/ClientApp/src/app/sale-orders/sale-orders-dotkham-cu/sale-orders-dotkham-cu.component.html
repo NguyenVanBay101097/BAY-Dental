@@ -51,10 +51,10 @@
             <table class="table table-sm table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th>Dịch vụ</th>
-                        <th>Công đoạn</th>
-                        <th>Răng, Chi tiết điều trị</th>
-                        <th class="text-center" *ngIf="editModeActive">Thao tác</th>
+                        <th style="width: 35%">Dịch vụ</th>
+                        <th style="width: 30%">Công đoạn</th>
+                        <th style="width: 30%">Răng, Chi tiết điều trị</th>
+                        <th style="width: 5%" class="text-center">#</th>
                     </tr>
                 </thead>
                 <tbody formArrayName="Lines">
@@ -65,7 +65,7 @@
                                 {{line.get('NameStep').value}}
                             </td>
                             <td>
-                                <div class="d-flex flex-wrap">
+                                <div class="d-flex">
                                     <div>
                                         <div *ngIf="line.get('Teeth')?.value?.length">
                                             {{showLineTeeth(line)}}
@@ -77,8 +77,8 @@
                                     <app-sale-order-dotkham-teeth-popover *ngIf="editModeActive" [line]="line.value" (eventTeeth)="eventTeeth($event,line, i)"></app-sale-order-dotkham-teeth-popover>
                                 </div>
                             </td>
-                            <td class="text-center" *ngIf="editModeActive">
-                                <i (click)="onRemoveLine(i)" class="far fa-trash-alt"></i>
+                            <td class="text-center">
+                                <i *ngIf="editModeActive" (click)="onRemoveLine(i)" class="far fa-trash-alt"></i>
                             </td>
                         </tr>
                     </ng-container>

@@ -211,7 +211,7 @@
                                                         <button *ngIf="stateControl.value == 'draft'" type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
                                                             <span class="k-icon k-i-delete"></span>
                                                         </button>
-                                                        <button *ngIf="stateControl.value == 'sale' && isLaboLine(line)" type="button" class="btn btn-icon btn-sm btn-light ml-2" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
+                                                        <button *ngIf="stateControl.value == 'sale' && isLaboLine(line)" type="button" class="btn btn-icon btn-sm btn-light" title="Quản lý phiếu labo" (click)="showLaboList(line.get('Id').value)">
                                                             <i class="fas fa-tooth"></i>
                                                         </button>
                                                     </td>

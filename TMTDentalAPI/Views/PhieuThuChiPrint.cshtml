@@ -6,22 +6,34 @@
 
 <div class="o_form_view">
     <div class="media">
-        @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-            <img class="mr-3" src="@Model.CompanyLogo" style="max-width: 200px" alt="@Model.CompanyName">
+            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
         <div class="media-body">
-            <h5 class="mt-0">@Model.CompanyName</h5>
+            <h5 class="mt-0">@Model.Company.Name</h5>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
         </div>
     </div>
     <div class="text-center">
         @if (Model.Type == "chi")
         {
-            <h1>PHIẾU CHI</h1>
+            <h2>PHIẾU CHI</h2>
         }
         else
         {
-            <h1>PHIẾU THU</h1>
+            <h2>PHIẾU THU</h2>
         }
 
         <span>Số: @Model.Name - Ngày: @Model.Date.ToString("dd/MM/yyyy")</span>

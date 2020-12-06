@@ -6,7 +6,7 @@
 
 
 <div class="o_form_view">
-    <div class="media">
+    <div class="media mb-2">
         @if (!string.IsNullOrEmpty(Model.CompanyLogo))
         {
             <img class="mr-3 company_logo" src="@Model.CompanyLogo" alt="@Model.CompanyName">
@@ -15,7 +15,7 @@
             <h5 class="mb-0">@Model.CompanyName</h5>
             @if (!string.IsNullOrEmpty(Model.CompanyAddress))
             {
-                <div>Địa chỉ: @Model.CompanyName</div>
+                <div>Địa chỉ: @Model.CompanyAddress</div>
             }
             @if (!string.IsNullOrEmpty(Model.CompanyPhone))
             {
@@ -27,11 +27,11 @@
             }
         </div>
     </div>
-    <div class="text-center mt-3 mb-2">
+    <div class="text-center">
         <h2>BIÊN LAI THANH TOÁN</h2>
     </div>
     <div class="o_group mb-0">
-        <table class="o_group o_inner_group o_group_col_6">
+        <table class="o_group o_inner_group o_group_col_4">
             <tbody>
                 <tr>
                     <td colspan="1" class="o_td_label">
@@ -59,7 +59,7 @@
                 </tr>
             </tbody>
         </table>
-        <table class="o_group o_inner_group o_group_col_6">
+        <table class="o_group o_inner_group o_group_col_8">
             <tbody>
                 <tr>
                     <td colspan="1" class="o_td_label">
