@@ -76,9 +76,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     }
     this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
       (result) => {
-        if (step.IsDone) {
-          this.notify('success', 'Đã hoàn thành tiến trình: ' + step.Name);
-        }
+        this.notify('success', 'Cập nhật thành công');
       },
       (error) => {
         this.errorService.show(error);
@@ -102,10 +100,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   sendDotKhamStep(service, step) {
     if (!this.activeDotKhamRef) {
-      this.notify('error', 'Vui lòng chỉnh sửa 1 đợt khám để thêm công đoạn thực hiện');
+      this.notify('error', 'Vui lòng tạo hoặc chỉnh sửa 1 đợt khám để thêm công đoạn thực hiện');
       return;
     }
-    
+
     this.activeDotKhamRef.instance.linesFA.push(this.fb.group({
       NameStep: step.Name,
       ProductId: service.ProductId,
@@ -136,15 +134,21 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         this.dotkhams.forEach(dotkham => {
           const componentFactory = this.componentFactoryResolver.resolveComponentFactory(SaleOrdersDotkhamCuComponent);
           const viewContainerRef = this.anchorHost.viewContainerRef;
-      
+
           const componentRef = viewContainerRef.createComponent<SaleOrdersDotkhamCuComponent>(componentFactory);
           componentRef.instance.dotkham = dotkham;
 
           componentRef.instance.btnSaveEvent.subscribe((dkVal: any) => {
             this.dotkhamOdataService.update(dotkham.Id, dkVal).subscribe(() => {
               this.notify('success', 'Lưu thành công');
-              componentRef.instance.setEditModeActive(false);
-              this.activeDotKhamRef = null;
+
+              this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+                componentRef.instance.setEditModeActive(false);
+                dotkham = result;
+                componentRef.instance.dotkham = result;
+                componentRef.instance.loadRecord();
+                this.activeDotKhamRef = null;
+              });
             });
           });
 
@@ -152,6 +156,8 @@ export class TreatmentProcessServiceListComponent implements OnInit {
             this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
               componentRef.instance.setEditModeActive(false);
               dotkham = result;
+              componentRef.instance.dotkham = result;
+              componentRef.instance.loadRecord();
               this.activeDotKhamRef = null;
             });
           });
@@ -212,15 +218,27 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       if (!dotkham.Id) {
         this.saleOrdersOdataService.createDotkham(this.saleOrderId, dkVal).subscribe((res: any) => {
           this.notify('success', 'Lưu thành công');
-          componentRef.instance.setEditModeActive(false);
-          this.activeDotKhamRef = null;
           dotkham.Id = res.Id;
+
+          this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+            componentRef.instance.setEditModeActive(false);
+            dotkham = result;
+            componentRef.instance.dotkham = result;
+            componentRef.instance.loadRecord();
+            this.activeDotKhamRef = null;
+          });
         });
       } else {
         this.dotkhamOdataService.update(dotkham.Id, dkVal).subscribe((res: any) => {
           this.notify('success', 'Lưu thành công');
-          componentRef.instance.setEditModeActive(false);
-          this.activeDotKhamRef = null;
+
+          this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+            componentRef.instance.setEditModeActive(false);
+            dotkham = result;
+            componentRef.instance.dotkham = result;
+            componentRef.instance.loadRecord();
+            this.activeDotKhamRef = null;
+          });
         });
       }
     });
@@ -244,10 +262,12 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
           componentRef.instance.setEditModeActive(false);
           dotkham = result;
+          componentRef.instance.dotkham = result;
+          componentRef.instance.loadRecord();
           this.activeDotKhamRef = null;
         });
       }
-    
+
     });
 
     this.activeDotkham = dotkham;

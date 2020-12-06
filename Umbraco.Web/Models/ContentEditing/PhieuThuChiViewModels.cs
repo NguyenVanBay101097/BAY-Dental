@@ -6,9 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PhieuThuChiPrintVM
     {
-        public string CompanyName { get; set; }
-
-        public string CompanyLogo { get; set; }
+        public CompanyPrintVM Company { get; set; }
 
         /// <summary>
         /// Ngày lập phiếu
