@@ -186,7 +186,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       filter: {
         logic: 'and',
         filters: [
-          { field: 'Name', operator: 'contains', value: val || '' }
+          { field: 'Name', operator: 'contains', value: val || '' },
+          { field: 'IsDoctor', operator: 'eq', value: true }
         ]
       }
     };
@@ -245,7 +246,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       return;
     }
     const val = this.dotkhamForm.value;
-    val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-ddTHH:mm:ss');
+    val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
     val.DoctorId = val.Doctor ? val.Doctor.Id : null;
     // val.CompanyId = this.authService.userInfo.companyId;
     val.Lines.forEach(line => {
