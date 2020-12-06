@@ -49,6 +49,14 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLineBasic>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
+
+            CreateMap<SaleOrderLine, SaleOrderLineBasicViewModel>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
+                .ForMember(x => x.Steps, x => x.MapFrom(s => s.DotKhamSteps));
+
+            CreateMap<SaleOrderLine, SaleOrderLineViewModel>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
+                .ForMember(x => x.Steps, x => x.MapFrom(s => s.DotKhamSteps));
         }
     }
 }

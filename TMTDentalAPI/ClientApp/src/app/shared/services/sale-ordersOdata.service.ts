@@ -19,4 +19,16 @@ export class SaleOrdersOdataService extends ODataService {
     public getSaleOrderLines(val) {
         return this.getFunction(val.id, val.func, val.options);
     }
+
+    public getDotKhamStepByOrderLine(id: any) {
+        return this.getFunction(id, 'GetDotKhamStepByOrderLine');
+    }
+
+    public createDotkham(id: any, val: any) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}(${id})` + '/CreateDotKham', val);
+    }
+
+    getDotKhamListIds(id: any) {
+        return this.getFunction(id, 'GetDotKhamListIds');
+    }
 }

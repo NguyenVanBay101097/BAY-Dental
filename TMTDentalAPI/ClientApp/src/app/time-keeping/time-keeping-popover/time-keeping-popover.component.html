@@ -19,8 +19,9 @@
 
 <ng-template #popTitle>
     <div class=" d-flex align-items-center d-inline-block">
-        <span *ngIf="line.chamCongs.length == 0"> Thêm chấm công</span>
-        <span *ngIf="line.chamCongs.length !== 0"> Cập nhật chấm công</span>
+        <span>Chấm công</span>
+        <!-- <span *ngIf="line.chamCongs.length == 0">Chấm công</span> -->
+        <!-- <span *ngIf="line.chamCongs.length !== 0"> Cập nhật chấm công</span> -->
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
     </div>
 </ng-template>
@@ -44,7 +45,7 @@
                             <div class="form-check form-check-inline" >
                                 <input class="form-check-input" type="radio" formControlName="type"
                                     (change)="onChangeType($event.target.value)" id="halfaday" value="halfaday">
-                                <label class="form-check-label-radio" for="halfaday">làm nửa ngày</label>
+                                <label class="form-check-label-radio" for="halfaday">Nửa ngày</label>
                             </div>
                             <div class="form-check form-check-inline" >
                                 <input class="form-check-input" type="radio" formControlName="type"
@@ -85,7 +86,7 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" formControlName="overTimeHourType"
                                             (change)="onChangeOverTimeHourType($event.target.value)" id="orther" value="orther">
-                                        <label class="form-check-label-radio" for="orther">khác</label>
+                                        <label class="form-check-label-radio" for="orther">Khác</label>
                                     </div>
                                  
                                 </div>
@@ -95,7 +96,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div *ngIf="getOverTimeHourType === 'orther'">
-                            <kendo-numerictextbox style="width: 100%;" [min]="0" [spinners]="false"
+                            <kendo-numerictextbox style="width: 100%;" [min]="0" [max]="8" [spinners]="false" [autoCorrect]="true"
                             formControlName="overTimeHour" placeholder="Nhập số ..">
                         </kendo-numerictextbox>
                         </div>

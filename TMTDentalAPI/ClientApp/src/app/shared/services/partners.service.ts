@@ -4,6 +4,17 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { ODataService } from './odata.service';
 
+export class PartnerImageBasic {
+    Id: string;
+    Name: string;
+    Date: any = new Date();
+    Note: string;
+    UploadId: string;
+    DotKhamId: string;
+    PartnerId: string;
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class PartnersService extends ODataService {
     constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, "Partners"); }

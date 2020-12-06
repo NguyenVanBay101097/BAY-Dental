@@ -13,16 +13,23 @@ namespace Umbraco.Web.Mapping
         public DotKhamLineProfile()
         {
             CreateMap<DotKhamLine, DotKhamLineBasic>();
-            CreateMap<DotKhamLine, DotKhamLineDisplay>();
+            CreateMap<DotKhamLine, DotKhamLineDisplay>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.ToothRels.Select(m => m.Tooth)));
+
             CreateMap<DotKhamLineDisplay, DotKhamLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.DotKham, x => x.Ignore())
-                .ForMember(x => x.Routing, x => x.Ignore())
-                .ForMember(x => x.Operations, x => x.Ignore())
-                .ForMember(x => x.User, x => x.Ignore())
-                .ForMember(x => x.Product, x => x.Ignore())
-                .ForMember(x => x.State, x => x.Ignore());
-            CreateMap<IGrouping<Guid?,DotKhamLine>, DotKhamLineBasic > ();
+                .ForMember(x => x.Product, x => x.Ignore());
+
+            CreateMap<DotKhamLineSaveVM, DotKhamLine>()
+              .ForMember(x => x.Id, x => x.Ignore())
+              .ForMember(x => x.SaleOrderLineId, x => x.Condition(s => s.Id == Guid.Empty))
+              .ForMember(x => x.NameStep, x => x.Condition(s => s.Id == Guid.Empty))
+              .ForMember(x => x.ProductId, x => x.Condition(s => s.Id == Guid.Empty))
+              .ForMember(x => x.DotKham, x => x.Ignore())
+              .ForMember(x => x.Product, x => x.Ignore());
+
+            CreateMap<IGrouping<Guid?, DotKhamLine>, DotKhamLineBasic>();
         }
     }
 }

@@ -28,13 +28,15 @@ namespace TMTDentalAPI.OdataControllers
     public class SaleOrdersController : BaseController
     {
         private readonly ISaleOrderService _saleOrderService;
+        private readonly IDotKhamService _dotKhamService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public SaleOrdersController(ISaleOrderService saleOrderService,
+        public SaleOrdersController(ISaleOrderService saleOrderService, IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _saleOrderService = saleOrderService;
+            _dotKhamService = dotKhamService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -85,6 +87,14 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [EnableQuery]
+        public async Task<IActionResult> GetDotKhamStepByOrderLine([FromODataUri] Guid key)
+        {
+            var res = await _saleOrderService.GetDotKhamStepByOrderLine(key);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(SaleOrderSave model)
         {
@@ -125,5 +135,32 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDotKhamListIds([FromODataUri] Guid key)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            //return ve list<Guid>;
+            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).OrderByDescending(x => x.Sequence).Select(x => x.Id).ToListAsync();
+
+            return Ok(dotKhamIds);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, [FromBody] DotKhamSaveVm val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _dotKhamService.CreateDotKham(key, val);
+            var viewdotkham = _mapper.Map<DotKhamVm>(res);
+            _unitOfWork.Commit();
+
+            return Ok(viewdotkham);
+        }
     }
 }

@@ -1,0 +1,64 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div>
+                    <h5>Công đoạn điều trị</h5>
+                    <table class="table table-sm text-center table-tbody-ver-align-middle border-bottom">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Công đoạn</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="steps">
+                            <ng-container *ngFor="let step of steps.controls; index as i">
+                                <tr [formGroupName]="i">
+                                    <td>{{i + 1}}</td>
+                                    <td>
+                                        <input type="text" class="form-control" formControlName="Name" placeholder="Nhập công đoạn ...">
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-around">
+                                            <span class="d-flex flex-column">
+                                                <a class="py-0 d-flex text-primary" [class.disabled]="i == 0" (click)="orderUp(i)"><i class="fas fa-chevron-up"></i></a>
+                                                <a class="py-0 d-flex text-primary" [class.disabled]="i == steps.length - 1" (click)="orderDown(i)"><i class="fas fa-chevron-down"></i></a>
+                                            </span>
+                                            <a class="text-danger" (click)="delete(i)"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-light btn-sm" (click)="add()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="saveDefault" [checked]="saveDefault"
+                            (change)="saveDefault = !saveDefault">
+                        <label class="form-check-label" for="saveDefault">Lưu làm công đoạn điều trị mặc định</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="save()">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
+</footer>

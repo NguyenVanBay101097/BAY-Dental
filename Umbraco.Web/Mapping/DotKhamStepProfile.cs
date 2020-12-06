@@ -12,19 +12,17 @@ namespace Umbraco.Web.Mapping
         public DotKhamStepProfile()
         {
             CreateMap<DotKhamStep, DotKhamStepSimple>();
+            CreateMap<DotKhamStep, DotKhamStepBasic>();
+            CreateMap<DotKhamStep, DotmKhamStepVM>();
 
             CreateMap<DotKhamStepDisplay, DotKhamStep>()
-                .ForMember(x => x.DotKham, x => x.Ignore())
-                .ForMember(x=>x.Id, x=>x.Ignore())
-                .ForMember(x=>x.Invoice, x=>x.Ignore())
-                .ForMember(x=>x.Product, x=>x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Product, x => x.Ignore());
             CreateMap<DotKhamStep, DotKhamStepDisplay>();
 
             CreateMap<DotKhamStep, DotKhamStepSave>();
             CreateMap<DotKhamStepSave, DotKhamStep>()
-                .ForMember(x => x.DotKham, x => x.Ignore())
                 .ForMember(x => x.Id, x => x.Ignore())
-                .ForMember(x => x.Invoice, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore());
         }
     }

@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { PrintService } from 'src/app/print.service';
 import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
@@ -52,7 +53,7 @@ export class SaleOrderFastListServiceComponent implements OnInit {
 
   loadDataDefault() {
     var val = new ProductPaged();
-    val.limit = this.limit;
+    val.limit = 1000;
     val.offset = this.skip;
     val.search = this.search || "";
     val.type2 = "service";

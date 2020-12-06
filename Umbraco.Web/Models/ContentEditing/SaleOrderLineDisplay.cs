@@ -28,6 +28,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
+        /// <summary>
+        /// Dùng để ẩn hiện icon răng tạo labo
+        /// </summary>
+        public bool ProductIsLabo { get; set; }
+
         public decimal PriceSubTotal { get; set; }
 
         public decimal PriceTotal { get; set; }

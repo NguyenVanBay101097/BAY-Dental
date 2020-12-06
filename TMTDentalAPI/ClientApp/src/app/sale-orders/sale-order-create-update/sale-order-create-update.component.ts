@@ -44,6 +44,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
+import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 
 declare var $: any;
 
@@ -96,7 +97,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
     private teethOdataService: TeethOdataService,
     private toaThuocService: ToaThuocService,
-    private printService: PrintService
+    private printService: PrintService,
+    private accountPaymentOdataService: AccountPaymentsOdataService
   ) {
   }
 
@@ -180,7 +182,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   getStateDisplay() {
     var state = this.formGroup.get('State').value;
-    switch(state) {
+    switch (state) {
       case 'sale':
         return 'Đang điều trị';
       case 'done':
@@ -643,13 +645,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printSaleOrder() {
     if (this.saleOrderId) {
-      this.saleOrderService.getPrint(this.saleOrderId).subscribe((result: any) => {
-        this.saleOrderPrint = result;
-        setTimeout(() => {
-          var printContents = document.getElementById('printSaleOrderDiv').innerHTML;
-          this.printService.print(printContents);
-          this.saleOrderPrint = null;
-        });
+      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
       });
     }
   }
@@ -1044,7 +1041,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
-        modalRef.result.then(() => {
+        modalRef.result.then(result => {
           this.notificationService.show({
             content: 'Thanh toán thành công',
             hideAfter: 3000,
@@ -1055,10 +1052,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
           this.loadRecord();
           this.paymentComp.loadPayments();
+          if (result.print) {
+            this.printPayment(result.paymentId)
+          }
         }, () => {
         });
       })
     }
+  }
+
+  printPayment(paymentId) {
+    this.accountPaymentOdataService.getPrint(paymentId).subscribe(result => {
+      if (result) {
+        var html = result['html']
+        this.printService.printHtml(html);
+      }
+    });
   }
 
   // hủy dịch vụ
@@ -1186,7 +1195,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.print(result.html);
+      this.printService.printHtml(result.html);
     });
   }
   createProductToaThuoc() {
@@ -1215,5 +1224,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   paymentOutput(e) {
     this.loadRecord();
+  }
+
+  isLaboLine(line: FormGroup) {
+    return line.get('ProductIsLabo') && line.get('ProductIsLabo').value;
   }
 }

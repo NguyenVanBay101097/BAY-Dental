@@ -31,22 +31,35 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }
+        public string NameStep { get; set; }
 
-        public Guid DotKhamId { get; set; }
-
-        public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
-        public int? Sequence { get; set; }
+        public Guid? SaleOrderLineId { get; set; }
 
-        /// <summary>
-        /// Trạng thái: chưa tiến hành, đang tiến hành, hoàn thành
-        /// draft: chưa tiến hành
-        /// progress: đang tiến hành
-        /// done: hoàn thành
-        /// </summary>
-        public string State { get; set; }
+        public string Note { get; set; }
+
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+    }
+
+
+    public class DotKhamLineSaveVM
+    {
+        public Guid Id { get; set; }
+
+        public string NameStep { get; set; }
+
+        //Chi su dung cho nhung line Id = Guid.Emplty
+        public Guid? SaleOrderLineId { get; set; }
+
+        //dung de tao
+        public Guid? ProductId { get; set; }
+
+        //dung de update
+        public string Note { get; set; }
+
+        //dung de update
+        public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
     }
 
     public class DotKhamLineChangeRouting

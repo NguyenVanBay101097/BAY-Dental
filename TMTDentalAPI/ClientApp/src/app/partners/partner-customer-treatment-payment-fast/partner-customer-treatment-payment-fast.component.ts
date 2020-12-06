@@ -49,6 +49,7 @@ import { PartnerSearchDialogComponent } from '../partner-search-dialog/partner-s
 import { PartnerSimple, PartnerPaged } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 import { PrintSaleOrderComponent } from 'src/app/shared/print-sale-order/print-sale-order.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -102,6 +103,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService, private authService: AuthService,
     private paymentService: AccountPaymentService,
     private odataPartnerService: PartnersService,
+    private printService: PrintService,
     private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService) {
   }
 
@@ -830,8 +832,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   printFastSaleOrder(saleOrderId) {
-    this.saleOrderService.getPrint(saleOrderId).subscribe((result: any) => {
-      this.printSaleOrderComponent.print(result);
+    this.saleOrderService.printSaleOrder(saleOrderId).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -1424,7 +1426,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+    this.saleOrderService.getPrint(payment.accountPaymentId).subscribe(result => {
       this.accountPaymentPrintComponent.print(result);
     });
   }

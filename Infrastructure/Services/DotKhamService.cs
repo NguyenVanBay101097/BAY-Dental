@@ -26,22 +26,6 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<DotKham> GetDotKhamForDisplayAsync(Guid id)
-        {
-            return await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
-                .Include(x=>x.Doctor)
-                .Include(x => x.Assistant)
-                .Include(x => x.User)
-                .Include(x => x.SaleOrder)
-                .Include(x => x.Lines)
-                .Include(x => x.Appointment)
-                .Include("Lines.Product")
-                .Include("Lines.Operations")
-                .Include("Lines.Operations.Product")
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<DotKhamDisplay> GetDotKhamDisplayAsync(Guid id)
         {
             return await _mapper.ProjectTo<DotKhamDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -49,33 +33,166 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Steps).ToListAsync();
-            foreach (var dk in self)
-            {
-                if (dk.Steps.Any(x => x.IsDone))
-                    throw new Exception("Không thể xóa đợt khám đã có công đoạn hoàn thành");
-            }
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            //foreach (var dk in self)
+            //{
+            //    if (dk.Steps.Any(x => x.IsDone))
+            //        throw new Exception("Không thể xóa đợt khám đã có công đoạn hoàn thành");
+            //}
 
             await DeleteAsync(self);
-        }
-
-        public async Task<IEnumerable<DotKham>> GetDotKhamsForInvoice(Guid invoiceId)
-        {
-            return await SearchQuery(x => x.InvoiceId == invoiceId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
-                .Include(x => x.User)
-                .Include(x=>x.Doctor)
-                .Include(x=>x.Assistant)
-                .ToListAsync();
         }
 
         public async Task<IEnumerable<DotKham>> GetDotKhamsForSaleOrder(Guid saleOrderId)
         {
             return await SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))
-                .Include(x => x.User)
                 .Include(x => x.Doctor)
-                .Include(x => x.Assistant)
                 .ToListAsync();
         }
+
+        public async Task<DotKham> CreateDotKham(Guid saleOrderId, DotKhamSaveVm val)
+        {
+            var orderobj = GetService<ISaleOrderService>();
+            var dotKham = _mapper.Map<DotKham>(val);
+            dotKham.Sequence = val.Sequence;
+            dotKham.CompanyId = CompanyId;
+            dotKham.SaleOrderId = saleOrderId;
+            dotKham.PartnerId = await orderobj.SearchQuery(x=>x.Id == saleOrderId).Select(x=>x.PartnerId).FirstOrDefaultAsync();
+
+            ///tạo lines
+            var sequence = 0;
+            foreach (var item in val.Lines)
+            {
+                var line = _mapper.Map<DotKhamLine>(item);
+                line.Sequence = sequence++;
+                foreach (var toothId in item.ToothIds)
+                {
+                    line.ToothRels.Add(new DotKhamLineToothRel
+                    {
+                        ToothId = toothId
+                    });
+                }
+
+                dotKham.Lines.Add(line);
+            }
+
+            ///tạo dot kham images
+            foreach (var img in val.DotKhamImages)
+            {
+                var image = _mapper.Map<PartnerImage>(img);
+                image.PartnerId = dotKham.PartnerId;
+                dotKham.DotKhamImages.Add(image);
+            }
+
+            await CreateAsync(dotKham);
+            return dotKham;
+            
+        }
+
+        public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
+        {
+            var dotKham =  await SearchQuery(x => x.Id == id)
+                .Include(x=>x.DotKhamImages)
+                .Include(x=>x.Lines)
+                .Include("Lines.ToothRels")
+                .Include("Lines.Product")
+                .FirstOrDefaultAsync();
+
+            dotKham = _mapper.Map(val, dotKham);
+
+            SaveLines(val, dotKham);
+
+            SaveDotKhamImages(val, dotKham);
+
+            await UpdateAsync(dotKham);
+
+        }
+
+        private void SaveLines(DotKhamSaveVm val, DotKham dotkham)
+        {
+            //remove line
+            var lineToRemoves = new List<DotKhamLine>();
+            foreach (var existLine in dotkham.Lines)
+            {
+                if (!val.Lines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                dotkham.Lines.Remove(line);
+            }
+
+            int sequence = 1;        
+
+            foreach (var line in val.Lines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<DotKhamLine>(line);       
+                    item.Sequence = sequence++;
+                    foreach (var toothId in line.ToothIds)
+                    {
+                        item.ToothRels.Add(new DotKhamLineToothRel
+                        {
+                            ToothId = toothId
+                        });
+                    }
+                    dotkham.Lines.Add(item);
+                }
+                else
+                {
+                   var res = _mapper.Map(line, dotkham.Lines.SingleOrDefault(c => c.Id == line.Id));
+                    if(res != null)
+                    {
+                        res.Sequence = sequence++;
+                        res.ToothRels.Clear();
+                        foreach (var toothId in line.ToothIds)
+                        {
+                            res.ToothRels.Add(new DotKhamLineToothRel
+                            {
+                                ToothId = toothId
+                            });
+                        }
+                    }
+                  
+                }
+            }
+
+        }
+
+        private void SaveDotKhamImages(DotKhamSaveVm val, DotKham dotkham)
+        {
+            //remove line
+            var lineToRemoves = new List<PartnerImage>();
+            foreach (var existLine in dotkham.DotKhamImages)
+            {
+                if (!val.DotKhamImages.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                dotkham.DotKhamImages.Remove(line);
+            }
+
+            foreach (var img in val.DotKhamImages)
+            {
+                if (img.Id == Guid.Empty)
+                {
+                    var image = _mapper.Map<PartnerImage>(img);
+                    image.PartnerId = dotkham.PartnerId;
+                    dotkham.DotKhamImages.Add(image);
+                }
+                else
+                {
+                    _mapper.Map(img, dotkham.DotKhamImages.SingleOrDefault(c => c.Id == img.Id));
+                }
+            }
+
+        }
+
+
 
         public async Task<IEnumerable<DotKhamBasic>> GetDotKhamBasicsForSaleOrder(Guid saleOrderId)
         {
@@ -104,21 +221,6 @@ namespace Infrastructure.Services
             return entity;
         }
 
-        public async Task ActionConfirm(Guid id)
-        {
-            var dotKham = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Invoice)
-                .Include("Invoice.InvoiceLines")
-                .FirstOrDefaultAsync();
-            var routingObj = GetService<IRoutingService>();
-            var dotKhamStepObj = GetService<IDotKhamStepService>();
-            var productStepObj = GetService<IProductStepService>();
-            var dotKhamSteps = new List<DotKhamStep>();
-
-            dotKham.State = "confirmed";
-            await UpdateAsync(dotKham);            
-        }
-
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -137,7 +239,7 @@ namespace Infrastructure.Services
             if (val.AppointmentId.HasValue)
                 query = query.Where(x => x.AppointmentId.Equals(val.AppointmentId));
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit)) 
+            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit))
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 

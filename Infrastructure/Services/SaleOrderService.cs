@@ -1500,17 +1500,7 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                    else
-                    {
-                        list.Add(new DotKhamStep
-                        {
-                            Name = line.Product.Name,
-                            SaleLineId = line.Id,
-                            ProductId = line.ProductId.Value,
-                            Order = 0,
-                            SaleOrderId = order.Id,
-                        });
-                    }
+                  
                     await dotKhamStepService.CreateAsync(list);
                 }
             }
@@ -1851,13 +1841,6 @@ namespace Infrastructure.Services
                     else
                         residual -= invoice.AmountResidual;
                 }
-
-                var lines = order.OrderLines.Where(x => x.IsRewardLine).ToList();
-                foreach (var line in lines)
-                {
-                    residual += line.PriceSubTotal;
-                }
-
 
                 order.Residual = residual;
             }
@@ -2240,6 +2223,37 @@ namespace Infrastructure.Services
                 reward_string = "Giảm " + (val.DiscountFixed ?? 0).ToString("n0");
 
             return reward_string;
+        }
+
+        public async Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var lines = await lineObj.SearchQuery(x => x.OrderId == key)
+                .Select(x => new SaleOrderLineBasicViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+
+                    Steps = x.DotKhamSteps.OrderBy(s => s.Order).Select(s => new DotKhamStepBasic
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        IsDone = s.IsDone,
+                        Order = s.Order
+                    }),
+                    ProductId = x.ProductId,
+                    Diagnostic = x.Diagnostic,
+                    Teeth = x.SaleOrderLineToothRels.Select(s => new ToothDisplay
+                    {
+                        Id = s.ToothId,
+                        Name = s.Tooth.Name,
+                    })
+                }).ToListAsync();
+
+            //chỉ lấy những dịch vụ có danh sách công đoạn 
+            lines = lines.Where(x => x.Steps.Any()).ToList();
+
+            return lines;
         }
     }
 

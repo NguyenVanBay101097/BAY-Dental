@@ -21,6 +21,26 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
     }
 
+    public class PartnerImageDisplay
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string UploadId { get; set; }
+
+        public DateTime? Date { get; set; }
+    }
+
+    public class PartnerImageSave
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string UploadId { get; set; }
+    }
+
     public class PartnerImageViewModel
     {
         public DateTime? Date { get; set; }

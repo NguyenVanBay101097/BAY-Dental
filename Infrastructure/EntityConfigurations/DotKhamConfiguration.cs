@@ -11,10 +11,6 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<DotKham> builder)
         {
-            builder.HasOne(x => x.Invoice)
-                .WithMany(x => x.DotKhams)
-                .HasForeignKey(x => x.InvoiceId);
-
             builder.HasOne(x => x.SaleOrder)
              .WithMany(x => x.DotKhams)
              .HasForeignKey(x => x.SaleOrderId);
@@ -22,10 +18,6 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Partner)
                .WithMany(x => x.DotKhams)
                .HasForeignKey(x => x.PartnerId);
-
-            builder.HasOne(x => x.User)
-               .WithMany()
-               .HasForeignKey(x => x.UserId);
 
             builder.HasOne(x => x.Company)
             .WithMany()
@@ -47,14 +39,6 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Doctor)
                 .WithMany()
                 .HasForeignKey(x => x.DoctorId);
-
-            builder.HasOne(x => x.Assistant)
-                .WithMany()
-                .HasForeignKey(x => x.AssistantId);
-
-            builder.HasOne(x => x.AssistantUser)
-                .WithMany()
-                .HasForeignKey(x => x.AssistantUserId);
         }
     }
 }

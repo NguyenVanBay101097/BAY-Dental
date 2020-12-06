@@ -45,9 +45,30 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CompanyPrintVM
     {
         public string Name { get; set; }
-        public string Address { get; set; }
+        public string PartnerCityName { get; set; }
+        public string PartnerDistrictName { get; set; }
+        public string PartnerWardName { get; set; }
+        public string PartnerStreet { get; set; }
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(PartnerStreet))
+                    list.Add(PartnerStreet);
+                if (!string.IsNullOrEmpty(PartnerWardName))
+                    list.Add(PartnerWardName);
+                if (!string.IsNullOrEmpty(PartnerDistrictName))
+                    list.Add(PartnerDistrictName);
+                if (!string.IsNullOrEmpty(PartnerCityName))
+                    list.Add(PartnerCityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public string Logo { get; set; }
     }
 
     public class CompanySimple

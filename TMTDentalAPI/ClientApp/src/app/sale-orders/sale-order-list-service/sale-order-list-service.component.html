@@ -20,7 +20,7 @@
             <tbody>
                 <tr class="cursor" (click)="addServiceToSaleOrder(item)"
                     *ngFor="let item of listProducts;let i = index">
-                    <td class="sticky-td" [title]="item.name">{{item.Name}}</td>
+                    <td class="sticky-td">{{item.Name}}</td>
                     <td class="sticky-td text-right">{{item.ListPrice | number}}</td>
                 </tr>
             </tbody>

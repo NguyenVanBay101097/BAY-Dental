@@ -152,6 +152,9 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
     }
 
+    printSaleOrder(id: string){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrder');
+    }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });

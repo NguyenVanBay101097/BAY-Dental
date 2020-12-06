@@ -1,0 +1,138 @@
+﻿@model Umbraco.Web.Models.ContentEditing.PhieuThuChiPrintVM
+@{
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div class="o_form_view">
+    <div class="media">
+        @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+        {
+            <img class="mr-3" src="@Model.CompanyLogo" style="max-width: 200px" alt="@Model.CompanyName">
+        }
+        <div class="media-body">
+            <h5 class="mt-0">@Model.CompanyName</h5>
+        </div>
+    </div>
+    <div class="text-center">
+        @if (Model.Type == "chi")
+        {
+            <h1>PHIẾU CHI</h1>
+        }
+        else
+        {
+            <h1>PHIẾU THU</h1>
+        }
+
+        <span>Số: @Model.Name - Ngày: @Model.Date.ToString("dd/MM/yyyy")</span>
+    </div>
+    <div class="o_group">
+        <table class="o_group o_inner_group">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            @if (Model.Type == "chi")
+                            {
+                                <span>Người nhận</span>
+                            }
+                            else
+                            {
+                                <span>Người nộp</span>
+                            }
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.PayerReceiver
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Địa chỉ
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.Address
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            @if (Model.Type == "chi")
+                            {
+                                <span>Loại chi</span>
+                            }
+                            else
+                            {
+                                <span>Loại thu</span>
+                            }
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.LoaiThuChiName
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số tiền
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.Amount.ToString("n0", culture)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Phương thức
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.JournalName
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Bằng chữ
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.AmountText
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Nội dung
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.Reason
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+                Người lập phiếu
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+                @if (Model.Type == "chi")
+                {
+                    <span>Người nhận</span>
+                }
+                else
+                {
+                    <span>Người nộp</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
