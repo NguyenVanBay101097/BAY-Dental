@@ -12,7 +12,7 @@ namespace TMTDentalAPI.OdataControllers
 {
     //[Route("odata/[controller]")]
     //[Authorize]
-    [ApiController]
+    //[ApiController]
     public class BaseController : ODataController
     {
         protected string UserId

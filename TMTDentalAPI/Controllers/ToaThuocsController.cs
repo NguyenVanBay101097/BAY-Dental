@@ -23,19 +23,19 @@ namespace TMTDentalAPI.Controllers
         private readonly IToaThuocService _toaThuocService;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
-        private readonly ViewRender view;
-        public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, ViewRender view,
+        private readonly IViewRenderService _view;
+        public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
             IIRModelAccessService modelAccessService)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
-            this.view = view;
+            _view = view;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
-        public async Task<IActionResult> Get([FromQuery]ToaThuocPaged val)
+        public async Task<IActionResult> Get([FromQuery] ToaThuocPaged val)
         {
             var result = await _toaThuocService.GetPagedResultAsync(val);
             return Ok(result);
@@ -115,9 +115,9 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
 
-            var html = this.view.Render("ToathuocPrint", res);
+            var html = _view.Render("ToathuocPrint", res);
 
-            return Ok(new printData() { html = html });
+            return Ok(new PrintData() { html = html });
         }
 
         private void SaveOrderLines(ToaThuocSave val, ToaThuoc order)

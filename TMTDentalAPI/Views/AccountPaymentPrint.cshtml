@@ -1,0 +1,126 @@
+﻿@model Umbraco.Web.Models.ContentEditing.AccountPaymentPrintVM
+@{
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+
+<div class="o_form_view">
+    <div class="media mb-2">
+        @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+        {
+            <img class="mr-3 company_logo" src="@Model.CompanyLogo" alt="@Model.CompanyName">
+        }
+        <div class="media-body">
+            <h5 class="mb-0">@Model.CompanyName</h5>
+            @if (!string.IsNullOrEmpty(Model.CompanyAddress))
+            {
+                <div>Địa chỉ: @Model.CompanyAddress</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.CompanyPhone))
+            {
+                <div>Điện thoại: @Model.CompanyPhone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.CompanyEmail))
+            {
+                <div>Email: @Model.CompanyEmail</div>
+            }
+        </div>
+    </div>
+    <div class="text-center">
+        <h2>BIÊN LAI THANH TOÁN</h2>
+    </div>
+    <div class="o_group mb-0">
+        <table class="o_group o_inner_group o_group_col_4">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Ngày thanh toán
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:dd/MM/yyyy}", Model.PaymentDate))</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Phương thức
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.JournalName)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số tiền
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:0,0}", Model.Amount))</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_8">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Khách hàng
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PartnerDisplayName)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Địa chỉ
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PartnerAddress)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Số phiếu điều trị</th>
+                <th>Ngày lập phiếu</th>
+                <th class="text-right">Tổng tiền</th>
+                <th class="text-right">Tổng thanh toán</th>
+                <th class="text-right">Còn lại</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.SaleOrders)
+            {
+                <tr>
+                    <td>@(item.Name)</td>
+                    <td>@(string.Format(info, "{0:dd/MM/yyyy HH:mm}", item.DateOrder))</td>
+                    <td class="text-right">@(item.AmountTotal.HasValue && item.AmountTotal != 0 ? string.Format(info, "{0:0,0}", item.AmountTotal.Value) : "0")</td>
+                    <td class="text-right">@(string.Format(info, "{0:0,0}", (item.AmountTotal.HasValue && item.Residual.HasValue && (item.AmountTotal - item.Residual) != 0 ? (item.AmountTotal - item.Residual) : 0)))</td>
+                    <td class="text-right">@(item.Residual.HasValue && item.Residual.Value != 0 ? string.Format(info, "{0:0,0}", item.Residual.Value) : "0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                Khách hàng <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.PartnerName</span>
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                Người lập <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.UserName</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,6 +27,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
+
+        /// <summary>
+        /// Dùng để ẩn hiện icon răng tạo labo
+        /// </summary>
+        public bool ProductIsLabo { get; set; }
 
         public decimal PriceSubTotal { get; set; }
 
@@ -75,5 +81,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? EmployeeId { get; set; }
         public EmployeeBasic Employee { get; set; }
+        public Guid OrderId { get; set; }
+        public SaleOrderBasic Order { get; set; }
+        public Guid? OrderPartnerId { get; set; }
+        public PartnerSimple OrderPartner { get; set; }
     }
 }

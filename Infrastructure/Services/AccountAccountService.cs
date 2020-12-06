@@ -41,7 +41,11 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.InternalType == "receivable" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
-       
+        public async Task<AccountAccount> GetAccount334CurrentCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "334" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
 
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {

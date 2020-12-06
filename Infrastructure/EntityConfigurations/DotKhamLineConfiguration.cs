@@ -13,20 +13,15 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.HasOne(x => x.DotKham)
                 .WithMany(x => x.Lines)
-                .HasForeignKey(x => x.DotKhamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.DotKhamId);
 
             builder.HasOne(x => x.Product)
                .WithMany()
                .HasForeignKey(x => x.ProductId);
 
-            builder.HasOne(x => x.Routing)
+            builder.HasOne(x => x.SaleOrderLine)
              .WithMany()
-             .HasForeignKey(x => x.RoutingId);
-
-            builder.HasOne(x => x.User)
-              .WithMany()
-              .HasForeignKey(x => x.UserId);
+             .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

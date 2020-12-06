@@ -1,0 +1,83 @@
+<div class="t_wrapper">
+    <div class="t_section_left">
+        <div class="info">
+            <app-partner-overview-info *ngIf="partner" [partner]="partner"></app-partner-overview-info>
+        </div>
+        <div class="image">
+            <app-partner-overview-image [partnerId]="partnerId">
+            </app-partner-overview-image>
+        </div>
+    </div>
+    <div class="t_section_right">
+        <div class="t_treatment_wrapper">
+            <div class="d-flex align-items-center justify-content-between">
+                <h3 class="t_treatment_title">Phiếu điều trị</h3>
+                <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary btn-sm"><i
+                        class="fas fa-folder-plus"></i> Thêm</button>
+            </div>
+            <div class="t_treatment_grid">
+                <app-partner-overview-treatment [saleOrders]="saleOrders" (deleteItemEvent)="onDeleteSaleOrder()">
+                </app-partner-overview-treatment>
+            </div>
+        </div>
+        <div class="row p-3">
+            <div class="col-6">
+                <app-partner-overview-appointment [partnerId]="partnerId" [customerAppointment]="customerAppointment">
+                </app-partner-overview-appointment>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body p-3">
+                        <h5 class="card-title t_title">Báo cáo</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="card text-white bg-info mb-3">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-center mb-2">
+                                            DOANH THU
+                                        </h5>
+                                        <h5 class="card-text text-center t_amount">
+                                            {{debit | number}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card text-white bg-primary mb-3">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-center mb-2">
+                                            THANH TOÁN
+                                        </h5>
+                                        <h5 class="card-text text-center t_amount">
+                                            {{credit | number}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card text-white bg-secondary">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-center mb-2">DỰ KIẾN THU</h5>
+                                        <h5 class="card-text text-center t_amount">
+                                            {{debit - credit | number}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-center mb-2">SỐ P.ĐIỀU TRỊ</h5>
+                                        <h5 class="card-text text-center t_amount">
+                                            {{saleCount | number}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

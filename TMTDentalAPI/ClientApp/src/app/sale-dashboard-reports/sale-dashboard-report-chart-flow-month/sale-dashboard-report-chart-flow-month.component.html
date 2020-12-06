@@ -1,0 +1,17 @@
+<kendo-chart class="p-3 bg-white">
+    <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU THEO THÁNG">
+    </kendo-chart-title>
+    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+    <kendo-chart-series>
+        <kendo-chart-series-item *ngIf="reportViewDateOfMonth && reportViewDateOfMonth.length > 0" type="line"
+            [data]="reportViewDateOfMonth" field="data" [dashType]="longDash" categoryField="day" [style]="'smooth'"
+            [name]="'Tháng ' + month">
+            <kendo-chart-series-item-tooltip>
+                <ng-template let-dataItem="dataItem">
+                    Doanh thu ngày <b>{{dataItem.day}}/{{dataItem.month}}/{{dataItem.year}}</b>:
+                    <b> {{(dataItem.data ? dataItem.data : 0) | number }} VNĐ</b>
+                </ng-template>
+            </kendo-chart-series-item-tooltip>
+        </kendo-chart-series-item>
+    </kendo-chart-series>
+</kendo-chart>

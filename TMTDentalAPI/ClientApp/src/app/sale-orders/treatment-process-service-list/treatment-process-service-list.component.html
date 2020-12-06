@@ -1,0 +1,70 @@
+<div class="section">
+    <div class="section-left">
+        <div class="section-header">
+            <h5 class="mb-0">Danh sách dịch vụ</h5>
+            <button class="btn btn-sm btn-primary opacity-0">None</button>
+        </div>
+        <div class="section-body">
+            <div *ngFor="let service of services; index as i" class="border rounded bg-white p-2 mb-3">
+                <h5>{{service.Name}}</h5>
+                <div>Răng:
+                    <span>{{formatTeethList(service.Teeth)}} </span>
+                </div>
+                <div>Chuẩn đoán: {{service.Diagnostic}}</div>
+                <div class="d-flex align-items-center justify-content-between my-2">
+                    <h6 class="mb-0">Công đoạn điều trị </h6>
+                    <a (click)="editTreatmentProcess(service)" class="text-success">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                <table class="table table-sm text-center table-tbody-ver-align-middle border-bottom mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 12.5%">STT</th>
+                            <th style="width: 62.5%" class="text-left">Công đoạn</th>
+                            <th style="width: 12.5%">Xong</th>
+                            <th style="width: 12.5%">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let step of service.Steps; index as j">
+                            <td>{{j + 1}}</td>
+                            <td class="text-left">{{step.Name}}</td>
+                            <td>
+                                <input type="checkbox" [checked]="step.IsDone" (change)="checkStatusDotKhamStep(step)">
+                            </td>
+                            <td>
+                                <button *ngIf="!step.IsDone" type="button" class="btn btn-primary btn-sm"
+                                    (click)="sendDotKhamStep(service, step)">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="section-right">
+        <div class="section-header section-right-header">
+            <h5 class="mb-0">Danh sách đợt khám</h5>
+            <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+        </div>
+        <div class="section-body overflow-auto">
+            <ng-template anchorHost></ng-template>
+            <!-- <ng-container *ngIf="dotkhams.length > 0 ; else empty">
+                <app-sale-orders-dotkham-cu #dotkhamVC *ngFor="let dk of dotkhams; let i = index" [dotkham]="dk"
+                    (dotkhamChange)="dotkhamChange($event, i)" [activeDotkham]="activeDotkham" (btnSaveEvent)="onDkSaveEvent($event, dk)">
+                </app-sale-orders-dotkham-cu>
+            </ng-container>
+            <ng-template #empty>
+                <div>
+                    <img class="img-fluid" src="/assets/images/background/bg-dotkham.svg" alt="">
+                    <div class="d-flex justify-content-center mt-2">
+                        <button (click)="onCreateDotKham()" class="btn btn-sm btn-primary">Tạo đợt khám</button>
+                    </div>
+                </div>
+            </ng-template> -->
+        </div>
+    </div>
+</div>

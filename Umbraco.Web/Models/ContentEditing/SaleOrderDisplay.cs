@@ -25,12 +25,20 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
-       
+
         public decimal? AmountTax { get; set; }
 
         public decimal? AmountUntaxed { get; set; }
 
         public decimal? AmountTotal { get; set; }
+        public decimal? PaidTotal
+        {
+            get
+            {
+                return (this.AmountTotal ?? 0) - (this.Residual ?? 0);
+            }
+            set { }
+        }
 
         public string Note { get; set; }
 
@@ -52,6 +60,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ApplicationUserSimple User { get; set; }
 
         public decimal? Residual { get; set; }
+        public decimal? Paid { get; set; }
 
         public Guid? PricelistId { get; set; }
         public ProductPricelistBasic Pricelist { get; set; }

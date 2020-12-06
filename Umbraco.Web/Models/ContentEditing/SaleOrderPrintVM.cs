@@ -6,10 +6,8 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderPrintVM
     {
-        public string CompanyName { get; set; }
-        public string CompanyAddress { get; set; }
-        public string CompanyPhone { get; set; }
-        public string CompanyEmail { get; set; }
+        public Guid CompanyId { get; set; }
+        public CompanyPrintVM Company { get; set; }
 
         public string PartnerRef { get; set; }
         public string PartnerName { get; set; }

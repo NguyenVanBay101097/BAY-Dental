@@ -69,8 +69,11 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
             var query = GetQueryPaged(val);
-
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
+            if (val.Limit > 0 )
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+            var items = await query.Include(x => x.Category).OrderByDescending(x=> x.DateCreated)
                 .ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -174,6 +177,22 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
+        }
+
+        public async Task updateSalary(EmployeeDisplay val, Employee emp)
+        {
+            var roleObj = GetService<IApplicationRoleFunctionService>();
+            var accessResult = await roleObj.HasAccess(new string[] { "Catalog.Employee.Salary.Update" });
+            if (!accessResult.Access)
+            {
+                val.Wage = emp.Wage;
+                val.HourlyWage = emp.HourlyWage;
+                val.LeavePerMonth = emp.LeavePerMonth;
+                val.RegularHour = emp.RegularHour;
+                val.OvertimeRate = emp.OvertimeRate;
+                val.RestDayRate = emp.RestDayRate;
+                val.Allowance = emp.Allowance;
+            }
         }
     }
 }

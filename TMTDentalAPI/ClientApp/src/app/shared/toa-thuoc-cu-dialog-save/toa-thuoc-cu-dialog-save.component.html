@@ -29,6 +29,19 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="employee" [filterable]="true"
+                                        [data]="employeeList" #employeeCbx [valueField]="'id'"
+                                        [textField]="'name'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
                                         Lời dặn
                                     </label>
                                 </td>
@@ -49,19 +62,6 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datetimepicker formControlName="dateObj">
                                     </kendo-datetimepicker>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Bác sĩ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true"
-                                        [data]="employeeList" #employeeCbx [valueField]="'id'"
-                                        [textField]="'name'">
-                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>
@@ -150,8 +150,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
+    <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

@@ -52,6 +52,9 @@ namespace Infrastructure.TenantData.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Version")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 

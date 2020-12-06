@@ -1,0 +1,14 @@
+.tooth-wrapper {
+    display: flex;
+    flex-flow: nowrap;
+}
+
+.tooth-item {
+    border: 1px solid #ccc;
+    display: inline-block;
+    flex: 1 1 auto;
+    cursor: pointer;
+    text-align: center;
+    margin: 0px 2px;
+    padding: 2px 5px;
+}

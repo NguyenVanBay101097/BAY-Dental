@@ -9,6 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ConfirmDialogComponent implements OnInit {
   title: string;
   body: string;
+  body2: string;
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {

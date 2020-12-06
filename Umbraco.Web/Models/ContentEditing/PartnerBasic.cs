@@ -199,7 +199,7 @@ namespace Umbraco.Web.Models.ContentEditing
             get
             {
                 if (Gender == "male")
-                    return "Name";
+                    return "Nam";
                 else if (Gender == "female")
                     return "Nữ";
                 else
@@ -289,9 +289,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "_")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "_")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "_")}";
             }
             set { }
         }
@@ -341,7 +341,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
-
+        public DateTime? DateCreated { get; set; }
         //public PartnerSourceViewModel Source { get; set; }
 
         public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
@@ -454,9 +454,84 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public string SourceName { get; set; }
 
         public string Tags { get; set; }
+    }
+
+    public class PartnerCustomerReportInput
+    {
+        public DateTime? DateFrom { get; set; }
+        public Guid? CompanyId { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class PartnerCustomerReportOutput
+    {
+        public int CustomerOld { get; set; }
+        public int CustomerNew { get; set; }
+    }
+
+    public class PartnerInfoVm
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string DisplayName { get; set; }
+
+        public string Phone { get; set; }
+
+        public int? BirthYear { get; set; }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Email { get; set; }
+
+        //public PartnerSourceViewModel Source { get; set; }
+
+        public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
     }
 }

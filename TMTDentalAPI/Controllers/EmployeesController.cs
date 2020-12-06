@@ -57,10 +57,30 @@ namespace TMTDentalAPI.Controllers
             employee.CompanyId = CompanyId;
 
 
+            var partner = new Partner();
+            employee.Partner = partner;
+            UpdatePartnerToEmployee(employee);
             await _employeeService.CreateAsync(employee);
 
             val.Id = employee.Id;
             return Ok(val);
+        }
+
+        private void UpdatePartnerToEmployee (Employee employee)
+        {
+            if (employee.Partner == null) return;
+            var pn = employee.Partner;
+            pn.Name = employee.Name;
+            pn.Employee = true;
+            pn.Ref = employee.Ref;
+            pn.Phone = employee.Phone;
+            pn.Email = employee.Email;
+            pn.BirthDay = employee.BirthDay.HasValue ? employee.BirthDay.Value.Day : 1;
+            pn.BirthMonth = employee.BirthDay.HasValue ? employee.BirthDay.Value.Month : 1;
+            pn.BirthYear = employee.BirthDay.HasValue ? employee.BirthDay.Value.Year : DateTime.Now.Year;
+            pn.Barcode = employee.EnrollNumber;
+            pn.Supplier = false;
+            pn.Customer = false;
         }
 
         [HttpPut("{id}")]
@@ -73,15 +93,16 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.ChamCongs)
                 .Include(x => x.Company)
                 .Include(x => x.StructureType)
+                .Include(x => x.Partner)
                 .Include("StructureType.DefaultResourceCalendar")
                 .Include("StructureType.DefaultStruct")
                 .FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
-
+            await _employeeService.updateSalary(val, employee);
             employee = _mapper.Map(val, employee);
-
+            UpdatePartnerToEmployee(employee);
             await _employeeService.UpdateAsync(employee);
 
             return NoContent();

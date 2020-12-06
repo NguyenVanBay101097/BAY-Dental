@@ -11,6 +11,7 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +22,6 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    [Route("odata/[controller]")]
-    [ApiController]
     public class PartnersController : BaseController
     {
         private readonly IPartnerService _partnerService;
@@ -31,15 +30,18 @@ namespace TMTDentalAPI.OdataControllers
         private readonly AppTenant _tenant;
         private readonly IPartnerCategoryService _partnerCategoryService;
         private readonly IPartnerPartnerCategoryRelService _partnerCategoryRelService;
+        private readonly ISaleOrderService _saleOrderService;
 
         public PartnersController(IPartnerService partnerService,
             IMapper mapper,
             IOptions<ConnectionStrings> connectionStrings,
+            ISaleOrderService saleOrderService,
             ITenant<AppTenant> tenant,
             IPartnerCategoryService partnerCategoryService,
             IPartnerPartnerCategoryRelService partnerCategoryRelService)
         {
             _partnerService = partnerService;
+            _saleOrderService = saleOrderService;
             _mapper = mapper;
             _connectionStrings = connectionStrings?.Value;
             _tenant = tenant?.Value;
@@ -48,23 +50,64 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
-        [HttpGet]
-        public async Task<IActionResult> Get(ODataQueryOptions<PartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
+        public async Task<IActionResult> Get()
         {
             var results = await _partnerService.GetViewModelsAsync();
-            if (tagIds != null && tagIds.Any())
-                results = results.Where(x => x.Tags.Any(s => tagIds.Contains(s.Id)));
+            return Ok(results);
+        }
+
+
+        [EnableQuery]
+        public SingleResult<PartnerInfoVm> Get([FromODataUri] Guid key)
+        {
+            var results = _partnerService.SearchQuery(x => x.Id == key).Select(x => new PartnerInfoVm
+            {
+                Id = x.Id,
+                BirthYear = x.BirthYear,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                Email = x.Email,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Street = x.Street,
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
+            });
+
+            return SingleResult.Create(results);
+        }
+
+        [EnableQuery]
+        public IActionResult GetSaleOrders([FromODataUri] Guid key)
+        {
+            var results = _saleOrderService.SearchQuery(x => x.PartnerId == key).Select(x => new SaleOrderViewModel
+            { 
+                Id = x.Id,
+                AmountTotal = x.AmountTotal,
+                DateOrder = x.DateOrder,
+                Name = x.Name,
+                PartnerId = x.PartnerId,
+                IsQuotation = x.IsQuotation,
+                Residual = x.Residual,
+                State = x.State
+            });
+
             return Ok(results);
         }
 
         [HttpPut]
-        public IActionResult Put([FromODataUri]Guid key, PartnerViewModel value)
+        public IActionResult Put([FromODataUri] Guid key, PartnerViewModel value)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(value);
             }
-           
+
             return NoContent();
         }
 
@@ -91,12 +134,12 @@ namespace TMTDentalAPI.OdataControllers
             }).ToListAsync();
 
             var tagDict = partnerCategRels.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => new TagModel
-            { 
+            {
                 Id = s.CategoryId,
                 Name = s.CategoryName
             }).ToList());
 
-            foreach(var item in partnerVMList)
+            foreach (var item in partnerVMList)
             {
                 if (!tagDict.ContainsKey(item.Id))
                     continue;
@@ -105,5 +148,50 @@ namespace TMTDentalAPI.OdataControllers
 
             return Ok(partnerVMList);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
+        {
+            var result = await _partnerService.SearchQuery(x => x.Id == key).Select(x => new PartnerDisplay
+            {
+                Id = x.Id,
+                Avatar = x.Avatar,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                City = new CitySimple { Code = x.CityCode, Name = x.CityName },
+                District = new DistrictSimple { Code = x.DistrictCode, Name = x.DistrictName },
+                Ward = new WardSimple { Code = x.WardCode, Name = x.WardName },
+                Ref = x.Ref,
+                Name = x.Name,
+                Date = x.Date,
+                Email = x.Email,
+                Gender = x.Gender,
+                Street = x.Street,
+                JobTitle = x.JobTitle,
+                Phone = x.Phone,
+                MedicalHistory = x.MedicalHistory,
+                Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
+                {
+                    Id = x.HistoryId,
+                    Name = x.History.Name
+                }),
+                Categories = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name
+                })
+            }).FirstOrDefaultAsync();
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+
     }
 }

@@ -39,5 +39,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
 
         public IEnumerable<ToaThuocLineSave> Lines { get; set; } = new List<ToaThuocLineSave>();
+
+        public Guid? SaleOrderId { get; set; }
+
     }
 }

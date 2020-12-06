@@ -20,6 +20,14 @@ namespace TMTDentalAPI.Controllers
             _reportService = reportService;
         }
 
+        [HttpPost("GetSummaryPartner")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetSummaryPartner(AccountCommonPartnerReportSearchV2 val)
+        {
+            var res = await _reportService.ReportSumaryPartner(val);
+            return Ok(res);
+        }
+
         [HttpPost("GetSummary")]
         [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> GetSummary(AccountCommonPartnerReportSearch val)
@@ -33,6 +41,22 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetDetail(AccountCommonPartnerReportItem val)
         {
             var res = await _reportService.ReportDetail(val);
+            return Ok(res);
+        }
+
+        [HttpPost("GetSalaryReportEmployee")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetSalaryReportEmployee(AccountCommonPartnerReportSearch val)
+        {
+            var res = await _reportService.ReportSalaryEmployee(val);
+            return Ok(res);
+        }
+        
+        [HttpPost("ReportSalaryEmployeeDetail")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportSalaryEmployeeDetail(AccountCommonPartnerReportItem val)
+        {
+            var res = await _reportService.ReportSalaryEmployeeDetail(val);
             return Ok(res);
         }
     }

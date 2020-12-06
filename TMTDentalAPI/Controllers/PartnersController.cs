@@ -137,16 +137,6 @@ namespace TMTDentalAPI.Controllers
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
 
-            if (partner.SourceId != null)
-            {
-                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
-                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
-            }
-            else
-            {
-                partner.ReferralUserId = null;
-            }
-
             SaveCategories(val, partner);
             SaveHistories(val, partner);
             await _partnerService.CreateAsync(partner);
@@ -181,16 +171,6 @@ namespace TMTDentalAPI.Controllers
             CityDistrictWardPrepare(partner, val);
 
             partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
-
-            if (partner.SourceId != null)
-            {
-                var source = await _partnerSourceService.GetByIdAsync(partner.SourceId);
-                partner.ReferralUserId = source.Type == "referral" ? partner.ReferralUserId : null;
-            }
-            else
-            {
-                partner.ReferralUserId = null;
-            }
 
             SaveCategories(val, partner);
             SaveHistories(val, partner);
@@ -248,6 +228,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutocompleteSimple(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersCbx(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AutocompleteInfos(PartnerPaged val)
+        {
+            var res = await _partnerService.SearchPartnerInfosCbx(val);
             return Ok(res);
         }
 
@@ -587,6 +574,13 @@ namespace TMTDentalAPI.Controllers
             partner.Avatar = val.ImageId;
             await _partnerService.UpdateAsync(partner);
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            var result = await _partnerService.GetPartnerCustomerReport(val);
+            return Ok(result);
         }
     }
 }

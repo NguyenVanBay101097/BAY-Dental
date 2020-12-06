@@ -9,6 +9,7 @@ import { HomeService } from './home.service';
 import { SaleReportComponent } from './sale-report/sale-report.component';
 import { HomeBusinessSituationComponent } from './home-business-situation/home-business-situation.component';
 import { HomeTodayAppointmentComponent } from './home-today-appointment/home-today-appointment.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [HomeComponent, SaleReportComponent, HomeBusinessSituationComponent, HomeTodayAppointmentComponent],
@@ -18,6 +19,7 @@ import { HomeTodayAppointmentComponent } from './home-today-appointment/home-tod
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
+    SharedModule
   ],
   providers: [HomeService]
 })

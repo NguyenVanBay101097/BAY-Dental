@@ -17,7 +17,7 @@ export class HrPayslipRunListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  title = "Đợt lương";
+  title = "Bảng lương";
   loading = false;
   searchUpdate = new Subject<string>();
   search: string;

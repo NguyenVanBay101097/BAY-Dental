@@ -42,6 +42,7 @@ export class DiscountDefault {
 }
 
 
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -147,7 +148,13 @@ export class SaleOrderService {
         return this.http.post<AccountRegisterPaymentDisplay>(this.baseApi + "api/accountregisterpayments/OrderDefaultGet", val);
     }
 
+    createFastSaleOrder(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
+    }
 
+    printSaleOrder(id: string){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrintSaleOrder');
+    }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
         return this.http.get<AccountPaymentBasic[]>(this.baseApi + "api/AccountPayments/GetPaymentBasicList", { params: val });

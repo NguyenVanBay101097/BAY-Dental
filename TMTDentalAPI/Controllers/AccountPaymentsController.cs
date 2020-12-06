@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +20,15 @@ namespace TMTDentalAPI.Controllers
     public class AccountPaymentsController : BaseApiController
     {
         private readonly IAccountPaymentService _paymentService;
+        private readonly IViewRenderService _viewRenderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public AccountPaymentsController(IAccountPaymentService paymentService,
+        public AccountPaymentsController(IAccountPaymentService paymentService, IViewRenderService viewRenderService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _paymentService = paymentService;
+            _viewRenderService = viewRenderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -131,5 +135,7 @@ namespace TMTDentalAPI.Controllers
             var res = await _paymentService.GetPrint(id);
             return Ok(res);
         }
+
+      
     }
 }

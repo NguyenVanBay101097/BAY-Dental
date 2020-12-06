@@ -89,4 +89,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsReceived { get; set; }
         public DateTime? ReceivedDate { get; set; }
     }
+
+    public class LaboOrderReportInput
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class LaboOrderReportOutput
+    {
+        public int LaboReceived { get; set; }
+        public int LaboAppointment { get; set; }
+    }
 }

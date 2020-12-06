@@ -25,6 +25,33 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Ref { get; set; }
 
         public string Gender { get; set; }
+        public string GenderConvertcom
+        {
+            get
+            {
+                switch (this.Gender)
+                {
+                    case "female": return "Nữ";
+                    case "male": return "Nam";
+                    default: return "khác";
+                }
+            }
+            set { }
+        }
+
+        public string DateOfBirth
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue)
+                    return string.Empty;
+
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+            set { }
+        }
 
         public string Street { get; set; }
 
@@ -33,6 +60,38 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DistrictName { get; set; }
 
         public string CityName { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string HistoriesString
+        {
+            get
+            {
+                var list = new List<string>();
+                foreach (var item in this.Histories)
+                {
+                    list.Add(item.Name);
+                }
+                return string.Join(", ", list);
+            }
+            set { }
+        }
 
         public int? BirthYear { get; set; }
 
@@ -145,6 +204,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ZaloId { get; set; }
 
         public DateTime? Date { get; set; }
+
 
         public string DisplayName { get; set; }
 

@@ -20,6 +20,11 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
+        /// thời gian hẹn
+        /// </summary>
+        public string Time { get; set; }
+
+        /// <summary>
         /// Ghi chú, nội dung
         /// </summary>
         public string Note { get; set; }
@@ -51,5 +56,8 @@ namespace ApplicationCore.Entities
         public string State { get; set; }
 
         public ICollection<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; } = new List<AppointmentMailMessageRel>();
+
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrder SaleOrder { get; set; }
     }
 }

@@ -1,0 +1,26 @@
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Ngày</th>
+            <th>Số</th>
+            <th>Bác sĩ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of toathuocs">
+            <td> {{item.date | date : 'short'}}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.employeeName}}</td>
+            <!-- <td>{{ payment.ref }}</td> -->
+            <td>
+                <button class="btn btn-info btn-sm mr-2" title="In" (click)="printToaThuoc(item)">
+                    <span class="fas fa-print"></span></button>
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editProductToaThuoc(item)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteProductToaThuoc(item)">
+                    <span class="far fa-trash-alt"></span></button>
+            </td>
+        </tr>
+    </tbody>
+</table>

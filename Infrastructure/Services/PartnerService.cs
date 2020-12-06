@@ -25,6 +25,7 @@ using Facebook.ApiClient.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyERP.Utilities;
@@ -282,30 +283,7 @@ namespace Infrastructure.Services
         private async Task<string> GenerateUniqueRef(string type = "customer")
         {
             var seqObj = GetService<IIRSequenceService>();
-            if (type == "customer")
-            {
-                var code = await seqObj.NextByCode(type);
-                var count = 0;
-                while ((await SearchQuery(x => x.Customer == true && x.Ref == code).CountAsync()) > 0 && count < 100)
-                {
-                    code = await seqObj.NextByCode(type);
-                }
-
-                return code;
-            }
-            else if (type == "supplier")
-            {
-                var code = await seqObj.NextByCode(type);
-                var count = 0;
-                while ((await SearchQuery(x => x.Supplier == true && x.Ref == code).CountAsync()) > 0 && count < 100)
-                {
-                    code = await seqObj.NextByCode(type);
-                }
-
-                return code;
-            }
-
-            return string.Empty;
+            return await seqObj.NextByCode(type);
         }
 
         private async Task _CheckUniqueRef(IEnumerable<Partner> self)
@@ -471,7 +449,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 DisplayName = x.DisplayName,
-                Name = x.Name
+                Name = x.Name,
             }).ToListAsync();
             return partners;
         }
@@ -483,7 +461,29 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Phone = x.Phone,
                 Name = x.Name
+
             }).ToListAsync();
+            return partners;
+        }
+
+        public async Task<IEnumerable<PartnerSimpleInfo>> SearchPartnerInfosCbx(PartnerPaged val)
+        {
+            var cateObj = GetService<IPartnerCategoryService>();
+            var partners = await GetQueryPaged(val).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerSimpleInfo
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                BirthYear = x.BirthYear,
+            }).ToListAsync();
+
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                       .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+
+            foreach (var partner in partners)
+                partner.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == partner.Id)));
+
             return partners;
         }
 
@@ -1439,7 +1439,7 @@ namespace Infrastructure.Services
         {
             var limit = 200;
             var offset = 0;
-           
+
             var res = new Dictionary<string, Partner>();
             while (offset < refs.Count())
             {
@@ -1881,11 +1881,11 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                //Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
-                //{
-                //    Id = s.CategoryId,
-                //    Name = s.Category.Name,
-                //})
+                Tags = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryViewModel
+                {
+                    Id = s.CategoryId,
+                    Name = s.Category.Name,
+                })
             });
         }
 
@@ -1913,7 +1913,8 @@ namespace Infrastructure.Services
                 Comment = x.Comment,
                 Email = x.Email,
                 JobTitle = x.JobTitle,
-                SourceName = x.Source.Name
+                SourceName = x.Source.Name,
+                DateCreated = x.DateCreated
             });
         }
 
@@ -1925,6 +1926,46 @@ namespace Infrastructure.Services
         public Task<IQueryable<GridPartnerViewModel>> GetGridViewModelsAsync()
         {
             return Task.Run(() => GetGridViewModels());
+        }
+
+        public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
+        {
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+
+            if (val.DateFrom.HasValue)
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.CompanyId == val.CompanyId.Value));
+
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            IEnumerable<Guid> ids_partner = query_saleOrder.Select(x => x.PartnerId).ToList();
+
+            var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId))
+                .GroupBy(x => x.PartnerId)
+                .Select(x => new
+                {
+                    PartnerId = x.Key,
+                    PartnerCount = x.Count()
+                })
+                .OrderBy(x => x.PartnerId).ToListAsync();
+
+            var result = new PartnerCustomerReportOutput
+            {
+                CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
+                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count()
+            };
+
+            return result;
         }
     }
 

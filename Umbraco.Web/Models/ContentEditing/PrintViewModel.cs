@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class printData
+    public class PrintData
     {
         public string html { get; set; }
     }

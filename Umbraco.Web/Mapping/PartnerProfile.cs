@@ -29,6 +29,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.ZaloId, x => x.Ignore());
 
             CreateMap<Partner, PartnerSimple>();
+            CreateMap<Partner, PartnerSimpleInfo>()
+                  .ForMember(x => x.Categories, x => x.MapFrom(s => s.PartnerPartnerCategoryRels));
             CreateMap<Partner, PartnerInfoViewModel>();
             CreateMap<Partner, PartnerInfoChangePhone>();
 
@@ -50,6 +52,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<PartnerChangePhone, Partner>();
             CreateMap<Partner, PartnerPrintVM>();
             CreateMap<Partner, PartnerViewModel>();
+
+            CreateMap<Partner, PartnerInfoVm>();
         }
     }
 }

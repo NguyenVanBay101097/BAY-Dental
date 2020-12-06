@@ -1,0 +1,137 @@
+﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPrintVM
+@{
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div class="o_form_view">
+    <div class="media mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="mr-3" src="@Model.Company.Logo" style="max-width: 200px" alt="@Model.Company.Name">
+        }
+        <div class="media-body">
+            <h5 class="mt-0">@Model.Company.Name</h5>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+    <div class="text-center">
+        <h2>PHIẾU ĐIỀU TRỊ</h2>
+        <span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>
+    </div>
+    <div class="o_group mt-0 mb-0">
+        <table class="o_group o_inner_group">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Khách hàng
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        @Model.PartnerName
+                    </td>
+                </tr>
+                @if (!string.IsNullOrEmpty(Model.PartnerPhone))
+                {
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.PartnerPhone
+                        </td>
+                    </tr>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.PartnerAddress))
+                {
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            @Model.PartnerAddress
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Dịch vụ</th>
+                    <th class="text-right">Số lượng</th>
+                    <th class="text-right">Đơn giá</th>
+                    <th class="text-right">Giảm</th>
+                    <th class="text-right">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var line in Model.OrderLines)
+                {
+                    <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
+                        <td>@line.ProductName</td>
+                        <td class="text-right">@line.ProductUOMQty</td>
+                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceUnit)</td>
+                        @if (line.DiscountType == "percentage")
+                        {
+                            <td class="text-right">@string.Format(culture, "{0:0}", line.Discount)%</td>
+                        }
+                        else if (line.DiscountType == "fixed")
+                        {
+                            <td class="text-right">@string.Format(culture, "{0:0,0}", line.DiscountFixed)</td>
+                        }
+
+                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <table class="o_inner_group oe_subtotal_footer oe_right">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label text-right">
+                        <label class="o_form_label oe_subtotal_footer_separator text-right">
+                            Tổng tiền
+                        </label>
+                    </td>
+                    <td colspan="1" class="text-right">
+                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+    </div>
+    <div class="row">
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+                Khách hàng
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-bold">
+                Người lập
+            </div>
+        </div>
+    </div>
+</div>

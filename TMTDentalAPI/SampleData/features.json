@@ -608,6 +608,10 @@
         "Permission": "Catalog.Employee",
         "Children": [
           {
+            "Name": "Thông tin tính lương",
+            "Permission": "Catalog.Employee.Salary.Update"
+          },
+          {
             "Name": "Xem",
             "Permission": "Catalog.Employee.Read"
           },

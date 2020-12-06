@@ -10,6 +10,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 
 @Component({
   selector: 'app-sale-order-payment-dialog',
@@ -31,7 +32,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
-    private errorService: AppSharedShowErrorService, private authService: AuthService) { }
+    private errorService: AppSharedShowErrorService, private authService: AuthService,
+    private accountPaymenetOdataService: AccountPaymentsOdataService) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
@@ -57,7 +59,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         this.paymentForm.get('paymentDateObj').setValue(paymentDate);
         this.maxAmount = this.getValueForm('amount');
         this.paymentForm.get('amount').setValue(0);
-        
+
         const control = this.saleOrderLinePaymentRels;
         control.clear();
         this.defaultVal.saleOrderLinePaymentRels.forEach(line => {
@@ -67,9 +69,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         });
         this.paymentForm.markAsPristine();
       }
-  
+
       this.loadFilteredJournals();
-  
+
       this.journalCbx.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.journalCbx.loading = true)),
@@ -84,6 +86,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
+      if (this.filteredJournals && this.filteredJournals.length > 1) {
+        this.paymentForm.get('journal').patchValue(this.filteredJournals[0])
+      }
     })
   }
 
@@ -142,7 +147,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     });
   }
 
-  getValueFormSave() {   
+  getValueFormSave() {
     var val = this.paymentForm.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
@@ -163,7 +168,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   changeMoneyLine(line: FormGroup) {
     var sumAmountPrepaid = 0;
-    this.getValueForm('saleOrderLinePaymentRels').forEach(function(v){ 
+    this.getValueForm('saleOrderLinePaymentRels').forEach(function (v) {
       sumAmountPrepaid += v.amountPrepaid;
     });
     this.paymentForm.get('amount').setValue(sumAmountPrepaid);

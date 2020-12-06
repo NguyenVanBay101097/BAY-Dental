@@ -1,0 +1,128 @@
+<div [ngClass]="{'active': editModeActive}" class="border rounded bg-white p-2 mb-2 dotkham" [formGroup]="dotkhamForm">
+    <div class="body">
+        <div class="info">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5>Đợt khám {{dotkham.Sequence}}</h5>
+                <div>
+                    <button *ngIf="!editModeActive" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
+                    <div *ngIf="editModeActive" class="footer d-flex align-items-center">
+                        <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
+                        <button (click)="onCancel()" class="btn btn-sm btn-secondary">Đóng</button>
+                        <!-- <button (click)="onClose()" class="btn btn-sm bg-close mr-2">Đóng</button> -->
+                    </div>
+                </div>
+            </div>
+            <div class="o_group my-0">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label b_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày
+                                </label>
+                            </td>
+                            <td colspan="1" class="b-td-value" style="width: 100%;">
+                                <kendo-datepicker *ngIf="editModeActive" formControlName="Date"></kendo-datepicker>
+                                <span *ngIf="!editModeActive">{{dotkhamDate | date: 'shortDate'}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label b_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Bác sĩ
+                                </label>
+                            </td>
+                            <td colspan="1" class="b-td-value" style="width: 100%;">
+                                <kendo-combobox [hidden]="!editModeActive" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="Chọn bác sĩ...">
+                                </kendo-combobox>
+                                <span *ngIf="!editModeActive">{{employee?.Name}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="operation mt-2">
+            <h6>Công đoạn thực hiện</h6>
+            <table class="table table-sm table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 35%">Dịch vụ</th>
+                        <th style="width: 30%">Công đoạn</th>
+                        <th style="width: 30%">Răng, Chi tiết điều trị</th>
+                        <th style="width: 5%" class="text-center">#</th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="Lines">
+                    <ng-container *ngFor="let line of linesFA.controls; let i=index">
+                        <tr [formGroupName]="i">
+                            <td>{{line.get('Product').value?.Name}}</td>
+                            <td>
+                                {{line.get('NameStep').value}}
+                            </td>
+                            <td>
+                                <div class="d-flex">
+                                    <div>
+                                        <div *ngIf="line.get('Teeth')?.value?.length">
+                                            {{showLineTeeth(line)}}
+                                        </div>
+                                        <div>
+                                            {{line.get('Note').value}}
+                                        </div>
+                                    </div>
+                                    <app-sale-order-dotkham-teeth-popover *ngIf="editModeActive" [line]="line.value" (eventTeeth)="eventTeeth($event,line, i)"></app-sale-order-dotkham-teeth-popover>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <i *ngIf="editModeActive" (click)="onRemoveLine(i)" class="far fa-trash-alt"></i>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div class="note">
+            <h6>Mô tả</h6>
+            <textarea *ngIf="editModeActive" formControlName="Reason" rows="2" placeholder="nhập mô tả..." class="form-control"></textarea>
+            <label *ngIf="!editModeActive">
+                {{reason}}
+            </label>
+        </div>
+        <div class="image mt-2">
+            <h6>Hình ảnh</h6>
+            <div class="o_attachments_previews">
+                <ng-container formArrayName="DotKhamImages">
+                    <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image" id="{{img.value.Name}}" [style.background-image]="'url('+ img.value.UploadId + '?width=240&height=240)'">
+                                </div>
+                                <div class="o_image_overlay o_attachment_view">
+                                    <span *ngIf="editModeActive" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.Name}}"></span>
+                                    <span class="o_attachment_title text-white">{{img.value.Name}}</span>
+                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{webContentApi}}/{{img.value.UploadId}}">
+                                        <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="editModeActive" class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="btn-img" (click)="inputFile.click()">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image d-flex align-items-center justify-content-center">
+                                    <img style="max-width: 100px;max-height: 100px;" src="/assets/images/placeholder.png" alt="">
+                                    <input #inputFile class="o_input_file d-none" type="file" multiple="multiple" accept="image/*" (change)="onFileChange($event)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

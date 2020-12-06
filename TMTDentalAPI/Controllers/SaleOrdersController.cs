@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -27,11 +28,12 @@ namespace TMTDentalAPI.Controllers
         private readonly ICardCardService _cardService;
         private readonly IProductPricelistService _pricelistService;
         private readonly ISaleOrderLineService _saleLineService;
+        private readonly IViewRenderService _viewRenderService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
-            ISaleOrderLineService saleLineService)
+            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -40,6 +42,7 @@ namespace TMTDentalAPI.Controllers
             _cardService = cardService;
             _pricelistService = pricelistService;
             _saleLineService = saleLineService;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -375,6 +378,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateFastSaleOrder(FastSaleOrderSave val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _saleOrderService.CreateFastSaleOrder(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetServiceBySaleOrderId(Guid id)
@@ -396,5 +408,19 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleOrderService.GetLaboBySaleOrderId(id);
             return Ok(res);
         }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrintSaleOrder(Guid id)
+        {
+            var phieu = await _saleOrderService.GetPrint(id);
+            if (phieu == null)
+                return NotFound();
+
+            var html = _viewRenderService.Render("SaleOrderPrint", phieu);
+
+            return Ok(new PrintData() { html = html });
+        }
+
     }
 }

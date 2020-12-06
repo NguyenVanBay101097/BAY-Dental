@@ -42,7 +42,7 @@ namespace Infrastructure.Services
         Task<bool> CheckHasPromotionCanApply(Guid id);
         Task<IEnumerable<AccountMoveBasic>> GetInvoicesBasic(Guid id);
         Task ApplyServiceCards(SaleOrderApplyServiceCards val);
-        Task<IEnumerable<SaleOrderLineDisplay>>  GetServiceBySaleOrderId(Guid id);
+        Task<IEnumerable<SaleOrderLineDisplay>> GetServiceBySaleOrderId(Guid id);
         Task<IEnumerable<DotKhamDisplay>> GetTreatmentBySaleOrderId(Guid id);
         Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id);
         Task ApplyDiscountDefault(ApplyDiscountSaleOrderViewModel val);
@@ -52,10 +52,15 @@ namespace Infrastructure.Services
 
         Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
+        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
+
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
 
         Task ActionUnlock(IEnumerable<Guid> ids);
 
         void _GetInvoiced(IEnumerable<SaleOrder> orders);
+
+        Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val);
+        Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key);
     }
 }

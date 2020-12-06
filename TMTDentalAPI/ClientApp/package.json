@@ -97,6 +97,7 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
     "typescript": "~3.4.3",
-    "@babel/compat-data": "7.8.0"
+    "@babel/compat-data": "7.8.0",
+    "@babel/preset-env": "7.8.0"
   }
 }

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -19,17 +22,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IPhieuThuChiService _phieuThuChiService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public PhieuThuChisController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        private readonly IViewRenderService _viewRenderService;
+        public PhieuThuChisController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
+            IViewRenderService viewRenderService)
         {
             _phieuThuChiService = phieuThuChiService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _viewRenderService = viewRenderService;
         }
 
         //api get phan trang loai thu , chi
         [HttpGet]
         [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
-        public async Task<IActionResult> GetLoaiThuChi([FromQuery]PhieuThuChiPaged val)
+        public async Task<IActionResult> GetLoaiThuChi([FromQuery] PhieuThuChiPaged val)
         {
             var res = await _phieuThuChiService.GetPhieuThuChiPagedResultAsync(val);
             return Ok(res);
@@ -43,6 +49,16 @@ namespace TMTDentalAPI.Controllers
             if (res == null)
                 return NotFound();
 
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        public async Task<IActionResult> ReportPhieuThuChi([FromQuery] PhieuThuChiSearch val)
+        {
+            if (val == null || !ModelState.IsValid)
+                return BadRequest();
+            var res = await _phieuThuChiService.ReportPhieuThuChi(val);
             return Ok(res);
         }
 
@@ -114,6 +130,22 @@ namespace TMTDentalAPI.Controllers
             res.Type = val.Type;
             res.CompanyId = CompanyId;
             return Ok(res);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/[action]")]
+        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (phieu == null)
+                return NotFound();
+
+            phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
+
+            var html = _viewRenderService.Render("PhieuThuChiPrint", phieu);
+
+            return Ok(new PrintData() { html = html });
         }
     }
 }

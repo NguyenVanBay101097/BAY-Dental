@@ -27,8 +27,8 @@ export class SaleOrderApplyDiscountDefaultDialogComponent implements OnInit {
 
   applyDiscount() {
     this.discountFormGroup.emit(this.formGroup.value);
-    this.popover.close();
     this.resetForm();
+    this.popover.close();
   }
 
    resetForm(){

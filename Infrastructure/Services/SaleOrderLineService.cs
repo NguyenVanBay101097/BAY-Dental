@@ -55,7 +55,8 @@ namespace Infrastructure.Services
                     Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
-                line.PriceTotal = line.PriceSubTotal + line.PriceTax;              
+                line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+                line.AmountResidual = line.PriceTotal - line.AmountPaid;
             }
         }
 
@@ -207,7 +208,7 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var amountPaid = 0M;
-                foreach(var rel in line.SaleOrderLinePaymentRels)
+                foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
                     if (payment.State == "draft")
@@ -287,7 +288,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PagedResult2<SaleOrderLine>> GetPagedResultAsync(SaleOrderLinesPaged val)
+        public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
@@ -304,11 +305,20 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
             if (val.DateOrderTo.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+            if (val.IsQuotation.HasValue)
+            {
+                query = query.Where(x => x.Order.IsQuotation == val.IsQuotation);
+            }
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).OrderByDescending(x => x.DateCreated).ToListAsync();
+            if (val.Limit > 0)
+            {
+                query = query.Take(val.Limit).Skip(val.Offset);
+            }
+            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
 
             var totalItems = await query.CountAsync();
-            return new PagedResult2<SaleOrderLine>(totalItems, val.Offset, val.Limit)
+            return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
@@ -463,7 +473,7 @@ namespace Infrastructure.Services
 
             var commissionLineObj = GetService<ISaleOrderLinePartnerCommissionService>();
             var commission_lines = new List<SaleOrderLinePartnerCommission>();
-            foreach(var line in self)
+            foreach (var line in self)
             {
                 await commissionLineObj.DeleteAsync(line.PartnerCommissions);
 
@@ -495,6 +505,85 @@ namespace Infrastructure.Services
             };
 
             return res;
+        }
+
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id)
+        {
+            var lines = await SearchQuery(x => x.OrderId == Id)
+                .Include(x => x.Employee)
+                .Include("SaleOrderLineToothRels.Tooth")
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
+        }
+
+        public async Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val)
+        {
+            var dkStepobj = GetService<IDotKhamStepService>();
+            var productObj = GetService<IProductService>();
+            var productStepObj = GetService<IProductStepService>();
+            var line = await SearchQuery(x => x.Id == key).Include(x => x.DotKhamSteps).FirstOrDefaultAsync();
+            var dksAdd = new List<DotKhamStep>();
+            var dksRemove = new List<DotKhamStep>();
+
+            foreach (var item in val.Steps.ToList())
+            {
+                if (!item.Id.HasValue)
+                {
+                    dksAdd.Add(new DotKhamStep
+                    {
+                        Id = GuidComb.GenerateComb(),
+                        IsDone = item.IsDone,
+                        Name = item.Name,
+                        Order = item.Order,
+                        ProductId = line.ProductId,
+                        SaleLineId = line.Id,
+                        SaleOrderId = line.OrderId
+                    });
+
+                    val.Steps.Remove(item);
+                }
+            }
+
+            var valDict = val.Steps.ToDictionary(x => x.Id, x => x);
+
+            foreach (var item in line.DotKhamSteps.ToList())
+            {
+                if (!val.Steps.Any(x => x.Id == item.Id))
+                {
+                    dksRemove.Add(item);
+                    line.DotKhamSteps.Remove(item);
+                }
+
+                if (valDict.ContainsKey(item.Id))
+                {
+                    item.Name = valDict[item.Id].Name;
+                    item.Order = valDict[item.Id].Order;
+                }
+            }
+
+
+            await dkStepobj.CreateAsync(dksAdd);
+            await dkStepobj.DeleteAsync(dksRemove);
+            await dkStepobj.UpdateAsync(line.DotKhamSteps.ToList());
+            if (val.Default)
+            {
+                var service = await productObj.SearchQuery(x => x.Id == line.ProductId).Include(x => x.Steps).FirstOrDefaultAsync();
+                var stepsAdd = new List<ProductStep>();
+                foreach (var item in val.Steps)
+                {
+                    stepsAdd.Add(new ProductStep
+                    {
+                        Id = item.Id.HasValue ? item.Id.Value : GuidComb.GenerateComb(),
+                        Name = item.Name,
+                        Order = item.Order,
+                        Active = true,
+                        Default = true,
+                        ProductId = service.Id,
+                    });
+                }
+                await productStepObj.DeleteAsync(service.Steps.ToList());
+                await productStepObj.CreateAsync(stepsAdd);
+            }
         }
     }
 }
