@@ -11,6 +11,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 })
 export class ForgotPasswordComponent implements OnInit {
   forgotPwdForm: FormGroup;
+  submitted = false;
   constructor(public authService: AuthService, public router: Router, private fb: FormBuilder, private notificationService: NotificationService) { }
 
   ngOnInit() {
@@ -19,7 +20,13 @@ export class ForgotPasswordComponent implements OnInit {
     });
   }
 
+  get emailControl() {
+    return this.forgotPwdForm.get('email');
+  }
+
   submit() {
+    debugger;
+    this.submitted = true;
     if (!this.forgotPwdForm.valid) {
       return;
     }

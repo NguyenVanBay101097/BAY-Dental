@@ -26,7 +26,7 @@ export class PartnerSourceListComponent implements OnInit {
     private partnerSourceService: PartnerSourceService,
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -45,20 +45,20 @@ export class PartnerSourceListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || "";
     this.partnerSourceService.getPaged(val).pipe(map((response) => <GridDataResult>{
-              data: response.items,
-              total: response.totalItems,
-            }
-        )
-      ).subscribe(
-        (res) => {
-          this.gridData = res;
-          this.loading = false;
-        },
-        (err) => {
-          console.log(err);
-          this.loading = false;
-        }
-      );
+      data: response.items,
+      total: response.totalItems,
+    }
+    )
+    ).subscribe(
+      (res) => {
+        this.gridData = res;
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -67,35 +67,33 @@ export class PartnerSourceListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent,{size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(() => {
-        this.loadDataFromApi();
-      },() => {} 
+      this.loadDataFromApi();
+    }, () => { }
     );
   }
 
   editItem(item: PartnerSourceBasic) {
-    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, {size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: "lg", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Sửa nguồn khách hàng";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
-        this.loadDataFromApi();
-      },() => {}
+      this.loadDataFromApi();
+    }, () => { }
     );
   }
 
   deleteItem(item: PartnerSourceBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, {size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static",});
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Xóa: Nguồn khách hàng";
     modalRef.result.then(() => {
-        this.partnerSourceService.delete(item.id).subscribe(() => {
-            this.loadDataFromApi();
-          },(err) => {
-            this.showErrorService.show(err);
-          }
-        );
+      this.partnerSourceService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
       }
+      );
+    }
     );
   }
 }

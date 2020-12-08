@@ -1930,7 +1930,7 @@ namespace Infrastructure.Services
 
         public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
         {
-            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true && (!x.IsQuotation.HasValue || x.IsQuotation.Value == false));
 
             if (val.DateFrom.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
@@ -1987,6 +1987,4 @@ namespace Infrastructure.Services
         public string Phone { get; set; }
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
-
-
 }
