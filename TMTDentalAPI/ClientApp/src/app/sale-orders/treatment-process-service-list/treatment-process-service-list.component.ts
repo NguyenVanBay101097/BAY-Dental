@@ -82,8 +82,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
         this.errorService.show(error);
       }
     );
-
-    this.loadDotKhamList();
   }
 
   editTreatmentProcess(service) {
