@@ -1,0 +1,61 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê khách hàng
+            </li>
+        </ol>   
+        <div class="o_cp_right">           
+               
+        </div> 
+        <div class="o_cp_left">           
+            <div class="o_cp_buttons">
+                <div>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+            </div>          
+        </div>
+    </div>
+</div>
+
+<div class="container bg-white my-3 p-3" [formGroup]="formGroup">
+    <div class="d-flex justify-content-between">
+        <div class="bg-white p-3 text-center border rounded w-30">
+            <h5 class="font-weight-bold">TỔNG BỆNH NHÂN</h5>
+            <h5 class="font-weight-bold text-danger mb-0">10</h5>
+        </div>
+        <div class="bg-white p-3 text-center border rounded w-30">
+            <h5 class="font-weight-bold">BỆNH NHÂN MỚI</h5>
+            <h5 class="font-weight-bold text-danger mb-0">3</h5>
+        </div>
+        <div class="bg-white p-3 text-center border rounded w-30">
+            <h5 class="font-weight-bold">BỆNH NHÂN CŨ</h5>
+            <h5 class="font-weight-bold text-danger mb-0">7</h5>
+        </div>
+    </div>
+    <div class="mt-3">
+        <h5 class="font-weight-bold">Chi tiết</h5>
+        <table class="table table-sm text-center table-tbody-ver-align-middle border-bottom">
+            <thead>
+                <tr>
+                    <th>Khu vực</th>
+                    <th>Số bệnh nhân</th>
+                    <th>Bệnh nhân mới</th>
+                    <th>Bệnh nhân cũ</th>
+                </tr>
+            </thead>
+            <tbody formArrayName="details">
+                <ng-container *ngFor="let detail of details.controls; index as i">
+                    <tr [formGroupName]="i">
+                        <td>{{i + 1}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
