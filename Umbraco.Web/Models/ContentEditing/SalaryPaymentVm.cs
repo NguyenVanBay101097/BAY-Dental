@@ -62,7 +62,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public Guid CompanyId { get; set; }
-        public CompanyBasic Company { get; set; }
+        public CompanyPrintVM Company { get; set; }
 
 
         /// <summary>

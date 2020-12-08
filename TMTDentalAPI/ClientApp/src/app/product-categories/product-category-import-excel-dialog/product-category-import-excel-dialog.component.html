@@ -28,7 +28,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" [disabled]="!fileBase64" (click)="onSave()" accesskey="s">Import</button>
     <a *ngIf="type == 'service'" download href="/assets/files/MauFileNhomDichVu.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
