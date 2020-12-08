@@ -61,7 +61,8 @@
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
-                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)"
+                                                    class="text-danger">
                                                     <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
                                                 </div>
                                             </td>
@@ -121,6 +122,10 @@
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 (click)="createTempProductStepList()">Thêm</button>
                                         </div>
+                                        <i class="fas fa-question-circle ml-2 text-primary"
+                                            style="font-size: 25px; padding: 7px;" triggers="mouseenter:mouseleave"
+                                            ngbPopover="Click vào biểu tượng bút trên mỗi dòng trong danh sách công đoạn, sau khi sửa tên xong nhấn Enter để lưu"
+                                            placement="right" popoverTitle="Hướng dẫn cập nhật công đoạn"></i>
                                     </div>
                                 </div>
                                 <div class="col"></div>

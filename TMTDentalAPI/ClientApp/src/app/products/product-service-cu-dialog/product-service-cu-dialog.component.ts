@@ -186,8 +186,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
       } else {
         this.activeModal.close(true);
       }
-    }, err => {
-      this.showErrorService.show(err);
     });
   }
 

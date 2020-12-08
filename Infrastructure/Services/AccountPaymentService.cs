@@ -1047,8 +1047,12 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
 
             ///update saleorderline
-            foreach (var rec in self)
-                await _ComputeSaleOrderLines(rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First());
+            var saleOrderIds = self.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
+            if (saleOrderIds.Any())
+            {
+                foreach (var saleOrderId in saleOrderIds)
+                    await _ComputeSaleOrderLines(saleOrderId);
+            }
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)

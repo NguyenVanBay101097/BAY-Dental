@@ -21,6 +21,9 @@
     width: 260px;
 }
 
+.active{
+    background-color: #16232d;
+}
 
 .main-nav .nav-link {
     color: #869fb1;

@@ -1279,7 +1279,7 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                    throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp hoặc hủy bỏ");
+                    throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp");
                 if (order.IsQuotation == true && order.OrderId.HasValue)
                     throw new Exception("Bạn không thể xóa phiếu tư vấn đã tạo phiếu điều trị");
             }
