@@ -16,6 +16,7 @@ namespace ApplicationCore.Entities
             Name = "/";
             IsQuotation = false;
             InvoiceStatus = "no";
+            isFast = false;
         }
 
         public SaleOrder(SaleOrder order)
@@ -34,6 +35,7 @@ namespace ApplicationCore.Entities
             DateOrder = DateTime.Now;
             Name = "/";
             IsQuotation = false;
+            isFast = false;
         }
 
         /// <summary>
@@ -126,5 +128,11 @@ namespace ApplicationCore.Entities
         public ICollection<SaleCoupon> GeneratedCoupons { get; set; } = new List<SaleCoupon>();
 
         public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
+
+        public bool? isFast { get; set; }
+
+        public Guid? JournalId { get; set; }
+        public AccountJournal Journal { get; set; }
+ 
     }
 }
