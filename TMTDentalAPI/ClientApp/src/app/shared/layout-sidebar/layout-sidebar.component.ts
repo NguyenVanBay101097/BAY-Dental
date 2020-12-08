@@ -12,7 +12,7 @@ export class LayoutSidebarComponent implements OnInit {
   folded = false;
   menuItems: { name: string, icon?: string, link?: string, groups?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
     {
-      name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
+      name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
     { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
     {
