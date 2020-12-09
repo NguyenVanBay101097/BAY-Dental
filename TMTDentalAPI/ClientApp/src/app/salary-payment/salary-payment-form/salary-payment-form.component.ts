@@ -1,7 +1,7 @@
 import { State } from '@progress/kendo-data-query';
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import {
@@ -16,6 +16,7 @@ import { EmployeeService } from "src/app/employees/employee.service";
 import { debounceTime, switchMap, tap } from "rxjs/operators";
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -39,6 +40,7 @@ export class SalaryPaymentFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
+    private modalService: NgbModal,
     private notificationService: NotificationService,
     private salaryPaymentService: SalaryPaymentService,
     private authService: AuthService,
@@ -197,16 +199,22 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   actionConfirm() {
-    if(this.id){
-      this.salaryPaymentService.actionConfirm([this.id]).subscribe(
-        () => {
-          this.activeModal.close();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    modalRef.componentInstance.title = "Xác nhận tạm ứng lương";
+    modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
+    modalRef.result.then(
+      () => {
+        this.salaryPaymentService.actionConfirm([this.id]).subscribe(
+          () => {
+            this.activeModal.close();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      },
+      () => { }
+    );   
   }
 
   checkIsDisable(id){

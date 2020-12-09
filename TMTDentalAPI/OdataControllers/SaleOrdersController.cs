@@ -68,6 +68,7 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(res);
         }
 
+
         [EnableQuery]
         [HttpGet]
         public async Task<IActionResult> GetSaleOrderLines([FromODataUri] Guid key)

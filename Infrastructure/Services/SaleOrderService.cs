@@ -1066,23 +1066,24 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id)
+        public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            return await SearchQuery(x => x.Id == id)
+            var saleorder = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Order)
                 .Include(x => x.Quote)
                 .Include(x => x.Pricelist)
                 .Include(x => x.User)
                 .Include(x => x.OrderLines)
-                .Include("OrderLines.SaleOrderLineInvoice2Rels")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine")
-                .Include("OrderLines.SaleOrderLineInvoice2Rels.InvoiceLine.Move")
-                .Include("OrderLines.Product")
-                .Include("OrderLines.ToothCategory")
-                .Include("OrderLines.SaleOrderLineToothRels")
-                .Include("OrderLines.SaleOrderLineToothRels.Tooth")
+                .Include(x => x.Journal)
                 .FirstOrDefaultAsync();
+
+            var display = _mapper.Map<SaleOrderDisplay>(saleorder);
+            var lineObj = GetService<ISaleOrderLineService>();
+            var line = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))               
+                              .Include(x=>x.Product).Include(x=>x.ToothCategory).Include(x=>x.Employee).Include(x=>x.SaleOrderLineToothRels).ToListAsync();
+            display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(line);
+            return display;
         }
 
         public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
@@ -1500,7 +1501,7 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                  
+
                     await dotKhamStepService.CreateAsync(list);
                 }
             }
@@ -2009,6 +2010,8 @@ namespace Infrastructure.Services
             res.OrderLines = val.OrderLines;
             res.PartnerId = val.PartnerId;
             res.PricelistId = val.PricelistId;
+            res.isFast = true;
+            res.JournalId = val.JournalId;
 
             var order = _mapper.Map<SaleOrder>(res);
 

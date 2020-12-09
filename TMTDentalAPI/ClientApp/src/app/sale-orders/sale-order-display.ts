@@ -1,3 +1,4 @@
+import { AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { UserSimple } from '../users/user-simple';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
 import { PartnerSimple } from '../partners/partner-simple';
@@ -21,6 +22,8 @@ export class SaleOrderDisplay {
     name: string;
     paid: number;
     pricelist: ProductPriceListBasic;
+    journalId: string;
+    journal: AccountJournalSimple;
     invoiceStatus: string;
     quote: SaleOrderBasic;
     order: SaleOrderBasic;

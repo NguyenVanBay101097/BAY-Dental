@@ -57,7 +57,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _saleOrderService.GetDisplayAsync(id);
+            var res = await _saleOrderService.GetSaleOrderForDisplayAsync(id);
             if (res == null)
                 return NotFound();
 

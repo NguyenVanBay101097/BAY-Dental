@@ -91,7 +91,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nội dung</th>
-                                        <th>Sô ngày</th>
+                                        <th>Số ngày</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -200,31 +200,46 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="h-10 w-100 pt-2">
-                        <table class="table border-none">
-                            <tr>
-                                <th class="text-center">Người lập phiếu</th>
-                                <th class="text-center">
-                                    @string.Format(culture, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
-                                    <p>Người lao động</p>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th class="text-center">
-                                    @(Model.User != null ? Model.User.Name.ToUpper(culture) : "")
-                                </th>
-                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(culture) : "")</th>
-                            </tr>
-                        </table>
+                    <div class="row">
+                        <div class="col col-sm-12">
+                            <div class="text-center font-weight-bold justify-content-between">
+                                <p></p>
+                                <div class="mt-2">Người lập phiếu</div>
+                            </div>
+                        </div>
+                        <div class="col col-sm-12">
+                            <div class="text-center font-weight-bold">
+                                @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                                <div>Người lao động</div>
+                            </div>
+
+                        </div>
                     </div>
+                    @*<div class="h-10 w-100 pt-2">
+            <table class="table border-none">
+                <tr>
+                    <th class="text-center">Người lập phiếu</th>
+                    <th class="text-center">
+                        @string.Format(culture, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                        <p>Người lao động</p>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th class="text-center">
+                        @(Model.User != null ? Model.User.Name.ToUpper(culture) : "")
+                    </th>
+                    <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(culture) : "")</th>
+                </tr>
+            </table>
+        </div>*@
                 </div>
             </div>
         }

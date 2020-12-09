@@ -59,7 +59,6 @@ export class DotkhamOdataService extends ODataService {
   constructor(http: HttpClient, @Inject('BASE_API') baseUrl: string) { super(http, baseUrl, 'DotKhams'); }
 
   createOrUpdateDotKham(val) {
-    debugger
     return this.http.post(`${this.BASE_URL}${this.tableName}` + '/CreateOrUpdateDotKham', val);
   }
 

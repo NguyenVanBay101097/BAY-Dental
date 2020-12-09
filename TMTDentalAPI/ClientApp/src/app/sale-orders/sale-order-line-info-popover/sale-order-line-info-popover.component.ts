@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -20,6 +21,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   listTeeths: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
   toolCateg: ToothCategoryBasic = new ToothCategoryBasic();
+  @Input() saleOrderState = 'draft';
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: any;
@@ -56,17 +58,19 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   reLoad(){
-    this.formGroup.patchValue(this.line);
-    if (this.line.toothCategory) {
-      this.loadTeethMap(this.line.toothCategory);
-      this.formGroup.get('toothCategory').patchValue(this.line.toothCategory);
+    console.log(this.saleOrderState);
+    var res = this.line.value;
+    if (res.toothCategory) {
+      this.loadTeethMap(res.toothCategory);
+      this.formGroup.get('toothCategory').patchValue(res.toothCategory);
+      this.filteredToothCategories = _.unionBy(this.filteredToothCategories, [res.toothCategory], 'id');
     }
-    if(this.line.diagnostic) {
-    this.formGroup.get('diagnostic').patchValue(this.line.Diagnostic);
+    if(res.Diagnostic) {
+    this.formGroup.get('diagnostic').patchValue(res.diagnostic);
     }
-    if (this.line.teeth) {
-      this.teethSelected = Object.assign([], this.line.teeth);
-    }
+    if (res.Teeth) {
+      this.teethSelected = Object.assign([], res.teeth);
+    }    
     // this.teethSelected = [...this.line.teeth];
     // if (this.line.get('toothCategory').value) {
     //   this.loadTeethMap(this.line.get('toothCategory').value)
@@ -80,6 +84,13 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   get ToothCategoryControl() {return this.formGroup.get('toothCategory').value; }
 
   loadToothCategories() {
+    // if (this.line.ToothCategory == null && this.filteredToothCategories.length > 0) {
+    //   const cate = this.filteredToothCategories.find(x => x.sequence === 1);
+    //   this.formGroup.get('toothCategory').patchValue(cate);
+    //   this.onChangeToothCategory(cate);
+    //   // this.line.ToothCategoryId').patchValue(cate.Id);
+    //   // this.line.ToothCategory').patchValue(cate);
+    // }
     return this.toothCategoryService.getAll().subscribe(
       result => {
         this.filteredToothCategories = result;      
@@ -123,6 +134,10 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
+    if(this.saleOrderState !== 'draft') {
+      return;
+    }
+    
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
