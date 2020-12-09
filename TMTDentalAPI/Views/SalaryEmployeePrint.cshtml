@@ -1,45 +1,40 @@
 ﻿@model Umbraco.Web.Models.ContentEditing.HrPayslipRunDisplay
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/custom.css" />
+<style>
+    .body {
+        font-size: 18px;
+    }
 
-    <style>
-        .body {
-            font-size: 18px;
+    .table td, .table th {
+        border-top: unset !important;
+    }
+
+    .active {
+        background-color: #adb5bd;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+        .page-break:first-child {
+            page-break-before: avoid;
         }
 
-        .table td, .table th {
-            border-top: unset !important;
-        }
+    .logo-image {
+        min-width: 150px;
+    }
+</style>
 
-        .active {
-            background-color: #adb5bd;
-        }
 
-        .page-break {
-            page-break-before: always;
-        }
-
-            .page-break:first-child {
-                page-break-before: avoid;
-            }
-
-        .logo-image {
-            min-width: 150px;
-        }
-    </style>
-</head>
-<body>
     @if (Model.Slips != null && Model.Slips.Count() > 0)
     {
-        var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+        
         foreach (var slip in Model.Slips)
         {
             <div class="body px-3 py-3 overflow-auto page-break">
@@ -77,7 +72,7 @@
                                     </tr>
                                     <tr>
                                         <td>Lương/tháng</td>
-                                        <td>@(slip.Employee != null && slip.Employee.Wage.HasValue ? string.Format(info, "{0:0,0}", slip.Employee.Wage.Value) : "0")</td>
+                                        <td>@(slip.Employee != null && slip.Employee.Wage.HasValue ? string.Format(culture, "{0:0,0}", slip.Employee.Wage.Value) : "0")</td>
                                     </tr>
                                     <tr>
                                         <td>Số ngày nghỉ/tháng</td>
@@ -145,62 +140,62 @@
                                 <tr>
                                     <td>1</td>
                                     <td>Lương cơ bản</td>
-                                    <td>@(slip.TotalBasicSalary.HasValue ? string.Format(info, "{0:0,0}", slip.TotalBasicSalary.Value) : "0")</td>
+                                    <td>@(slip.TotalBasicSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.TotalBasicSalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
                                     <td>Lương tăng ca</td>
-                                    <td>@(slip.OverTimeHourSalary.HasValue ? string.Format(info, "{0:0,0}", slip.OverTimeHourSalary.Value) : "0")</td>
+                                    <td>@(slip.OverTimeHourSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.OverTimeHourSalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
                                     <td>Lương làm thêm</td>
-                                    <td>@(slip.OverTimeDaySalary.HasValue ? string.Format(info, "{0:0,0}", slip.OverTimeDaySalary.Value) : "0")</td>
+                                    <td>@(slip.OverTimeDaySalary.HasValue ? string.Format(culture, "{0:0,0}", slip.OverTimeDaySalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>4</td>
                                     <td>Phụ cấp xác định</td>
-                                    <td>@(slip.Employee != null && slip.Employee.Allowance.HasValue ?  string.Format(info, "{0:0,0}", slip.Employee.Allowance.Value) : "0")</td>
+                                    <td>@(slip.Employee != null && slip.Employee.Allowance.HasValue ?  string.Format(culture, "{0:0,0}", slip.Employee.Allowance.Value) : "0")</td>
                                 <tr>
                                     <td>5</td>
                                     <td>Phụ cấp khác</td>
-                                    <td>@(slip.OtherAllowance.HasValue ? string.Format(info, "{0:0,0}", slip.OtherAllowance.Value) : "0")</td>
+                                    <td>@(slip.OtherAllowance.HasValue ? string.Format(culture, "{0:0,0}", slip.OtherAllowance.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>6</td>
                                     <td>Thưởng</td>
-                                    <td>@(slip.RewardSalary.HasValue ? string.Format(info, "{0:0,0}", slip.RewardSalary.Value) : "0")</td>
+                                    <td>@(slip.RewardSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.RewardSalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>7</td>
                                     <td>Phụ cấp lễ tết</td>
-                                    <td>@(slip.HolidayAllowance.HasValue ? string.Format(info, "{0:0,0}", slip.HolidayAllowance.Value) : "0")</td>
+                                    <td>@(slip.HolidayAllowance.HasValue ? string.Format(culture, "{0:0,0}", slip.HolidayAllowance.Value) : "0")</td>
                                 </tr>
 
                                 <tr>
                                     <td>8</td>
                                     <td>Hoa hồng</td>
-                                    <td>@(slip.CommissionSalary.HasValue ? string.Format(info, "{0:0,0}", slip.CommissionSalary.Value) : "0")</td>
+                                    <td>@(slip.CommissionSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.CommissionSalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>9</td>
                                     <td>Phạt</td>
-                                    <td>@(slip.AmercementMoney.HasValue ? string.Format(info, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
+                                    <td>@(slip.AmercementMoney.HasValue ? string.Format(culture, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
                                 </tr>
                                 <tr class="bg-info font-weight-bold">
                                     <td></td>
                                     <td>Tổng lương</td>
-                                    <td>@(slip.TotalSalary.HasValue ? string.Format(info, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
+                                    <td>@(slip.TotalSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
                                 </tr>
                                 <tr>
                                     <td>10</td>
                                     <td>Tạm ứng</td>
-                                    <td>@(slip.AdvancePayment.HasValue ? string.Format(info, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
+                                    <td>@(slip.AdvancePayment.HasValue ? string.Format(culture, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
                                 </tr>
                                 <tr class="bg-info font-weight-bold">
                                     <td></td>
                                     <td>Thực lĩnh</td>
-                                    <td>@(slip.NetSalary.HasValue ? string.Format(info, "{0:0,0}", slip.NetSalary.Value) : "0")</td>
+                                    <td>@(slip.NetSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.NetSalary.Value) : "0")</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -210,7 +205,7 @@
                             <tr>
                                 <th class="text-center">Người lập phiếu</th>
                                 <th class="text-center">
-                                    @string.Format(info, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                                    @string.Format(culture, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
                                     <p>Người lao động</p>
                                 </th>
                             </tr>
@@ -224,9 +219,9 @@
                             </tr>
                             <tr>
                                 <th class="text-center">
-                                    @(Model.User != null ? Model.User.Name.ToUpper(info) : "")
+                                    @(Model.User != null ? Model.User.Name.ToUpper(culture) : "")
                                 </th>
-                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(info) : "")</th>
+                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(culture) : "")</th>
                             </tr>
                         </table>
                     </div>
@@ -234,17 +229,3 @@
             </div>
         }
     }
-
-
-    <script defer>
-        function triggerPrint(event) {
-            window.removeEventListener('load', triggerPrint, false);
-            setTimeout(function () {
-                window.print();
-                setTimeout(function () { window.close(); }, 0);
-            }, 0);
-        }
-        window.addEventListener('load', triggerPrint, false);
-    </script>
-</body>
-</html>`

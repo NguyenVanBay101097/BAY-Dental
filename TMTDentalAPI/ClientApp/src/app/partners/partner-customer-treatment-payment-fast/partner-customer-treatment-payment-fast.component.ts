@@ -71,6 +71,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   discountDefault: DiscountDefault;
   valueSearch: string;
+  submitted = false;
+
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -207,11 +209,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
-        if (!this.saleOrderId) {      
-          setTimeout(()=>{
+        if (!this.saleOrderId) {
+          setTimeout(() => {
             this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
-          })  
-          
+          })
+
         }
 
         const control = this.formGroup.get('orderLines') as FormArray;
@@ -295,19 +297,27 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
+  get f() { return this.formGroup.controls; }
+
 
 
   actionPayment() {
-    if (!this.getPartner) {
-      this.notificationService.show({
-        content: "Chọn khách hàng trước khi thanh toán",
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
+    // if (!this.getPartner) {
+    //   this.notificationService.show({
+    //     content: "Chọn khách hàng trước khi thanh toán",
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
 
-      return false;
+    //   return false;
+    // }
+
+    this.submitted = true;
+
+    if (this.formGroup.invalid) {
+      return;
     }
 
     var val = this.formGroup.value;

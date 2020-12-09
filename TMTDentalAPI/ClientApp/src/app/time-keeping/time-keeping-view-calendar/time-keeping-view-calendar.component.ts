@@ -429,6 +429,8 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       var res = new TaoChamCongNguyenThangViewModel();
       res.year = date.getFullYear();
       res.month = date.getMonth() + 1;
+      res.from = this.intl.formatDate(this.monthStart, "yyyy-MM-dd");
+      res.to = this.intl.formatDate(this.monthEnd, "yyyy-MM-dd");
 
       this.timeKeepingService.createFullMonthTimeKeeping(res).subscribe(
         rs => {         

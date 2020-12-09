@@ -15,6 +15,7 @@ import { error } from 'protractor';
 import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
 import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
 import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -34,6 +35,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     private route: ActivatedRoute, private modalService: NgbModal,
     private notificationService: NotificationService,
     private hrPayslipService: HrPayslipService,
+    private printService: PrintService,
     private router: Router, private intlService: IntlService) { }
 
   ngOnInit() {
@@ -272,19 +274,9 @@ export class HrPayslipRunFormComponent implements OnInit {
     this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
       result => {
         if (result && result['html']) {
-          var popupWin = window.open('', '_blank', 'top=0,left=0,height=auto,width=auto');
-          popupWin.document.open();
-
-          popupWin.document.write(result['html']);
-          popupWin.document.close();
+          this.printService.printHtml(result['html']);
         } else {
-          this.notificationService.show({
-            content: "Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục",
-            hideAfter: 5000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: "error", icon: true }
-          });
+          alert('Có lỗi xảy ra, thử lại sau');
         }
       }
     )
