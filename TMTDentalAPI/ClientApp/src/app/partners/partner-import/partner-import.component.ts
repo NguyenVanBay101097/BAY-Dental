@@ -47,7 +47,6 @@ export class PartnerImportComponent implements OnInit {
         this.errors = result.errors;
       }
     }, (err) => {
-      this.showErrorService.show(err);
     });
   }
 }

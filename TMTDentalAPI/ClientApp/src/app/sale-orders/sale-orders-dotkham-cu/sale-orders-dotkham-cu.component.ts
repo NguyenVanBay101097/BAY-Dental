@@ -40,7 +40,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   differ: IterableDiffer<any>;
   webImageApi: string;
   webContentApi: string;
-  
+
   editModeActive = false;
 
   constructor(
@@ -140,6 +140,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   get employee() { return this.dotkhamForm.get('Doctor').value; }
   get reason() { return this.dotkhamForm.get('Reason').value; }
 
+  stopPropagation(e) {
+    e.stopPropagation();
+  }
+  
   loadRecord() {
     this.dotkhamForm.get('Date').setValue(new Date(this.dotkham.Date));
     this.dotkhamForm.get('Doctor').setValue(this.dotkham.Doctor);
@@ -363,7 +367,16 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       note: imgObj.Note,
       uploadId: imgObj.UploadId
     };
-    modalRef.componentInstance.partnerImages = [];
+    const imgs = this.imgsFA.value.map(x => {
+      return {
+        id: x.Id,
+        name: x.Name,
+        date: x.Date,
+        note: x.Note,
+        uploadId: x.UploadId
+      };
+    });
+    modalRef.componentInstance.partnerImages = imgs;
     modalRef.componentInstance.partnerImageSelected = img;
   }
 }

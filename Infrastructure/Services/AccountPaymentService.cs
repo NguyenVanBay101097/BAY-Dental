@@ -555,7 +555,7 @@ namespace Infrastructure.Services
             var total_amount = orders.Sum(x => x.Residual);
 
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = await saleLineObj.SearchQuery(x => saleOrderIds.Contains(x.OrderId))
+            var paymentRels = await saleLineObj.SearchQuery(x => saleOrderIds.Contains(x.OrderId) && x.AmountResidual != 0)
                 .Select(x => new SaleOrderLinePaymentRelDisplay
                 {
                     SaleOrderLineId = x.Id,

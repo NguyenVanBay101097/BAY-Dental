@@ -122,15 +122,27 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   loadEmployees() {
+    const state = {
+      filter: {
+        logic: 'and',
+        filters: [
+          { field: 'IsDoctor ', operator: 'eq', value: true }
+        ]
+      }
+    };
     const options = {
       select: 'Id,Name'
     };
-    this.employeeOdataService.getFetch({}, options).subscribe(
+    this.employeeOdataService.getFetch(state, options).subscribe(
       (result: any) => {
         this.initialListEmployees = result.data;
         this.filteredEmployees = this.initialListEmployees.slice(0, 20);
       }
     );
+  }
+
+  onEmployeeFilter(value) {
+    this.filteredEmployees = this.initialListEmployees.filter((s) => s.Name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20);
   }
 
   routeActive() {

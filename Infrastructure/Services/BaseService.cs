@@ -263,8 +263,7 @@ namespace Infrastructure.Services
             var userObj = GetService<IUserService>();
             var key = string.Format(DOMAIN_RULE_CACHE_KEY, UserId, model_name, mode);
             var tenant = _httpContextAccessor.HttpContext.GetTenant<AppTenant>();
-            if (tenant != null)
-                key = tenant.Hostname + "-" + key;
+            key = $"{(tenant != null ? tenant.Hostname : "localhost")}-{key}";
             var res = cache.GetOrCreate(key, entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);

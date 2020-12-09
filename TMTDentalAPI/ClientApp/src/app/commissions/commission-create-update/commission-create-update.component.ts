@@ -178,13 +178,6 @@ export class CommissionCreateUpdateComponent implements OnInit {
             id: result['id']
           },
         });
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
         this.temp_name = this.getValueForm("name");
       }, err => {
         console.log(err);

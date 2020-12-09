@@ -56,6 +56,29 @@ namespace Infrastructure.Services
                 line.PriceTax = 0;
                 line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+            }
+        }
+
+        public void ComputeResidual(IEnumerable<SaleOrderLine> self)
+        {
+            foreach (var line in self)
+            {
+                if (line.State == "draft")
+                {
+                    line.AmountPaid = 0;
+                    line.AmountResidual = 0;
+                    continue;
+                }
+
+                decimal amountPaid = 0;
+                foreach(var rel in line.SaleOrderLinePaymentRels)
+                {
+                    var payment = rel.Payment;
+                    if (payment != null && payment.State != "draft")
+                        amountPaid += (rel.AmountPrepaid ?? 0);
+                }
+
+                line.AmountPaid = amountPaid;
                 line.AmountResidual = line.PriceTotal - line.AmountPaid;
             }
         }

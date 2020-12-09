@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -31,11 +32,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IMyCache _cache;
+        private readonly AppTenant _tenant;
 
         public ApplicationRolesController(RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager,
-            IApplicationRoleFunctionService roleFunctionService,
+            IApplicationRoleFunctionService roleFunctionService, ITenant<AppTenant> tenant,
             IMyCache cache)
         {
             _roleManager = roleManager;
@@ -45,6 +47,7 @@ namespace TMTDentalAPI.Controllers
             _userManager = userManager;
             _roleFunctionService = roleFunctionService;
             _cache = cache;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -95,10 +98,17 @@ namespace TMTDentalAPI.Controllers
                 });
             }
 
-            var result = await _roleManager.CreateAsync(role);
-            if (!result.Succeeded)
+            try
             {
-                throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+                var result = await _roleManager.CreateAsync(role);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+                }
+            }
+            catch (Exception)
+            {
+                throw new Exception("Tên nhóm quyền đã tồn tại");
             }
 
             foreach (var userId in val.UserIds)
@@ -122,9 +132,9 @@ namespace TMTDentalAPI.Controllers
         private void ClearPermissionsCache(IEnumerable<string> userIds)
         {
             foreach(var userId in userIds) 
-                _cache.RemoveByPattern($"permissions-{userId}");
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{userId}");
         }
-
+       
         [HttpPut("{id}")]
         [CheckAccess(Actions = "System.ApplicationRole.Update")]
         public async Task<IActionResult> Update(string id, ApplicationRoleSave val)
@@ -145,10 +155,18 @@ namespace TMTDentalAPI.Controllers
                 });
             }
 
-            var result = await _roleManager.UpdateAsync(role);
+            try
+            {
+                var result = await _roleManager.UpdateAsync(role);
+            
             if (!result.Succeeded)
             {
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
+            }
+            }
+            catch (Exception)
+            {
+                throw new Exception("Tên nhóm quyền đã tồn tại");
             }
 
             var users = await _userManager.GetUsersInRoleAsync(role.Name);

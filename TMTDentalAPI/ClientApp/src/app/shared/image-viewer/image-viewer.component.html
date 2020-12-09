@@ -1,10 +1,9 @@
-<div class="o_viewer_content" (wheel)="scrollZoom($event)" (keydown.ArrowLeft)="showPrevious()"
-    (keydown.ArrowRight)="showNext()">
+<div class="o_viewer_content" (wheel)="scrollZoom($event)" (keydown.ArrowLeft)="showPrevious()" (keydown.ArrowRight)="showNext()">
     <div class="o_viewer-header">
         <span class="o_image_caption">
             <i class="fa fa-picture-o mr8"></i>
             {{partnerImageSelected.name}}
-            <a class="o_download_btn ml8 small" title="Download"
+            <a class="o_download_btn ml8 small" title="Download" target="_blank"
                 [href]="partnerImageSelected.uploadId" download>
                 <i class="fa fa-fw fa-download"></i>
             </a>
@@ -34,8 +33,7 @@
             </a>
         </div>
         <div class="btn-group">
-            <a class="o_viewer_toolbar_btn btn o_download_btn" download data-toggle="tooltip" data-placement="top"
-                title="Download" [href]="partnerImageSelected.uploadId">
+            <a class="o_viewer_toolbar_btn btn o_download_btn" download target="_blank" (click)="stopPropagation($event)" data-toggle="tooltip" data-placement="top" title="Download" [href]="partnerImageSelected.uploadId">
                 <i class="fa fa-fw fa-download"></i>
             </a>
         </div>

@@ -406,7 +406,7 @@ namespace Infrastructure.Services
             var payments = new List<SalaryPaymentDisplay>();
             foreach (var slip in slipRun.Slips)
             {
-                if (slip.SalaryPayment != null) throw new Exception(@$"{slip.Employee.Name} đã chi lương");
+                if (slip.SalaryPayment != null) continue;
                 payments.Add(new SalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),

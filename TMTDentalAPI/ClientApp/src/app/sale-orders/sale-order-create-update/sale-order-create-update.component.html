@@ -175,7 +175,7 @@
                                                     </td>
                                                     <td>
                                                         <span *ngIf="stateControl.value !== 'draft'">{{line.get('Employee').value?.Name }}</span>
-                                                        <kendo-combobox *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
+                                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                         </kendo-combobox>
                                                     </td>
                                                     <td class="text-right">
@@ -227,14 +227,14 @@
                                         <app-sale-order-apply-discount-default-dialog (discountFormGroup)="onApplyDiscount($event)" *ngIf="['draft', 'sent'].indexOf(saleOrder.State) !== -1">
                                         </app-sale-order-apply-discount-default-dialog>
                                         <button type="button" hasGroups [groups]="'sale.group_service_card'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCardDialog()" *ngIf="['draft', 'sent','sale'].indexOf(saleOrder.State) !== -1">
-                                            <span>thẻ tiền mặt</span>
+                                            <span>Thẻ tiền mặt</span>
                                         </button>
                                         <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'" class="btn btn-outline-primary btn-sm mx-1" (click)="showApplyCouponDialog()" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1">
-                                            <span>coupon, mã khuyến mãi</span>
+                                            <span>Coupon, mã khuyến mãi</span>
                                         </button>
                                         <button type="button" hasGroups [groups]="'sale.group_sale_coupon_promotion'" name="recompute_coupon_lines" placement="bottom" triggers="mouseenter:mouseleave" ngbPopover="Khi nhấn, phiếu điều trị sẽ kiểm tra và áp dụng những chương trình khuyến mãi có thể áp dụng."
-                                            popoverTitle="Cập nhật khuyến mãi" class="btn btn-outline-primary btn-sm mx-1" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1" (click)="applyPromotion()">
-                                            <span>Cập nhật khuyến mãi</span>
+                                            popoverTitle="Khuyến mãi" class="btn btn-outline-primary btn-sm mx-1" *ngIf="['draft', 'sent', 'sale'].indexOf(saleOrder.State) !== -1" (click)="applyPromotion()">
+                                            <span>Khuyến mãi</span>
                                         </button>
                                     </div>
                                     <table class="table-borderless table-text-right mr-4 table-payment-result">

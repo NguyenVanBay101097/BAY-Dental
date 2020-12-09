@@ -857,7 +857,8 @@ namespace Infrastructure.Services
 
         private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
         {
-            return self.OrderLines.Where(x => !x.IsRewardLine && (x.QtyInvoiced > 0)).ToList();
+            //ko dùng điều kiện QtyInvoiced > 0
+            return self.OrderLines.Where(x => !x.IsRewardLine).ToList(); 
         }
 
         public async Task ApplyPromotion(Guid id)
@@ -1407,6 +1408,7 @@ namespace Infrastructure.Services
 
                 saleLineObj._GetToInvoiceQty(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
+                saleLineObj.ComputeResidual(order.OrderLines);
 
                 await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
