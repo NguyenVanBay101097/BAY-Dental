@@ -192,13 +192,25 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var amount = this.paymentForm.get('amount').value || 0;
 
     var lines = this.paymentForm.get('saleOrderLinePaymentRels') as FormArray;
+    //tìm những line có số tiền âm sẽ cộng thêm vào amount;
+    var negativeLineControls = lines.controls.filter((value, index, array) => {
+      return value.get('amountResidual').value < 0;
+    });
+
+    negativeLineControls.forEach(control => {
+      var amountResidual = control.get('amountResidual').value || 0;
+      control.get('amountPrepaid').setValue(amountResidual);
+      amount += (amountResidual * -1);
+    });
 
     lines.controls.forEach(control => {
       var amountResidual = control.get('amountResidual').value || 0;
-      var amountPaid = Math.min(amount, amountResidual);
-      control.get('amountPrepaid').setValue(amountPaid);
-
-      amount -= amountPaid;
+      if (amountResidual > 0) {
+        var amountPaid = Math.min(amount, amountResidual);
+        control.get('amountPrepaid').setValue(amountPaid);
+  
+        amount -= amountPaid;
+      }
     });
   }
 
