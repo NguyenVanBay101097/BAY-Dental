@@ -134,7 +134,7 @@ export class HrSalaryPaymentComponent implements OnInit {
         }
         this.paymentService.onPrint(res.value).subscribe(
           result => {
-            this.printService.print2(result['html']);
+            this.printService.printHtml(result['html']);
           }
         );
 

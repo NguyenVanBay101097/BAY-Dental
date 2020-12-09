@@ -31,4 +31,20 @@ export class SaleOrdersOdataService extends ODataService {
     getDotKhamListIds(id: any) {
         return this.getFunction(id, 'GetDotKhamListIds');
     }
+
+    actionConvertToOrder(id: string) {
+        return this.getFunction(id, 'ActionConvertToOrder');
+    }
+
+    actionDone(ids: string[]) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionDone', ids);
+    }
+
+    actionConfirm(ids: string[]) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids);
+    }
+
+    onChangePartner(val: any) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/OnChangePartner', val);
+    }
 }

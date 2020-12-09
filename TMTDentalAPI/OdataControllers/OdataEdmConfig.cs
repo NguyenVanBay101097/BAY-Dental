@@ -97,6 +97,10 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SaleOrderViewModel>()
                 .Action("CreateDotKham")
                 .ReturnsFromEntitySet<DotKhamVm>("DotKhams");
+
+            builder.EntityType<SaleOrderViewModel>()
+                .Action("ActionConvertToOrder")
+                .Returns<SaleOrderBasic>();
             #endregion
 
             #region SaleOrderLines
