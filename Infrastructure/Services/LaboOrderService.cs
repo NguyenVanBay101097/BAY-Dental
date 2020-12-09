@@ -417,7 +417,7 @@ namespace Infrastructure.Services
             foreach (var order in self)
             {
                 if (!states.Contains(order.State))
-                    throw new Exception("Chỉ có thể xóa phiếu labo ở trạng thái nháp hoặc hủy bỏ.");
+                    throw new Exception("Chỉ có thể xóa phiếu labo ở trạng thái nháp.");
             }
             await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
             await DeleteAsync(self);

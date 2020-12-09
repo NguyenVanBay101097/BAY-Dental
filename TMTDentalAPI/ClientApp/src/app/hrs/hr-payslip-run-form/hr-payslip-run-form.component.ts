@@ -140,7 +140,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         });
     } else {
       this.hrPaysliprunService.ReComputeSalary(this.id).subscribe(() => {
-        this.notify('success', 'tính lương thành công');
+        this.notify('success', 'Tính lương thành công');
         this.loadRecord();
       });
     }
@@ -165,7 +165,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     } else {
       this.hrPaysliprunService.update(this.id, val)
         .subscribe(() => {
-          this.notify('success', 'lưu thành công');
+          this.notify('success', 'Lưu thành công');
           this.loadRecord();
         }, err => {
           console.log(err);
@@ -178,10 +178,10 @@ export class HrPayslipRunFormComponent implements OnInit {
       const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Xác nhận bảng lương';
       modalRef.componentInstance.body = 'Bạn chắc chắn xác nhận bảng lương?';
-      modalRef.componentInstance.body2 = ' bạn sẽ không thể điều chỉnh sau khi xác nhận.';
+      modalRef.componentInstance.body2 = ' Bạn sẽ không thể điều chỉnh sau khi xác nhận.';
       modalRef.result.then(() => {
         this.hrPaysliprunService.actionConfirm(this.id).subscribe(() => {
-          this.notify('success', 'bảng lương xác nhận thành công');
+          this.notify('success', 'Bảng lương xác nhận thành công');
           this.loadRecord();
         });
       });
@@ -292,8 +292,12 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onExport() {
     const payslipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
+    if (payslipIds.length === 0) {
+      this.notify('error', 'Phải chọn nhân viên trước khi xuất file');
+      return;
+    }
     this.hrPaysliprunService.ExportExcelFile(payslipIds).subscribe((res: any) => {
-      const filename = 'danh_sach_phieu_luong';
+      const filename = `Bang_Luong_${this.dateFC.value.getMonth() + 1}_${this.dateFC.value.getFullYear()}`;
       const newBlob = new Blob([res], {
         type:
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

@@ -35,7 +35,7 @@ export class CardTypeCreateUpdateComponent implements OnInit {
       basicPoint: 0,
       discount: [0, Validators.required],
       period: ['', Validators.required],
-      nbPeriod: 0,
+      nbPeriod: [0, Validators.required],
       pricelist: null
     });
 

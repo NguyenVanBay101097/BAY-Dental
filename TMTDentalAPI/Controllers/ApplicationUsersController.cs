@@ -51,7 +51,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "System.ApplicationUser.Read")]
-        public async Task<IActionResult> Get([FromQuery]ApplicationUserPaged val)
+        public async Task<IActionResult> Get([FromQuery] ApplicationUserPaged val)
         {
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
@@ -91,6 +91,8 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
+            if (val.UserName.Length > 256) throw new Exception("Tên tài khoản phải nhỏ hơn 256 kí tự");
+
             await _unitOfWork.BeginTransactionAsync();
             var partner = new Partner()
             {
@@ -107,7 +109,7 @@ namespace TMTDentalAPI.Controllers
 
             var user = _mapper.Map<ApplicationUser>(val);
             user.PartnerId = partner.Id;
-         
+
 
             foreach (var company in val.Companies)
             {
@@ -132,14 +134,22 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var result = await _userManager.CreateAsync(user);
-
-            if (!result.Succeeded)
+            try
             {
-                if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
-                    throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
-                else
-                    throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+                var result = await _userManager.CreateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                        throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                    else
+                        throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Tên tài khoản đã tồn tại");
             }
 
             if (!string.IsNullOrEmpty(val.Password))
@@ -162,6 +172,8 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+            if (val.UserName.Length > 256) throw new Exception("Tên tài khoản phải nhỏ hơn 256 kí tự");
+
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.ResCompanyUsersRels).Include(x => x.ResGroupsUsersRels)
                 .Include("ResGroupsUsersRels.Group").FirstOrDefaultAsync();
@@ -218,19 +230,27 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-                throw new Exception(string.Join(", ", updateResult.Errors.Select(x => x.Description)));
+            try
+            {
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                    throw new Exception(string.Join(", ", updateResult.Errors.Select(x => x.Description)));
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Tên tài khoản đã tồn tại");
+            }
 
             if (!string.IsNullOrEmpty(val.Password))
             {
                 var removeResult = await _userManager.RemovePasswordAsync(user);
                 if (!removeResult.Succeeded)
-                    throw new Exception($"Remove password fail");
+                    throw new Exception($"Xóa mật khẩu thất bại");
 
                 var addResult = await _userManager.AddPasswordAsync(user, val.Password);
                 if (!addResult.Succeeded)
-                    throw new Exception($"Add password fail");
+                    throw new Exception($"Thêm mật khẩu thất bại");
             }
 
             var partner = user.Partner;
@@ -336,7 +356,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-
         [HttpPost("[action]")]
         public async Task<IActionResult> SwitchCompany(UserSwitchCompanyVM val)
         {
@@ -360,39 +379,46 @@ namespace TMTDentalAPI.Controllers
             var errors = new List<string>();
             using (var stream = new MemoryStream(fileData))
             {
-                using (var package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
-
-                    for (int row = 2; row <= rowCount; row++)
+                    using (var package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
 
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        if (string.IsNullOrWhiteSpace(name))
-                            errs.Add("Tên người dùng là bắt buộc");
-
-                        var userName = Convert.ToString(worksheet.Cells[row, 4].Value);
-                        if (string.IsNullOrWhiteSpace(userName))
-                            errs.Add("Tên tài khoản là bắt buộc");
-
-                        if (errs.Any())
+                        for (int row = 2; row <= rowCount; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            if (string.IsNullOrWhiteSpace(name))
+                                errs.Add("Tên người dùng là bắt buộc");
+
+                            var userName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            if (string.IsNullOrWhiteSpace(userName))
+                                errs.Add("Tên tài khoản là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            data.Add(new ApplicationUserRowExcel
+                            {
+                                Name = name,
+                                PhoneNumber = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                Email = Convert.ToString(worksheet.Cells[row, 3].Value),
+                                UserName = userName,
+                                Password = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                Group = Convert.ToString(worksheet.Cells[row, 6].Value),
+                            });
                         }
-
-                        data.Add(new ApplicationUserRowExcel
-                        {
-                            Name = name,
-                            PhoneNumber = Convert.ToString(worksheet.Cells[row, 2].Value),
-                            Email = Convert.ToString(worksheet.Cells[row, 3].Value),
-                            UserName = userName,
-                            Password = Convert.ToString(worksheet.Cells[row, 5].Value),
-                            Group = Convert.ToString(worksheet.Cells[row, 6].Value),
-                        });
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 
@@ -422,11 +448,13 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = companyId });
                 user.PartnerId = partner.Id;
 
+                string existRoleName = string.Empty;
                 if (!string.IsNullOrEmpty(item.Group))
                 {
                     var excel_group = await _resGroupService.SearchQuery(x => x.Name == item.Group).FirstOrDefaultAsync();
                     if (excel_group != null)
                     {
+                        existRoleName = excel_group.Name;
                         var to_add = new List<Guid>() { excel_group.Id };
                         var add_dict = _resGroupService._GetTransImplied(to_add);
 
@@ -472,6 +500,16 @@ namespace TMTDentalAPI.Controllers
                 }
                 else
                     row_tmp++;
+
+                // add userRole
+                if(!string.IsNullOrEmpty(existRoleName))
+                {
+                    var result2 = await _userManager.AddToRoleAsync(user, existRoleName);
+                    if (!result2.Succeeded)
+                    {
+                        throw new Exception(string.Join(";", result2.Errors.Select(x => x.Description)));
+                    }
+                }
             }
 
             if (!errors.Any())

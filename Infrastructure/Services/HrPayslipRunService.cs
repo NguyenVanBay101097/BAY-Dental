@@ -368,7 +368,7 @@ namespace Infrastructure.Services
             payslip.WorkedDay = Math.Min(chamCongs.Where(x => x.Type == "work").Count() + (chamCongs.Where(x => x.Type == "halfaday").Count() / 2)
                 , DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault());
 
-            payslip.ActualLeavePerMonth = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay;
+            payslip.ActualLeavePerMonth = chamCongs.Where(x => x.Type == "off").Count() + (chamCongs.Where(x => x.Type == "halfaday").Count() / 2);
             payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
 
             payslip.OverTimeDay = Math.Max(payslip.WorkedDay.Value - (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()), 0);

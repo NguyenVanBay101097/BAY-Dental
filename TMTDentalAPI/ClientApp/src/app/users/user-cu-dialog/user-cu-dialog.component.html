@@ -1,15 +1,13 @@
 <header class="modal-header">
     <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="userForm" #form="ngForm" autocomplete="off">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="userForm.get('avatar').value"
-                    [width]="200" [height]="200">
+                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="userForm.get('avatar').value" [width]="200" [height]="200">
                 </app-image-file-upload>
                 <div class="oe_title">
                     <label class="o_form_label">Tên</label>
@@ -28,8 +26,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="tel" (focusout)="onFocusoutPhoneNumber($event)" class="form-control"
-                                        formControlName="phoneNumber" />
+                                    <input type="tel" (focusout)="onFocusoutPhoneNumber($event)" class="form-control" formControlName="phoneNumber" />
                                 </td>
                             </tr>
                             <tr>
@@ -39,8 +36,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="email" (focusout)="onFocusoutEmail($event)" class="form-control"
-                                        formControlName="email" />
+                                    <input type="email" (focusout)="onFocusoutEmail($event)" class="form-control" formControlName="email" />
                                 </td>
                             </tr>
                         </tbody>
@@ -54,8 +50,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="userName"
-                                        autocomplete="nope" />
+                                    <input type="text" class="form-control" id="userName" maxlength="256" formControlName="userName" autocomplete="nope" />
+                                    <label *ngIf="userNameFC.errors?.pattern" class="text-danger m-0" for="userName">Trường tài khoản là bắt buộc , không quá 256 kí tự và  không có khoảng trắng </label>
                                 </td>
                             </tr>
                             <tr>
@@ -65,8 +61,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="password" class="form-control" formControlName="passWord"
-                                        autocomplete="new-password" />
+                                    <input type="password" class="form-control" formControlName="passWord" autocomplete="new-password" />
                                 </td>
                             </tr>
                         </tbody>
@@ -88,8 +83,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'"
-                                        formControlName="companies">
+                                    <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'" formControlName="companies">
                                     </kendo-multiselect>
                                 </td>
                             </tr>
@@ -100,8 +94,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
-                                        formControlName="company" [valueField]="'id'">
+                                    <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="company" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -137,6 +130,5 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

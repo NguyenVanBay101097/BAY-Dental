@@ -17,13 +17,15 @@ namespace Infrastructure.Services
     {
         private readonly ITCareJobService _tcareJobService;
         private readonly AppTenant _tenant;
+        private readonly IMyCache _cache;
 
         public ResConfigSettingsService(IAsyncRepository<ResConfigSettings> repository, IHttpContextAccessor httpContextAccessor,
-            ITCareJobService tcareJobService, ITenant<AppTenant> tenant)
+            ITCareJobService tcareJobService, ITenant<AppTenant> tenant, IMyCache cache)
             : base(repository, httpContextAccessor)
         {
             _tcareJobService = tcareJobService;
             _tenant = tenant?.Value;
+            _cache = cache;
         }
 
         public virtual async Task<T> DefaultGet<T>()
@@ -197,6 +199,9 @@ namespace Infrastructure.Services
 
             //other fields
             await SetDefaultOtherFields(self, classified.Others);
+
+            //xử lý clear cache
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule");
         }
 
         private async Task _EnsureAdminHasGroupUser()

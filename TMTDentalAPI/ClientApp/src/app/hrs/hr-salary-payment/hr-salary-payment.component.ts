@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountJournalService } from 'src/app/shared/services/account-journal.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SalaryPaymentSave, SalaryPaymentSaveDefault, SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
@@ -29,7 +30,8 @@ export class HrSalaryPaymentComponent implements OnInit {
     private fb: FormBuilder,
     private journalService: AccountJournalService,
     private notificationService: NotificationService,
-    private printService: PrintService
+    private printService: PrintService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -106,27 +108,37 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   }
   onSave() {
-    const val = this.paymentFA.value;
-    this.paymentService.actionMultiSalaryPayment(val).subscribe(() => {
-      this.notify('success', 'xác nhận thành công');
-      this.activeModal.close();
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chi lương';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
+    modalRef.result.then(() => {
+      const val = this.paymentFA.value;
+      this.paymentService.actionMultiSalaryPayment(val).subscribe(() => {
+        this.notify('success', 'Xác nhận thành công');
+        this.activeModal.close();
+      });
     });
   }
 
   onSaveAndPrint() {
-    const val = this.paymentFA.value;
-    this.paymentService.actionMultiSalaryPayment(val).subscribe((res: any) => {
-      this.notify('success', 'xác nhận thành công');
-      this.activeModal.close();
-      if (!res.value) {
-        this.notify('error', 'không có phiếu chi lương để in');
-      }
-      this.paymentService.onPrint(res.value).subscribe(
-        result => {
-          this.printService.print2(result['html']);
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chi lương';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
+    modalRef.result.then(() => {
+      const val = this.paymentFA.value;
+      this.paymentService.actionMultiSalaryPayment(val).subscribe((res: any) => {
+        this.notify('success', 'Xác nhận thành công');
+        this.activeModal.close();
+        if (!res.value) {
+          this.notify('error', 'Không có phiếu chi lương để in');
         }
-      );
+        this.paymentService.onPrint(res.value).subscribe(
+          result => {
+            this.printService.print2(result['html']);
+          }
+        );
 
+      });
     });
   }
 
@@ -141,9 +153,9 @@ export class HrSalaryPaymentComponent implements OnInit {
   }
 
   onRemovePayment(i) {
-  this.paymentFA.removeAt(i);
-  console.log(this.paymentFA);
-  
+    this.paymentFA.removeAt(i);
+    console.log(this.paymentFA);
+
   }
 
 }

@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -33,9 +32,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true"
-                                        [data]="employeeList" #employeeCbx [valueField]="'id'"
-                                        [textField]="'name'">
+                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList" #employeeCbx [valueField]="'id'" [textField]="'name'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -67,13 +64,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div>
+                <div class="overflow-auto">
                     <div class="d-flex">
                         <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm thuốc</button>
-                        <app-toa-thuoc-sample-prescription 
-                            (nameSamplePrescription)="getNameSamplePrescription($event)"
-                            (itemSamplePrescription)="getItemSamplePrescription($event)"
-                            [item]="samplePrescriptionAdded">
+                        <app-toa-thuoc-sample-prescription (nameSamplePrescription)="getNameSamplePrescription($event)" (itemSamplePrescription)="getItemSamplePrescription($event)" [item]="samplePrescriptionAdded">
                         </app-toa-thuoc-sample-prescription>
                     </div>
                     <table class="table table-sm mt-2">
@@ -88,41 +82,33 @@
                                 <th>#</th>
                             </tr>
                         </thead>
-                        <tbody formArrayName="lines" >
+                        <tbody formArrayName="lines">
                             <ng-container *ngFor="let item of lines.controls; let i = index;">
                                 <tr [formGroupName]="i">
                                     <td>
-                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'"
-                                            formControlName="product" [kendoDropDownFilter]="filterSettings" [valueField]="'id'">
+                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'" formControlName="product" [kendoDropDownFilter]="filterSettings" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <kendo-numerictextbox style="width: 100px" class="mr-1"
-                                                [min]="0" [format]="'n0'" formControlName="numberOfTimes" 
-                                                (valueChange)="updateQuantity(item)">
+                                            <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0" [format]="'n0'" formControlName="numberOfTimes" (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
                                             <span>Lần</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <kendo-numerictextbox class="mr-1" style="width: 100px"
-                                                [min]="0" [format]="'n0'" formControlName="amountOfTimes" 
-                                                (valueChange)="updateQuantity(item)">
+                                            <kendo-numerictextbox class="mr-1" style="width: 100px" [min]="0" [format]="'n0'" formControlName="amountOfTimes" (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
                                             <span>Viên</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <kendo-numerictextbox style="width: 100px"
-                                            [min]="0" [format]="'n0'" formControlName="numberOfDays" 
-                                            (valueChange)="updateQuantity(item)">
+                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'" formControlName="numberOfDays" (valueChange)="updateQuantity(item)">
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
-                                        <kendo-numerictextbox style="width: 100px"
-                                            [min]="0" [format]="'n0'" formControlName="quantity">
+                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'" formControlName="quantity">
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
@@ -152,6 +138,5 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
     <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

@@ -1,4 +1,4 @@
 <div class="custom-file">
-    <input type="file" class="custom-file-input" id="customFile" lang="vi" (change)="onChange($event)">
+    <input type="file" [accept]="accept || '*'" class="custom-file-input" id="customFile" lang="vi" (change)="onChange($event)">
     <label class="custom-file-label" for="customFile">Chọn file</label>
 </div>
