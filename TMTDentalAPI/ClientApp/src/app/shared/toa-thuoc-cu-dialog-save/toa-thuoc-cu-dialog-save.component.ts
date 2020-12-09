@@ -167,6 +167,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   onSave(print) {
+    if (!this.toaThuocForm.valid) {
+      return false;
+    }
+
     var i = 0;
     while (i < this.lines.value.length) {
       if (this.lines.value[i]['product'] == null) {
@@ -179,11 +183,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     // controls.forEach(control => {
     //   this.lines.removeAt(this.lines.controls.findIndex(x => image.id === 502))
     // });
-  
-
-    if (!this.toaThuocForm.valid) {
-      return false;
-    }
     
     var val = Object.assign({}, this.toaThuocForm.value);
     val.employeeId = val.employee ? val.employee.id : null;

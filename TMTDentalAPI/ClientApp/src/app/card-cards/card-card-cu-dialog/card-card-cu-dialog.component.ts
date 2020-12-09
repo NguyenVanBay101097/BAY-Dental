@@ -40,7 +40,7 @@ export class CardCardCuDialogComponent implements OnInit {
 
     this.formGroup = this.fb.group({
       barcode: null,
-      partner: this.partner,
+      partner: [this.partner, Validators.required],
       type: [null, Validators.required],
     });
 

@@ -10,6 +10,7 @@ import { CompanyService } from '../company.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-company-cu-dialog',
@@ -50,8 +51,8 @@ export class CompanyCuDialogComponent implements OnInit {
       city: null,
       district: null,
       ward: null,
-      email: null,
-      phone: null,
+      email: [null],
+      phone: [null],
       logo: null
     });
 

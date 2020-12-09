@@ -175,7 +175,7 @@
                                                     </td>
                                                     <td>
                                                         <span *ngIf="stateControl.value !== 'draft'">{{line.get('Employee').value?.Name }}</span>
-                                                        <kendo-combobox *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
+                                                        <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)" *ngIf="stateControl.value === 'draft'" style="width:100%;" [data]="filteredEmployees" [textField]="'Name'" #employeeCbx formControlName="Employee" [valueField]="'Id'">
                                                         </kendo-combobox>
                                                     </td>
                                                     <td class="text-right">

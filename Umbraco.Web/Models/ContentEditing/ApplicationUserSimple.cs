@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -26,7 +27,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Id { get; set; }
 
         public string Name { get; set; }
-
         public string UserName { get; set; }
 
         public string Password { get; set; }

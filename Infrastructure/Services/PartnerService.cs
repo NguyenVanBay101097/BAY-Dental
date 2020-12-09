@@ -950,6 +950,8 @@ namespace Infrastructure.Services
 
             using (var stream = new MemoryStream(fileData))
             {
+                try
+                {
                 using (var package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -1061,6 +1063,12 @@ namespace Infrastructure.Services
                             continue;
                         }
                     }
+                }
+
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 

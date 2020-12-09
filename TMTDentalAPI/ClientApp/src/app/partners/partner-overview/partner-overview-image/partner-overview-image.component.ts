@@ -47,6 +47,10 @@ export class PartnerOverviewImageComponent implements OnInit {
     }
   }
 
+  stopPropagation(e) {
+    e.stopPropagation();
+  }
+
   addPartnerImages(e) {
     var file_node = e.target;
     var count = file_node.files.length;
@@ -100,7 +104,7 @@ export class PartnerOverviewImageComponent implements OnInit {
 
   viewImage(partnerImage: PartnerImageBasic) {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    modalRef.componentInstance.partnerImages = this.imageViewModels;
+    modalRef.componentInstance.partnerImages = this.imagesPreview;
     modalRef.componentInstance.partnerImageSelected = partnerImage;
   }
 
