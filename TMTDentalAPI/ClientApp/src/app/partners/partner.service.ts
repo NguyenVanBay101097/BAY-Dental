@@ -118,6 +118,25 @@ export class PartnerCustomerReportOutput {
     customerNew: number;
 }
 
+export class CustomerStatisticsInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class CustomerStatisticsDetails {
+    location: string;
+    customerTotal: number;
+    customerOld: number;
+    customerNew: number;
+}
+
+export class CustomerStatisticsOutput {
+    customerTotal: number;
+    customerOld: number;
+    customerNew: number;
+    details: CustomerStatisticsDetails;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -442,6 +461,10 @@ export class PartnerService {
 
     getPartnerCustomerReport(data: any) {
         return this.http.post<PartnerCustomerReportOutput>(this.baseApi + this.apiUrl + '/PartnerCustomerReport', data);
+    }
+
+    getCustomerStatistics(data: any) {
+        return this.http.post<CustomerStatisticsOutput>(this.baseApi + this.apiUrl + '/CustomerStatistics', data);
     }
 }
 

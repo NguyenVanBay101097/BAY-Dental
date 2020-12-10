@@ -504,5 +504,10 @@ namespace Infrastructure.Services
                 return result;
             }
         }
+
+        public void GetReportOldNewPartner()
+        {
+
+        }
     }
 }
