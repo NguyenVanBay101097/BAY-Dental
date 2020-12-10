@@ -6,10 +6,14 @@
     </div>
     <div>
         <div class="o_content">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
                 <!-- <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column> -->
                 <kendo-grid-column field="name" title="Số phiếu" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" [routerLink]="['/sale-quotations/form']" [queryParams]="{ id: dataItem.id}">
+                            {{dataItem.name}}
+                        </a>
+                    </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="dateOrder" title="Ngày tư vấn" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

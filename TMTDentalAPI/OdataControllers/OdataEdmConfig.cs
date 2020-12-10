@@ -195,6 +195,9 @@ namespace TMTDentalAPI.OdataControllers
                 .Function("GetPrint")
                 .Returns<PrintData>();
             #endregion
+            #region ApplicationUser
+            builder.EntitySet<ApplicationUserViewModel>("ApplicationUsers");
+            #endregion
 
             #region ComplexType
             builder.ComplexType<ApplicationUserSimple>();
@@ -226,10 +229,6 @@ namespace TMTDentalAPI.OdataControllers
 
 
             #endregion
-
-
-
-
 
             return builder.GetEdmModel();
         }

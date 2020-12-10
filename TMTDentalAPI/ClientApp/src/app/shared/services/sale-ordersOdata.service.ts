@@ -33,18 +33,23 @@ export class SaleOrdersOdataService extends ODataService {
     }
 
     actionConvertToOrder(id: string) {
-        return this.getFunction(id, 'ActionConvertToOrder');
+        return this.postAction('ActionConvertToOrder', null, id);
     }
 
     actionDone(ids: string[]) {
-        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionDone', ids);
+        return this.postAction('OnChangePartner',{Ids: ids});
     }
 
     actionConfirm(ids: string[]) {
-        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/ActionConfirm', ids);
+        return this.postAction('OnChangePartner',{Ids: ids});
     }
 
     onChangePartner(val: any) {
-        return this.http.post(`${this.BASE_URL}${this.tableName}` + '/OnChangePartner', val);
+        return this.postAction('OnChangePartner',val);
+
+    }
+
+    postAction(action: string, val: any, id = null) {
+        return this.http.post(`${this.BASE_URL}${this.tableName}${id?`(${id})`:''}` + `/${action}`, val);
     }
 }
