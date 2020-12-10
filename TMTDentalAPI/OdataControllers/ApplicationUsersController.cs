@@ -14,7 +14,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/[controller]")]
     [ApiController]
     public class ApplicationUsersController : BaseController
     {
