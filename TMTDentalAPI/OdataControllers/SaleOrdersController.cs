@@ -180,30 +180,30 @@ namespace TMTDentalAPI.OdataControllers
             return Ok(basic);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        [HttpPost]
+        public async Task<IActionResult> ActionDone([FromBody] ActionDonePar val)
         {
-            if (ids == null || ids.Count() == 0)
+            if (val.Ids == null || val.Ids.Count() == 0)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ActionDone(ids);
+            await _saleOrderService.ActionDone(val.Ids);
             _unitOfWork.Commit();
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        [HttpPost]
+        public async Task<IActionResult> ActionConfirm([FromBody] ActionDonePar val)
         {
-            if (ids == null || ids.Count() == 0)
+            if (val.Ids == null || val.Ids.Count() == 0)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _saleOrderService.ActionConfirm(ids);
+            await _saleOrderService.ActionConfirm(val.Ids);
             _unitOfWork.Commit();
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> OnChangePartner(SaleOrderOnChangePartner val)
+        [HttpPost]
+        public async Task<IActionResult> OnChangePartner([FromBody]SaleOrderOnChangePartner val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

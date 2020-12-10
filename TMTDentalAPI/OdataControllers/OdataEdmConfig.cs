@@ -101,6 +101,19 @@ namespace TMTDentalAPI.OdataControllers
             builder.EntityType<SaleOrderViewModel>()
                 .Action("ActionConvertToOrder")
                 .Returns<SaleOrderBasic>();
+
+            builder.EntityType<SaleOrderViewModel>()
+                .Collection
+                .Action("ActionDone");
+
+            builder.EntityType<SaleOrderViewModel>()
+              .Collection
+              .Action("ActionConfirm");
+
+            builder.EntityType<SaleOrderViewModel>()
+                .Collection
+                .Action("OnChangePartner");
+
             #endregion
 
             #region SaleOrderLines
@@ -167,9 +180,9 @@ namespace TMTDentalAPI.OdataControllers
                  .Action("GetAllDotKhamForSaleOrder")
                  .Returns<bool>();
 
-           builder.EntityType<DotKhamVm>()
-          .Function("GetInfo")
-          .Returns<DotKhamDisplayVm>();
+            builder.EntityType<DotKhamVm>()
+           .Function("GetInfo")
+           .Returns<DotKhamDisplayVm>();
 
 
 
@@ -209,7 +222,7 @@ namespace TMTDentalAPI.OdataControllers
             //builder.ComplexType<DotKhamSaveVm>();
             builder.ComplexType<PartnerImageDisplay>();
             builder.ComplexType<DotKhamLineSaveVM>();
-
+            builder.ComplexType<SaleOrderOnChangePartnerResult>();
 
 
             #endregion
