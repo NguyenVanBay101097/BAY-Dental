@@ -7,13 +7,14 @@ namespace Infrastructure.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "IsFast",
+                table: "SaleOrders",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<Guid>(
                 name: "JournalId",
-                table: "SaleOrders",
-                nullable: true);
-
-            migrationBuilder.AddColumn<bool>(
-                name: "isFast",
                 table: "SaleOrders",
                 nullable: true);
 
@@ -42,11 +43,11 @@ namespace Infrastructure.Data.Migrations
                 table: "SaleOrders");
 
             migrationBuilder.DropColumn(
-                name: "JournalId",
+                name: "IsFast",
                 table: "SaleOrders");
 
             migrationBuilder.DropColumn(
-                name: "isFast",
+                name: "JournalId",
                 table: "SaleOrders");
         }
     }

@@ -188,7 +188,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         if (this.saleOrderId) {
           return this.saleOrderService.get(this.saleOrderId);
         } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
+          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' , IsFast: true });
         }
       })).subscribe(result => {       
         this.saleOrder = result;
@@ -213,12 +213,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           }
         }
 
-        if (!this.saleOrderId) {
-          setTimeout(() => {
-            this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
-          })
-
-        }
 
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();

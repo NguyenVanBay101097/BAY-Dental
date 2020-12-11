@@ -6332,6 +6332,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsFast")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsQuotation")
                         .HasColumnType("bit");
 
@@ -6374,9 +6377,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool?>("isFast")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
