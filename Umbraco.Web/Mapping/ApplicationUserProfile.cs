@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<ApplicationUser, ApplicationUserSimple>();
             CreateMap<ApplicationUser, ApplicationUserBasic>();
+            CreateMap<ApplicationUser, ApplicationUserViewModel>();
 
             CreateMap<ApplicationUserDisplay, ApplicationUser>()
                 .ForMember(x => x.Id, x => x.Ignore())

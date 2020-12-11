@@ -30,15 +30,20 @@ namespace TMTDentalAPI.OdataControllers
         private readonly ISaleOrderService _saleOrderService;
         private readonly IDotKhamService _dotKhamService;
         private readonly IMapper _mapper;
+        private readonly IProductPricelistService _pricelistService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly ICardCardService _cardService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IDotKhamService dotKhamService,
+            IProductPricelistService pricelistService, ICardCardService cardService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _saleOrderService = saleOrderService;
             _dotKhamService = dotKhamService;
             _mapper = mapper;
+            _pricelistService = pricelistService;
             _unitOfWork = unitOfWork;
+            _cardService = cardService;
         }
 
         [EnableQuery]
@@ -162,6 +167,66 @@ namespace TMTDentalAPI.OdataControllers
             _unitOfWork.Commit();
 
             return Ok(viewdotkham);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionConvertToOrder([FromODataUri]Guid key)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var order = await _saleOrderService.ActionConvertToOrder(key);
+            _unitOfWork.Commit();
+
+            var basic = _mapper.Map<SaleOrderBasic>(order);
+            return Ok(basic);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionDone([FromBody] ActionDonePar val)
+        {
+            if (val.Ids == null || val.Ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionDone(val.Ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActionConfirm([FromBody] ActionDonePar val)
+        {
+            if (val.Ids == null || val.Ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleOrderService.ActionConfirm(val.Ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OnChangePartner([FromBody]SaleOrderOnChangePartner val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var res = new SaleOrderOnChangePartnerResult();
+            if (val.PartnerId.HasValue)
+            {
+                //tìm bảng giá mặc định
+                var pricelist = await _pricelistService.SearchQuery(x => !x.CompanyId.HasValue, orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+                if (pricelist == null)
+                {
+                    var companyId = CompanyId;
+                    pricelist = await _pricelistService.SearchQuery(x => x.CompanyId == companyId, orderBy: x => x.OrderBy(s => s.Sequence)).FirstOrDefaultAsync();
+                }
+
+                if (pricelist != null)
+                    res.Pricelist = _mapper.Map<ProductPricelistBasic>(pricelist);
+
+                var card = await _cardService.GetValidCard(val.PartnerId.Value);
+                if (card != null && card.Type.PricelistId.HasValue)
+                    res.Pricelist = await _pricelistService.GetBasic(card.Type.PricelistId.Value);
+            }
+
+            return Ok(res);
         }
     }
 }

@@ -66,6 +66,9 @@ import { PrintSaleOrderComponent } from './print-sale-order/print-sale-order.com
 import { PermissionDirective } from './permission.directive';
 import { PrintSalaryEmpComponent } from './print-salary-emp/print-salary-emp.component';
 import { SalaryPaymentBindingDirective } from './directives/salary-payment-binding.directive';
+import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-service/sale-order-list-service.component';
+import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
+import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 
 @NgModule({
   declarations: [
@@ -128,7 +131,11 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
     PermissionDirective,
     PrintSalaryEmpComponent,
     ProductServiceCuDialogComponent, 
-    SalaryPaymentBindingDirective
+    SalaryPaymentBindingDirective,
+    SaleOrderListServiceComponent,
+    SaleOrderTeethPopoverComponent,
+    SaleOrderLineDiscountOdataPopoverComponent,
+
   ],
   exports: [
     ConfirmDialogComponent,
@@ -183,7 +190,10 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
     PrintSaleOrderComponent,
     PermissionDirective,
     PrintSaleOrderComponent,
-    SalaryPaymentBindingDirective
+    SalaryPaymentBindingDirective,
+    SaleOrderListServiceComponent,
+    SaleOrderTeethPopoverComponent,
+    SaleOrderLineDiscountOdataPopoverComponent
   ],
   imports: [
     CommonModule,

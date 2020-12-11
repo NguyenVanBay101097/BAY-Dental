@@ -54,7 +54,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPut("{id}/[action]")]
-        [CheckAccess(Actions = "Salary.HrPayslipRun.Print")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
         public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
@@ -200,6 +200,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
         public async Task<IActionResult> CheckExist([FromQuery] DateTime? date)
         {
             if (date == null)
@@ -211,6 +212,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
         public async Task<IActionResult> ExportExcelFile(IEnumerable<Guid> payslipIds)
         {
             CultureInfo cul = CultureInfo.CurrentCulture;
