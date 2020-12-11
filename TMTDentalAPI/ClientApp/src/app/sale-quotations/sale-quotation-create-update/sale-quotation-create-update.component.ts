@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { from } from 'rxjs';
 import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
 import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
@@ -22,28 +23,26 @@ import { UserOdataService, UserSimple } from 'src/app/shared/services/user-odata
 })
 export class SaleQuotationCreateUpdateComponent implements OnInit {
   // các source để filter
-  sourceUsers: UserSimple[] = [];
+  sourceEmployees: any = [];
   //khai báo các biến
   formGroup: FormGroup;
   saleOrderId: string;
-  filteredUsers: UserSimple[];
   saleOrder: any = {};
   partnerId: string;
   filteredToothCategories: any[];
   initialListTeeths: any[];
-
-  @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
+  filteredEmployees: any[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserOdataService,
     private route: ActivatedRoute,
     private saleOrderService: SaleOrdersOdataService,
     private intlService: IntlService,
     private router: Router,
     private notificationService: NotificationService,
     private toothCategoryOdataService: ToothCategoryOdataService,
-    private teethOdataService: TeethOdataService
+    private teethOdataService: TeethOdataService,
+    private employeeService: EmployeesOdataService
   ) { }
 
   ngOnInit() {
@@ -60,27 +59,17 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       Card: null,
       Pricelist: [null],
       IsQuotation: true,
+      Order: null
     });
 
     this.routeActive();
-    this.loadUsers();
     this.loadToothCategories();
     this.loadTeethList();
-
-    this.userCbx.filterChange.asObservable().pipe(
-      switchMap(value => from([this.sourceUsers]).pipe(
-        tap(() => this.userCbx.loading = true),
-        debounceTime(300),
-        map((data) => this.sourceUsers.filter((s) => s.Name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20))
-      ))
-    )
-      .subscribe(x => {
-        this.filteredUsers = x;
-        this.userCbx.loading = false;
-      });
+    this.loadEmployees();
   }
 
   get partner() { return this.formGroup.get('Partner').value }
+  get order() { return this.formGroup.get('Order').value }
 
   get customerId() {
     if (this.partnerId) {
@@ -121,8 +110,8 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
         let dateOrder = new Date(result.DateOrder);
         this.formGroup.get("dateOrderObj").patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
         }
 
         const control = this.formGroup.get('OrderLines') as FormArray;
@@ -136,16 +125,26 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       });
   }
 
-  loadUsers() {
+  onEmployeeFilter(value) {
+    this.filteredEmployees = this.sourceEmployees.filter((s) => s.Name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20);
+  }
+
+  loadEmployees() {
     const state = {
+      filter: {
+        logic: 'and',
+        filters: [
+          { field: 'IsDoctor ', operator: 'eq', value: true }
+        ]
+      }
     };
     const options = {
       select: 'Id,Name'
     };
-    this.userService.fetch2(state, options).subscribe(
+    this.employeeService.getFetch(state, options).subscribe(
       (result: any) => {
-        this.sourceUsers = result.data;
-        this.filteredUsers = this.sourceUsers.slice(0, 20);
+        this.sourceEmployees = result.data;
+        this.filteredEmployees = this.sourceEmployees.slice(0, 20);
       }
     );
   }
@@ -285,6 +284,10 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
+        }
 
         let control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();

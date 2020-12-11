@@ -5,8 +5,8 @@ import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { DateInputModule } from '@progress/kendo-angular-dateinputs';
 import { IntlService, load } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { from, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/operators';
 import { offset } from '@progress/kendo-date-math';
 import { Router } from '@angular/router';
 import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged, ChamCongSave, TaoChamCongNguyenThangViewModel } from '../time-keeping.service';
@@ -29,6 +29,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   title: string = "Bảng chấm công";
+  sourceEmployees: EmployeeSimple[] = [];
   listEmployeies: EmployeeSimple[] = [];
   flag = true;
   listTimeSheetByEmpId: { [id: string]: TimeSheetEmployee[] } = {};
@@ -67,33 +68,42 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   searchEmployee(search?: string) {
     var paged = new EmployeePaged();
-    paged.limit = 20;
+    paged.limit = 2000;
     paged.offset = 0;
     paged.search = search ? search : '';
     return this.employeeService.getEmployeeSimpleList(paged);
   }
 
   empChange(event) {
-    var filter;
     if (event) {
-      filter = event.name;
+      this.listEmployeies = [event];
+      // if (this.listEmployeies) {
+      //   this.loadAllChamCong(this.listEmployeies);
+      // }
     } else {
-      filter = "";
+      this.listEmployeies = this.sourceEmployees;
+      // var filter;
+      // if (event) {
+      //   filter = event.name;
+      // } else {
+      //   filter = "";
+      // }
+      // this.searchEmployee(filter).subscribe(
+      //   result => {
+      //     this.listEmployeies = result;
+      //     if (this.listEmployeies) {
+      //       this.loadAllChamCong(this.listEmployeies);
+      //     }
+      //   }
+      // );
     }
-    this.searchEmployee(filter).subscribe(
-      result => {
-        this.listEmployeies = result;
-        if (this.listEmployeies) {
-          this.loadAllChamCong(this.listEmployeies);
-        }
-      }
-    );
   }
 
   loadEmployee() {
     this.searchEmployee().subscribe(
       result => {
         this.listEmployeies = result;
+        this.sourceEmployees = result;
         if (this.listEmployeies) {
           this.loadAllChamCong(this.listEmployeies);
         }
@@ -335,7 +345,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   }
 
-  deleteTimeKeeping(evt,date,employee) {
+  deleteTimeKeeping(evt, date, employee) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa chấm công vào ${this.intl.formatDate(new Date(date), "EEEE dd/MM/yyyy")} của nhân viên ${employee.name}`;
     modalRef.componentInstance.title = "Xóa chấm công";
@@ -410,7 +420,7 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     });
   }
 
-  checkOverTime(value){
+  checkOverTime(value) {
     if (value !== undefined) {
       if (value.overTime) {
         return true;
@@ -433,15 +443,14 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
       res.to = this.intl.formatDate(this.monthEnd, "yyyy-MM-dd");
 
       this.timeKeepingService.createFullMonthTimeKeeping(res).subscribe(
-        rs => {         
+        rs => {
           var val = [];
-          if(rs.length > 0)
-          {
+          if (rs.length > 0) {
             rs.forEach(item => {
               val.push(item);
-            });   
+            });
           }
-                        
+
           this.loadAllChamCong(val);
           this.notificationService.show({
             content: 'Thành công',

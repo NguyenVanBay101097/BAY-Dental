@@ -336,12 +336,17 @@ namespace Infrastructure.Services
             var commissionObj = GetService<ICommissionSettlementService>();
             var advanceObj = GetService<ISalaryPaymentService>();
             date = date.HasValue ? date : DateTime.Now;
+            var soCongNguyenNgay = chamCongs.Where(x => x.Type == "work").Sum(x => 1M);
+            var soCongNuaNgay = chamCongs.Where(x => x.Type == "halfaday").Sum(x => 0.5M);
+            var soCongNghi = chamCongs.Where(x => x.Type == "off").Sum(x => 1M);
+            var soCongThucTe = soCongNguyenNgay + soCongNuaNgay;
 
             var emp = payslip.Employee;
             if (emp == null)
             {
                 emp = await empObj.GetByIdAsync(payslip.EmployeeId);
             }
+            var soCongChuanThang = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault();
 
             if (chamCongs == null)
             {
@@ -363,15 +368,14 @@ namespace Infrastructure.Services
             && c.Date.Year == date.Value.Year).ToListAsync();
             }
 
-            payslip.DaySalary = (emp.Wage.GetValueOrDefault() / (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()));
+            payslip.DaySalary = (emp.Wage.GetValueOrDefault() / soCongChuanThang);
 
-            payslip.WorkedDay = Math.Min(chamCongs.Where(x => x.Type == "work").Count() + (chamCongs.Where(x => x.Type == "halfaday").Count() / 2)
-                , DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault());
+            payslip.WorkedDay = Math.Min(soCongThucTe, soCongChuanThang);
+            
+            payslip.ActualLeavePerMonth = soCongNghi + soCongNuaNgay;
+            payslip.LeavePerMonthUnpaid = soCongChuanThang - payslip.WorkedDay;
 
-            payslip.ActualLeavePerMonth = chamCongs.Where(x => x.Type == "off").Count() + (chamCongs.Where(x => x.Type == "halfaday").Count() / 2);
-            payslip.LeavePerMonthUnpaid = DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - payslip.WorkedDay - emp.LeavePerMonth.GetValueOrDefault();
-
-            payslip.OverTimeDay = Math.Max(payslip.WorkedDay.Value - (DateTime.DaysInMonth(date.Value.Year, date.Value.Month) - emp.LeavePerMonth.GetValueOrDefault()), 0);
+            payslip.OverTimeDay = Math.Max(soCongThucTe - soCongChuanThang, 0);
             payslip.TotalBasicSalary = Math.Round(payslip.WorkedDay.GetValueOrDefault() * payslip.DaySalary.GetValueOrDefault(), 0);
 
             payslip.OverTimeHour = chamCongs.Where(x => x.OverTime == true).Sum(x => x.OverTimeHour.GetValueOrDefault());

@@ -401,6 +401,7 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
                 return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
                     $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
                     $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";

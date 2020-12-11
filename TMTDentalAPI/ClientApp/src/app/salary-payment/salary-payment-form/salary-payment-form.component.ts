@@ -17,6 +17,7 @@ import { debounceTime, switchMap, tap } from "rxjs/operators";
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -31,8 +32,8 @@ export class SalaryPaymentFormComponent implements OnInit {
   filteredJournals: any = [];
   filteredEmployees: EmployeeSimple[] = [];
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0 ).getDate())).toDateString());
-  public maxDateTime : Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
   submitted = false;
@@ -59,10 +60,10 @@ export class SalaryPaymentFormComponent implements OnInit {
       Amount: [0, Validators.required],
       Reason: null,
       Type: 'advance',
-      CompanyId:null
+      CompanyId: null
     });
 
-    
+
     setTimeout(() => {
       this.loadFilteredJournals();
       this.loadEmployees();
@@ -78,8 +79,8 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadData() {
     this.salaryPaymentService.getIdSP(this.id).subscribe(
-      (result) => {   
-        this.salaryPayment = result;     
+      (result) => {
+        this.salaryPayment = result;
         let date = new Date(result.Date);
         this.formGroup.get('DateObj').patchValue(date);
         this.formGroup.patchValue(result);
@@ -103,7 +104,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     );
   }
 
-  defaultGet() {  
+  defaultGet() {
     this.formGroup.get('DateObj').patchValue(new Date());
   }
 
@@ -128,7 +129,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     );
   }
 
-  onChangeDate(date){
+  onChangeDate(date) {
     console.log(date);
   }
 
@@ -158,7 +159,7 @@ export class SalaryPaymentFormComponent implements OnInit {
       });
   }
 
-  onSave() {
+  onSave$() {
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
@@ -171,31 +172,26 @@ export class SalaryPaymentFormComponent implements OnInit {
     salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
     salaryPayment.Type = salaryPayment.Type;
     salaryPayment.CompanyId = this.authService.userInfo.companyId;
-    // this.activeModal.close(salaryPayment);
-    if (this.id) {
-      this.salaryPaymentService.update(this.id, salaryPayment).subscribe(
-        () => {
-          this.id = this.id;
-          this.loadData();
-          this.printSalaryPayment(this.id);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    } else {
-      this.salaryPaymentService.create(salaryPayment).subscribe(
-        (result : any) => {
-          this.id = result.Id;
-          this.loadData();
-          this.printSalaryPayment(this.id);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
 
+    if (this.id) {
+      return this.salaryPaymentService.update(this.id, salaryPayment);
+    } else {
+      return this.salaryPaymentService.create(salaryPayment);
+    }
+  }
+
+  onSave() {
+    const save$ = this.onSave$() as Observable<any>;
+    save$.subscribe((res: any) => {
+      if (this.id) {
+        this.id = this.id;
+      } else {
+        this.id = res.Id;
+      }
+      this.loadData();
+      this.activeModal.close()
+      this.printSalaryPayment(this.id);
+    });
   }
 
   actionConfirm() {
@@ -204,28 +200,54 @@ export class SalaryPaymentFormComponent implements OnInit {
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
     modalRef.result.then(
       () => {
-        this.salaryPaymentService.actionConfirm([this.id]).subscribe(
-          () => {
-            this.activeModal.close();
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
+        if (!this.salaryPayment) {
+          const save$ = this.onSave$() as Observable<any>;
+          save$.subscribe((res: any) => {
+            this.salaryPaymentService.actionConfirm([res.Id]).subscribe(
+              () => {
+                this.notify('success', 'Tạm ứng lương thành công');
+                this.activeModal.close();
+              },
+              (error) => {
+                console.log(error);
+              }
+            );
+          });
+        } else {
+          this.salaryPaymentService.actionConfirm([this.id]).subscribe(
+            () => {
+              this.notify('success', 'Tạm ứng lương thành công');
+              this.activeModal.close();
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+        }
       },
       () => { }
-    );   
+    );
   }
 
-  checkIsDisable(id){
-    if(id && this.salaryPayment && this.salaryPayment.State !== 'waiting'){
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
+  checkIsDisable(id) {
+    if (id && this.salaryPayment && this.salaryPayment.State !== 'waiting') {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
 
-  printSalaryPayment(ids) {  
+  printSalaryPayment(ids) {
     this.salaryPaymentService.onPrint([ids]).subscribe(
       result => {
         if (result && result['html']) {

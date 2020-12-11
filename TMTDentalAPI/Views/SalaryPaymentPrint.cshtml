@@ -33,7 +33,7 @@
                     }
                     @if (!string.IsNullOrEmpty(item.Company.Phone))
                     {
-                        <div>Điện Thoại: @item.Company.Phone</div>
+                        <div>Điện thoại: @item.Company.Phone</div>
                     }
                     @if (!string.IsNullOrEmpty(item.Company.Email))
                     {
@@ -58,7 +58,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bold">
-                                    Người nhận :
+                                    Người nhận
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
@@ -68,7 +68,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bold">
-                                    Số tiền :
+                                    Số tiền
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
@@ -78,7 +78,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bold">
-                                    Phương thức:
+                                    Phương thức
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
@@ -88,7 +88,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bold">
-                                    Bằng chữ :
+                                    Bằng chữ
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
@@ -98,7 +98,7 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label o_form_label_help font-weight-bold">
-                                    Nội dung :
+                                    Nội dung
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
@@ -110,18 +110,19 @@
 
             </div>
             <div class="row">
-                <div class="col col-sm-12">
-                    <div class="text-center font-weight-bold justify-content-between">
-                        <p></p>
-                        <div class="mt-2">Người lập phiếu</div>
-                    </div>
-                </div>
-                <div class="col col-sm-12">
-                    <div class="text-center font-weight-bold">
-                        @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
-                        <div>Người nhận</div>
-                    </div>
+                <div class="col-6">
 
+                </div>
+                <div class="col-6 text-center">
+                    @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                </div>
+            </div>
+            <div class="row font-weight-bold">
+                <div class="col-6 text-center">
+                    Người lập phiếu
+                </div>
+                <div class="col-6 text-center">
+                    Người lao động
                 </div>
             </div>
         </div>
