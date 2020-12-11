@@ -1367,6 +1367,14 @@ namespace Infrastructure.Services
                 res.PartnerId = partner.Id;
                 res.Partner = _mapper.Map<PartnerSimple>(partner);
             }
+
+            if (val.IsFast)
+            {
+                var journalObj = GetService<IAccountJournalService>();
+                var journal = await journalObj.SearchQuery(x => x.Type == "cash").FirstOrDefaultAsync();
+                res.Journal = _mapper.Map<AccountJournalSimple>(journal);
+            }
+
             return res;
         }
 
@@ -2012,7 +2020,7 @@ namespace Infrastructure.Services
             res.OrderLines = val.OrderLines;
             res.PartnerId = val.PartnerId;
             res.PricelistId = val.PricelistId;
-            res.isFast = true;
+            res.IsFast = true;
             res.JournalId = val.JournalId;
 
             var order = _mapper.Map<SaleOrder>(res);

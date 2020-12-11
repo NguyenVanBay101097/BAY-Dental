@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20201208105922_thuong_AddColumnIsFastJournal_SaleOrder")]
+    [Migration("20201211040220_thuong_AddColumnIsFastJournal_SaleOrder")]
     partial class thuong_AddColumnIsFastJournal_SaleOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -6334,6 +6334,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsFast")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsQuotation")
                         .HasColumnType("bit");
 
@@ -6376,9 +6379,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool?>("isFast")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

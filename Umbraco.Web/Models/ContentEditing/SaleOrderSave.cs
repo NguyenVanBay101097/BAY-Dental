@@ -30,6 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? JournalId { get; set; }
 
         public bool? IsQuotation { get; set; }
-        public bool? isFast { get; set; }
+        public bool IsFast { get; set; }
     }
 }
