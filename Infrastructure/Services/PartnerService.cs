@@ -1,38 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using ApplicationCore.Entities;
+﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
-using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using MyERP.Utilities;
 using Newtonsoft.Json;
-using NPOI.HSSF.Record.Chart;
-using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ZaloDotNetSDK;
 using ZaloDotNetSDK.oa;
@@ -1971,6 +1957,66 @@ namespace Infrastructure.Services
             {
                 CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
                 CustomerNew = temp.Where(x => x.PartnerCount == 1).Count()
+            };
+
+            return result;
+        }
+
+        public async Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val)
+        {
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+
+            var dateFrom = DateTime.Now;
+            var dateTo = DateTime.Now.AbsoluteEndOfDate();
+
+            if (val.DateFrom.HasValue)
+            {
+                dateFrom = val.DateFrom.Value;
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= dateFrom));
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            IEnumerable<Guid> ids_partner = query_saleOrder.Select(x => x.PartnerId).ToList();
+
+            var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId) && x.DateOrder <= dateTo)
+                .GroupBy(x => new { x.PartnerId, x.Partner.DistrictName })
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    PartnerCount = x.Count(),
+                    PartnerLocation = x.Key.DistrictName
+                })
+                .OrderBy(x => x.PartnerId).ToListAsync();
+
+            var temp_groupLocation = temp.GroupBy(x => x.PartnerLocation);
+
+            var details = new List<CustomerStatisticsDetails>();
+            foreach (var item in temp_groupLocation)
+            {
+                details.Add(new CustomerStatisticsDetails
+                {
+                    Location = item.Key, 
+                    CustomerTotal = item.Count(),
+                    CustomerOld = item.Where(x => x.PartnerCount > 1).Count(),
+                    CustomerNew = item.Where(x => x.PartnerCount == 1).Count()
+                });
+            }
+
+            var result = new CustomerStatisticsOutput
+            {
+                CustomerTotal = temp.Count(),
+                CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
+                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count(), 
+                Details = details
             };
 
             return result;
