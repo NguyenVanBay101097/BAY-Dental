@@ -25,14 +25,12 @@
                     <div class="filterDatetime">
                         <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
                         </app-time-keeping-date-filter>
-                    </div>                
+                    </div>
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" [data]="listEmployeies"
-                [textField]="'name'" [filterable]="true" #empCbx (selectionChange)="empChange($event)"
-                [valueField]="'id'">
+            <kendo-combobox [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx (selectionChange)="empChange($event)" [valueField]="'id'">
             </kendo-combobox>
         </div>
     </div>
@@ -74,8 +72,7 @@
                             <p class="o_column_title_thread">{{date | date: 'E'}}</p>
                             <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
                         </div>
-                        <div class="o_kanban_header_title text-success"
-                            *ngIf="date.toDateString() == today.toDateString()">
+                        <div class="o_kanban_header_title text-success" *ngIf="date.toDateString() == today.toDateString()">
                             <p class="o_column_title_thread">{{date | date: 'E'}}</p>
                             <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
                         </div>
@@ -87,12 +84,11 @@
         <tbody>
             <ng-container *ngFor="let empl of listEmployeies">
                 <tr>
-                    <th  class="oe_kanban_label_Emp">{{empl.name}}</th>
+                    <th class="oe_kanban_label_Emp">{{empl.name}}</th>
                     <!-- <th scope="row" style="min-width: 200px;"></th> -->
                     <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                         <div class="oe_kanban_content">
-                            <app-time-keeping-popover [line]="date"
-                                (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)" (removeTime)="deleteTimeKeeping($event,date.date,empl)">
+                            <app-time-keeping-popover [line]="date" (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)" (removeTime)="deleteTimeKeeping($event,date.date,empl)">
                             </app-time-keeping-popover>
                         </div>
                         <div class="oe_kanban_content_timeOver" *ngIf="checkOverTime(date.chamCongs[0])">
@@ -100,7 +96,7 @@
                         </div>
                     </td>
                 </tr>
-            
+
             </ng-container>
 
         </tbody>

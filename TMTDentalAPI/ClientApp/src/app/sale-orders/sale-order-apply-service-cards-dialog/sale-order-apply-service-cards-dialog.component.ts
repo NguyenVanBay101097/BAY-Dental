@@ -55,7 +55,6 @@ export class SaleOrderApplyServiceCardsDialogComponent implements OnInit {
 
       this.suggestSetAmount();
     }, err => {
-      this.errorService.show(err);
     });
   }
 

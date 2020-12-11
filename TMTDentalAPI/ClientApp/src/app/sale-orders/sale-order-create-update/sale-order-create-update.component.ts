@@ -165,6 +165,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
         }
 
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
+        }
+
         if (result.Partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
           if (!this.saleOrderId) {
@@ -817,6 +821,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         let dateOrder = new Date(result.DateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
+        }
+        
         if (result.Partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
         }

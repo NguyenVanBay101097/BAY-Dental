@@ -191,7 +191,5 @@ namespace TMTDentalAPI.OdataControllers
 
             return Ok(result);
         }
-
-
     }
 }
