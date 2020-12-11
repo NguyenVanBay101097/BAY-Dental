@@ -505,9 +505,48 @@ namespace Infrastructure.Services
             }
         }
 
-        public void GetReportOldNewPartner()
+        public async Task<SaleReportOldNewPartnerOutput> GetReportOldNewPartner(SaleReportOldNewPartnerInput val)
         {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
 
+            //truy van so tong benh nhan
+            var query = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            IEnumerable<Guid?> idsKhachHangTruocKhoang = null;
+
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= dateFrom);
+
+                var query2 = query.Where(x => x.Date < dateFrom);
+                idsKhachHangTruocKhoang = await query2.GroupBy(x => x.PartnerId).Select(x => x.Key).ToListAsync();
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
+            var idsKhachHangTrongKhoang = await query.GroupBy(x => x.PartnerId).Select(x => x.Key).ToListAsync();
+            var tongBenhNhan = idsKhachHangTrongKhoang.Count;
+            int soCu = 0;
+            if (idsKhachHangTruocKhoang != null)
+            {
+                soCu = idsKhachHangTrongKhoang.Where(x => !idsKhachHangTruocKhoang.Contains(x)).Count();
+            }
+
+            int soMoi = tongBenhNhan - soCu;
+
+
+
+
+
+            return null;
         }
     }
 }

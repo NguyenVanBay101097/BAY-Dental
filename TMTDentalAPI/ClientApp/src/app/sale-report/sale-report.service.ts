@@ -50,6 +50,24 @@ export class SaleReportTopSaleProductSearch {
     topBy: string;
 }
 
+export class SaleReportOldNewPartnerInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class SaleReportOldNewPartnerDetails {
+    location: string;
+    partnerTotal: number;
+    partnerOld: number;
+    partnerNew: number;
+}
+
+export class SaleReportOldNewPartnerOutput {
+    partnerTotal: number;
+    partnerOld: number;
+    partnerNew: number;
+    details: SaleReportOldNewPartnerDetails;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SaleReportService {
@@ -81,5 +99,9 @@ export class SaleReportService {
             this.baseApi + this.apiUrl + "/ExportServiceReportExcelFile", val,
             { responseType: "blob" }
         );
+    }
+
+    getReportOldNewPartner(val: SaleReportOldNewPartnerInput) {
+        return this.http.post<SaleReportOldNewPartnerOutput>(this.baseApi + this.apiUrl + '/GetReportOldNewPartner', val);
     }
 }
