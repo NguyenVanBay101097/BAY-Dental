@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
@@ -190,13 +190,15 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   showInfo() {
+    debugger;
     var list = [];
-    if (this.teethSelected.length) {
-      list.push(this.teethSelected.map(x => x.name).join(','));
+    var teeth = this.line.get('teeth').value;
+    if (teeth.length) {
+      list.push(teeth.map(x => x.name).join(','));
     }
 
-    if (this.formGroup.get('diagnostic').value) {
-      list.push(this.formGroup.get('diagnostic').value);
+    if (this.line.get('diagnostic').value) {
+      list.push(this.line.get('diagnostic').value);
     }
 
     return list.join('; ');

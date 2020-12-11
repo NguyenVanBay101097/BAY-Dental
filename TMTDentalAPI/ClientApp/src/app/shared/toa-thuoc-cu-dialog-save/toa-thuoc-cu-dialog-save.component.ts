@@ -149,7 +149,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   onCreate() {
     var lines = this.toaThuocForm.get('lines') as FormArray;
     lines.push(this.fb.group({
-      product: [null, Validators.required],
+      product: null,
       numberOfTimes: 1, 
       amountOfTimes: 1, 
       quantity: 1,  

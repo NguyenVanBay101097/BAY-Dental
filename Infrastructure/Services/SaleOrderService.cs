@@ -858,7 +858,7 @@ namespace Infrastructure.Services
         private IList<SaleOrderLine> _GetPaidOrderLines(SaleOrder self)
         {
             //ko dùng điều kiện QtyInvoiced > 0
-            return self.OrderLines.Where(x => !x.IsRewardLine).ToList(); 
+            return self.OrderLines.Where(x => !x.IsRewardLine).ToList();
         }
 
         public async Task ApplyPromotion(Guid id)
@@ -1069,21 +1069,9 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
-            var saleorder = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
-                .Include(x => x.Order)
-                .Include(x => x.Quote)
-                .Include(x => x.Pricelist)
-                .Include(x => x.User)
-                .Include(x => x.OrderLines)
-                .Include(x => x.Journal)
-                .FirstOrDefaultAsync();
-
-            var display = _mapper.Map<SaleOrderDisplay>(saleorder);
+            var display = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             var lineObj = GetService<ISaleOrderLineService>();
-            var line = await lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))               
-                              .Include(x=>x.Product).Include(x=>x.ToothCategory).Include(x=>x.Employee).Include(x=>x.SaleOrderLineToothRels).ToListAsync();
-            display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(line);
+            display.OrderLines = await _mapper.ProjectTo<SaleOrderLineDisplay>(lineObj.SearchQuery(x => x.OrderId == display.Id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
             return display;
         }
 
@@ -1352,14 +1340,10 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val)
         {
-            var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
-            var user = await userManager.FindByIdAsync(UserId);
             var res = new SaleOrderDisplay();
             res.CompanyId = CompanyId;
-            res.UserId = UserId;
-            res.User = _mapper.Map<ApplicationUserSimple>(user);
-            if (val.IsQuotation.HasValue)
-                res.IsQuotation = val.IsQuotation;
+            res.IsQuotation = val.IsQuotation;
+
             if (val.PartnerId.HasValue)
             {
                 var partnerObj = GetService<IPartnerService>();
@@ -1371,7 +1355,7 @@ namespace Infrastructure.Services
             if (val.IsFast)
             {
                 var journalObj = GetService<IAccountJournalService>();
-                var journal = await journalObj.SearchQuery(x => x.Type == "cash").FirstOrDefaultAsync();
+                var journal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
                 res.Journal = _mapper.Map<AccountJournalSimple>(journal);
             }
 
@@ -2068,13 +2052,13 @@ namespace Infrastructure.Services
 
             await UpdateAsync(order);
             //confirm sale order       
-            order.State = "sale";
+            order.State = "done";
             foreach (var line in order.OrderLines)
             {
                 if (line.State == "cancel")
                     continue;
 
-                line.State = "sale";
+                line.State = "done";
             }
 
             saleLineObj._GetToInvoiceQty(order.OrderLines);

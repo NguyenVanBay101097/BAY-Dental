@@ -188,32 +188,20 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         if (this.saleOrderId) {
           return this.saleOrderService.get(this.saleOrderId);
         } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' , IsFast: true });
+          return this.saleOrderService.defaultGet({ IsFast: true });
         }
-      })).subscribe(result => {       
+      })).subscribe(result => {
         this.saleOrder = result;
         this.partnerSend = result.partner;
         this.formGroup.patchValue(result);
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
-        }
-
-        if(result.journal){
+        if (result.journal) {
           this.filteredJournals = _.unionBy(this.filteredJournals, [result.journal], 'id');
         }
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (this.saleOrderId) {
-            this.onChangePartner(result.partner);
-
-          }
-        }
-
-
+        debugger;
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -277,8 +265,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   ///load phương thức thanh toán
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
-      this.filteredJournals = result;
-    })
+      this.filteredJournals = _.unionBy(this.filteredJournals, result, 'id');
+    });
   }
 
   getJournalDefault() {
@@ -1005,7 +993,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   onChangePartner(value) {
     if (this.partner) {
-      this.odataPartnerService.get(this.partner.id, null).subscribe(rs => {       
+      this.odataPartnerService.get(this.partner.id, null).subscribe(rs => {
         this.formGroup.get('partnerAge').patchValue(rs.Age);
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
         this.formGroup.get('partnerAddress').patchValue(rs.Address);
@@ -1287,7 +1275,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   createToaThuoc() {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
-    modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
+    modalRef.componentInstance.defaultVal = { partnerId: this.saleOrder.partner ? this.saleOrder.partner.id : null, saleOrderId: this.saleOrderId };
     modalRef.result.then((result: any) => {
       this.loadRecord();
       if (result.print) {
@@ -1325,7 +1313,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
   }
 
- 
+
 
 
   get getAmountTotal() {
@@ -1521,7 +1509,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onChangeDiscount(event, line: FormGroup) {
-    
+
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       line.value.discountType = event.discountType;
