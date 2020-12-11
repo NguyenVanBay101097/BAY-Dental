@@ -64,6 +64,17 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getDateMonthList();
+    this.empCbx.filterChange.asObservable().pipe(
+      switchMap(value => from([this.sourceEmployees]).pipe(
+        tap(() => this.empCbx.loading = true),
+        debounceTime(300),
+        map((data) => this.sourceEmployees.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20))
+      ))
+    )
+      .subscribe(x => {
+        this.listEmployeies = x;
+        this.empCbx.loading = false;
+      });
   }
 
   searchEmployee(search?: string) {
