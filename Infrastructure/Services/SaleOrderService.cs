@@ -619,7 +619,6 @@ namespace Infrastructure.Services
             var laboOrder = new LaboOrder
             {
                 PartnerId = val.PartnerId,
-                SaleOrderId = val.OrderId,
             };
 
             var productIds = self.OrderLines.Where(x => x.Product.IsLabo).Select(x => x.Product.Id).Distinct().ToList();
@@ -1991,7 +1990,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<LaboOrderDisplay>> GetLaboBySaleOrderId(Guid id)
         {
             var laboObj = GetService<ILaboOrderService>();
-            var labos = await _mapper.ProjectTo<LaboOrderDisplay>(laboObj.SearchQuery(x => x.SaleOrderId == id, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
+            var labos = await _mapper.ProjectTo<LaboOrderDisplay>(laboObj.SearchQuery(orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
             return labos;
         }
 

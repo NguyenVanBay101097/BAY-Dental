@@ -32,13 +32,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search) ||
-                x.SaleOrder.Name.Contains(val.Search)));
+                x.Partner.Phone.Contains(val.Search)));
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
-
-            if (val.SaleOrderId.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderId == val.SaleOrderId));
 
             if (val.DateOrderFrom.HasValue)
             {
@@ -62,12 +58,6 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
             }
 
-            if (!string.IsNullOrEmpty(val.State))
-            {
-                var states = val.State.Split(",");
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => states.Contains(x.State)));
-            }
-
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
@@ -85,7 +75,6 @@ namespace Infrastructure.Services
             var listSaleOrderLineIds = new List<Guid>();
             if (val.SaleOrderId.HasValue)
             { 
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderId == val.SaleOrderId));
                 listSaleOrderLineIds = GetService<ISaleOrderLineService>().SearchQuery(x=>x.OrderId == val.SaleOrderId.Value).Select(x=>x.Id).ToList();
             }
             if (val.SaleOrderLineId.HasValue)
@@ -179,15 +168,13 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<LaboOrderBasic>> GetAllForDotKham(Guid dotKhamId)
         {
-            var res = await SearchQuery(x => x.DotKhamId == dotKhamId).Select(x => new LaboOrderBasic
+            var res = await SearchQuery().Select(x => new LaboOrderBasic
             {
                 Id = x.Id,
                 AmountTotal = x.AmountTotal,
                 DateOrder = x.DateOrder,
                 Name = x.Name,
                 PartnerName = x.Partner.Name,
-                State = x.State,
-                CustomerName = x.Customer.Name
             }).ToListAsync();
             return res;
         }
@@ -214,7 +201,6 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.DotKham).Include(x => x.Customer).Include(x => x.SaleOrder)
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.Product")
                 .Include("OrderLines.ToothCategory")
@@ -323,10 +309,6 @@ namespace Infrastructure.Services
                 .ToListAsync();
             foreach (var order in self)
             {
-                if (order.State != "draft" && order.State != "sent")
-                    continue;
-
-                order.State = "purchase";
                 foreach (var line in order.OrderLines)
                     line.State = "purchase";
             }
@@ -362,7 +344,6 @@ namespace Infrastructure.Services
 
             foreach (var order in self)
             {
-                order.State = "draft";
                 foreach (var line in order.OrderLines)
                     line.State = "draft";
             }
@@ -380,8 +361,6 @@ namespace Infrastructure.Services
             {
                 foreach (var line in order.OrderLines)
                     line.State = "done";
-
-                order.State = "done";
             }
 
             await UpdateAsync(self);
@@ -414,11 +393,6 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.OrderLines).ToListAsync();
             var states = new string[] { "draft", "cancel" };
-            foreach (var order in self)
-            {
-                if (!states.Contains(order.State))
-                    throw new Exception("Chỉ có thể xóa phiếu labo ở trạng thái nháp.");
-            }
             await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
             await DeleteAsync(self);
         }
@@ -464,7 +438,6 @@ namespace Infrastructure.Services
                     var lbLine = _mapper.Map<LaboOrderLine>(line);
                     lbLine.CompanyId = order.CompanyId;
                     lbLine.PartnerId = order.PartnerId;
-                    lbLine.CustomerId = order.CustomerId;
                     foreach (var tooth in line.Teeth)
                     {
                         lbLine.LaboOrderLineToothRels.Add(new LaboOrderLineToothRel
@@ -532,13 +505,8 @@ namespace Infrastructure.Services
                     labo.Name = await sequenceObj.NextByCode("labo.order");
                 }
 
-                var sale = labo.SaleOrderId.HasValue ? await saleObj.GetByIdAsync(labo.SaleOrderId.Value) : null;
-                var partnerId = sale != null ? sale.PartnerId : (Guid?)null;
-                labo.CustomerId = partnerId;
-
                 foreach (var line in labo.OrderLines)
                 {
-                    line.CustomerId = partnerId;
                     line.PartnerId = labo.PartnerId;
                 }
             }

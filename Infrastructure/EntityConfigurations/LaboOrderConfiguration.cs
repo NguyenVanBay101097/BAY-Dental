@@ -18,26 +18,18 @@ namespace Infrastructure.EntityConfigurations
              .HasForeignKey(x => x.PartnerId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Customer)
-               .WithMany()
-               .HasForeignKey(x => x.CustomerId);
-
-            builder.HasOne(x => x.DotKham)
-              .WithMany()
-              .HasForeignKey(x => x.DotKhamId);
-
-            builder.HasOne(x => x.SaleOrder)
-              .WithMany()
-              .HasForeignKey(x => x.SaleOrderId);
-
-            builder.HasOne(x => x.User)
-              .WithMany()
-              .HasForeignKey(x => x.UserId);
-
             builder.HasOne(x => x.Company)
                 .WithMany()
                 .HasForeignKey(x => x.CompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.SaleOrderLine)
+                .WithMany()
+                .HasForeignKey(x => x.SaleOrderLineId);
+
+            builder.HasOne(x => x.Product)
+                 .WithMany()
+                 .HasForeignKey(x => x.ProductId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
