@@ -1,30 +1,34 @@
 <header class="modal-header">
     <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="toaThuocForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="oe_title">
-                    <h1>
-                        <span>{{toaThuocForm.get('name').value || 'Mới'}}</span>
-                    </h1>
+                <div class="d-flex">
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Họ tên</label>
+                        <span>Đặng Văn Trà</span>
+                    </div>
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Giới tính</label>
+                        <span>Nam</span>
+                    </div>
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Tuổi</label>
+                        <span>11</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-weight-600 mr-4">Địa chỉ</label>
+                    <span>260 Tân Kỳ Tân Quý, phường Sơn Kỳ, quận Tân Phú, Thành phố Hồ Chí Minh</span>
                 </div>
                 <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_6">
+                    <table class="o_group o_inner_group o_group_col_6 my-0">
                         <tbody>
-                            <!-- <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Chẩn đoán
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="diagnostic" />
-                                </td>
-                            </tr> -->
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
@@ -32,33 +36,21 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList" #employeeCbx [valueField]="'id'" [textField]="'name'">
+                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList"
+                                        #employeeCbx [valueField]="'id'" [textField]="'name'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Lời dặn
+                                        Đơn thuốc mẫu
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea class="form-control" formControlName="note"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ngày
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datetimepicker formControlName="dateObj">
-                                    </kendo-datetimepicker>
+                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList"
+                                        #employeeCbx [valueField]="'id'" [textField]="'name'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>
@@ -66,11 +58,14 @@
                 </div>
                 <div class="overflow-auto">
                     <div class="d-flex">
-                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="onCreate()">Thêm thuốc</button>
-                        <app-toa-thuoc-sample-prescription (nameSamplePrescription)="getNameSamplePrescription($event)" (itemSamplePrescription)="getItemSamplePrescription($event)" [item]="samplePrescriptionAdded">
+                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
+                            (click)="onCreate()">Thêm thuốc mới</button>
+                        <app-toa-thuoc-sample-prescription (nameSamplePrescription)="getNameSamplePrescription($event)"
+                            (itemSamplePrescription)="getItemSamplePrescription($event)"
+                            [item]="samplePrescriptionAdded">
                         </app-toa-thuoc-sample-prescription>
                     </div>
-                    <table class="table table-sm mt-2">
+                    <table class="table table-sm mt-2 table-tbody-ver-align-middle border-bottom">
                         <thead>
                             <tr>
                                 <th>Tên thuốc</th>
@@ -86,29 +81,37 @@
                             <ng-container *ngFor="let item of lines.controls; let i = index;">
                                 <tr [formGroupName]="i">
                                     <td>
-                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'" formControlName="product" [kendoDropDownFilter]="filterSettings" [valueField]="'id'">
+                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                            formControlName="product" [kendoDropDownFilter]="filterSettings"
+                                            [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0" [format]="'n0'" formControlName="numberOfTimes" (valueChange)="updateQuantity(item)">
+                                            <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0"
+                                                [format]="'n0'" formControlName="numberOfTimes"
+                                                (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
                                             <span>Lần</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <kendo-numerictextbox class="mr-1" style="width: 100px" [min]="0" [format]="'n0'" formControlName="amountOfTimes" (valueChange)="updateQuantity(item)">
+                                            <kendo-numerictextbox class="mr-1" style="width: 100px" [min]="0"
+                                                [format]="'n0'" formControlName="amountOfTimes"
+                                                (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
                                             <span>Viên</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'" formControlName="numberOfDays" (valueChange)="updateQuantity(item)">
+                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
+                                            formControlName="numberOfDays" (valueChange)="updateQuantity(item)">
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
-                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'" formControlName="quantity">
+                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
+                                            formControlName="quantity">
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
@@ -121,13 +124,25 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <button type="button" title="Hủy" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                        <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                            (click)="deleteLine(i)">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
                                 </tr>
                             </ng-container>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <button type="button" title="Thêm thuốc" class="btn btn-primary btn-sm"
+                                        (click)="onCreate()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <span class="text-primary cursor-pointer px-2" (click)="onCreate()">Thêm thuốc</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -138,5 +153,6 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
     <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
 </footer>

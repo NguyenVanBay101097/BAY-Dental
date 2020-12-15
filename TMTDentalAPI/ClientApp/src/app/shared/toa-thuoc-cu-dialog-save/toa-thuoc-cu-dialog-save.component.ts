@@ -62,8 +62,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       } else {
         this.loadDefault(this.defaultVal || {});
         this.onCreate();
-        this.onCreate();
-        this.onCreate();
       }
   
       this.employeeCbx.filterChange.asObservable().pipe(
