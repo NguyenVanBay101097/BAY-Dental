@@ -183,4 +183,10 @@ export class PartnerPrint {
     note: string;
 }
 
-
+export class PartnerCustomerDonThuoc {
+    id: string;
+    name: string;
+    gender: string;
+    age: string;
+    address: string;
+}

@@ -48,9 +48,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList"
-                                        #employeeCbx [valueField]="'id'" [textField]="'name'">
-                                    </kendo-combobox>
+
                                 </td>
                             </tr>
                         </tbody>
@@ -73,11 +71,11 @@
                                 <th>#</th>
                             </tr>
                         </thead>
-                        <tbody formArrayName="lines">
+                        <tbody formArrayName="lines" *ngIf="lines">
                             <ng-container *ngFor="let item of lines.controls; let i = index;">
                                 <tr [formGroupName]="i">
                                     <td>
-                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                        <kendo-combobox [data]="productList" [textField]="'name'"
                                             formControlName="product" [kendoDropDownFilter]="filterSettings"
                                             [valueField]="'id'">
                                         </kendo-combobox>
@@ -171,13 +169,13 @@
                     </table>
                     <div class="o_group o_inner_group o_group_col_6">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
-                            <label class="form-check-label" for="isLabo">
+                            <input class="form-check-input" type="checkbox" formControlName="saveSamplePrescription" id="saveSamplePrescription">
+                            <label class="form-check-label" for="saveSamplePrescription">
                                 Lưu làm đơn thuốc mẫu
                             </label>
                         </div>
-                        <input type="text" class="form-control w-75" formControlName="diagnostic"
-                            placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        <input type="text" class="form-control w-75" formControlName="nameSamplePrescription"
+                            placeholder="Nhập tên đơn thuốc mẫu ..." />-
                     </div>
                 </div>
             </div>
