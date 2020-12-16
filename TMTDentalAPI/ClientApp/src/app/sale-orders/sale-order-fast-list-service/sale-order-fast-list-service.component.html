@@ -1,22 +1,8 @@
-<!-- <table class="table table-sm table-bordered">
-    <thead>
-        <tr class="table-info">
-            <th *ngFor="let item of thTable_services">
-                {{item.name}}
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listFilter;let i = index">
-            <td [title]="item.name">{{item.name}}</td>
-            <td>{{item.listPrice | number}}</td>
-        </tr>
-    </tbody>
-</table> -->
+
 <div class="d-flex flex-column h-100">
     <!-- Component Form Service List -->
     <div class="flex--1-1-100 overflow-auto">
-        <table class="table sticky-table table-bordered table-sm">
+        <table class="table sticky-table table-sm">
             <thead>
                 <tr class="table-info">
                     <th class="sticky-th">
@@ -29,8 +15,8 @@
             </thead>
             <tbody>
                 <tr (click)="addServiceToSaleOrder(item)" *ngFor="let item of listFilter;let i = index">
-                    <td [title]="item.name">{{item.name}}</td>
-                    <td class="text-right">{{item.listPrice | number}}</td>
+                    <td [title]="item.name" class="sticky-td">{{item.name}}</td>
+                    <td class="sticky-td text-right">{{item.listPrice | number}}</td>
                 </tr>
             </tbody>
         </table>
