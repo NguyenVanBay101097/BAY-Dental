@@ -51,10 +51,12 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var discountType = line.DiscountType ?? "percentage";
-                var price = discountType == "percentage" ? line.PriceUnit * (1 - line.Discount / 100) :
-                    Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
+                if (discountType == "percentage")
+                    line.PriceSubTotal = Math.Round(line.ProductUOMQty * line.PriceUnit * (1 - line.Discount / 100));
+                else
+                    line.PriceSubTotal = Math.Max(0, line.ProductUOMQty * line.PriceUnit - (line.DiscountFixed ?? 0));
+
                 line.PriceTax = 0;
-                line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
             }
         }
