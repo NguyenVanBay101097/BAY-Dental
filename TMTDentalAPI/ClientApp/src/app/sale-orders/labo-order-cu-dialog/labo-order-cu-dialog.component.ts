@@ -16,6 +16,7 @@ import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-ord
 import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from 'src/app/labo-orders/labo-order.service';
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { ProductSimple } from 'src/app/products/product-simple';
 declare var $: any;
 
 
@@ -34,6 +35,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
   saleOrderId: string;
   filteredPartners: PartnerSimple[];
   filteredSaleOrders: SaleOrderBasic[];
+  filteredLabos: ProductSimple[];
+  @ViewChild('laboCbx', { static: true }) laboCbx: ComboBoxComponent;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('saleOrderCbx', { static: true }) saleOrderCbx: ComboBoxComponent;
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
@@ -60,11 +63,16 @@ export class LaboOrderCuDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       partner: [null, Validators.required],
-      saleOrder: null,
       dateOrderObj: [null, Validators.required],
       datePlannedObj: null,
-      orderLines: this.fb.array([]),
-      dotKhamId: null
+      product: [null, Validators.required],
+      color: null,
+      note: null,
+      quantity: [0, Validators.required],
+      priceUnit: [0, Validators.required],
+      saleOrderLineId: [null, Validators.required],
+      warrantyCode: null,
+      warrantyPeriodObj: null,
     });
 
     setTimeout(() => {
@@ -83,6 +91,16 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.partnerCbx.loading = false;
       });
       this.loadPartners();
+
+      this.laboCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.laboCbx.loading = true)),
+        switchMap(value => this.searchLabos(value))
+      ).subscribe(result => {
+        this.filteredLabos = result;
+        this.laboCbx.loading = false;
+      });
+      this.loadLabos();
     });
   }
 
@@ -142,6 +160,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
+  loadLabos() {
+    this.searchLabos().subscribe(result => {
+      this.filteredLabos = _.unionBy(this.filteredLabos, result, 'id');
+    });
+  }
+
   loadPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = _.unionBy(this.filteredPartners, result, 'id');
@@ -198,6 +222,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
   }
 
+  searchLabos(filter?: string) {
+    var val = new ProductFilter();
+    val.type2 = 'labo';
+    val.search = filter;
+    return this.productService.autocomplete2(val);
+  }
+
   searchPartners(filter?: string) {
     var val = new PartnerPaged();
     val.supplier = true;
@@ -224,7 +255,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   updateSupplierModal() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: Labo';
+    modalRef.componentInstance.title = 'Sửa: Nhà cung cấp';
     modalRef.componentInstance.id = this.partner.id;
 
     modalRef.result.then(() => {
@@ -234,7 +265,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   quickCreateSupplier() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Labo';
+    modalRef.componentInstance.title = 'Thêm: Nhà cung cấp';
 
     modalRef.result.then(result => {
       var p = new PartnerSimple();
@@ -257,6 +288,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
     val.saleOrderId = val.saleOrder ? val.saleOrder.id : null;
+    val.warrantyPeriod = this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss');
     if (this.saleOrderId)
       val.saleOrderId = this.saleOrderId;
      this.laboOrderService.create(val).subscribe(result => {
@@ -339,6 +371,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   get orderLines() {
     return this.formGroup.get('orderLines') as FormArray;
+  }
+
+  get getPriceUnit() { return this.formGroup.get('priceUnit').value; }
+  get getQuantity() { return this.formGroup.get('quantity').value; }
+
+  getPriceSubTotal() {
+    return this.getPriceUnit * this.getQuantity;
   }
 
   showAddLineModal() {

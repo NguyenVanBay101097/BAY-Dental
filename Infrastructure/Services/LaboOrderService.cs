@@ -207,7 +207,7 @@ namespace Infrastructure.Services
                 .Include("OrderLines.LaboOrderLineToothRels")
                 .Include("OrderLines.LaboOrderLineToothRels.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
             return res;
         }
 
@@ -404,14 +404,14 @@ namespace Infrastructure.Services
             foreach (var existLine in existLines)
             {
                 bool found = false;
-                foreach (var item in val.OrderLines)
-                {
-                    if (item.Id == existLine.Id)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
+                //foreach (var item in val.OrderLines)
+                //{
+                //    if (item.Id == existLine.Id)
+                //    {
+                //        found = true;
+                //        break;
+                //    }
+                //}
 
                 if (!found)
                     lineToRemoves.Add(existLine);
@@ -426,44 +426,44 @@ namespace Infrastructure.Services
 
             //Cập nhật sequence cho tất cả các line của val
             int sequence = 0;
-            foreach (var line in val.OrderLines)
-            {
-                line.Sequence = sequence++;
-            }
+            //foreach (var line in val.OrderLines)
+            //{
+            //    line.Sequence = sequence++;
+            //}
 
-            foreach (var line in val.OrderLines)
-            {
-                if (line.Id == Guid.Empty)
-                {
-                    var lbLine = _mapper.Map<LaboOrderLine>(line);
-                    lbLine.CompanyId = order.CompanyId;
-                    lbLine.PartnerId = order.PartnerId;
-                    foreach (var tooth in line.Teeth)
-                    {
-                        lbLine.LaboOrderLineToothRels.Add(new LaboOrderLineToothRel
-                        {
-                            ToothId = tooth.Id
-                        });
-                    }
-                    order.OrderLines.Add(lbLine);
-                }
-                else
-                {
-                    var lbLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
-                    if (lbLine != null)
-                    {
-                        _mapper.Map(line, lbLine);
-                        lbLine.LaboOrderLineToothRels.Clear();
-                        foreach (var tooth in line.Teeth)
-                        {
-                            lbLine.LaboOrderLineToothRels.Add(new LaboOrderLineToothRel
-                            {
-                                ToothId = tooth.Id
-                            });
-                        }
-                    }
-                }
-            }
+            //foreach (var line in val.OrderLines)
+            //{
+            //    if (line.Id == Guid.Empty)
+            //    {
+            //        var lbLine = _mapper.Map<LaboOrderLine>(line);
+            //        lbLine.CompanyId = order.CompanyId;
+            //        lbLine.PartnerId = order.PartnerId;
+            //        foreach (var tooth in line.Teeth)
+            //        {
+            //            lbLine.LaboOrderLineToothRels.Add(new LaboOrderLineToothRel
+            //            {
+            //                ToothId = tooth.Id
+            //            });
+            //        }
+            //        order.OrderLines.Add(lbLine);
+            //    }
+            //    else
+            //    {
+            //        var lbLine = order.OrderLines.SingleOrDefault(c => c.Id == line.Id);
+            //        if (lbLine != null)
+            //        {
+            //            _mapper.Map(line, lbLine);
+            //            lbLine.LaboOrderLineToothRels.Clear();
+            //            foreach (var tooth in line.Teeth)
+            //            {
+            //                lbLine.LaboOrderLineToothRels.Add(new LaboOrderLineToothRel
+            //                {
+            //                    ToothId = tooth.Id
+            //                });
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public async Task<LaboOrderPrintVM> GetPrint(Guid id)

@@ -9,19 +9,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public LaboOrderDisplay()
         {
             DateOrder = DateTime.Now;
-            State = "draft";
         }
 
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public string State { get; set; }
-
-        /// <summary>
-        /// Vendor Reference
-        /// </summary>
-        public string PartnerRef { get; set; }
 
         /// <summary>
         /// Nhà cung cấp
@@ -38,8 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DatePlanned { get; set; }
 
-        public IEnumerable<LaboOrderLineDisplay> OrderLines { get; set; } = new List<LaboOrderLineDisplay>();
-
         public Guid? DotKhamId { get; set; }
         public DotKhamSimple DotKham { get; set; }
 
@@ -48,5 +38,37 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrderBasic SaleOrder { get; set; }
+
+        public Guid? ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+
+        /// <summary>
+        /// màu sắc
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// ghi chú
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
+        /// số lượng
+        /// </summary>
+        public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// đơn giá
+        /// </summary>
+        public decimal PriceUnit { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLineBasic SaleOrderLine { get; set; }
+
+        /// <summary>
+        /// Mã bảo hành
+        /// </summary>
+        public string WarrantyCode { get; set; }
+        public DateTime? WarrantyPeriod { get; set; }
     }
 }

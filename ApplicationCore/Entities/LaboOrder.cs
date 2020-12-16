@@ -93,5 +93,9 @@ namespace ApplicationCore.Entities
         /// Hạn bảo hành
         /// </summary>
         public DateTime? WarrantyPeriod { get; set; }
+        /// <summary>
+        /// list răng
+        /// </summary>
+        public ICollection<LaboOrderToothRel> LaboOrderToothRel { get; set; }
     }
 }

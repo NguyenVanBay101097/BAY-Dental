@@ -215,7 +215,7 @@ namespace Infrastructure.Data
 
         public DbSet<SalaryPayment> SalaryPayments { get; set; }
         public DbSet<DotKhamLineToothRel> DotKhamLineToothRels { get; set; }
-        
+        public DbSet<LaboOrderToothRel> LaboOrderToothRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -387,6 +387,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new TCareConfigConfiguration());
             builder.ApplyConfiguration(new SalaryPaymentConfiguration());
             builder.ApplyConfiguration(new DotKhamLineToothRelConfiguration());
+            builder.ApplyConfiguration(new LaboOrderToothRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
