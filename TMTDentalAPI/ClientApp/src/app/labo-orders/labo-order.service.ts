@@ -6,6 +6,9 @@ import { PartnerSimple } from '../partners/partner-simple';
 import { LaboOrderLineDisplay } from '../labo-order-lines/labo-order-line.service';
 import { DotKhamBasic } from '../dot-khams/dot-khams';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { ToothBasic } from '../teeth/tooth.service';
+import { SaleOrderLineBasic } from '../partners/partner.service';
+import { ProductSimple } from '../products/product-simple';
 
 export class LaboOrderPaged {
     limit: number;
@@ -36,7 +39,7 @@ export class LaboOrderBasic {
 
 export class LaboOrderDefaultGet {
     dotKhamId: string;
-    saleOrderId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderDisplay {
@@ -53,6 +56,10 @@ export class LaboOrderDisplay {
     dotKhamId: string;
     orderLines: LaboOrderLineDisplay[];
     dotKham: DotKhamBasic;
+    teeth: ToothBasic[];
+    saleOrderLine: SaleOrderLineBasic;
+    warrantyPeriod: string;
+    product: ProductSimple;
 }
 
 export class LaboOrderStatisticsPaged {

@@ -1,39 +1,80 @@
 <header class="modal-header">
     <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" #form="ngForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
-                <div class="o_group">
-                    <table class="o_group o_inner_group">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Tên labo
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Giá mua
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="purchasePrice">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên thuốc</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
+                    </h1>
+                </div>
+
+
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Nhóm labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filterdCategories" [textField]="'completeName'" [filterable]="true" #categCbx formControlName="categ" [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá mua
+                                                    <i class="fas fa-question-circle text-primary" placement="bottom"
+                                                        triggers="mouseenter:mouseleave"
+                                                        ngbPopover="Giá mua theo đơn vị mua" popoverTitle="Giá mua"></i>
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="laboPrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá bán
+                                                    <i class="fas fa-question-circle text-primary" placement="bottom"
+                                                        triggers="mouseenter:mouseleave"
+                                                        ngbPopover="Giá bán theo đơn vị mua" popoverTitle="Giá bán"></i>
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,6 +83,5 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

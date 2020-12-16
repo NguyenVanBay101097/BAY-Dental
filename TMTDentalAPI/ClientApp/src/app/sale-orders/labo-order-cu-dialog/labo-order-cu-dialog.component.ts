@@ -17,6 +17,7 @@ import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from 'src/app
 import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { ProductSimple } from 'src/app/products/product-simple';
+import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
 declare var $: any;
 
 
@@ -35,7 +36,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   saleOrderId: string;
   filteredPartners: PartnerSimple[];
   filteredSaleOrders: SaleOrderBasic[];
-  filteredLabos: ProductSimple[];
+  filteredLabos: any[];
   @ViewChild('laboCbx', { static: true }) laboCbx: ComboBoxComponent;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('saleOrderCbx', { static: true }) saleOrderCbx: ComboBoxComponent;
@@ -43,6 +44,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   laboOrderPrint: any;
   title: string;
   isChange = false;
+  teethSelected = [];
 
   constructor(
     private fb: FormBuilder,
@@ -70,7 +72,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       note: null,
       quantity: [0, Validators.required],
       priceUnit: [0, Validators.required],
-      saleOrderLineId: [null, Validators.required],
+      saleOrderLineId: [this.saleOrderLineId, Validators.required],
       warrantyCode: null,
       warrantyPeriodObj: null,
     });
@@ -104,6 +106,16 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
+  get partner() {
+    return this.formGroup.get('partner').value;
+  }
+
+  get labo() {
+    return this.formGroup.get('product').value;
+  }
+
+  get saleOrderLine() {return this.laboOrder.saleOrderLine;}
+
   loadData() {
     this.laboOrderService.get(this.id).subscribe(result => {
       this.laboOrder = result;
@@ -117,23 +129,21 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.formGroup.get('datePlannedObj').patchValue(datePlanned);
       }
 
-      if (result.saleOrder) {
-        this.filteredSaleOrders = _.unionBy(this.filteredSaleOrders, [result.saleOrder], 'id');
+      if (result.warrantyPeriod) {
+        let warrantyPeriod = this.intlService.parseDate(result.warrantyPeriod);
+        this.formGroup.get('warrantyPeriodObj').patchValue(warrantyPeriod);
       }
 
-      const control = this.formGroup.get('orderLines') as FormArray;
-      control.clear();
-      result.orderLines.forEach(line => {
-        var g = this.fb.group(line);
-        g.setControl('teeth', this.fb.array(line.teeth));
-        control.push(g);
-      });
+      if (result.product) {
+        this.filteredLabos = _.unionBy(this.filteredLabos, [result.product], 'id');
+      }
     });
 
   }
 
   loadDefault() {
     var df = new LaboOrderDefaultGet();
+    df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
       this.formGroup.patchValue(result);
@@ -146,17 +156,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.formGroup.get('datePlannedObj').patchValue(datePlanned);
       }
 
-      if (result.saleOrder) {
-        this.filteredSaleOrders = _.unionBy(this.filteredSaleOrders, [result.saleOrder], 'id');
+      if (result.warrantyPeriod) {
+        let warrantyPeriod = this.intlService.parseDate(result.warrantyPeriod);
+        this.formGroup.get('warrantyPeriodObj').patchValue(warrantyPeriod);
       }
-
-      const control = this.formGroup.get('orderLines') as FormArray;
-      control.clear();
-      result.orderLines.forEach(line => {
-        var g = this.fb.group(line);
-        g.setControl('teeth', this.fb.array(line.teeth));
-        control.push(g);
-      });
     });
   }
 
@@ -247,12 +250,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.router.navigate(['/labo-orders/form']);
   }
 
-
-
-  get partner() {
-    return this.formGroup.get('partner').value;
-  }
-
   updateSupplierModal() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: Nhà cung cấp';
@@ -307,6 +304,16 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
   }
 
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
   onSave() {
     if (!this.formGroup.valid) {
       return false;
@@ -315,14 +322,19 @@ export class LaboOrderCuDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.dateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
+    val.teeth = this.teethSelected;
+    val.productId = val.product.id;
    
     if (this.id) {
       this.laboOrderService.update(this.id, val).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
         this.activeModal.close(true);
       });
     } else {
       this.laboOrderService.create(val).subscribe(result => {
+        this.notify('success', 'Tạo thành công');
         this.activeModal.close(result);
       });
     }
@@ -349,13 +361,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
           this.filteredSaleOrders = _.unionBy(this.filteredSaleOrders, [result.saleOrder], 'id');
         }
 
-        let control = this.formGroup.get('orderLines') as FormArray;
-        control.clear();
-        result.orderLines.forEach(line => {
-          var g = this.fb.group(line);
-          g.setControl('teeth', this.fb.array(line.teeth));
-          control.push(g);
-        });
       });
     }
   }
@@ -367,10 +372,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.loadRecord();
       });
     }
-  }
-
-  get orderLines() {
-    return this.formGroup.get('orderLines') as FormArray;
   }
 
   get getPriceUnit() { return this.formGroup.get('priceUnit').value; }
@@ -389,7 +390,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
       let line = result as any;
       line.teeth = this.fb.array(line.teeth);
       line.teethListVirtual = this.fb.array(line.teethListVirtual);
-      this.orderLines.push(this.fb.group(line));
       this.computeAmountTotal();
     }, () => {
     });
@@ -416,7 +416,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.orderLines.removeAt(index);
     this.computeAmountTotal();
   }
 
@@ -426,9 +425,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   computeAmountTotal() {
     let total = 0;
-    this.orderLines.controls.forEach(line => {
-      total += line.get('priceSubtotal').value;
-    });
     this.laboOrder.amountTotal = total;
     // this.formGroup.get('amountTotal').patchValue(total);
   }
@@ -439,5 +435,32 @@ export class LaboOrderCuDialogComponent implements OnInit {
     } else {
       this.activeModal.dismiss();
     }
+  }
+  
+  isSelected(tooth: ToothDisplay) {
+    for (var i = 0; i < this.teethSelected.length; i++) {
+      if (this.teethSelected[i].id === tooth.id) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+  onSelected(tooth: ToothDisplay) {
+    if (this.isSelected(tooth)) {
+      var index = this.teethSelected.indexOf(tooth);
+      this.teethSelected.splice(index, 1);
+    } else {
+      this.teethSelected.push(tooth);
+    }
+
+    //update quantity combobox
+    if (this.teethSelected.length > 0) {
+      this.formGroup.get("productQty").setValue(this.teethSelected.length);
+    }
+  }
+
+  onLaboChange(e) {
+    this.formGroup.get('priceUnit').setValue(e.priceUnit);
   }
 }

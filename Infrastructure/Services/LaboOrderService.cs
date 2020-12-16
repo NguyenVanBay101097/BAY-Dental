@@ -58,6 +58,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
             }
 
+            if(val.SaleOrderLineId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderLineId == val.SaleOrderLineId));
+            }
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
@@ -201,11 +206,8 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.OrderLines)
-                .Include("OrderLines.Product")
-                .Include("OrderLines.ToothCategory")
-                .Include("OrderLines.LaboOrderLineToothRels")
-                .Include("OrderLines.LaboOrderLineToothRels.Tooth").FirstOrDefaultAsync();
+                .Include(x=>x.Product)
+                .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
             //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
             return res;
@@ -215,12 +217,11 @@ namespace Infrastructure.Services
         {
             var labo = _mapper.Map<LaboOrder>(val);
             labo.CompanyId = CompanyId;
-            SaveOrderLines(val, labo);
-
-            var lbLineObj = GetService<ILaboOrderLineService>();
-            lbLineObj._ComputeAmount(labo.OrderLines);
-
-            _AmountAll(new List<LaboOrder>() { labo });
+            foreach (var tooth in val.Teeth)
+            {
+                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id});
+            }
+            labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await CreateAsync(labo);
             return labo;
         }
@@ -246,12 +247,13 @@ namespace Infrastructure.Services
                 .Include("OrderLines.LaboOrderLineToothRels")
                 .FirstOrDefaultAsync();
             labo = _mapper.Map(val, labo);
-            SaveOrderLines(val, labo);
-
-            var lbLineObj = GetService<ILaboOrderLineService>();
-            lbLineObj._ComputeAmount(labo.OrderLines);
-
-            _AmountAll(new List<LaboOrder>() { labo });
+            labo.CompanyId = CompanyId;
+            labo.LaboOrderToothRel.Clear();
+            foreach (var tooth in val.Teeth)
+            {
+                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
+            }
+            labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await UpdateAsync(labo);
         }
 
@@ -373,18 +375,15 @@ namespace Infrastructure.Services
             {
                 var dkObj = GetService<IDotKhamService>();
                 var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner).FirstOrDefaultAsync();
-                if (dk != null)
-                    res.Customer = _mapper.Map<PartnerSimple>(dk.Partner);
-                res.CustomerId = dk.PartnerId;
-                res.DotKhamId = dk.Id;
             }
-
-            if (val.SaleOrderId.HasValue)
+            if(val.SaleOrderLineId.HasValue)
             {
-                var saleObj = GetService<ISaleOrderService>();
-                var order = await saleObj.GetByIdAsync(val.SaleOrderId);
-                if (order != null)
-                    res.SaleOrder = _mapper.Map<SaleOrderBasic>(order);
+                var saleOrderLineObj = GetService<ISaleOrderLineService>();
+               
+                var line = await _mapper.ProjectTo<SaleOrderLineBasic>(saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId)
+                        .Include("SaleOrderLineToothRels.Tooth")).FirstOrDefaultAsync();
+                res.SaleOrderLineId = val.SaleOrderLineId;
+                res.SaleOrderLine = line;
             }
             return res;
         }
@@ -393,7 +392,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.OrderLines).ToListAsync();
             var states = new string[] { "draft", "cancel" };
-            await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
+            //await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
             await DeleteAsync(self);
         }
 

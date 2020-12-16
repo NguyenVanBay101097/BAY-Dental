@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'products',
     component: ProductProductListComponent
+  },
+  {
+    path: 'labos',
+    component: ProductLaboListComponent
   }
 ];
 

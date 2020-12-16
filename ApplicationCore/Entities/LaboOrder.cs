@@ -96,6 +96,6 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// list răng
         /// </summary>
-        public ICollection<LaboOrderToothRel> LaboOrderToothRel { get; set; }
+        public ICollection<LaboOrderToothRel> LaboOrderToothRel { get; set; } = new List<LaboOrderToothRel>();
     }
 }

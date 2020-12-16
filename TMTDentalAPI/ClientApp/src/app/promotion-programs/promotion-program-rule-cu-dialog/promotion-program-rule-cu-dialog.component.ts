@@ -6,6 +6,7 @@ import { ProductCategoryService, ProductCategoryBasic, ProductCategoryPaged } fr
 import { Product } from 'src/app/products/product';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { ProductSimple } from 'src/app/products/product-simple';
 
 @Component({
   selector: 'app-promotion-program-rule-cu-dialog',
@@ -16,7 +17,7 @@ export class PromotionProgramRuleCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   listCategories: ProductCategoryBasic[];
-  listProducts: Product[];
+  listProducts: ProductSimple[];
   @ViewChild('productMultiSelect', { static: true }) productMultiSelect: MultiSelectComponent;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, private productService: ProductService,

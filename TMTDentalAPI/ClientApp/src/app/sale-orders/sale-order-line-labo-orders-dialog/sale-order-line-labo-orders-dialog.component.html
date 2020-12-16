@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -16,10 +15,11 @@
                 <tr>
                     <th>Số phiếu</th>
                     <th>Labo</th>
+                    <th>Nhà cung cấp</th>
                     <th>Ngày gửi</th>
                     <th>Ngày nhận</th>
                     <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
+                    <!-- <th>Trạng thái</th> -->
                     <th></th>
                 </tr>
             </thead>
@@ -27,14 +27,15 @@
                 <tr *ngFor="let lb of laboOrders">
                     <td (click)="actionLabo(lb)" style="cursor: pointer; color: #007bff;">
                         {{lb.name}}</td>
+                    <td>{{lb.productName }}</td>
                     <td>{{lb.partnerName }}</td>
                     <td>{{lb.dateOrder | date: 'short' }}</td>
                     <td>{{lb.datePlanned | date: 'short' }}</td>
                     <td>{{lb.amountTotal | number }}</td>
-                    <td>
+                    <!-- <td>
                         <span *ngIf="lb.state==='purchase'">Đơn hàng</span>
                         <span *ngIf="lb.state==='draft'">Nháp</span>
-                    </td>
+                    </td> -->
                     <td>
                         <a title="Xóa" (click)="deleteLabo(lb)">
                             <span class="far fa-trash-alt"></span></a>

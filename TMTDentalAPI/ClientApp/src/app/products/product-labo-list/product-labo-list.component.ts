@@ -51,8 +51,9 @@ export class ProductLaboListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
+    val.type2 = 'labo';
 
-    this.productService.getLaboPaged(val).pipe(
+    this.productService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems

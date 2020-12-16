@@ -29,6 +29,7 @@ import { ProductAdvanceSearchComponent } from './product-advance-search/product-
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductServiceImportDialogComponent } from './product-service-import-dialog/product-service-import-dialog.component';
 import { SharedModule } from '../shared/shared.module';
+import { DialogContainerService, DialogService, WindowContainerService, WindowService } from '@progress/kendo-angular-dialog';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,7 @@ import { SharedModule } from '../shared/shared.module';
     ProductSearchListComponent
   ],
   providers: [
-    ProductService
+    ProductService,WindowService, WindowContainerService, DialogService, DialogContainerService
   ],
   entryComponents: [ProductDialogComponent, ProductImportExcelDialogComponent, ProductMedicineCuDialogComponent,
     ProductLaboCuDialogComponent, ProductProductCuDialogComponent, ProductStepCuDialogComponent,

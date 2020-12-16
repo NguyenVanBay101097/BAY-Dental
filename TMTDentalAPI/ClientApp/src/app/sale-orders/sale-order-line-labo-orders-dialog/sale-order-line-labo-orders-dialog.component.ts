@@ -20,7 +20,8 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
-    private saleLineService: SaleOrderLineService
+    private saleLineService: SaleOrderLineService,
+    private laboOrderServie: LaboOrderService
   ) { }
 
   saleOrderLineId: string;
@@ -34,8 +35,11 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
   }
 
   loadLaboOrderList() {
-    return this.saleLineService.getLaboOrders(this.saleOrderLineId).subscribe((result: any) => {
-      this.laboOrders = result;
+    const val = new LaboOrderPaged();
+    val.saleOrderLineId = this.saleOrderLineId;
+    val.limit = 2000;
+    return this.laboOrderService.getPaged(val).subscribe((result: any) => {
+      this.laboOrders = result.items;
     });
   }
 

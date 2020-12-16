@@ -9,6 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string PartnerName { get; set; }
         public string CustomerName { get; set; }
+        public string ProductName { get; set; }
         public string Name { get; set; }
         public DateTime DateOrder { get; set; }
         public string State { get; set; }

@@ -30,15 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DatePlanned { get; set; }
 
-        public Guid? DotKhamId { get; set; }
-        public DotKhamSimple DotKham { get; set; }
-
-        public Guid? CustomerId { get; set; }
-        public PartnerSimple Customer { get; set; }
-
-        public Guid? SaleOrderId { get; set; }
-        public SaleOrderBasic SaleOrder { get; set; }
-
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
@@ -70,5 +61,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string WarrantyCode { get; set; }
         public DateTime? WarrantyPeriod { get; set; }
+        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
     }
 }

@@ -86,7 +86,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetLabo(Guid id)
         {
-            var product = await _productService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var product = await _productService.SearchQuery(x => x.Id == id).Include(x=>x.Categ).FirstOrDefaultAsync();
             var display = _mapper.Map<ProductLaboDisplay>(product);
             return Ok(display);
         }

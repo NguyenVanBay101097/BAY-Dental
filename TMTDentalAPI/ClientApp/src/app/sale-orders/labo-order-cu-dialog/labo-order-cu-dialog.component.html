@@ -7,29 +7,6 @@
     <div class="o_content">
         <div class="o_form_view ng-untouched ng-pristine ng-valid">
             <div class="o_form_sheet_bg">
-                <div class="o_form_statusbar">
-                    <div class="o_statusbar_buttons">
-                        <button type="button" accesskey="1" *ngIf="id && laboOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="buttonConfirm()">
-                            Xác nhận
-                        </button>
-                        <button *ngIf="['purchase'].indexOf(laboOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="buttonCancel()">
-                            Hủy phiếu
-                        </button>
-                    </div>
-                    <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                        <button [disabled]="laboOrder.state !== 'purchase'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': laboOrder.state === 'purchase', 'btn-secondary': laboOrder.state !== 'purchase'}" type="button">
-                            Đơn hàng
-                        </button>
-                        <button [disabled]="laboOrder.state !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': laboOrder.state === 'draft', 'btn-secondary': laboOrder.state !== 'draft'}" type="button">
-                            Nháp
-                        </button>
-                        <button *ngIf="laboOrder.state === 'cancel'" [disabled]="laboOrder.state !== 'cancel'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': laboOrder.state === 'cancel', 'btn-secondary': laboOrder.state !== 'cancel'}" type="button">
-                            Đã hủy
-                        </button>
-                    </div>
-                </div>
-
-
                 <form class="o_form_view" [formGroup]="formGroup">
                     <div class="o_form_sheet_bg">
 
@@ -49,14 +26,16 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox [class.d-none]="laboOrder.state != 'draft'" [data]="filteredLabos" [textField]="'name'" [filterable]="true" #laboCbx formControlName="partner" [valueField]="'id'">
-                                                </kendo-combobox>
-                                                <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="partner" (click)="updateSupplierModal()">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </a>
-                                                <a [class.d-none]="laboOrder.state != 'draft'" type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
-                                                    <i class="fas fa-plus"></i>
-                                                </a>
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filteredLabos" [textField]="'name'" [filterable]="true" #laboCbx formControlName="product" [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                    <a title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="labo" (click)="updateSupplierModal()">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                    <a type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -67,38 +46,47 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
-                                                    <kendo-combobox [class.d-none]="laboOrder.state != 'draft'" [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
+                                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
                                                     </kendo-combobox>
-                                                    <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="partner" (click)="updateSupplierModal()">
+                                                    <a title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="partner" (click)="updateSupplierModal()">
                                                         <i class="fas fa-external-link-alt"></i>
                                                     </a>
-                                                    <a [class.d-none]="laboOrder.state != 'draft'" type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
+                                                    <a type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
                                                         <i class="fas fa-plus"></i>
                                                     </a>
                                                 </div>
-                                                <a class="text-primary" (click)="updateSupplierModal()" [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}</a>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                <label class="o_form_label">Răng</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div *ngIf="saleOrderLine">
+                                                    <div *ngFor="let rang of saleOrderLine.teeth" (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}">
+                                                        {{rang.name}}</div>
+                                                </div>
+                                            </td>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label o_form_label_help">
                                                     Màu sắc
                                                 </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="color">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label o_form_label_help">
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <input type="text" class="form-control" formControlName="color">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label o_form_label_help">
                                                     Ghi chú
                                                 </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <textarea class="form-control" formControlName="note"></textarea>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <textarea class="form-control" formControlName="note"></textarea>
+                                                </td>
+                                            </tr>
                                     </tbody>
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">
@@ -155,7 +143,7 @@
                                               </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <span>{{getPriceSubTotal() | number}}</span>
+                                                <span style="margin-left: 15px;">{{getPriceSubTotal() | number}}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -294,9 +282,6 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" accesskey="s" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
-        Xác nhận
-    </button>
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
