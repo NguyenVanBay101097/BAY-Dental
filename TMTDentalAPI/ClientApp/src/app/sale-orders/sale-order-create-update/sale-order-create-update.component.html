@@ -41,6 +41,9 @@
                         <button *ngIf="['sale', 'done'].indexOf(saleOrder.State) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
                             Thanh toán
                         </button>
+                        <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                            In hồ sơ điều trị
+                        </button>
                         <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                             Cập nhật công nợ
                         </button>
