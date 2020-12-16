@@ -77,6 +77,16 @@
                                     <a *ngIf="partner" [routerLink]="['/partners/customer/' + partner.Id]">{{partner.DisplayName}}</a>
                                 </td>
                             </tr>
+                            <tr *ngIf="saleOrder.Quote">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phiếu tư vấn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.Quote.Id}">{{saleOrder.Quote.Name}}</a>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -101,16 +111,6 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     {{getStateDisplay()}}
-                                </td>
-                            </tr>
-                            <tr *ngIf="saleOrder.Quote">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Phiếu tư vấn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="saleOrder.Quote" [routerLink]="['/sale-quotations/form']" [queryParams]="{id: saleOrder.Quote.Id}">{{saleOrder.Quote.Name}}</a>
                                 </td>
                             </tr>
                         </tbody>

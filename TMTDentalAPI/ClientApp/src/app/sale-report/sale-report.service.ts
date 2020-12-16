@@ -67,6 +67,9 @@ export class SaleReportOldNewPartnerOutput {
     partnerOld: number;
     partnerNew: number;
     details: SaleReportOldNewPartnerDetails;
+    customerTotal: number;
+    customerNew: number;
+    customerOld: number;
 }
 
 @Injectable({ providedIn: 'root' })

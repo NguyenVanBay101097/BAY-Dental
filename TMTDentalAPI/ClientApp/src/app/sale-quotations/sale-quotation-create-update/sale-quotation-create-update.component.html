@@ -53,7 +53,7 @@
                                   </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a *ngIf="order" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">{{order.Name}}</a>
+                                    <a *ngIf="order" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.Id}">{{order.Name}}</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -72,18 +72,18 @@
                                     <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.DateOrder | date: 'short'}}</span>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                       Người tư vấn
                                   </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <kendo-combobox [class.d-none]="saleOrder.State != 'draft'" [data]="filteredUsers" [textField]="'Name'" [filterable]="true" #userCbx formControlName="User" [valueField]="'Id'">
-                                    </kendo-combobox> -->
+                                    <kendo-combobox [class.d-none]="saleOrder.State != 'draft'" [data]="filteredUsers" [textField]="'Name'" [filterable]="true" #userCbx formControlName="User" [valueField]="'Id'">
+                                    </kendo-combobox>
                                     <span [class.d-none]="saleOrder.State == 'draft'">{{saleOrder.User ? saleOrder.User.Name : ''}}</span>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>

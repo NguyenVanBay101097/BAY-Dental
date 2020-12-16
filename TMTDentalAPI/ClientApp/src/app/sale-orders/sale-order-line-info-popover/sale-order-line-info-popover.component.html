@@ -1,8 +1,6 @@
 
 <span class="d-flex">
-
-    <span>{{showInfo()}}</span>&nbsp;
-
+    <!-- <span>{{showInfo()}}</span>&nbsp; -->
     <a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'"
         [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual"
         (click)="toggleWithTeeth(popOver)">
@@ -52,7 +50,7 @@
             </table>
         </div>
         <div class="popover-footer">
-            <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Lưu</button>
+            <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Cập nhật</button>
             <button (click)="popOver.close()" class="btn btn-sm btn-danger ml-2">Hủy</button>
         </div>
     </div>

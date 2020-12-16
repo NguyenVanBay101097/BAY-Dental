@@ -824,8 +824,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
   }
 
-  blurSave() {
+  showTeethDiagnostic(line: FormGroup) {
+    var list = [];
+    var teeth = line.get('teeth').value;
+    if (teeth.length) {
+      list.push(teeth.map(x => x.name).join(','));
+    }
 
+    var diagnostic = line.get('diagnostic').value;
+    if (diagnostic) {
+      list.push(diagnostic);
+    }
+
+    return list.join('; ');
   }
 
   printFastSaleOrder(saleOrderId) {
