@@ -29,5 +29,19 @@
   /* Apply both top and bottom borders to the <th> */
   position: sticky !important;
   top: 0 !important;
+  background-color: #bee5eb !important;
+  border-top: 1px solid #dee2e6 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  border-right: 1px solid #dee2e6 !important;
+}
 
+.sticky-table .sticky-td {
+  /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+  border-bottom: 1px solid #dee2e6 !important;
+  border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-th:first-child, .sticky-table .sticky-td:first-child {
+  /* Apply a left border on the first <td> or <th> in a row */
+  border-left: 1px solid #dee2e6 !important;
 }

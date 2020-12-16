@@ -62,8 +62,8 @@
                                 <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                   </div>
-                                <div *ngIf="['sent','sale'].indexOf(saleOrder.state) !== -1">
-                                    {{getPartner.name}}
+                                <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
+                                    {{getPartner?.name}}
                                 </div>
                             </td>
                         </tr>
@@ -200,10 +200,13 @@
                                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                         <tr [formGroupName]="i">
                                             <td>{{line.get('name').value }}</td>
-                                            <td>                                             
-                                                <app-sale-order-line-info-popover [class.d-none]="saleOrder.state != 'draft'" [line]="line" [saleOrderState]="getState"
-                                                    (eventTeeth)="updateTeeth($event, line)">
-                                                </app-sale-order-line-info-popover>
+                                            <td>  
+                                                <div class="d-flex justify-content-between">
+                                                    <span>{{showTeethDiagnostic(line)}}</span>                                        
+                                                    <app-sale-order-line-info-popover [class.d-none]="saleOrder.state != 'draft'" [line]="line" [saleOrderState]="getState"
+                                                        (eventTeeth)="updateTeeth($event, line)">
+                                                    </app-sale-order-line-info-popover>
+                                                </div>   
                                             </td>
                                             <td>
                                                 <span *ngIf="saleOrderId">{{line.get('employee').value?.name }}</span>
