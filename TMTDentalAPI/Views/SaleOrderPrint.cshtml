@@ -40,10 +40,10 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        @Model.PartnerName
+                        @Model.Partner.Name
                     </td>
                 </tr>
-                @if (!string.IsNullOrEmpty(Model.PartnerPhone))
+                @if (!string.IsNullOrEmpty(Model.Partner.Phone))
                 {
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -52,12 +52,12 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            @Model.PartnerPhone
+                            @Model.Partner.Phone
                         </td>
                     </tr>
                 }
 
-                @if (!string.IsNullOrEmpty(Model.PartnerAddress))
+                @if (!string.IsNullOrEmpty(Model.Partner.Address))
                 {
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -66,7 +66,7 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            @Model.PartnerAddress
+                            @Model.Partner.Address
                         </td>
                     </tr>
                 }
@@ -90,7 +90,7 @@
                 {
                     <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
                         <td>@line.ProductName</td>
-                        <td class="text-right">@line.ProductUOMQty</td>
+                        <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
                         <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceUnit)</td>
                         @if (line.DiscountType == "percentage")
                         {
@@ -209,7 +209,7 @@
                                 <td>@line.Product.Name</td>
                                 <td>@line.NameStep</td>
                                 <td class="text-left">
-                                    <span>@String.Join(", ", line.Teeth.Select(x=>x.Name).ToArray())</span>
+                                    <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
                                     <p>@line.Note</p>
                                 </td>
                             </tr>

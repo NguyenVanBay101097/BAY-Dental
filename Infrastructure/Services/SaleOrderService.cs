@@ -1629,22 +1629,52 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)
         {
-            var order = await SearchQuery(x => x.Id == id)
-               .Include(x => x.Partner)
-               .Include(x => x.Company)
-               .Include(x => x.Company.Partner)
-               .Include(x => x.OrderLines)
-               .Include(x => x.DotKhams)
-               .Include("OrderLines.Product")
-               .FirstOrDefaultAsync();
-            var res = _mapper.Map<SaleOrderPrintVM>(order);
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();           
+            var order = await SearchQuery(x => x.Id == id).Select(x => new SaleOrderPrintVM
+            {
+                Id = x.Id,
+                CompanyId = x.CompanyId,
+                Company = x.Company != null ? new CompanyPrintVM
+                {
+                    Name = x.Company.Name,
+                    Email = x.Company.Email,
+                    Phone = x.Company.Phone,
+                    Logo = x.Company.Logo,
+                    PartnerCityName = x.Company.Partner.CityName,
+                    PartnerDistrictName = x.Company.Partner.DistrictName,
+                    PartnerWardName = x.Company.Partner.WardName,
+                    PartnerStreet = x.Company.Partner.Street,
+                } : null,
+                Name = x.Name,
+                DateOrder = x.DateOrder,
+                AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
+                Residual = x.Residual.HasValue ? x.Residual.Value : 0,
+                Partner = x.Partner != null ? new PartnerSimpleInfo {
+                    Name =  x.Partner.Name ,
+                    Phone =  x.Partner.Phone,
+                    Ref =  x.Partner.Ref ,
+                    Street = x.Partner.Street,
+                    CityName = x.Partner.CityName,
+                    WardName = x.Partner.WardName,
+                    DistrictName = x.Partner.DistrictName,
+                } : null,                    
+            }).FirstOrDefaultAsync();          
             //Lược bỏ những dòng số lượng bằng 0
-            res.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
-            res.DotKhams = await _GetListDotkhamInfo(order.Id);
-            res.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
-            var partnerObj = GetService<IPartnerService>();
-            res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
-            return res;
+            order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Select(x => new SaleOrderLinePrintVM
+            {
+                ProductName = x.Product.Name,
+                ProductUOMQty = x.ProductUOMQty,
+                DiscountType = x.DiscountType,
+                Discount = x.Discount,
+                DiscountFixed = x.DiscountFixed,
+                PriceUnit = x.PriceUnit,
+                PriceSubTotal = x.PriceSubTotal,
+                Sequence = x.Sequence               
+            }).ToListAsync();
+            //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
+            order.DotKhams = await _GetListDotkhamInfo(order.Id);
+            order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);        
+            return order;
         }
 
         public async Task<IEnumerable<PaymentInfoContentPrintVm>> _GetPaymentInfoPrint(Guid id)

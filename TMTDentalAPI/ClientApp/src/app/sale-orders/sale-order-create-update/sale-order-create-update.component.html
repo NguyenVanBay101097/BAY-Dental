@@ -42,7 +42,7 @@
                             Thanh toán
                         </button>
                         <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
-                            In hồ sơ điều trị
+                            In phiếu
                         </button>
                         <button type="button" class="btn btn-primary btn-sm" *ngIf="saleOrder.InvoiceStatus == 'to invoice'" (click)="actionInvoiceCreateV2()">
                             Cập nhật công nợ
