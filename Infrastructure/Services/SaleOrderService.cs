@@ -1634,15 +1634,95 @@ namespace Infrastructure.Services
                .Include(x => x.Company)
                .Include(x => x.Company.Partner)
                .Include(x => x.OrderLines)
+               .Include(x => x.DotKhams)
                .Include("OrderLines.Product")
                .FirstOrDefaultAsync();
             var res = _mapper.Map<SaleOrderPrintVM>(order);
             //Lược bỏ những dòng số lượng bằng 0
             res.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
-
+            res.DotKhams = await _GetListDotkhamInfo(order.Id);
+            res.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
             var partnerObj = GetService<IPartnerService>();
             res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
             return res;
+        }
+
+        public async Task<IEnumerable<PaymentInfoContentPrintVm>> _GetPaymentInfoPrint(Guid id)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var invoiceIds = await amlObj.SearchQuery(x => x.SaleLineRels.Any(s => s.OrderLine.OrderId == id)).Select(x => x.MoveId).Distinct().ToListAsync();
+            var invoiceObj = GetService<IAccountMoveService>();
+            var invoices = await invoiceObj._ComputePaymentsWidgetReconciledInfo(invoiceIds);
+            var dict = new Dictionary<Guid, PaymentInfoContentPrintVm>();
+            foreach (var invoice in invoices)
+            {
+                if (string.IsNullOrEmpty(invoice.InvoicePaymentsWidget))
+                    continue;
+
+                var paymentsWidget = JsonConvert.DeserializeObject<IList<PaymentInfoContentPrintVm>>(invoice.InvoicePaymentsWidget);
+                foreach (var paymentWidget in paymentsWidget)
+                {
+                    if (!paymentWidget.AccountPaymentId.HasValue)
+                        continue;
+
+                    if (!dict.ContainsKey(paymentWidget.PaymentId))
+                        dict.Add(paymentWidget.PaymentId, paymentWidget);
+                    else
+                        dict[paymentWidget.PaymentId].Amount += paymentWidget.Amount;
+                }
+            }
+
+            return dict.Values;
+        }
+
+        public async Task<IEnumerable<DotKhamDisplayVm>> _GetListDotkhamInfo(Guid id)
+        {
+            var dotkhamObj = GetService<IDotKhamService>();
+            var dotKhamLineObj = GetService<IDotKhamLineService>();
+            var listdotkham = new List<DotKhamDisplayVm>();
+            var order = await SearchQuery(x => x.Id == id)          
+              .Include(x => x.DotKhams)
+              .FirstOrDefaultAsync();
+
+            var dotkhamids = order.DotKhams.Select(x => x.Id).ToList();
+            foreach(var dotkhamId in dotkhamids)
+            {
+                var dotkham = await dotkhamObj.SearchQuery(x => x.Id == dotkhamId).Select(x => new DotKhamDisplayVm
+                {
+                    Date = x.Date,
+                    Doctor = x.Doctor != null ? new EmployeeSimple
+                    {
+                        Id = x.Doctor.Id,
+                        Name = x.Doctor.Name
+                    } : null,
+                    Id = x.Id,
+                    Sequence = x.Sequence,
+                    Reason = x.Reason
+                }).FirstOrDefaultAsync();
+
+
+                dotkham.Lines = await dotKhamLineObj.SearchQuery(x => x.DotKhamId == dotkham.Id).OrderBy(x => x.Sequence).Select(x => new DotKhamLineDisplay
+                {
+                    Teeth = x.ToothRels.Select(x => new ToothDisplay
+                    {
+                        Id = x.ToothId,
+                        Name = x.Tooth.Name
+                    }),
+                    Id = x.Id,
+                    NameStep = x.NameStep,
+                    Note = x.Note,
+                    Product = new ProductSimple
+                    {
+                        Id = x.ProductId.Value,
+                        Name = x.Product.Name
+                    },
+                    SaleOrderLineId = x.SaleOrderLineId
+                }).ToListAsync();
+
+                listdotkham.Add(dotkham);
+            }
+            return listdotkham.OrderBy(x=>x.Sequence);
+
         }
 
         public override ISpecification<SaleOrder> RuleDomainGet(IRRule rule)
