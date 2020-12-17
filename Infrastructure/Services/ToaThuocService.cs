@@ -67,8 +67,9 @@ namespace Infrastructure.Services
                 var partnerObj = GetService<IPartnerService>();
                 var partner = await partnerObj.GetByIdAsync(val.PartnerId);
                 res.PartnerId = partner.Id;
-                res.Partner = _mapper.Map<PartnerSimple>(partner);
+                res.Partner = _mapper.Map<PartnerCustomerDonThuoc>(partner);
             }
+
             if (val.SaleOrderId.HasValue)
             {
                 res.SaleOrderId = val.SaleOrderId;

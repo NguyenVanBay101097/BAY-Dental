@@ -11,20 +11,20 @@
                 <div class="d-flex">
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Họ tên</label>
-                        <span>Đặng Văn Trà</span>
+                        <span>{{ getFBValueItem('partner').name }}</span>
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Giới tính</label>
-                        <span>Nam</span>
+                        <span>{{ getFBValueItem('partner').gender == 'male' ? 'Nam' : 'Nữ' }}</span>
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Tuổi</label>
-                        <span>11</span>
+                        <span>{{ getFBValueItem('partner').age }}</span>
                     </div>
                 </div>
                 <div>
                     <label class="font-weight-600 mr-4">Địa chỉ</label>
-                    <span>260 Tân Kỳ Tân Quý, phường Sơn Kỳ, quận Tân Phú, Thành phố Hồ Chí Minh</span>
+                    <span>{{ getFBValueItem('partner').address }}</span>
                 </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6 my-0">
@@ -44,11 +44,13 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Đơn thuốc mẫu
+                                        Đơn thuốc mẫu 
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-
+                                    <kendo-combobox formControlName="samplePrescription" [filterable]="true" [data]="samplePrescriptionList"
+                                        #samplePrescriptionCbx [valueField]="'id'" [textField]="'name'" (selectionChange)="selectionChangeSamplePrescription($event)">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>
@@ -57,7 +59,7 @@
                 <div class="overflow-auto">
                     <div class="d-flex">
                         <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
-                            (click)="onCreate()">Thêm thuốc mới</button>
+                            (click)="createMedicine()">Thêm thuốc mới</button>
                     </div>
                     <table class="table table-sm mt-2 table-tbody-ver-align-middle border-bottom">
                         <thead>
@@ -175,7 +177,7 @@
                             </label>
                         </div>
                         <input type="text" class="form-control w-75" formControlName="nameSamplePrescription"
-                            placeholder="Nhập tên đơn thuốc mẫu ..." />-
+                            placeholder="Nhập tên đơn thuốc mẫu ..." />
                     </div>
                 </div>
             </div>

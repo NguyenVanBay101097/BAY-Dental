@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormGroup, FormBuilder, FormArray, Validators } from "@angular/forms";
 import { UserPaged, UserService } from "src/app/users/user.service";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { ProductSimple } from "src/app/products/product-simple";
@@ -17,12 +17,15 @@ import {
   SamplePrescriptionsService,
   SamplePrescriptionsDisplay,
   SamplePrescriptionsSimple,
+  SamplePrescriptionsPaged,
 } from "src/app/sample-prescriptions/sample-prescriptions.service";
 import { debounceTime, tap, switchMap } from "rxjs/operators";
 import { ToaThuocService } from "src/app/toa-thuocs/toa-thuoc.service";
 import { EmployeeBasic, EmployeePaged } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
 import * as _ from "lodash";
+import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: "app-toa-thuoc-cu-dialog-save",
@@ -30,17 +33,16 @@ import * as _ from "lodash";
   styleUrls: ["./toa-thuoc-cu-dialog-save.component.css"],
 })
 export class ToaThuocCuDialogSaveComponent implements OnInit {
+  id: string;
   title: string;
   toaThuocForm: FormGroup;
-  id: string;
   employeeList: EmployeeBasic[] = [];
   productList: ProductSimple[] = [];
   samplePrescriptionList: SamplePrescriptionsSimple[] = [];
   defaultVal: any;
   samplePrescriptionAdded: any;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
-  @ViewChild("samplePrescriptionCbx", { static: true })
-  samplePrescriptionCbx: ComboBoxComponent;
+  @ViewChild("samplePrescriptionCbx", { static: true }) samplePrescriptionCbx: ComboBoxComponent;
 
   filterSettings: DropDownFilterSettings = {
     caseSensitive: false,
@@ -55,19 +57,21 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     private errorService: AppSharedShowErrorService,
     private employeeService: EmployeeService,
     private productService: ProductService,
-    private samplePrescriptionsService: SamplePrescriptionsService
+    private samplePrescriptionsService: SamplePrescriptionsService, 
+    private modalService: NgbModal, 
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
-      customer: null,
-      employee: null,
-      samplePrescriptions: null,
-      lines: this.fb.array([]),
-      note: null,
-      dateObj: null,
-      saveSamplePrescription: false,
-      nameSamplePrescription: null,
+      partner: null, 
+      employee: null, 
+      samplePrescription: null, 
+      lines: this.fb.array([]), 
+      note: null, 
+      dateObj: null, 
+      saveSamplePrescription: false, 
+      nameSamplePrescription: null, 
     });
 
     setTimeout(() => {
@@ -79,16 +83,27 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       }
 
       this.employeeCbx.filterChange.asObservable().pipe(
-          debounceTime(300),
-          tap(() => (this.employeeCbx.loading = true)),
-          switchMap((val) => this.searchEmployees(val))
-        )
-        .subscribe((result) => {
-          this.employeeList = result.items;
-          this.employeeCbx.loading = false;
-        });
+        debounceTime(300),
+        tap(() => (this.employeeCbx.loading = true)),
+        switchMap((val) => this.searchEmployees(val))
+      )
+      .subscribe((result) => {
+        this.employeeList = result.items;
+        this.employeeCbx.loading = false;
+      });
+
+      this.samplePrescriptionCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.samplePrescriptionCbx.loading = true)),
+        switchMap((val) => this.searchSamplePrescriptions(val))
+      )
+      .subscribe((result) => {
+        this.samplePrescriptionList = result.items;
+        this.samplePrescriptionCbx.loading = false;
+      });
 
       this.loadEmployeeList();
+      this.loadSamplePrescriptionList();
       this.loadProductList();
     });
   }
@@ -97,16 +112,32 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     return this.toaThuocForm.get("lines") as FormArray;
   }
 
-  searchEmployees(q?: string) {
+  getFBValueItem(item) {
+    return this.toaThuocForm.get(item).value;
+  }
+
+  searchEmployees(search?: string) {
     var val = new EmployeePaged();
     val.isDoctor = true;
-    val.search = q || "";
+    val.search = search || "";
     return this.employeeService.getEmployeePaged(val);
   }
 
   loadEmployeeList() {
     return this.searchEmployees().subscribe((result) => {
       this.employeeList = _.unionBy(this.employeeList, result.items, "id");
+    });
+  }
+
+  searchSamplePrescriptions(search?: string) {
+    var val = new SamplePrescriptionsPaged();
+    val.search = search || "";
+    return this.samplePrescriptionsService.getPaged(val);
+  }
+
+  loadSamplePrescriptionList() {
+    return this.searchSamplePrescriptions().subscribe((result) => {
+      this.samplePrescriptionList = _.unionBy(this.samplePrescriptionList, result.items, "id");
     });
   }
 
@@ -121,6 +152,70 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     return this.searchProducts().subscribe((result) => {
       this.productList = _.unionBy(this.productList, result, "id");
     });
+  }
+
+  selectionChangeSamplePrescription(item) {
+    this.samplePrescriptionsService.get(item.id).subscribe(
+      (result) => {
+        this.toaThuocForm.get("note").patchValue(result.note);
+
+        this.lines.clear();
+
+        result.lines.forEach((line) => {
+          this.lines.push(
+            this.fb.group({
+              product: [line.product, Validators.required],
+              numberOfTimes: line.numberOfTimes,
+              amountOfTimes: line.amountOfTimes,
+              quantity: line.quantity,
+              numberOfDays: line.numberOfDays,
+              useAt: line.useAt,
+            })
+          );
+        });
+      },
+      (err) => {
+        this.errorService.show(err);
+      }
+    );
+  }
+
+  createMedicine() {
+    let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Thêm thuốc mới thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+    }, () => {
+    });
+  }
+
+  loadDefault(val: any) {
+    this.toaThuocService.defaultGet(val).subscribe((result) => {
+      console.log(result);
+      this.toaThuocForm.patchValue(result);
+      // let date = new Date(result.date);
+      // this.toaThuocForm.get("dateObj").patchValue(date);
+    });
+  }
+
+  onCreate() {
+    var lines = this.toaThuocForm.get("lines") as FormArray;
+    lines.push(
+      this.fb.group({
+        product: null,
+        numberOfTimes: 1,
+        amountOfTimes: 1,
+        quantity: 1,
+        numberOfDays: 1,
+        useAt: "after_meal",
+      })
+    );
   }
 
   loadRecord() {
@@ -148,28 +243,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         );
       });
     });
-  }
-
-  loadDefault(val: any) {
-    this.toaThuocService.defaultGet(val).subscribe((result) => {
-      this.toaThuocForm.patchValue(result);
-      let date = new Date(result.date);
-      this.toaThuocForm.get("dateObj").patchValue(date);
-    });
-  }
-
-  onCreate() {
-    var lines = this.toaThuocForm.get("lines") as FormArray;
-    lines.push(
-      this.fb.group({
-        product: null,
-        numberOfTimes: 1,
-        amountOfTimes: 1,
-        quantity: 1,
-        numberOfDays: 1,
-        useAt: "after_meal",
-      })
-    );
   }
 
   updateQuantity(line: FormGroup) {
@@ -210,9 +283,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     if (this.id) {
       this.toaThuocService.update(this.id, val).subscribe(
         () => {
-          this.activeModal.close({
-            print,
-          });
+          this.activeModal.close({print,});
         },
         (err) => {
           this.errorService.show(err);
@@ -221,10 +292,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     } else {
       this.toaThuocService.create(val).subscribe(
         (result) => {
-          this.activeModal.close({
-            item: result,
-            print,
-          });
+          this.activeModal.close({item: result, print,});
         },
         (err) => {
           this.errorService.show(err);
@@ -248,37 +316,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     this.samplePrescriptionsService.create(val).subscribe(
       (result) => {
         this.samplePrescriptionAdded = result;
-      },
-      (err) => {
-        this.errorService.show(err);
-      }
-    );
-  }
-
-  getNameSamplePrescription(nameSamplePrescription) {
-    this.onSaveSamplePrescription(nameSamplePrescription);
-  }
-
-  getItemSamplePrescription(itemSamplePrescription) {
-    this.samplePrescriptionsService.get(itemSamplePrescription.id).subscribe(
-      (result) => {
-        console.log(result);
-        this.toaThuocForm.get("note").patchValue(result.note);
-
-        this.lines.clear();
-
-        result.lines.forEach((line) => {
-          this.lines.push(
-            this.fb.group({
-              product: [line.product, Validators.required],
-              numberOfTimes: line.numberOfTimes,
-              amountOfTimes: line.amountOfTimes,
-              quantity: line.quantity,
-              numberOfDays: line.numberOfDays,
-              useAt: line.useAt,
-            })
-          );
-        });
       },
       (err) => {
         this.errorService.show(err);
