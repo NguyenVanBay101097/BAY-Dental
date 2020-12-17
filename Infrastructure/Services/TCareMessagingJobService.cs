@@ -149,7 +149,7 @@ namespace Infrastructure.Services
                             var nextAppointment = await GetNextAppointment(personalized.Id, context);
                             if (nextAppointment != null)
                             {
-                                template.Add("thoi_gian_lich_hen", nextAppointment.Date.Value.ToString("dd/MM/yyyy HH:mm"));
+                                template.Add("thoi_gian_lich_hen", nextAppointment.Date.Value.ToString("dd/MM/yyyy "+ nextAppointment.Time));
                             }
                         }
 
@@ -198,7 +198,8 @@ namespace Infrastructure.Services
             var appointment = await context.Appointments.Where(x => x.PartnerId == partnerId).OrderByDescending(x=> x.Date)
                 .Select(x=> new AppointmentBasic { 
                 Id = x.Id,
-                Date = x.Date
+                Date = x.Date,
+                Time = x.Time
                 }).FirstOrDefaultAsync();
             return appointment;
         }
