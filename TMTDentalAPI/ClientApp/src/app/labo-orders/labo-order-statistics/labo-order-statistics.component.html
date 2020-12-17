@@ -29,9 +29,38 @@
 <div class="o_content">
     <div class="o_view_controller">
         <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
-            <kendo-grid-column field="partnerDisplayName" title="Tên labo" width="150">
+            <kendo-grid-column field="id" width="100" title="Thao tác" [locked]="true">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                        <i class="far fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <i class="far fa-trash-alt"></i></button>
+                </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
+            <kendo-grid-column field="productName" title="Vật liệu" width="150" [locked]="true" >
+            </kendo-grid-column>
+            <kendo-grid-column field="customerRef" title="Mã KH" width="100" [locked]="true">
+            </kendo-grid-column>
+            <kendo-grid-column field="customerName" title="Tên KH" width="150" [locked]="true">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Nhà cung cấp" width="150" [locked]="true">
+            </kendo-grid-column>
+            <kendo-grid-column field="quantity" title="SL" class="text-right" width="50">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.quantity | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="priceUnit" title="Đơn giá" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.priceUnit | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amountTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <!-- <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <a class="text-primary" *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderId}">
                         {{dataItem.saleOrderName}}
@@ -39,55 +68,51 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="orderName" title="Phiếu labo" width="100">
-            </kendo-grid-column>
-            <kendo-grid-column field="productName" title="Loại phục hình" width="150">
-            </kendo-grid-column>
-            <kendo-grid-column field="productQty" title="SL" class="text-right" width="50">
+            </kendo-grid-column> -->
+         
+          
+            <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.productQty | number}}
+                    {{dataItem.dateOrder | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="priceTotal" title="Thành tiền" class="text-right" width="120">
+            <kendo-grid-column field="datePlanned" title="Ngày nhận" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.priceTotal | number}}
+                    {{dataItem.datePlanned | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="orderDateOrder" title="Ngày gửi" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.orderDateOrder | date : 'short'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="orderDatePlanned" title="Ngày nhận" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.orderDatePlanned | date : 'short'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="receivedDate" title="Ngày thực nhận" width="140">
+            <!-- <kendo-grid-column field="receivedDate" title="Ngày thực nhận" width="140">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.receivedDate | date : 'short'}}
                 </ng-template>
-            </kendo-grid-column>
+            </kendo-grid-column> -->
             <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="120">
             </kendo-grid-column>
-            <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
+            <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="140">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <span *ngIf="dataItem.warrantyPeriod">{{dataItem.warrantyPeriod | date : 'shortDate'}}</span>
                 </ng-template>
-                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.warrantyPeriod | date : 'shortDate'}}
-                </ng-template> -->
             </kendo-grid-column>
-            <kendo-grid-column field="state" title="Trạng thái" width="120">
+            <kendo-grid-column field="saleOrderLineName" title="Dịch vụ" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.datePlanned | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="note" title="Ghi chú" width="120">
+            </kendo-grid-column>
+            <!-- <kendo-grid-column field="state" title="Trạng thái" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{stateGet(dataItem.state)}}
                 </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Nhận labo" width="120">
+            </kendo-grid-column> -->
+            <!-- <kendo-grid-column title="Nhận labo" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <button class="btn btn-success btn-sm mr-2" title="Cập nhật chi tiết labo" (click)="editItem(dataItem)">
                         <span class="far fa-edit"></span></button>
                 </ng-template>
-            </kendo-grid-column>
+            </kendo-grid-column> -->
         </kendo-grid>
     </div>
 </div>

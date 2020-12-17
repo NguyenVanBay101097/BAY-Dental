@@ -60,7 +60,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mã bảo hành
         /// </summary>
         public string WarrantyCode { get; set; }
+
         public DateTime? WarrantyPeriod { get; set; }
+
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
     }
 }

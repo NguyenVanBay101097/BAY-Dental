@@ -156,7 +156,7 @@
                                                 <th class="b-sticky-left" style="min-width: 200px;">Dịch vụ</th>
                                                 <th style="min-width: 200px;">Răng, Chuẩn đoán</th>
                                                 <th style="min-width: 200px;">Bác sĩ</th>
-                                                <th style="min-width: 60px;" class="text-right">SL</th>
+                                                <th style="min-width: 80px;" class="text-right">SL</th>
                                                 <th style="min-width: 120px;" class="text-right">Đơn giá</th>
                                                 <th style="min-width: 60px;" class="text-right">Giảm</th>
                                                 <th style="min-width: 100px;" class="text-right">Thành tiền</th>
@@ -318,109 +318,4 @@
             </div>
         </div>
     </form>
-</div>
-
-<app-account-payment-print></app-account-payment-print>
-
-<div id="printSaleOrderDiv" *ngIf="saleOrderPrint" style="display: none;">
-    <div class="o_form_view o_print">
-        <div class="text-center">
-            <h5 class="mb-0">{{saleOrderPrint.companyName}}</h5>
-            <div *ngIf="saleOrderPrint.companyAddress">{{saleOrderPrint.companyAddress}}</div>
-            <!-- <div>ĐT: {{saleOrderPrint.companyPhone}} - Email: {{saleOrderPrint.companyEmail}}</div> -->
-        </div>
-        <div class="text-center">
-            <h1>PHIẾU ĐIỀU TRỊ</h1>
-            <span>Số phiếu: {{saleOrderPrint.Name}} - Ngày điều trị: {{saleOrderPrint.dateOrder | date: 'short'}}</span>
-        </div>
-        <div class="o_group">
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Khách hàng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{saleOrderPrint.partnerName}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Địa chỉ
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{saleOrderPrint.partnerAddress}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Điện thoại
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{saleOrderPrint.partnerPhone}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th>Dịch vụ</th>
-                        <th class="text-right">Số lượng</th>
-                        <th class="text-right">Đơn giá</th>
-                        <th class="text-right">Giảm (%)</th>
-                        <th class="text-right">Thành tiền</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
-                        <td>{{ line.productName }}</td>
-                        <td class="text-right">{{ line.productUOMQty | number }}</td>
-                        <td class="text-right">{{ line.priceUnit | number }}</td>
-                        <td class="text-right">{{ line.discount | number }}</td>
-                        <td class="text-right">{{ line.priceSubTotal | number }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label" style="width: 50%;">
-                            <label class="o_form_label oe_subtotal_footer_separator">
-                                Tổng tiền
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 50%;">
-                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">{{saleOrderPrint.amountTotal | number}}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="clearfix"></div>
-        </div>
-        <div class="row">
-            <div class="col col-sm">
-                <div class="text-center font-weight-bold">
-                    Khách hàng
-                </div>
-            </div>
-            <div class="col col-sm">
-                <div class="text-center font-weight-bold">
-                    Người lập
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

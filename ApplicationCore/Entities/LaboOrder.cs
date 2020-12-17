@@ -9,6 +9,7 @@ namespace ApplicationCore.Entities
         public LaboOrder()
         {
             DateOrder = DateTime.Now;
+            State = "draft";
         }
 
         public string Name { get; set; }
@@ -24,8 +25,8 @@ namespace ApplicationCore.Entities
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
 
-        //public Guid? CustomerId { get; set; }
-        //public Partner Customer { get; set; }
+        public Guid? CustomerId { get; set; }
+        public Partner Customer { get; set; }
 
         /// <summary>
         /// Ngày gửi
@@ -97,5 +98,14 @@ namespace ApplicationCore.Entities
         /// list răng
         /// </summary>
         public ICollection<LaboOrderToothRel> LaboOrderToothRel { get; set; } = new List<LaboOrderToothRel>();
+
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Đã xác nhận
+        /// </summary>
+        public string State { get; set; }
+
+        public Guid? AccountMoveId { get; set; }
+        public AccountMove AccountMove { get; set; }
     }
 }

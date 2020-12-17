@@ -58,7 +58,7 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
             }
 
-            if(val.SaleOrderLineId.HasValue)
+            if (val.SaleOrderLineId.HasValue)
             {
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderLineId == val.SaleOrderLineId));
             }
@@ -79,12 +79,12 @@ namespace Infrastructure.Services
             ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
             var listSaleOrderLineIds = new List<Guid>();
             if (val.SaleOrderId.HasValue)
-            { 
-                listSaleOrderLineIds = GetService<ISaleOrderLineService>().SearchQuery(x=>x.OrderId == val.SaleOrderId.Value).Select(x=>x.Id).ToList();
+            {
+                listSaleOrderLineIds = GetService<ISaleOrderLineService>().SearchQuery(x => x.OrderId == val.SaleOrderId.Value).Select(x => x.Id).ToList();
             }
             if (val.SaleOrderLineId.HasValue)
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.OrderLines.Any(y=> y.SaleOrderLineId == val.SaleOrderLineId)));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.OrderLines.Any(y => y.SaleOrderLineId == val.SaleOrderLineId)));
             }
             if (listSaleOrderLineIds.Count() > 0)
             {
@@ -104,52 +104,52 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val)
         {
-            ISpecification<LaboOrderLine> spec = new InitialSpecification<LaboOrderLine>(x => true);
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
 
             if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.PartnerId == val.PartnerId));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
 
             if (val.ProductId.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.ProductId == val.ProductId));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.ProductId == val.ProductId));
 
             if (val.DateOrderFrom.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder >= val.DateOrderFrom));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder >= val.DateOrderFrom));
 
             if (val.DateOrderTo.HasValue)
             {
                 var dateOrderTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DateOrder <= dateOrderTo));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateOrderTo));
             }
 
             if (val.DatePlannedFrom.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned >= val.DatePlannedFrom));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned >= val.DatePlannedFrom));
 
             if (val.DatePlannedTo.HasValue)
             {
                 var datePlannedTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= datePlannedTo));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= datePlannedTo));
             }
 
-            var lineObj = GetService<ILaboOrderLineService>();
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var query = lineObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await query.Select(x => new LaboOrderStatisticsBasic { 
+            var items = await query.Select(x => new LaboOrderStatisticsBasic
+            {
                 Id = x.Id,
                 PartnerDisplayName = x.Partner.DisplayName,
+                CustomerDisplayName = x.Customer.DisplayName,
                 ProductName = x.Product.Name,
-                OrderName = x.Order.Name,
-                ProductQty = x.ProductQty,
-                PriceTotal = x.PriceTotal,
-                OrderDateOrder = x.Order.DateOrder,
-                OrderDatePlanned = x.Order.DatePlanned,
+                //OrderName = x.Order.Name,
+                ProductQty = x.Quantity,
+                PriceTotal = x.AmountTotal,
+                //OrderDateOrder = x.Order.DateOrder,
+                //OrderDatePlanned = x.Order.DatePlanned,
                 WarrantyCode = x.WarrantyCode,
                 WarrantyPeriod = x.WarrantyPeriod,
-                State = x.State,
+                //State = x.State,
                 SaleOrderName = x.SaleOrderLine.Order.Name,
                 SaleOrderId = x.SaleOrderLine.Order.Id,
-                IsReceived = x.IsReceived,
-                ReceivedDate = x.ReceivedDate
+                //IsReceived = x.IsReceived,
+                //ReceivedDate = x.ReceivedDate
             }).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -179,7 +179,7 @@ namespace Infrastructure.Services
                 AmountTotal = x.AmountTotal,
                 DateOrder = x.DateOrder,
                 Name = x.Name,
-                PartnerName = x.Partner.Name,
+                //PartnerName = x.Partner.Name,
             }).ToListAsync();
             return res;
         }
@@ -206,7 +206,7 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x=>x.Product)
+                .Include(x => x.Product)
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
             //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
@@ -219,7 +219,7 @@ namespace Infrastructure.Services
             labo.CompanyId = CompanyId;
             foreach (var tooth in val.Teeth)
             {
-                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id});
+                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
             }
             labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await CreateAsync(labo);
@@ -306,23 +306,63 @@ namespace Infrastructure.Services
 
         public async Task ButtonConfirm(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines).Include("OrderLines.Product")
-                .ToListAsync();
+            var moveObj = GetService<IAccountMoveService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var order in self)
             {
-                foreach (var line in order.OrderLines)
-                    line.State = "purchase";
+                if (order.State != "draft")
+                    throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp.");
+                var move = await _PrepareAccountMove(order);
+
+                await moveObj.CreateAsync(move);
+                await moveObj.ActionPost(new List<AccountMove>() { move });
+
+                order.State = "confirmed";
+                order.AccountMoveId = move.Id;
             }
 
-            var invoices = await _CreateInvoices(self);
-            var moveObj = GetService<IAccountMoveService>();
-            await moveObj.ActionPost(invoices);
-
-            var lbLineObj = GetService<ILaboOrderLineService>();
-            lbLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
-
             await UpdateAsync(self);
+        }
+
+        private async Task<AccountMove> _PrepareAccountMove(LaboOrder self)
+        {
+            var accountObj = GetService<IAccountAccountService>();
+            var account = await accountObj.GetAccountPayableCurrentCompany();
+
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice");
+            if (journal == null)
+                throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
+
+            var balance = self.AmountTotal;
+            var move = new AccountMove
+            {
+                JournalId = journal.Id,
+                Journal = journal,
+                PartnerId = self.PartnerId,
+                CompanyId = journal.CompanyId,
+                Lines = new List<AccountMoveLine>()
+                {
+                    new AccountMoveLine
+                    {
+                        Debit = balance,
+                        Credit = 0,
+                        PartnerId = self.PartnerId,
+                        AccountId = journal.DefaultDebitAccount.Id,
+                        Account = journal.DefaultDebitAccount,
+                    },
+                    new AccountMoveLine
+                    {
+                        Debit = 0,
+                        Credit = balance,
+                        PartnerId = self.PartnerId,
+                        AccountId = account.Id,
+                        Account = account,
+                    },
+                }
+            };
+
+            return move;
         }
 
         public async Task ButtonCancel(IEnumerable<Guid> ids)
@@ -376,21 +416,21 @@ namespace Infrastructure.Services
                 var dkObj = GetService<IDotKhamService>();
                 var dk = await dkObj.SearchQuery(x => x.Id == val.DotKhamId).Include(x => x.Partner).FirstOrDefaultAsync();
             }
-            if(val.SaleOrderLineId.HasValue)
+
+            if (val.SaleOrderLineId.HasValue)
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
-               
-                var line = await _mapper.ProjectTo<SaleOrderLineBasic>(saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId)
-                        .Include("SaleOrderLineToothRels.Tooth")).FirstOrDefaultAsync();
-                res.SaleOrderLineId = val.SaleOrderLineId;
-                res.SaleOrderLine = line;
+
+                var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
+                    .Select(x => x.Tooth).ToListAsync();
+                res.Teeth = _mapper.Map<IEnumerable<ToothBasic>>(teeth);
             }
             return res;
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x=>x.OrderLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();
             var states = new string[] { "draft", "cancel" };
             //await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
             await DeleteAsync(self);
@@ -495,7 +535,6 @@ namespace Infrastructure.Services
 
         private async Task _UpdateProperties(IEnumerable<LaboOrder> self)
         {
-            var saleObj = GetService<ISaleOrderService>();
             foreach (var labo in self)
             {
                 if (string.IsNullOrEmpty(labo.Name))
@@ -504,9 +543,11 @@ namespace Infrastructure.Services
                     labo.Name = await sequenceObj.NextByCode("labo.order");
                 }
 
-                foreach (var line in labo.OrderLines)
+                if (!labo.CustomerId.HasValue)
                 {
-                    line.PartnerId = labo.PartnerId;
+                    var saleLineObj = GetService<ISaleOrderLineService>();
+                    var saleLine = await saleLineObj.GetByIdAsync(labo.SaleOrderLineId);
+                    labo.CustomerId = saleLine.OrderPartnerId;
                 }
             }
         }
@@ -538,7 +579,8 @@ namespace Infrastructure.Services
             query = lineObj.SearchQuery(spec_2.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
             var laboAppointment = await query.CountAsync();
 
-            var result = new LaboOrderReportOutput { 
+            var result = new LaboOrderReportOutput
+            {
                 LaboReceived = laboReceived,
                 LaboAppointment = laboAppointment
             };

@@ -456,7 +456,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
     //update quantity combobox
     if (this.teethSelected.length > 0) {
-      this.formGroup.get("productQty").setValue(this.teethSelected.length);
+      this.formGroup.get("quantity").setValue(this.teethSelected.length);
     }
   }
 
