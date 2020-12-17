@@ -56,15 +56,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.ToaThuoc.Create")]
         public async Task<IActionResult> Create(ToaThuocSave val)
         {
-            var order = _mapper.Map<ToaThuoc>(val);
-            SaveOrderLines(val, order);
-            await _toaThuocService.CreateAsync(order);
+            var result = await _toaThuocService.CreateToaThuocAsync(val);
 
-            var basic = _mapper.Map<ToaThuocBasic>(order);
-            return Ok(basic);
+            return Ok(result);
         }
-
-
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Basic.ToaThuoc.Update")]
@@ -101,6 +96,20 @@ namespace TMTDentalAPI.Controllers
             var res = await _toaThuocService.DefaultGet(val);
             return Ok(res);
         }
+
+
+        [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.ToaThuoc.Delete")]
+        public async Task<IActionResult> CreateFromUI(ToaThuocCreateFromUI val)
+        {
+            var toaThuoc = await _toaThuocService.GetByIdAsync(id);
+            if (toaThuoc == null)
+                return NotFound();
+            await _toaThuocService.DeleteAsync(toaThuoc);
+
+            return NoContent();
+        }
+
 
         [HttpPost("LineDefaultGet")]
         public async Task<IActionResult> LineDefaultGet(ToaThuocLineDefaultGet val)

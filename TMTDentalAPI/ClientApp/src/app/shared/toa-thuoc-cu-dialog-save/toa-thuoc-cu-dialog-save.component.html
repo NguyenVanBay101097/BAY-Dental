@@ -11,20 +11,20 @@
                 <div class="d-flex">
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Họ tên</label>
-                        <span>{{ getFBValueItem('partner').name }}</span>
+                        <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').name : null }}</span>
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Giới tính</label>
-                        <span>{{ getFBValueItem('partner').gender == 'male' ? 'Nam' : 'Nữ' }}</span>
+                        <span>{{ getFBValueItem('partner') ? (getFBValueItem('partner').gender == 'male' ? 'Nam' : 'Nữ') : null }}</span>
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Tuổi</label>
-                        <span>{{ getFBValueItem('partner').age }}</span>
+                        <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').age : null }}</span>
                     </div>
                 </div>
                 <div>
                     <label class="font-weight-600 mr-4">Địa chỉ</label>
-                    <span>{{ getFBValueItem('partner').address }}</span>
+                    <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').address : null }}</span>
                 </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6 my-0">
@@ -176,8 +176,8 @@
                                 Lưu làm đơn thuốc mẫu
                             </label>
                         </div>
-                        <input type="text" class="form-control w-75" formControlName="nameSamplePrescription"
-                            placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
+                            formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
                     </div>
                 </div>
             </div>

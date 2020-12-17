@@ -40,7 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public ToaThuocDisplay()
         {
-            DateReExamination = DateTime.Now;
+            Date = DateTime.Now;
         }
         public Guid PartnerId { get; set; }
         public PartnerCustomerDonThuoc Partner { get; set; }
@@ -52,7 +52,9 @@ namespace Umbraco.Web.Models.ContentEditing
         //public SamplePrescriptionBasic SamplePrescription { get; set; }
         public IEnumerable<ToaThuocLineDisplay> Lines { get; set; } = new List<ToaThuocLineDisplay>();
         public string Note { get; set; }
-        public DateTime DateReExamination { get; set; }
+        public DateTime Date { get; set; }
+        public bool SaveSamplePrescription { get; set; }
+        public string NameSamplePrescription { get; set; }
         public Guid CompanyId { get; set; }
         public Guid? SaleOrderId { get; set; }
     }

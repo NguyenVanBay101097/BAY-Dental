@@ -72,6 +72,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       dateObj: null, 
       saveSamplePrescription: false, 
       nameSamplePrescription: null, 
+      partnerId: null,
+      companyId: null,
+      saleOrderId: null, 
     });
 
     setTimeout(() => {
@@ -191,6 +194,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
+      this.loadProductList();
     }, () => {
     });
   }
@@ -199,8 +203,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     this.toaThuocService.defaultGet(val).subscribe((result) => {
       console.log(result);
       this.toaThuocForm.patchValue(result);
-      // let date = new Date(result.date);
-      // this.toaThuocForm.get("dateObj").patchValue(date);
     });
   }
 
@@ -266,16 +268,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       }
       i++;
     }
-    // var controls = this.lines.controls.filter(x => x.get('product').value == null);
-    // controls.forEach(control => {
-    //   this.lines.removeAt(this.lines.controls.findIndex(x => image.id === 502))
-    // });
 
     var val = Object.assign({}, this.toaThuocForm.value);
     val.employeeId = val.employee ? val.employee.id : null;
-    val.date = val.dateObj
-      ? this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss")
-      : null;
+    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss") : null;
     val.lines.forEach((line) => {
       line.productId = line.product.id;
     });
@@ -304,22 +300,5 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   deleteLine(index: number) {
     this.lines.removeAt(index);
   }
-
-  onSaveSamplePrescription(name) {
-    var val = new SamplePrescriptionsDisplay();
-    val.name = name;
-    val.note = this.toaThuocForm.get("note").value;
-    val.lines = this.lines.value;
-    val.lines.forEach((line) => {
-      line.productId = line.product["id"];
-    });
-    this.samplePrescriptionsService.create(val).subscribe(
-      (result) => {
-        this.samplePrescriptionAdded = result;
-      },
-      (err) => {
-        this.errorService.show(err);
-      }
-    );
-  }
+  
 }

@@ -18,11 +18,13 @@ namespace Infrastructure.Services
     public class ToaThuocService : BaseService<ToaThuoc>, IToaThuocService
     {
         private readonly IMapper _mapper;
+        private readonly ISamplePrescriptionService _samplePrescriptionService;
         public ToaThuocService(IAsyncRepository<ToaThuoc> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper, ISamplePrescriptionService samplePrescriptionService)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _samplePrescriptionService = samplePrescriptionService;
         }
 
         public async Task<ToaThuocDisplay> GetToaThuocForDisplayAsync(Guid id)
@@ -110,6 +112,44 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entity);
         }
 
+        public async Task<ToaThuocBasic> CreateToaThuocAsync(ToaThuocSave val)
+        {
+            var order = _mapper.Map<ToaThuoc>(val);
+            SaveOrderLines(val, order);
+            await this.CreateAsync(order);
+
+            var samplePrescriptionLineSave = new List<SamplePrescriptionLineSave>();
+            if (val.SaveSamplePrescription)
+            {
+                var samplePrescriptionSave = new SamplePrescriptionSave() {
+                    Name = val.NameSamplePrescription,
+                    Note = order.Note
+                };
+                
+                foreach(var line in order.Lines)
+                {
+                    samplePrescriptionLineSave.Add(new SamplePrescriptionLineSave
+                    { 
+                        ProductId = line.ProductId, 
+                        NumberOfTimes = line.NumberOfTimes, 
+                        AmountOfTimes = line.AmountOfTimes, 
+                        NumberOfDays = line.NumberOfDays, 
+                        Quantity = line.Quantity, 
+                        UseAt = line.UseAt
+                    });
+                }
+
+                samplePrescriptionSave.Lines = samplePrescriptionLineSave;
+
+                await _samplePrescriptionService.CreatePrescription(samplePrescriptionSave);
+
+            }
+
+            var result = _mapper.Map<ToaThuocBasic>(order); 
+
+            return result;
+        }
+
         public async Task Write(ToaThuoc entity)
         {
             var lineObj = GetService<IToaThuocLineService>();
@@ -185,6 +225,42 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
+        }
+
+        private void SaveOrderLines(ToaThuocSave val, ToaThuoc order)
+        {
+            var lineToRemoves = new List<ToaThuocLine>();
+
+            foreach (var existLine in order.Lines)
+            {
+                if (!val.Lines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                order.Lines.Remove(line);
+            }
+
+            int sequence = 1;
+
+            foreach (var line in val.Lines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var l = _mapper.Map<ToaThuocLine>(line);
+                    l.Sequence = sequence;
+                    order.Lines.Add(l);
+                }
+                else
+                {
+                    var l = order.Lines.SingleOrDefault(c => c.Id == line.Id);
+                    _mapper.Map(line, l);
+                    l.Sequence = sequence;
+                }
+
+                sequence++;
+            }
         }
     }
 }
