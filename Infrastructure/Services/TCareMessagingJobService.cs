@@ -144,6 +144,15 @@ namespace Infrastructure.Services
                             template.Add("ma_coupon", await CreateNewCoupon(messaging.CouponProgramId.Value, item.Key, context));
                         }
 
+                        if (messaging.Content.Contains("{thoi_gian_lich_hen}"))
+                        {
+                            var nextAppointment = await GetNextAppointment(personalized.Id, context);
+                            if (nextAppointment != null)
+                            {
+                                template.Add("thoi_gian_lich_hen", nextAppointment.Date.Value.ToString("dd/MM/yyyy HH:mm"));
+                            }
+                        }
+
                         var messageContent = template.Render();
 
                         var message = new TCareMessage()
@@ -182,6 +191,16 @@ namespace Infrastructure.Services
                 await transaction.RollbackAsync();
                 throw e;
             }
+        }
+
+        public async Task<AppointmentBasic> GetNextAppointment(Guid partnerId, CatalogDbContext context)
+        {
+            var appointment = await context.Appointments.Where(x => x.PartnerId == partnerId).OrderByDescending(x=> x.Date)
+                .Select(x=> new AppointmentBasic { 
+                Id = x.Id,
+                Date = x.Date
+                }).FirstOrDefaultAsync();
+            return appointment;
         }
 
 

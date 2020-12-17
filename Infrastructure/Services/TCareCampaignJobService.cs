@@ -110,7 +110,7 @@ namespace Infrastructure.Services
             while (offset < partnerIds.Count())
             {
                 var ids = partnerIds.Skip(offset).Take(limit);
-                var items = await context.FacebookUserProfiles.Where(x => x.PartnerId.HasValue && ids.Contains(x.Partner.Id) && x.FbPageId == fbFageId).ToListAsync();
+                var items = await context.FacebookUserProfiles.Where(x => x.PartnerId.HasValue && ids.Contains(x.PartnerId.Value) && x.FbPageId == fbFageId).ToListAsync();
 
                 result = result.Union(items);
                 offset += limit;
