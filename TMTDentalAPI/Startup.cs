@@ -424,6 +424,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareMessageTemplateProfile());
                 mc.AddProfile(new TCareConfigProfile());
                 mc.AddProfile(new SalaryPaymentProfile());
+                mc.AddProfile(new LaboFinishLineProfile());
+                mc.AddProfile(new LaboBiteJointProfile());
+                mc.AddProfile(new LaboBridgeProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
