@@ -117,8 +117,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm vật tư', link: '/product-categories/product' },
         { name: 'Thuốc', link: '/products/medicines' },
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
-        { name: 'Labo', link: '/products/labos' },
-        { name: 'Nhóm labo', link: '/product-categories/labo' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
         { name: 'Danh xưng', link: '/partner-titles' },
@@ -126,6 +124,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
+        { name: 'Vật liệu Labo', link: '/products/labos' },
+        { name: 'Gửu kèm Labo', link: '/products/labo-attachs' },
       ]
     },
     {

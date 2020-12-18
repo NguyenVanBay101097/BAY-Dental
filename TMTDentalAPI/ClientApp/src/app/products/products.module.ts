@@ -30,6 +30,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductServiceImportDialogComponent } from './product-service-import-dialog/product-service-import-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { DialogContainerService, DialogService, WindowContainerService, WindowService } from '@progress/kendo-angular-dialog';
+import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
+import { ProductLaboAttachCuDialogComponent } from './product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,7 @@ import { DialogContainerService, DialogService, WindowContainerService, WindowSe
     ProductStepCuDialogComponent, 
     ProductStepFormComponent, 
     ProductAdvanceSearchComponent, 
-    ProductServiceImportDialogComponent
+    ProductServiceImportDialogComponent, ProductLaboAttachListComponent, ProductLaboAttachCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -69,11 +71,11 @@ import { DialogContainerService, DialogService, WindowContainerService, WindowSe
     ProductSearchListComponent
   ],
   providers: [
-    ProductService,WindowService, WindowContainerService, DialogService, DialogContainerService
+    ProductService, WindowContainerService, DialogContainerService
   ],
   entryComponents: [ProductDialogComponent, ProductImportExcelDialogComponent, ProductMedicineCuDialogComponent,
     ProductLaboCuDialogComponent, ProductProductCuDialogComponent, ProductStepCuDialogComponent,
-    ProductServiceImportDialogComponent
+    ProductServiceImportDialogComponent, ProductLaboAttachCuDialogComponent
   ],
 })
 export class ProductsModule { }

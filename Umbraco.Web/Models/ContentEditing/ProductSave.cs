@@ -17,7 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public Guid CategId { get; set; }
+        public Guid? CategId { get; set; }
 
         public Guid UOMId { get; set; }
 

@@ -1,19 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ProductService } from '../product.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import * as _ from 'lodash';
-import { UomService } from 'src/app/uoms/uom.service';
+import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
+import { ProductService } from '../product.service';
 
 @Component({
-  selector: 'app-product-labo-cu-dialog',
-  templateUrl: './product-labo-cu-dialog.component.html',
-  styleUrls: ['./product-labo-cu-dialog.component.css']
+  selector: 'app-product-labo-attach-cu-dialog',
+  templateUrl: './product-labo-attach-cu-dialog.component.html',
+  styleUrls: ['./product-labo-attach-cu-dialog.component.css']
 })
-export class ProductLaboCuDialogComponent implements OnInit {
+
+export class ProductLaboAttachCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   title: string;
@@ -34,7 +31,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
       uom: null,
       uompo: null,
       type: 'consu',
-      type2: 'labo',
+      type2: 'labo_attach',
       listPrice: 1,
       standardPrice: 0,
       companyId: null,
@@ -61,7 +58,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
       this.productService.defaultGet().subscribe((result: any) => {
         this.formGroup.patchValue(result);
         this.formGroup.get('type').setValue('consu');
-        this.formGroup.get('type2').setValue('labo');
+        this.formGroup.get('type2').setValue('labo_attach');
         this.formGroup.get('saleOK').setValue(false);
         this.formGroup.get('purchaseOK').setValue(false);
         this.formGroup.get('keToaOK').setValue(true);
@@ -90,4 +87,3 @@ export class ProductLaboCuDialogComponent implements OnInit {
     }
   }
 }
-

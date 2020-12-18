@@ -1,27 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductPaged, ProductBasic2, ProductLaboBasic } from '../product.service';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
-import { Product } from '../product';
-import { ProductAdvanceFilter } from '../product-advance-filter/product-advance-filter.component';
-import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/product-medicine-cu-dialog.component';
-import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-labo-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DialogService, WindowService } from '@progress/kendo-angular-dialog';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { ProductLaboAttachCuDialogComponent } from '../product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
+import { ProductLaboBasic, ProductPaged, ProductService } from '../product.service';
+
 @Component({
-  selector: 'app-product-labo-list',
-  templateUrl: './product-labo-list.component.html',
-  styleUrls: ['./product-labo-list.component.css'],
-  host: {
-    class: 'o_action o_view_controller'
-  }
+  selector: 'app-product-labo-attach-list',
+  templateUrl: './product-labo-attach-list.component.html',
+  styleUrls: ['./product-labo-attach-list.component.css']
 })
-export class ProductLaboListComponent implements OnInit {
+
+export class ProductLaboAttachListComponent implements OnInit {
   constructor(private productService: ProductService,
     private modalService: NgbModal) { }
   gridData: GridDataResult;
@@ -52,7 +46,7 @@ export class ProductLaboListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type2 = 'labo';
+    val.type2 = 'labo_attach';
 
     this.productService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -74,8 +68,8 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm vật liệu Labo';
+    let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm gửu kèm Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -83,8 +77,8 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   editItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa vật liệu Labo';
+    let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa gửu kèm Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -94,8 +88,8 @@ export class ProductLaboListComponent implements OnInit {
 
   deleteItem(item: ProductLaboBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa vật liệu Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa vật liệu labo ${item.name}?`;
+    modalRef.componentInstance.title = 'Xóa gửu kèm Labo';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửu kèm labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
@@ -107,12 +101,10 @@ export class ProductLaboListComponent implements OnInit {
   onImport() {
     let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Import excel';
-    modalRef.componentInstance.type = 'labo';
+    modalRef.componentInstance.type = 'labo_attach';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
     });
   }
 }
-
-
