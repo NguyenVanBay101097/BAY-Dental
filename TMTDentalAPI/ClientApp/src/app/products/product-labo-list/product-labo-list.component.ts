@@ -12,6 +12,7 @@ import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/
 import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-labo-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 @Component({
   selector: 'app-product-labo-list',
   templateUrl: './product-labo-list.component.html',
@@ -73,8 +74,15 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm Labo';
+    // let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Thêm Labo';
+    // modalRef.result.then(() => {
+    //   this.loadDataFromApi();
+    // }, () => {
+    // });
+
+    let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {

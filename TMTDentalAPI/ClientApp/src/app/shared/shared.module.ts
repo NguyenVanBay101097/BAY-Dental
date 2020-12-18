@@ -69,6 +69,7 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
 import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
+import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,7 @@ import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent,
-
+    LaboOrderCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -193,7 +194,8 @@ import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
-    SaleOrderLineDiscountOdataPopoverComponent
+    SaleOrderLineDiscountOdataPopoverComponent, 
+    LaboOrderCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -231,7 +233,8 @@ import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
-    ProductServiceCuDialogComponent
+    ProductServiceCuDialogComponent, 
+    LaboOrderCuDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
