@@ -17,6 +17,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId);
         Task Write(ToaThuoc entity);
         Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id);
-        Task<ToaThuocBasic> CreateToaThuocAsync(ToaThuocSave val);
+        Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val);
+        Task UpdateToaThuocFromUIAsync(Guid id, ToaThuocSaveFromUI val);
     }
 }

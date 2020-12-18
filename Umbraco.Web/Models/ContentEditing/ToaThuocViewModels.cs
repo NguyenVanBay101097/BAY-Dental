@@ -48,13 +48,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DotKhamSimple DotKham { get; set; }
         public Guid? EmployeeId { get; set; }
         public EmployeeBasic Employee { get; set; }
-        //public Guid? SamplePrescriptionId { get; set; }
-        //public SamplePrescriptionBasic SamplePrescription { get; set; }
+
         public IEnumerable<ToaThuocLineDisplay> Lines { get; set; } = new List<ToaThuocLineDisplay>();
         public string Note { get; set; }
         public DateTime Date { get; set; }
-        public bool SaveSamplePrescription { get; set; }
-        public string NameSamplePrescription { get; set; }
         public Guid CompanyId { get; set; }
         public Guid? SaleOrderId { get; set; }
     }

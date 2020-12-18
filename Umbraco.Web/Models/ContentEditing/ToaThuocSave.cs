@@ -39,8 +39,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class ToaThuocCreateFromUI
+    public class ToaThuocSaveFromUI
     {
+        public ToaThuocSaveFromUI()
+        {
+            Date = DateTime.Now;
+        }
+
         /// <summary>
         /// Khách hàng
         /// </summary>
@@ -66,11 +71,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày Tái Khám
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime? ReExaminationDate { get; set; }
 
         public bool SaveSamplePrescription { get; set; }
 
         public string NameSamplePrescription { get; set; }
+
+        public DateTime? Date { get; set; }
 
         public Guid CompanyId { get; set; }
 

@@ -201,7 +201,6 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
   loadDefault(val: any) {
     this.toaThuocService.defaultGet(val).subscribe((result) => {
-      console.log(result);
       this.toaThuocForm.patchValue(result);
     });
   }
@@ -271,13 +270,13 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
     var val = Object.assign({}, this.toaThuocForm.value);
     val.employeeId = val.employee ? val.employee.id : null;
-    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss") : null;
+    val.reExaminationDate = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss") : null;
     val.lines.forEach((line) => {
       line.productId = line.product.id;
     });
 
     if (this.id) {
-      this.toaThuocService.update(this.id, val).subscribe(
+      this.toaThuocService.updateFromUI(this.id, val).subscribe(
         () => {
           this.activeModal.close({print,});
         },
@@ -286,7 +285,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
         }
       );
     } else {
-      this.toaThuocService.create(val).subscribe(
+      this.toaThuocService.createFromUI(val).subscribe(
         (result) => {
           this.activeModal.close({item: result, print,});
         },

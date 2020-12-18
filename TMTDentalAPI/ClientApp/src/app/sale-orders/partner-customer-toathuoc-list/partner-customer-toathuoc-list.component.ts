@@ -32,6 +32,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
       return;
     }
     const val = new ToaThuocPaged();
+    val.limit = 0;
     val.saleOrderId = this.saleOrderId;
 
     this.toaThuocService.getPaged(val).pipe(
