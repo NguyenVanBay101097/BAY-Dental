@@ -216,6 +216,10 @@ namespace Infrastructure.Data
         public DbSet<SalaryPayment> SalaryPayments { get; set; }
         public DbSet<DotKhamLineToothRel> DotKhamLineToothRels { get; set; }
         public DbSet<LaboOrderToothRel> LaboOrderToothRels { get; set; }
+        public DbSet<LaboFinishLine> LaboFinishLines { get; set; }
+        public DbSet<LaboBiteJoint> LaboBiteJoints { get; set; }
+        public DbSet<LaboBridge> LaboBridges { get; set; }
+        public DbSet<LaboOrderProductRel> laboOrderProductRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -388,6 +392,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SalaryPaymentConfiguration());
             builder.ApplyConfiguration(new DotKhamLineToothRelConfiguration());
             builder.ApplyConfiguration(new LaboOrderToothRelConfiguration());
+            builder.ApplyConfiguration(new LaboFinishLineConfiguration());
+            builder.ApplyConfiguration(new LaboBiteJointConfiguration());
+            builder.ApplyConfiguration(new LaboBridgeConfiguration());
+            builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

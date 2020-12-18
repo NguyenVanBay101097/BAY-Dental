@@ -24,7 +24,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Nhóm sản phẩm
         /// </summary>
-        public Guid CategId { get; set; }
+        public Guid? CategId { get; set; }
         public ProductCategory Categ { get; set; }
 
         /// <summary>

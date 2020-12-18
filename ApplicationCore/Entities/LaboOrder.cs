@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class LaboOrder: BaseEntity
+    public class LaboOrder : BaseEntity
     {
         public LaboOrder()
         {
@@ -57,7 +57,7 @@ namespace ApplicationCore.Entities
         //public Guid? SaleOrderId { get; set; }
         //public SaleOrder SaleOrder { get; set; }
         /// <summary>
-        /// labo nào : lấy từ product type labo
+        /// vật liệu
         /// </summary>
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
@@ -107,5 +107,38 @@ namespace ApplicationCore.Entities
 
         public Guid? AccountMoveId { get; set; }
         public AccountMove AccountMove { get; set; }
+
+        /// <summary>
+        /// chỉ định
+        /// </summary>
+        public string Indicated { get; set; }
+
+        /// <summary>
+        /// ghi chú kỹ thuật
+        /// </summary>
+        public string TechnicalNote { get; set; }
+
+        /// <summary>
+        /// đường hoàn tất
+        /// </summary>
+        public Guid? LaboFinishLineId { get; set; }
+        public LaboFinishLine LaboFinishLine { get; set; }
+
+        /// <summary>
+        /// khớp cắn
+        /// </summary>
+        public Guid? LaboBiteJointId { get; set; }
+        public LaboBiteJoint LaboBiteJoint { get; set; }
+
+        /// <summary>
+        /// kiểu nhịp
+        /// </summary>
+        public Guid? LaboBridgeId { get; set; }
+        public LaboBridge LaboBridge { get; set; }
+
+        /// <summary>
+        /// list gửu kèm
+        /// </summary>
+        public ICollection<LaboOrderProductRel> LaboOrderProductRel { get; set; } = new List<LaboOrderProductRel>();
     }
 }

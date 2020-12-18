@@ -39,6 +39,18 @@ namespace Infrastructure.EntityConfigurations
                  .WithMany()
                  .HasForeignKey(x => x.ProductId);
 
+            builder.HasOne(x => x.LaboBiteJoint)
+                 .WithMany()
+                 .HasForeignKey(x => x.LaboBiteJointId);
+
+            builder.HasOne(x => x.LaboBridge)
+                 .WithMany()
+                 .HasForeignKey(x => x.LaboBridgeId);
+
+            builder.HasOne(x => x.LaboFinishLine)
+                 .WithMany()
+                 .HasForeignKey(x => x.LaboFinishLineId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

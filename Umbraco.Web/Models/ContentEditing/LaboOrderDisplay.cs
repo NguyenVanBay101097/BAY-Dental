@@ -64,5 +64,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? WarrantyPeriod { get; set; }
 
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
+        public IEnumerable<IrAttachmentBasic> Images = new List<IrAttachmentBasic>();
     }
 }

@@ -978,8 +978,8 @@ namespace Infrastructure.Services
                             if (item.Qty < min_quantity)
                                 continue;
 
-                            if (dict.ContainsKey(categId))
-                                dict.Add(categId, new PromotionQtyAmountDictValue());
+                            if (dict.ContainsKey(categId.Value))
+                                dict.Add(categId.Value, new PromotionQtyAmountDictValue());
 
                             total_amount += item.Amount;
                             await UpdateDiscountLine(rule, self, total_amount, categId: categId);
