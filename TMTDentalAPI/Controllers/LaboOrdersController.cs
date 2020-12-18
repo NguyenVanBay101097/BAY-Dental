@@ -47,7 +47,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
             return Ok(res);
-        }
+        }   
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Basic.LaboOrder.Read")]
@@ -161,6 +161,13 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _laboOrderService.GetLaboOrderReport(val);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetLaboForSaleOrderLine(LaboOrderPaged val)
+        {
+            var res = await _laboOrderService.GetPagedResultAsync(val);
+            return Ok(res);
         }
     }
 }

@@ -63,6 +63,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderLineId == val.SaleOrderLineId));
             }
 
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.State == val.State));
+            }
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();

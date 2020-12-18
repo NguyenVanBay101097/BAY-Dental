@@ -24,6 +24,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+
+
     public class LaboOrderStatisticsPaged
     {
         public LaboOrderStatisticsPaged()

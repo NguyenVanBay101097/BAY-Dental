@@ -330,10 +330,18 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
             if (val.DateOrderTo.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+            if (val.IsLabo == true)
+                query = query.Where(x => x.Product.IsLabo);
             if (val.IsQuotation.HasValue)
             {
                 query = query.Where(x => x.Order.IsQuotation == val.IsQuotation);
             }
+
+            if (val.IsLabo == true)
+            {
+                query = query.Where(x => x.Product.IsLabo);
+            }
+
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
@@ -348,7 +356,7 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
-
+    
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;

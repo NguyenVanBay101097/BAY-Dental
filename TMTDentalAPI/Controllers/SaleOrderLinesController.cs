@@ -74,5 +74,14 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleLineService.GetTeeth(id);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesPaged val)
+        {
+            var res = await _saleLineService.GetPagedResultAsync(val);
+            return Ok(res);
+        }
+
+       
     }
 }
