@@ -30,6 +30,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DatePlanned { get; set; }
 
+        /// <summary>
+        /// Vật liệu
+        /// </summary>
         public Guid? ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
@@ -42,6 +45,39 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ghi chú
         /// </summary>
         public string Note { get; set; }
+
+        /// <summary>
+        /// chỉ định
+        /// </summary>
+        public string Indicated { get; set; }
+
+        /// <summary>
+        /// ghi chú kỹ thuật
+        /// </summary>
+        public string TechnicalNote { get; set; }
+
+        /// <summary>
+        /// đường hoàn tất
+        /// </summary>
+        public Guid? LaboFinishLineId { get; set; }
+        public LaboFinishLineSimple LaboFinishLine { get; set; }
+
+        /// <summary>
+        /// khớp cắn
+        /// </summary>
+        public Guid? LaboBiteJointId { get; set; }
+        public LaboBiteJointSimple LaboBiteJoint { get; set; }
+
+        /// <summary>
+        /// kiểu nhịp
+        /// </summary>
+        public Guid? LaboBridgeId { get; set; }
+        public LaboBridgeSimple LaboBridge { get; set; }
+
+        /// <summary>
+        /// list gửu kèm
+        /// </summary>
+        public IEnumerable<ProductSimple> LaboOrderProducts { get; set; } = new List<ProductSimple>();
 
         /// <summary>
         /// số lượng

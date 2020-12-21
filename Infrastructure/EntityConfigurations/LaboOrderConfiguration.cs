@@ -24,7 +24,7 @@ namespace Infrastructure.EntityConfigurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.SaleOrderLine)
-                .WithMany()
+                .WithMany(x => x.Labos)
                 .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.Customer)

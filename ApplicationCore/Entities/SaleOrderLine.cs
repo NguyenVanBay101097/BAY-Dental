@@ -165,6 +165,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
 
+        public ICollection<LaboOrder> Labos { get; set; } = new List<LaboOrder>();
+
         /// <summary>
         /// Xác định line bị hủy bỏ
         /// </summary>

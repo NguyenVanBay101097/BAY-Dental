@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
+import { PagedResult2 } from '../paged-result-2';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
@@ -18,6 +19,8 @@ export class SaleOrderLinesPaged {
     Offset: number;
     limit: number;
     isQuotation: boolean;
+    isLabo: boolean;
+    search: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -51,5 +54,9 @@ export class SaleOrderLineService {
 
     getTeeth(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetTeeth');
+    }
+
+    getListLineIsLabo(val: any):Observable<PagedResult2<any>> {
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetListLineIsLabo', { params: new HttpParams({ fromObject: val }) });
     }
 }

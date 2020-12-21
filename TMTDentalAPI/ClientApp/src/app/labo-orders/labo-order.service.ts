@@ -140,4 +140,8 @@ export class LaboOrderService {
     getLaboOrderReport(data: any) {
         return this.http.post<LaboOrderReportOutput>(this.baseApi + this.apiUrl + '/LaboOrderReport', data);
     }
+
+    getLaboForSaleOrderLine(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetLaboForSaleOrderLine', { params: new HttpParams({ fromObject: val }) });
+    }
 }

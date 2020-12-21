@@ -31,6 +31,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateOrderTo { get; set; }
         public bool? IsQuotation { get; set; }
+
+        public string LaboState { get; set; }
     }
 
     

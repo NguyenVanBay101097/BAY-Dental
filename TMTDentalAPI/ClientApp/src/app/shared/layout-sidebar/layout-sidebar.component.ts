@@ -18,11 +18,21 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
+
+    // {
+    //   name: 'Thống kê labo',
+    //   icon: 'fas fa-tooth',
+    //   children: [],
+    //   link: '/labo-orders/statistics'
+    // },
+    // ,
     {
-      name: 'Thống kê labo',
+      name: 'Labo',
       icon: 'fas fa-tooth',
-      children: [],
-      link: '/labo-orders/statistics'
+      children: [
+        { name: 'Quản lý phiếu Labo', link: '/labo-orders' },
+     
+      ],
     },
     {
       name: 'Mua hàng',

@@ -7,4 +7,12 @@ namespace Umbraco.Web.Models.ContentEditing
     class LaboBiteJointsViewModel
     {
     }
+
+
+    public class LaboBiteJointSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+
 }

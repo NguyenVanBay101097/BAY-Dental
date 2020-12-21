@@ -14,6 +14,7 @@ import { LaboOrderStatisticsComponent } from './labo-order-statistics/labo-order
 import { LaboOrderLineService } from './labo-order-line.service';
 import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-order-list-dialog.component';
 import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistics/labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
+import { LaboOrderDetailListComponent } from './labo-order-detail-list/labo-order-detail-list.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistics
     LaboOrderStatisticsComponent,
     LaboOrderListDialogComponent,
     LaboOrderStatisticUpdateDialogComponent,
+    LaboOrderDetailListComponent,
   ],
   imports: [
     CommonModule,

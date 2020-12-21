@@ -14,6 +14,16 @@ namespace Infrastructure.Data.Migrations
                 oldClrType: typeof(Guid),
                 oldType: "uniqueidentifier");
 
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DateExport",
+                table: "LaboOrders",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DateReceipt",
+                table: "LaboOrders",
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "Indicated",
                 table: "LaboOrders",
@@ -258,6 +268,14 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_LaboOrders_LaboFinishLineId",
+                table: "LaboOrders");
+
+            migrationBuilder.DropColumn(
+                name: "DateExport",
+                table: "LaboOrders");
+
+            migrationBuilder.DropColumn(
+                name: "DateReceipt",
                 table: "LaboOrders");
 
             migrationBuilder.DropColumn(

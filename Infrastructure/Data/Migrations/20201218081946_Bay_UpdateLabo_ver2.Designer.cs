@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20201218032617_Bay_UpdateLabo_ver2")]
+    [Migration("20201218081946_Bay_UpdateLabo_ver2")]
     partial class Bay_UpdateLabo_ver2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3782,10 +3782,16 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateExport")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateOrder")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DatePlanned")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReceipt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Indicated")

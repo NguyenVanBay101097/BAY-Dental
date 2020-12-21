@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -27,21 +28,22 @@ export class LaboOrderListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
 
-  dateOrderFrom: Date;
-  dateOrderTo: Date;
-  datePlannedFrom: Date;
-  datePlannedTo: Date;
+  // dateOrderFrom: Date;
+  // dateOrderTo: Date;
+  // datePlannedFrom: Date;
+  // datePlannedTo: Date;
   stateFilter: string;
 
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
-    { text: 'Đơn hàng', value: 'purchase,done' },
-    { text: 'Nháp', value: 'draft,cancel' }
+    { text: 'Đơn hàng', value: 'confirm' },
+    { text: 'Nháp', value: 'draft' }
   ];
 
 
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
+    private saleOrderLineService: SaleOrderLineService,
     private modalService: NgbModal, private intlService: IntlService) { }
 
   ngOnInit() {
@@ -55,17 +57,17 @@ export class LaboOrderListComponent implements OnInit {
       });
   }
 
-  onDateSearchChange(data) {
-    this.dateOrderFrom = data.dateFrom;
-    this.dateOrderTo = data.dateTo;
-    this.loadDataFromApi();
-  }
+  // onDateSearchChange(data) {
+  //   this.dateOrderFrom = data.dateFrom;
+  //   this.dateOrderTo = data.dateTo;
+  //   this.loadDataFromApi();
+  // }
 
-  onDatePlannedSearchChange(data) {
-    this.datePlannedFrom = data.dateFrom;
-    this.datePlannedTo = data.dateTo;
-    this.loadDataFromApi();
-  }
+  // onDatePlannedSearchChange(data) {
+  //   this.datePlannedFrom = data.dateFrom;
+  //   this.datePlannedTo = data.dateTo;
+  //   this.loadDataFromApi();
+  // }
 
   onStateSelectChange(data: TmtOptionSelect) {
     this.stateFilter = data.value;
@@ -103,31 +105,12 @@ export class LaboOrderListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new LaboOrderPaged();
+    var val = new SaleOrderLinesPaged();
     val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || '';
-
-    if (this.dateOrderFrom) {
-      val.dateOrderFrom = this.intlService.formatDate(this.dateOrderFrom, 'd', 'en-US');
-    }
-    if (this.dateOrderTo) {
-      val.dateOrderTo = this.intlService.formatDate(this.dateOrderTo, 'd', 'en-US');
-    }
-
-    if (this.datePlannedFrom) {
-      val.datePlannedFrom = this.intlService.formatDate(this.datePlannedFrom, 'd', 'en-US');
-    }
-    if (this.datePlannedTo) {
-      val.datePlannedTo = this.intlService.formatDate(this.datePlannedTo, 'd', 'en-US');
-    }
-
-    if (this.stateFilter) {
-      val.state = this.stateFilter;
-    }
-
-
-    this.laboOrderService.getPaged(val).pipe(
+    val.Offset = this.skip;
+    val.isLabo = true;
+    val.search = this.search || '';   
+    this.saleOrderLineService.getListLineIsLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -144,6 +127,19 @@ export class LaboOrderListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  showInfo(val) {
+    var list = [];
+    if (val.teeth.length) {
+      list.push(val.teeth.map(x => x.name).join(','));
+    }
+
+    if (val.diagnostic) {
+      list.push(val.diagnostic);
+    }
+
+    return list.join('; ');
   }
 
   createItem() {
