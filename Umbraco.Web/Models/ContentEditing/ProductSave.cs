@@ -17,7 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public Guid CategId { get; set; }
+        public Guid? CategId { get; set; }
 
         public Guid UOMId { get; set; }
 
@@ -48,5 +48,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal ListPrice { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
+        
+        public string Firm { get; set; }
     }
 }

@@ -30,6 +30,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<ToaThuocSave, ToaThuoc>()
                 .ForMember(x => x.Lines, x => x.Ignore());
+
+            CreateMap<ToaThuocSaveFromUI, ToaThuoc>()
+                .ForMember(x => x.Lines, x => x.Ignore());
         }
     }
 }

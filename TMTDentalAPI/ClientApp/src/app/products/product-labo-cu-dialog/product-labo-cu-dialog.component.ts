@@ -20,10 +20,8 @@ export class ProductLaboCuDialogComponent implements OnInit {
   filterdCategories: ProductCategoryBasic[] = [];
   filterdUoMs = [];
   filterdUoMPOs = [];
-  @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
   constructor(private productService: ProductService, public activeModal: NgbActiveModal,
-    private productCategoryService: ProductCategoryService, private uoMService: UomService,
     private fb: FormBuilder) {
   }
 
@@ -32,7 +30,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
       name: ['', Validators.required],
       saleOK: false,
       purchaseOK: false,
-      categ: [null, Validators.required],
+      categ: [null],
       uom: null,
       uompo: null,
       type: 'consu',
@@ -42,90 +40,43 @@ export class ProductLaboCuDialogComponent implements OnInit {
       companyId: null,
       defaultCode: '',
       keToaNote: null,
-      keToaOK: true,
+      keToaOK: false,
       isLabo: false,
       purchasePrice: 0,
       laboPrice:0
     });
 
-    this.categCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchCategories(value))
-    ).subscribe(result => {
-      this.filterdCategories = result;
-      this.categCbx.loading = false;
-    });
-    this.loadCate();
-
     this.default();
   }
+
+  get form() {return this.formGroup;}
+  get nameC() {return this.formGroup.get('name');}
 
   default() {
     if (this.id) {
       this.productService.get(this.id).subscribe((result: any) => {
         this.formGroup.patchValue(result);
-
-        this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
-
-        this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
-
-        if (result.uompo) {
-          this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
-            this.filterdUoMPOs = result2.items;
-            this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, [result.uompo], 'id');
-          });
-        }
       });
     } else {
       this.productService.defaultGet().subscribe((result: any) => {
         this.formGroup.patchValue(result);
-
-        if (result.categ) {
-          this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
-        }
-
-        if (result.uom) {
-          this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
-        }
-
-        if (result.uompo) {
-          this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
-            this.filterdUoMPOs = result2.items;
-            this.filterdUoMPOs = _.unionBy(this.filterdUoMPOs, [result.uompo], 'id');
-          });
-        }
-
         this.formGroup.get('type').setValue('consu');
         this.formGroup.get('type2').setValue('labo');
         this.formGroup.get('saleOK').setValue(false);
         this.formGroup.get('purchaseOK').setValue(false);
-        this.formGroup.get('keToaOK').setValue(true);
+        this.formGroup.get('keToaOK').setValue(false);
       });
     } }
-
-  loadCate() {
-    this.searchCategories().subscribe(result => {
-      this.filterdCategories = result;
-    });
-  }
-
-  searchCategories(q?: string) {
-    var val = new ProductCategoryPaged();
-    val.search = q || '';
-    val.type = 'labo';
-    return this.productCategoryService.autocomplete(val);
-  }
 
   onSave() {
     if (!this.formGroup.valid) {
       return;
     }
     var val = this.formGroup.value;
-    val.categId = val.categ.id;
+    val.categId = val.categ? val.categ.id: null;
     val.uoMIds = [];
-    val.uomId = val.uom.id;
-    val.uompoId = val.uompo.id;
+    val.uomId = val.uom? val.uom.id: null;
+    val.uompoId = val.uompo? val.uompo.id: null;
     val.uoMIds.push(val.uompo.id);
     val.uoMIds.push(val.uom.id);
     if (this.id) {

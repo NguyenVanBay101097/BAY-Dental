@@ -4991,6 +4991,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Firm")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsLabo")
                         .HasColumnType("bit");
 
@@ -8367,6 +8370,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ReExaminationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("SaleOrderID")
                         .HasColumnType("uniqueidentifier");

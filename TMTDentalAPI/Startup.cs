@@ -294,6 +294,9 @@ namespace TMTDentalAPI
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
             services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
             services.AddScoped<ISalaryPaymentService, SalaryPaymentService>();
+            services.AddScoped<ILaboBiteJointService, LaboBiteJointService>();
+            services.AddScoped<ILaboBridgeService, LaboBridgeService>();
+            services.AddScoped<ILaboFinishLineService, LaboFinishLineService>();
 
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();

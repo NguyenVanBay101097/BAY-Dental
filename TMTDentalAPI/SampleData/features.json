@@ -402,7 +402,7 @@
         ]
       },
       {
-        "Name": "Dịch vụ, vật tư, thuốc",
+        "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửu kèm Labo",
         "Permission": "Product",
         "Children": [
           {
@@ -556,6 +556,72 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Commission.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đường hoàn tất Labo",
+        "Permission": "Catalog.LaboFinishLine",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboFinishLine.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboFinishLine.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboFinishLine.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboFinishLine.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểu nhịp Labo",
+        "Permission": "Catalog.LaboBridge",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBridge.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBridge.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBridge.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBridge.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Khớp cắn Labo",
+        "Permission": "Catalog.LaboBiteJoint",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBiteJoint.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBiteJoint.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBiteJoint.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBiteJoint.Delete"
           }
         ]
       }

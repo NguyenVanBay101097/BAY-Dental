@@ -118,5 +118,10 @@ namespace ApplicationCore.Entities
         /// Giá đặt mua labo
         /// </summary>
         public decimal? LaboPrice { get; set; }
+
+        /// <summary>
+        /// hãng:  nếu là labo thì hãng nào ?
+        /// </summary>
+        public string Firm { get; set; }
     }
 }
