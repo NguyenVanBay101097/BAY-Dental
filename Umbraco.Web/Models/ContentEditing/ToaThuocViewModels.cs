@@ -42,38 +42,23 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Date = DateTime.Now;
         }
-
-        /// <summary>
-        /// Khách hàng
-        /// </summary>
         public Guid PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
-
-        public DateTime Date { get; set; }
-
-        public string Note { get; set; }
-
-        public string Diagnostic { get; set; }
-
-        /// <summary>
-        /// Liên kết với đợt khám nào?
-        /// </summary>
+        public PartnerCustomerDonThuoc Partner { get; set; }
         public Guid? DotKhamId { get; set; }
         public DotKhamSimple DotKham { get; set; }
-
         public Guid? EmployeeId { get; set; }
         public EmployeeBasic Employee { get; set; }
 
-        public Guid CompanyId { get; set; }
-
         public IEnumerable<ToaThuocLineDisplay> Lines { get; set; } = new List<ToaThuocLineDisplay>();
+        public string Note { get; set; }
+        public DateTime Date { get; set; }
+        public Guid CompanyId { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
 
     public class ToaThuocDefaultGet
     {
         public Guid? DotKhamId { get; set; }
-
         public Guid? PartnerId { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
@@ -94,6 +79,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
         public string Diagnostic { get; set; }
         public string EmployeeName { get; set; }
+
+        public DateTime? ReExaminationDate { get; set; }
 
         public IEnumerable<ToaThuocLinePrintViewModel> Lines { get; set; } = new List<ToaThuocLinePrintViewModel>();
     }

@@ -69,7 +69,7 @@ export class ProductLaboAttachListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm gửu kèm Labo';
+    modalRef.componentInstance.title = 'Thêm gửi kèm Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -78,7 +78,7 @@ export class ProductLaboAttachListComponent implements OnInit {
 
   editItem(item: ProductLaboBasic) {
     let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa gửu kèm Labo';
+    modalRef.componentInstance.title = 'Sửa gửi kèm Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -87,9 +87,9 @@ export class ProductLaboAttachListComponent implements OnInit {
   }
 
   deleteItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa gửu kèm Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửu kèm labo ${item.name}?`;
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa gửi kèm Labo';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửi kèm labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();

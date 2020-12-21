@@ -101,12 +101,11 @@
             </tbody>
         </table>
     </div>
-    <div>Lời dặn: @Model.Note</div>
+   
     <div class="row">
         <div class="col">
-            <div class="text-center font-weight-bold">
-                &nbsp;
-            </div>
+            <div>Lời dặn: @Model.Note</div>
+            <div>Hẹn tái khám: @(Model.ReExaminationDate.HasValue ? Model.ReExaminationDate.Value.ToString("dd/MM/yyyy") : "")</div>
         </div>
         <div class="col">
             <div class="text-center">

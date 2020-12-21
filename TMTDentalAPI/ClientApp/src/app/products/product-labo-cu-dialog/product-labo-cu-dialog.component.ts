@@ -40,7 +40,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
       companyId: null,
       defaultCode: '',
       keToaNote: null,
-      keToaOK: true,
+      keToaOK: false,
       isLabo: false,
       purchasePrice: 0,
       laboPrice:0
@@ -64,7 +64,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
         this.formGroup.get('type2').setValue('labo');
         this.formGroup.get('saleOK').setValue(false);
         this.formGroup.get('purchaseOK').setValue(false);
-        this.formGroup.get('keToaOK').setValue(true);
+        this.formGroup.get('keToaOK').setValue(false);
       });
     } }
 
