@@ -69,7 +69,7 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
 import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
-import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
+import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -136,8 +136,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent,
-    LaboFinnishLineImportComponent
-
+    LaboOrderCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -195,8 +194,8 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
-    SaleOrderLineDiscountOdataPopoverComponent,
-    LaboFinnishLineImportComponent
+    SaleOrderLineDiscountOdataPopoverComponent, 
+    LaboOrderCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -234,8 +233,8 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
-    ProductServiceCuDialogComponent,
-    LaboFinnishLineImportComponent
+    ProductServiceCuDialogComponent, 
+    LaboOrderCuDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

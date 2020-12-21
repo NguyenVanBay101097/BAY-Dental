@@ -1,0 +1,451 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group my-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        NCC Labo
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox [data]="NCCLaboList" [textField]="'name'" [filterable]="true"
+                                            #NCCLaboCbx formControlName="NCCLabo" [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <a class="btn btn-sm btn-light" (click)="quickCreateNCCLabo()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group my-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày gửi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày nhận dự kiến
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group my-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <h5>CHI TIẾT PHIẾU</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Loại phục hình 
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>Răng sứ Katana</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hãng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>ITALY</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Răng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <button type="button" class="btn btn-sm mr-1 btn-primary">14</button>
+                                    <button type="button" class="btn btn-sm mr-1 btn-light">22</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Màu răng chi tiết
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số lượng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đơn giá
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Thành tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>0</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chỉ định
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h5 class="mt-2">THÔNG TIN BẢO HÀNH</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Hạn bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <h5>THÔNG SỐ LABO</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Vật liệu
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_1">
+                                                <label class="ml-1" for="radio_1_1">
+                                                    Sứ Ceramill ZI
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_2">
+                                                <label class="ml-1" for="radio_1_2">
+                                                    Sứ Ceramill ZoLid
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_3">
+                                                <label class="ml-1" for="radio_1_3">
+                                                    Sứ Ceramill HT
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_4">
+                                                <label class="ml-1" for="radio_1_4">
+                                                    Sứ Naccera
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_5">
+                                                <label class="ml-1" for="radio_1_5">
+                                                    Sứ Katana
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_6">
+                                                <label class="ml-1" for="radio_1_6">
+                                                    Sứ Venus
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đường hoàn tất
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_1">
+                                                <label class="ml-1" for="radio_1_1">
+                                                    Bờ vai
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_2">
+                                                <label class="ml-1" for="radio_1_2">
+                                                    Bờ xuôi vát cánh
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_3">
+                                                <label class="ml-1" for="radio_1_3">
+                                                    Bờ vai vát cánh
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_4">
+                                                <label class="ml-1" for="radio_1_4">
+                                                    Bờ xuôi
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Khớp cắn
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_1">
+                                                <label class="ml-1" for="radio_1_1">
+                                                    Khớp cắn hở
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_2">
+                                                <label class="ml-1" for="radio_1_2">
+                                                    Khớp cắn ngược
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_3">
+                                                <label class="ml-1" for="radio_1_3">
+                                                    Khớp cắn đối đầu
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_4">
+                                                <label class="ml-1" for="radio_1_4">
+                                                    Khớp cắn sâu
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Kiểu nhịp
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_1">
+                                                <label class="ml-1" for="radio_1_1">
+                                                    Nhịp cầu yên ngựa
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_2">
+                                                <label class="ml-1" for="radio_1_2">
+                                                    Nhịp cầu hình chữ T biến đổi
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_3">
+                                                <label class="ml-1" for="radio_1_3">
+                                                    Nhịp cầu chữ T
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <input type="radio" name="radio_1" id="radio_1_4">
+                                                <label class="ml-1" for="radio_1_4">
+                                                    Nhịp hình trứng
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Gửi kèm
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-primary">Hàm đối diện</button>
+                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Khay lấy dấu</button>
+                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Cần sáp</button>
+                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Giá khớp</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú kĩ thuật
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <textarea type="text" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="image-title">
+                                Hình ảnh
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
+                                    <i class="far fa-image"></i> Thêm hình</button>
+                                <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file" accept="image/*" (change)="addImages($event)">
+                            </div>
+                        </div>
+                        <div class="w-100 view-img h-75">
+                            <div class="o_attachments_previews">
+                                <!-- Preview hình ảnh -->
+                                <div class="o_attachment" *ngFor="let img of imagesPreview; let i = index">
+                                    <div class="o_attachment_wrap" (click)="viewImage(img)">
+                                        <div class="o_image_box">
+                                            <div class="o_attachment_image" id="{{img.name}}">
+                                                <img width="100%" [src]="img.uploadId + '?width=240&height=240)'" alt="">
+                                            </div>
+                                            <div class="o_image_overlay o_attachment_view">
+                                                <span class="fa fa-times o_attachment_delete_cross" (click)="deleteImages(i, $event)" title="Delete {{img.name}}"></span>
+                                                <span class="o_attachment_title text-white">{{img.name}}</span>
+                                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.uploadId}}" target="_blank">
+                                                    <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
