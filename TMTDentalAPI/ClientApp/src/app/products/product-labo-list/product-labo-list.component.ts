@@ -13,6 +13,7 @@ import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 @Component({
   selector: 'app-product-labo-list',
   templateUrl: './product-labo-list.component.html',
