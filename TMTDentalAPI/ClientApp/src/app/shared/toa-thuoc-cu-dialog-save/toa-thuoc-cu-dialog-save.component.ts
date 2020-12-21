@@ -144,6 +144,17 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     });
   }
 
+  onCheckSaveSamplePrescription(event: any) {
+    var checked = event.currentTarget.checked;
+    if (checked) {
+      this.toaThuocForm.get('nameSamplePrescription').setValidators(Validators.required);
+      this.toaThuocForm.get('nameSamplePrescription').updateValueAndValidity();
+    } else {
+      this.toaThuocForm.get('nameSamplePrescription').clearValidators();
+      this.toaThuocForm.get('nameSamplePrescription').updateValueAndValidity();
+    }
+  }
+
   searchProducts() {
     var val = new ProductFilter();
     val.keToaOK = true;

@@ -80,6 +80,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Diagnostic { get; set; }
         public string EmployeeName { get; set; }
 
+        public DateTime? ReExaminationDate { get; set; }
+
         public IEnumerable<ToaThuocLinePrintViewModel> Lines { get; set; } = new List<ToaThuocLinePrintViewModel>();
     }
 
