@@ -598,7 +598,6 @@ namespace Infrastructure.Services
                .FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderPrintVM>(order);
             var partnerObj = GetService<IPartnerService>();
-            res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
             res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
             return res;
         }

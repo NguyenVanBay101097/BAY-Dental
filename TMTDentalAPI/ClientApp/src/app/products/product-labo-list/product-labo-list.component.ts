@@ -75,19 +75,19 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   createItem() {
-    // let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    // modalRef.componentInstance.title = 'Thêm Labo';
-    // modalRef.result.then(() => {
-    //   this.loadDataFromApi();
-    // }, () => {
-    // });
-
-    let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tạo phiếu Labo';
+    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
     });
+
+    // let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Tạo phiếu Labo';
+    // modalRef.result.then(() => {
+    //   this.loadDataFromApi();
+    // }, () => {
+    // });
   }
 
   editItem(item: ProductLaboBasic) {
