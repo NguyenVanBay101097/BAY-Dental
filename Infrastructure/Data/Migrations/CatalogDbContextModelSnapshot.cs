@@ -3660,6 +3660,99 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("IrModuleCategories");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.LaboBiteJoint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("LaboBiteJoints");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboBridge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("LaboBridges");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboFinishLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("LaboFinishLines");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.LaboOrder", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3687,11 +3780,29 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateExport")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateOrder")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DatePlanned")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReceipt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Indicated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("LaboBiteJointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LaboBridgeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LaboFinishLineId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -3721,6 +3832,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TechnicalNote")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WarrantyCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -3739,6 +3853,12 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("LaboBiteJointId");
+
+                    b.HasIndex("LaboBridgeId");
+
+                    b.HasIndex("LaboFinishLineId");
 
                     b.HasIndex("PartnerId");
 
@@ -3868,6 +3988,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ToothId");
 
                     b.ToTable("LaboOrderLineToothRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboOrderProductRel", b =>
+                {
+                    b.Property<Guid>("LaboOrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LaboOrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("laboOrderProductRels");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.LaboOrderToothRel", b =>
@@ -4838,7 +4973,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("CategId")
+                    b.Property<Guid?>("CategId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CompanyId")
@@ -4854,6 +4989,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Firm")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsLabo")
@@ -8233,6 +8371,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ReExaminationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("SaleOrderID")
                         .HasColumnType("uniqueidentifier");
 
@@ -10187,6 +10328,39 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.LaboBiteJoint", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboBridge", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboFinishLine", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.LaboOrder", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.AccountMove", "AccountMove")
@@ -10207,6 +10381,18 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
+                    b.HasOne("ApplicationCore.Entities.LaboBiteJoint", "LaboBiteJoint")
+                        .WithMany()
+                        .HasForeignKey("LaboBiteJointId");
+
+                    b.HasOne("ApplicationCore.Entities.LaboBridge", "LaboBridge")
+                        .WithMany()
+                        .HasForeignKey("LaboBridgeId");
+
+                    b.HasOne("ApplicationCore.Entities.LaboFinishLine", "LaboFinishLine")
+                        .WithMany()
+                        .HasForeignKey("LaboFinishLineId");
+
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId")
@@ -10218,7 +10404,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
+                        .WithMany("Labos")
                         .HasForeignKey("SaleOrderLineId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
@@ -10279,6 +10465,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
                         .WithMany()
                         .HasForeignKey("ToothId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboOrderProductRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.LaboOrder", "LaboOrder")
+                        .WithMany("LaboOrderProductRel")
+                        .HasForeignKey("LaboOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -10660,8 +10861,7 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ProductCategory", "Categ")
                         .WithMany()
                         .HasForeignKey("CategId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
                         .WithMany()

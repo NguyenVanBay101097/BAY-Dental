@@ -32,10 +32,20 @@
     <Compile Remove="Data\Migrations\20200814024701_UpdateColumnResourceCalendarAttendances.Designer.cs" />
     <Compile Remove="Data\Migrations\20201201084008_thuong_Update_DotKham.cs" />
     <Compile Remove="Data\Migrations\20201201084008_thuong_Update_DotKham.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201216022705_Bay_UpdateLaboOrder.cs" />
+    <Compile Remove="Data\Migrations\20201216022705_Bay_UpdateLaboOrder.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201217030520_AddCustomerLaboOrderTable.cs" />
+    <Compile Remove="Data\Migrations\20201217030520_AddCustomerLaboOrderTable.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201217044502_AddAccountMoveStateLaboOrderTable.cs" />
+    <Compile Remove="Data\Migrations\20201217044502_AddAccountMoveStateLaboOrderTable.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201217100507_AddReExaminationDateToaThuocTable.cs" />
+    <Compile Remove="Data\Migrations\20201217100507_AddReExaminationDateToaThuocTable.Designer.cs" />
     <Compile Remove="Data\Migrations\20201218030355_Bay_UpdateLabo_ver2.cs" />
     <Compile Remove="Data\Migrations\20201218030355_Bay_UpdateLabo_ver2.Designer.cs" />
     <Compile Remove="Data\Migrations\20201218032617_Bay_UpdateLabo_ver2.cs" />
     <Compile Remove="Data\Migrations\20201218032617_Bay_UpdateLabo_ver2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201221021726_thuong_Update_LaboOrder_V3.cs" />
+    <Compile Remove="Data\Migrations\20201221021726_thuong_Update_LaboOrder_V3.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
