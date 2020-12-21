@@ -84,6 +84,11 @@ export class LaboOrderReportOutput {
     laboAppointment: number;
 }
 
+export class LaboImageBasic {
+    name: string;
+    url: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LaboOrderService {
     apiUrl = 'api/LaboOrders';
