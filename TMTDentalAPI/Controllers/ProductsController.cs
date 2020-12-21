@@ -718,7 +718,7 @@ namespace TMTDentalAPI.Controllers
                 pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
-                pd.KeToaOK = true;
+                pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo";
                 pd.ListPrice = 0;
@@ -759,7 +759,7 @@ namespace TMTDentalAPI.Controllers
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
 
                         if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên gửu kèm Labo là bắt buộc");
+                            errs.Add("Tên gửi kèm Labo là bắt buộc");
 
                         if (errs.Any())
                         {
@@ -791,7 +791,7 @@ namespace TMTDentalAPI.Controllers
                 pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
-                pd.KeToaOK = true;
+                pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo_attach";
                 pd.ListPrice = 0;

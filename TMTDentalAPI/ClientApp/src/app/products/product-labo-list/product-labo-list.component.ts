@@ -93,7 +93,7 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   deleteItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa vật liệu Labo';
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa vật liệu labo ${item.name}?`;
     modalRef.result.then(() => {
