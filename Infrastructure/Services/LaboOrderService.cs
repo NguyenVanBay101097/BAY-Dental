@@ -219,6 +219,7 @@ namespace Infrastructure.Services
                 .Include(x=>x.LaboFinishLine)               
                 .Include(x => x.Product)
                 .Include("SaleOrderLine.Teeth")
+                .Include("SaleOrderLine.Product")
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
             var attachments = await attachmentObj.GetAttachments("labo", res.Id);
