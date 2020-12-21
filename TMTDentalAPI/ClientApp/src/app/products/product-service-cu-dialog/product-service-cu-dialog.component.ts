@@ -82,6 +82,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       default: true,
       order: this.order,
       purchasePrice: 0,
+      firm: null
     });
 
     setTimeout(() => {

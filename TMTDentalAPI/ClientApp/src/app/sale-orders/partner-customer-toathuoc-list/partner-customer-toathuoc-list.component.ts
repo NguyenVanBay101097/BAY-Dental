@@ -41,6 +41,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      console.log(res);
       this.toathuocs = res.data;
     }, err => {
       console.log(err);

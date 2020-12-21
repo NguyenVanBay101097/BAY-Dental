@@ -18,11 +18,21 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
+
+    // {
+    //   name: 'Thống kê labo',
+    //   icon: 'fas fa-tooth',
+    //   children: [],
+    //   link: '/labo-orders/statistics'
+    // },
+    // ,
     {
-      name: 'Thống kê labo',
+      name: 'Labo',
       icon: 'fas fa-tooth',
-      children: [],
-      link: '/labo-orders/statistics'
+      children: [
+        { name: 'Quản lý phiếu Labo', link: '/labo-orders' },
+     
+      ],
     },
     {
       name: 'Mua hàng',
@@ -117,8 +127,6 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm vật tư', link: '/product-categories/product' },
         { name: 'Thuốc', link: '/products/medicines' },
         { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
-        { name: 'Labo', link: '/products/labos' },
-        { name: 'Nhóm labo', link: '/product-categories/labo' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
         { name: 'Tiểu sử bệnh', link: '/histories' },
         { name: 'Danh xưng', link: '/partner-titles' },
@@ -126,6 +134,11 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
+        { name: 'Vật liệu Labo', link: '/products/labos' },
+        { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
+        { name: 'Gửu kèm Labo', link: '/products/labo-attachs' },
+        { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
+        { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
       ]
     },
     {

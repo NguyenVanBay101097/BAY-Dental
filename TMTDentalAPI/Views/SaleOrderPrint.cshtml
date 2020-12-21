@@ -75,7 +75,7 @@
     </div>
     <div>
         <h5>BẢNG KÊ DỊCH VỤ</h5>
-        <table class="table table-sm table-bordered">
+        <table class="table table-sm table-bordered mb-2">
             <thead>
                 <tr>
                     <th>Dịch vụ</th>
@@ -107,36 +107,36 @@
 
             </tbody>
         </table>
-        <table class="o_inner_group oe_subtotal_footer oe_right">
+        <table class="o_inner_group oe_right float-right">
             <tbody>
                 <tr>
-                    <td colspan="1" class="o_td_label text-right">
-                        <label class="o_form_label oe_subtotal_footer_separator text-right">
+                    <td colspan="1" class="o_td_label pr-3">
+                        <label class="o_form_label">
                             Tổng tiền
                         </label>
                     </td>
                     <td colspan="1" class="text-right">
-                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</span>
+                        <span class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</span>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="o_td_label text-right">
-                        <label class="o_form_label oe_subtotal_footer_separator text-right">
+                    <td colspan="1" class="o_td_label pr-3">
+                        <label class="o_form_label">
                             Đã thanh toán
                         </label>
                     </td>
                     <td colspan="1" class="text-right">
-                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</span>
+                        <span class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</span>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="o_td_label text-right">
-                        <label class="o_form_label oe_subtotal_footer_separator text-right">
+                    <td colspan="1" class="o_td_label pr-3">
+                        <label class="o_form_label">
                             Còn lại
                         </label>
                     </td>
                     <td colspan="1" class="text-right">
-                        <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</span>
+                        <span class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</span>
                     </td>
                 </tr>
             </tbody>
@@ -151,9 +151,9 @@
                 <thead>
                     <tr>
                         @*<th>Số phiếu</th>*@
-                        <th class="text-right">Ngày</th>
-                        <th class="text-right">Phương thức</th>
-                        <th class="text-right">Nội dung</th>
+                        <th>Ngày</th>
+                        <th>Phương thức</th>
+                        <th>Nội dung</th>
                         <th class="text-right">Thanh toán</th>
                     </tr>
                 </thead>
@@ -162,9 +162,9 @@
                     {
                         <tr>
                             @*<td>@payment.Ref</td>*@
-                            <td class="text-right">@payment.Date.Value.ToString("dd/MM/yyyy")</td>
-                            <td class="text-right">@payment.JournalName</td>
-                            <td class="text-right">@payment.Communication</td>
+                            <td>@payment.Date.Value.ToString("dd/MM/yyyy")</td>
+                            <td>@payment.JournalName</td>
+                            <td>@payment.Communication</td>
                             <td class="text-right">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
                         </tr>
                     }
@@ -194,16 +194,14 @@
                 <tbody>
                     @foreach (var dotkham in Model.DotKhams)
                     {
-
-
                         @foreach (var line in dotkham.Lines)
                         {
                             <tr>
                                 @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
                                 {
-                                    <td class="align-middle text-center" rowspan="@dotkham.Lines.Count()"> Đợt khám @i</td>
-                                    <td class="align-middle text-center" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
-                                    <td class="align-middle text-center" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
+                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
+                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
+                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
                                 }
 
                                 <td>@line.Product.Name</td>
@@ -227,12 +225,12 @@
 
     <div class="row">
         <div class="col col-sm">
-            <div class="text-center font-weight-bold">
+            <div class="text-center font-weight-600">
                 Khách hàng
             </div>
         </div>
         <div class="col col-sm">
-            <div class="text-center font-weight-bold">
+            <div class="text-center font-weight-600">
                 Người lập
             </div>
         </div>

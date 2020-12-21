@@ -181,6 +181,14 @@ export class ProductService {
     return this.http.post(this.baseApi + this.apiUrl + "/ImportProduct", val);
   }
 
+  importLabo(val: ProductImportExcelBaseViewModel) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ImportLabo", val);
+  }
+
+  importLaboAttach(val: ProductImportExcelBaseViewModel) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ImportLaboAttach", val);
+  }
+
   getLaboPaged(val: any): Observable<PagedResult2<ProductLaboBasic>> {
     return this.http.get<PagedResult2<ProductLaboBasic>>(
       this.baseApi + this.apiUrl + "/GetLaboPaged",

@@ -22,7 +22,7 @@ import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/
   }
 })
 export class ProductLaboListComponent implements OnInit {
-  constructor(private productService: ProductService, private windowService: WindowService, private dialogService: DialogService,
+  constructor(private productService: ProductService,
     private modalService: NgbModal) { }
   gridData: GridDataResult;
   limit = 20;
@@ -90,8 +90,8 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   editItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa Labo';
+    let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa vật liệu Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();
@@ -100,13 +100,23 @@ export class ProductLaboListComponent implements OnInit {
   }
 
   deleteItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa labo ${item.name}?`;
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa vật liệu Labo';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa vật liệu labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       });
+    }, () => {
+    });
+  }
+
+  onImport() {
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Import excel';
+    modalRef.componentInstance.type = 'labo';
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
     }, () => {
     });
   }

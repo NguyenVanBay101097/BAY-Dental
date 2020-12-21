@@ -661,6 +661,152 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Product.Create")]
+        public async Task<IActionResult> ImportLabo(ProductImportExcelBaseViewModel val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ProductLaboImportExcelRow>();
+            var categDict = new Dictionary<string, ProductCategory>();
+            var errors = new List<string>();
+            await _unitOfWork.BeginTransactionAsync();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    {
+                        var errs = new List<string>();
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+
+                        if (string.IsNullOrEmpty(name))
+                            errs.Add("Tên vật liệu Labo là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        var item = new ProductLaboImportExcelRow
+                        {
+                            Name = name,
+                        };
+                        data.Add(item);
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var vals = new List<Product>();
+            var uom = await _uomService.DefaultUOM();
+            foreach (var item in data)
+            {
+                var pd = new Product();
+                pd.CompanyId = CompanyId;
+                pd.UOMId = uom.Id;
+                pd.UOMPOId = uom.Id;
+                pd.Name = item.Name;
+                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                pd.SaleOK = false;
+                pd.PurchaseOK = false;
+                pd.KeToaOK = false;
+                pd.Type = "consu";
+                pd.Type2 = "labo";
+                pd.ListPrice = 0;
+                pd.PurchasePrice = 0;
+                vals.Add(pd);
+            }
+
+            await _productService.CreateAsync(vals);
+
+            _unitOfWork.Commit();
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Product.Create")]
+        public async Task<IActionResult> ImportLaboAttach(ProductImportExcelBaseViewModel val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ProductLaboImportExcelRow>();
+            var categDict = new Dictionary<string, ProductCategory>();
+            var errors = new List<string>();
+            await _unitOfWork.BeginTransactionAsync();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    {
+                        var errs = new List<string>();
+                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+
+                        if (string.IsNullOrEmpty(name))
+                            errs.Add("Tên gửi kèm Labo là bắt buộc");
+
+                        if (errs.Any())
+                        {
+                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                            continue;
+                        }
+
+                        var item = new ProductLaboImportExcelRow
+                        {
+                            Name = name,
+                        };
+                        data.Add(item);
+                    }
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var vals = new List<Product>();
+            var uom = await _uomService.DefaultUOM();
+            foreach (var item in data)
+            {
+                var pd = new Product();
+                pd.CompanyId = CompanyId;
+                pd.UOMId = uom.Id;
+                pd.UOMPOId = uom.Id;
+                pd.Name = item.Name;
+                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+                pd.SaleOK = false;
+                pd.PurchaseOK = false;
+                pd.KeToaOK = false;
+                pd.Type = "consu";
+                pd.Type2 = "labo_attach";
+                pd.ListPrice = 0;
+                pd.PurchasePrice = 0;
+                vals.Add(pd);
+            }
+
+            await _productService.CreateAsync(vals);
+
+            _unitOfWork.Commit();
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> OnChangeUOM(ProductOnChangeUOM val)
         {
             if (!ModelState.IsValid)

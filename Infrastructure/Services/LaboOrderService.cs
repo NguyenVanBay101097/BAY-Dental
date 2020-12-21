@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,8 @@ namespace Infrastructure.Services
     public class LaboOrderService : BaseService<LaboOrder>, ILaboOrderService
     {
         private readonly IMapper _mapper;
-        public LaboOrderService(IAsyncRepository<LaboOrder> repository, IHttpContextAccessor httpContextAccessor,
+        private readonly IUploadService _uploadService;
+        public LaboOrderService(IAsyncRepository<LaboOrder> repository, IHttpContextAccessor httpContextAccessor, IUploadService uploadService,
             IMapper mapper)
             : base(repository, httpContextAccessor)
         {
@@ -191,6 +193,7 @@ namespace Infrastructure.Services
 
         public async Task<LaboOrderDisplay> GetLaboDisplay(Guid id)
         {
+            var attachmentObj = GetService<IIrAttachmentService>();
             //var res = await SearchQuery(x => x.Id == id).Select(x => new LaboOrderDisplay
             //{
             //    Id = x.Id,
@@ -211,25 +214,88 @@ namespace Infrastructure.Services
             //    Name = x.Name
             //}).FirstOrDefaultAsync();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
+                .Include(x=>x.LaboBridge)
+                .Include(x=>x.LaboBiteJoint)
+                .Include(x=>x.LaboFinishLine)               
                 .Include(x => x.Product)
+                .Include("SaleOrderLine.Teeth")
+                .Include("SaleOrderLine.Product")
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            var attachments = await attachmentObj.GetAttachments("labo", res.Id);
+            res.Images = _mapper.Map<IEnumerable<IrAttachmentBasic>>(attachments);
             return res;
         }
 
-        public async Task<LaboOrder> CreateLabo(LaboOrderDisplay val)
+        public async Task<LaboOrder> CreateLabo(LaboOrderSave val)
         {
             var labo = _mapper.Map<LaboOrder>(val);
             labo.CompanyId = CompanyId;
+
+            ///thêm răng
             foreach (var tooth in val.Teeth)
             {
                 labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
             }
-            labo.AmountTotal = labo.PriceUnit * labo.Quantity;
+
+            ///thêm danh sach gửi kèm
+            if (val.AttechRels.Any())
+            {
+                foreach(var attach in val.AttechRels)
+                {
+                    labo.LaboOrderProductRel.Add(new LaboOrderProductRel()
+                    {
+                        ProductId = attach.Id
+                    });
+                }
+            }
+
+            //labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await CreateAsync(labo);
+
+
+            ///update image
+            await UploadAttachment(val, labo);
+
             return labo;
         }
+
+
+
+        private async Task UploadAttachment(LaboOrderSave val , LaboOrder labo)
+        {
+            var attachmentObj = GetService<IIrAttachmentService>();
+            var imageslabo = await attachmentObj.GetAttachments("labo", labo.Id);
+            //remove line
+            var lineToRemoves = new List<IrAttachment>();
+            foreach (var existLine in imageslabo)
+            {
+                if (!val.Images.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            await attachmentObj.DeleteAsync(lineToRemoves);
+
+            var listadd = new List<IrAttachment>();
+            foreach (var img in val.Images)
+            {
+                if (img.Id == Guid.Empty)
+                {
+                    var image = new IrAttachment();
+                    image.ResModel = "labo";
+                    image.ResId = labo.Id;
+                    image.Name = img.Name;
+                    image.Url = img.Url;
+
+                    listadd.Add(image);
+                }
+               
+            }
+
+            await attachmentObj.CreateAsync(listadd);
+        }
+
+     
 
         public void _AmountAll(IEnumerable<LaboOrder> orders)
         {
@@ -246,10 +312,11 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task UpdateLabo(Guid id, LaboOrderDisplay val)
+        public async Task UpdateLabo(Guid id, LaboOrderSave val)
         {
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
                 .Include("OrderLines.LaboOrderLineToothRels")
+                .Include(x=>x.LaboOrderProductRel)
                 .FirstOrDefaultAsync();
             labo = _mapper.Map(val, labo);
             labo.CompanyId = CompanyId;
@@ -260,7 +327,12 @@ namespace Infrastructure.Services
             }
             labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await UpdateAsync(labo);
+
+            ///update image
+            await UploadAttachment(val, labo);
         }
+
+     
 
         public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<LaboOrder> self)
         {
@@ -435,9 +507,14 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             var states = new string[] { "draft", "cancel" };
-            //await GetService<ILaboOrderLineService>().DeleteAsync(self.SelectMany(x=>x.OrderLines));
+            foreach (var labo in self)
+            {
+                if (!states.Contains(labo.State))
+                    throw new Exception("Chỉ có thể xóa phiếu Labo ở trạng thái nháp");            
+            }  
+            
             await DeleteAsync(self);
         }
 

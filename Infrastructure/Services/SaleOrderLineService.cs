@@ -332,17 +332,19 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated >= val.DateOrderTo);
             if (val.IsLabo == true)
                 query = query.Where(x => x.Product.IsLabo);
+
             if (val.IsQuotation.HasValue)
             {
                 query = query.Where(x => x.Order.IsQuotation == val.IsQuotation);
             }
 
-            if (val.IsLabo == true)
+            if (!string.IsNullOrEmpty(val.LaboState))
             {
-                query = query.Where(x => x.Product.IsLabo);
+                query = query.Where(x => x.Labos.Any( s=>s.State == val.LaboState));
             }
+      
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x=>x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
             {

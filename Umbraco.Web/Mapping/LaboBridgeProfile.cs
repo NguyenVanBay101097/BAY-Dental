@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Entities;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Umbraco.Web.Mapping
 {
@@ -9,7 +11,11 @@ namespace Umbraco.Web.Mapping
     {
         public LaboBridgeProfile()
         {
-
+            CreateMap<LaboBridge, LaboBridgeBasic>();
+            CreateMap<LaboBridge, LaboBridgeDisplay>();
+            CreateMap<LaboBridgeSave, LaboBridge>();
+            CreateMap<LaboBridgeDisplay, LaboBridge>().ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<LaboBridge, LaboBridgeSimple>();
         }
 
     }

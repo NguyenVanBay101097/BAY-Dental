@@ -33,15 +33,23 @@ namespace ApplicationCore.Entities
         /// </summary>
         public DateTime DateOrder { get; set; }
 
-        /// <summary>
-        /// Thành tiền
-        /// </summary>
-        public decimal AmountTotal { get; set; }
+      
 
         /// <summary>
-        /// Ngày nhận
+        /// Ngày nhận dự kiến
         /// </summary>
         public DateTime? DatePlanned { get; set; }
+
+        /// <summary>
+        /// Ngày nhận thực tế
+        /// </summary>
+        public DateTime? DateReceipt { get; set; }
+
+        /// <summary>
+        /// Ngày xuất labo 
+        /// 7 kêu trường này đặt tên như vậy
+        /// </summary>
+        public DateTime? DateExport { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }
@@ -81,6 +89,11 @@ namespace ApplicationCore.Entities
         /// đơn giá
         /// </summary>
         public decimal PriceUnit { get; set; }
+
+        /// <summary>
+        /// Thành tiền
+        /// </summary>
+        public decimal AmountTotal { get; set; }
 
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLine SaleOrderLine { get; set; }

@@ -59,20 +59,20 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.LaboOrder.Create")]
-        public async Task<IActionResult> Create(LaboOrderDisplay val)
+        public async Task<IActionResult> Create(LaboOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
             var labo = await _laboOrderService.CreateLabo(val);
             _unitOfWork.Commit();
-            val.Id = labo.Id;
+           // val.Id = labo.Id;
             return Ok(val);
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Basic.LaboOrder.Update")]
-        public async Task<IActionResult> Update(Guid id, LaboOrderDisplay val)
+        public async Task<IActionResult> Update(Guid id, LaboOrderSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -164,7 +164,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetLaboForSaleOrderLine(LaboOrderPaged val)
+        public async Task<IActionResult> GetLaboForSaleOrderLine([FromQuery] LaboOrderPaged val)
         {
             var res = await _laboOrderService.GetPagedResultAsync(val);
             return Ok(res);

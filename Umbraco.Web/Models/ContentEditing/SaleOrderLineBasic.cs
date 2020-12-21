@@ -6,6 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SaleOrderLineBasic
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public string State { get; set; }
@@ -27,6 +28,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceTotal { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+        public bool IsListLabo  { get; set; }
 
     }
 }

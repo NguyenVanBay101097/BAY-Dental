@@ -15,7 +15,7 @@ namespace ApplicationCore.Entities
         public Partner Partner { get; set; }
 
         /// <summary>
-        /// Ngày tạo
+        /// Ngày tái khám
         /// </summary>
         public DateTime Date { get; set; }
 
@@ -23,11 +23,6 @@ namespace ApplicationCore.Entities
         /// Lời dặn
         /// </summary>
         public string Note { get; set; }
-
-          /// <summary>
-          /// Chẩn đoán
-          /// </summary>
-        public string Diagnostic { get; set; }
 
         /// <summary>
         /// Liên kết với đợt khám nào?
@@ -56,5 +51,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? SaleOrderID { get; set; }
         public SaleOrder SaleOrder { get; set; }
+
+        public DateTime? ReExaminationDate { get; set; }
+
+        public string Diagnostic { get; set; }
     }
 }

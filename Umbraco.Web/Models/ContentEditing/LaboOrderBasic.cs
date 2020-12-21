@@ -24,10 +24,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        /// <summary>
+        /// ngày gửi
+        /// </summary>
         public DateTime DateOrder { get; set; }
 
-        public decimal AmountTotal { get; set; }
-
+        
+        /// <summary>
+        /// ngày dự kiến
+        /// </summary>
         public DateTime? DatePlanned { get; set; }
 
         /// <summary>
@@ -50,8 +55,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal PriceUnit { get; set; }
 
+        public decimal AmountTotal { get; set; }
+
         public string SaleOrderLineName { get; set; }
 
         public DateTime? DateCreated { get; set; }
+
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+
+
+        public string State { get; set; }
     }
 }

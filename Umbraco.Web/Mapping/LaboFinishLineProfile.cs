@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Entities;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Umbraco.Web.Mapping
 {
@@ -9,7 +11,11 @@ namespace Umbraco.Web.Mapping
     {
         public LaboFinishLineProfile()
         {
-
+            CreateMap<LaboFinishLine, LaboFinishLineBasic>();
+            CreateMap<LaboFinishLine, LaboFinishLineDisplay>();
+            CreateMap<LaboFinishLineSave, LaboFinishLine>();
+            CreateMap<LaboFinishLineDisplay, LaboFinishLine>().ForMember(x=>x.Id, x=> x.Ignore());
+            CreateMap<LaboFinishLine, LaboFinishLineSimple>();
         }
 
     }

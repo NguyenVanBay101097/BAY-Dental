@@ -2,6 +2,10 @@
   size: auto;
 }
 
+label, strong {
+  font-weight: 600!important;
+}
+
 [type="text"], [type="password"], [type="number"], textarea, select {
   width: 100%;
   display: block;
@@ -361,7 +365,7 @@
 
 .o_form_view .o_inner_group.oe_subtotal_footer .oe_subtotal_footer_separator {
   font-weight: 600;
-  font-size: 1.3em;
+  font-size: 13pt;
 }
 
 .o_form_view .o_inner_group.oe_subtotal_footer>tbody>tr>td .o_field_widget {

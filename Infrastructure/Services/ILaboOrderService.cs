@@ -14,8 +14,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val);
 
         Task<LaboOrderDisplay> GetLaboDisplay(Guid id);
-        Task<LaboOrder> CreateLabo(LaboOrderDisplay val);
-        Task UpdateLabo(Guid id, LaboOrderDisplay val);
+        Task<LaboOrder> CreateLabo(LaboOrderSave val);
+        Task UpdateLabo(Guid id, LaboOrderSave val);
         Task Unlink(IEnumerable<Guid> ids);
         Task<LaboOrderDisplay> DefaultGet(LaboOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);
