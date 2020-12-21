@@ -1503,3 +1503,7 @@ span.char-count {
 .dotkham-teeth-popover-width {
     min-width: 300px !important;
 }
+
+.k-mid {
+    white-space: pre-line;
+}

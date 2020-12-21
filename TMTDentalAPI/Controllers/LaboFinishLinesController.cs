@@ -10,6 +10,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Read")]
         public async Task<IActionResult> Get([FromQuery] LaboFinishLinesPaged val)
         {
             var result = await _laboFinishLineService.GetPagedResultAsync(val);
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _laboFinishLineService.GetDisplay(id);
@@ -43,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Create")]
         public async Task<IActionResult> Create(LaboFinishLineSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -52,6 +56,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Update")]
         public async Task<IActionResult> Update(Guid id, LaboFinishLineSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -62,6 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _laboFinishLineService.GetByIdAsync(id);
@@ -72,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("ImportExcel")]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)

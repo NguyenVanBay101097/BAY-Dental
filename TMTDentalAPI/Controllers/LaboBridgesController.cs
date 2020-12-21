@@ -10,6 +10,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Read")]
         public async Task<IActionResult> Get([FromQuery] LaboBridgesPaged val)
         {
             var result = await _LaboBridgeService.GetPagedResultAsync(val);
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _LaboBridgeService.GetDisplay(id);
@@ -43,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Create")]
         public async Task<IActionResult> Create(LaboBridgeSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -52,6 +56,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Update")]
         public async Task<IActionResult> Update(Guid id, LaboBridgeSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -62,6 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Read")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _LaboBridgeService.GetByIdAsync(id);
@@ -72,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("ImportExcel")]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
