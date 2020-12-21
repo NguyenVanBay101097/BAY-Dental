@@ -74,6 +74,13 @@ export class LaboOrderStatisticsPaged {
     datePlannedTo: string;
 }
 
+export class OrderLaboPaged{
+    limit: number;
+    offset: number;
+    search: string;
+    state: string;
+}
+
 export class LaboOrderReportInput {
     dateFrom: string;
     dateTo: string;
@@ -148,5 +155,9 @@ export class LaboOrderService {
 
     getLaboForSaleOrderLine(val: any): Observable<PagedResult2<any>>{
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetLaboForSaleOrderLine', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getOrderLabo(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
     }
 }

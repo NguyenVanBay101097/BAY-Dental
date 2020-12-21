@@ -169,5 +169,12 @@ namespace TMTDentalAPI.Controllers
             var res = await _laboOrderService.GetPagedResultAsync(val);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
+        {
+            var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
+            return Ok(res);
+        }
     }
 }

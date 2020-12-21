@@ -109,6 +109,43 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PagedResult2<LaboOrderBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val)
+        {
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                x.Partner.Name.Contains(val.Search) ||
+                x.SaleOrderLine.Order.Name.Contains(val.Search)));
+            var now = DateTime.Now;
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                if(val.State == "trehan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value));
+                }
+                else if(val.State == "chonhan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => (x.DatePlanned.HasValue && now  < x.DatePlanned.Value) || !x.DatePlanned.HasValue));
+                }
+                else if (val.State == "toihan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue &&  now == x.DatePlanned.Value));
+                }
+            }
+
+            spec = spec.And(new InitialSpecification<LaboOrder>(x => !x.DateReceipt.HasValue));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public async Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val)
         {
             ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
