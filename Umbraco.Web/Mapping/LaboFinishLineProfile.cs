@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<LaboFinishLine, LaboFinishLineBasic>();
             CreateMap<LaboFinishLine, LaboFinishLineDisplay>();
+            CreateMap<LaboFinishLineSave, LaboFinishLine>();
             CreateMap<LaboFinishLineDisplay, LaboFinishLine>().ForMember(x=>x.Id, x=> x.Ignore());
         }
 

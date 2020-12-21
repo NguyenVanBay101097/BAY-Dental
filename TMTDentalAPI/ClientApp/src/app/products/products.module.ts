@@ -30,8 +30,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProductServiceImportDialogComponent } from './product-service-import-dialog/product-service-import-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { DialogContainerService, DialogService, WindowContainerService, WindowService } from '@progress/kendo-angular-dialog';
-import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
 import { ProductLaboAttachCuDialogComponent } from './product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
+import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
 
 @NgModule({
   declarations: [

@@ -238,6 +238,21 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'labo-bite-joints',
+    loadChildren: () => import('./labo-bite-joints/labo-bite-joints.module').then(m => m.LaboBiteJointsModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'labo-bridges',
+    loadChildren: () => import('./labo-bridges/labo-bridges.module').then(m => m.LaboBridgesModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'labo-finish-lines',
+    loadChildren: () => import('./labo-finish-lines/labo-finish-lines.module').then(m => m.LaboFinishLinesModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'commission-report',
     loadChildren: () => import('./commission-reports/commission-reports.module').then(m => m.CommissionReportsModule),
     canActivate: [AuthGuard]
@@ -292,7 +307,7 @@ const routes: Routes = [
     path: 'customer-statistics',
     loadChildren: () => import('./customer-statistics/customer-statistics.module').then(m => m.CustomerStatisticsModule),
     canActivate: [AuthGuard]
-  },
+  }
 ];
 
 @NgModule({

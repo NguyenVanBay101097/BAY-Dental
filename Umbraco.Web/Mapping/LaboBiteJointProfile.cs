@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<LaboBiteJoint, LaboBiteJointBasic>();
             CreateMap<LaboBiteJoint, LaboBiteJointDisplay>();
+            CreateMap<LaboBiteJointSave, LaboBiteJoint>();
             CreateMap<LaboBiteJointDisplay, LaboBiteJoint>().ForMember(x => x.Id, x => x.Ignore());
         }
 

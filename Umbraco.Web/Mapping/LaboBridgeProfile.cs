@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<LaboBridge, LaboBridgeBasic>();
             CreateMap<LaboBridge, LaboBridgeDisplay>();
+            CreateMap<LaboBridgeSave, LaboBridge>();
             CreateMap<LaboBridgeDisplay, LaboBridge>().ForMember(x => x.Id, x => x.Ignore());
         }
 
