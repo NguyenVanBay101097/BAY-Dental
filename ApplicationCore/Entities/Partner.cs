@@ -190,5 +190,19 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
+
+        public string GetAddress()
+        {
+            var list = new List<string>();
+            if (!string.IsNullOrEmpty(Street))
+                list.Add(Street);
+            if (!string.IsNullOrEmpty(WardName))
+                list.Add(WardName);
+            if (!string.IsNullOrEmpty(DistrictName))
+                list.Add(DistrictName);
+            if (!string.IsNullOrEmpty(CityName))
+                list.Add(CityName);
+            return string.Join(", ", list);
+        }
     }
 }

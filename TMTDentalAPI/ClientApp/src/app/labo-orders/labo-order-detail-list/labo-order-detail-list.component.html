@@ -73,7 +73,7 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="In">
+                <button class="btn btn-success btn-sm mr-2" title="In" (click)="printLabo(dataItem)">
                     <span class="far fa-print"></span></button>
                 <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
