@@ -15,7 +15,7 @@
                                     <label class="o_form_label">Ngày nhận thực tế</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">                                                                     
-                                    <span></span>
+                                    <span>{{labo.dateReceipt | date: 'shortDate'}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -23,7 +23,7 @@
                                     <label class="o_form_label">Mã bảo hành</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span></span>
+                                    <span>{{labo.warrantyCode}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -31,7 +31,7 @@
                                     <label class="o_form_label">Hạn bảo hành</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span></span>
+                                    <span>{{labo.warrantyPeriod | date: 'shortDate'}}</span>
                                 </td>
                             </tr>       
                             <tr>
@@ -39,9 +39,9 @@
                                     <label class="o_form_label">Ngày xuất</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateExportObj"></kendo-datepicker>
-                                    <div *ngIf="f.dateExportObj.errors && (f.dateExportObj.touched || f.dateExportObj.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateExportObj.errors.required">Vui lòng chọn ngày xuất</div>
+                                    <kendo-datepicker formControlName="dateReceipt"></kendo-datepicker>
+                                    <div *ngIf="f.dateReceipt.errors && (f.dateReceipt.touched || f.dateReceipt.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateReceipt.errors.required">Vui lòng chọn ngày xuất</div>
                                     </div>
                                 </td>
                             </tr>  
@@ -54,6 +54,6 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
-    <button type="button" class="btn btn-danger" accesskey="s" (click)="onCancelExport()">Hủy nhận</button>
+    <button type="button" class="btn btn-danger" accesskey="s" (click)="onCancelReceipt()">Hủy nhận</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

@@ -178,8 +178,15 @@ export class LaboOrderService {
         return this.http.post(this.baseApi + this.apiUrl + "/UpdateOrderLabo" , val);
     }
 
-
     getExportLabo(val: any): Observable<PagedResult2<any>>{
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetExportLabo', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    updateExportLabo(val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateExportLabo" , val);
+    }
+
+    actionCancelReceipt(val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt" , val);
     }
 }

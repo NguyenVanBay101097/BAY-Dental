@@ -25,9 +25,27 @@ export class LaboOrderExportDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateExportObj: [null, Validators.required]
+      dateReceipt: [null, Validators.required]
     });
-
   }
 
+  onSave() {
+    if (!this.formGroup.valid) {
+      return false;
+    }
+  
+    var val = this.formGroup.value;
+    val.id = this.labo.id;
+    val.dateReceipt = val.dateReceipt ? this.intelservice.formatDate(val.dateReceipt, 'yyyy-MM-dd HH:mm:ss') : null;
+
+    this.laboOrderService.updateExportLabo(val).subscribe(() => {   
+      this.activeModal.close();
+    });
+  }
+
+  onCancelReceipt() {
+    this.laboOrderService.actionCancelReceipt([this.labo.id]).subscribe(() => {   
+      this.activeModal.close();
+    });
+  }
 }

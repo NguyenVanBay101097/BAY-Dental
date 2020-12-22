@@ -82,7 +82,6 @@ export class LaboOrderExportComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.state = this.stateFilter || '';
-    val.dateExport = this.intlService.formatDate(new Date(), 'd', 'en-US');
     if (this.dateExportFrom) {
       val.dateExportFrom = this.intlService.formatDate(this.dateExportFrom, 'd', 'en-US');
     }
