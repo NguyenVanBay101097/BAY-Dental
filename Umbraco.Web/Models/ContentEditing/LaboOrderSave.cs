@@ -130,7 +130,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// list gửu kèm
         /// </summary>
-        public IEnumerable<ProductSimple> AttechRels { get; set; } = new List<ProductSimple>();
+        public IEnumerable<ProductSimple> LaboOrderProducts { get; set; } = new List<ProductSimple>();
 
         public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
         /// <summary>

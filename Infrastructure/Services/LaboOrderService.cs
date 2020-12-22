@@ -315,9 +315,9 @@ namespace Infrastructure.Services
             }
 
             ///thêm danh sach gửi kèm
-            if (val.AttechRels.Any())
+            if (val.LaboOrderProducts.Any())
             {
-                foreach(var attach in val.AttechRels)
+                foreach(var attach in val.LaboOrderProducts)
                 {
                     labo.LaboOrderProductRel.Add(new LaboOrderProductRel()
                     {
