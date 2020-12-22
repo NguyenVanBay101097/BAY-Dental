@@ -221,7 +221,7 @@
                                     <div class="row">
                                         <div *ngFor="let labo of labos;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="labo" type="radio" [id]="'labo'+i">
+                                                <input formControlName="product" name="product" [value]="labo" type="radio" [id]="'labo'+i">
                                                 <label class="ml-1" [for]="'labo'+i">
                                                     {{labo.name}}
                                                 </label>
@@ -242,7 +242,7 @@
                                     <div class="row">
                                         <div *ngFor="let finish of finishlines;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="finish" type="radio" [id]="'finish'+i">
+                                                <input formControlName="laboFinishLine" name="laboFinishLine" [value]="finish" type="radio" [id]="'finish'+i">
                                                 <label class="ml-1" [for]="'finish'+i">
                                                     {{finish.name}}
                                                 </label>
@@ -263,7 +263,7 @@
                                     <div class="row">
                                         <div *ngFor="let bite of biteJoints;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="bite" type="radio" [id]="'bite'+i">
+                                                <input formControlName="laboBiteJoint" [value]="bite" type="radio" [id]="'bite'+i">
                                                 <label class="ml-1" [for]="'bite'+i">
                                                     {{bite.name}}
                                                 </label>
@@ -284,7 +284,7 @@
                                     <div class="row">
                                         <div *ngFor="let bridge of bridges;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="bridge" type="radio" [id]="'bridge'+i">
+                                                <input formControlName="laboBridge" name="laboBridge" [value]="bridge" type="radio" [id]="'bridge'+i">
                                                 <label class="ml-1" [for]="'bridge'+i">
                                                     {{bridge.name}}
                                                 </label>

@@ -178,6 +178,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.imagesFA.push(this.fb.group(img));
       });
     }
+    console.log(res);
+    
   }
 
   loadData() {
@@ -213,6 +215,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
     const biteJointPaged = new LaboFinishLinePageSimple();
     this.biteJointService.autoComplete(biteJointPaged).subscribe((res: any) => {
       this.biteJoints = res;
+      console.log(this.biteJoints);
+      
     });
     //load bridge
     const bridgePaged = new LaboBridgePageSimple();
@@ -321,7 +325,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.productId = val.product ? val.product.id : null;
     val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
     val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
-    val.laboFinishLineId = val.LaboFinishLine ? val.LaboFinishLine.id : null;
+    val.laboFinishLineId = val.laboFinishLine ? val.laboFinishLine.id : null;
     val.amountTotal = this.getAmountTotal();
 
     if (this.id) {
