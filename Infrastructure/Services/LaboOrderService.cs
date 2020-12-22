@@ -173,9 +173,13 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (val.DateExport.HasValue)
+            if (val.DateExportFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder >= val.DateExportFrom));
+
+            if (val.DateExportTo.HasValue)
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport.HasValue && x.DateExport == val.DateExport.Value));
+                var dateOrderTo = val.DateExportTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateOrderTo));
             }
 
 
