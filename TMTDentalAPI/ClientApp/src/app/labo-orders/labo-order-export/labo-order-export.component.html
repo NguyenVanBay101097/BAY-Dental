@@ -61,13 +61,18 @@
                 {{dataItem.orderNCCLabo.name }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderName" title="Phiếu điều trị" width="150">
+        <kendo-grid-column field="orderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <a class="text-primary" [routerLink]="['/sale-orders/form']"
                 [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>               
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="laboName" title="Phiếu Labo" width="120">
+        <kendo-grid-column field="laboName" title="Phiếu Labo" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.laboName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="laboName" title="Loại phục hình" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.laboName}}
             </ng-template>
@@ -77,32 +82,39 @@
                 {{dataItem.orderPartner.name }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Răng, chuẩn đoán" width="120">
+        <kendo-grid-column field="Date" title="Ngày nhận thực tế" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{showInfo(dataItem)}}
+                {{dataItem.Date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Bác sĩ" width="120">
+        <kendo-grid-column field="orderPartner" title="Mã bảo hành" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.employee == null ? '' : dataItem.employee.name}}
+                {{dataItem.orderPartner.name }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Phiếu Labo"  width="120">
+        <kendo-grid-column field="Date" title="Hạn bảo hành" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.isListLabo === false ? 'Chưa tạo' : 'Đã tạo'}}
+                {{dataItem.Date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-       
-        <!-- <kendo-grid-column field="id" width="100">
+        <kendo-grid-column field="Date" title="Ngày xuất" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.Date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderPartner" title="Trạng thái" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.orderPartner.name }}
+            </ng-template>
+        </kendo-grid-column>       
+        <kendo-grid-column field="id" width="80">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
+                Xuất khách
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                    <span class="far fa-trash-alt"></span></button>
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
     </kendo-grid>
 </div>
