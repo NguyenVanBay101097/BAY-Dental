@@ -45,7 +45,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("GetSalaryReportEmployee")]
-        [CheckAccess(Actions = "Report.AccountPartner")]
+        [CheckAccess(Actions = "Salary.AccountCommonPartnerReport")]
         public async Task<IActionResult> GetSalaryReportEmployee(AccountCommonPartnerReportSearch val)
         {
             var res = await _reportService.ReportSalaryEmployee(val);

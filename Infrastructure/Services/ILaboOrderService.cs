@@ -14,8 +14,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val);
 
         Task<LaboOrderDisplay> GetLaboDisplay(Guid id);
-        Task<LaboOrder> CreateLabo(LaboOrderDisplay val);
-        Task UpdateLabo(Guid id, LaboOrderDisplay val);
+        Task<LaboOrder> CreateLabo(LaboOrderSave val);
+        Task UpdateLabo(Guid id, LaboOrderSave val);
         Task Unlink(IEnumerable<Guid> ids);
         Task<LaboOrderDisplay> DefaultGet(LaboOrderDefaultGet val);
         Task ButtonConfirm(IEnumerable<Guid> ids);
@@ -26,5 +26,10 @@ namespace Infrastructure.Services
         Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val);
 
         Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val);
+
+        Task<PagedResult2<LaboOrderReceiptBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val);
+
+        Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val);
+        Task ActionCancelReceipt(IEnumerable<Guid> ids);
     }
 }

@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -73,6 +74,43 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleLineService.GetTeeth(id);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesPaged val)
+        {
+            var query = _saleLineService.SearchQuery(x => x.Product.IsLabo);
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) ||
+                x.OrderPartner.NameNoSign.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search));
+            }
+
+            if (!string.IsNullOrEmpty(val.LaboStatus))
+            {
+                 if (val.LaboStatus == "not_created")
+                    query = query.Where(x => !x.Labos.Any());
+                if (val.LaboStatus == "created")
+                    query = query.Where(x => x.Labos.Any());
+            }
+
+            var totalItems = await query.CountAsync();
+
+            query = query.Include(x => x.OrderPartner)
+                .Include(x => x.Order)
+                .Include(x => x.Employee)
+                .Include(x => x.Labos);
+
+            query.OrderByDescending(x => x.DateCreated);
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(items)
+            };
+
+            return Ok(paged);
         }
     }
 }

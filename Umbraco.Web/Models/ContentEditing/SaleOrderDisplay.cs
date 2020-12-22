@@ -65,7 +65,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PricelistId { get; set; }
         public ProductPricelistBasic Pricelist { get; set; }
 
+        public Guid? JournalId { get; set; }
+        public AccountJournalSimple Journal { get; set; }
+
         public bool? IsQuotation { get; set; }
+        public bool? IsFast { get; set; }
 
         public SaleOrderBasic Quote { get; set; }
 

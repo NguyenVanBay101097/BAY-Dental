@@ -100,7 +100,7 @@ export class PartnerOverviewComponent implements OnInit {
 
   getSaleQoutation() {
     const val = new SaleOrderLinesPaged();
-    val.Offset = 0;
+    val.offset = 0;
     val.limit = 0;
     val.isQuotation = true;
     this.saleOrderLineService.get(val).subscribe((res: any) => {

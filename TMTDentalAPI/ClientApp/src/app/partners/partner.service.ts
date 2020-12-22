@@ -13,6 +13,9 @@ import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { AccountPaymentBasic } from '../account-payments/account-payment.service';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
 import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
+import { ToothDisplay } from '../teeth/tooth.service';
+import { ProductBasic2 } from '../products/product.service';
+import { Product } from '../products/product';
 
 export class PartnerFilter {
     search: string;
@@ -29,6 +32,8 @@ export class SaleOrderLineBasic {
     productId: string;
     diagnostic: string;
     dateCreated: string;
+    teeth: ToothDisplay;
+    product: any;
 }
 
 export class SaleOrderLinePaged {
@@ -118,6 +123,25 @@ export class PartnerCustomerReportOutput {
     customerNew: number;
 }
 
+export class CustomerStatisticsInput {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class CustomerStatisticsDetails {
+    location: string;
+    customerTotal: number;
+    customerOld: number;
+    customerNew: number;
+}
+
+export class CustomerStatisticsOutput {
+    customerTotal: number;
+    customerOld: number;
+    customerNew: number;
+    details: CustomerStatisticsDetails;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -177,6 +201,7 @@ export class PartnerService {
     }
 
     delete(id: string) {
+        debugger
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
@@ -442,6 +467,10 @@ export class PartnerService {
 
     getPartnerCustomerReport(data: any) {
         return this.http.post<PartnerCustomerReportOutput>(this.baseApi + this.apiUrl + '/PartnerCustomerReport', data);
+    }
+
+    getCustomerStatistics(data: any) {
+        return this.http.post<CustomerStatisticsOutput>(this.baseApi + this.apiUrl + '/CustomerStatistics', data);
     }
 }
 

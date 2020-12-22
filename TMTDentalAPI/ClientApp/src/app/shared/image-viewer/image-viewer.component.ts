@@ -12,7 +12,7 @@ import { PartnerImageViewModel, PartnerImageBasic } from 'src/app/partners/partn
 })
 export class ImageViewerComponent implements OnInit {
 
-  partnerImages: PartnerImageViewModel[] = [];
+  partnerImages: PartnerImageBasic[] = [];
   partnerImageSelected: PartnerImageBasic;
 
   imageApi: string;
@@ -31,30 +31,46 @@ export class ImageViewerComponent implements OnInit {
     this.imageDownloadApi = environment.uploadDomain + 'api/Web/Content';
   }
 
+  stopPropagation(e) {
+    e.stopPropagation();
+  }
+  
   showPrevious() {
-    var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
-    if (model) {
-      var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
-      if (index > 0) {
-        this.partnerImageSelected = model.partnerImages[index - 1];
-      } else {
-        this.partnerImageSelected = model.partnerImages[model.partnerImages.length - 1];
-      }
+    this.resetAll();
+    const index = this.partnerImages.findIndex(x => x.uploadId === this.partnerImageSelected.uploadId);
+    if (index > 0) {
+      this.partnerImageSelected = this.partnerImages[index - 1];
+    } else if (index === 0) {
+      this.partnerImageSelected = this.partnerImages[this.partnerImages.length - 1];
     }
+    // if (model) {
+    //   var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
+    //   if (index > 0) {
+    //     this.partnerImageSelected = model.partnerImages[index - 1];
+    //   } else {
+    //     this.partnerImageSelected = model.partnerImages[model.partnerImages.length - 1];
+    //   }
+    // }
     return false;
   }
 
   showNext() {
     this.resetAll();
-    var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
-    if (model) {
-      var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
-      if (index < model.partnerImages.length - 1) {
-        this.partnerImageSelected = model.partnerImages[index + 1];
-      } else {
-        this.partnerImageSelected = model.partnerImages[0];
-      }
+    const index = this.partnerImages.findIndex(x => x.uploadId === this.partnerImageSelected.uploadId);
+    if (index < (this.partnerImages.length - 1)) {
+      this.partnerImageSelected = this.partnerImages[index + 1];
+    } else {
+      this.partnerImageSelected = this.partnerImages[0];
     }
+    // var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
+    // if (model) {
+    //   var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
+    //   if (index < model.partnerImages.length - 1) {
+    //     this.partnerImageSelected = model.partnerImages[index + 1];
+    //   } else {
+    //     this.partnerImageSelected = model.partnerImages[0];
+    //   }
+    // }
     return false;
   }
 
@@ -98,7 +114,6 @@ export class ImageViewerComponent implements OnInit {
   }
 
   updateStyle() {
-    debugger;
     var transform = `scale3d(${this.scale},${this.scale},1) rotate(${this.rotation}deg)`;
     this.style = {
       transform: transform,

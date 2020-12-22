@@ -73,7 +73,7 @@ export class PhieuThuChiListComponent implements OnInit {
   stateGet(state) {
     switch (state) {
       case 'posted':
-        return 'Đã vào sổ';
+        return 'Đã xác nhận';
       default:
         return 'Nháp';
     }

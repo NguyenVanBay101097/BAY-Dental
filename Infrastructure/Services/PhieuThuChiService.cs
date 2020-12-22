@@ -282,7 +282,7 @@ namespace Infrastructure.Services
                 throw new Exception("Phiếu không tồn tại");
 
             if (phieuthuchi.State == "posted")
-                throw new Exception("Bạn không thể xóa phiếu khi đã ghi sổ");
+                throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
 
             await DeleteAsync(phieuthuchi);
         }

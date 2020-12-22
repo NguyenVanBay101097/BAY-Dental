@@ -82,6 +82,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       default: true,
       order: this.order,
       purchasePrice: 0,
+      firm: null
     });
 
     setTimeout(() => {
@@ -186,8 +187,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
       } else {
         this.activeModal.close(true);
       }
-    }, err => {
-      this.showErrorService.show(err);
     });
   }
 

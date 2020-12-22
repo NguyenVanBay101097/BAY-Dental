@@ -85,7 +85,7 @@ namespace TMTDentalAPI.OdataControllers
         [EnableQuery]
         public IActionResult GetSaleOrders([FromODataUri] Guid key)
         {
-            var results = _saleOrderService.SearchQuery(x => x.PartnerId == key).Select(x => new SaleOrderViewModel
+            var results = _saleOrderService.SearchQuery(x => x.PartnerId == key && (!x.IsQuotation.HasValue || x.IsQuotation == false)).Select(x => new SaleOrderViewModel
             { 
                 Id = x.Id,
                 AmountTotal = x.AmountTotal,
@@ -191,7 +191,5 @@ namespace TMTDentalAPI.OdataControllers
 
             return Ok(result);
         }
-
-
     }
 }

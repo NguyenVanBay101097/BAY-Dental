@@ -8,9 +8,10 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RoleService } from './role.service';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { SharedModule } from '../shared/shared.module';
+import { RoleFormComponent } from './role-form/role-form.component';
 
 @NgModule({
-  declarations: [RoleListComponent],
+  declarations: [RoleListComponent, RoleFormComponent],
   imports: [
     CommonModule,
     RolesRoutingModule,

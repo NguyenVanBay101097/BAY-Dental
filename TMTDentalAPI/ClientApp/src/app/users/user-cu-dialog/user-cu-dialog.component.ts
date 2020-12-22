@@ -33,7 +33,7 @@ export class UserCuDialogComponent implements OnInit {
   ngOnInit() {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
-      userName: [null, Validators.required],
+      userName: [null, [Validators.required, Validators.pattern('^[^ ]+$')]],
       passWord: null,
       email: null,
       companyId: null,
@@ -80,7 +80,7 @@ export class UserCuDialogComponent implements OnInit {
       this.loadListGroups();
     });
   }
-
+  get userNameFC() {return this.userForm.get('userName');}
   onAvatarUploaded(data: any) {
     var fileUrl = data ? data.fileUrl : null;
     this.userForm.get('avatar').setValue(fileUrl);
@@ -132,7 +132,6 @@ export class UserCuDialogComponent implements OnInit {
     this.saveOrUpdate().subscribe(() => {
       this.activeModal.close(true);
     }, err => {
-      this.showErrorService.show(err);
     });
   }
 

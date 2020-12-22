@@ -11,7 +11,7 @@ namespace Infrastructure.Services
     public interface ISaleOrderService : IBaseService<SaleOrder>
     {
         Task<PagedResult<SaleOrder>> GetPagedResultAsync(int pageIndex = 0, int pageSize = 20, string orderBy = "name", string orderDirection = "asc", string filter = "");
-        Task<SaleOrder> GetSaleOrderForDisplayAsync(Guid id);
+        Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id);
         Task<SaleOrder> GetSaleOrderWithLines(Guid id);
         Task UpdateOrderAsync(Guid id, SaleOrderSave val);
         Task<SaleOrder> GetSaleOrderByIdAsync(Guid id);

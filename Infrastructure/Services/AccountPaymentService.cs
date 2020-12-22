@@ -555,7 +555,7 @@ namespace Infrastructure.Services
             var total_amount = orders.Sum(x => x.Residual);
 
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var paymentRels = await saleLineObj.SearchQuery(x => saleOrderIds.Contains(x.OrderId))
+            var paymentRels = await saleLineObj.SearchQuery(x => saleOrderIds.Contains(x.OrderId) && x.AmountResidual != 0)
                 .Select(x => new SaleOrderLinePaymentRelDisplay
                 {
                     SaleOrderLineId = x.Id,
@@ -1047,8 +1047,12 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
 
             ///update saleorderline
-            foreach (var rec in self)
-                await _ComputeSaleOrderLines(rec.SaleOrderPaymentRels.Select(x => x.SaleOrderId).First());
+            var saleOrderIds = self.SelectMany(x => x.SaleOrderPaymentRels).Select(x => x.SaleOrderId).ToList();
+            if (saleOrderIds.Any())
+            {
+                foreach (var saleOrderId in saleOrderIds)
+                    await _ComputeSaleOrderLines(saleOrderId);
+            }
         }
 
         public async Task<IEnumerable<AccountPaymentBasic>> GetPaymentBasicList(AccountPaymentFilter val)

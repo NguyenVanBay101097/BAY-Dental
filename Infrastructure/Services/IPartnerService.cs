@@ -60,5 +60,7 @@ namespace Infrastructure.Services
         Task UpdateTags(PartnerAddRemoveTagsVM val);
 
         Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val);
+
+        Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val);
     }
 }

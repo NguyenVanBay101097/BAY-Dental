@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -30,12 +29,10 @@
                 <div class="o_notebook">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
-                                aria-controls="home" aria-selected="true">Thông tin</a>
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
-                                aria-controls="profile" aria-selected="false">Công đoạn</a>
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab" aria-controls="profile" aria-selected="false">Công đoạn</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -51,11 +48,7 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
-                                                    <kendo-combobox [data]="filterdCategories"
-                                                        [textField]="'completeName'" [filterable]="true" #categCbx
-                                                        formControlName="categ" [valueField]="'id'"
-                                                        (filterChange)="categCbxFilterChange2($event)"
-                                                        [loading]="categCbxLoading">
+                                                    <kendo-combobox [data]="filterdCategories" [textField]="'completeName'" [filterable]="true" #categCbx formControlName="categ" [valueField]="'id'" (filterChange)="categCbxFilterChange2($event)" [loading]="categCbxLoading">
                                                     </kendo-combobox>
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
@@ -73,8 +66,17 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động"
-                                                    class="form-control" formControlName="defaultCode" />
+                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động" class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hãng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="firm">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -88,8 +90,7 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="listPrice">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
@@ -100,8 +101,7 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="laboPrice">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="laboPrice">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
@@ -114,13 +114,12 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" formControlName="stepName"
-                                            placeholder="Nhập tên công đoạn sau đó nhấn enter"
-                                            (keydown)="onKeyDownStepName($event)" />
+                                        <input type="text" class="form-control" formControlName="stepName" placeholder="Nhập tên công đoạn sau đó nhấn enter" (keydown)="onKeyDownStepName($event)" />
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                (click)="createTempProductStepList()">Thêm</button>
+                                            <button type="button" class="btn btn-primary btn-sm" (click)="createTempProductStepList()">Thêm</button>
                                         </div>
+                                        <i class="fas fa-question-circle ml-2 text-primary" style="font-size: 25px; padding: 7px;" triggers="mouseenter:mouseleave" ngbPopover="Click vào biểu tượng bút trên mỗi dòng trong danh sách công đoạn, sau khi sửa tên xong nhấn Enter để lưu" placement="right"
+                                            popoverTitle="Hướng dẫn cập nhật công đoạn"></i>
                                     </div>
                                 </div>
                                 <div class="col"></div>
@@ -141,20 +140,15 @@
                                         </td>
                                         <td #stepName>
                                             <span *ngIf="showInput(i.order)">{{i.name}}</span>
-                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
-                                                (ngSubmit)="submitStepName(i.order)">
+                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit" (ngSubmit)="submitStepName(i.order)">
                                                 <input type="text" formControlName="name" />
                                             </form>
                                         </td>
                                         <td colspan="1">
-                                            <button type="button" [disabled]=" disableButton(i.order,true)"
-                                                class="btn btn-light btn-sm mr-2"
-                                                (click)="editStepOrCancel(i.order, i.name)">
+                                            <button type="button" [disabled]=" disableButton(i.order,true)" class="btn btn-light btn-sm mr-2" (click)="editStepOrCancel(i.order, i.name)">
                                                 <i class="fas fa-pen"></i>
                                             </button>
-                                            <button type="button" class="btn btn-light btn-sm mr-2"
-                                                (click)="removeStepListItem(i.order)"
-                                                [disabled]=" disableButton(i.order,false)">
+                                            <button type="button" class="btn btn-light btn-sm mr-2" (click)="removeStepListItem(i.order)" [disabled]=" disableButton(i.order,false)">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
@@ -171,6 +165,5 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
 </footer>

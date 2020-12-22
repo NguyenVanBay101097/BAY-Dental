@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -9,27 +8,17 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <table class="o_group o_inner_group">
+                    <table class="o_group o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
-                                        Tên labo
+                                        Tên vật liệu Labo
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" required />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Giá mua
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="purchasePrice">
-                                    </kendo-numerictextbox>
+                                    <input type="text" class="form-control" formControlName="name">
+                                    <label *ngIf="nameC.errors && (nameC.touched || nameC.dirty)" class="text-danger">Vui lòng điền tên vật liệu Labo</label>
                                 </td>
                             </tr>
                         </tbody>
@@ -42,6 +31,5 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

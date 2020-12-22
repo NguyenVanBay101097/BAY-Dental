@@ -2,8 +2,8 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li class="active">
-                <span *ngIf="saleOrderId">{{saleOrder.name}}</span>
-                <span *ngIf="!saleOrderId">Phiếu điều trị nhanh</span>
+                <!-- <span *ngIf="saleOrderId">{{saleOrder.name}}</span> -->
+                <span>Phiếu điều trị nhanh</span>
             </li>
         </ol>
     </div>
@@ -11,6 +11,32 @@
 
 <div class="o_content">
     <div class="o_form_view t_custom_form" [formGroup]="formGroup">
+        <div class="d-flex">
+            <div class="btns">
+                <a [routerLink]="['/dashboard']" class="btn btn-secondary btn-sm mr-1">
+                    Trở lại
+                </a>       
+                <button *ngIf="!saleOrderId && saleOrder.state == 'draft'" type="button" class="btn btn-primary btn-sm mr-1" (click)="actionPayment()">
+                    Thanh toán
+                </button>
+                <a [routerLink]="['/partners/treatment-paymentfast/from']" *ngIf="saleOrderId" class="btn btn-primary btn-sm mr-1">
+                    Thêm mới
+                 </a>     
+                <button *ngIf="saleOrderId" type="button" class="btn btn-primary btn-sm mr-1" (click)="printFastSaleOrder(saleOrderId)">
+                    In phiếu
+                </button> 
+                <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-danger btn-sm ml-1" (click)="actionCancel()">
+                    Hủy phiếu
+                </button> -->
+                                          
+            </div>
+            <div *ngIf="saleOrderId" class="ml-auto">
+                <button (click)="createToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
+                    Tạo đơn thuốc</button>
+                <button type="button" (click)="createAppoinment()" class="btn btn-sm btn-primary">Tạo lịch
+                    hẹn</button>
+            </div>
+        </div>
         <div class="t_upper">
             <div class="o_group">
                 <table class="o_group o_inner_group o_group_col_6">
@@ -33,8 +59,11 @@
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
-                                <div *ngIf="['sent','sale'].indexOf(saleOrder.state) !== -1">
-                                    {{getPartner.name}}
+                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
+                                  </div>
+                                <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
+                                    {{getPartner?.name}}
                                 </div>
                             </td>
                         </tr>
@@ -93,9 +122,14 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                <span
+                                [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.journal?.name }}</span>
+                                <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" [class.d-none]="saleOrder.state != 'draft'"
                                     #journalCbx formControlName="journal" [valueField]="'id'">
                                 </kendo-combobox>
+                                <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -104,7 +138,7 @@
         </div>
         <div class="t_lower">
             <div class="t_wrapper">
-                <div class="t_wrapper_left">
+                <div class="t_wrapper_left" [class.d-none]="saleOrder.state != 'draft'">
                     <div class="t_search_wrapper">
                         <div class="flex-0-0-auto has-search">
                             <span class="fa fa-search form-control-feedback"></span>
@@ -155,7 +189,7 @@
                                         <th scope="col" style="width: 25%">Dịch vụ</th>
                                         <th scope="col" style="width: 15%">Thông tin bổ sung</th>
                                         <th scope="col" style="width: 15%">Bác sĩ</th>
-                                        <th scope="col" style="width: 10%">SL</th>
+                                        <th scope="col" style="width: 10%" class="text-right">SL</th>
                                         <th scope="col" style="width: 10%" class="text-right">Đơn giá</th>
                                         <th scope="col" style="width: 10%" class="text-right">Giảm</th>
                                         <th scope="col" class="text-right" style="width: 10%">Thành tiền</th>
@@ -166,40 +200,41 @@
                                     <ng-container *ngFor="let line of orderLines.controls; let i=index">
                                         <tr [formGroupName]="i">
                                             <td>{{line.get('name').value }}</td>
-                                            <td>
-                                                <!-- <a (click)="addInfoLineModal(line)">
-                                                    <span
-                                                        class="badge badge-primary mr-1">{{lineTeeth(line)}}{{line.get('diagnostic').value}}</span>
-                                                    <span
-                                                        *ngIf="!line.get('teeth').value || line.get('teeth').value.length ==0">
-                                                        <i class="fas fa-plus-square text-primary"></i>
-                                                    </span>
-                                                </a> -->
-                                                <app-sale-order-line-info-popover [line]="line"
-                                                    (eventTeeth)="updateTeeth($event, line)">
-                                                </app-sale-order-line-info-popover>
+                                            <td>  
+                                                <div class="d-flex justify-content-between">
+                                                    <span>{{showTeethDiagnostic(line)}}</span>                                        
+                                                    <app-sale-order-line-info-popover [class.d-none]="saleOrder.state != 'draft'" [line]="line" [saleOrderState]="getState"
+                                                        (eventTeeth)="updateTeeth($event, line)">
+                                                    </app-sale-order-line-info-popover>
+                                                </div>   
                                             </td>
                                             <td>
-                                                <kendo-combobox style="width: 100%;" [data]="filteredEmployees"
+                                                <span *ngIf="saleOrderId">{{line.get('employee').value?.name }}</span>
+                                                <kendo-combobox *ngIf="!saleOrderId" style="width: 100%;" [data]="filteredEmployees"
                                                    [textField]="'name'" [filterable]="true"
                                                     #employeeCbx formControlName="employee" [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
-                                            <td class="text-center">
-                                                <kendo-numerictextbox style="width: 100%;" [min]="0" [spinners]="false"
+                                            <td class="text-right">
+                                                <span *ngIf="saleOrderId">{{line.get('productUOMQty').value | number }}</span>
+                                                <kendo-numerictextbox style="width: 100%;" [min]="0" [spinners]="false" *ngIf="!saleOrderId"
                                                     formControlName="productUOMQty"
                                                     (valueChange)="onChangeQuantity(line)">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox style="width: 100%;" [min]="0"
+                                                <span *ngIf="saleOrderId">{{line.get('priceUnit').value | number }}</span>
+                                                <kendo-numerictextbox style="width: 100%;" [min]="0" *ngIf="!saleOrderId"
                                                     formControlName="priceUnit" (valueChange)="onChangePriceUnit(line)"
                                                     [autoCorrect]="true" [spinners]="false" [format]="'n0'">
                                                 </kendo-numerictextbox>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-end">
-                                                    <app-sale-order-line-discount-popover [discountForm]="line"
+                                                    <span *ngIf="saleOrderId">
+                                                        {{ getDiscountNumber(line) | number }}{{getDiscountTypeDisplay(line)}}
+                                                    </span>
+                                                    <app-sale-order-line-discount-popover [discountForm]="line" *ngIf="!saleOrderId"
                                                         (discountFormGroup)="onChangeDiscount($event,line)">
                                                     </app-sale-order-line-discount-popover>
                                                 </div>
@@ -207,15 +242,15 @@
                                             <td class="text-right">
                                                 {{line.get('priceSubTotal').value | number}}
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-center">
                                                 <div>
                                                     <!-- <button type="button" class="btn btn-icon btn-sm btn-light mr-1"
                                                                 (click)="copyLine(line)">
                                                                 <span class="k-icon k-i-copy"></span>
                                                             </button> -->
-                                                    <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                    <button [class.d-none]="saleOrder.state != 'draft'" type="button" class="btn btn-icon btn-sm btn-light"
                                                         (click)="deleteLine(i)">
-                                                        <span class="k-icon k-i-delete"></span>
+                                                        <span class="far fa-trash-alt text-danger"></span>
                                                     </button>
                                                 </div>
                                             </td>
@@ -252,15 +287,7 @@
                                                 class="oe_subtotal_footer_separator o_form_field o_form_field_number o_field_widget">{{getAmountTotal | number}}</span>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="2" class="text-right">
-                                            <!-- <input type="text" class="btn btn-group-lg btn-success" (keyup.enter)="onKeyPressPayment($event)" (keypress)="onKeyPressPayment($event)" value="Thanh toán" /> -->
-                                            <button type="button" class="btn btn-group-lg btn-success"
-                                                (click)="actionPayment()">Thanh toán</button>
-                                                
-                                        </td>
-                            
-                                    </tr>
+                                   
                                 </tbody>
                             </table>
                         </div>

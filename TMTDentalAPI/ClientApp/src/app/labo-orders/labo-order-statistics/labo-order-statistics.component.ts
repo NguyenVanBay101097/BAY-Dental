@@ -179,7 +179,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
     console.log(this.paged);
 
     this.laboOrderService
-      .getStatistics(this.paged)
+      .getPaged(this.paged)
       .pipe(
         map(
           (response: any) =>

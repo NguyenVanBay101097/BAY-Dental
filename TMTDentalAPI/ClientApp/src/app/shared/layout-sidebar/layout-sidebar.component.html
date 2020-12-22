@@ -4,7 +4,7 @@
             <li class="nav-item" *ngFor="let item of menuItems;let i = index" hasGroups [groups]="item.groups"[item]="item"
                 (mouseover)="sidebarService.collapsed && activeIndex = i"
                 (mouseout)="sidebarService.collapsed && activeIndex = -1" [class.active]="i === activeIndex">
-                <a class="nav-link" [routerLink]="item.link" *ngIf="item.children.length == 0">
+                <a class="nav-link" [routerLink]="item.link" routerLinkActive="active" *ngIf="item.children.length == 0">
                     <i class="menu-icon" [ngClass]="item.icon"></i>
                     <span class="menu-name">{{item.name}}</span>
                 </a>

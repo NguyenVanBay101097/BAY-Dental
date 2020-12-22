@@ -24,7 +24,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Nhóm sản phẩm
         /// </summary>
-        public Guid CategId { get; set; }
+        public Guid? CategId { get; set; }
         public ProductCategory Categ { get; set; }
 
         /// <summary>
@@ -105,7 +105,8 @@ namespace ApplicationCore.Entities
         /// service: Dich vu
         /// product: Vat tu
         /// medicine: Thuoc
-        /// labo: Labo
+        /// labo: vật liệu Labo
+        /// labo_attach: gửu kèm labo
         /// </summary>
         public string Type2 { get; set; }
 
@@ -118,5 +119,10 @@ namespace ApplicationCore.Entities
         /// Giá đặt mua labo
         /// </summary>
         public decimal? LaboPrice { get; set; }
+
+        /// <summary>
+        /// hãng:  nếu là labo thì hãng nào ?
+        /// </summary>
+        public string Firm { get; set; }
     }
 }

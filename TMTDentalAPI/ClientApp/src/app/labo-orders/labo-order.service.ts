@@ -6,6 +6,10 @@ import { PartnerSimple } from '../partners/partner-simple';
 import { LaboOrderLineDisplay } from '../labo-order-lines/labo-order-line.service';
 import { DotKhamBasic } from '../dot-khams/dot-khams';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { ToothBasic } from '../teeth/tooth.service';
+import { SaleOrderLineBasic } from '../partners/partner.service';
+import { ProductSimple } from '../products/product-simple';
+import { IrAttachmentBasic } from '../shared/shared';
 
 export class LaboOrderPaged {
     limit: number;
@@ -36,7 +40,7 @@ export class LaboOrderBasic {
 
 export class LaboOrderDefaultGet {
     dotKhamId: string;
-    saleOrderId: string;
+    saleOrderLineId: string;
 }
 
 export class LaboOrderDisplay {
@@ -53,6 +57,12 @@ export class LaboOrderDisplay {
     dotKhamId: string;
     orderLines: LaboOrderLineDisplay[];
     dotKham: DotKhamBasic;
+    teeth: ToothBasic[];
+    saleOrderLine: SaleOrderLineBasic;
+    warrantyPeriod: string;
+    product: ProductSimple;
+    laboOrderProducts: ProductSimple[];
+    images: IrAttachmentBasic[];
 }
 
 export class LaboOrderStatisticsPaged {
@@ -67,6 +77,13 @@ export class LaboOrderStatisticsPaged {
     datePlannedTo: string;
 }
 
+export class OrderLaboPaged{
+    limit: number;
+    offset: number;
+    search: string;
+    state: string;
+}
+
 export class LaboOrderReportInput {
     dateFrom: string;
     dateTo: string;
@@ -75,6 +92,21 @@ export class LaboOrderReportInput {
 export class LaboOrderReportOutput {
     laboReceived: number;
     laboAppointment: number;
+}
+
+export class LaboImageBasic {
+    name: string;
+    url: string;
+}
+
+export class ExportLaboPaged{
+    limit: number;
+    offset: number;
+    search: string;
+    state: string;
+    dateExportFrom: string;
+    dateExportTo: string;
+    dateExport: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -132,5 +164,29 @@ export class LaboOrderService {
 
     getLaboOrderReport(data: any) {
         return this.http.post<LaboOrderReportOutput>(this.baseApi + this.apiUrl + '/LaboOrderReport', data);
+    }
+
+    getLaboForSaleOrderLine(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetLaboForSaleOrderLine', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getOrderLabo(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    updateReceiptLabo( val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateOrderLabo" , val);
+    }
+
+    getExportLabo(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetExportLabo', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    updateExportLabo(val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateExportLabo" , val);
+    }
+
+    actionCancelReceipt(val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt" , val);
     }
 }

@@ -22,5 +22,6 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
+
     }
 }

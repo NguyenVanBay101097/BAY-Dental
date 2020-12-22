@@ -74,6 +74,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type2 { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+        public decimal? LaboPrice { get; set; }
+
     }
 
     public class ProductPaged
@@ -176,5 +178,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? PurchasePrice { get; set; }
     }
 
-    
+    public class ProductLaboImportExcelRow
+    {
+        public string Name { get; set; }
+    }
 }

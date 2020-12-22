@@ -32,5 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public UoMBasic UOMPO { get; set; }
 
         public ProductCategoryBasic Categ { get; set; }
+
+        public string Firm { get; set; }
     }
 }

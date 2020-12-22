@@ -338,12 +338,13 @@ namespace Infrastructure.Services
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
 
-            var items = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
+            var items = await query.OrderBy(x => x.Name).OrderByDescending(x=>x.DateCreated).Skip(val.Offset).Take(val.Limit)
                 .Select(x => new ProductLaboBasic
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    PurchasePrice = x.PurchasePrice
+                    PurchasePrice = x.PurchasePrice,
+                    LaboPrice = x.LaboPrice
                 })
                 .ToListAsync();
 
@@ -422,7 +423,8 @@ namespace Infrastructure.Services
             return await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Select(x => new ProductSimple
             {
                 Id = x.Id,
-                Name = x.Name
+                Name = x.Name,
+                PriceUnit = x.ListPrice
             }).ToListAsync();
         }
 

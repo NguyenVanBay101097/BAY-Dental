@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -23,14 +26,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IDotKhamService _dotKhamService;
+        private readonly IViewRenderService _viewRenderService;
 
         public LaboOrdersController(ILaboOrderService laboOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService)
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService)
         {
             _laboOrderService = laboOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _dotKhamService = dotKhamService;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -47,7 +52,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
             return Ok(res);
-        }
+        }   
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Basic.LaboOrder.Read")]
@@ -59,20 +64,19 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "Basic.LaboOrder.Create")]
-        public async Task<IActionResult> Create(LaboOrderDisplay val)
+        public async Task<IActionResult> Create(LaboOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
             var labo = await _laboOrderService.CreateLabo(val);
             _unitOfWork.Commit();
-            val.Id = labo.Id;
-            return Ok(val);
+            return Ok(_mapper.Map<LaboOrderDisplay>(labo));
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Basic.LaboOrder.Update")]
-        public async Task<IActionResult> Update(Guid id, LaboOrderDisplay val)
+        public async Task<IActionResult> Update(Guid id, LaboOrderSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -128,6 +132,19 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Cancel")]
+        public async Task<IActionResult> ActionCancelReceipt(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboOrderService.ActionCancelReceipt(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
@@ -143,9 +160,27 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _laboOrderService.GetPrint(id);
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            return Ok(res);
+            var order = await _laboOrderService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Product)
+                .Include(x => x.LaboBridge)
+                .Include(x => x.LaboBiteJoint)
+                .Include(x => x.LaboFinishLine)
+                .Include(x => x.SaleOrderLine.Product)
+                .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.SaleOrderLine.Employee)
+                .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
+                .Include(x => x.Partner)
+                .Include(x => x.Customer)
+                .Include("LaboOrderToothRel.Tooth")
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+                return NotFound();
+
+            var html = _viewRenderService.Render("LaboOrder/Print", order);
+
+            return Ok(new PrintData() { html = html });
         }
 
         [HttpPost("[action]")]
@@ -161,6 +196,50 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _laboOrderService.GetLaboOrderReport(val);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetLaboForSaleOrderLine([FromQuery] LaboOrderPaged val)
+        {
+            var res = await _laboOrderService.GetPagedResultAsync(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
+        {
+
+            var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
+        {
+            var res = await _laboOrderService.GetPagedExportLaboAsync(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateOrderLabo(LaboOrderReceiptSave val)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateReceipt = val.DateReceipt;
+            labo.WarrantyCode = val.WarrantyCode;
+            labo.WarrantyPeriod = val.WarrantyPeriod;
+            await _laboOrderService.UpdateAsync(labo);
+            return NoContent();
+
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateExportLabo(ExportLaboOrderSave val)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateExport = val.DateExport.HasValue ? val.DateExport : null;
+            await _laboOrderService.UpdateAsync(labo);
+            return NoContent();
         }
     }
 }

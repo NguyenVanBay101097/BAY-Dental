@@ -51,6 +51,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
     { name: 'Tên trang', value: '{ten_page}' },
     { name: 'Danh xưng khách hàng', value: '{danh_xung_khach_hang}' },
     { name: 'mã coupon', value: '{ma_coupon}' },
+    { name: 'thời gian lịch hẹn', value: '{thoi_gian_lich_hen}' },
   ];
 
   constructor(

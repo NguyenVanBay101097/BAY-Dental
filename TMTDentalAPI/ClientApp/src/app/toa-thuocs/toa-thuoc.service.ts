@@ -30,6 +30,26 @@ export class ToaThuocDisplay {
     saleOrderId: string;
 }
 
+export class ToaThuocDisplayFromUI {
+    id: string;
+    name: string;
+    partnerId: string;
+    partner: object;
+    date: string;
+    dotKhamId: string;
+    dotKham: object;
+    userId: string;
+    user: object;
+    note: string;
+    state: string;
+    companyId: string;
+    lines: [];
+    saleOrderId: string;
+    reExaminationDate: string;
+    saveSamplePrescription: boolean;  
+    nameSamplePrescription: string; 
+}
+
 export class ToaThuocSave {
     id: string;
     partnerId: string;
@@ -126,8 +146,16 @@ export class ToaThuocService {
         return this.http.post<ToaThuocDisplay>(this.baseApi + this.apiUrl, val);
     }
 
+    createFromUI(val: ToaThuocDisplayFromUI): Observable<ToaThuocDisplayFromUI> {
+        return this.http.post<ToaThuocDisplayFromUI>(this.baseApi + this.apiUrl + "/CreateFromUI", val);
+    }
+
     update(id: string, val: ToaThuocDisplay) {
-        return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
+        return this.http.put(this.baseApi + this.apiUrl + `/${id}`, val);
+    }
+
+    updateFromUI(id: string, val: ToaThuocDisplayFromUI) {
+        return this.http.put(this.baseApi + this.apiUrl + `/${id}/UpdateFromUI`, val);
     }
 
     delete(id: string) {

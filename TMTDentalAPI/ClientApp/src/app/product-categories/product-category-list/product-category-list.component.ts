@@ -96,6 +96,8 @@ export class ProductCategoryListComponent implements OnInit {
         return 'Nhóm vật tư';
       case 'medicine':
         return 'Nhóm thuốc';
+        case 'labo':
+        return 'Nhóm Labo';
       default:
         return 'Nhóm sản phẩm';
     }

@@ -70,6 +70,8 @@ export class ChamCongPagging {
 export class TaoChamCongNguyenThangViewModel {
   year: number;
   month: number;
+  from: string;
+  to: string;
 }
 
 @Injectable({

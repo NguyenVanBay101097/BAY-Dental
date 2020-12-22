@@ -232,7 +232,7 @@
     "Permission": "Salary",
     "Children": [
       {
-        "Name": "Đợt lương",
+        "Name": "Bảng lương",
         "Permission": "Salary.HrPayslipRun",
         "Children": [
           {
@@ -248,38 +248,8 @@
             "Permission": "Salary.HrPayslipRun.Update"
           },
           {
-            "Name": "Xóa",
-            "Permission": "Salary.HrPayslipRun.Delete"
-          },
-          {
             "Name": "Hủy",
             "Permission": "Salary.HrPayslipRun.Cancel"
-          }
-        ]
-      },
-      {
-        "Name": "Phiếu lương",
-        "Permission": "Salary.HrPayslip",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Salary.HrPayslip.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Salary.HrPayslip.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Salary.HrPayslip.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Salary.HrPayslip.Delete"
-          },
-          {
-            "Name": "Hủy",
-            "Permission": "Salary.HrPayslip.Cancel"
           }
         ]
       },
@@ -306,92 +276,30 @@
         ]
       },
       {
-        "Name": "Loại mẫu lương",
-        "Permission": "Salary.HrPayrollStructureType",
+        "Name": "Quản lý tạm ứng - chi lương",
+        "Permission": "Salary.SalaryPayment",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "Salary.HrPayrollStructureType.Read"
+            "Permission": "Salary.SalaryPayment.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Salary.HrPayrollStructureType.Create"
+            "Permission": "Salary.SalaryPayment.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Salary.HrPayrollStructureType.Update"
+            "Permission": "Salary.SalaryPayment.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Salary.HrPayrollStructureType.Delete"
+            "Permission": "Salary.SalaryPayment.Delete"
           }
         ]
       },
       {
-        "Name": "Mẫu lương",
-        "Permission": "Salary.HrPayrollStructure",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Salary.HrPayrollStructure.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Salary.HrPayrollStructure.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Salary.HrPayrollStructure.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Salary.HrPayrollStructure.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Loại chấm công",
-        "Permission": "Salary.WorkEntryType",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Salary.WorkEntryType.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Salary.WorkEntryType.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Salary.WorkEntryType.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Salary.WorkEntryType.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Lịch làm việc",
-        "Permission": "Salary.ResourceCalendar",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Salary.ResourceCalendar.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Salary.ResourceCalendar.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Salary.ResourceCalendar.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Salary.ResourceCalendar.Delete"
-          }
-        ]
+        "Name": "Báo cáo thanh toán lương",
+        "Permission": "Salary.AccountCommonPartnerReport"
       }
     ]
   },
@@ -494,7 +402,7 @@
         ]
       },
       {
-        "Name": "Dịch vụ, vật tư, thuốc",
+        "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửu kèm Labo",
         "Permission": "Product",
         "Children": [
           {
@@ -648,6 +556,72 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Commission.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đường hoàn tất Labo",
+        "Permission": "Catalog.LaboFinishLine",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboFinishLine.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboFinishLine.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboFinishLine.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboFinishLine.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểu nhịp Labo",
+        "Permission": "Catalog.LaboBridge",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBridge.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBridge.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBridge.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBridge.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Khớp cắn Labo",
+        "Permission": "Catalog.LaboBiteJoint",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBiteJoint.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBiteJoint.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBiteJoint.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBiteJoint.Delete"
           }
         ]
       }

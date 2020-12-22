@@ -401,9 +401,10 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : string.Empty)}/" +
-                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : string.Empty)}";
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
             }
             set { }
         }
@@ -472,6 +473,28 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public int CustomerOld { get; set; }
         public int CustomerNew { get; set; }
+    }
+
+    public class CustomerStatisticsInput
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class CustomerStatisticsDetails
+    {
+        public string Location { get; set; }
+        public int CustomerTotal { get; set; }
+        public int CustomerOld { get; set; }
+        public int CustomerNew { get; set; }
+    }
+
+    public class CustomerStatisticsOutput
+    {
+        public int CustomerTotal { get; set; }
+        public int CustomerOld { get; set; }
+        public int CustomerNew { get; set; }
+        public IEnumerable<CustomerStatisticsDetails> Details { get; set; } = new List<CustomerStatisticsDetails>();
     }
 
     public class PartnerInfoVm
