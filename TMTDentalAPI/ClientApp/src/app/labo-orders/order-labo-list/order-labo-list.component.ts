@@ -81,6 +81,11 @@ export class OrderLaboListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onChangeLaboState(event) {
+    this.stateFilter = event.target.value;
+    this.loadDataFromApi();
+  }
+
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();

@@ -30,13 +30,17 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
+                                    <div [hidden]="state == 'confirmed'" class="d-flex">
                                         <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
-                                        <a class="btn btn-sm btn-light" (click)="quickCreateNCCLabo()">
+                                        <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-success" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        <a class="ml-1 btn btn-sm btn-primary" (click)="onQuickCreatePartner()">
                                             <span class="k-icon k-i-plus"></span>
                                         </a>
                                     </div>
+                                    <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -52,8 +56,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateOrderObj">
-                                    </kendo-datepicker>
+                                    <ng-container *ngIf="state == 'draft'; else dateOrder">
+                                        <kendo-datepicker formControlName="dateOrderObj">
+                                        </kendo-datepicker>
+                                    </ng-container>
+                                    <ng-template #dateOrder>
+                                        {{dateOrderObjFC.value | date:'dd/MM/yyyy'}}
+                                    </ng-template>
                                 </td>
                             </tr>
                         </tbody>
@@ -109,7 +118,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <button *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
+                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                 </td>
                             </tr>
                             <tr>
@@ -129,8 +138,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox formControlName="quantity" [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                                    <ng-container *ngIf="state=='draft'; else quantity">
+                                        <kendo-numerictextbox formControlName="quantity" [min]="0" [format]="'n0'">
+                                        </kendo-numerictextbox>
+                                    </ng-container>
+                                    <ng-template #quantity>
+                                        {{quantityFC.value | number}}
+                                    </ng-template>
                                 </td>
                             </tr>
                             <tr>
@@ -140,8 +154,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox formControlName="priceUnit" [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                                    <ng-container *ngIf="state=='draft'; else priceUnit">
+                                        <kendo-numerictextbox formControlName="priceUnit" [min]="0" [format]="'n0'">
+                                        </kendo-numerictextbox>
+                                    </ng-container>
+                                    <ng-template #priceUnit>
+                                        {{priceUnitFC.value | number}}
+                                    </ng-template>
                                 </td>
                             </tr>
                             <tr>
@@ -150,8 +169,8 @@
                                         Thành tiền
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span>{{getAmountTotal() | number}}</span>
+                                <td colspan="1" [ngClass]="{'text-right': state=='draft'}" class="" style="width: 100%;">
+                                    <span class="font-weight-600">{{getAmountTotal() | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -161,7 +180,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" formControlName="indicated" class="form-control"></textarea>
+                                    <ng-container *ngIf="state=='draft'; else indicated">
+                                        <textarea type="text" formControlName="indicated" class="form-control"></textarea>
+                                    </ng-container>
+                                    <ng-template #indicated>
+                                        <label>
+                                            {{indicatedFC.value}}
+                                        </label>
+                                    </ng-template>
                                 </td>
                             </tr>
                             <tr>
@@ -171,7 +197,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" formControlName='note' class="form-control"></textarea>
+                                    <ng-container *ngIf="state=='draft'; else note">
+                                        <textarea type="text" formControlName='note' class="form-control"></textarea>
+                                    </ng-container>
+                                    <ng-template #note>
+                                        <label>
+                                                {{noteFC.value}}
+                                            </label>
+                                    </ng-template>
                                 </td>
                             </tr>
                             <tr>
@@ -221,7 +254,7 @@
                                     <div class="row">
                                         <div *ngFor="let labo of labos;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="labo" type="radio" [id]="'labo'+i">
+                                                <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="productId" [value]="labo.id" type="radio" [id]="'labo'+i">
                                                 <label class="ml-1" [for]="'labo'+i">
                                                     {{labo.name}}
                                                 </label>
@@ -242,7 +275,7 @@
                                     <div class="row">
                                         <div *ngFor="let finish of finishlines;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="finish" type="radio" [id]="'finish'+i">
+                                                <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboFinishLineId" [value]="finish.id" type="radio" [id]="'finish'+i">
                                                 <label class="ml-1" [for]="'finish'+i">
                                                     {{finish.name}}
                                                 </label>
@@ -263,7 +296,7 @@
                                     <div class="row">
                                         <div *ngFor="let bite of biteJoints;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="bite" type="radio" [id]="'bite'+i">
+                                                <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBiteJointId" [value]="bite.id" type="radio" [id]="'bite'+i">
                                                 <label class="ml-1" [for]="'bite'+i">
                                                     {{bite.name}}
                                                 </label>
@@ -284,7 +317,7 @@
                                     <div class="row">
                                         <div *ngFor="let bridge of bridges;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input name="bridge" type="radio" [id]="'bridge'+i">
+                                                <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBridgeId" [value]="bridge.id" type="radio" [id]="'bridge'+i">
                                                 <label class="ml-1" [for]="'bridge'+i">
                                                     {{bridge.name}}
                                                 </label>
@@ -302,7 +335,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <button *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1">
+                                    <button [disabled]="state == 'confirmed'" *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
                                         {{attach.name}}
                                     </button>
                                 </td>
@@ -316,7 +349,14 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
+                                    <ng-container *ngIf="state=='draft'; else technicalNote">
+                                        <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
+                                    </ng-container>
+                                    <ng-template #technicalNote>
+                                        <label>
+                                                {{technicalNoteFC.value}}
+                                            </label>
+                                    </ng-template>
                                 </td>
                             </tr>
                         </tbody>
@@ -364,5 +404,5 @@
     <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
     <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>

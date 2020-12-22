@@ -35,6 +35,7 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
 
   loadData() {
     if (this.labo) {
+      debugger
       this.formGroup.get('warrantyPeriod').setValue(this.labo.warrantyPeriod ? new Date(this.labo.warrantyPeriod) : null);
       this.formGroup.get('warrantyCode').setValue(this.labo.warrantyCode ? this.labo.warrantyCode : null);
       this.formGroup.get('dateReceipt').setValue(this.labo.dateReceipt ? new Date(this.labo.dateReceipt) : null);
@@ -42,12 +43,7 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   }
 
   onChangeWarrantyPeriod() {
-
-    this.submitted = true;
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
+    debugger
     var res = this.formGroup.value;
     if (this.getWarrantyPeriodType !== 'orther') {
       var date = new Date(this.getDateReceipt);
@@ -75,20 +71,24 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   }
 
   onSave() {
+
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }
-
+  
     var val = this.formGroup.value;
-    this.labo.warrantyPeriod = val.warrantyPeriod ? this.intelservice.formatDate(val.warrantyPeriod, 'yyyy-MM-dd HH:mm:ss') : null;
-    this.labo.warrantyCode = val.warrantyCode;
-    this.labo.dateReceipt = val.dateReceipt ? this.intelservice.formatDate(val.dateReceipt, 'yyyy-MM-dd HH:mm:ss') : null;
+    val.id = this.labo.id;
+    val.warrantyPeriod = val.warrantyPeriod ? this.intelservice.formatDate(val.warrantyPeriod, 'yyyy-MM-dd HH:mm:ss') : null;
+    val.warrantyCode = val.warrantyCode;
+    val.dateReceipt = val.dateReceipt ? this.intelservice.formatDate(val.dateReceipt, 'yyyy-MM-dd HH:mm:ss') : null;
 
-    this.laboOrderService.updateReceiptLabo(this.labo.id, this.labo).subscribe(() => {   
+    this.laboOrderService.updateReceiptLabo(val).subscribe(() => {   
       this.activeModal.close();
     });
   }
+
+  
 
   get f() {
     return this.formGroup.controls;
