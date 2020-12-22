@@ -6,7 +6,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderService, LaboOrderBasic, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
-import { LaboOrderCuDialogComponent } from '../labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @Component({
   selector: 'app-sale-order-line-labo-orders-dialog',

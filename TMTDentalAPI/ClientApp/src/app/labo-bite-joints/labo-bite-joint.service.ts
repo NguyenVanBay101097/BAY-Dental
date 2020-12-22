@@ -34,6 +34,12 @@ export class ImportExcelBaseViewModel {
   fileBase64: string;
 }
 
+export class LaboBiteJointPageSimple{
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,5 +74,9 @@ export class LaboBiteJointService {
 
   ImportExcel(val: ImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
+  }
+
+  autoComplete(val: LaboBiteJointPageSimple) {
+    return this.http.post(this.baseApi + this.apiUrl + "/AutoComplete", val);
   }
 }

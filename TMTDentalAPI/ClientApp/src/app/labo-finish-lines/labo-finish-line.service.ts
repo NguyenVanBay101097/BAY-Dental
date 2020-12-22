@@ -34,6 +34,12 @@ export class ImportExcelBaseViewModel {
   fileBase64: string;
 }
 
+export class LaboFinishLinePageSimple{
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,5 +74,9 @@ export class LaboFinishLineService {
 
   ImportExcel(val: ImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
+  }
+
+  autoComplete(val: LaboFinishLinePageSimple) {
+    return this.http.post(this.baseApi + this.apiUrl + "/AutoComplete", val);
   }
 }

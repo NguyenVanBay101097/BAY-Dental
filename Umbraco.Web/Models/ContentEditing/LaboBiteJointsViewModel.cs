@@ -28,6 +28,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
     }
+
+    public class LaboBiteJointPageSimple
+    {
+        public string Search { get; set; }
+        public int? Limit { get; set; }
+        public int? Offset { get; set; }
+    }
     public class LaboBiteJointSave
     {
         public string Name { get; set; }

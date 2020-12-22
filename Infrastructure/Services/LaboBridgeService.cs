@@ -60,5 +60,30 @@ namespace Infrastructure.Services
             item = _mapper.Map(val,item);
             await UpdateAsync(item);
         }
+
+        public async Task<IEnumerable<LaboBridgeSimple>> Autocomplete(LaboBridgePageSimple val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.ToLower().Contains(val.Search.Trim().ToLower()));
+            }
+
+            if (val.Offset.HasValue)
+            {
+                query = query.Skip(val.Limit.Value);
+            }
+
+            if (val.Limit.HasValue && val.Limit.Value > 0)
+            {
+                query = query.Take(val.Limit.Value);
+            }
+
+            return await query.OrderBy(x => x.Name).Select(x => new LaboBridgeSimple
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
+        }
     }
 }

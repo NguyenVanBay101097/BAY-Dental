@@ -1,11 +1,10 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" #form="ngForm">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group my-0">
@@ -19,8 +18,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <kendo-combobox [data]="NCCLaboList" [textField]="'name'" [filterable]="true"
-                                            #NCCLaboCbx formControlName="NCCLabo" [valueField]="'id'">
+                                        <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
                                         <a class="btn btn-sm btn-light" (click)="quickCreateNCCLabo()">
                                             <span class="k-icon k-i-plus"></span>
@@ -41,7 +39,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <kendo-datepicker formControlName="dateOrderObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -56,7 +54,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <kendo-datepicker formControlName="datePlannedObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -78,7 +76,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>Răng sứ Katana</span>
+                                    <span>{{saleOrderLine?.name}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -88,7 +86,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>ITALY</span>
+                                    <span>{{saleOrderLine?.product.firm}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -98,8 +96,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <button type="button" class="btn btn-sm mr-1 btn-primary">14</button>
-                                    <button type="button" class="btn btn-sm mr-1 btn-light">22</button>
+                                    <button *ngFor="let tooth of saleOrderLine?.teeth" [className]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                 </td>
                             </tr>
                             <tr>
@@ -109,7 +106,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control">
+                                    <input formControlName='color' type="text" class="form-control">
                                 </td>
                             </tr>
                             <tr>
@@ -119,7 +116,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    <kendo-numerictextbox formControlName="quantity" [min]="0" [format]="'n0'">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -130,7 +127,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    <kendo-numerictextbox formControlName="priceUnit" [min]="0" [format]="'n0'">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -141,7 +138,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>0</span>
+                                    <span>{{getAmountTotal() | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -151,7 +148,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control"></textarea>
+                                    <textarea type="text" formControlName="indicated" class="form-control"></textarea>
                                 </td>
                             </tr>
                             <tr>
@@ -161,7 +158,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" class="form-control"></textarea>
+                                    <textarea type="text" formControlName='note' class="form-control"></textarea>
                                 </td>
                             </tr>
                             <tr>
@@ -176,7 +173,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control">
+                                    <input type="text" formControlName='warrantyCode' class="form-control">
                                 </td>
                             </tr>
                             <tr>
@@ -186,7 +183,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <kendo-datepicker formControlName="warrantyPeriodObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -209,51 +206,11 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div *ngFor="let labo of labos;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_1">
-                                                <label class="ml-1" for="radio_1_1">
-                                                    Sứ Ceramill ZI
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_2">
-                                                <label class="ml-1" for="radio_1_2">
-                                                    Sứ Ceramill ZoLid
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_3">
-                                                <label class="ml-1" for="radio_1_3">
-                                                    Sứ Ceramill HT
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_4">
-                                                <label class="ml-1" for="radio_1_4">
-                                                    Sứ Naccera
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_5">
-                                                <label class="ml-1" for="radio_1_5">
-                                                    Sứ Katana
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_1" id="radio_1_6">
-                                                <label class="ml-1" for="radio_1_6">
-                                                    Sứ Venus
+                                                <input type="radio" [id]="'labo'+i">
+                                                <label class="ml-1" [for]="'labo'+i">
+                                                    {{labo.name}}
                                                 </label>
                                             </div>
                                         </div>
@@ -270,35 +227,11 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div *ngFor="let finish of finishlines;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input type="radio" name="radio_2" id="radio_2_1">
-                                                <label class="ml-1" for="radio_2_1">
-                                                    Bờ vai
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_2" id="radio_2_2">
-                                                <label class="ml-1" for="radio_2_2">
-                                                    Bờ xuôi vát cánh
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_2" id="radio_2_3">
-                                                <label class="ml-1" for="radio_2_3">
-                                                    Bờ vai vát cánh
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_2" id="radio_2_4">
-                                                <label class="ml-1" for="radio_2_4">
-                                                    Bờ xuôi
+                                                <input type="radio" [id]="'finish'+i">
+                                                <label class="ml-1" [for]="'finish'+i">
+                                                    {{finish.name}}
                                                 </label>
                                             </div>
                                         </div>
@@ -315,35 +248,11 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div *ngFor="let bite of biteJoints;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input type="radio" name="radio_3" id="radio_3_1">
-                                                <label class="ml-1" for="radio_3_1">
-                                                    Khớp cắn hở
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_3" id="radio_3_2">
-                                                <label class="ml-1" for="radio_3_2">
-                                                    Khớp cắn ngược
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_3" id="radio_3_3">
-                                                <label class="ml-1" for="radio_3_3">
-                                                    Khớp cắn đối đầu
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_3" id="radio_3_4">
-                                                <label class="ml-1" for="radio_3_4">
-                                                    Khớp cắn sâu
+                                                <input type="radio" [id]="'bite'+i">
+                                                <label class="ml-1" [for]="'bite'+i">
+                                                    {{bite.name}}
                                                 </label>
                                             </div>
                                         </div>
@@ -360,35 +269,11 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div *ngFor="let bridge of bridges;let i = index" class="col-6">
                                             <div class="radio">
-                                                <input type="radio" name="radio_4" id="radio_4_1">
-                                                <label class="ml-1" for="radio_4_1">
-                                                    Nhịp cầu yên ngựa
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_4" id="radio_4_2">
-                                                <label class="ml-1" for="radio_4_2">
-                                                    Nhịp cầu hình chữ T biến đổi
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_4" id="radio_4_3">
-                                                <label class="ml-1" for="radio_4_3">
-                                                    Nhịp cầu chữ T
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="radio">
-                                                <input type="radio" name="radio_4" id="radio_4_4">
-                                                <label class="ml-1" for="radio_4_4">
-                                                    Nhịp hình trứng
+                                                <input type="radio" [id]="'bridge'+i">
+                                                <label class="ml-1" [for]="'bridge'+i">
+                                                    {{bridge.name}}
                                                 </label>
                                             </div>
                                         </div>
@@ -404,10 +289,9 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-primary">Hàm đối diện</button>
-                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Khay lấy dấu</button>
-                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Cần sáp</button>
-                                    <button type="button" class="btn btn-sm mr-1 mt-1 btn-light">Giá khớp</button>
+                                    <button *ngFor="let attach of attachs" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 btn-light">
+                                        {{attach.name}}
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -419,42 +303,42 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea type="text" class="form-control"></textarea>
+                                    <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="image-title">
-                                Hình ảnh
-                            </div>
-                            <div>
-                                <button class="btn btn-primary btn-sm float-right" (click)="inputFile.click()">
-                                    <i class="far fa-image"></i> Thêm hình</button>
-                                <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file" accept="image/*" (change)="addImages($event)">
-                            </div>
-                        </div>
-                        <div class="w-100 view-img h-75">
-                            <div class="o_attachments_previews">
-                                <!-- Preview hình ảnh -->
-                                <div class="o_attachment" *ngFor="let img of imagesPreview; let i = index">
-                                    <div class="o_attachment_wrap" (click)="viewImage(img)">
+                    <div class="image mt-2">
+                        <h6>Hình ảnh</h6>
+                        <div class="o_attachments_previews">
+                            <ng-container formArrayName="images">
+                                <div [formGroupName]="i" *ngFor="let img of imagesFA.controls; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                    <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
                                         <div class="o_image_box">
-                                            <div class="o_attachment_image" id="{{img.name}}">
-                                                <img width="100%" [src]="img.uploadId + '?width=240&height=240)'" alt="">
+                                            <div class="o_attachment_image" id="{{img.value.name}}">
+                                                <img width="100%" [src]="img.value.UploadId + '?width=240&height=240)'" alt="">
                                             </div>
                                             <div class="o_image_overlay o_attachment_view">
-                                                <span class="fa fa-times o_attachment_delete_cross" (click)="deleteImages(i, $event)" title="Delete {{img.name}}"></span>
-                                                <span class="o_attachment_title text-white">{{img.name}}</span>
-                                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.uploadId}}" target="_blank">
+                                                <span *ngIf="true" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.name}}"></span>
+                                                <span class="o_attachment_title text-white">{{img.value.name}}</span>
+                                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.value.url}}" target="_blank">
                                                     <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div *ngIf="true" class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                    <div class="btn-img" (click)="inputFile.click()">
+                                        <div class="o_image_box">
+                                            <div class="o_attachment_image d-flex align-items-center justify-content-center">
+                                                <img style="max-width: 100px;max-height: 100px;" src="/assets/images/placeholder.png" alt="">
+                                                <input #inputFile class="o_input_file d-none" type="file" multiple="multiple" accept="image/*" (change)="onFileChange($event)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
                         </div>
                     </div>
                 </div>
@@ -466,6 +350,5 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>
