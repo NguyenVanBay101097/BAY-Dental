@@ -32,6 +32,7 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Quản lý phiếu Labo', link: '/labo-orders' },
         { name: 'Đơn hàng Labo', link: '/labo-orders/order' },
+        { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
       ],
     },
     {
