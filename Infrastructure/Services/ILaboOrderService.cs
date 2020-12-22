@@ -26,5 +26,10 @@ namespace Infrastructure.Services
         Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val);
 
         Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val);
+
+        Task<PagedResult2<LaboOrderBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val);
+
+        Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val);
+        Task ActionCancelReceipt(IEnumerable<Guid> ids);
     }
 }

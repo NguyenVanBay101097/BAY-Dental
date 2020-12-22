@@ -109,6 +109,82 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PagedResult2<LaboOrderBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val)
+        {
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                x.Partner.Name.Contains(val.Search) ||
+                x.SaleOrderLine.Order.Name.Contains(val.Search)));
+            var now = DateTime.Now;
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                if(val.State == "trehan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value));
+                }
+                else if(val.State == "chonhan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => (x.DatePlanned.HasValue && now  < x.DatePlanned.Value) || !x.DatePlanned.HasValue));
+                }
+                else if (val.State == "toihan")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue &&  now == x.DatePlanned.Value));
+                }
+            }
+
+            spec = spec.And(new InitialSpecification<LaboOrder>(x => !x.DateReceipt.HasValue));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
+        public async Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val)
+        {
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                x.Partner.Name.Contains(val.Search) || x.WarrantyCode.Contains(val.Search) ||
+                x.SaleOrderLine.Order.Name.Contains(val.Search)));
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                if (val.State == "daxuat")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport.HasValue));
+                }
+                else if (val.State == "chuaxuat")
+                {
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => !x.DateExport.HasValue));
+                }              
+            }
+
+            if (val.DateExport.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport.HasValue && x.DateExport == val.DateExport.Value));
+            }
+
+
+            spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt.HasValue));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
+
+            var totalItems = await query.CountAsync();
+            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
+
         public async Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val)
         {
             ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
@@ -239,9 +315,9 @@ namespace Infrastructure.Services
             }
 
             ///thêm danh sach gửi kèm
-            if (val.AttechRels.Any())
+            if (val.LaboOrderProducts.Any())
             {
-                foreach(var attach in val.AttechRels)
+                foreach(var attach in val.LaboOrderProducts)
                 {
                     labo.LaboOrderProductRel.Add(new LaboOrderProductRel()
                     {
@@ -448,7 +524,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.MoveLines")
                 .ToListAsync();
-
+           
             var move_ids = new List<Guid>().AsEnumerable();
             foreach (var order in self)
                 move_ids = move_ids.Union(order.OrderLines.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList());
@@ -465,6 +541,8 @@ namespace Infrastructure.Services
             {
                 foreach (var line in order.OrderLines)
                     line.State = "draft";
+
+                //order.
             }
 
             var lbLineObj = GetService<ILaboOrderLineService>();
@@ -473,6 +551,24 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ActionCancelReceipt(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .ToListAsync();
+
+            foreach (var order in self)
+            {
+                if (order.DateExport.HasValue)
+                {
+                    order.DateExport = null;
+                }
+
+                order.DateReceipt = null;
+                //order.
+            }
+
+            await UpdateAsync(self);
+        }
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.OrderLines).ToListAsync();

@@ -15,6 +15,7 @@ import { LaboOrderLineService } from './labo-order-line.service';
 import { LaboOrderListDialogComponent } from './labo-order-list-dialog/labo-order-list-dialog.component';
 import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistics/labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
 import { LaboOrderDetailListComponent } from './labo-order-detail-list/labo-order-detail-list.component';
+import { OrderLaboListComponent } from './order-labo-list/order-labo-list.component';
 import { LaboOrderExportComponent } from './labo-order-export/labo-order-export.component';
 
 
@@ -27,6 +28,7 @@ import { LaboOrderExportComponent } from './labo-order-export/labo-order-export.
     LaboOrderListDialogComponent,
     LaboOrderStatisticUpdateDialogComponent,
     LaboOrderDetailListComponent,
+    OrderLaboListComponent,
     LaboOrderExportComponent,
   ],
   imports: [

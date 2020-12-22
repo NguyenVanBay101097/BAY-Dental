@@ -24,6 +24,43 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class OrderLaboPaged
+    {
+        public OrderLaboPaged()
+        {
+            Limit = 20;
+        }
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+
+        /// <summary>
+        /// trể hạn
+        /// Chờ nhận
+        /// tới hạn
+        /// </summary>
+        public string State { get; set; }
+    }
+
+    public class ExportLaboPaged
+    {
+        public ExportLaboPaged()
+        {
+            Limit = 20;
+        }
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+
+        public DateTime? DateExport { get; set; }
+
+        /// <summary>
+        /// danhan
+        /// chuanhan
+        /// </summary>
+        public string State { get; set; }
+    }
+
 
 
     public class LaboOrderStatisticsPaged

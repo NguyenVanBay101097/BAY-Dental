@@ -128,6 +128,19 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.LaboOrder.Cancel")]
+        public async Task<IActionResult> ActionCancelReceipt(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboOrderService.ActionCancelReceipt(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
@@ -167,6 +180,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetLaboForSaleOrderLine([FromQuery] LaboOrderPaged val)
         {
             var res = await _laboOrderService.GetPagedResultAsync(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
+        {
+            var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
+        {
+            var res = await _laboOrderService.GetPagedExportLaboAsync(val);
             return Ok(res);
         }
     }

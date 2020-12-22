@@ -36,6 +36,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DatePlanned { get; set; }
 
         /// <summary>
+        /// Ngày nhận thực tế
+        /// </summary>
+        public DateTime? DateReceipt { get; set; }
+
+        /// <summary>
+        /// Ngày xuất labo 
+        /// 7 kêu trường này đặt tên như vậy
+        /// </summary>
+        public DateTime? DateExport { get; set; }
+
+        /// <summary>
         /// màu sắc
         /// </summary>
         public string Color { get; set; }
@@ -57,7 +68,21 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal AmountTotal { get; set; }
 
+        /// <summary>
+        /// Mã bảo hành
+        /// </summary>
+        public string WarrantyCode { get; set; }
+
+        /// <summary>
+        /// Hạn bảo hành
+        /// </summary>
+        public DateTime? WarrantyPeriod { get; set; }
+
         public string SaleOrderLineName { get; set; }
+
+        public string SaleOrderId { get; set; }
+        public string SaleOrderName { get; set; }
+
 
         public DateTime? DateCreated { get; set; }
 

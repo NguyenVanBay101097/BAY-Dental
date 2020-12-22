@@ -13,9 +13,12 @@ namespace Umbraco.Web.Mapping
         public LaboOrderProfile()
         {
             CreateMap<LaboOrder, LaboOrderBasic>()
+                 .ForMember(x => x.SaleOrderId, x => x.MapFrom(s => s.SaleOrderLine.OrderId))
+                 .ForMember(x => x.SaleOrderName, x => x.MapFrom(s => s.SaleOrderLine.Order.Name))
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(x => x.Tooth)));
+
             CreateMap<LaboOrder, LaboOrderDisplay>()
-            .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(x=>x.Tooth)));
+            .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(x => x.Tooth)));
 
             CreateMap<LaboOrderDisplay, LaboOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
