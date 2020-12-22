@@ -378,11 +378,25 @@ namespace Infrastructure.Services
 
         public async Task UpdateLabo(Guid id, LaboOrderSave val)
         {
-            var labo = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
-                .Include("OrderLines.LaboOrderLineToothRels")
+            var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
+                .Include(x => x.LaboBridge)
+                .Include(x => x.LaboBiteJoint)
+                .Include(x => x.LaboFinishLine)
+                .Include(x => x.Product)
+                .Include(x => x.SaleOrderLine)
                 .Include(x => x.LaboOrderProductRel)
-                .FirstOrDefaultAsync();
+                .Include(x => x.LaboOrderToothRel)
+                .Include("SaleOrderLine.Product").FirstOrDefaultAsync(); 
+
             labo = _mapper.Map(val, labo);
+            labo.LaboOrderProductRel.Clear();
+            foreach (var product in val.LaboOrderProducts)
+            {
+                labo.LaboOrderProductRel.Add(new LaboOrderProductRel
+                {
+                    ProductId = product.Id
+                });
+            }
             //labo.CompanyId = CompanyId;        
             // labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await UpdateAsync(labo);
