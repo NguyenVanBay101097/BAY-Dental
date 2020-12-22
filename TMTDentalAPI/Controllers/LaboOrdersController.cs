@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -195,6 +196,16 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
             return Ok(res);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<LaboOrder> patchDoc)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(id);
+            patchDoc.ApplyTo(labo, ModelState);
+            await _laboOrderService.UpdateAsync(labo);
+
+            return NoContent();
         }
     }
 }
