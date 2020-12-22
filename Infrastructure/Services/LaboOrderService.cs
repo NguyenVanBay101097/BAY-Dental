@@ -269,32 +269,12 @@ namespace Infrastructure.Services
 
         public async Task<LaboOrderDisplay> GetLaboDisplay(Guid id)
         {
-            var attachmentObj = GetService<IIrAttachmentService>();
-            //var res = await SearchQuery(x => x.Id == id).Select(x => new LaboOrderDisplay
-            //{
-            //    Id = x.Id,
-            //    AmountTotal = x.AmountTotal,
-            //    DateOrder = x.DateOrder,
-            //    DatePlanned = x.DatePlanned,
-            //    DotKhamId = x.DotKhamId,
-            //    Name = x.Name,
-            //    PartnerId = x.PartnerId,
-            //    PartnerRef = x.PartnerRef,
-            //    State = x.State
-            //}).FirstOrDefaultAsync();
-
-            //var partnerObj = GetService<IPartnerService>();
-            //res.Partner = await partnerObj.SearchQuery(x => x.Id == res.PartnerId).Select(x => new PartnerSimple
-            //{
-            //    Id = x.Id,
-            //    Name = x.Name
-            //}).FirstOrDefaultAsync();
+            var attachmentObj = GetService<IIrAttachmentService>();       
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
                 .Include(x=>x.LaboBridge)
                 .Include(x=>x.LaboBiteJoint)
                 .Include(x=>x.LaboFinishLine)               
                 .Include(x => x.Product)
-                //.Include("SaleOrderLine.Teeth")
                 .Include("SaleOrderLine.Product")
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
@@ -395,20 +375,16 @@ namespace Infrastructure.Services
                 .Include(x=>x.LaboOrderProductRel)
                 .FirstOrDefaultAsync();
             labo = _mapper.Map(val, labo);
-            labo.CompanyId = CompanyId;
-            labo.LaboOrderToothRel.Clear();
-            foreach (var tooth in val.Teeth)
-            {
-                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
-            }
-            labo.AmountTotal = labo.PriceUnit * labo.Quantity;
+            //labo.CompanyId = CompanyId;        
+           // labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await UpdateAsync(labo);
 
             ///update image
             await UploadAttachment(val, labo);
         }
 
-     
+    
+
 
         public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<LaboOrder> self)
         {
