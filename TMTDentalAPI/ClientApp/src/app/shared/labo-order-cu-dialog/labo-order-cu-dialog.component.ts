@@ -322,6 +322,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
     val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
     val.laboFinishLineId = val.LaboFinishLine ? val.LaboFinishLine.id : null;
+    val.amountTotal = this.getAmountTotal();
 
     if (this.id) {
       return this.laboOrderService.update(this.id, val);
