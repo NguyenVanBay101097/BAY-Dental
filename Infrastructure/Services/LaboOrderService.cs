@@ -184,6 +184,7 @@ namespace Infrastructure.Services
 
 
             spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt.HasValue));
+            spec = spec.And(new InitialSpecification<LaboOrder>(x => x.State == "confirmed"));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
