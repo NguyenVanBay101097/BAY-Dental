@@ -12,13 +12,14 @@ import { LaboBiteJointBasic, LaboBiteJointService } from 'src/app/labo-bite-join
 import { LaboBridgeBasic, LaboBridgePageSimple, LaboBridgeService } from 'src/app/labo-bridges/labo-bridge.service';
 import { LaboFinishLineBasic, LaboFinishLinePageSimple, LaboFinishLineService } from 'src/app/labo-finish-lines/labo-finish-line.service';
 import { LaboImageBasic, LaboOrderDefaultGet, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerImageBasic, PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
+import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { IrAttachmentBasic } from '../shared';
 
 @Component({
@@ -71,9 +72,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
       note: null,
       warrantyCode: null,
       warrantyPeriodObj: null,
+      productId: [null],
       product: [null],
+      laboFinishLineId: [null],
       laboFinishLine: [null],
+      laboBiteJointId: null,
       laboBiteJoint: null,
+      laboBridgeId: null,
       laboBridge: null,
       laboOrderProducts: this.fb.array([]),//attach
       technicalNote: null,
@@ -101,7 +106,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   }
 
-  get state() {return this.myForm.get('state').value; }
+  get state() { return this.myForm.get('state').value; }
   get dateOrderObjFC() { return this.myForm.get('dateOrderObj'); }
   get datePlannedObjFC() { return this.myForm.get('datePlannedObj'); }
   get warrantyPeriodObjFC() { return this.myForm.get('warrantyPeriodObj'); }
@@ -113,7 +118,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get imagesFA() { return this.myForm.get('images') as FormArray; }
   get quantityFC() { return this.myForm.get('quantity'); }
   get priceUnitFC() { return this.myForm.get('priceUnit'); }
-  get amountTotalFC() { return this.myForm.get('amountTotal').value; }
+  get amountTotalFC() { return this.myForm.get('amountTotal'); }
+  get partnerFC() {return this.myForm.get('partner');}
+  get indicatedFC() {return this.myForm.get('indicated');}
+  get noteFC() {return this.myForm.get('note');}
 
 
   notify(style, content) {
@@ -178,8 +186,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.imagesFA.push(this.fb.group(img));
       });
     }
-    console.log(res);
-    
+
   }
 
   loadData() {
@@ -215,8 +222,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     const biteJointPaged = new LaboFinishLinePageSimple();
     this.biteJointService.autoComplete(biteJointPaged).subscribe((res: any) => {
       this.biteJoints = res;
-      console.log(this.biteJoints);
-      
+
     });
     //load bridge
     const bridgePaged = new LaboBridgePageSimple();
@@ -322,10 +328,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
-    val.productId = val.product ? val.product.id : null;
-    val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
-    val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
-    val.laboFinishLineId = val.laboFinishLine ? val.laboFinishLine.id : null;
+    // val.productId = val.product ? val.product.id : null;
+    // val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
+    // val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
+    // val.laboFinishLineId = val.laboFinishLine ? val.laboFinishLine.id : null;
     val.amountTotal = this.getAmountTotal();
 
     if (this.id) {
@@ -343,10 +349,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.onSave$().subscribe((res: any) => {
       if (this.id) {
         this.notify('success', 'Lưu thành công');
-        this.activeModal.close(true);
+        this.loadData();
+
       } else {
         this.notify('success', 'Tạo thành công');
-        this.activeModal.close(res);
+        this.loadData();
+
       }
     });
   }
@@ -359,16 +367,48 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.onSave$().subscribe((res: any) => {
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
         this.notify('success', 'Lưu thành công');
-        this.activeModal.close(true);
       });
     });
   }
 
   onCancel() {
-    this.laboOrderService.buttonCancel([this.id]).subscribe(()=>{
+    this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
       this.notify('success', 'Hủy phiếu thành công');
+      this.loadData();
+    });
+  }
+
+  onClose() {
+    if(this.id) {
       this.activeModal.close(true);
-    }); 
+    } else{
+      this.activeModal.close();
+    }
+  }
+
+  onQuickCreatePartner(){
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Nhà cung cấp';
+
+    modalRef.result.then(result => {
+      var p = new PartnerSimple();
+      p.id = result.id;
+      p.name = result.name;
+      p.displayName = result.displayName;
+      this.partnerFC.patchValue(p);
+      this.partners = _.unionBy(this.partners, [p], 'id');
+    }, () => {
+    });
+  }
+
+  onQuickUpdatePartner(){
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa: Nhà cung cấp';
+    modalRef.componentInstance.id = this.partnerFC.value.id;
+
+    modalRef.result.then(() => {
+    }, () => {
+    });
   }
 
 }
