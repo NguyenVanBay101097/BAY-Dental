@@ -17,6 +17,7 @@ import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistics
 import { LaboOrderDetailListComponent } from './labo-order-detail-list/labo-order-detail-list.component';
 import { OrderLaboListComponent } from './order-labo-list/order-labo-list.component';
 import { LaboOrderExportComponent } from './labo-order-export/labo-order-export.component';
+import { LaboOrderReceiptDialogComponent } from './labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { LaboOrderExportComponent } from './labo-order-export/labo-order-export.
     LaboOrderDetailListComponent,
     OrderLaboListComponent,
     LaboOrderExportComponent,
+    LaboOrderReceiptDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -92,6 +92,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLineBasic SaleOrderLine { get; set; }
 
+        public string State { get; set; }
+
         /// <summary>
         /// Mã bảo hành
         /// </summary>
@@ -99,7 +101,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? WarrantyPeriod { get; set; }
 
-        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
         /// <summary>
         /// list image for laboorder
         /// </summary>

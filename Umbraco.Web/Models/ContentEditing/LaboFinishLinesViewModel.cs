@@ -17,6 +17,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
     }
 
+    public class LaboFinishLinePageSimple
+    {
+        public string Search { get; set; }
+        public int? Limit { get; set; }
+
+        public int? Offset { get; set; }
+    }
+
     public class LaboFinishLineBasic
     {
         public Guid Id { get; set; }

@@ -137,5 +137,13 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(new { success = true });
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.LaboFinishLine.Read")]
+        public async Task<IActionResult> Autocomplete(LaboFinishLinePageSimple val)
+        {
+            var res = await _laboFinishLineService.Autocomplete(val);
+            return Ok(res);
+        }
     }
 }

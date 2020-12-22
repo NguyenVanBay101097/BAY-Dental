@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task<LaboBiteJointDisplay> GetDisplay(Guid id);
         Task<LaboBiteJointDisplay> CreateItem(LaboBiteJointSave val);
         Task UpdateItem(Guid id,LaboBiteJointSave val);
+        Task<IEnumerable<LaboBiteJointSimple>> Autocomplete(LaboBiteJointPageSimple val);
+
     }
 }

@@ -34,6 +34,12 @@ export class ImportExcelBaseViewModel {
   fileBase64: string;
 }
 
+export class LaboBridgePageSimple{
+  search?: string;
+  limit?: number;
+  offset?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,5 +74,9 @@ export class LaboBridgeService {
 
   ImportExcel(val: ImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/ImportExcel", val);
+  }
+
+  autoComplete(val: LaboBridgePageSimple) {
+    return this.http.post(this.baseApi + this.apiUrl + "/AutoComplete", val);
   }
 }

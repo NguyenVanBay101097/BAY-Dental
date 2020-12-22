@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -23,14 +26,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IDotKhamService _dotKhamService;
+        private readonly IViewRenderService _viewRenderService;
 
         public LaboOrdersController(ILaboOrderService laboOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService)
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService)
         {
             _laboOrderService = laboOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _dotKhamService = dotKhamService;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -156,9 +161,24 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _laboOrderService.GetPrint(id);
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            return Ok(res);
+            var order = await _laboOrderService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Product)
+                .Include(x => x.LaboFinishLine)
+                .Include(x => x.SaleOrderLine.Product)
+                .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.SaleOrderLine.Employee)
+                .Include(x => x.Partner)
+                .Include(x => x.Customer)
+                .Include("LaboOrderToothRel.Tooth")
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+                return NotFound();
+
+            var html = _viewRenderService.Render("LaboOrder/Print", order);
+
+            return Ok(new PrintData() { html = html });
         }
 
         [HttpPost("[action]")]
@@ -195,6 +215,16 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
             return Ok(res);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<LaboOrder> patchDoc)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(id);
+            patchDoc.ApplyTo(labo, ModelState);
+            await _laboOrderService.UpdateAsync(labo);
+
+            return NoContent();
         }
     }
 }

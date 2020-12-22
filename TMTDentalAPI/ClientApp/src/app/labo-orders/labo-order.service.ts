@@ -9,6 +9,7 @@ import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { ToothBasic } from '../teeth/tooth.service';
 import { SaleOrderLineBasic } from '../partners/partner.service';
 import { ProductSimple } from '../products/product-simple';
+import { IrAttachmentBasic } from '../shared/shared';
 
 export class LaboOrderPaged {
     limit: number;
@@ -60,6 +61,8 @@ export class LaboOrderDisplay {
     saleOrderLine: SaleOrderLineBasic;
     warrantyPeriod: string;
     product: ProductSimple;
+    laboOrderProducts: ProductSimple[];
+    images: IrAttachmentBasic[];
 }
 
 export class LaboOrderStatisticsPaged {
@@ -169,6 +172,11 @@ export class LaboOrderService {
     getOrderLabo(val: any): Observable<PagedResult2<any>>{
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
     }
+
+    updateReceiptLabo(id: string, val: any){
+        return this.http.patch(this.baseApi + this.apiUrl + "/" + id, val);
+    }
+
 
     getExportLabo(val: any): Observable<PagedResult2<any>>{
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetExportLabo', { params: new HttpParams({ fromObject: val }) });

@@ -14,7 +14,7 @@
             <thead>
                 <tr>
                     <th>Số phiếu</th>
-                    <th>Labo</th>
+                    <!-- <th>Labo</th> -->
                     <th>Nhà cung cấp</th>
                     <th>Ngày gửi</th>
                     <th>Ngày nhận</th>
@@ -27,7 +27,7 @@
                 <tr *ngFor="let lb of laboOrders">
                     <td (click)="actionLabo(lb)" style="cursor: pointer; color: #007bff;">
                         {{lb.name}}</td>
-                    <td>{{lb.productName }}</td>
+                    <!-- <td>{{lb.productName }}</td> -->
                     <td>{{lb.partnerName }}</td>
                     <td>{{lb.dateOrder | date: 'shortDate' }}</td>
                     <td>{{lb.datePlanned | date: 'shortDate' }}</td>

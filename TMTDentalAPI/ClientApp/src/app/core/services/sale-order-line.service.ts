@@ -16,11 +16,12 @@ export class SaleOrderLineOnChangeProductResult {
 }
 
 export class SaleOrderLinesPaged {
-    Offset: number;
+    offset: number;
     limit: number;
     isQuotation: boolean;
     isLabo: boolean;
     search: string;
+    laboStatus: string;
 }
 
 @Injectable({ providedIn: 'root' })
