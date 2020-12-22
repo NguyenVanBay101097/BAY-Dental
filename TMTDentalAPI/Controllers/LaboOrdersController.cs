@@ -71,8 +71,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var labo = await _laboOrderService.CreateLabo(val);
             _unitOfWork.Commit();
-           // val.Id = labo.Id;
-            return Ok(val);
+            return Ok(_mapper.Map<LaboOrderDisplay>(labo));
         }
 
         [HttpPut("{id}")]

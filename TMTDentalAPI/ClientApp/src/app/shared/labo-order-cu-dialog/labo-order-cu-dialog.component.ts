@@ -122,6 +122,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get partnerFC() {return this.myForm.get('partner');}
   get indicatedFC() {return this.myForm.get('indicated');}
   get noteFC() {return this.myForm.get('note');}
+  get technicalNoteFC() {return this.myForm.get('technicalNote');}
 
 
   notify(style, content) {
@@ -353,8 +354,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
       } else {
         this.notify('success', 'Tạo thành công');
+        this.id = res.id;
         this.loadData();
-
       }
     });
   }
@@ -365,6 +366,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
 
     this.onSave$().subscribe((res: any) => {
+      if(!this.id) {
+        this.id = res.id;
+      }
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
         this.notify('success', 'Lưu thành công');
       });

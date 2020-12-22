@@ -118,7 +118,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <button *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
+                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                 </td>
                             </tr>
                             <tr>
@@ -170,7 +170,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" [ngClass]="{'text-right': state=='draft'}" class="" style="width: 100%;">
-                                    <span>{{getAmountTotal() | number}}</span>
+                                    <span class="font-weight-600">{{getAmountTotal() | number}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -335,7 +335,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <button *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
+                                    <button [disabled]="state == 'confirmed'" *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
                                         {{attach.name}}
                                     </button>
                                 </td>
@@ -349,7 +349,14 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
+                                    <ng-container *ngIf="state=='draft'; else technicalNote">
+                                        <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
+                                    </ng-container>
+                                    <ng-template #technicalNote>
+                                        <label>
+                                                {{technicalNoteFC.value}}
+                                            </label>
+                                    </ng-template>
                                 </td>
                             </tr>
                         </tbody>
