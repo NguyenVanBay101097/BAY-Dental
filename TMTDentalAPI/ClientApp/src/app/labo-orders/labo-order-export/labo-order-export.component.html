@@ -6,7 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm theo Nhà cung cấp, Phiếu điều trị, Phiếu Labo, Mã bảo hành"
+                    <input class="o_searchview_input" placeholder="Tìm theo số phiếu, khách hàng"
                         type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
@@ -98,7 +98,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{getState(dataItem.state)}}
+                {{getState(dataItem)}}
             </ng-template>
         </kendo-grid-column>       
         <kendo-grid-column field="id" width="80">

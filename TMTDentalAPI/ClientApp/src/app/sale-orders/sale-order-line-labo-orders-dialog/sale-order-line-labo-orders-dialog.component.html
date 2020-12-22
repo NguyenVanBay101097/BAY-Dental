@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -10,39 +11,59 @@
                 Tạo phiếu labo
             </button>
         </div>
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th>Số phiếu</th>
-                    <!-- <th>Labo</th> -->
-                    <th>Nhà cung cấp</th>
-                    <th>Ngày gửi</th>
-                    <th>Ngày nhận</th>
-                    <th class="text-right">Tổng tiền</th>
-                    <!-- <th>Trạng thái</th> -->
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let lb of laboOrders">
-                    <td (click)="actionLabo(lb)" style="cursor: pointer; color: #007bff;">
-                        {{lb.name}}</td>
-                    <!-- <td>{{lb.productName }}</td> -->
-                    <td>{{lb.partnerName }}</td>
-                    <td>{{lb.dateOrder | date: 'shortDate' }}</td>
-                    <td>{{lb.datePlanned | date: 'shortDate' }}</td>
-                    <td class="text-right">{{lb.amountTotal | number }}</td>
-                    <!-- <td>
-                        <span *ngIf="lb.state==='purchase'">Đơn hàng</span>
-                        <span *ngIf="lb.state==='draft'">Nháp</span>
-                    </td> -->
-                    <td>
-                        <a title="Xóa" (click)="deleteLabo(lb)">
-                            <span class="far fa-trash-alt"></span></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+        <kendo-grid [data]="laboOrders">
+            <!-- <kendo-grid-column field="date" title="Ngày">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column> -->
+            <kendo-grid-column field="name" title="Số phiếu" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="NCC Labo" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.dateOrder | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="datePlanned" title="Ngày nhận" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.datePlanned | date : 'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="teeth" title="Răng" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{GetTeeth(dataItem)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amountTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{stateGet(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="id" width="120">
+                <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                    Thao tác
+                </ng-template>
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
+                        <i class="fas fa-print"></i></button>
+                    <button class="btn btn-sm mr-1" title="Sửa" (click)="actionLabo(dataItem)">
+                        <span class="fas fa-edit"></span></button>
+                    <button class="btn btn-sm" title="Xóa" (click)="deleteLabo(dataItem)">
+                        <span class="fas fa-trash-alt"></span></button>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
     </div>
 </div>
 

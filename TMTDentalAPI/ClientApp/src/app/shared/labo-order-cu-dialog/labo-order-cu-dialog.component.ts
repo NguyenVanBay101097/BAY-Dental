@@ -177,7 +177,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     if (res.laboOrderProducts) {
       this.laboOrderProductsFA.clear();
       res.laboOrderProducts.forEach(p => {
-        this.teethFA.push(this.fb.group(p));
+        this.laboOrderProductsFA.push(this.fb.group(p));
       });
     }
     //patch images
@@ -262,6 +262,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   isAttachSelected(attach: ProductSimple) {
+    debugger;
     const index = this.laboOrderProducts.findIndex(x => x.id == attach.id);
     return index >= 0 ? true : false;
   }
@@ -350,12 +351,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.onSave$().subscribe((res: any) => {
       if (this.id) {
         this.notify('success', 'Lưu thành công');
-        this.loadData();
-
+        // this.loadData();
+        this.activeModal.close();
       } else {
         this.notify('success', 'Tạo thành công');
         this.id = res.id;
-        this.loadData();
+        // this.loadData();
+        this.activeModal.close(res);
       }
     });
   }
@@ -379,7 +381,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   onCancel() {
     this.laboOrderService.buttonCancel([this.id]).subscribe(() => {
       this.notify('success', 'Hủy phiếu thành công');
-      this.loadData();
+      this.activeModal.close();
     });
   }
 

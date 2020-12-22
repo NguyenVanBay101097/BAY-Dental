@@ -14,6 +14,8 @@ import { AccountPaymentBasic } from '../account-payments/account-payment.service
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
 import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
 import { ToothDisplay } from '../teeth/tooth.service';
+import { ProductBasic2 } from '../products/product.service';
+import { Product } from '../products/product';
 
 export class PartnerFilter {
     search: string;
@@ -31,6 +33,7 @@ export class SaleOrderLineBasic {
     diagnostic: string;
     dateCreated: string;
     teeth: ToothDisplay;
+    product: any;
 }
 
 export class SaleOrderLinePaged {

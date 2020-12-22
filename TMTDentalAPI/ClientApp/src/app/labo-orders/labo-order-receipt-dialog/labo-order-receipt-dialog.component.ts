@@ -35,7 +35,6 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
 
   loadData() {
     if (this.labo) {
-      debugger
       this.formGroup.get('warrantyPeriod').setValue(this.labo.warrantyPeriod ? new Date(this.labo.warrantyPeriod) : null);
       this.formGroup.get('warrantyCode').setValue(this.labo.warrantyCode ? this.labo.warrantyCode : null);
       this.formGroup.get('dateReceipt').setValue(this.labo.dateReceipt ? new Date(this.labo.dateReceipt) : null);
@@ -43,7 +42,6 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   }
 
   onChangeWarrantyPeriod() {
-    debugger
     var res = this.formGroup.value;
     if (this.getWarrantyPeriodType !== 'orther') {
       var date = new Date(this.getDateReceipt);
@@ -71,7 +69,6 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   }
 
   onSave() {
-
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;

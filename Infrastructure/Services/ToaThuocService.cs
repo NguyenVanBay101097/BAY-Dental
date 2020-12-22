@@ -207,14 +207,22 @@ namespace Infrastructure.Services
 
         public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)
         {
-            var toaThuoc = await _mapper.ProjectTo<ToaThuocPrintViewModel>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var toaThuoc = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner).FirstOrDefaultAsync();
+
             if (toaThuoc == null)
                 return null;
 
             var toaThuocLineObj = GetService<IToaThuocLineService>();
-            toaThuoc.Lines = await _mapper.ProjectTo<ToaThuocLinePrintViewModel>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Product).ToListAsync();
 
-            return toaThuoc;
+            var res = _mapper.Map<ToaThuocPrintViewModel>(toaThuoc);
+            res.Lines = _mapper.Map<IEnumerable<ToaThuocLinePrintViewModel>>(lines);
+
+            return res;
         }
 
         private async Task InsertToaThuocSequence()

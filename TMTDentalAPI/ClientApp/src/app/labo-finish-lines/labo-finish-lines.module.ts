@@ -9,9 +9,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LaboFinishLineService } from './labo-finish-line.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
+import { LaboFinnishLineImportComponent } from './labo-finnish-line-import/labo-finnish-line-import.component';
 
 @NgModule({
-  declarations: [LaboFinishLineListComponent, LaboFinishLineCuDialogComponent],
+  declarations: [LaboFinishLineListComponent, LaboFinishLineCuDialogComponent, LaboFinnishLineImportComponent],
   imports: [
     CommonModule,
     LaboFinishLinesRoutingModule,

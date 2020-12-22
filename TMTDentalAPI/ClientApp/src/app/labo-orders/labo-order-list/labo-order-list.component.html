@@ -74,11 +74,11 @@
                 {{dataItem.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Răng, chuẩn đoán" width="150">
+        <!-- <kendo-grid-column title="Răng, chuẩn đoán" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{showInfo(dataItem)}}
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column> -->
         <kendo-grid-column title="Bác sĩ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.employee == null ? '' : dataItem.employee.name}}

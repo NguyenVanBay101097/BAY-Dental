@@ -137,7 +137,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Vật liệu Labo', link: '/products/labos' },
         { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
-        { name: 'Gửu kèm Labo', link: '/products/labo-attachs' },
+        { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
         { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
         { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
       ]
@@ -165,7 +165,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
-        { name: 'Thống kê công việc', link: '/dot-kham-report' },
+        // { name: 'Thống kê công việc', link: '/dot-kham-report' },
         { name: 'Thống kê hoa hồng', link: '/commission-settlements/report' },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },

@@ -99,7 +99,6 @@ namespace TMTDentalAPI.Controllers
 
             query = query.Include(x => x.OrderPartner)
                 .Include(x => x.Order)
-                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.Employee)
                 .Include(x => x.Labos);
 

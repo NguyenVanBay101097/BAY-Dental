@@ -12,6 +12,7 @@ import { LaboOrderService } from '../labo-order.service';
 export class LaboOrderExportDialogComponent implements OnInit {
   labo : any;
   formGroup: FormGroup;
+  submitted = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -25,18 +26,25 @@ export class LaboOrderExportDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateReceipt: [null, Validators.required]
+      dateExport: [null]
     });
+
+    if (this.labo) {
+      if (this.labo.dateExport) {
+        this.formGroup.get('dateExport').setValue(new Date(this.labo.dateExport));
+      }
+    }
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }
   
     var val = this.formGroup.value;
     val.id = this.labo.id;
-    val.dateReceipt = val.dateReceipt ? this.intelservice.formatDate(val.dateReceipt, 'yyyy-MM-dd HH:mm:ss') : null;
+    val.dateExport = val.dateExport ? this.intelservice.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
 
     this.laboOrderService.updateExportLabo(val).subscribe(() => {   
       this.activeModal.close();

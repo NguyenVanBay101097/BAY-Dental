@@ -7,6 +7,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { LaboOrderService, LaboOrderBasic, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
 import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-line-labo-orders-dialog',
@@ -21,7 +23,8 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     public modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
     private saleLineService: SaleOrderLineService,
-    private laboOrderServie: LaboOrderService
+    private laboOrderServie: LaboOrderService,
+    private printService: PrintService
   ) { }
 
   saleOrderLineId: string;
@@ -43,6 +46,19 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     });
   }
 
+  GetTeeth(val) {
+    return val.teeth.map(x => x.name).join(',');
+  }
+
+  stateGet(state) {
+    switch (state) {
+      case 'confirmed':
+        return 'Đơn hàng';
+      default:
+        return 'Nháp';
+    }
+  }
+
   onCancel() {
     this.activeModal.dismiss();
   }
@@ -58,10 +74,14 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
     modalRef.result.then(res => {
-      if (res) {
-        this.loadLaboOrderList();
-      }
+      this.loadLaboOrderList();
     }, () => {
+    });
+  }
+
+  printLabo(item: any) {
+    this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 

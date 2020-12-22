@@ -20,8 +20,8 @@
                 </div>
             </div>
             <div class="o_form_sheet">
-                <div class="o_group my-0">
-                    <table class="o_group o_inner_group o_group_col_6">
+                <div class="o_group my-0 mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6 mt-0 mb-0">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -30,15 +30,17 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <div [hidden]="state == 'confirmed'" class="d-flex">
-                                        <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
-                                        </kendo-combobox>
-                                        <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-success" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                        <a class="ml-1 btn btn-sm btn-primary" (click)="onQuickCreatePartner()">
-                                            <span class="k-icon k-i-plus"></span>
-                                        </a>
+                                    <div [class.d-none]="state == 'confirmed'">
+                                        <div class="d-flex">
+                                            <kendo-combobox #partnerCbx [data]="partners"  [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
+                                            </kendo-combobox>
+                                            <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                            <a class="ml-1 btn btn-sm btn-light" (click)="onQuickCreatePartner()">
+                                                <span class="k-icon k-i-plus"></span>
+                                            </a>
+                                        </div>
                                     </div>
                                     <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
                                 </td>
@@ -402,7 +404,7 @@
 
 <footer class="modal-footer">
     <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
-    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Hủy phiếu</button>
+    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>

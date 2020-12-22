@@ -24,7 +24,7 @@ export class OrderLaboListComponent implements OnInit {
 
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
-    { text: 'trễ hạn', value: 'trehan' },
+    { text: 'Trễ hạn', value: 'trehan' },
     { text: 'Chờ nhận', value: 'chonhan' },
     { text: 'Tới hạn', value: 'toihan' }
   ];

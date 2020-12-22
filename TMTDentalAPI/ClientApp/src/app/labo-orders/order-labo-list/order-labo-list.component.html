@@ -7,7 +7,7 @@
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
                     <input class="o_searchview_input"
-                        placeholder="Tìm kiếm theo Nhà cung cấp, phiếu điều trị, phiếu labo" type="text"
+                        placeholder="Tìm kiếm theo số phiếu, nhà cung cấp" type="text"
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
@@ -20,7 +20,7 @@
                 </app-tmt-option-select-dropdown> -->
                     <select class="form-control form-control-sm" (change)="onChangeLaboState($event)">
                         <option value="">Trạng thái</option>
-                        <option value="trehan">trễ hạn</option>
+                        <option value="trehan">Trễ hạn</option>
                         <option value="chonhan">Chờ nhận</option>
                         <option value="toihan">Tới hạn</option>
                     </select>
@@ -69,7 +69,7 @@
                 [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>     
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Phiếu Labo" width="100">
+        <kendo-grid-column field="name" title="Số phiếu" width="100">
         </kendo-grid-column>
         <kendo-grid-column title="Loại phục hình" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -64,15 +64,17 @@ export class LaboOrderExportComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  getState(state) {
-    switch (state) {
-      case 'daxuat':
-        return 'Đã xuất';
-      case 'chuaxuat':
-        return 'Chưa xuất';
-      default:
-        return 'Chưa xuất';
+  getState(dataItem: any) {
+    if (dataItem.dateExport) {
+      return 'Đã xuất';
     }
+
+    return 'Chưa xuất';
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {

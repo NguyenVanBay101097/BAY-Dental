@@ -111,12 +111,12 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderReceiptBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val)
         {
-            var query = SearchQuery(x => x.State == "confirmed");
+            var query = SearchQuery(x => x.State == "confirmed" && !x.DateReceipt.HasValue);
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.SaleOrderLine.Order.Name.Contains(val.Search));
+                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
 
             var now = DateTime.Now;
 
@@ -155,11 +155,11 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val)
         {
-            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => x.State == "confirmed" && x.DateReceipt.HasValue);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
-                x.Partner.Name.Contains(val.Search) || x.WarrantyCode.Contains(val.Search) ||
-                x.SaleOrderLine.Order.Name.Contains(val.Search)));
+                x.Customer.Name.Contains(val.Search) || x.Customer.NameNoSign.Contains(val.Search) ||
+                x.Customer.Ref.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.State))
             {
@@ -174,17 +174,13 @@ namespace Infrastructure.Services
             }
 
             if (val.DateExportFrom.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder >= val.DateExportFrom));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport >= val.DateExportFrom));
 
             if (val.DateExportTo.HasValue)
             {
                 var dateOrderTo = val.DateExportTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateOrderTo));
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport <= dateOrderTo));
             }
-
-
-            spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt.HasValue));
-            spec = spec.And(new InitialSpecification<LaboOrder>(x => x.State == "confirmed"));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
@@ -288,7 +284,7 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboFinishLine)
                 .Include(x => x.Product)
                 .Include(x => x.SaleOrderLine)
-                .Include(x => x.LaboOrderProductRel)
+                .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
                 .Include(x => x.LaboOrderToothRel)
                 .Include("SaleOrderLine.Product").FirstOrDefaultAsync();
 
@@ -477,7 +473,10 @@ namespace Infrastructure.Services
                     throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp.");
                 var move = await _PrepareAccountMove(order);
 
-                await moveObj.CreateAsync(move);
+                var amlObj = GetService<IAccountMoveLineService>();
+                amlObj.PrepareLines(move.Lines);
+
+                await moveObj.CreateMoves(new List<AccountMove>() { move });
                 await moveObj.ActionPost(new List<AccountMove>() { move });
 
                 order.State = "confirmed";
@@ -490,83 +489,74 @@ namespace Infrastructure.Services
         private async Task<AccountMove> _PrepareAccountMove(LaboOrder self)
         {
             var accountObj = GetService<IAccountAccountService>();
-            var account = await accountObj.GetAccountPayableCurrentCompany();
+            var account = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
 
             var accountMoveObj = GetService<IAccountMoveService>();
-            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice");
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice", default_company_id: self.CompanyId);
             if (journal == null)
                 throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
 
             var balance = self.AmountTotal;
-            var move = new AccountMove
+            var move_vals = new AccountMove
             {
                 JournalId = journal.Id,
                 Journal = journal,
                 PartnerId = self.PartnerId,
                 CompanyId = journal.CompanyId,
-                Lines = new List<AccountMoveLine>()
-                {
-                    new AccountMoveLine
-                    {
-                        Debit = balance,
-                        Credit = 0,
-                        PartnerId = self.PartnerId,
-                        AccountId = journal.DefaultDebitAccount.Id,
-                        Account = journal.DefaultDebitAccount,
-                        CompanyId = self.CompanyId,
-                    },
-                    new AccountMoveLine
-                    {
-                        Debit = 0,
-                        Credit = balance,
-                        PartnerId = self.PartnerId,
-                        AccountId = account.Id,
-                        Account = account,
-                        CompanyId = self.CompanyId,
-                    },
-                }
             };
 
-            return move;
+            var lines = new List<AccountMoveLine>()
+            {
+                new AccountMoveLine
+                {
+                    Name = self.Name,
+                    Debit = balance,
+                    Credit = 0,
+                    PartnerId = self.PartnerId,
+                    AccountId = journal.DefaultDebitAccount.Id,
+                    Account = journal.DefaultDebitAccount,
+                    CompanyId = self.CompanyId,
+                    Move = move_vals,
+                },
+                new AccountMoveLine
+                {
+                    Name = self.Name,
+                    Debit = 0,
+                    Credit = balance,
+                    PartnerId = self.PartnerId,
+                    AccountId = account.Id,
+                    Account = account,
+                    CompanyId = self.CompanyId,
+                    Move = move_vals,
+                },
+            };
+
+            move_vals.Lines = lines;
+
+            return move_vals;
         }
 
         public async Task ButtonCancel(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.OrderLines)
-                .Include("OrderLines.MoveLines")
-                .ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
+            var move_ids = self.Where(x => x.AccountMoveId.HasValue).Select(x => x.AccountMoveId.Value).ToList();
             foreach (var labo in self)
             {
                 if (labo.DateReceipt.HasValue || labo.DateExport.HasValue)
                     throw new Exception("Phiếu Labo đã nhận từ NCC Labo hoặc đã xuất cho khách hàng không thể hủy phiếu");
+                labo.AccountMoveId = null;
+                labo.State = "draft";
             }
 
-            var move_ids = new List<Guid>().AsEnumerable();
-            foreach (var order in self)
-                move_ids = move_ids.Union(order.OrderLines.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList());
+            await UpdateAsync(self);
 
             if (move_ids.Any())
             {
                 var moveObj = GetService<IAccountMoveService>();
                 await moveObj.ButtonDraft(move_ids);
-
                 await moveObj.Unlink(move_ids);
             }
-
-            foreach (var order in self)
-            {
-                foreach (var line in order.OrderLines)
-                    line.State = "draft";
-
-                order.State = "draft";
-            }
-
-            var lbLineObj = GetService<ILaboOrderLineService>();
-            lbLineObj._ComputeQtyInvoiced(self.SelectMany(x => x.OrderLines));
-
-            await UpdateAsync(self);
         }
 
         public async Task ActionCancelReceipt(IEnumerable<Guid> ids)
