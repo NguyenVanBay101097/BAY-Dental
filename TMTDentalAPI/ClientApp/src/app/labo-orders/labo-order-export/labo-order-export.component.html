@@ -17,7 +17,7 @@
                     <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                         (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown>
-                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
+                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo"
                         (searchChange)="onDateSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
                 </div>
@@ -38,12 +38,6 @@
         </div>
         <div class="o_cp_right">        
             <div class="o_search_options">
-                <!-- <app-tai-date-range-filter-dropdown title="Ngày gửi" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
-                    (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown> -->
-                <!-- <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="datePlannedFrom"
-                    [dateTo]="datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
-                </app-tai-date-range-filter-dropdown> -->
     
             </div>
         </div>
@@ -56,55 +50,55 @@
         <div *kendoGridDetailTemplate="let dataItem">
             <app-labo-order-detail-list [item]="dataItem" [state]="stateFilter"></app-labo-order-detail-list> 
         </div>
-        <kendo-grid-column field="laboNCCLabo" title="NCC Labo" width="100">
+        <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.orderNCCLabo.name }}
+                {{dataItem.partnerDisplayName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderName" title="Phiếu điều trị" width="100">
+        <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>               
+                [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>               
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="laboName" title="Phiếu Labo" width="100">
+        <kendo-grid-column field="name" title="Phiếu Labo" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.laboName}}
+                {{dataItem.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="laboName" title="Loại phục hình" width="120">
+        <kendo-grid-column field="productName" title="Loại phục hình" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.laboName}}
+                {{dataItem.productName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderPartner" title="Khách hàng" width="100">
+        <kendo-grid-column field="customerName" title="Khách hàng" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.orderPartner.name }}
+                {{dataItem.customerName }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Date" title="Ngày nhận thực tế" width="120">
+        <kendo-grid-column field="dateReceipt" title="Ngày nhận thực tế" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date: 'shortDate'}}
+                {{dataItem.dateReceipt | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderPartner" title="Mã bảo hành" width="100">
+        <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.orderPartner.name }}
+                {{dataItem.warrantyCode}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Date" title="Hạn bảo hành" width="120">
+        <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date: 'shortDate'}}
+                {{dataItem.warrantyPeriod | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Date" title="Ngày xuất" width="120">
+        <kendo-grid-column field="dateExport" title="Ngày xuất" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date: 'shortDate'}}
+                {{dataItem.dateExport | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderPartner" title="Trạng thái" width="100">
+        <kendo-grid-column field="state" title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.orderPartner.name }}
+                {{getState(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>       
         <kendo-grid-column field="id" width="80">

@@ -52,7 +52,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public string Search { get; set; }
 
-        public DateTime? DateExport { get; set; }
+        public DateTime? DateExportFrom { get; set; }
+
+        public DateTime? DateExportTo { get; set; }
 
         /// <summary>
         /// danhan
