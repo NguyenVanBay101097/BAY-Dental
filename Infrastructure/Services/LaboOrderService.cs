@@ -109,41 +109,48 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<LaboOrderBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val)
+        public async Task<PagedResult2<LaboOrderReceiptBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val)
         {
-            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            var query = SearchQuery(x => x.State == "confirmed");
+
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.SaleOrderLine.Order.Name.Contains(val.Search)));
+                x.SaleOrderLine.Order.Name.Contains(val.Search));
+
             var now = DateTime.Now;
+
             if (!string.IsNullOrEmpty(val.State))
             {
                 if (val.State == "trehan")
                 {
-                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value));
+                    query = query.Where(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value);
                 }
                 else if (val.State == "chonhan")
                 {
-                    spec = spec.And(new InitialSpecification<LaboOrder>(x => (x.DatePlanned.HasValue && now < x.DatePlanned.Value) || !x.DatePlanned.HasValue));
+                    query = query.Where(x => (x.DatePlanned.HasValue && now < x.DatePlanned.Value) || !x.DatePlanned.HasValue);
                 }
                 else if (val.State == "toihan")
                 {
-                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now == x.DatePlanned.Value));
+                    query = query.Where(x => x.DatePlanned.HasValue && now == x.DatePlanned.Value);
                 }
             }
 
-            spec = spec.And(new InitialSpecification<LaboOrder>(x => !x.DateReceipt.HasValue));
-
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
-
             var totalItems = await query.CountAsync();
-            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+
+            query = query.Include(x => x.Partner)
+                .Include(x => x.SaleOrderLine.Order);
+
+            query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<LaboOrderReceiptBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<LaboOrderReceiptBasic>>(items)
             };
+
+            return paged;
         }
 
         public async Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val)
@@ -386,7 +393,7 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrderLine)
                 .Include(x => x.LaboOrderProductRel)
                 .Include(x => x.LaboOrderToothRel)
-                .Include("SaleOrderLine.Product").FirstOrDefaultAsync(); 
+                .Include("SaleOrderLine.Product").FirstOrDefaultAsync();
 
             labo = _mapper.Map(val, labo);
             labo.LaboOrderProductRel.Clear();
@@ -501,6 +508,7 @@ namespace Infrastructure.Services
                         PartnerId = self.PartnerId,
                         AccountId = journal.DefaultDebitAccount.Id,
                         Account = journal.DefaultDebitAccount,
+                        CompanyId = self.CompanyId,
                     },
                     new AccountMoveLine
                     {
@@ -509,6 +517,7 @@ namespace Infrastructure.Services
                         PartnerId = self.PartnerId,
                         AccountId = account.Id,
                         Account = account,
+                        CompanyId = self.CompanyId,
                     },
                 }
             };

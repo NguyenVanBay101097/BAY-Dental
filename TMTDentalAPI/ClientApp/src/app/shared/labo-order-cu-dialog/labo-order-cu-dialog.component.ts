@@ -370,6 +370,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.id = res.id;
       }
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
+        this.activeModal.close();
         this.notify('success', 'Lưu thành công');
       });
     });

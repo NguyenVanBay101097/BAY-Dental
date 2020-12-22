@@ -205,25 +205,9 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
         {
-            var query = _laboOrderService.SearchQuery();
 
-            var totalItems = await query.CountAsync();
-
-            query = query.Include(x => x.Partner)
-                .Include(x => x.SaleOrderLine.Order);
-
-            query.OrderByDescending(x => x.DateCreated);
-
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
-
-            var paged = new PagedResult2<LaboOrderReceiptBasic>(totalItems, val.Offset, val.Limit)
-            {
-                Items = _mapper.Map<IEnumerable<LaboOrderReceiptBasic>>(items)
-            };
-
-            return Ok(paged);
-            //var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
-            //return Ok(res);
+            var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
+            return Ok(res);
         }
 
         [HttpGet("[action]")]
