@@ -98,7 +98,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{stateGet(dataItem.state)}}
+                {{getState(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>       
         <kendo-grid-column field="id" width="80">

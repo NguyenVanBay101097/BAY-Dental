@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { LaboOrderExportDialogComponent } from '../labo-order-export-dialog/labo-order-export-dialog.component';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -30,13 +32,14 @@ export class LaboOrderExportComponent implements OnInit {
 
   stateFilterOptions: TmtOptionSelect[] = [
     { text: 'Tất cả', value: '' },
-    { text: 'Đơn hàng', value: 'confirm' },
-    { text: 'Nháp', value: 'draft' }
+    { text: 'Đã xuất', value: 'daxuat' },
+    { text: 'Chưa xuất', value: 'chuaxuat' }
   ];
 
   constructor(
     private laboOrderService: LaboOrderService, 
-    private intlService: IntlService
+    private intlService: IntlService, 
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -61,14 +64,14 @@ export class LaboOrderExportComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  stateGet(state) {
+  getState(state) {
     switch (state) {
-      case 'draft':
-        return 'Nháp';
-      case 'confirmed':
-        return 'Đã xác nhận';
+      case 'daxuat':
+        return 'Đã xuất';
+      case 'chuaxuat':
+        return 'Chưa xuất';
       default:
-        return 'Nháp';
+        return 'Chưa xuất';
     }
   }
 
@@ -79,6 +82,7 @@ export class LaboOrderExportComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.state = this.stateFilter || '';
+    val.dateExport = this.intlService.formatDate(new Date(), 'd', 'en-US');
     if (this.dateExportFrom) {
       val.dateExportFrom = this.intlService.formatDate(this.dateExportFrom, 'd', 'en-US');
     }
@@ -98,5 +102,13 @@ export class LaboOrderExportComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  editItem(item) {
+    const modalRef = this.modalService.open(LaboOrderExportDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.labo = item;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, er => { });
   }
 }

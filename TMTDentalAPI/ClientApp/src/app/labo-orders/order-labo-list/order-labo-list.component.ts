@@ -50,7 +50,6 @@ export class OrderLaboListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.state = this.stateFilter || '';
-
     this.laboOrderService.getOrderLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

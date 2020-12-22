@@ -106,6 +106,7 @@ export class ExportLaboPaged{
     state: string;
     dateExportFrom: string;
     dateExportTo: string;
+    dateExport: string;
 }
 
 @Injectable({ providedIn: 'root' })
