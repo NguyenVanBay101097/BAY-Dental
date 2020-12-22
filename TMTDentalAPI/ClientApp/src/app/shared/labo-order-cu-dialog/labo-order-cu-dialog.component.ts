@@ -112,7 +112,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get laboOrderProducts() { return this.myForm.get('laboOrderProducts').value; }
   get imagesFA() { return this.myForm.get('images') as FormArray; }
   get quantityFC() { return this.myForm.get('quantity'); }
-  get priceUnitFC() { return this.myForm.get('priceUnit').value; }
+  get priceUnitFC() { return this.myForm.get('priceUnit'); }
   get amountTotalFC() { return this.myForm.get('amountTotal').value; }
 
 
@@ -365,43 +365,5 @@ export class LaboOrderCuDialogComponent implements OnInit {
       this.activeModal.close(true);
     }); 
   }
-
-  // addImages(e) {
-  //   var file_node = e.target;
-  //   var count = file_node.files.length;
-  //   // var formData = new FormData();
-  //   // formData.append('partnerId', this.partnerId);
-  //   for (let i = 0; i < count; i++) {
-  //     var file = file_node.files[i];
-  //     // formData.append('files', file);
-  //     var filereader = new FileReader();
-  //     filereader.readAsDataURL(file);
-  //   }
-  //   // this.partnerService.uploadPartnerImage(formData).subscribe(() => {
-  //   //   this.getImageIds();
-  //   // }, (err) => {
-  //   //   this.showErrorService.show(err);
-  //   // });
-  // }
-
-  // deleteImages(index, event) {
-  //   var item = this.imagesPreview[index];
-  //   event.stopPropagation();
-  //   let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-  //   modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
-
-  //   modalRef.result.then(() => {
-  //     // this.partnerService.deleteParnerImage(item.id).subscribe(
-  //     //   () => {
-  //     //     this.loadData();
-  //     //   })
-  //   })
-  // }
-
-  // viewImage(laboImage: LaboImageBasic) {
-  //   var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-  //   modalRef.componentInstance.partnerImages = this.imagesPreview;
-  //   modalRef.componentInstance.partnerImageSelected = laboImage;
-  // }
 
 }

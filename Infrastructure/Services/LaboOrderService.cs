@@ -524,6 +524,12 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderLines)
                 .Include("OrderLines.MoveLines")
                 .ToListAsync();
+
+            foreach(var labo in self)
+            {
+                if (labo.DateReceipt.HasValue || labo.DateExport.HasValue)
+                    throw new Exception("Phiếu Labo đã nhận từ NCC Labo hoặc đã xuất cho khách hàng không thể hủy phiếu");
+            }
            
             var move_ids = new List<Guid>().AsEnumerable();
             foreach (var order in self)
@@ -542,7 +548,7 @@ namespace Infrastructure.Services
                 foreach (var line in order.OrderLines)
                     line.State = "draft";
 
-                //order.
+                order.State = "draft";
             }
 
             var lbLineObj = GetService<ILaboOrderLineService>();
@@ -593,11 +599,13 @@ namespace Infrastructure.Services
             if (val.SaleOrderLineId.HasValue)
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
-
+                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
                 var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
                     .Select(x => x.Tooth).ToListAsync();
                 res.Teeth = _mapper.Map<IEnumerable<ToothBasic>>(teeth);
+                res.SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine);
             }
+
             return res;
         }
 
@@ -694,7 +702,6 @@ namespace Infrastructure.Services
                .FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderPrintVM>(order);
             var partnerObj = GetService<IPartnerService>();
-            res.CompanyAddress = partnerObj.GetFormatAddress(order.Company.Partner);
             res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
             return res;
         }

@@ -6,6 +6,19 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
         <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <h3>{{laboOrder?.name}}</h3>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="true" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': state === 'confirmed', 'btn-secondary': state !== 'confirmed'}" type="button">
+                        Đơn hàng
+                    </button>
+                    <button [disabled]="true" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': state === 'draft', 'btn-secondary': state !== 'draft'}" type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
             <div class="o_form_sheet">
                 <div class="o_group my-0">
                     <table class="o_group o_inner_group o_group_col_6">
@@ -86,7 +99,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>{{saleOrderLine?.product.firm}}</span>
+                                    <span>{{saleOrderLine?.product?.firm}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -96,7 +109,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <button *ngFor="let tooth of saleOrderLine?.teeth" [className]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
+                                    <button *ngFor="let tooth of saleOrderLine?.teeth" (click)="onToothSelected(tooth)" [className]="isToothSelected(tooth)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                 </td>
                             </tr>
                             <tr>
@@ -289,7 +302,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <button *ngFor="let attach of attachs" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 btn-light">
+                                    <button *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1">
                                         {{attach.name}}
                                     </button>
                                 </td>
@@ -316,7 +329,7 @@
                                     <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
                                         <div class="o_image_box">
                                             <div class="o_attachment_image" id="{{img.value.name}}">
-                                                <img width="100%" [src]="img.value.UploadId + '?width=240&height=240)'" alt="">
+                                                <img width="100%" [src]="img.value.url + '?width=240&height=240)'" alt="">
                                             </div>
                                             <div class="o_image_overlay o_attachment_view">
                                                 <span *ngIf="true" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.name}}"></span>
@@ -348,7 +361,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
+    <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
+    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>
