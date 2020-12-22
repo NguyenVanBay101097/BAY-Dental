@@ -4,6 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -18,7 +19,8 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal) { }
+  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,
+    private printService: PrintService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -84,6 +86,12 @@ export class LaboOrderDetailListComponent implements OnInit {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
       });
+    });
+  }
+
+  printLabo(item: any) {
+    this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 

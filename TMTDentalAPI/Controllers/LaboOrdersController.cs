@@ -148,10 +148,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var order = await _laboOrderService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Company).Include(x => x.Company.Partner).Include(x => x.Product).Include(x => x.LaboFinishLine)
-                .Include(x => x.SaleOrderLine).Include(x => x.SaleOrderLine.Product).Include(x => x.SaleOrderLine.Order)
-                .Include(x => x.SaleOrderLine.Employee).Include(x => x.Partner).Include(x => x.Customer)
-                .Include(x => x.LaboOrderToothRel).Include("LaboOrderToothRel.Tooth")
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Product)
+                .Include(x => x.LaboFinishLine)
+                .Include(x => x.SaleOrderLine.Product)
+                .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.SaleOrderLine.Employee)
+                .Include(x => x.Partner)
+                .Include(x => x.Customer)
+                .Include("LaboOrderToothRel.Tooth")
                 .FirstOrDefaultAsync();
 
             if (order == null)

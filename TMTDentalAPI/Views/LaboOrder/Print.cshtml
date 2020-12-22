@@ -2,6 +2,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutA5.cshtml";
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var now = DateTime.Now;
 }
 
 <div class="o_form_view">
@@ -26,71 +27,75 @@
             }
         </div>
     </div>
-    <div class="text-center">
-        <h2>ĐẶT HÀNG LABO</h2>
+    <div class="text-center mb-3">
+        <h3 class="mb-0">ĐẶT HÀNG LABO</h3>
+        <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
+        <div class="font-weight-600">Số: @Model.Name</div>
     </div>
-    <div class="o_group mb-0">
-        <h5>THÔNG TIN CHUNG</h5>
-        <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Bác sĩ
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Số phiếu điều trị
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Order.Name)</td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Khách hàng
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            NCC Labo
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Ngày gửi
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.DateOrder.ToString("dd/MM/yyyy"))</td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Ngày nhận dự kiến
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
-                </tr>
-            </tbody>
-        </table>
+    <div>
+        <h5 class="mb-0">THÔNG TIN CHUNG</h5>
+        <div class="row">
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Bác sĩ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Số phiếu điều trị
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Order.Name)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                NCC Labo
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày gửi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.DateOrder.ToString("dd/MM/yyyy"))</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày nhận dự kiến
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="row">
         <div class="col-6">
-            <h5>CHI TIẾT PHIẾU</h5>
+            <h5 class="mb-0">CHI TIẾT PHIẾU</h5>
             <table class="o_group o_inner_group">
                 <tbody>
                     <tr>
@@ -208,44 +213,46 @@
             </table>
         </div>
     </div>
-    <div class="o_group mb-0">
-        <h5>THÔNG TIN BẢO HÀNH</h5>
-        <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Mã bảo hành
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.WarrantyCode)</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="o_group o_inner_group o_group_col_6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Hạn bảo hành
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">@(Model.WarrantyPeriod.HasValue ? Model.WarrantyPeriod.Value.ToString("dd/MM/yyyy") : "")</td>
-                </tr>
-            </tbody>
-        </table>
+    <div>
+        <h5 class="mb-0">THÔNG TIN BẢO HÀNH</h5>
+        <div class="row">
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Mã bảo hành
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.WarrantyCode)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Hạn bảo hành
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.WarrantyPeriod.HasValue ? Model.WarrantyPeriod.Value.ToString("dd/MM/yyyy") : "")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="row">
         <div class="col col-sm">
         </div>
         <div class="col col-sm">
-            <div class="text-center font-weight-600">
-                Người đặt hàng <br />
+            <div class="text-center">
+                <span class="font-weight-600">Người đặt hàng</span> <br />
                 <i>(Ký, họ tên)</i> <br/>
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span>@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</span>
+                <span class="font-weight-600">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</span>
             </div>
         </div>
     </div>
