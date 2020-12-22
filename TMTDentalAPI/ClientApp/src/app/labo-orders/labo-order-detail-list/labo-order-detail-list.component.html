@@ -14,17 +14,20 @@
                 </ng-template>
             </kendo-grid-column> -->
             <kendo-grid-column field="name" title="Số phiếu" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>               
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="NCC Labo" width="150">
             </kendo-grid-column>
             <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.dateOrder | date : 'short'}}
+                    {{dataItem.dateOrder | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="datePlanned" title="Ngày nhận dự kiến" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'short'}}
+                    {{dataItem.datePlanned | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="teeth" title="Răng" width="120">

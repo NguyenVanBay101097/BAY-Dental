@@ -49,7 +49,8 @@ import { LaboOrderReceiptDialogComponent } from './labo-order-receipt-dialog/lab
   entryComponents: [
     LaboOrderQuickCreateDialogComponent,
     LaboOrderListDialogComponent,
-    LaboOrderStatisticUpdateDialogComponent
+    LaboOrderStatisticUpdateDialogComponent,
+    LaboOrderReceiptDialogComponent
   ]
 })
 export class LaboOrdersModule { }

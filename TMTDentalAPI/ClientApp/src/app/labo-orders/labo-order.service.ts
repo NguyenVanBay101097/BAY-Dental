@@ -164,8 +164,8 @@ export class LaboOrderService {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
-    updateReceiptLabo(id: string, val: any){
-        return this.http.patch(this.baseApi + this.apiUrl + "/" + id, val);
+    updateReceiptLabo( val: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateOrderLabo" , val);
     }
 
 }

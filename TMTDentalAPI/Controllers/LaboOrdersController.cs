@@ -217,13 +217,25 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<LaboOrder> patchDoc)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateOrderLabo(LaboOrderReceiptSave val)
         {
-            var labo = await _laboOrderService.GetByIdAsync(id);
-            patchDoc.ApplyTo(labo, ModelState);
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateReceipt = val.DateReceipt;
+            labo.WarrantyCode = val.WarrantyCode;
+            labo.WarrantyPeriod = val.WarrantyPeriod;
             await _laboOrderService.UpdateAsync(labo);
+            return NoContent();
 
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateExportLabo(ExportLaboOrderSave val)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateExport = val.DateExport.HasValue ? val.DateExport : null;
+            await _laboOrderService.UpdateAsync(labo);
             return NoContent();
         }
     }
