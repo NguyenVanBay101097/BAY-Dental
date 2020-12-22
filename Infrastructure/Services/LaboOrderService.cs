@@ -599,11 +599,11 @@ namespace Infrastructure.Services
             if (val.SaleOrderLineId.HasValue)
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
+                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).Include(x=>x.Product).FirstOrDefaultAsync();
                 var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
                     .Select(x => x.Tooth).ToListAsync();
-                res.Teeth = _mapper.Map<IEnumerable<ToothBasic>>(teeth);
                 res.SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine);
+                res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
             }
 
             return res;

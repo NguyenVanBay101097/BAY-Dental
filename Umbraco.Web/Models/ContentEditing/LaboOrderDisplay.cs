@@ -92,6 +92,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLineBasic SaleOrderLine { get; set; }
 
+        public string State { get; set; }
+
         /// <summary>
         /// Mã bảo hành
         /// </summary>
