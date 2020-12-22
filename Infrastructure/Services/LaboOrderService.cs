@@ -117,20 +117,19 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.SaleOrderLine.Order.Name.Contains(val.Search)));
             var now = DateTime.Now;
-
             if (!string.IsNullOrEmpty(val.State))
             {
-                if (val.State == "trehan")
+                if(val.State == "trehan")
                 {
                     spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value));
                 }
-                else if (val.State == "chonhan")
+                else if(val.State == "chonhan")
                 {
-                    spec = spec.And(new InitialSpecification<LaboOrder>(x => (x.DatePlanned.HasValue && now < x.DatePlanned.Value) || !x.DatePlanned.HasValue));
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => (x.DatePlanned.HasValue && now  < x.DatePlanned.Value) || !x.DatePlanned.HasValue));
                 }
                 else if (val.State == "toihan")
                 {
-                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue && now == x.DatePlanned.Value));
+                    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned.HasValue &&  now == x.DatePlanned.Value));
                 }
             }
 
@@ -164,7 +163,7 @@ namespace Infrastructure.Services
                 else if (val.State == "chuaxuat")
                 {
                     spec = spec.And(new InitialSpecification<LaboOrder>(x => !x.DateExport.HasValue));
-                }
+                }              
             }
 
             if (val.DateExport.HasValue)
@@ -270,32 +269,12 @@ namespace Infrastructure.Services
 
         public async Task<LaboOrderDisplay> GetLaboDisplay(Guid id)
         {
-            var attachmentObj = GetService<IIrAttachmentService>();
-            //var res = await SearchQuery(x => x.Id == id).Select(x => new LaboOrderDisplay
-            //{
-            //    Id = x.Id,
-            //    AmountTotal = x.AmountTotal,
-            //    DateOrder = x.DateOrder,
-            //    DatePlanned = x.DatePlanned,
-            //    DotKhamId = x.DotKhamId,
-            //    Name = x.Name,
-            //    PartnerId = x.PartnerId,
-            //    PartnerRef = x.PartnerRef,
-            //    State = x.State
-            //}).FirstOrDefaultAsync();
-
-            //var partnerObj = GetService<IPartnerService>();
-            //res.Partner = await partnerObj.SearchQuery(x => x.Id == res.PartnerId).Select(x => new PartnerSimple
-            //{
-            //    Id = x.Id,
-            //    Name = x.Name
-            //}).FirstOrDefaultAsync();
+            var attachmentObj = GetService<IIrAttachmentService>();       
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
-                .Include(x => x.LaboBridge)
-                .Include(x => x.LaboBiteJoint)
-                .Include(x => x.LaboFinishLine)
+                .Include(x=>x.LaboBridge)
+                .Include(x=>x.LaboBiteJoint)
+                .Include(x=>x.LaboFinishLine)               
                 .Include(x => x.Product)
-                .Include("SaleOrderLine.Teeth")
                 .Include("SaleOrderLine.Product")
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
@@ -318,7 +297,7 @@ namespace Infrastructure.Services
             ///thêm danh sach gửi kèm
             if (val.LaboOrderProducts.Any())
             {
-                foreach (var attach in val.LaboOrderProducts)
+                foreach(var attach in val.LaboOrderProducts)
                 {
                     labo.LaboOrderProductRel.Add(new LaboOrderProductRel()
                     {
@@ -339,7 +318,7 @@ namespace Infrastructure.Services
 
 
 
-        private async Task UploadAttachment(LaboOrderSave val, LaboOrder labo)
+        private async Task UploadAttachment(LaboOrderSave val , LaboOrder labo)
         {
             var attachmentObj = GetService<IIrAttachmentService>();
             var imageslabo = await attachmentObj.GetAttachments("labo", labo.Id);
@@ -366,13 +345,13 @@ namespace Infrastructure.Services
 
                     listadd.Add(image);
                 }
-
+               
             }
 
             await attachmentObj.CreateAsync(listadd);
         }
 
-
+     
 
         public void _AmountAll(IEnumerable<LaboOrder> orders)
         {
@@ -393,22 +372,18 @@ namespace Infrastructure.Services
         {
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.OrderLines)
                 .Include("OrderLines.LaboOrderLineToothRels")
-                .Include(x => x.LaboOrderProductRel)
+                .Include(x=>x.LaboOrderProductRel)
                 .FirstOrDefaultAsync();
             labo = _mapper.Map(val, labo);
-            labo.CompanyId = CompanyId;
-            labo.LaboOrderToothRel.Clear();
-            foreach (var tooth in val.Teeth)
-            {
-                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
-            }
-            labo.AmountTotal = labo.PriceUnit * labo.Quantity;
+            //labo.CompanyId = CompanyId;        
+           // labo.AmountTotal = labo.PriceUnit * labo.Quantity;
             await UpdateAsync(labo);
 
             ///update image
             await UploadAttachment(val, labo);
         }
 
+    
 
 
         public async Task<IEnumerable<AccountMove>> _CreateInvoices(IEnumerable<LaboOrder> self)
@@ -526,12 +501,12 @@ namespace Infrastructure.Services
                 .Include("OrderLines.MoveLines")
                 .ToListAsync();
 
-            foreach (var labo in self)
+            foreach(var labo in self)
             {
                 if (labo.DateReceipt.HasValue || labo.DateExport.HasValue)
                     throw new Exception("Phiếu Labo đã nhận từ NCC Labo hoặc đã xuất cho khách hàng không thể hủy phiếu");
             }
-
+           
             var move_ids = new List<Guid>().AsEnumerable();
             foreach (var order in self)
                 move_ids = move_ids.Union(order.OrderLines.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList());
@@ -600,11 +575,13 @@ namespace Infrastructure.Services
             if (val.SaleOrderLineId.HasValue)
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).Include(x => x.Product).FirstOrDefaultAsync();
+                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).Include(x=>x.Product).FirstOrDefaultAsync();
                 var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
                     .Select(x => x.Tooth).ToListAsync();
                 res.SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine);
                 res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                res.State = "draft";
+                res.SaleOrderLineId = val.SaleOrderLineId;
             }
 
             return res;
@@ -617,9 +594,9 @@ namespace Infrastructure.Services
             foreach (var labo in self)
             {
                 if (!states.Contains(labo.State))
-                    throw new Exception("Chỉ có thể xóa phiếu Labo ở trạng thái nháp");
-            }
-
+                    throw new Exception("Chỉ có thể xóa phiếu Labo ở trạng thái nháp");            
+            }  
+            
             await DeleteAsync(self);
         }
 
