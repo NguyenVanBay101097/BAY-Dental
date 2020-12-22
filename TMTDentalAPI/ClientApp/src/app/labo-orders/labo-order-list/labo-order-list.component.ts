@@ -40,6 +40,8 @@ export class LaboOrderListComponent implements OnInit {
     { text: 'Nháp', value: 'draft' }
   ];
 
+  laboStatusFilter: string = '';
+
 
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
@@ -107,9 +109,10 @@ export class LaboOrderListComponent implements OnInit {
     this.loading = true;
     var val = new SaleOrderLinesPaged();
     val.limit = this.limit;
-    val.Offset = this.skip;
+    val.offset = this.skip;
     val.isLabo = true;
     val.search = this.search || '';   
+    val.laboStatus = this.laboStatusFilter;
     this.saleOrderLineService.getListLineIsLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -122,6 +125,11 @@ export class LaboOrderListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  onChangeLaboStatus(event) {
+    this.laboStatusFilter = event.target.value;
+    this.loadDataFromApi();
   }
 
   pageChange(event: PageChangeEvent): void {
