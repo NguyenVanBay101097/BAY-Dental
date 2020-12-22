@@ -71,9 +71,9 @@
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="120">
+        <kendo-grid-column title="Loại phục hình" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrderLineName}}
+                {{dataItem.saleOrderLine.name}}
             </ng-template>
         </kendo-grid-column>
         <!-- <kendo-grid-column field="teeth" title="Răng" width="120">
@@ -81,7 +81,7 @@
                 {{GetTeeth(dataItem)}}
             </ng-template>
         </kendo-grid-column> -->
-        </kendo-grid-column>      
+        <!-- </kendo-grid-column>       -->
         <kendo-grid-column field="quantity" title="Số lượng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}

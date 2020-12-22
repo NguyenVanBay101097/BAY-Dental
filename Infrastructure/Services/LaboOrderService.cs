@@ -277,11 +277,14 @@ namespace Infrastructure.Services
                 .Include(x => x.Product)
                 .Include(x => x.SaleOrderLine)
                 .Include(x => x.LaboOrderProductRel)
+                .Include(x => x.LaboOrderToothRel)
                 .Include("SaleOrderLine.Product").FirstOrDefaultAsync();
+
             var res = _mapper.Map<LaboOrderDisplay>(labo);
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == labo.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
                 .Select(x => x.Tooth).ToListAsync();
+            res.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(labo.LaboOrderToothRel.Select(x => x.Tooth).ToList());
             res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
             var attachments = await attachmentObj.GetAttachments("labo", res.Id);
             res.Images = _mapper.Map<IEnumerable<IrAttachmentBasic>>(attachments);
