@@ -17,7 +17,7 @@
                     <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                         (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown>
-                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
+                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo"
                         (searchChange)="onDateSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
                 </div>
@@ -38,12 +38,6 @@
         </div>
         <div class="o_cp_right">        
             <div class="o_search_options">
-                <!-- <app-tai-date-range-filter-dropdown title="Ngày gửi" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
-                    (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown> -->
-                <!-- <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="datePlannedFrom"
-                    [dateTo]="datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
-                </app-tai-date-range-filter-dropdown> -->
     
             </div>
         </div>
