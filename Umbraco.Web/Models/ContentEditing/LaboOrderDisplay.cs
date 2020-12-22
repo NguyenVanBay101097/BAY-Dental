@@ -90,7 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceUnit { get; set; }
 
         public Guid? SaleOrderLineId { get; set; }
-        public SaleOrderLineBasic SaleOrderLine { get; set; }
+        public SaleOrderLineDisplay SaleOrderLine { get; set; }
 
         public string State { get; set; }
 

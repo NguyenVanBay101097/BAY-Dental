@@ -71,8 +71,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var labo = await _laboOrderService.CreateLabo(val);
             _unitOfWork.Commit();
-           // val.Id = labo.Id;
-            return Ok(val);
+            return Ok(_mapper.Map<LaboOrderDisplay>(labo));
         }
 
         [HttpPut("{id}")]
@@ -206,8 +205,25 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
         {
-            var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
-            return Ok(res);
+            var query = _laboOrderService.SearchQuery();
+
+            var totalItems = await query.CountAsync();
+
+            query = query.Include(x => x.Partner)
+                .Include(x => x.SaleOrderLine.Order);
+
+            query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<LaboOrderReceiptBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<LaboOrderReceiptBasic>>(items)
+            };
+
+            return Ok(paged);
+            //var res = await _laboOrderService.GetPagedOrderLaboAsync(val);
+            //return Ok(res);
         }
 
         [HttpGet("[action]")]
@@ -217,13 +233,25 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(Guid id, [FromBody] JsonPatchDocument<LaboOrder> patchDoc)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateOrderLabo(LaboOrderReceiptSave val)
         {
-            var labo = await _laboOrderService.GetByIdAsync(id);
-            patchDoc.ApplyTo(labo, ModelState);
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateReceipt = val.DateReceipt;
+            labo.WarrantyCode = val.WarrantyCode;
+            labo.WarrantyPeriod = val.WarrantyPeriod;
             await _laboOrderService.UpdateAsync(labo);
+            return NoContent();
 
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateExportLabo(ExportLaboOrderSave val)
+        {
+            var labo = await _laboOrderService.GetByIdAsync(val.Id);
+            labo.DateExport = val.DateExport.HasValue ? val.DateExport : null;
+            await _laboOrderService.UpdateAsync(labo);
             return NoContent();
         }
     }

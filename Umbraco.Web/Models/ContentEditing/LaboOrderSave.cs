@@ -44,11 +44,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DateReceipt { get; set; }
 
-        /// <summary>
-        /// Ngày xuất labo 
-        /// 7 kêu trường này đặt tên như vậy
-        /// </summary>
-        public DateTime? DateExport { get; set; }
+  
 
         /// <summary>
         /// vật liệu
@@ -135,5 +131,34 @@ namespace Umbraco.Web.Models.ContentEditing
         /// list image for laboorder
         /// </summary>
         public IEnumerable<IrAttachmentSave> Images = new List<IrAttachmentSave>();
+    }
+
+    public class LaboOrderReceiptSave
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Ngày nhận thực tế
+        /// </summary>
+        public DateTime? DateReceipt { get; set; }
+
+        /// <summary>
+        /// Mã bảo hành
+        /// </summary>
+        public string WarrantyCode { get; set; }
+
+        /// <summary>
+        /// Hạn bảo hành
+        /// </summary>
+        public DateTime? WarrantyPeriod { get; set; }
+    }
+
+    public class ExportLaboOrderSave
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Ngày xuất labo 
+        /// 7 kêu trường này đặt tên như vậy
+        /// </summary>
+        public DateTime? DateExport { get; set; }
     }
 }

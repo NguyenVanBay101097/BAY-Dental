@@ -38,9 +38,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="warrantyPeriod"></kendo-datepicker>
-                                    <div>
-                                        <div class="mb-1">
-                                            <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
+                                    <!-- <div>
+                                        <div class="mb-1">                                        
                                             <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" formControlName="warrantyPeriodType"
                                                     (change)="onChangeWarrantyPeriod($event.target.value)" id="1" [value]="3">
@@ -69,11 +68,11 @@
                                          
                                         </div>                     
                                     </div>
-                                    <div *ngIf="getWarrantyPeriodType === 'orther'">
+                                    <div *ngIf="getWarrantyPeriodType === 'orther'" class="mt-2">
                                         <kendo-numerictextbox style="width: 100%;" [min]="0" [max]="20" [spinners]="false" [autoCorrect]="true" 
                                         (valueChange)="onChangeCustomWarrantyPeriod($event.target.value)" formControlName="warrantyPeriodCustom" placeholder="Nhập số ..">
                                     </kendo-numerictextbox>
-                                    </div>
+                                    </div> -->
                                 </td>
                             </tr>       
                            

@@ -51,7 +51,8 @@ import { LaboOrderExportDialogComponent } from './labo-order-export-dialog/labo-
   entryComponents: [
     LaboOrderQuickCreateDialogComponent,
     LaboOrderListDialogComponent,
-    LaboOrderStatisticUpdateDialogComponent, 
+    LaboOrderStatisticUpdateDialogComponent,
+    LaboOrderReceiptDialogComponent,
     LaboOrderExportDialogComponent
   ]
 })

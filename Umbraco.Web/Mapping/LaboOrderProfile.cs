@@ -39,6 +39,7 @@ namespace Umbraco.Web.Mapping
               .ForMember(x => x.LaboFinishLine, x => x.Ignore());
 
             CreateMap<LaboOrder, LaboOrderPrintVM>();
+            CreateMap<LaboOrder, LaboOrderReceiptBasic>();
         }
     }
 }
