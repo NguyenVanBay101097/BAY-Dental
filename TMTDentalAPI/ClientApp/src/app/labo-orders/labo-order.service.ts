@@ -96,6 +96,15 @@ export class LaboImageBasic {
     url: string;
 }
 
+export class ExportLaboPaged{
+    limit: number;
+    offset: number;
+    search: string;
+    state: string;
+    dateExportFrom: string;
+    dateExportTo: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LaboOrderService {
     apiUrl = 'api/LaboOrders';
@@ -159,5 +168,9 @@ export class LaboOrderService {
 
     getOrderLabo(val: any): Observable<PagedResult2<any>>{
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getExportLabo(val: any): Observable<PagedResult2<any>>{
+        return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetExportLabo', { params: new HttpParams({ fromObject: val }) });
     }
 }
