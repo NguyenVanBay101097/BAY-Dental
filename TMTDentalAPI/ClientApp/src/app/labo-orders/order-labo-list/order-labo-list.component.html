@@ -6,20 +6,28 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo Nhà cung cấp, phiếu điều trị, phiếu labo"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input"
+                        placeholder="Tìm kiếm theo Nhà cung cấp, phiếu điều trị, phiếu labo" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
+                    <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
-                </app-tmt-option-select-dropdown>
+                </app-tmt-option-select-dropdown> -->
+                    <select class="form-control form-control-sm" (change)="onChangeLaboState($event)">
+                        <option value="">Trạng thái</option>
+                        <option value="trehan">trễ hạn</option>
+                        <option value="chonhan">Chờ nhận</option>
+                        <option value="toihan">Tới hạn</option>
+                    </select>
                 </div>
+
             </div>
-            <div class="o_cp_sidebar">  
+            <div class="o_cp_sidebar">
                 <!-- <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
                         <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -33,7 +41,7 @@
                 </div> -->
             </div>
         </div>
-        <div class="o_cp_right">        
+        <div class="o_cp_right">
             <div class="o_search_options">
                 <!-- <app-tai-date-range-filter-dropdown title="Ngày gửi" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
                     (searchChange)="onDateSearchChange($event)">
@@ -41,7 +49,7 @@
                 <!-- <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="datePlannedFrom"
                     [dateTo]="datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
                 </app-tai-date-range-filter-dropdown> -->
-    
+
             </div>
         </div>
     </div>
@@ -50,33 +58,33 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Phiếu điều trị" width="120">
+        <kendo-grid-column field="partner" title="NCC Labo" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.dateOrder | date : 'short'}}
+                {{dataItem.partner.displayName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Phiếu điều trị" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" [routerLink]="['/sale-orders/form']"
+                [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>     
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
-        </kendo-grid-column>     
-        <kendo-grid-column field="productName" title="Loại phục hình" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.productName}}
+                {{dataItem.saleOrderLineName}}
             </ng-template>
-        </kendo-grid-column>      
+        </kendo-grid-column>
         <!-- <kendo-grid-column field="teeth" title="Răng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{GetTeeth(dataItem)}}
             </ng-template>
         </kendo-grid-column> -->
+        </kendo-grid-column>      
         <kendo-grid-column field="quantity" title="Số lượng" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="priceUnit" title="Đơn giá" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.priceUnit | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
@@ -86,12 +94,12 @@
         </kendo-grid-column>
         <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.dateOrder | date : 'short'}}
+                {{dataItem.dateOrder | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="datePlanned" title="Ngày nhận dự kiến" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.datePlanned | date : 'short'}}
+                {{dataItem.datePlanned | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="100">
@@ -99,16 +107,14 @@
                 {{GetState(dataItem)}}
             </ng-template>
         </kendo-grid-column>
-       
+
         <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
+                Nhận labo
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success btn-sm" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <!-- <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                    <span class="far fa-trash-alt"></span></button> -->
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

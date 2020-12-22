@@ -91,4 +91,48 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string State { get; set; }
     }
+
+    public class LaboOrderReceiptBasic
+    {
+        public Guid Id { get; set; }
+
+        public PartnerBasic Partner { get; set; }
+
+        public PartnerBasic Customer { get; set; }
+
+        public SaleOrderLineBasic SaleOrderLine { get; set; }
+
+        public string Name { get; set; }
+
+        /// <summary>
+        /// ngày gửi
+        /// </summary>
+        public DateTime DateOrder { get; set; }
+
+
+        /// <summary>
+        /// ngày dự kiến
+        /// </summary>
+        public DateTime? DatePlanned { get; set; }
+
+        /// <summary>
+        /// Ngày nhận thực tế
+        /// </summary>
+        public DateTime? DateReceipt { get; set; }
+
+        /// <summary>
+        /// Ngày xuất labo 
+        /// 7 kêu trường này đặt tên như vậy
+        /// </summary>
+        public DateTime? DateExport { get; set; }
+
+        /// <summary>
+        /// số lượng
+        /// </summary>
+        public decimal Quantity { get; set; }
+
+        public decimal AmountTotal { get; set; }
+
+        public string State { get; set; }
+    }
 }

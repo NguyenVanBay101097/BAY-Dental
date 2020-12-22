@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -19,7 +20,7 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,
+  constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
     private printService: PrintService) { }
 
   ngOnInit() {
@@ -28,7 +29,6 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    debugger
     var val = new LaboOrderPaged();
     val.limit = this.limit;
     val.offset = this.skip;
@@ -53,7 +53,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  GetTeeth(val){
+  GetTeeth(val) {
     var list = [];
     if (val.teeth.length) {
       list.push(val.teeth.map(x => x.name).join(','));
@@ -71,11 +71,30 @@ export class LaboOrderDetailListComponent implements OnInit {
   }
 
   createItem() {
-   // this.router.navigate(['/labo-orders/form']);
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Tạo phiếu labo';
+    modalRef.componentInstance.saleOrderLineId = this.item.id;
+    modalRef.result.then(res => {
+      if (res) {
+        this.loadDataFromApi();
+      }
+    }, () => {
+    });
   }
 
-  editItem(item: LaboOrderBasic) {
-    //this.router.navigate(['/labo-orders/form'], { queryParams: { id: item.id } });
+  editItem(item) {
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.id = item.id;
+    debugger
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+
+    modalRef.result.then(res => {
+      if (res) {
+        this.loadDataFromApi();
+      }
+    }, () => {
+    });
   }
 
   deleteItem(item) {
