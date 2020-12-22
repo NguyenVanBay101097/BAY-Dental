@@ -51,13 +51,13 @@ namespace Infrastructure.Services
 
         public void UpdateTCareJobs(TCareConfig config)
         {
-
             var tenant = _tenant != null ? _tenant.Hostname : "localhost";
             RecurringJob.AddOrUpdate<TCareCampaignJobService>($"{tenant}-tcare-campaign-job", x => x.Run(tenant, null), $"{config.JobCampaignMinute} {config.JobCampaignHour} * * *", TimeZoneInfo.Local);
 
             var messagingMinute = config.JobMessagingMinute ?? 60;
             var messagingTimeSpan = TimeSpan.FromMinutes(messagingMinute);
-            RecurringJob.AddOrUpdate<TCareMessagingJobService>($"{tenant}-tcare-messaging-job", x => x.ProcessQueue(tenant), $"{(messagingTimeSpan.Minutes > 0 ? "*/" + messagingTimeSpan.Minutes : "*")} {(messagingTimeSpan.Hours > 0 ? "*/" + messagingTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
+            //RecurringJob.AddOrUpdate<TCareMessagingJobService>($"{tenant}-tcare-messaging-job", x => x.ProcessQueue(tenant), $"{(messagingTimeSpan.Minutes > 0 ? "*/" + messagingTimeSpan.Minutes : "*")} {(messagingTimeSpan.Hours > 0 ? "*/" + messagingTimeSpan.Hours : "*")} * * *", TimeZoneInfo.Local);
+            RecurringJob.RemoveIfExists($"{tenant}-tcare-messaging-job");
 
             var messageMinute = config.JobMessageMinute ?? 60;
             var messageTimeSpan = TimeSpan.FromMinutes(messageMinute);

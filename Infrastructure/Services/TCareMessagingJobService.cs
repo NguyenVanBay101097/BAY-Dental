@@ -172,14 +172,6 @@ namespace Infrastructure.Services
 
                     await context.AddRangeAsync(messages);
                     await context.SaveChangesAsync();
-
-                    var batchStr = BatchJob.StartNew(x =>
-                    {
-                        foreach (var message in messages)
-                        {
-                            x.Enqueue<TCareMessageJobService>(x => x.Send(message.Id, db));
-                        }
-                    });
                 }
 
                 messaging.State = "done";

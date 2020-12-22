@@ -74,7 +74,7 @@ export class FacebookComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
-    this.onGetPartnersList();
+    // this.onGetPartnersList();
   }
 
   loadData() {
