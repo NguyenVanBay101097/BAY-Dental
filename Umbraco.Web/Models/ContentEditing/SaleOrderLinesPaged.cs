@@ -33,8 +33,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsQuotation { get; set; }
 
         public string LaboState { get; set; }
+
+        /// <summary>
+        /// not_created: Chưa tạo
+        /// created: Đã tạo
+        /// </summary>
+        public string LaboStatus { get; set; }
     }
-
-    
-
 }
