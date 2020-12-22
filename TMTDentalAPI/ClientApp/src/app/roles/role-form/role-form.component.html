@@ -1,0 +1,59 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/roles']">Nhóm quyền</a>
+            </li>
+            <li class="active">
+                <span *ngIf="role">{{role.name}}</span>
+                <span *ngIf="!role">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="onSave()">Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view h-100" [formGroup]="roleForm">
+        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet m-2 mx-auto">
+                    <div class="oe_title">
+                        <label class="o_form_label oe_edit_only">Tên nhóm quyền</label>
+                        <h1>
+                            <input type="text" class="form-control" formControlName="name">
+                        </h1>
+                    </div>
+                    <div>
+                        <h4 class="o_horizontal_separator text-dark">Người dùng</h4>
+                        <div>
+                            <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm" class="btn btn-sm mr-2" [class.btn-success]="isUserSelected(user)" *ngFor="let user of userList" (click)="selectUser(user)">{{user.name}}</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="o_horizontal_separator text-dark">Phân quyền</h4>
+                        <div class="row">
+                            <div class="col-4" *ngFor="let group of featureGroups">
+                                <div hasGroups [groups]="group.groups">
+                                    <kendo-treeview kendoTreeViewExpandable [kendoTreeViewCheckable]="checkableSettings" (childrenLoaded)="onChildrenLoaded($event)" [checkBy]="'permission'" [(checkedKeys)]="checkedKeys" [isChecked]="isChecked" [nodes]="[group]" textField="name" [children]="fetchChildren"
+                                        [hasChildren]="hasChildren">
+                                    </kendo-treeview>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -99,12 +99,13 @@
                     <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                         <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
                             <div class="o_image_box">
-                                <div class="o_attachment_image" id="{{img.value.Name}}" [style.background-image]="'url('+ img.value.UploadId + '?width=240&height=240)'">
+                                <div class="o_attachment_image" id="{{img.value.Name}}">
+                                    <img width="100%" [src]="img.value.UploadId + '?width=240&height=240)'" alt="">
                                 </div>
                                 <div class="o_image_overlay o_attachment_view">
                                     <span *ngIf="editModeActive" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.Name}}"></span>
                                     <span class="o_attachment_title text-white">{{img.value.Name}}</span>
-                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{webContentApi}}/{{img.value.UploadId}}">
+                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.value.UploadId}}" target="_blank">
                                         <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                     </a>
                                 </div>

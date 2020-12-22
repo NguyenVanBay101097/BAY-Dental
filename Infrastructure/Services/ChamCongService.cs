@@ -890,7 +890,7 @@ namespace Infrastructure.Services
             var timekeepings = new List<ChamCong>();
             foreach (var employee in employees)
             {
-                var items = await AddTimeKeepings(employee, dates);
+                var items = await AddTimeKeepings(employee, dates ,val.From.Value , val.To.Value);
                 timekeepings.AddRange(items);
             }
 
@@ -903,11 +903,18 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<ChamCong>> AddTimeKeepings(Employee emp, IEnumerable<DateTime> dates)
+        public async Task<IEnumerable<ChamCong>> AddTimeKeepings(Employee emp, IEnumerable<DateTime> dates , DateTime? from , DateTime? to)
         {
             var timekeepings = new List<ChamCong>();
-            var empTimekeepings = await SearchQuery(x => x.EmployeeId == emp.Id).ToListAsync();
-            var empTimekeepingdict = empTimekeepings.ToDictionary(x => x.Date.Value, x => x);
+            var empTimekeepings = SearchQuery(x => x.EmployeeId == emp.Id && x.Date.HasValue && x.Date.Value != null);
+            if (from.HasValue)
+                empTimekeepings = empTimekeepings.Where(x => x.Date.Value >= from);
+            if (to.HasValue)
+                empTimekeepings = empTimekeepings.Where(x => x.Date.Value <= to);
+
+            var res = await empTimekeepings.ToListAsync();
+
+            var empTimekeepingdict = res.ToDictionary(x => x.Date.Value, x => x);
 
             foreach (var date in dates)
             {

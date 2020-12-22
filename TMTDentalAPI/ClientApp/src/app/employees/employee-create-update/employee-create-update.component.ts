@@ -180,7 +180,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     modalRef.result.then(() => {
       this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
         rs => {
-          this.notify('success', 'thành công');
+          this.notify('success', 'Lưu thành công');
           if (this.empId) {
             this.activeModal.close(true);
           } else {

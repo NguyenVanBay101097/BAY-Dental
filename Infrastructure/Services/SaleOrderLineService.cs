@@ -51,11 +51,36 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 var discountType = line.DiscountType ?? "percentage";
-                var price = discountType == "percentage" ? line.PriceUnit * (1 - line.Discount / 100) :
-                    Math.Max(0, line.PriceUnit - (line.DiscountFixed ?? 0));
+                if (discountType == "percentage")
+                    line.PriceSubTotal = Math.Round(line.ProductUOMQty * line.PriceUnit * (1 - line.Discount / 100));
+                else
+                    line.PriceSubTotal = Math.Max(0, line.ProductUOMQty * line.PriceUnit - (line.DiscountFixed ?? 0));
+
                 line.PriceTax = 0;
-                line.PriceSubTotal = price * line.ProductUOMQty;
                 line.PriceTotal = line.PriceSubTotal + line.PriceTax;
+            }
+        }
+
+        public void ComputeResidual(IEnumerable<SaleOrderLine> self)
+        {
+            foreach (var line in self)
+            {
+                if (line.State == "draft")
+                {
+                    line.AmountPaid = 0;
+                    line.AmountResidual = 0;
+                    continue;
+                }
+
+                decimal amountPaid = 0;
+                foreach(var rel in line.SaleOrderLinePaymentRels)
+                {
+                    var payment = rel.Payment;
+                    if (payment != null && payment.State != "draft")
+                        amountPaid += (rel.AmountPrepaid ?? 0);
+                }
+
+                line.AmountPaid = amountPaid;
                 line.AmountResidual = line.PriceTotal - line.AmountPaid;
             }
         }
@@ -305,11 +330,21 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
             if (val.DateOrderTo.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+            if (val.IsLabo == true)
+                query = query.Where(x => x.Product.IsLabo);
+
             if (val.IsQuotation.HasValue)
             {
                 query = query.Where(x => x.Order.IsQuotation == val.IsQuotation);
             }
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+
+            if (!string.IsNullOrEmpty(val.LaboState))
+            {
+                query = query.Where(x => x.Labos.Any( s=>s.State == val.LaboState));
+            }
+      
+
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x=>x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
             {
@@ -323,7 +358,7 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
-
+    
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;

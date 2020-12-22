@@ -8,6 +8,7 @@ import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter }
 export class BinaryFileInputComponent implements OnInit {
   maxUploadSize = 5 * 1024 * 1024;
   @Input() value: string;
+  @Input() accept: string;
   @Output('valueChange') change = new EventEmitter<string>();
   constructor() { }
 

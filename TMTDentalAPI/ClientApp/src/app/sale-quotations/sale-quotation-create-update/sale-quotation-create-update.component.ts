@@ -1,50 +1,17 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  FormBuilder,
-  FormArray,
-  Validators,
-} from "@angular/forms";
-import { debounceTime, switchMap, tap, map } from "rxjs/operators";
-import { PartnerSimple, PartnerPaged } from "src/app/partners/partner-simple";
-import { PartnerService } from "src/app/partners/partner.service";
-import { UserService, UserPaged } from "src/app/users/user.service";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import {
-  ProductService,
-  ProductFilter,
-} from "src/app/products/product.service";
-import { IntlService } from "@progress/kendo-angular-intl";
-import {
-  WindowService,
-  WindowCloseResult,
-} from "@progress/kendo-angular-dialog";
-import * as _ from "lodash";
-import { UserSimple } from "src/app/users/user-simple";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { DotKhamBasic } from "src/app/dot-khams/dot-khams";
-import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import {
-  CardCardService,
-} from "src/app/card-cards/card-card.service";
-import {
-  ProductPriceListBasic,
-  ProductPricelistPaged,
-} from "src/app/price-list/price-list";
-import { PriceListService } from "src/app/price-list/price-list.service";
-import { PartnerSearchDialogComponent } from "src/app/partners/partner-search-dialog/partner-search-dialog.component";
-import {
-  EmployeeBasic,
-  EmployeePaged,
-  EmployeeSimple,
-} from "src/app/employees/employee";
-import { EmployeeService } from "src/app/employees/employee.service";
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import * as _ from 'lodash';
+import { from } from 'rxjs';
+import { debounceTime, delay, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
+import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
+import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
+import { UserOdataService, UserSimple } from 'src/app/shared/services/user-odata.service';
 
 @Component({
   selector: "app-sale-quotation-create-update",
@@ -55,284 +22,181 @@ import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-custome
   },
 })
 export class SaleQuotationCreateUpdateComponent implements OnInit {
+  // các source để filter
+  sourceEmployees: any = [];
+  //khai báo các biến
   formGroup: FormGroup;
-  id: string;
-  partnerId: string;
-  submitted = false;
-  filteredPartners: PartnerSimple[];
-  filteredUsers: UserSimple[];
-  filteredEmployees: EmployeeSimple[] = [];
-  filteredPricelists: ProductPriceListBasic[];
-  // @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
-  @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild("pricelistCbx", { static: true }) pricelistCbx: ComboBoxComponent;
+  saleOrderId: string;
   saleOrder: any = {};
+  partnerId: string;
+  filteredToothCategories: any[];
+  initialListTeeths: any[];
+  filteredEmployees: any[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private partnerService: PartnerService,
-    private userService: UserService,
     private route: ActivatedRoute,
-    private saleOrderService: SaleOrderService,
-    private productService: ProductService,
+    private saleOrderService: SaleOrdersOdataService,
     private intlService: IntlService,
-    private modalService: NgbModal,
     private router: Router,
     private notificationService: NotificationService,
-    private cardCardService: CardCardService,
-    private pricelistService: PriceListService,
-    private employeeService: EmployeeService
+    private toothCategoryOdataService: ToothCategoryOdataService,
+    private teethOdataService: TeethOdataService,
+    private employeeService: EmployeesOdataService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      partner: [null, Validators.required],
-      user: null,
+      Partner: [null, Validators.required],
+      User: null,
+      UserId: null,
       dateOrderObj: [null, Validators.required],
-      orderLines: this.fb.array([]),
-      companyId: null,
-      userId: null,
-      amountTotal: 0,
-      state: null,
-      pricelist: [null, Validators.required],
-      isQuotation: true,
+      OrderLines: this.fb.array([]),
+      CompanyId: null,
+      AmountTotal: 0,
+      State: null,
+      Residual: null,
+      Card: null,
+      Pricelist: [null],
+      IsQuotation: true,
+      Order: null
     });
 
     this.routeActive();
-
-    // this.partnerCbx.filterChange
-    //   .asObservable()
-    //   .pipe(
-    //     debounceTime(300),
-    //     tap(() => (this.partnerCbx.loading = true)),
-    //     switchMap((value) => this.searchPartners(value))
-    //   )
-    //   .subscribe((result) => {
-    //     this.filteredPartners = result;
-    //     this.partnerCbx.loading = false;
-    //   });
-
-    this.userCbx.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.userCbx.loading = true)),
-        switchMap((value) => this.searchUsers(value))
-      )
-      .subscribe((result) => {
-        this.filteredUsers = result;
-        this.userCbx.loading = false;
-      });
-
-    // this.pricelistCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.pricelistCbx.loading = true)),
-    //   switchMap(value => this.searchPricelists(value))
-    // ).subscribe(result => {
-    //   this.filteredPricelists = result.items;
-    //   this.pricelistCbx.loading = false;
-    // });
-
-    this.loadPartners();
-    this.loadUsers();
-    // this.loadPricelists();
+    this.loadToothCategories();
+    this.loadTeethList();
+    this.loadEmployees();
   }
 
-  get f() {
-    return this.formGroup.controls;
+  get partner() { return this.formGroup.get('Partner').value }
+  get order() { return this.formGroup.get('Order').value }
+
+  get customerId() {
+    if (this.partnerId) {
+      return this.partnerId
+    }
+    if (this.saleOrder) {
+      return this.saleOrder.PartnerId;
+    }
+    return undefined;
   }
+
+  get getAmountTotal() {
+    return this.formGroup.get('AmountTotal').value;
+  }
+
+  get orderLinesFA() {
+    return this.formGroup.get('OrderLines') as FormArray;
+  }
+
+  get stateControl() { return this.formGroup.get("State"); }
 
   routeActive() {
     this.route.queryParamMap
       .pipe(
         switchMap((params: ParamMap) => {
-          this.id = params.get("id");
+          this.saleOrderId = params.get("id");
           this.partnerId = params.get("partner_id");
-          if (this.id) {
-            return this.saleOrderService.get(this.id);
+          if (this.saleOrderId) {
+            return this.saleOrderService.getDisplay(this.saleOrderId);
           } else {
-            return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '', isQuotation: true });
+            return this.saleOrderService.defaultGet({ PartnerId: this.partnerId || '', IsQuotation: true });
           }
         })
       )
-      .subscribe((result) => {
+      .subscribe((result: any) => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
+        let dateOrder = new Date(result.DateOrder);
         this.formGroup.get("dateOrderObj").patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
         }
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.id) {
-            this.onChangePartner(result.partner);
-          }
-        }
-
-        const control = this.formGroup.get("orderLines") as FormArray;
+        const control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach((line) => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl("teeth", this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
+        this.formGroup.markAsPristine();
       });
   }
 
-  get customerId() {
-    var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
-    if (parterIdParam) {
-      return parterIdParam;
-    }
-
-    if (this.id && this.saleOrder) {
-      return this.saleOrder.partnerId;
-    }
-
-    return undefined;
+  onEmployeeFilter(value) {
+    this.filteredEmployees = this.sourceEmployees.filter((s) => s.Name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20);
   }
 
-  get partner() {
-    var control = this.formGroup.get('partner');
-    return control ? control.value : null;
-  }
-
-  updateCustomerModal() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Sửa khách hàng";
-    modalRef.componentInstance.id = this.partner.id;
-
-    modalRef.result.then(
-      () => { },
-      () => { }
+  loadEmployees() {
+    const state = {
+      filter: {
+        logic: 'and',
+        filters: [
+          { field: 'IsDoctor ', operator: 'eq', value: true }
+        ]
+      }
+    };
+    const options = {
+      select: 'Id,Name'
+    };
+    this.employeeService.getFetch(state, options).subscribe(
+      (result: any) => {
+        this.sourceEmployees = result.data;
+        this.filteredEmployees = this.sourceEmployees.slice(0, 20);
+      }
     );
   }
 
-  quickCreateCustomer() {
-    let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Thêm khách hàng";
-
-    modalRef.result.then(
-      (result) => {
-        var p = new PartnerSimple();
-        p.id = result.id;
-        p.name = result.name;
-        p.displayName = result.displayName;
-        this.formGroup.get("partner").patchValue(p);
-        this.filteredPartners = _.unionBy(this.filteredPartners, [p], "id");
-        this.onChangePartner(p);
-      },
-      () => { }
+  loadTeethList() {
+    const options = {
+      select: 'Id,Name,CategoryId,ViTriHam,Position'
+    };
+    this.teethOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.initialListTeeths = result.data;
+      }
     );
   }
 
-  searchCustomerDialog() {
-    let modalRef = this.modalService.open(PartnerSearchDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Tìm khách hàng";
-    modalRef.componentInstance.domain = { customer: true };
-
-    modalRef.result.then(
-      (result) => {
-        if (result.length) {
-          var p = result[0].dataItem;
-          this.formGroup.get("partner").patchValue(p);
-          this.filteredPartners = _.unionBy(this.filteredPartners, [p], "id");
-          this.onChangePartner(p);
-        }
-      },
-      () => { }
+  loadToothCategories() {
+    const options = {
+      select: 'Id,Name,Sequence'
+    };
+    this.toothCategoryOdataService.getFetch({}, options).subscribe(
+      (result: any) => {
+        this.filteredToothCategories = result.data;
+      }
     );
   }
 
-  loadPartners() {
-    this.searchPartners().subscribe((result) => {
-      this.filteredPartners = _.unionBy(this.filteredPartners, result, "id");
+  getFormDataSave() {
+    const val = Object.assign({}, this.formGroup.value);
+    val.DateOrder = this.intlService.formatDate(val.dateOrderObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.PartnerId = val.Partner.Id;
+    val.pricelistId = val.Pricelist ? val.Pricelist.Id : null;
+    val.UserId = val.User ? val.User.Id : null;
+    val.CardId = val.card ? val.card.id : null;
+    val.OrderLines.forEach(line => {
+      if (line.Employee) {
+        line.EmployeeId = line.Employee.Id;
+      }
+      if (line.Teeth) {
+        line.ToothIds = line.Teeth.map(x => x.Id);
+      }
     });
-  }
-
-  loadPricelists() {
-    this.searchPricelists().subscribe((result) => {
-      this.filteredPricelists = _.unionBy(
-        this.filteredPricelists,
-        result.items,
-        "id"
-      );
-    });
+    return val;
   }
 
   createRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(
-      val.dateOrderObj,
-      "yyyy-MM-ddTHH:mm:ss"
-    );
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
+    const val = this.getFormDataSave();
     return this.saleOrderService.create(val);
   }
 
   saveRecord() {
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(
-      val.dateOrderObj,
-      "yyyy-MM-ddTHH:mm:ss"
-    );
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.cardId = val.card ? val.card.id : null;
-    return this.saleOrderService.update(this.id, val);
-  }
-
-  loadUsers() {
-    this.searchUsers().subscribe((result) => {
-      this.filteredUsers = _.unionBy(this.filteredUsers, result, "id");
-    });
-  }
-
-  searchPartners(filter?: string) {
-    var val = new PartnerPaged();
-    val.customer = true;
-    val.search = filter;
-    return this.partnerService.getAutocompleteSimple(val);
-  }
-
-  searchUsers(filter?: string) {
-    var val = new UserPaged();
-    val.search = filter;
-    return this.userService.autocompleteSimple(val);
-  }
-
-  searchEmployees(filter?: string) {
-    var val = new EmployeePaged();
-    val.search = filter;
-    return this.employeeService.getEmployeeSimpleList(val);
-  }
-
-  searchPricelists(filter?: string) {
-    var val = new ProductPricelistPaged();
-    val.search = filter || "";
-    return this.pricelistService.loadPriceListList(val);
+    var val = this.getFormDataSave();
+    return this.saleOrderService.update(this.saleOrderId, val);
   }
 
   createNew() {
@@ -342,230 +206,188 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
   }
 
   actionConvertToOrder() {
-    if (this.id) {
-      this.saleOrderService.actionConvertToOrder(this.id).subscribe((result: any) => {
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+    if (this.saleOrderId) {
+      this.saleOrderService.actionConvertToOrder(this.saleOrderId).subscribe((result: any) => {
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.Id } });
       });
     }
-  }
-
-  actionDone() {
-    if (this.id) {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, {
-        size: "lg",
-        windowClass: "o_technical_modal",
-        keyboard: false,
-        backdrop: "static",
-      });
-      modalRef.componentInstance.title = "Khóa phiếu tư vấn";
-      modalRef.componentInstance.body =
-        "Khi khóa phiếu tư vấn bạn sẽ không thể thay đổi được nữa, bạn có chắc chắn muốn khóa?";
-      modalRef.result.then(() => {
-        this.saleOrderService.actionDone([this.id]).subscribe(() => {
-          this.loadRecord();
-        });
-      });
-    }
-  }
-
-  onSaveConfirm() {
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(
-      val.dateOrderObj,
-      "yyyy-MM-ddTHH:mm:ss"
-    );
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.orderLines.forEach((line) => {
-      line.toothIds = line.teeth.map((x) => x.id);
-    });
-    this.saleOrderService.create(val).subscribe((result) => {
-      this.saleOrderService.actionConfirm([result.id]).subscribe(
-        () => {
-          this.router.navigate(["/sale-quotations/form"], {
-            queryParams: { id: result.id },
-          });
-        },
-        () => {
-          this.router.navigate(["/sale-quotations/form"], {
-            queryParams: { id: result.id },
-          });
-        }
-      );
-    });
   }
 
   onSave() {
-    this.submitted = true;
-
     if (!this.formGroup.valid) {
       return false;
     }
 
-    var val = this.formGroup.value;
-    val.dateOrder = this.intlService.formatDate(
-      val.dateOrderObj,
-      "yyyy-MM-ddTHH:mm:ss"
-    );
-    val.partnerId = val.partner.id;
-    val.pricelistId = val.pricelist.id;
-    val.userId = val.user ? val.user.id : null;
-    val.orderLines.forEach((line) => {
-      line.toothIds = line.teeth.map((x) => x.id);
-    });
-    if (this.id) {
-      this.saleOrderService.update(this.id, val).subscribe(() => {
-        this.notificationService.show({
-          content: "Lưu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+    const val = this.getFormDataSave();
+    if (this.saleOrderId) {
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
         this.loadRecord();
       });
     } else {
-      this.saleOrderService.create(val).subscribe((result) => {
+      this.saleOrderService.create(val).subscribe((result: any) => {
         this.router.navigate(["/sale-quotations/form"], {
-          queryParams: { id: result.id },
+          queryParams: { id: result.Id },
         });
       });
     }
   }
 
-  onChangePartner(value) {
-    if (value) {
-      this.saleOrderService
-        .onChangePartner({ partnerId: value.id })
-        .subscribe((result) => {
-          this.formGroup.patchValue(result);
-        });
+  getPriceSubTotal() {
+    this.orderLinesFA.controls.forEach(line => {
+      var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
+      var discountFixedValue = line.get('DiscountFixed') ? line.get('DiscountFixed').value : 0;
+      var discountNumber = line.get('Discount') ? line.get('Discount').value : 0;
+      var getquanTity = line.get('ProductUOMQty') ? line.get('ProductUOMQty').value : 1;
+      var getamountPaid = line.get('AmountPaid') ? line.get('AmountPaid').value : 0;
+      var priceUnit = line.get('PriceUnit') ? line.get('PriceUnit').value : 0;
+      var price = priceUnit * getquanTity;
+
+      var subtotal = discountType == 'percentage' ? price * (1 - discountNumber / 100) :
+        Math.max(0, price - discountFixedValue);
+      line.get('PriceSubTotal').setValue(subtotal);
+      var getResidual = subtotal - getamountPaid;
+      line.get('AmountResidual').setValue(getResidual);
+    });
+
+  }
+
+  addLine(val) {
+    var res = this.fb.group(val);
+    if (!this.orderLinesFA.controls.some(x => x.value.ProductId === res.value.ProductId)) {
+      this.orderLinesFA.push(res);
+    } else {
+      var line = this.orderLinesFA.controls.find(x => x.value.ProductId === res.value.ProductId);
+      if (line) {
+        line.value.ProductUOMQty += 1;
+        line.patchValue(line.value);
+      }
+    }
+    this.getPriceSubTotal();
+    this.orderLinesFA.markAsDirty();
+    this.computeAmountTotal();
+    if (this.formGroup.get('State').value == "sale") {
+      var val = this.getFormDataSave();
+      this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        this.loadRecord();
+      }, () => {
+        this.loadRecord();
+      });
     }
   }
 
   loadRecord() {
-    if (this.id) {
-      this.saleOrderService.get(this.id).subscribe((result) => {
+    if (this.saleOrderId) {
+      this.saleOrderService.getDisplay(this.saleOrderId).subscribe((result: any) => {
         this.saleOrder = result;
         this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.dateOrder);
-        this.formGroup.get("dateOrderObj").patchValue(dateOrder);
+        let dateOrder = new Date(result.DateOrder);
+        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        let control = this.formGroup.get("orderLines") as FormArray;
+        if (result.Employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
+        }
+
+        let control = this.formGroup.get('OrderLines') as FormArray;
         control.clear();
-        result.orderLines.forEach((line) => {
+        result.OrderLines.forEach(line => {
           var g = this.fb.group(line);
-          g.setControl("teeth", this.fb.array(line.teeth));
+          g.setControl('Teeth', this.fb.array(line.Teeth));
           control.push(g);
         });
+
+        this.formGroup.markAsPristine();
       });
     }
-  }
-
-  get orderLines() {
-    return this.formGroup.get("orderLines") as FormArray;
-  }
-
-  showAddLineModal() {
-    var partner = this.formGroup.get("partner").value;
-    if (!partner) {
-      this.notificationService.show({
-        content: "Vui lòng chọn khách hàng",
-        hideAfter: 3000,
-        position: { horizontal: "right", vertical: "bottom" },
-        animation: { type: "fade", duration: 400 },
-        type: { style: "error", icon: true },
-      });
-      return false;
-    }
-
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Thêm dịch vụ điều trị";
-    modalRef.componentInstance.partnerId = partner.id;
-    var pricelist = this.formGroup.get("pricelist").value;
-    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
-
-    modalRef.result.then(
-      (result) => {
-        for (let i = 0; i < result.length; i++) {
-          let line = result[i] as any;
-          line.teeth = this.fb.array(line.teeth);
-          this.orderLines.push(this.fb.group(line));
-          this.orderLines.markAsDirty();
-          this.computeAmountTotal();
-        }
-      },
-      () => { }
-    );
-  }
-
-  editLine(line: FormGroup) {
-    var partner = this.formGroup.get("partner").value;
-    if (!partner) {
-      alert("Vui lòng chọn khách hàng");
-      return false;
-    }
-
-    let modalRef = this.modalService.open(SaleOrderLineDialogComponent, {
-      size: "lg",
-      windowClass: "o_technical_modal",
-      keyboard: false,
-      backdrop: "static",
-    });
-    modalRef.componentInstance.title = "Sửa dịch vụ điều trị";
-    modalRef.componentInstance.line = line.value;
-    modalRef.componentInstance.partnerId = partner.Id;
-    var pricelist = this.formGroup.get("pricelist").value;
-    modalRef.componentInstance.pricelistId = pricelist ? pricelist.id : null;
-
-    modalRef.result.then(
-      (result) => {
-        var a = result[0] as any;
-        line.patchValue(a);
-        line.setControl('teeth', this.fb.array(a.teeth || []));
-        this.computeAmountTotal();
-      },
-      () => { }
-    );
-  }
-
-  lineTeeth(line: FormGroup) {
-    var teeth = line.get("teeth").value as any[];
-    return teeth.map((x) => x.name).join(",");
   }
 
   deleteLine(index: number) {
-    this.orderLines.removeAt(index);
-    this.computeAmountTotal();
-  }
-
-  get getAmountTotal() {
-    return this.formGroup.get("amountTotal").value;
-  }
-
-  get getState() {
-    return this.formGroup.get("state").value;
-  }
-
-  get getPartner() {
-    return this.formGroup.get("partner").value;
+    if (this.formGroup.get('State').value == "draft" || this.formGroup.get('State').value == "cancel") {
+      this.orderLinesFA.removeAt(index);
+      this.computeAmountTotal();
+      this.orderLinesFA.markAsDirty();
+    } else {
+      this.notificationService.show({
+        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
+        hideAfter: 5000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
   }
 
   computeAmountTotal() {
     let total = 0;
-    this.orderLines.controls.forEach((line) => {
-      total += line.get("priceSubTotal").value;
+    this.orderLinesFA.controls.forEach(line => {
+      total += line.get('PriceSubTotal').value;
     });
-    this.formGroup.get("amountTotal").patchValue(total);
+    this.formGroup.get('AmountTotal').patchValue(total);
   }
+
+  updateTeeth(line, lineControl) {
+    line.ProductUOMQty = (line.Teeth && line.Teeth.length > 0) ? line.Teeth.length : 1;
+    lineControl.patchValue(line);
+    lineControl.get('Teeth').clear();
+    line.Teeth.forEach(teeth => {
+      let g = this.fb.group(teeth);
+      lineControl.get('Teeth').push(g);
+    });
+    this.onChangeQuantity(lineControl);
+  }
+
+  onChangeQuantity(line: FormGroup) {
+    var res = this.orderLinesFA.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+
+  }
+
+  getDiscountNumber(line: FormGroup) {
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return line.get('DiscountFixed').value;
+    } else {
+      return line.get('Discount').value;
+    }
+  }
+
+  getDiscountTypeDisplay(line: FormGroup) {
+    var discountType = line.get('DiscountType') ? line.get('DiscountType').value : 'percentage';
+    if (discountType == 'fixed') {
+      return "";
+    } else {
+      return '%';
+    }
+  }
+
+  onChangeDiscount(event, line: FormGroup) {
+    var res = this.orderLinesFA.controls.find(x => x.value.ProductId === line.value.ProductId);
+    if (res) {
+      line.value.DiscountType = event.DiscountType;
+      if (event.DiscountType == "fixed") {
+        line.value.DiscountFixed = event.DiscountFixed;
+      } else {
+        line.value.Discount = event.DiscountPercent;
+      }
+      res.patchValue(line.value);
+    }
+    this.getPriceSubTotal();
+    this.computeAmountTotal();
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+        content: content,
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: type, icon: true }
+    });
+}
+
 }

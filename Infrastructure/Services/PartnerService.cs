@@ -1,38 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using ApplicationCore.Entities;
+﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
-using Dapper;
 using Facebook.ApiClient.ApiEngine;
 using Facebook.ApiClient.Constants;
 using Facebook.ApiClient.Interfaces;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using MyERP.Utilities;
 using Newtonsoft.Json;
-using NPOI.HSSF.Record.Chart;
-using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ZaloDotNetSDK;
 using ZaloDotNetSDK.oa;
@@ -156,35 +142,35 @@ namespace Infrastructure.Services
             var cateObj = GetService<IPartnerCategoryService>();
 
             var query = GetQueryPaged(val);
-            var items = await _mapper.ProjectTo<PartnerBasic>(query.Skip(val.Offset).Take(val.Limit))
-                .ToListAsync();
             var totalItems = await query.CountAsync();
 
-            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
-                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            if (val.ComputeCreditDebit)
-            {
+            //var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+            //                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
 
-                var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
-                foreach (var item in items)
-                {
-                    item.Credit = creditDebitDict[item.Id].Credit;
-                    item.Debit = creditDebitDict[item.Id].Debit;
-                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-                }
-            }
-            else
-            {
-                foreach (var item in items)
-                {
-                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-                }
-            }
+            //if (val.ComputeCreditDebit)
+            //{
+
+            //    var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
+            //    foreach (var item in items)
+            //    {
+            //        item.Credit = creditDebitDict[item.Id].Credit;
+            //        item.Debit = creditDebitDict[item.Id].Debit;
+            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+            //    }
+            //}
+            //else
+            //{
+            //    foreach (var item in items)
+            //    {
+            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+            //    }
+            //}
 
             return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<PartnerBasic>>(items)
             };
         }
 
@@ -950,6 +936,8 @@ namespace Infrastructure.Services
 
             using (var stream = new MemoryStream(fileData))
             {
+                try
+                {
                 using (var package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -1061,6 +1049,12 @@ namespace Infrastructure.Services
                             continue;
                         }
                     }
+                }
+
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 
@@ -1930,7 +1924,7 @@ namespace Infrastructure.Services
 
         public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
         {
-            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true && (!x.IsQuotation.HasValue || x.IsQuotation.Value == false));
 
             if (val.DateFrom.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
@@ -1967,6 +1961,66 @@ namespace Infrastructure.Services
 
             return result;
         }
+
+        public async Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val)
+        {
+            ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true);
+
+            var dateFrom = DateTime.Now;
+            var dateTo = DateTime.Now.AbsoluteEndOfDate();
+
+            if (val.DateFrom.HasValue)
+            {
+                dateFrom = val.DateFrom.Value;
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= dateFrom));
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder <= dateTo));
+            }
+
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query_saleOrder = saleOrderObj.SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            IEnumerable<Guid> ids_partner = query_saleOrder.Select(x => x.PartnerId).ToList();
+
+            var temp = await saleOrderObj.SearchQuery(x => ids_partner.Contains(x.PartnerId) && x.DateOrder <= dateTo)
+                .GroupBy(x => new { x.PartnerId, x.Partner.DistrictName })
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    PartnerCount = x.Count(),
+                    PartnerLocation = x.Key.DistrictName
+                })
+                .OrderBy(x => x.PartnerId).ToListAsync();
+
+            var temp_groupLocation = temp.GroupBy(x => x.PartnerLocation);
+
+            var details = new List<CustomerStatisticsDetails>();
+            foreach (var item in temp_groupLocation)
+            {
+                details.Add(new CustomerStatisticsDetails
+                {
+                    Location = item.Key, 
+                    CustomerTotal = item.Count(),
+                    CustomerOld = item.Where(x => x.PartnerCount > 1).Count(),
+                    CustomerNew = item.Where(x => x.PartnerCount == 1).Count()
+                });
+            }
+
+            var result = new CustomerStatisticsOutput
+            {
+                CustomerTotal = temp.Count(),
+                CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
+                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count(), 
+                Details = details
+            };
+
+            return result;
+        }
     }
 
     public class PartnerCreditDebitItem
@@ -1987,6 +2041,4 @@ namespace Infrastructure.Services
         public string Phone { get; set; }
         public GetProfileOfFollowerResponse Profile { get; set; }
     }
-
-
 }

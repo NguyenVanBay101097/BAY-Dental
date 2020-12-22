@@ -294,6 +294,9 @@ namespace TMTDentalAPI
             services.AddScoped<IResourceCalendarLeaveService, ResourceCalendarLeaveService>();
             services.AddScoped<IPartnerPartnerCategoryRelService, PartnerPartnerCategoryRelService>();
             services.AddScoped<ISalaryPaymentService, SalaryPaymentService>();
+            services.AddScoped<ILaboBiteJointService, LaboBiteJointService>();
+            services.AddScoped<ILaboBridgeService, LaboBridgeService>();
+            services.AddScoped<ILaboFinishLineService, LaboFinishLineService>();
 
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();
@@ -424,6 +427,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new TCareMessageTemplateProfile());
                 mc.AddProfile(new TCareConfigProfile());
                 mc.AddProfile(new SalaryPaymentProfile());
+                mc.AddProfile(new LaboFinishLineProfile());
+                mc.AddProfile(new LaboBiteJointProfile());
+                mc.AddProfile(new LaboBridgeProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

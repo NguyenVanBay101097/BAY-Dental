@@ -138,5 +138,13 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.PartnerOldNew")]
+        public async Task<IActionResult> GetReportOldNewPartner(SaleReportOldNewPartnerInput val)
+        {
+            var res = await _saleReportService.GetReportOldNewPartner(val);
+            return Ok(res);
+        }
     }
 }

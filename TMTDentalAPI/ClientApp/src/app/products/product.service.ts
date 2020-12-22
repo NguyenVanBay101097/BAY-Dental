@@ -86,6 +86,7 @@ export class ProductLaboDisplay {
   id: string;
   name: string;
   purchasePrice: number;
+  categ: any;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -157,8 +158,8 @@ export class ProductService {
     );
   }
 
-  autocomplete2(val: ProductFilter): Observable<Product[]> {
-    return this.http.post<Product[]>(
+  autocomplete2(val: ProductFilter): Observable<ProductSimple[]> {
+    return this.http.post<ProductSimple[]>(
       this.baseApi + this.apiUrl + "/autocomplete2",
       val
     );
@@ -178,6 +179,14 @@ export class ProductService {
 
   importProduct(val: ProductImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/ImportProduct", val);
+  }
+
+  importLabo(val: ProductImportExcelBaseViewModel) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ImportLabo", val);
+  }
+
+  importLaboAttach(val: ProductImportExcelBaseViewModel) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ImportLaboAttach", val);
   }
 
   getLaboPaged(val: any): Observable<PagedResult2<ProductLaboBasic>> {

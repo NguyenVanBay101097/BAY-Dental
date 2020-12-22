@@ -33,6 +33,7 @@ export class SalaryPaymentListComponent implements OnInit {
   gridSort = [];
   advanceFilter: any = {
     params: {},
+    orderby: "Date desc"
     // expand : "Employee,Journal",
   };
 
@@ -83,7 +84,7 @@ export class SalaryPaymentListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Phiếu tạm ứng';
+    modalRef.componentInstance.title = 'Phiếu chi tạm ứng';
     modalRef.result.then(() => {
       this.refreshData();
     }, () => {
@@ -91,9 +92,8 @@ export class SalaryPaymentListComponent implements OnInit {
   }
 
   editItem(item) {
-    debugger
     let modalRef = this.modalService.open(SalaryPaymentFormComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Sửa: " + (item.Type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.title = (item.Type == "advance" ? "Phiếu chi tạm ứng" : "Phiếu chi lương");
     modalRef.componentInstance.id = item.Id;
     modalRef.result.then(
       () => {
@@ -105,7 +105,7 @@ export class SalaryPaymentListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: " + (item.Type == "advance" ? "phiếu tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.title = "Xóa: " + (item.Type == "advance" ? "phiếu chi tạm ứng" : "phiếu chi lương");
     modalRef.result.then(
       () => {
         this.salaryPaymentService.delete(item.Id).subscribe(

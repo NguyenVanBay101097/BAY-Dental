@@ -9,19 +9,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public LaboOrderDisplay()
         {
             DateOrder = DateTime.Now;
-            State = "draft";
         }
 
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public string State { get; set; }
-
-        /// <summary>
-        /// Vendor Reference
-        /// </summary>
-        public string PartnerRef { get; set; }
 
         /// <summary>
         /// Nhà cung cấp
@@ -38,15 +30,82 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DatePlanned { get; set; }
 
-        public IEnumerable<LaboOrderLineDisplay> OrderLines { get; set; } = new List<LaboOrderLineDisplay>();
+        /// <summary>
+        /// Vật liệu
+        /// </summary>
+        public Guid? ProductId { get; set; }
+        public ProductSimple Product { get; set; }
 
-        public Guid? DotKhamId { get; set; }
-        public DotKhamSimple DotKham { get; set; }
+        /// <summary>
+        /// màu sắc
+        /// </summary>
+        public string Color { get; set; }
 
-        public Guid? CustomerId { get; set; }
-        public PartnerSimple Customer { get; set; }
+        /// <summary>
+        /// ghi chú
+        /// </summary>
+        public string Note { get; set; }
 
-        public Guid? SaleOrderId { get; set; }
-        public SaleOrderBasic SaleOrder { get; set; }
+        /// <summary>
+        /// chỉ định
+        /// </summary>
+        public string Indicated { get; set; }
+
+        /// <summary>
+        /// ghi chú kỹ thuật
+        /// </summary>
+        public string TechnicalNote { get; set; }
+
+        /// <summary>
+        /// đường hoàn tất
+        /// </summary>
+        public Guid? LaboFinishLineId { get; set; }
+        public LaboFinishLineSimple LaboFinishLine { get; set; }
+
+        /// <summary>
+        /// khớp cắn
+        /// </summary>
+        public Guid? LaboBiteJointId { get; set; }
+        public LaboBiteJointSimple LaboBiteJoint { get; set; }
+
+        /// <summary>
+        /// kiểu nhịp
+        /// </summary>
+        public Guid? LaboBridgeId { get; set; }
+        public LaboBridgeSimple LaboBridge { get; set; }
+
+        /// <summary>
+        /// list gửu kèm
+        /// </summary>
+        public IEnumerable<ProductSimple> LaboOrderProducts { get; set; } = new List<ProductSimple>();
+
+        /// <summary>
+        /// số lượng
+        /// </summary>
+        public decimal Quantity { get; set; }
+
+        /// <summary>
+        /// đơn giá
+        /// </summary>
+        public decimal PriceUnit { get; set; }
+
+        public Guid? SaleOrderLineId { get; set; }
+        public SaleOrderLineDisplay SaleOrderLine { get; set; }
+
+        public string State { get; set; }
+
+        /// <summary>
+        /// Mã bảo hành
+        /// </summary>
+        public string WarrantyCode { get; set; }
+
+        public DateTime? WarrantyPeriod { get; set; }
+
+        public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
+
+        /// <summary>
+        /// list image for laboorder
+        /// </summary>
+        public IEnumerable<IrAttachmentBasic> Images = new List<IrAttachmentBasic>();
     }
 }

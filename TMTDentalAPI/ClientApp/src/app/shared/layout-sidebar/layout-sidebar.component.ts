@@ -12,17 +12,28 @@ export class LayoutSidebarComponent implements OnInit {
   folded = false;
   menuItems: { name: string, icon?: string, link?: string, groups?: string, children?: { name: string, link?: string, params?: Object, groups?: string }[] }[] = [
     {
-      name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/',
+      name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
     { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
+
+    // {
+    //   name: 'Thống kê labo',
+    //   icon: 'fas fa-tooth',
+    //   children: [],
+    //   link: '/labo-orders/statistics'
+    // },
+    // ,
     {
-      name: 'Thống kê labo',
+      name: 'Labo',
       icon: 'fas fa-tooth',
-      children: [],
-      link: '/labo-orders/statistics'
+      children: [
+        { name: 'Quản lý phiếu Labo', link: '/labo-orders' },
+        { name: 'Đơn hàng Labo', link: '/labo-orders/order' },
+        { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
+      ],
     },
     {
       name: 'Mua hàng',
@@ -124,6 +135,11 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
+        { name: 'Vật liệu Labo', link: '/products/labos' },
+        { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
+        { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
+        { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
+        { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
       ]
     },
     {
@@ -149,11 +165,13 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' } },
         { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton' },
         { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report' },
-        { name: 'Thống kê công việc', link: '/dot-kham-report' },
+        // { name: 'Thống kê công việc', link: '/dot-kham-report' },
         { name: 'Thống kê hoa hồng', link: '/commission-settlements/report' },
         { name: 'Khách hàng lân cận phòng khám', link: '/partner-report-location' },
         { name: 'Thống kê nguồn khách hàng', link: '/report-partner-sources' },
         { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/partner' },
+        // { name: 'Thống kê khách hàng', link: '/customer-statistics' },
+        // { name: 'Thống kê khách hàng cũ mới', link: '/sale-report/old-new-partner' },
       ]
     },
   ];

@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleReportPartnerItem>> GetReportPartner(SaleReportPartnerSearch val);
         Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val);
         Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val);
+        Task<SaleReportOldNewPartnerOutput> GetReportOldNewPartner(SaleReportOldNewPartnerInput val);
     }
 }

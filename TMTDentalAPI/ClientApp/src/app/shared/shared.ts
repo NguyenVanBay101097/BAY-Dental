@@ -9,4 +9,5 @@ export class IrAttachmentBasic {
     datasFname: string;
     mineType: string;
     uploadId: string;
+    url: string;
 }

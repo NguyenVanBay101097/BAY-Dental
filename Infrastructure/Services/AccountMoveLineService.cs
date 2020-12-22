@@ -132,11 +132,17 @@ namespace Infrastructure.Services
         private object _GetPriceTotalAndSubtotalModel(AccountMoveLine self, decimal? price_unit, decimal? quantity,
             decimal? discount, Product product, Partner partner, string move_type)
         {
-            var price_unit_wo_discount = self.DiscountType == "fixed" ? price_unit - (self.DiscountFixed ?? 0) :
-                price_unit * (1 - (discount ?? 0) / 100);
-
-            var subtotal = price_unit_wo_discount * (quantity ?? 0);
-            return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
+            if (self.DiscountType == "fixed")
+            {
+                var subtotal = Math.Max(0, (price_unit ?? 0) * (quantity ?? 0) - (self.DiscountFixed ?? 0));
+                return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
+            }
+            else
+            {
+                var price_unit_wo_discount = (price_unit ?? 0) * (1 - (discount ?? 0) / 100);
+                var subtotal = Math.Round(price_unit_wo_discount * (quantity ?? 0));
+                return new { PriceTotal = subtotal, PriceSubtotal = subtotal };
+            }
         }
 
         public override async Task<IEnumerable<AccountMoveLine>> CreateAsync(IEnumerable<AccountMoveLine> entities)

@@ -71,6 +71,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   discountDefault: DiscountDefault;
   valueSearch: string;
+  submitted = false;
+
 
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -186,7 +188,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         if (this.saleOrderId) {
           return this.saleOrderService.get(this.saleOrderId);
         } else {
-          return this.saleOrderService.defaultGet({ partnerId: this.partnerId || '' });
+          return this.saleOrderService.defaultGet({ IsFast: true });
         }
       })).subscribe(result => {
         this.saleOrder = result;
@@ -195,25 +197,11 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
         let dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.user) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.user], 'id');
+        if (result.journal) {
+          this.filteredJournals = _.unionBy(this.filteredJournals, [result.journal], 'id');
         }
 
-        if (result.partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
-          if (!this.saleOrderId) {
-            this.onChangePartner(result.partner);
-
-          }
-        }
-
-        if (!this.saleOrderId) {      
-          setTimeout(()=>{
-            this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
-          })  
-          
-        }
-
+        debugger;
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -277,8 +265,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   ///load phương thức thanh toán
   loadFilteredJournals() {
     this.searchJournals().subscribe(result => {
-      this.filteredJournals = result;
-    })
+      this.filteredJournals = _.unionBy(this.filteredJournals, result, 'id');
+    });
   }
 
   getJournalDefault() {
@@ -295,19 +283,27 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
+  get f() { return this.formGroup.controls; }
+
 
 
   actionPayment() {
-    if (!this.getPartner) {
-      this.notificationService.show({
-        content: "Chọn khách hàng trước khi thanh toán",
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
+    // if (!this.getPartner) {
+    //   this.notificationService.show({
+    //     content: "Chọn khách hàng trước khi thanh toán",
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
 
-      return false;
+    //   return false;
+    // }
+
+    this.submitted = true;
+
+    if (this.formGroup.invalid) {
+      return;
     }
 
     var val = this.formGroup.value;
@@ -321,6 +317,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.journalId = val.journal.id;
 
     this.saleOrderService.createFastSaleOrder(val).subscribe((rs: any) => {
+      this.router.navigate(['/partners/treatment-paymentfast/from'], { queryParams: { id: rs.id } });
       this.printFastSaleOrder(rs.id);
       this.notificationService.show({
         content: "Thanh toán thành công",
@@ -827,8 +824,19 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     }
   }
 
-  blurSave() {
+  showTeethDiagnostic(line: FormGroup) {
+    var list = [];
+    var teeth = line.get('teeth').value;
+    if (teeth.length) {
+      list.push(teeth.map(x => x.name).join(','));
+    }
 
+    var diagnostic = line.get('diagnostic').value;
+    if (diagnostic) {
+      list.push(diagnostic);
+    }
+
+    return list.join('; ');
   }
 
   printFastSaleOrder(saleOrderId) {
@@ -996,9 +1004,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   onChangePartner(value) {
     if (this.partner) {
-
       this.odataPartnerService.get(this.partner.id, null).subscribe(rs => {
-        debugger
         this.formGroup.get('partnerAge').patchValue(rs.Age);
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
         this.formGroup.get('partnerAddress').patchValue(rs.Address);
@@ -1151,7 +1157,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     });
 
     line.get('diagnostic').setValue(event.diagnostic);
-    line.get('productUOMQty').setValue(teeth.length ? teeth.length : 1);
+    // line.get('productUOMQty').setValue(teeth.length ? teeth.length : 1);
 
     this.getPriceSubTotal();
     this.computeAmountTotal();
@@ -1184,7 +1190,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     modalRef.componentInstance.line = line.value;
 
     modalRef.result.then(result => {
-      debugger
       var a = result as any;
       line.patchValue(a);
       line.setControl('teeth', this.fb.array(a.teeth || []));
@@ -1267,7 +1272,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       this.orderLines.markAsDirty();
     } else {
       this.notificationService.show({
-        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp hoặc hủy bỏ',
+        content: 'Chỉ có thể xóa dịch vụ khi phiếu điều trị ở trạng thái nháp',
         hideAfter: 5000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -1281,7 +1286,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   createToaThuoc() {
     let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
-    modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
+    modalRef.componentInstance.defaultVal = { partnerId: this.saleOrder.partner ? this.saleOrder.partner.id : null, saleOrderId: this.saleOrderId };
     modalRef.result.then((result: any) => {
       this.loadRecord();
       if (result.print) {
@@ -1292,8 +1297,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   printToaThuoc(item) {
-    this.toaThuocService.getPrint(item.id).subscribe(result => {
-      this.toaThuocPrintComponent.print(result);
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -1303,15 +1308,24 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
 
   ///lịch hẹn
   createAppoinment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: lịch hẹn';
     modalRef.componentInstance.defaultVal = { partnerId: this.getPartner ? this.getPartner.id : null };
-
     modalRef.result.then((result: any) => {
-      this.loadRecord();
+      this.notificationService.show({
+        content: ' Tạo lịch hẹn thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
+      this.routeActive();
     }, () => {
     });
   }
+
+
+
 
   get getAmountTotal() {
     return this.formGroup.get('amountTotal').value;
@@ -1489,7 +1503,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   updateSaleOrder() {
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();
-      debugger
       this.saleOrderService.update(this.saleOrderId, val).subscribe(() => {
         this.notificationService.show({
           content: 'Lưu thành công',
@@ -1507,7 +1520,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   }
 
   onChangeDiscount(event, line: FormGroup) {
-    debugger
+
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {
       line.value.discountType = event.discountType;

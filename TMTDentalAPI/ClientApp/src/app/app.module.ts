@@ -24,7 +24,6 @@ import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 
-
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }

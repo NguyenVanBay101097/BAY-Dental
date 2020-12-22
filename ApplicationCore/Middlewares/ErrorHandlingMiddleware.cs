@@ -37,7 +37,13 @@ namespace ApplicationCore.Middlewares
             //else if (ex is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
             //else if (ex is MyException) code = HttpStatusCode.BadRequest;
 
+
             var msg = ex.Message;
+            if (ex is DbUpdateException)
+            {
+                msg = "Không thể hoàn thành thao tác do có sự ràng buộc dữ liệu.";
+            }
+
             //if (ex.InnerException != null)
             //    msg = ex.InnerException.Message;
             var result = JsonConvert.SerializeObject(new { error = msg, message = msg });

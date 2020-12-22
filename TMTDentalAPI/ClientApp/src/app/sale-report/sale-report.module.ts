@@ -11,9 +11,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-partner.component';
 import { SaleReportPartnerDaysFilterComponent } from './sale-report-partner-days-filter/sale-report-partner-days-filter.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
 
 @NgModule({
-  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent],
+  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent],
   imports: [
     CommonModule,
     SaleReportRoutingModule,

@@ -56,7 +56,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? TimeOut { get; set; }
 
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
 
         public Guid? WorkEntryTypeId { get; set; }
         public WorkEntryTypeBasic WorkEntryType { get; set; }
@@ -109,5 +109,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public int Year { get; set; }
         public int Month { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
     }
 }

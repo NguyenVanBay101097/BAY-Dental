@@ -385,7 +385,7 @@ namespace Infrastructure.Services
             else
             {
                 var company_id = default_company_id ?? CompanyId;
-                journal = await journalObj.SearchQuery(x => x.CompanyId == company_id && x.Type == journal_type).FirstOrDefaultAsync();
+                journal = await journalObj.SearchQuery(x => x.CompanyId == company_id && x.Type == journal_type).Include(x=>x.DefaultDebitAccount).FirstOrDefaultAsync();
 
                 if (journal == null)
                 {

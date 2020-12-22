@@ -87,9 +87,9 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
             return this.laboOrderService.get(this.id);
           } else {
             var df = new LaboOrderDefaultGet();
-            if (this.saleOrderId) {
-              df.saleOrderId = this.saleOrderId;
-            }
+            // if (this.saleOrderId) {
+            //   df.saleOrderId = this.saleOrderId;
+            // }
             return this.laboOrderService.defaultGet(df);
           }
         })

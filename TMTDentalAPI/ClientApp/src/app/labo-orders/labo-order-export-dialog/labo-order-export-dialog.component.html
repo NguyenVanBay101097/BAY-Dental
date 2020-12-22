@@ -1,0 +1,59 @@
+<header class="modal-header">
+    <h5 class="modal-title">Chi tiết Xuất Labo cho khách<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày nhận thực tế</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">                                                                     
+                                    <span>{{labo.dateReceipt | date: 'shortDate'}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Mã bảo hành</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{labo.warrantyCode}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Hạn bảo hành</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{labo.warrantyPeriod | date: 'shortDate'}}</span>
+                                </td>
+                            </tr>       
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày xuất</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateExport"></kendo-datepicker>
+                                    <div *ngIf="f.dateExport.errors && (f.dateExport.touched || f.dateExport.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateExport.errors.required">Vui lòng chọn ngày xuất</div>
+                                    </div>
+                                </td>
+                            </tr>  
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
+    <button type="button" class="btn btn-danger" accesskey="s" (click)="onCancelReceipt()">Hủy nhận</button>
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
+</div>

@@ -5,6 +5,7 @@ import { ProductServiceListComponent } from './product-service-list/product-serv
 import { ProductMedicineListComponent } from './product-medicine-list/product-medicine-list.component';
 import { ProductLaboListComponent } from './product-labo-list/product-labo-list.component';
 import { ProductProductListComponent } from './product-product-list/product-product-list.component';
+import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,14 @@ const routes: Routes = [
   {
     path: 'products',
     component: ProductProductListComponent
+  },
+  {
+    path: 'labos',
+    component: ProductLaboListComponent
+  },
+  {
+    path: 'labo-attachs',
+    component: ProductLaboAttachListComponent
   }
 ];
 

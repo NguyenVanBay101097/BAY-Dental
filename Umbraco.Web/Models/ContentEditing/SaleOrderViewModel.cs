@@ -29,4 +29,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public bool? IsQuotation { get; set; }
     }
+
+    public class ActionDonePar
+    {
+        public IEnumerable<Guid> Ids { get; set; }
+    }
 }
