@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task<LaboBridgeDisplay> GetDisplay(Guid id);
         Task<LaboBridgeDisplay> CreateItem(LaboBridgeSave val);
         Task UpdateItem(Guid id,LaboBridgeSave val);
+        Task<IEnumerable<LaboBridgeSimple>> Autocomplete(LaboBridgePageSimple val);
+
     }
 }

@@ -14,5 +14,6 @@ namespace Infrastructure.Services
         Task<LaboFinishLineDisplay> GetDisplay(Guid id);
         Task<LaboFinishLineDisplay> CreateItem(LaboFinishLineSave val);
         Task UpdateItem(Guid id,LaboFinishLineSave val);
+        Task<IEnumerable<LaboFinishLineSimple>> Autocomplete(LaboFinishLinePageSimple val);
     }
 }

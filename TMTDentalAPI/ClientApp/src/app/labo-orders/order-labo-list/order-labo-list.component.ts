@@ -4,6 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { LaboOrderReceiptDialogComponent } from '../labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 import { LaboOrderBasic, LaboOrderService, OrderLaboPaged } from '../labo-order.service';
 
 @Component({
@@ -83,6 +84,14 @@ export class OrderLaboListComponent implements OnInit {
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  editItem(item) {
+    const modalRef = this.modalService.open(LaboOrderReceiptDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.labo = item;
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, er => { });
   }
 
 }

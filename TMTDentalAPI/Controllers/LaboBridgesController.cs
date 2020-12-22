@@ -138,5 +138,13 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(new { success = true });
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.LaboBridge.Read")]
+        public async Task<IActionResult> Autocomplete(LaboBridgePageSimple val)
+        {
+            var res = await _LaboBridgeService.Autocomplete(val);
+            return Ok(res);
+        }
     }
 }

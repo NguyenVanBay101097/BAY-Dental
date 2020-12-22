@@ -138,5 +138,13 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(new { success = true });
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.LaboBiteJoint.Read")]
+        public async Task<IActionResult> Autocomplete(LaboBiteJointPageSimple val)
+        {
+            var res = await _LaboBiteJointService.Autocomplete(val);
+            return Ok(res);
+        }
     }
 }

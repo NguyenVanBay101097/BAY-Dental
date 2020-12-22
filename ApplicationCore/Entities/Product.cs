@@ -105,7 +105,8 @@ namespace ApplicationCore.Entities
         /// service: Dich vu
         /// product: Vat tu
         /// medicine: Thuoc
-        /// labo: Labo
+        /// labo: vật liệu Labo
+        /// labo_attach: gửu kèm labo
         /// </summary>
         public string Type2 { get; set; }
 

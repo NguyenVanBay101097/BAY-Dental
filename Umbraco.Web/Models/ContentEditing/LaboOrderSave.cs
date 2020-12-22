@@ -50,8 +50,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DateExport { get; set; }
 
-        public Guid CompanyId { get; set; }
-
         /// <summary>
         /// vật liệu
         /// </summary>
