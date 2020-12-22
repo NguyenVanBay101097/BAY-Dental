@@ -294,7 +294,7 @@ namespace Infrastructure.Services
                 .Include(x=>x.LaboBiteJoint)
                 .Include(x=>x.LaboFinishLine)               
                 .Include(x => x.Product)
-                .Include("SaleOrderLine.Teeth")
+                //.Include("SaleOrderLine.Teeth")
                 .Include("SaleOrderLine.Product")
                 .Include("LaboOrderToothRel.Tooth").FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderDisplay>(labo);
@@ -604,6 +604,8 @@ namespace Infrastructure.Services
                     .Select(x => x.Tooth).ToListAsync();
                 res.SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine);
                 res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                res.State = "draft";
+                res.SaleOrderLineId = val.SaleOrderLineId;
             }
 
             return res;
