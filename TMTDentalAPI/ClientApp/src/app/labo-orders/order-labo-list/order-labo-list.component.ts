@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
@@ -29,7 +30,7 @@ export class OrderLaboListComponent implements OnInit {
     { text: 'Tới hạn', value: 'toihan' }
   ];
   
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal) { }
+  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -65,10 +66,12 @@ export class OrderLaboListComponent implements OnInit {
   }
 
   GetState(val){
-    var now = new Date();
-    if(now > val.datePlanned ){
+    debugger
+    var now = this.intlService.formatDate(new Date(), "d");
+    var datePlanned =  this.intlService.formatDate(new Date(val.datePlanned), "d");
+    if(now > datePlanned ){
       return "Trễ hạn";
-    }else if(now == val.datePlanned){
+    }else if(now == datePlanned){
       return "Tới hạn";
     }else{
       return "Chờ nhận";

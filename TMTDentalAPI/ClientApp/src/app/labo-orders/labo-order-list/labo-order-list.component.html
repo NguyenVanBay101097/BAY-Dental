@@ -56,7 +56,7 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-labo-order-detail-list [item]="dataItem" [state]="stateFilter"></app-labo-order-detail-list> 
+            <app-labo-order-detail-list [item]="dataItem" [state]="stateFilter" (reload)="reloaChange($event)" ></app-labo-order-detail-list> 
         </div>
         <kendo-grid-column field="orderPartner" title="Khách hàng" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
