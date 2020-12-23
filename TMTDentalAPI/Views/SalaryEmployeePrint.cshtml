@@ -86,11 +86,11 @@
                                 </tr>
                                 <tr>
                                     <td>Số ngày nghỉ/tháng</td>
-                                    <td>@(slip.Employee != null && slip.Employee.LeavePerMonth.HasValue ? slip.Employee.LeavePerMonth.Value : 0)</td>
+                                    <td>@(slip.Employee != null && slip.Employee.LeavePerMonth.HasValue ? Decimal.ToInt32(slip.Employee.LeavePerMonth.Value): 0)</td>
                                 </tr>
                                 <tr>
                                     <td>Số giờ làm/ngày</td>
-                                    <td>@(slip.Employee != null && slip.Employee.RegularHour.HasValue ? slip.Employee.RegularHour.Value : 0)</td>
+                                    <td>@(slip.Employee != null && slip.Employee.RegularHour.HasValue ? Decimal.ToInt32( slip.Employee.RegularHour.Value) : 0)</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -107,23 +107,23 @@
                             <tbody>
                                 <tr>
                                     <td>Số ngày công</td>
-                                    <td>@(slip.WorkedDay.HasValue ? slip.WorkedDay.Value : 0)</td>
+                                    <td>@(slip.WorkedDay.HasValue ? Decimal.ToDouble(slip.WorkedDay.Value) : 0)</td>
                                 </tr>
                                 <tr>
                                     <td>Số ngày nghỉ</td>
-                                    <td>@(slip.ActualLeavePerMonth.HasValue ? slip.ActualLeavePerMonth.Value : 0)</td>
+                                    <td>@(slip.ActualLeavePerMonth.HasValue ? Decimal.ToDouble(slip.ActualLeavePerMonth.Value) : 0)</td>
                                 </tr>
                                 <tr>
                                     <td>Ngày nghỉ không lương</td>
-                                    <td>@(slip.LeavePerMonthUnpaid.HasValue ? slip.LeavePerMonthUnpaid.Value : 0)</td>
+                                    <td>@(slip.LeavePerMonthUnpaid.HasValue ? Decimal.ToDouble(slip.LeavePerMonthUnpaid.Value) : 0)</td>
                                 </tr>
                                 <tr>
                                     <td>Ngày làm thêm</td>
-                                    <td>@(slip.OverTimeDay.HasValue ? slip.OverTimeDay.Value : 0)</td>
+                                    <td>@(slip.OverTimeDay.HasValue ? Decimal.ToDouble(slip.OverTimeDay.Value) : 0)</td>
                                 </tr>
                                 <tr>
                                     <td>Số giờ tăng ca</td>
-                                    <td>@(slip.OverTimeHour.HasValue ? slip.OverTimeHour.Value : 0)</td>
+                                    <td>@(slip.OverTimeHour.HasValue ? Decimal.ToDouble(slip.OverTimeHour.Value) : 0)</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -155,17 +155,17 @@
                             <tr>
                                 <td>2</td>
                                 <td>Lương tăng ca</td>
-                                <td>@(slip.OverTimeHourSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.OverTimeHourSalary.Value) : "0")</td>
+                                <td>@(slip.OverTimeHourSalary.HasValue && slip.OverTimeHourSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.OverTimeHourSalary.Value) : "0")</td>
                             </tr>
                             <tr>
                                 <td>3</td>
                                 <td>Lương làm thêm</td>
-                                <td>@(slip.OverTimeDaySalary.HasValue ? string.Format(culture, "{0:0,0}", slip.OverTimeDaySalary.Value) : "0")</td>
+                                <td>@(slip.OverTimeDaySalary.HasValue && slip.OverTimeDaySalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.OverTimeDaySalary.Value) : "0")</td>
                             </tr>
                             <tr>
                                 <td>4</td>
                                 <td>Phụ cấp xác định</td>
-                                <td>@(slip.Employee != null && slip.Employee.Allowance.HasValue ?  string.Format(culture, "{0:0,0}", slip.Employee.Allowance.Value) : "0")</td>
+                                <td>@(slip.Employee != null && slip.Employee.Allowance.HasValue && slip.Employee.Allowance.Value != 0 ?  string.Format(culture, "{0:0,0}", slip.Employee.Allowance.Value) : "0")</td>
                             <tr>
                                 <td>5</td>
                                 <td>Phụ cấp khác</td>
@@ -185,12 +185,12 @@
                             <tr>
                                 <td>8</td>
                                 <td>Hoa hồng</td>
-                                <td>@(slip.CommissionSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.CommissionSalary.Value) : "0")</td>
+                                <td>@(slip.CommissionSalary.HasValue && slip.CommissionSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.CommissionSalary.Value) : "0")</td>
                             </tr>
                             <tr>
                                 <td>9</td>
                                 <td>Phạt</td>
-                                <td>@(slip.AmercementMoney.HasValue ? string.Format(culture, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
+                                <td>@(slip.AmercementMoney.HasValue && slip.AmercementMoney.Value != 0 ? string.Format(culture, "{0:0,0}", slip.AmercementMoney.Value) : "0")</td>
                             </tr>
                             <tr class="bg-info font-weight-bold">
                                 <td></td>
@@ -200,7 +200,7 @@
                             <tr>
                                 <td>10</td>
                                 <td>Tạm ứng</td>
-                                <td>@(slip.AdvancePayment.HasValue ? string.Format(culture, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
+                                <td>@(slip.AdvancePayment.HasValue && slip.AdvancePayment.Value != 0 ? string.Format(culture, "{0:0,0}", slip.AdvancePayment.Value) : "0")</td>
                             </tr>
                             <tr class="bg-info font-weight-bold">
                                 <td></td>
@@ -218,39 +218,61 @@
                         @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
                     </div>
                 </div>
-                <div class="row font-weight-bold">
+                <div class="row">
+                    <div class="col col-sm">
+                        <div class="text-center">
+                            <span class="font-weight-600">Người lập phiếu</span> <br />
+                            @*<i>(Ký, họ tên)</i> <br />*@
+                            <span></span> <br />
+                            <span></span> <br />
+                            <span></span> <br />
+                            <span class="font-weight-600">@(Model.User != null ? Model.User.Name.ToUpper() : "")</span>
+                        </div>
+                    </div>
+                    <div class="col col-sm">
+                        <div class="text-center">
+                            <span class="font-weight-600"> Người lao động</span> <br />
+                            @*<i>(Ký, họ tên)</i> <br />*@
+                            <span></span> <br />
+                            <span></span> <br />
+                            <span></span> <br />
+                            <span class="font-weight-600">@(slip.Employee != null ? slip.Employee.Name.ToUpper() : "")</span>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="row font-weight-bold">
                     <div class="col-6 text-center">
                         Người lập phiếu
                     </div>
                     <div class="col-6 text-center">
                         Người lao động
                     </div>
-                </div>
+                </div>*@
                 @*<div class="h-10 w-100 pt-2">
-                        <table class="table border-none">
-                            <tr>
-                                <th class="text-center">Người lập phiếu</th>
-                                <th class="text-center">
-                                    @string.Format(culture, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
-                                    <p>Người lao động</p>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th class="text-center">
-                                    @(Model.User != null ? Model.User.Name.ToUpper(culture) : "")
-                                </th>
-                                <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(culture) : "")</th>
-                            </tr>
-                        </table>
-                    </div>*@
+            <table class="table border-none">
+                <tr>
+                    <th class="text-center">Người lập phiếu</th>
+                    <th class="text-center">
+                        @string.Format(culture, "{0:dddd}", DateTime.Now), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                        <p>Người lao động</p>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th class="text-center">
+                        @(Model.User != null ? Model.User.Name.ToUpper(culture) : "")
+                    </th>
+                    <th class="text-center">@(slip.Employee!=null ? slip.Employee.Name.ToUpper(culture) : "")</th>
+                </tr>
+            </table>
+        </div>*@
             </div>
         </div>
     }
