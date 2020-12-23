@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -77,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesPaged val)
         {
             var query = _saleLineService.SearchQuery(x => x.Product.IsLabo);
