@@ -37,7 +37,7 @@ export class PartnerCustomerProfileComponent implements OnInit {
     if (this.id) {
       const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.id = this.id;
-      modalRef.componentInstance.title = 'Cập nhật khách hàng';
+      modalRef.componentInstance.title = 'Sửa khách hàng';
 
       modalRef.result.then(result => {
         this.loadCustomerInfo();
