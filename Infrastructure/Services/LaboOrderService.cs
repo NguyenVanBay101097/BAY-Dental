@@ -124,15 +124,15 @@ namespace Infrastructure.Services
             {
                 if (val.State == "trehan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date > x.DatePlanned.Value.Date);
                 }
                 else if (val.State == "chonhan")
                 {
-                    query = query.Where(x => (x.DatePlanned.HasValue && now < x.DatePlanned.Value) || !x.DatePlanned.HasValue);
+                    query = query.Where(x => (x.DatePlanned.HasValue && now.Date < x.DatePlanned.Value.Date) || !x.DatePlanned.HasValue);
                 }
                 else if (val.State == "toihan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now == x.DatePlanned.Value);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value.Date);
                 }
             }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, Output } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -59,6 +59,8 @@ export class LaboOrderListComponent implements OnInit {
       });
   }
 
+
+
   // onDateSearchChange(data) {
   //   this.dateOrderFrom = data.dateFrom;
   //   this.dateOrderTo = data.dateTo;
@@ -74,6 +76,13 @@ export class LaboOrderListComponent implements OnInit {
   onStateSelectChange(data: TmtOptionSelect) {
     this.stateFilter = data.value;
     this.loadDataFromApi();
+  }
+
+  reloaChange(val){
+    if(val){
+      this.loadDataFromApi();
+    }
+   
   }
 
   stateGet(state) {
