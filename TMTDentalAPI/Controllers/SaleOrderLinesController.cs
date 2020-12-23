@@ -104,7 +104,8 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.Employee)
                 .Include(x => x.Labos);
 
-            query.OrderByDescending(x => x.DateCreated);
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
