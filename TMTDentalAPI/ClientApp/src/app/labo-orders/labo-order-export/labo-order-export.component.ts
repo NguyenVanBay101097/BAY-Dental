@@ -98,6 +98,7 @@ export class LaboOrderExportComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      console.log(res);
       this.gridData = res;
       this.loading = false;
     }, err => {

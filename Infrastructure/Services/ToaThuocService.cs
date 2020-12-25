@@ -29,15 +29,14 @@ namespace Infrastructure.Services
 
         public async Task<ToaThuocDisplay> GetToaThuocForDisplayAsync(Guid id)
         {
-            var toathuoc = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrder).Include(x => x.Employee).Include(x => x.Partner).FirstOrDefaultAsync();
+            var toathuoc = await _mapper.ProjectTo<ToaThuocDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (toathuoc == null)
                 return null;
-            var toathuocDisplay = _mapper.Map<ToaThuocDisplay>(toathuoc);
 
             var toaThuocLineObj = GetService<IToaThuocLineService>();
-            toathuocDisplay.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            toathuoc.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
 
-            return toathuocDisplay;
+            return toathuoc;
         }
 
         public async Task<ToaThuocDisplay> DefaultGet(ToaThuocDefaultGet val)
@@ -111,6 +110,19 @@ namespace Infrastructure.Services
             lineObj.ComputeName(entity.Lines);
 
             return await base.CreateAsync(entity);
+        }
+
+        public async Task<ToaThuocDisplay> GetToaThuocFromUIAsync(Guid id)
+        {
+            var toathuoc = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrder).Include(x => x.Employee).Include(x => x.Partner).FirstOrDefaultAsync();
+            if (toathuoc == null)
+                return null;
+            var toathuocDisplay = _mapper.Map<ToaThuocDisplay>(toathuoc);
+
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            toathuocDisplay.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+
+            return toathuocDisplay;
         }
 
         public async Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val)

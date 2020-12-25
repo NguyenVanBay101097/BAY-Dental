@@ -146,16 +146,8 @@ export class ToaThuocService {
         return this.http.post<ToaThuocDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    createFromUI(val: ToaThuocDisplayFromUI): Observable<ToaThuocDisplayFromUI> {
-        return this.http.post<ToaThuocDisplayFromUI>(this.baseApi + this.apiUrl + "/CreateFromUI", val);
-    }
-
     update(id: string, val: ToaThuocDisplay) {
         return this.http.put(this.baseApi + this.apiUrl + `/${id}`, val);
-    }
-
-    updateFromUI(id: string, val: ToaThuocDisplayFromUI) {
-        return this.http.put(this.baseApi + this.apiUrl + `/${id}/UpdateFromUI`, val);
     }
 
     delete(id: string) {
@@ -168,5 +160,17 @@ export class ToaThuocService {
 
     getPrint(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
+    }
+
+    getFromUI(id): Observable<ToaThuocDisplay> {
+        return this.http.get<ToaThuocDisplay>(this.baseApi + this.apiUrl + `/${id}/GetFromUI`);
+    }
+
+    createFromUI(val: ToaThuocDisplayFromUI): Observable<ToaThuocDisplayFromUI> {
+        return this.http.post<ToaThuocDisplayFromUI>(this.baseApi + this.apiUrl + "/CreateFromUI", val);
+    }
+
+    updateFromUI(id: string, val: ToaThuocDisplayFromUI) {
+        return this.http.put(this.baseApi + this.apiUrl + `/${id}/UpdateFromUI`, val);
     }
 }

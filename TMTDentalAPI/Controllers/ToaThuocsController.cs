@@ -118,7 +118,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(new PrintData() { html = html });
         }
 
-        [HttpPost("CreateFromUI")]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetFromUI(Guid id)
+        {
+            var toaThuoc = await _toaThuocService.GetToaThuocFromUIAsync(id);
+            if (toaThuoc == null)
+                return NotFound();
+
+            return Ok(toaThuoc);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateFromUI(ToaThuocSaveFromUI val)
         {
             var result = await _toaThuocService.CreateToaThuocFromUIAsync(val);
