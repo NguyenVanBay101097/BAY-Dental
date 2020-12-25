@@ -32,6 +32,38 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateOrderTo { get; set; }
         public bool? IsQuotation { get; set; }
 
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Đơn hàng
+        /// </summary>
+        public string LaboState { get; set; }
+
+        /// <summary>
+        /// not_created: Chưa tạo
+        /// created: Đã tạo
+        /// </summary>
+        public string LaboStatus { get; set; }
+    }
+
+    public class SaleOrderLinesLaboPaged
+    {
+        public SaleOrderLinesLaboPaged()
+        {
+            Limit = 20;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public string Search { get; set; }
+
+        public string State { get; set; }
+
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Đơn hàng
+        /// </summary>
         public string LaboState { get; set; }
 
         /// <summary>

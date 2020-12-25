@@ -79,7 +79,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
-        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesPaged val)
+        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesLaboPaged val)
         {
             var query = _saleLineService.SearchQuery(x => x.Product.IsLabo);
 
@@ -95,6 +95,14 @@ namespace TMTDentalAPI.Controllers
                     query = query.Where(x => !x.Labos.Any());
                 if (val.LaboStatus == "created")
                     query = query.Where(x => x.Labos.Any());
+            }
+
+            if (!string.IsNullOrEmpty(val.LaboState))
+            {
+                if (val.LaboState == "draft")
+                    query = query.Where(x => x.Labos.Where(s => s.State == "draft").Count() > 0);
+                else if (val.LaboState == "confirmed")
+                    query = query.Where(x => x.Labos.Where(s => s.State == "confirmed").Count() > 0);
             }
 
             var totalItems = await query.CountAsync();

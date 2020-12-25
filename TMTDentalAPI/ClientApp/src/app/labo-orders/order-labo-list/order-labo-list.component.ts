@@ -66,7 +66,6 @@ export class OrderLaboListComponent implements OnInit {
   }
 
   GetState(val){
-    debugger
     var now = this.intlService.formatDate(new Date(), "d");
     var datePlanned =  this.intlService.formatDate(new Date(val.datePlanned), "d");
     if(now > datePlanned ){

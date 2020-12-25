@@ -32,13 +32,7 @@ export class LaboOrderListComponent implements OnInit {
   // dateOrderTo: Date;
   // datePlannedFrom: Date;
   // datePlannedTo: Date;
-  stateFilter: string;
-
-  stateFilterOptions: TmtOptionSelect[] = [
-    { text: 'Tất cả', value: '' },
-    { text: 'Đơn hàng', value: 'confirm' },
-    { text: 'Nháp', value: 'draft' }
-  ];
+  stateFilter: string = '';
 
   laboStatusFilter: string = '';
 
@@ -73,8 +67,8 @@ export class LaboOrderListComponent implements OnInit {
   //   this.loadDataFromApi();
   // }
 
-  onStateSelectChange(data: TmtOptionSelect) {
-    this.stateFilter = data.value;
+  onStateLaboChange(event) {
+    this.stateFilter = event.target.value;
     this.loadDataFromApi();
   }
 
@@ -122,6 +116,7 @@ export class LaboOrderListComponent implements OnInit {
     val.isLabo = true;
     val.search = this.search || '';   
     val.laboStatus = this.laboStatusFilter;
+    val.laboState = this.stateFilter || '';
     this.saleOrderLineService.getListLineIsLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
