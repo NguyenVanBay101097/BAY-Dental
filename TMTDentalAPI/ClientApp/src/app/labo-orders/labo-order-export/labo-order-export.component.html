@@ -14,7 +14,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view d-flex">
-                    <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
+                    <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions" [optionSelected]="stateFilterOptionSelected"
                         (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown>
                     <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo"

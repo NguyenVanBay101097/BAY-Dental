@@ -32,6 +32,8 @@ export class LaboOrderExportDialogComponent implements OnInit {
     if (this.labo) {
       if (this.labo.dateExport) {
         this.formGroup.get('dateExport').setValue(new Date(this.labo.dateExport));
+      } else {
+        this.formGroup.get('dateExport').setValue(new Date());
       }
     }
   }

@@ -8,7 +8,7 @@ import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 })
 export class TmtOptionSelectDropdownComponent implements OnInit {
   @Input() options: TmtOptionSelect[];
-  optionSelected: TmtOptionSelect;
+  @Input() optionSelected: TmtOptionSelect;
   @Input() title: string;
   @Output() selectChange = new EventEmitter<any>();
   constructor() { }
