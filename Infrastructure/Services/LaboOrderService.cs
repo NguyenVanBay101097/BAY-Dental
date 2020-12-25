@@ -29,56 +29,48 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderBasic>> GetPagedResultAsync(LaboOrderPaged val)
         {
-            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            //ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            //if (!string.IsNullOrEmpty(val.Search))
+            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+            //    x.Partner.Name.Contains(val.Search) ||
+            //    x.Partner.NameNoSign.Contains(val.Search) ||
+            //    x.Partner.Phone.Contains(val.Search)));
+            //if (val.PartnerId.HasValue)
+            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
+
+            var query = SearchQuery();
+
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
-            if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
-
-            if (val.DateOrderFrom.HasValue)
-            {
-                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder >= dateFrom));
-            }
-            if (val.DateOrderTo.HasValue)
-            {
-                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateTo));
-            }
-
-            if (val.DatePlannedFrom.HasValue)
-            {
-                var dateFrom = val.DatePlannedFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned >= dateFrom));
-            }
-            if (val.DatePlannedTo.HasValue)
-            {
-                var dateTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
-            }
+                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
 
             if (val.SaleOrderLineId.HasValue)
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderLineId == val.SaleOrderLineId));
+                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);          
             }
 
             if (!string.IsNullOrEmpty(val.State))
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.State == val.State));
+                query = query.Where(x => x.State == val.State);
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
-
             var totalItems = await query.CountAsync();
-            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+
+            query = query.Include(x => x.Partner)
+                .Include(x => x.SaleOrderLine.Order);
+
+            query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<LaboOrderBasic>>(items)
             };
+
+            return paged;
+
         }
 
         public async Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val)

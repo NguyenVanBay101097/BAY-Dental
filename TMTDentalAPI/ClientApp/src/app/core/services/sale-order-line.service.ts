@@ -22,6 +22,7 @@ export class SaleOrderLinesPaged {
     isLabo: boolean;
     search: string;
     laboStatus: string;
+    laboState: string;
 }
 
 @Injectable({ providedIn: 'root' })

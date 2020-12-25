@@ -17,11 +17,19 @@
                     <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown> -->
-                    <select class="form-control form-control-sm" (change)="onChangeLaboStatus($event)">
-                        <option value="">Lọc phiếu labo</option>
-                        <option value="created">Đã tạo</option>
-                        <option value="not_created">Chưa tạo</option>
-                    </select>
+                    <div class="d-flex">
+                        <select class="form-control form-control-sm" (change)="onChangeLaboStatus($event)">
+                            <option value="">Tất cả</option>
+                            <option value="created">Đã tạo</option>
+                            <option value="not_created">Chưa tạo</option>
+                        </select>
+                        <select class="form-control form-control-sm ml-2" (change)="onStateLaboChange($event)">
+                            <option value="">Tất cả</option>
+                            <option value="draft">Nháp</option>
+                            <option value="confirmed">Đơn hàng</option>
+                        </select>
+                    </div>
+                   
                 </div>
             </div>
             <div class="o_cp_sidebar">  
