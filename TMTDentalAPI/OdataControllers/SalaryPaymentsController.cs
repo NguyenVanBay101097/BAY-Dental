@@ -45,7 +45,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
-        [CheckAccess(Actions = "Salary.SalaryPayment.Get")]
+        [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery());
@@ -54,7 +54,7 @@ namespace TMTDentalAPI.OdataControllers
 
 
         [EnableQuery]
-        [CheckAccess(Actions = "Salary.SalaryPayment.Get")]
+        [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
         public SingleResult<SalaryPaymentVm> Get([FromODataUri] Guid key)
         {
 
