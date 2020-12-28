@@ -89,20 +89,20 @@ namespace TMTDentalAPI.Controllers
                 x.OrderPartner.NameNoSign.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search));
             }
 
-            if (!string.IsNullOrEmpty(val.LaboStatus))
+            if (val.HasAnyLabo.HasValue)
             {
-                 if (val.LaboStatus == "not_created")
+                 if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                if (val.LaboStatus == "created")
+                 else
                     query = query.Where(x => x.Labos.Any());
             }
 
             if (!string.IsNullOrEmpty(val.LaboState))
             {
                 if (val.LaboState == "draft")
-                    query = query.Where(x => x.Labos.Where(s => s.State == "draft").Count() > 0);
+                    query = query.Where(x => x.Labos.Any(s => s.State == "draft"));
                 else if (val.LaboState == "confirmed")
-                    query = query.Where(x => x.Labos.Where(s => s.State == "confirmed").Count() > 0);
+                    query = query.Where(x => x.Labos.Any(s => s.State == "confirmed"));
             }
 
             var totalItems = await query.CountAsync();
@@ -110,7 +110,8 @@ namespace TMTDentalAPI.Controllers
             query = query.Include(x => x.OrderPartner)
                 .Include(x => x.Order)
                 .Include(x => x.Employee)
-                .Include(x => x.Labos);
+                .Include(x => x.Labos)
+                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth);
 
             query = query.OrderByDescending(x => x.DateCreated);
 

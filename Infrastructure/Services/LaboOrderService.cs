@@ -19,7 +19,6 @@ namespace Infrastructure.Services
     public class LaboOrderService : BaseService<LaboOrder>, ILaboOrderService
     {
         private readonly IMapper _mapper;
-        private readonly IUploadService _uploadService;
         public LaboOrderService(IAsyncRepository<LaboOrder> repository, IHttpContextAccessor httpContextAccessor, IUploadService uploadService,
             IMapper mapper)
             : base(repository, httpContextAccessor)
@@ -58,7 +57,8 @@ namespace Infrastructure.Services
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.Partner)
-                .Include(x => x.SaleOrderLine.Order);
+                .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.LaboOrderToothRel).ThenInclude(x => x.Tooth);
 
             query.OrderByDescending(x => x.DateCreated);
 

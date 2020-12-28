@@ -25,6 +25,14 @@ export class SaleOrderLinesPaged {
     laboState: string;
 }
 
+export class SaleOrderLinesLaboPaged {
+    offset: number;
+    limit: number;
+    search: string;
+    hasAnyLabo: boolean;
+    laboState: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';

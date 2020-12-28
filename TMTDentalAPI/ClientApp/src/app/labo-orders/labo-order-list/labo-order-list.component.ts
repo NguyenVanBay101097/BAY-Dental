@@ -8,7 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -34,7 +34,9 @@ export class LaboOrderListComponent implements OnInit {
   // datePlannedTo: Date;
   stateFilter: string = '';
 
-  laboStatusFilter: string = '';
+  laboStatusFilter: boolean;
+  filterPaged: SaleOrderLinesLaboPaged;
+  
 
 
   constructor(private laboOrderService: LaboOrderService,
@@ -43,12 +45,17 @@ export class LaboOrderListComponent implements OnInit {
     private modalService: NgbModal, private intlService: IntlService) { }
 
   ngOnInit() {
+    this.filterPaged = new SaleOrderLinesLaboPaged();
+    this.filterPaged.limit = this.limit;
+    this.filterPaged.offset = this.skip;
+
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
+      .subscribe((value) => {
+        this.filterPaged.search = value || '';
         this.loadDataFromApi();
       });
   }
@@ -68,7 +75,13 @@ export class LaboOrderListComponent implements OnInit {
   // }
 
   onStateLaboChange(event) {
-    this.stateFilter = event.target.value;
+    var value = event.target.value;
+    if (value) {
+      this.filterPaged.laboState = value;
+    } else {
+      delete this.filterPaged['laboState'];
+    }
+
     this.loadDataFromApi();
   }
 
@@ -110,14 +123,7 @@ export class LaboOrderListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new SaleOrderLinesPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.isLabo = true;
-    val.search = this.search || '';   
-    val.laboStatus = this.laboStatusFilter;
-    val.laboState = this.stateFilter || '';
-    this.saleOrderLineService.getListLineIsLabo(val).pipe(
+    this.saleOrderLineService.getListLineIsLabo(this.filterPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -132,7 +138,13 @@ export class LaboOrderListComponent implements OnInit {
   }
 
   onChangeLaboStatus(event) {
-    this.laboStatusFilter = event.target.value;
+    var value = event.target.value;
+    if (value) {
+      this.filterPaged.hasAnyLabo = value == 'true';
+    } else {
+      delete this.filterPaged['hasAnyLabo'];
+    }
+
     this.loadDataFromApi();
   }
 

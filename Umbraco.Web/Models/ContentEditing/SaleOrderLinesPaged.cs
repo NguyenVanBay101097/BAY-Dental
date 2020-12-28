@@ -58,18 +58,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Search { get; set; }
 
-        public string State { get; set; }
+        /// <summary>
+        /// true: Đã tạo
+        /// false: Chưa tạo
+        /// </summary>
+        public bool? HasAnyLabo { get; set; }
 
         /// <summary>
         /// draft: Nháp
-        /// confirmed: Đơn hàng
+        /// confirmed: Đã tạo
         /// </summary>
         public string LaboState { get; set; }
-
-        /// <summary>
-        /// not_created: Chưa tạo
-        /// created: Đã tạo
-        /// </summary>
-        public string LaboStatus { get; set; }
     }
 }
