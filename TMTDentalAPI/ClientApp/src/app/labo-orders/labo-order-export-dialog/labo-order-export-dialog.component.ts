@@ -26,12 +26,14 @@ export class LaboOrderExportDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateExport: [null]
+      dateExport: [null, Validators.required]
     });
 
     if (this.labo) {
       if (this.labo.dateExport) {
         this.formGroup.get('dateExport').setValue(new Date(this.labo.dateExport));
+      } else {
+        this.formGroup.get('dateExport').setValue(new Date());
       }
     }
   }
@@ -56,4 +58,6 @@ export class LaboOrderExportDialogComponent implements OnInit {
       this.activeModal.close();
     });
   }
+
+  
 }

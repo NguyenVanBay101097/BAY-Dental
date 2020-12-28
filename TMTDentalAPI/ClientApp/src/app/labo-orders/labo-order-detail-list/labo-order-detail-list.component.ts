@@ -1,11 +1,12 @@
 import { LaboOrderBasic, LaboOrderPaged, LaboOrderService } from './../labo-order.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -15,6 +16,7 @@ import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/
 export class LaboOrderDetailListComponent implements OnInit {
   @Input() public item: any;
   @Input() public state: string;
+  @Output() reload : Subject<boolean> = new Subject<boolean>();
   skip = 0;
   limit = 10;
   gridData: GridDataResult;
@@ -76,6 +78,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     modalRef.componentInstance.saleOrderLineId = this.item.id;
     modalRef.result.then(res => {
       this.loadDataFromApi();
+      this.reload.next(true);
     }, () => {
     });
   }
@@ -88,6 +91,7 @@ export class LaboOrderDetailListComponent implements OnInit {
 
     modalRef.result.then(res => {
       this.loadDataFromApi();
+      this.reload.next(true);
     }, () => {
     });
   }
@@ -99,6 +103,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
         this.loadDataFromApi();
+        this.reload.next(true);
       });
     });
   }

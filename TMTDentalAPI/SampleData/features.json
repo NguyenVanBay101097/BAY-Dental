@@ -304,50 +304,44 @@
     ]
   },
   {
-    "Name": "Thu chi",
-    "Permission": "Account",
+    "Name": "Labo",
+    "Permission": "Labo",
     "Children": [
       {
-        "Name": "Phiếu thu/chi",
-        "Permission": "Account.PhieuThuChi",
+        "Name": "Quản lý phiếu Labo",
+        "Permission": "Labo.LaboOrder",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "Account.PhieuThuChi.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Account.PhieuThuChi.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Account.PhieuThuChi.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Account.PhieuThuChi.Delete"
+            "Permission": "Labo.LaboOrder.Read"
           }
         ]
       },
       {
-        "Name": "Loại thu/chi",
-        "Permission": "Account.LoaiThuChi",
+        "Name": "Đơn hàng Labo",
+        "Permission": "Labo.OrderLabo",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "Account.LoaiThuChi.Read"
+            "Permission": "Labo.OrderLabo.Read"
           },
           {
-            "Name": "Thêm",
-            "Permission": "Account.LoaiThuChi.Create"
+            "Name": "Nhận Labo",
+            "Permission": "Labo.OrderLabo.Update"
+          }
+        ]
+      },
+      {
+        "Name": "Xuất Labo cho khách",
+        "Permission": "Labo.ExportLabo",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.ExportLabo.Read"
           },
           {
-            "Name": "Cập nhật",
-            "Permission": "Account.LoaiThuChi.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Account.LoaiThuChi.Delete"
+            "Name": "Xuất Labo",
+            "Permission": "Labo.ExportLabo.Update"
           }
         ]
       }
@@ -694,6 +688,56 @@
           {
             "Name": "Xóa",
             "Permission": "System.ApplicationRole.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Thu chi",
+    "Permission": "Account",
+    "Children": [
+      {
+        "Name": "Phiếu thu/chi",
+        "Permission": "Account.PhieuThuChi",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.PhieuThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.PhieuThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.PhieuThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.PhieuThuChi.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thu/chi",
+        "Permission": "Account.LoaiThuChi",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.LoaiThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.LoaiThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.LoaiThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.LoaiThuChi.Delete"
           }
         ]
       }

@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -77,7 +78,8 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesPaged val)
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
+        public async Task<IActionResult> GetListLineIsLabo([FromQuery] SaleOrderLinesLaboPaged val)
         {
             var query = _saleLineService.SearchQuery(x => x.Product.IsLabo);
 
@@ -87,12 +89,20 @@ namespace TMTDentalAPI.Controllers
                 x.OrderPartner.NameNoSign.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search));
             }
 
-            if (!string.IsNullOrEmpty(val.LaboStatus))
+            if (val.HasAnyLabo.HasValue)
             {
-                 if (val.LaboStatus == "not_created")
+                 if (!val.HasAnyLabo.Value)
                     query = query.Where(x => !x.Labos.Any());
-                if (val.LaboStatus == "created")
+                 else
                     query = query.Where(x => x.Labos.Any());
+            }
+
+            if (!string.IsNullOrEmpty(val.LaboState))
+            {
+                if (val.LaboState == "draft")
+                    query = query.Where(x => x.Labos.Any(s => s.State == "draft"));
+                else if (val.LaboState == "confirmed")
+                    query = query.Where(x => x.Labos.Any(s => s.State == "confirmed"));
             }
 
             var totalItems = await query.CountAsync();
@@ -100,9 +110,11 @@ namespace TMTDentalAPI.Controllers
             query = query.Include(x => x.OrderPartner)
                 .Include(x => x.Order)
                 .Include(x => x.Employee)
-                .Include(x => x.Labos);
+                .Include(x => x.Labos)
+                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth);
 
-            query.OrderByDescending(x => x.DateCreated);
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
