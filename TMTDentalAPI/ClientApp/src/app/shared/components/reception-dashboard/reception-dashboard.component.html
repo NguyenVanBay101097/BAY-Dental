@@ -45,7 +45,7 @@
         <div class="col-8">
             <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
             <div class="d-flex w-100">
-                <div class="t_kanban w-70">
+                <div class="t_kanban w-65">
                     <div class="card t_card_right border-secondary">
                         <div class="card-body">
                             <div class="d-flex">
@@ -64,21 +64,20 @@
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="t_report_item">
-                                    <span class="font-weight-bold">LABO TỚI HẸN</span>
+                                    <span class="font-weight-bold">TIỀN MẶT</span>
                                     <h4 class="text-primary">
-                                        {{laboOrderReport ? laboOrderReport.laboAppointment : 0}}
+                                        {{(reportValueCash ? reportValueCash.balance : 0) | number}}
                                     </h4>
                                 </div>
                                 <div class="t_report_item">
-                                    <span class="font-weight-bold">LABO ĐÃ NHẬN</span>
+                                    <span class="font-weight-bold">NGÂN HÀNG</span>
                                     <h4 class="text-primary">
-                                        {{laboOrderReport ? laboOrderReport.laboReceived : 0}}
+                                        {{(reportValueBank ? reportValueBank.balance : 0) | number}}
                                     </h4>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="card t_card_right border-secondary">
                         <div class="card-body">
                             <div class="d-flex">
@@ -101,15 +100,15 @@
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="t_report_item">
-                                    <span class="font-weight-bold">TỔNG LỊCH HẸN</span>
+                                    <span class="font-weight-bold">LABO TỚI HẸN</span>
                                     <h4 class="text-primary">
-                                        {{appointmentStateCount.all ? appointmentStateCount.all : 0}}
+                                        {{laboOrderReport ? laboOrderReport.laboAppointment : 0}}
                                     </h4>
                                 </div>
                                 <div class="t_report_item">
-                                    <span class="font-weight-bold">LỊCH HẸN ĐÃ TỚI</span>
+                                    <span class="font-weight-bold">LABO ĐÃ NHẬN</span>
                                     <h4 class="text-primary">
-                                        {{appointmentStateCount.done ? appointmentStateCount.done : 0}}
+                                        {{laboOrderReport ? laboOrderReport.laboReceived : 0}}
                                     </h4>
                                 </div>
                             </div>
@@ -117,29 +116,48 @@
                     </div>
                     <div class="t_card_right t_card_ghost"></div>
                 </div>
-                <div class="card t_card_right border-secondary w-30">
+                <div class="card t_card_right border-secondary w-35">
                     <div class="card-body">
-                        <div class="">
-                            <div class="t_report_item">
-                                <span class="font-weight-bold">TIỀN MẶT</span>
-                                <h4 class="text-primary">
-                                    {{(reportValueCash ? reportValueCash.balance : 0) | number}}
-                                </h4>
-                            </div>
-                            <div class="t_report_item">
-                                <span class="font-weight-bold">NGÂN HÀNG</span>
-                                <h4 class="text-primary">
-                                    {{(reportValueBank ? reportValueBank.balance : 0) | number}}
-                                </h4>
-                            </div>
-                            <div class="t_report_item">
-                                <span class="font-weight-bold">THỰC THU</span>
-                                <h4 class="text-primary">
-                                    {{((reportValueCash ? reportValueCash.balance : 0) + (reportValueBank ?
-                                    reportValueBank.balance : 0)) | number}}
-                                </h4>
-                            </div>
-                        </div>
+                        <table class="table border-none">
+                            <thead>
+                                <tr class="text-center border-bottom">
+                                    <td colspan="2">
+                                        <h5 class="font-weight-bold">THU TRONG NGÀY</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h5 class="font-weight-bold">TIỀN MẶT</h5>
+                                    </td>
+                                    <td>
+                                        <h5 class="text-primary">
+                                            {{(reportValueCashByDate ? reportValueCashByDate.balance : 0) | number}}
+                                        </h5>
+                                    </td>
+                                </tr>
+                                <tr class="border-bottom">
+                                    <td>
+                                        <h5 class="font-weight-bold">NGÂN HÀNG</h5>
+                                    </td>
+                                    <td>
+                                        <h5 class="text-primary">
+                                            {{(reportValueBankByDate ? reportValueBankByDate.balance : 0) | number}}
+                                        </h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <h5 class="font-weight-bold">TỔNG THU</h5>
+                                    </td>
+                                    <td>
+                                        <h5 class="text-primary">
+                                            {{((reportValueCashByDate ? reportValueCashByDate.balance : 0) +
+                                           (reportValueBankByDate ? reportValueBankByDate.balance : 0)) | number}}
+                                        </h5>
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
             </div>

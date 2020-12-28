@@ -36,6 +36,8 @@ export class ReceptionDashboardComponent implements OnInit {
   customerReport: PartnerCustomerReportOutput;
   reportValueCash: any;
   reportValueBank: any;
+  reportValueCashByDate: any;
+  reportValueBankByDate: any;
 
   public state: State = {
     skip: this.offset,
@@ -68,6 +70,7 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadLaboOrderReport();
     this.loadPartnerCustomerReport();
     this.loadDataMoney();
+    this.loadDataMoneyByDateTime();
     this.loadService();
   }
 
@@ -189,12 +192,23 @@ export class ReceptionDashboardComponent implements OnInit {
 
   loadDataMoney() {
     var val = new ReportCashBankGeneralLedger();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     val.companyId = this.authService.userInfo.companyId;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
       this.reportValueCash = result['accounts'].find(x => x.name == 'Tiền mặt');
       this.reportValueBank = result['accounts'].find(x => x.name == 'Ngân hàng');
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  loadDataMoneyByDateTime() {
+    var val = new ReportCashBankGeneralLedger();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
+    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
+      this.reportValueCashByDate = result['accounts'].find(x => x.name == 'Tiền mặt');
+      this.reportValueBankByDate = result['accounts'].find(x => x.name == 'Ngân hàng');
     }, err => {
       console.log(err);
     });
