@@ -34,7 +34,8 @@ export class ReceptionDashboardComponent implements OnInit {
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
   customerReport: PartnerCustomerReportOutput;
-  reportValue: any;
+  reportValueCash: any;
+  reportValueBank: any;
 
   public state: State = {
     skip: this.offset,
@@ -98,10 +99,10 @@ export class ReceptionDashboardComponent implements OnInit {
     val.state = 'draft';
     this.saleReportService.getReportService(val).pipe(
       map((response: any) =>
-        (<GridDataResult>{
-          data: response.items,
-          total: response.totalItems
-        }))
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
     ).subscribe(res => {
       this.gridView = res.data;
       this.gridData = res.data;
@@ -188,9 +189,12 @@ export class ReceptionDashboardComponent implements OnInit {
 
   loadDataMoney() {
     var val = new ReportCashBankGeneralLedger();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     val.companyId = this.authService.userInfo.companyId;
     this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportValue = result['accounts'].find(x => x.name == 'Tiền mặt');
+      this.reportValueCash = result['accounts'].find(x => x.name == 'Tiền mặt');
+      this.reportValueBank = result['accounts'].find(x => x.name == 'Ngân hàng');
     }, err => {
       console.log(err);
     });
@@ -255,7 +259,7 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
   getStateDisplay(state) {
-    switch(state) {
+    switch (state) {
       case 'sale':
         return 'Đang điều trị';
       case 'done':
