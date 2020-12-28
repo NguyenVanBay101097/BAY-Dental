@@ -3,6 +3,7 @@ import { WebService } from 'src/app/core/services/web.service';
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
+import { PartnerWebcamComponent } from '../partner-webcam/partner-webcam.component';
 
 @Component({
   selector: 'app-image-file-upload',
@@ -54,5 +55,20 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
     }
     
     return this.imageId;
+  }
+
+  onWebcam() {
+    const modalRef = this.modalService.open(PartnerWebcamComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(file => {
+      if (file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        this.webService.uploadImage(formData).subscribe((result: any) => {
+          this.uploaded.emit(result);
+        });
+      }
+    }, err => {
+      console.log(err);
+    });
   }
 }
