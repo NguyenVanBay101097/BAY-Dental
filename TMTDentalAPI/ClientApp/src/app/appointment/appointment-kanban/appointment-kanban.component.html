@@ -57,7 +57,11 @@
                     </div>
                 </div>
                 <div class="oe_kanban_color_0 oe_kanban_card o_kanban_record"
-                    [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 'oe_kanban_color_2': appointment.state == 'done', 'oe_kanban_color_5': appointment.state == 'cancel'}"
+                    [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 
+                        'oe_kanban_color_3': appointment.state == 'waiting', 
+                        'oe_kanban_color_7': appointment.state == 'examination', 
+                        'oe_kanban_color_2': appointment.state == 'done', 
+                        'oe_kanban_color_5': appointment.state == 'cancel'}"
                     *ngFor="let appointment of appointmentByDate[date.toDateString()]">
                     <div class="oe_kanban_content">
                         <div class="o_kanban_record_top">

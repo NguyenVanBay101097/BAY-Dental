@@ -14,7 +14,9 @@ export class AppointmentStateFilterComponent implements OnInit {
   states: { text: string, value: string, class: string }[] = [
     { text: 'Tất cả trạng thái', value: '', class: '' },
     { text: 'Đang hẹn', value: 'confirmed', class: 'text-primary' },
-    { text: 'Đã tới', value: 'done', class: 'text-success' },
+    { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
+    { text: 'Đang khám', value: 'examination', class: 'text-info' },
+    { text: 'Hoàn thành', value: 'done', class: 'text-success' },
     { text: 'Đã hủy', value: 'cancel', class: 'text-dark' },
   ];
 
