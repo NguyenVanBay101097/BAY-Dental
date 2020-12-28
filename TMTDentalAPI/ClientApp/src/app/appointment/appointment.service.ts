@@ -77,6 +77,10 @@ export class AppointmentService {
     return this.http.post(this.baseApi + "api/Appointments/DefaultGet", val);
   }
 
+  getCountState(val: any) {
+    return this.http.post(this.baseApi + "api/Appointments/CountAppointment", val);
+  }
+
   searchRead(val: any): Observable<AppointmentBasic[]> {
     return this.http.post<AppointmentBasic[]>(this.baseApi + "api/Appointments/SearchRead", val);
   }
@@ -100,6 +104,8 @@ export class AppointmentService {
   patch(id, val) {
     return this.http.patch(this.baseApi + "api/Appointments/" + id, val);
   }
+
+
 
   //cập nhật các cuộc hẹn quá hạn
   // patchMulti(val) {

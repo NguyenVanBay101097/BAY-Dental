@@ -1,0 +1,73 @@
+<div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
+<kendo-grid [height]="300" [resizable]="true" [data]="gridData" [sortable]="true"
+(pageChange)="pageChange($event)">
+    <ng-template kendoGridToolbarTemplate>
+        <div class="d-flex">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" [(ngModel)]="stateFilter"
+                    (change)="onChangeOverState('')" id="all" [value]="''">
+                <label class="form-check-label-radio" for="all">Tổng hẹn-({{gridData.total}})</label>
+            </div>
+            <div class="form-check form-check-inline" *ngFor="let item of stateFilterOptions ; let i = index">
+                <input class="form-check-input" type="radio" [(ngModel)]="stateFilter"
+                    (change)="onChangeOverState(item.state)" id="{{item.state}}" [value]="item.state">
+                <label class="form-check-label-radio" for="{{item.state}}">{{stateGet(item.state)}}-({{item.count}})</label>
+            </div>
+            <!-- <button [class.active]="entry.isLocationActive" [value]="entry.value" (click)="entry.isLocationActive = !entry.isLocationActive" (click)="checkfilterState(entry.value)"  class="ml-1 btn btn-primary btn-sm" type="button" *ngFor="let entry of stateFilterOptions ; let i = index">{{entry.text}}</button> -->
+        </div>
+    </ng-template>
+    <kendo-grid-column
+        title="Mã lịch hẹn" width="80">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <!-- <a class="text-primary cursor-pointer" title="Chuyển đến lịch hẹn "
+               >{{dataItem.name}}</a> -->
+               {{dataItem.name}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Thời gian"  width="50">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.time}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Ngày"  width="80">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column  title="Khách hàng" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.partnerDisplayName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="SĐT KH" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.partnerPhone}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Bác sĩ" width="80">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.doctorName}}
+          </ng-template>
+    </kendo-grid-column>  
+    <kendo-grid-column title="Nội dung" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.note}}
+          </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column  title="Trạng thái" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{stateGet(dataItem.state)}}
+        </ng-template>
+    </kendo-grid-column>
+      <kendo-grid-column field="id" width="50">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <!-- <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button> -->
+            </ng-template>
+        </kendo-grid-column>
+</kendo-grid>

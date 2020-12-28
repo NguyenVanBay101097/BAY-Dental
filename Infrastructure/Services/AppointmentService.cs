@@ -168,23 +168,20 @@ namespace Infrastructure.Services
         //Đếm số cuộc hẹn trong ngày (trang Tổng quan)
         public async Task<IEnumerable<AppointmentStateCount>> CountAppointment(DateFromTo val)
         {
-            var today = DateTime.Today;
-            var fromDate = val.DateFrom.HasValue ? val.DateFrom : val.DateFrom.HasValue ? val.DateFrom : today;
-            var toDate = val.DateFrom.HasValue ? val.DateTo.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1);
 
-            var confirmCount = await SearchQuery().Where(x => x.Date > fromDate && x.Date < toDate && x.State.Contains("confirmed")).CountAsync();
-            var cancelCount = await SearchQuery().Where(x => x.Date > fromDate && x.Date < toDate && x.State.Contains("cancel")).CountAsync();
-            var doneCount = await SearchQuery().Where(x => x.Date > fromDate && x.Date < toDate && x.State.Contains("done")).CountAsync();
-            var waitingCount = await SearchQuery().Where(x => x.Date > fromDate && x.Date < toDate && x.State.Contains("waiting")).CountAsync();
-            var expiredCount = await SearchQuery().Where(x => x.Date > fromDate && x.Date < toDate && x.State.Contains("expired")).CountAsync();
+            var confirmCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("confirmed")).CountAsync();
+            var cancelCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("cancel")).CountAsync();
+            var doneCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("done")).CountAsync();
+            var waitingCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("wait")).CountAsync();
+            var expiredCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("examination")).CountAsync();
 
             var list = new List<AppointmentStateCount>();
             list.Add(new AppointmentStateCount { State = "confirmed", Count = confirmCount, Color = "#04c835" });
-            list.Add(new AppointmentStateCount { State = "cancel", Count = cancelCount, Color = "#cc0000" });
+            list.Add(new AppointmentStateCount { State = "wait", Count = waitingCount, Color = "#0080ff" });
+            list.Add(new AppointmentStateCount { State = "examination", Count = expiredCount, Color = "#ffbf00" });
             list.Add(new AppointmentStateCount { State = "done", Count = doneCount, Color = "#666666" });
-            list.Add(new AppointmentStateCount { State = "waiting", Count = waitingCount, Color = "#0080ff" });
-            list.Add(new AppointmentStateCount { State = "expired", Count = expiredCount, Color = "#ffbf00" });
-
+            list.Add(new AppointmentStateCount { State = "cancel", Count = cancelCount, Color = "#cc0000" });
+           
             return list;
         }
 

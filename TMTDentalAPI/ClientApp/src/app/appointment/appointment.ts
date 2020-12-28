@@ -119,3 +119,9 @@ export class AppointmentPatch {
     state: string;
     date: string;
 }
+
+export class  DateFromTo
+{
+    dateFrom: string;
+    dateTo: string;
+}
