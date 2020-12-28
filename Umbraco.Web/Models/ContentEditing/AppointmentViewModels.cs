@@ -39,6 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+        public string Reason { get; set; }
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }
@@ -82,6 +83,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+        public string Reason { get; set; }
 
         //Hẹn khách hàng nào?
         public Guid PartnerId { get; set; }

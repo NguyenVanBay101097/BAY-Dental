@@ -110,9 +110,19 @@
                                     <td>
                                         <select class="form-control" formControlName="state">
                                             <option value="confirmed">Đang hẹn</option>
-                                            <option value="done">Đã tới</option>
+                                            <option value="waiting">Chờ khám</option>
+                                            <option value="examination">Đang khám</option>
+                                            <option value="done">Hoàn thành</option>
                                             <option value="cancel">Đã hủy</option>
                                         </select>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="state == 'cancel'">
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Lý do hủy hẹn</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <input type="text" class="form-control" formControlName="reason" />
                                     </td>
                                 </tr>
                                 <tr>
