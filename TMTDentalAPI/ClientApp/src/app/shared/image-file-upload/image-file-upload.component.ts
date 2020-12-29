@@ -59,11 +59,9 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
 
   onWebcam() {
     const modalRef = this.modalService.open(PartnerWebcamComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.result.then(uri => {
-      if (uri) {
-        this.webService.UploadImageByBase64(uri).subscribe((result: any) => {
-          this.uploaded.emit(result);
-        });
+    modalRef.result.then(res => {
+      if (res) {
+        this.uploaded.emit(res);
       }
     }, err => {
       console.log(err);

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WebService } from 'src/app/core/services/web.service';
 declare var Webcam: any;
 @Component({
@@ -11,15 +11,13 @@ export class PartnerWebcamComponent implements OnInit {
 
   image64: any;
 
-  constructor(private activeModal: NgbActiveModal, private webService: WebService) { }
+  constructor(public activeModal: NgbActiveModal, private webService: WebService, public modalService: NgbModal) { }
 
   ngOnInit() {
   }
 
   public ngAfterViewInit() {
     Webcam.set({
-      width: 320,
-      height: 240,
       image_format: 'jpeg',
       jpeg_quality: 90
     });
@@ -30,7 +28,7 @@ export class PartnerWebcamComponent implements OnInit {
     Webcam.snap(function (data_uri) {
       this.image64 = data_uri;
       document.getElementById('results').innerHTML =
-      '<a href="'+ this.image64 +'" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + this.image64 + '"/></a>';
+        '<a href="' + this.image64 + '" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + this.image64 + '"/></a>';
     });
   }
 
@@ -40,7 +38,17 @@ export class PartnerWebcamComponent implements OnInit {
       return;
     }
     Webcam.reset();
-    this.activeModal.close(this.image64);
+    
+    const modalRef = this.modalService.open(PartnerWebcamComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(uri => {
+      if (uri) {
+        this.webService.UploadImageByBase64(uri).subscribe((result: any) => {
+          this.activeModal.close(result);
+        });
+      }
+    }, err => {
+      console.log(err);
+    });
   }
 
 }
