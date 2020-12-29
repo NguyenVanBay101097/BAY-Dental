@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookService } from './cash-book.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [CashBookComponent, CashBookCuDialogComponent],
@@ -15,6 +16,7 @@ import { CashBookService } from './cash-book.service';
     CashBookRoutingModule, 
     NgbModule,
     MyCustomKendoModule,
+    ReactiveFormsModule,
   ], 
   providers: [
     CashBookService
