@@ -39,6 +39,7 @@ export class PartnerWebcamComponent implements OnInit {
       this.activeModal.close();
       return;
     }
+    Webcam.reset();
     this.activeModal.close(this.image64);
   }
 
