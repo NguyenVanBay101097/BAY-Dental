@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,6 @@ namespace Infrastructure.Services
 {
     public interface IVFundBookService
     {
-        Task<IEnumerable<VFundBookDisplay>> GetMoney(VFundBookSearch val);
-
+        Task<PagedResult2<VFundBookDisplay>> GetMoney(VFundBookSearch val);
     }
 }

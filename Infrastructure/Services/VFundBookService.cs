@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<VFundBookDisplay>> GetMoney(VFundBookSearch val)
+        public async Task<PagedResult2<VFundBookDisplay>> GetMoney(VFundBookSearch val)
         {
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
@@ -58,7 +59,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
-            if (val.JournalId.HasValue)
+            if (!string.IsNullOrEmpty(val.ResultSelection))
                 query = query.Where(x => x.JournalId == val.JournalId.Value);
 
             if (!string.IsNullOrEmpty(val.Type))
@@ -75,8 +76,9 @@ namespace Infrastructure.Services
                 }
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
-
-            var fundBooks = await query.Select(x => new VFundBookDisplay()
+            var totalItems = await query.CountAsync();
+            query = query.Take(val.Limit).Skip(val.Offset);
+            var items = await query.Select(x => new VFundBookDisplay()
             {
                 Amount = x.Amount,
                 CompanyId = x.CompanyId,
@@ -93,11 +95,14 @@ namespace Infrastructure.Services
                 (x.Type == "outbound-customer" ? "Hoàn tiền khách hàng" :
                 (x.Type == "inbound-supplier" ? "NCC hoàn tiền" :
                 (x.Type == "outbound" ? "Thanh toán NCC" :
-                (x.Type == "salary" ? "Chi lương" : 
+                (x.Type == "salary" ? "Chi lương" :
                 (x.Type == "advance" ? "Chi lương tạm ứng" : x.Type))))))
             }).ToListAsync();
 
-            return fundBooks;
+            return new PagedResult2<VFundBookDisplay>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public string CompareType2(string val)
