@@ -25,10 +25,11 @@ export class PartnerWebcamComponent implements OnInit {
   }
 
   onSnap() {
+    var self = this;
     Webcam.snap(function (data_uri) {
-      this.image64 = data_uri;
+      self.image64 = data_uri;
       document.getElementById('results').innerHTML =
-        '<a href="' + this.image64 + '" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + this.image64 + '"/></a>';
+        '<a href="' + self.image64 + '" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + self.image64 + '"/></a>';
     });
   }
 
@@ -37,17 +38,9 @@ export class PartnerWebcamComponent implements OnInit {
       this.activeModal.close();
       return;
     }
-    Webcam.reset();
-    
-    const modalRef = this.modalService.open(PartnerWebcamComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.result.then(uri => {
-      if (uri) {
-        this.webService.UploadImageByBase64(uri).subscribe((result: any) => {
-          this.activeModal.close(result);
-        });
-      }
-    }, err => {
-      console.log(err);
+    this.webService.UploadImageByBase64(this.image64).subscribe((result: any) => {
+      Webcam.reset();
+      this.activeModal.close(result);
     });
   }
 
