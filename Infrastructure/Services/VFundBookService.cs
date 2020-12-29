@@ -59,9 +59,6 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
-            if (!string.IsNullOrEmpty(val.ResultSelection))
-                query = query.Where(x => x.JournalId == val.JournalId.Value);
-
             if (!string.IsNullOrEmpty(val.Type))
                 switch (val.Type)
                 {
@@ -90,13 +87,8 @@ namespace Infrastructure.Services
                 ResId = x.ResId,
                 ResModel = x.ResModel,
                 State = x.State,
-                Type = x.Type == "inbound" || x.Type == "thu" ? "Phiếu thu" : "Phiếu chi",
-                Type2 = (x.Type2 == "inbound-customer" ? "Khách hàng thanh toán" :
-                (x.Type == "outbound-customer" ? "Hoàn tiền khách hàng" :
-                (x.Type == "inbound-supplier" ? "NCC hoàn tiền" :
-                (x.Type == "outbound" ? "Thanh toán NCC" :
-                (x.Type == "salary" ? "Chi lương" :
-                (x.Type == "advance" ? "Chi lương tạm ứng" : x.Type))))))
+                Type = x.Type,
+                Type2 = x.Type2
             }).ToListAsync();
 
             return new PagedResult2<VFundBookDisplay>(totalItems, val.Offset, val.Limit)
