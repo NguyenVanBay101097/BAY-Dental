@@ -1,11 +1,11 @@
 <!-- template popover -->
-<span class="d-flex">
+
     <a popoverClass="appointment-state-popover-width" class="ml-auto" [ngbPopover]="popContent" [autoClose]="'outside'"
         [popoverTitle]="popTitle" (click)="togglePopover(popOver)" #popOver="ngbPopover" placement="left"
         triggers="manual" data-container="body">
         <i class="fas fa-edit icon-edit"></i>
     </a>
-</span>
+
 
 <ng-template #popTitle>
     <div class=" d-flex align-items-center d-inline-block">

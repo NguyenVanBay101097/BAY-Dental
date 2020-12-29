@@ -26,11 +26,10 @@ export class AppointmentListTodayComponent implements OnInit {
   loading = false;
   opened = false;
   total: number;
-
   search: string;
   searchUpdate = new Subject<string>();
   public today: Date = new Date(new Date().toDateString());
-  stateFilter: string;
+  stateFilter: string = 'all';
 
   stateFilterOptions: any[] = [];
 
@@ -99,12 +98,14 @@ export class AppointmentListTodayComponent implements OnInit {
   }
 
   loadStateCount() {
+    this.loading = true;
     var val = new DateFromTo();
     val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     this.appointmentService.getCountState(val).subscribe(
       (result: any) => {
         this.stateFilterOptions = result;
+        this.loading = false;
       },
       error => {
 
