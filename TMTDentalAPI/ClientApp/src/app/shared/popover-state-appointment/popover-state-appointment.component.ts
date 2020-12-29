@@ -17,7 +17,7 @@ export class PopoverStateAppointmentComponent implements OnInit {
   formGroup: FormGroup;
   stateFilterOptions: any[] = [
     {text:'Đang hẹn' , value:'confirmed'},
-    {text:'Chờ khám' , value:'wait'},
+    {text:'Chờ khám' , value:'waiting'},
     {text:'Đang khám' , value:'examination'},
     {text:'Hoàn thành' , value:'done'},
     {text:'Hủy hẹn' , value:'cancel'}

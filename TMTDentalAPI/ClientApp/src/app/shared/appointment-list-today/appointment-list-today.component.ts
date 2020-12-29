@@ -120,7 +120,7 @@ export class AppointmentListTodayComponent implements OnInit {
 
   stateGet(state) {
     switch (state) {
-      case 'wait':
+      case 'waiting':
         return 'Chờ khám';
       case 'examination':
         return 'Đang khám';

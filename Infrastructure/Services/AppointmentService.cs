@@ -172,13 +172,13 @@ namespace Infrastructure.Services
             var confirmCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("confirmed")).CountAsync();
             var cancelCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("cancel")).CountAsync();
             var doneCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("done")).CountAsync();
-            var waitingCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("wait")).CountAsync();
+            var waitingCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("waiting")).CountAsync();
             var expiredCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("examination")).CountAsync();
 
             var list = new List<AppointmentStateCount>();
             list.Add(new AppointmentStateCount { State = "all", Count = AllCount, Color = "#04c835" });
             list.Add(new AppointmentStateCount { State = "confirmed", Count = confirmCount, Color = "#04c835" });
-            list.Add(new AppointmentStateCount { State = "wait", Count = waitingCount, Color = "#0080ff" });
+            list.Add(new AppointmentStateCount { State = "waiting", Count = waitingCount, Color = "#0080ff" });
             list.Add(new AppointmentStateCount { State = "examination", Count = expiredCount, Color = "#ffbf00" });
             list.Add(new AppointmentStateCount { State = "done", Count = doneCount, Color = "#666666" });
             list.Add(new AppointmentStateCount { State = "cancel", Count = cancelCount, Color = "#cc0000" });
