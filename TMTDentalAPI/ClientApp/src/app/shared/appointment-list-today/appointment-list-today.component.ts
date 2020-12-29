@@ -140,6 +140,13 @@ export class AppointmentListTodayComponent implements OnInit {
     res.state = val.state;
     res.reason = val.reason != null ? val.reason : null;
     this.appointmentService.patchState(id, res).subscribe(() => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
       this.loadStateCount();
     });
