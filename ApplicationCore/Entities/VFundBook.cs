@@ -54,14 +54,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string RecipientPayer { get; set; }
 
-        /// <summary>
-        /// Tien mat
-        /// ngan hang
-        /// </summary>
-        public string JournalName { get; set; }
-
         public Guid JournalId { get; set; }
         public AccountJournal Journal { get; set; }
+
         public Company Company { get; set; }
         public Guid CompanyId { get; set; }
     }

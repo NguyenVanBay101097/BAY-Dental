@@ -15,8 +15,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
         public string State { get; set; }
         public string RecipientPayer { get; set; }
-        public string JournalName { get; set; }
         public Guid JournalId { get; set; }
+        public AccountJournalViewModel Journal { get; set; }
         public Guid CompanyId { get; set; }
+
     }
 }

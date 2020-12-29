@@ -431,6 +431,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboFinishLineProfile());
                 mc.AddProfile(new LaboBiteJointProfile());
                 mc.AddProfile(new LaboBridgeProfile());
+                mc.AddProfile(new VFundBookProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

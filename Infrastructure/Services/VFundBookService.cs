@@ -60,40 +60,18 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (!string.IsNullOrEmpty(val.Type))
-                switch (val.Type)
-                {
-                    case "Phiếu thu":
-                        query = query.Where(x => x.Type.Equals("inbound") || x.Type.Equals("thu"));
-                        break;
-                    case "Phiếu chi":
-                        query = query.Where(x => x.Type.Equals("outbound") || x.Type.Equals("chi") || x.Type.Equals("salary") || x.Type.Equals("advance"));
-                        break;
-                    default:
-                        break;
-                }
+                query = query.Where(x => x.Type.Equals(val.Type));
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
-            var totalItems = await query.CountAsync();
+            if (!string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
+                query = query.Where(x => x.Journal.Type.Equals(val.ResultSelection));
+                var totalItems = await query.CountAsync();
             query = query.Take(val.Limit).Skip(val.Offset);
-            var items = await query.Select(x => new VFundBookDisplay()
-            {
-                Amount = x.Amount,
-                CompanyId = x.CompanyId,
-                Date = x.Date,
-                JournalId = x.JournalId,
-                JournalName = x.JournalName,
-                Name = x.Name,
-                RecipientPayer = x.RecipientPayer,
-                ResId = x.ResId,
-                ResModel = x.ResModel,
-                State = x.State,
-                Type = x.Type,
-                Type2 = x.Type2
-            }).ToListAsync();
+            var items = await query.Include(x => x.Journal).ToListAsync();
 
             return new PagedResult2<VFundBookDisplay>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<VFundBookDisplay>>(items)
             };
         }
 
