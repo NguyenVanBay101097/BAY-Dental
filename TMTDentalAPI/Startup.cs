@@ -302,6 +302,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddScoped<ITCareMessageService, TCareMessageService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
