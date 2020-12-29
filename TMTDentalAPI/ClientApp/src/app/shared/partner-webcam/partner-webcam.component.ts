@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { WebService } from 'src/app/core/services/web.service';
+declare var Webcam: any;
 @Component({
   selector: 'app-partner-webcam',
   templateUrl: './partner-webcam.component.html',
@@ -8,44 +9,54 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class PartnerWebcamComponent implements OnInit {
 
-  @ViewChild('video', { static: true }) public video: ElementRef;
+  image64: any;
 
-  @ViewChild("canvas", { static: true }) public canvas: ElementRef;
-
-  imageUrl: any;
-  hasDevice = true;
-
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(private activeModal: NgbActiveModal, private webService: WebService) { }
 
   ngOnInit() {
   }
 
   public ngAfterViewInit() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then(resolve => {
-        this.hasDevice = true;
-        this.video.nativeElement.src = window.URL.createObjectURL(resolve);
-        this.video.nativeElement.play();
-      }, (reject) => {
-        this.hasDevice = false;
-      });
-    }
+    Webcam.set({
+      width: 320,
+      height: 240,
+      image_format: 'jpeg',
+      jpeg_quality: 90
+    });
+    Webcam.attach('#my_camera');
   }
 
   onSnap() {
-    var context = this.canvas.nativeElement.getContext("2d").drawImage(this.video.nativeElement, 0, 0, 640, 480);
-    this.imageUrl = this.canvas.nativeElement.toDataURL("image/png");
+    Webcam.snap(function (data_uri) {
+      this.image64 = data_uri;
+      document.getElementById('results').innerHTML =
+      '<a href="'+ this.image64 +'" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + this.image64 + '"/></a>';
+    });
   }
 
   onSave() {
-    var blobBin = atob(this.imageUrl.split(',')[1]);
-    var array = [];
-    for (var i = 0; i < blobBin.length; i++) {
-      array.push(blobBin.charCodeAt(i));
+    if (!this.image64) {
+      this.activeModal.close();
+      return;
     }
-    var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
+    // convert base 64 to file
+    var file = this.dataURLtoFile(this.image64, 'abc.png');
     this.activeModal.close(file);
   }
 
+  dataURLtoFile(dataurl, filename) {
+
+    var arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
+  }
 
 }
