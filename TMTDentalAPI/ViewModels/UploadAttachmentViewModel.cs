@@ -16,4 +16,9 @@ namespace TMTDentalAPI.ViewModels
         [FromForm(Name = "files")]
         public IList<IFormFile> files { get; set; }
     }
+
+    public class UploadBinaryViewModel
+    {
+        public string Uri { get; set; }
+    }
 }
