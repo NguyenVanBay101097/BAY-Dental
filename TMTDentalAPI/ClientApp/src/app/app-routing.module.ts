@@ -292,6 +292,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'cash-book',
+    loadChildren: () => import('./cash-book/cash-book.module').then(m => m.CashBookModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

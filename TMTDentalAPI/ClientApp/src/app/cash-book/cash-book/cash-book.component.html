@@ -1,0 +1,179 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Sổ quỹ tiền</li>
+    </ol>
+    <div class="o_cp_searchview">
+
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createPhieuThu()">
+                    <i class="fas fa-plus mr-2"></i>Phiếu thu
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="createPhieuChi()">
+                    <i class="fas fa-plus mr-2"></i>Phiếu chi
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="createPhieuChuyenQuy()">
+                    <i class="fas fa-sync-alt mr-2"></i>Phiếu chuyển quỹ
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="exportFile()">
+                    <i class="fas fa-download mr-2"></i>Xuất file
+                </button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+
+        </div>
+    </div>
+    <div class="o_cp_right">
+
+    </div>
+</div>
+
+<div class="p-3">
+    <div class="d-flex">
+        <div class="card border-secondary mr-2">
+            <div class="card-body">
+                <div class="text-center">
+                    <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
+                    <h4 class="text-warning">100.000.000</h4>
+                </div>
+            </div>
+        </div>
+        <div class="card border-secondary mr-2">
+            <div class="card-body">
+                <div class="text-center">
+                    <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
+                    <h4 class="text-primary">100.000.000</h4>
+                </div>
+            </div>
+        </div>
+        <div class="card border-secondary mr-2">
+            <div class="card-body">
+                <div class="text-center">
+                    <span class="font-weight-bold">Tổng sổ quỹ</span>
+                    <h4 class="text-success">200.000.000</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="my-3 d-flex justify-content-between">
+        <div class="d-flex">
+            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
+                <option value="">Thời gian</option>
+            </select>
+            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
+                <option value="">Loại chứng từ</option>
+            </select>
+            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
+                <option value="">Loại thu chi</option>
+            </select>
+        </div>
+        <div class="t-search t-search-right">
+            <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu">
+            <span class="fas fa-search form-control-icon form-control-sm"></span>
+        </div>
+    </div>
+    <div>
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
+                    aria-selected="true">Tiền mặt</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
+                    aria-selected="false">Ngân hàng</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
+                    aria-selected="false">Tổng sổ quỹ</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
+                    aria-selected="false">Phiếu chuyển quỹ</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane show active" id="nav-1" role="tabpanel">
+                <div class="d-flex justify-content-end mt-2">
+                    <div class="p-2 mr-2">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Quỹ đầu kỳ</span>
+                            <h4 class="text-primary">50.000.000</h4>
+                        </div>
+                    </div>
+                    <div class="p-2 mr-2">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Tổng thu</span>
+                            <h4 class="text-primary">100.000.000</h4>
+                        </div>
+                    </div>
+                    <div class="p-2 mr-2">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Tổng chi</span>
+                            <h4 class="text-danger">-50.000.000</h4>
+                        </div>
+                    </div>
+                    <div class="p-2 mr-2">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Tồn quỹ tiền mặt</span>
+                            <h4 class="text-success">100.000.000</h4>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                        (pageChange)="pageChange($event)">
+                        <kendo-grid-column field="date" title="Ngày" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.date | date: 'shortDate'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="saleOrderName" title="Số phiếu" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <a class="text-primary" [routerLink]="['/sale-orders/form']"
+                                [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>               
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="" title="Loại chứng từ" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.a}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="" title="Loại thu chi" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.a}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="" title="Số tiền" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.a}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="" title="Người nhận/ nộp" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.a}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="state" title="Trạng thái" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{getState(dataItem)}}
+                            </ng-template>
+                        </kendo-grid-column>       
+                        <kendo-grid-column field="id" width="80">
+                            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                                Thao tác
+                            </ng-template>
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                                    <span class="far fa-edit"></span>
+                                </button>
+                                <button class="btn btn-sm btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
+                                    <span class="fas fa-trash-alt"></span>
+                                </button>
+                                <button class="btn btn-sm btn-sm mr-2" title="Xem" (click)="deleteItem(dataItem)">
+                                    <span class="fas fa-eye"></span>
+                                </button>
+                            </ng-template>
+                        </kendo-grid-column>
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
