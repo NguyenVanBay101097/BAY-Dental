@@ -36,8 +36,12 @@ export class AppointmentStateFilterComponent implements OnInit {
     switch (this.stateSelected) {
       case "confirmed":
         return 'Đang hẹn';
+      case "waiting":
+        return 'Chờ khám';
+      case "examination":
+        return 'Đang khám';
       case "done":
-        return 'Đã tới';
+        return 'Hoàn thành';
       case "cancel":
         return 'Đã hủy';
       default:
