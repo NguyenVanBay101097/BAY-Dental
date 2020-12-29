@@ -168,7 +168,7 @@ namespace Infrastructure.Services
         //Đếm số cuộc hẹn trong ngày (trang Tổng quan)
         public async Task<IEnumerable<AppointmentStateCount>> CountAppointment(DateFromTo val)
         {
-
+            var AllCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo).CountAsync();
             var confirmCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("confirmed")).CountAsync();
             var cancelCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("cancel")).CountAsync();
             var doneCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("done")).CountAsync();
@@ -176,6 +176,7 @@ namespace Infrastructure.Services
             var expiredCount = await SearchQuery().Where(x => x.Date >= val.DateFrom && x.Date <= val.DateTo && x.State.Contains("examination")).CountAsync();
 
             var list = new List<AppointmentStateCount>();
+            list.Add(new AppointmentStateCount { State = "all", Count = AllCount, Color = "#04c835" });
             list.Add(new AppointmentStateCount { State = "confirmed", Count = confirmCount, Color = "#04c835" });
             list.Add(new AppointmentStateCount { State = "wait", Count = waitingCount, Color = "#0080ff" });
             list.Add(new AppointmentStateCount { State = "examination", Count = expiredCount, Color = "#ffbf00" });

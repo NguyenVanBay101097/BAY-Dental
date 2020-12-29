@@ -191,5 +191,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string State { get; set; }
         public DateTime Date { get; set; }
+        public string Reason { get; set; }
+    }
+
+    public class AppointmentStatePatch
+    {
+        public string State { get; set; }
+        public string Reason { get; set; }
     }
 }

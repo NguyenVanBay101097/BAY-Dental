@@ -118,6 +118,12 @@ export class AppointmentPatch {
     id: string;
     state: string;
     date: string;
+    reason:string;
+}
+
+export class AppointmentStatePatch {  
+    state: string;
+    reason:string;
 }
 
 export class  DateFromTo
