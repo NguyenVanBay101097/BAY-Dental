@@ -60,14 +60,11 @@
     </div>
     <div class="my-3 d-flex justify-content-between">
         <div class="d-flex">
-            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
-                <option value="">Thời gian</option>
-            </select>
-            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
-                <option value="">Loại chứng từ</option>
-            </select>
-            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeTime($event)">
-                <option value="">Loại thu chi</option>
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom" [dateTo]="paged.dateTo" (searchChange)="searchChangeDate($event)">
+            </app-tai-date-range-filter-dropdown>
+            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeType($event)">
+                <option value="thu">Phiếu thu</option>
+                <option value="chi">Phiếu chi</option>
             </select>
         </div>
         <div class="t-search t-search-right">
