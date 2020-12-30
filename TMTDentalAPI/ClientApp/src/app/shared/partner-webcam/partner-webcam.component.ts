@@ -14,7 +14,16 @@ export class PartnerWebcamComponent implements  OnInit {
   constructor(public activeModal: NgbActiveModal, private webService: WebService, public modalService: NgbModal) { }
 
   ngOnInit() {
-    var wrapper = document.getElementById('_wrapper');
+    Webcam.set({
+      width: 320,
+      height:240,
+      dest_width:640,
+      dest_height:480,
+      crop_width:480,
+      crop_height:480,
+      image_format:'jpeg',
+      jpeg_quality:90
+    });
     Webcam.attach('#my_camera');
   }
   
@@ -23,7 +32,7 @@ export class PartnerWebcamComponent implements  OnInit {
     Webcam.snap(function (data_uri) {
       self.image64 = data_uri;
       document.getElementById('results').innerHTML =
-        '<a href="' + self.image64 + '" download="cbimage.jpg"><img style="width: 100%; height: 100%;" src="' + self.image64 + '"/></a>';
+        '<a href="' + self.image64 + '" download="cbimage.jpg"><img class="img-fluid" src="' + self.image64 + '"/></a>';
     });
   }
 
