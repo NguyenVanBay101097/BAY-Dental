@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
-import { CashBookPaged, CashBookService } from '../cash-book.service';
+import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book-tab-cash-bank',
@@ -16,6 +16,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   limit = 20;
   skip = 0;
   loading = false;
+  reportData: ReportDataResult;
 
   @Input() paged: CashBookPaged;
   @Input() changeToLoadData: boolean;
@@ -30,7 +31,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-
+    this.reportData = new ReportDataResult();
   }
 
   getType(type) {
@@ -54,7 +55,19 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
 
-    this.cashBookService.getPaged(this.paged).pipe(map(
+    this.cashBookService.getReport(this.paged)
+    .subscribe(
+      (res) => {
+        this.reportData = res;
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
+
+    this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
         <GridDataResult>{
           data: response.items,

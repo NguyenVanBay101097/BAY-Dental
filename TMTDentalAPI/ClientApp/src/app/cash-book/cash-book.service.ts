@@ -28,15 +28,28 @@ export class CashBookDisplay {
   companyId: string;
 }
 
+export class ReportDataResult {
+  begin: number;
+  totalAmount: number;
+  totalChi: number;
+  totalThu: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 
 export class CashBookService {
+  
   apiUrl = 'api/FundBooks';
+
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getPaged(val: CashBookPaged): Observable<PagedResult2<CashBookDisplay>> {
+  getMoney(val: CashBookPaged): Observable<PagedResult2<CashBookDisplay>> {
     return this.http.post<PagedResult2<CashBookDisplay>>(this.baseApi + this.apiUrl + '/GetMoney', val);
+  }
+
+  getReport(val: CashBookPaged): Observable<ReportDataResult> {
+    return this.http.post<ReportDataResult>(this.baseApi + this.apiUrl + '/GetReport', val);
   }
 }
