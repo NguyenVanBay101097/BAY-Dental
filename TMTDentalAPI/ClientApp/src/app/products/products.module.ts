@@ -32,6 +32,10 @@ import { SharedModule } from '../shared/shared.module';
 import { DialogContainerService, DialogService, WindowContainerService, WindowService } from '@progress/kendo-angular-dialog';
 import { ProductLaboAttachCuDialogComponent } from './product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
 import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
+import { ProductManagementServicesComponent } from './product-management-services/product-management-services.component';
+import { ProductManagementProductsComponent } from './product-management-products/product-management-products.component';
+import { ProductManagementMedicinesComponent } from './product-management-medicines/product-management-medicines.component';
+import { ProductManagementComponent } from './product-management/product-management.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +59,8 @@ import { ProductLaboAttachListComponent } from './product-labo-attach-list/produ
     ProductStepCuDialogComponent, 
     ProductStepFormComponent, 
     ProductAdvanceSearchComponent, 
-    ProductServiceImportDialogComponent, ProductLaboAttachListComponent, ProductLaboAttachCuDialogComponent
+    ProductServiceImportDialogComponent, ProductLaboAttachListComponent, ProductLaboAttachCuDialogComponent, ProductManagementServicesComponent, ProductManagementProductsComponent, ProductManagementMedicinesComponent,
+    ProductManagementComponent 
   ],
   imports: [
     CommonModule,
