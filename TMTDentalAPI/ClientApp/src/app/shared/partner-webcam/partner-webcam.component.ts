@@ -18,12 +18,15 @@ export class PartnerWebcamComponent implements OnInit {
 
   public ngAfterViewInit() {
     Webcam.set({
-      width: 320,
       height: 240,
       image_format: 'jpeg',
       jpeg_quality: 90
     });
     Webcam.attach('#my_camera');
+    var videoEls = document.getElementById('my_camera').getElementsByTagName("video");
+    if(videoEls.length > 0) {
+      videoEls[0].style.width = '100%';
+    }
   }
 
   onSnap() {
@@ -44,6 +47,11 @@ export class PartnerWebcamComponent implements OnInit {
       Webcam.reset();
       this.activeModal.close(result);
     });
+  }
+
+  onClose() {
+    Webcam.reset();
+    this.activeModal.close();
   }
 
 }

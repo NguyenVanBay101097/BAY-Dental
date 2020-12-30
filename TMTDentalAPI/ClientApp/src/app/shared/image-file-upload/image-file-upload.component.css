@@ -40,3 +40,7 @@
 .pointer {
     cursor: pointer;
 }
+
+.view-img:hover {
+    cursor: zoom-in;
+}

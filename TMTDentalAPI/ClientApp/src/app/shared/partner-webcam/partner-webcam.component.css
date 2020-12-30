@@ -1,7 +1,16 @@
 #my_camera video {
     max-width: 100%;
+    width: 100% !important;
 }
 
 .camera video {
     max-width: 100%;
+}
+
+video {
+    max-width: 100%;
+}
+
+.camera .a {
+    color: red;
 }
