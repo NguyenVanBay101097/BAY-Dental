@@ -97,13 +97,18 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <div class="align-items-center ">
-                    <span class="align-items-">
-                        {{stateGet(dataItem.state)}}
-                    </span>
-                    <app-popover-state-appointment [item]="dataItem" class="ml-3"
-                        (stateFormGroup)="onChangeState(dataItem.id,$event)">
-                    </app-popover-state-appointment>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="align-items-">
+                            {{stateGet(dataItem.state)}}
+                        </span>
+                    </div>
+                    <div>
+                        <app-popover-state-appointment [item]="dataItem" class="ml-3"
+                            (stateFormGroup)="onChangeState(dataItem.id,$event)">
+                        </app-popover-state-appointment>
+                    </div>
+
 
                 </div>
 
