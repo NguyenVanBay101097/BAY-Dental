@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { map } from 'rxjs/operators';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
-import { CashBookService } from '../cash-book.service';
+import { CashBookPaged, CashBookService } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book',
@@ -17,17 +19,53 @@ export class CashBookComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
+  paged: CashBookPaged;
   
   constructor(    
     private modalService: NgbModal, 
-    private cashBookService: CashBookService
+    private cashBookService: CashBookService, 
+    private intlService: IntlService, 
   ) { }
 
   ngOnInit() {
+    this.paged = new CashBookPaged();
+    this.loadDataFromApi();
+  }
+
+  searchChangeDate(value) {
+    this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : null;
+    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-dd") : null;
+    this.loadDataFromApi();
+  }
+
+  changeType(value) {
+    this.paged.type = value;
   }
 
   loadDataFromApi() {
+    this.loading = true;
+    this.paged.limit = this.limit;
+    this.paged.offset = this.skip;
+    console.log(this.paged);
 
+    this.cashBookService.getPaged(this.paged).pipe(map(
+      (response: any) =>
+        <GridDataResult>{
+          data: response.items,
+          total: response.totalItems,
+        }
+      )
+    ).subscribe(
+      (res) => {
+        this.gridData = res;
+        console.log(this.gridData);
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
+        this.loading = false;
+      }
+    );
   }
 
   createItem(type) {
