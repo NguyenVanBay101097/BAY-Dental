@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
-            if (string.IsNullOrEmpty(val.State) && val.State != "all")
+            if (!string.IsNullOrEmpty(val.State) && val.State != "all")
                 query = query.Where(x => x.State == val.State);
 
             if (!val.InitBal && val.DateFrom.HasValue)
