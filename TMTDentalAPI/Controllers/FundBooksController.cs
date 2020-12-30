@@ -30,19 +30,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetReport(VFundBookSearch val)
+        public async Task<IActionResult> GetSumary(VFundBookSearch val)
         {
-            var res = await _fundBookService.GetReport(val);
+            var res = await _fundBookService.GetSumary(val);
             return Ok(res);
         }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSumary()
-        {
-            var res = await _fundBookService.GetSumary();
-            return Ok(res);
-        }
-
-
     }
 }

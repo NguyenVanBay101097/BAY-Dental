@@ -11,7 +11,6 @@ namespace Infrastructure.Services
     public interface IVFundBookService
     {
         Task<PagedResult2<VFundBookDisplay>> GetMoney(VFundBookSearch val);
-        Task<FundBookReport> GetReport(VFundBookSearch val);
-        Task<FundBookSumary> GetSumary();
+        Task<FundBookReport> GetSumary(VFundBookSearch val);
     }
 }

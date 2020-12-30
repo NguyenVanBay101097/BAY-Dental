@@ -10,13 +10,8 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Limit = 20;
             Offset = 0;
-            InitBal = false;
             State = "all";
         }
-        /// <summary>
-        /// khong truyen tu client 
-        /// </summary>
-        public bool InitBal { get; set; }
 
         /// <summary>
         /// Ngay bat dau
@@ -27,18 +22,23 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ngay ket thuc
         /// </summary>
         public DateTime? DateFrom { get; set; }
+
         /// <summary>
         /// all : lay tat ca
         /// posted: phieu dc xac nhan
         /// </summary>
         public string State { get; set; }
+
         /// <summary>
         /// inbound : thu
         /// outbound : chi
         /// </summary>
         public string Type { get; set; }
+
         public Guid? CompanyId { get; set; }
+
         public string Search { get; set; }
+
         /// <summary>
         /// bank: ngan hang
         /// cash: tien mat

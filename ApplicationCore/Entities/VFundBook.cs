@@ -31,6 +31,8 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Loai chung tu
+        /// inbound
+        /// outbound
         /// </summary>
         public string Type { get; set; }
 
@@ -44,8 +46,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal Amount { get; set; }
 
+        public decimal AmountSigned { get; set; }
         /// <summary>
         /// Trang thai
+        /// posted : xac nhan
         /// </summary>
         public string State { get; set; }
 
