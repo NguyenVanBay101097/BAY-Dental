@@ -25,8 +25,22 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetMoney(VFundBookSearch val)
         {
-            var list = await _fundBookService.GetMoney(val);
-            return Ok(list);
+            var res = await _fundBookService.GetMoney(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetReport(VFundBookSearch val)
+        {
+            var res = await _fundBookService.GetReport(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSumary()
+        {
+            var res = await _fundBookService.GetSumary();
+            return Ok(res);
         }
 
 

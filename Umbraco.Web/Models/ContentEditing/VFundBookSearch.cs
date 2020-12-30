@@ -10,7 +10,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Limit = 20;
             Offset = 0;
+            InitBal = false;
         }
+        public bool InitBal { get; set; }
         public DateTime? DateTo { get; set; }
         public DateTime? DateFrom { get; set; }
         public string Type { get; set; }
