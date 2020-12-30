@@ -52,17 +52,15 @@ namespace Infrastructure.Services
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (!string.IsNullOrEmpty(val.State) && val.State != "all")
                 query = query.Where(x => x.State == val.State);
 
-            if (!val.InitBal && val.DateFrom.HasValue)
+            if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value);
 
-            if (!val.InitBal && val.DateTo.HasValue)
+            if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
-
-            if (val.InitBal && val.DateFrom.HasValue)
-                query = query.Where(x => x.Date < val.DateFrom.Value);
 
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type.Equals(val.Type));
@@ -89,56 +87,31 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<FundBookSumary> GetSumary()
+        public async Task<FundBookReport> GetSumary(VFundBookSearch val)
         {
-            var userObj = GetService<IUserService>();
-            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
-            var query = _context.VFundBooks.Where(x => company_ids.Contains(x.CompanyId) && x.State == "posted");
-            var list = await query.Include(x => x.Journal).ToListAsync();
-            var fundBookSumary = new FundBookSumary();
-            if (list.Any())
-            {
-                var totalBankInbound = list.Where(x => x.Journal.Type == "bank" && x.Type == "inbound").Sum(x => x.Amount);
-                var totalBankOutbound = list.Where(x => x.Journal.Type == "bank" && x.Type == "outbound").Sum(x => x.Amount);
-                fundBookSumary.TotalBank = totalBankInbound - totalBankOutbound;
-
-                var totalCashInbound = list.Where(x => x.Journal.Type == "cash" && x.Type == "inbound").Sum(x => x.Amount);
-                var totalCashOutbound = list.Where(x => x.Journal.Type == "cash" && x.Type == "outbound").Sum(x => x.Amount);
-                fundBookSumary.TotalCash = totalCashInbound - totalCashOutbound;
-
-                fundBookSumary.TotalAmount = fundBookSumary.TotalBank + fundBookSumary.TotalCash;
-            }
-            return fundBookSumary;
-        }
-
-        public async Task<FundBookReport> GetReport(VFundBookSearch val)
-        {
-            var query = _FilterQueryable(val);
-            var list = await query.ToListAsync();
             var fundBookReport = new FundBookReport();
-            if (list.Any())
+            //neu co datefrom tinh begin -> select sum trong query1
+            if (val.DateFrom.HasValue)
             {
-                fundBookReport.TotalChi = list.Where(x => x.Type == "outbound").Sum(x => x.Amount);
-                fundBookReport.TotalThu = list.Where(x => x.Type == "inbound").Sum(x => x.Amount);
+                IQueryable<VFundBook> query1 = _context.VFundBooks.Where(x => x.Date < val.DateFrom && val.State == "posted");
+                if (string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
+                    query1 = query1.Where(x => x.Journal.Type == val.ResultSelection);
+                if (query1.Any())
+                    fundBookReport.Begin = query1.Sum(x => x.AmountSigned);
+                else
+                    fundBookReport.Begin = 0;
             }
 
-            val.InitBal = true;
-            IQueryable<VFundBook> query2 = _FilterQueryable(val);
-            var list2 = await query2.ToListAsync();
-            if (list2.Any())
+            //loc nhung posted và sum trong query2 tinh dc thu chi
+            var query = _FilterQueryable(val);
+            if (query.Any())
             {
-                var totalThu = list2.Where(x => x.Type == "inbound").Sum(x => x.Amount);
-                var totalChi = list2.Where(x => x.Type == "outbound").Sum(x => x.Amount);
-                fundBookReport.Begin = totalThu - totalChi;
-                fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
-
-            }
-            else
-            {
-                fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
-                fundBookReport.Begin = 0;
+                fundBookReport.TotalThu = query.Where(x => x.Type == "inbound").Sum(x => x.Amount);
+                fundBookReport.TotalChi = query.Where(x => x.Type == "outbound").Sum(x => x.Amount);
             }
 
+            //return total = begin + thu - chi
+            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
 
             return fundBookReport;
         }
