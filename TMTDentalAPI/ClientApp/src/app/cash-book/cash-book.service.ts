@@ -36,7 +36,7 @@ export class CashBookService {
   apiUrl = 'api/FundBooks';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getPaged(val: any): Observable<PagedResult2<CashBookDisplay>> {
-    return this.http.get<PagedResult2<CashBookDisplay>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+  getPaged(val: CashBookPaged): Observable<PagedResult2<CashBookDisplay>> {
+    return this.http.post<PagedResult2<CashBookDisplay>>(this.baseApi + this.apiUrl + '/GetMoney', val);
   }
 }

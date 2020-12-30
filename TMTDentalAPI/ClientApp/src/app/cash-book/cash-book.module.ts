@@ -9,9 +9,10 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
 import { CashBookService } from './cash-book.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { CashBookTabCashBankComponent } from './cash-book-tab-cash-bank/cash-book-tab-cash-bank.component';
 
 @NgModule({
-  declarations: [CashBookComponent, CashBookCuDialogComponent],
+  declarations: [CashBookComponent, CashBookCuDialogComponent, CashBookTabCashBankComponent],
   imports: [
     CommonModule,
     CashBookRoutingModule, 
@@ -24,7 +25,8 @@ import { SharedModule } from '../shared/shared.module';
     CashBookService
   ], 
   entryComponents: [
-    CashBookCuDialogComponent
+    CashBookCuDialogComponent, 
+    CashBookTabCashBankComponent
   ]
 })
 export class CashBookModule { }

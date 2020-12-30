@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { map } from 'rxjs/operators';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService } from '../cash-book.service';
 
@@ -15,12 +13,10 @@ import { CashBookPaged, CashBookService } from '../cash-book.service';
   }
 })
 export class CashBookComponent implements OnInit {
-  gridData: GridDataResult;
-  limit = 20;
-  skip = 0;
-  loading = false;
+  quickOptionDate: string;
   paged: CashBookPaged;
-  
+  changeToLoadData: boolean = false;
+
   constructor(    
     private modalService: NgbModal, 
     private cashBookService: CashBookService, 
@@ -29,43 +25,25 @@ export class CashBookComponent implements OnInit {
 
   ngOnInit() {
     this.paged = new CashBookPaged();
-    this.loadDataFromApi();
+    this.paged.resultSelection = "cash";
+    this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
+
   }
 
   searchChangeDate(value) {
     this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : null;
     this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-dd") : null;
-    this.loadDataFromApi();
+    this.changeToLoadData = !this.changeToLoadData;
   }
 
   changeType(value) {
     this.paged.type = value;
+    this.changeToLoadData = !this.changeToLoadData;
   }
 
-  loadDataFromApi() {
-    this.loading = true;
-    this.paged.limit = this.limit;
-    this.paged.offset = this.skip;
-    console.log(this.paged);
-
-    this.cashBookService.getPaged(this.paged).pipe(map(
-      (response: any) =>
-        <GridDataResult>{
-          data: response.items,
-          total: response.totalItems,
-        }
-      )
-    ).subscribe(
-      (res) => {
-        this.gridData = res;
-        console.log(this.gridData);
-        this.loading = false;
-      },
-      (err) => {
-        console.log(err);
-        this.loading = false;
-      }
-    );
+  clickTab(value) {
+    this.paged.resultSelection = value;
+    this.changeToLoadData = !this.changeToLoadData;
   }
 
   createItem(type) {
@@ -73,16 +51,7 @@ export class CashBookComponent implements OnInit {
     modalRef.componentInstance.type = type;
     modalRef.componentInstance.item = null;
     modalRef.result.then(() => {
-      this.loadDataFromApi();
-    }, er => { });
-  }
-
-  editItem(type, item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = type;
-    modalRef.componentInstance.item = item;
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
+      this.changeToLoadData = !this.changeToLoadData;
     }, er => { });
   }
 }
