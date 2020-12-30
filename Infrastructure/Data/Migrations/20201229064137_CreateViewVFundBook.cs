@@ -28,7 +28,7 @@ namespace Infrastructure.Data.Migrations
             "SELECT sp.Id,'salary.payment' , [Date], sp.[Name], " +
             "case when sp.Type = 'salary' then 'outbound' when sp.Type = 'advance' then 'outbound' end as Type , " +
             "case when sp.Type = 'salary' then 'Chi lương' when sp.Type = 'advance' then 'Chi lương tạm ứng' end " +
-            ", Amount, [State], em.Name, jn.Id,sp.CompanyId " +
+            ", Amount, case when State = 'done' then 'posted' else State end, em.Name, jn.Id,sp.CompanyId " +
             "FROM SalaryPayments sp INNER JOIN " +
             "Employees em ON em.Id = sp.EmployeeId INNER JOIN " +
             "AccountJournals jn ON sp.JournalId = jn.id)");

@@ -52,11 +52,13 @@ namespace Infrastructure.Services
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (!string.IsNullOrEmpty(val.State) && val.State != "all")
+                query = query.Where(x => x.State == val.State);
 
             if (!val.InitBal && val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value);
 
-            if (val.DateTo.HasValue)
+            if (!val.InitBal && val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (val.InitBal && val.DateFrom.HasValue)
@@ -91,14 +93,20 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
-            var query = _context.VFundBooks.Where(x => company_ids.Contains(x.CompanyId));
+            var query = _context.VFundBooks.Where(x => company_ids.Contains(x.CompanyId) && x.State == "posted");
             var list = await query.Include(x => x.Journal).ToListAsync();
             var fundBookSumary = new FundBookSumary();
             if (list.Any())
             {
-                fundBookSumary.TotalBank = list.Where(x => x.Journal.Type == "bank" && (x.State == "done" || x.State == "posted")).Sum(x => x.Amount);
-                fundBookSumary.TotalCash = list.Where(x => x.Journal.Type == "cash" && (x.State == "done" || x.State == "posted")).Sum(x => x.Amount);
-                fundBookSumary.TotalAmount = list.Where(x => x.State == "done" || x.State == "posted").Sum(x => x.Amount);
+                var totalBankInbound = list.Where(x => x.Journal.Type == "bank" && x.Type == "inbound").Sum(x => x.Amount);
+                var totalBankOutbound = list.Where(x => x.Journal.Type == "bank" && x.Type == "outbound").Sum(x => x.Amount);
+                fundBookSumary.TotalBank = totalBankInbound - totalBankOutbound;
+
+                var totalCashInbound = list.Where(x => x.Journal.Type == "cash" && x.Type == "inbound").Sum(x => x.Amount);
+                var totalCashOutbound = list.Where(x => x.Journal.Type == "cash" && x.Type == "outbound").Sum(x => x.Amount);
+                fundBookSumary.TotalCash = totalCashInbound - totalCashOutbound;
+
+                fundBookSumary.TotalAmount = fundBookSumary.TotalBank + fundBookSumary.TotalCash;
             }
             return fundBookSumary;
         }
