@@ -60,11 +60,16 @@
     </div>
     <div class="my-3 d-flex justify-content-between">
         <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom" [dateTo]="paged.dateTo" (searchChange)="searchChangeDate($event)">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" 
+                [dateFrom]="paged.dateFrom" 
+                [dateTo]="paged.dateTo" 
+                [quickOption]="quickOptionDate"
+                (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeType($event)">
-                <option value="thu">Phiếu thu</option>
-                <option value="chi">Phiếu chi</option>
+            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeType($event.target.value)">
+                <option value="">Loại chứng từ</option>
+                <option value="inbound">Phiếu thu</option>
+                <option value="outbound">Phiếu chi</option>
             </select>
         </div>
         <div class="t-search t-search-right">
@@ -121,35 +126,34 @@
                                 {{dataItem.date | date: 'shortDate'}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="saleOrderName" title="Số phiếu" width="100">
+                        <kendo-grid-column field="name" title="Loại chứng từ" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                                [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>               
+                                {{dataItem.name}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="" title="Loại chứng từ" width="100">
+                        <kendo-grid-column field="type" title="Loại chứng từ" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.a}}
+                                {{getType(dataItem.type)}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="" title="Loại thu chi" width="120">
+                        <kendo-grid-column field="type2" title="Loại thu chi" width="120">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.a}}
+                                {{dataItem.type2}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="" title="Số tiền" width="100">
+                        <kendo-grid-column field="amount" title="Số tiền" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.a}}
+                                {{dataItem.amount}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="" title="Người nhận/ nộp" width="100">
+                        <kendo-grid-column field="recipientPayer" title="Người nhận/ nộp" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.a}}
+                                {{dataItem.recipientPayer}}
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column field="state" title="Trạng thái" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{getState(dataItem)}}
+                                {{getState(dataItem.state)}}
                             </ng-template>
                         </kendo-grid-column>       
                         <kendo-grid-column field="id" width="80">
@@ -157,13 +161,13 @@
                                 Thao tác
                             </ng-template>
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                                <button *ngIf="dataItem.state != 'posted'" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                                     <span class="far fa-edit"></span>
                                 </button>
-                                <button class="btn btn-sm btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
+                                <button *ngIf="dataItem.state != 'posted'" class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                                     <span class="fas fa-trash-alt"></span>
                                 </button>
-                                <button class="btn btn-sm btn-sm mr-2" title="Xem" (click)="deleteItem(dataItem)">
+                                <button *ngIf="dataItem.state == 'posted'" class="btn btn-info btn-sm mr-2" title="Xem" (click)="deleteItem(dataItem)">
                                     <span class="fas fa-eye"></span>
                                 </button>
                             </ng-template>

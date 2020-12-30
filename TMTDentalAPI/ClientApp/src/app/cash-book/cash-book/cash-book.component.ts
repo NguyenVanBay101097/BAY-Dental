@@ -20,6 +20,7 @@ export class CashBookComponent implements OnInit {
   skip = 0;
   loading = false;
   paged: CashBookPaged;
+  quickOptionDate: string;
   
   constructor(    
     private modalService: NgbModal, 
@@ -29,17 +30,22 @@ export class CashBookComponent implements OnInit {
 
   ngOnInit() {
     this.paged = new CashBookPaged();
-    this.loadDataFromApi();
+    this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
+
+
   }
 
   searchChangeDate(value) {
     this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : null;
     this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-dd") : null;
+
     this.loadDataFromApi();
   }
 
   changeType(value) {
     this.paged.type = value;
+
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
@@ -66,6 +72,22 @@ export class CashBookComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  getType(type) {
+    if (type == "inbound") {
+      return "Phiếu thu";
+    } else {
+      return "Phiếu chi";
+    }
+  }
+
+  getState(state) {
+    if (state == "posted") {
+      return "Đã xác nhận";
+    } else {
+      return "Nháp"
+    }
   }
 
   createItem(type) {
