@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WebService } from 'src/app/core/services/web.service';
 declare var Webcam: any;
@@ -7,28 +7,17 @@ declare var Webcam: any;
   templateUrl: './partner-webcam.component.html',
   styleUrls: ['./partner-webcam.component.css']
 })
-export class PartnerWebcamComponent implements OnInit {
+export class PartnerWebcamComponent implements  OnInit {
 
   image64: any;
 
   constructor(public activeModal: NgbActiveModal, private webService: WebService, public modalService: NgbModal) { }
 
   ngOnInit() {
-  }
-
-  public ngAfterViewInit() {
-    Webcam.set({
-      height: 240,
-      image_format: 'jpeg',
-      jpeg_quality: 90
-    });
+    var wrapper = document.getElementById('_wrapper');
     Webcam.attach('#my_camera');
-    var videoEls = document.getElementById('my_camera').getElementsByTagName("video");
-    if(videoEls.length > 0) {
-      videoEls[0].style.width = '100%';
-    }
   }
-
+  
   onSnap() {
     var self = this;
     Webcam.snap(function (data_uri) {
