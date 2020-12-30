@@ -56,7 +56,7 @@ namespace Infrastructure.Services
             if (!val.InitBal && val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value);
 
-            if (val.DateTo.HasValue)
+            if (!val.InitBal && val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (val.InitBal && val.DateFrom.HasValue)
