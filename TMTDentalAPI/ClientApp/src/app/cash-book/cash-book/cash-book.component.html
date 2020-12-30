@@ -14,9 +14,6 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="createItem('chi')">
                     <i class="fas fa-plus mr-2"></i>Phiếu chi
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="createPhieuChuyenQuy()">
-                    <i class="fas fa-sync-alt mr-2"></i>Phiếu chuyển quỹ
-                </button>
                 <button type="button" class="btn btn-secondary btn-sm" (click)="exportFile()">
                     <i class="fas fa-download mr-2"></i>Xuất file
                 </button>
@@ -37,7 +34,7 @@
             <div class="card-body">
                 <div class="text-center">
                     <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
-                    <h4 class="text-warning">100.000.000</h4>
+                    <h4 class="text-warning">{{reportCashData.totalAmount}}</h4>
                 </div>
             </div>
         </div>
@@ -45,7 +42,7 @@
             <div class="card-body">
                 <div class="text-center">
                     <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
-                    <h4 class="text-primary">100.000.000</h4>
+                    <h4 class="text-primary">{{reportBankData.totalAmount}}</h4>
                 </div>
             </div>
         </div>
@@ -53,7 +50,7 @@
             <div class="card-body">
                 <div class="text-center">
                     <span class="font-weight-bold">Tổng sổ quỹ</span>
-                    <h4 class="text-success">200.000.000</h4>
+                    <h4 class="text-success">{{reportCashData.totalAmount + reportBankData.totalAmount}}</h4>
                 </div>
             </div>
         </div>
@@ -73,7 +70,8 @@
             </select>
         </div>
         <div class="t-search t-search-right">
-            <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu">
+            <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"
+                [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
             <span class="fas fa-search form-control-icon form-control-sm"></span>
         </div>
     </div>
@@ -86,8 +84,6 @@
                     aria-selected="false" (click)="clickTab('bank')">Ngân hàng</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
                     aria-selected="false" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
-                    aria-selected="false">Phiếu chuyển quỹ</a>
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">

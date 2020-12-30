@@ -89,12 +89,13 @@ namespace Infrastructure.Services
 
         public async Task<FundBookReport> GetSumary(VFundBookSearch val)
         {
+            val.State = "posted";
             var fundBookReport = new FundBookReport();
             //neu co datefrom tinh begin -> select sum trong query1
             if (val.DateFrom.HasValue)
             {
                 IQueryable<VFundBook> query1 = _context.VFundBooks.Where(x => x.Date < val.DateFrom && val.State == "posted");
-                if (string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
+                if (!string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
                     query1 = query1.Where(x => x.Journal.Type == val.ResultSelection);
                 if (query1.Any())
                     fundBookReport.Begin = query1.Sum(x => x.AmountSigned);

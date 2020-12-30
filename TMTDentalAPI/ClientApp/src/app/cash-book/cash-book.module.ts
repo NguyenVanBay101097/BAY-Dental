@@ -7,7 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookService } from './cash-book.service';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CashBookTabCashBankComponent } from './cash-book-tab-cash-bank/cash-book-tab-cash-bank.component';
 
@@ -19,7 +19,8 @@ import { CashBookTabCashBankComponent } from './cash-book-tab-cash-bank/cash-boo
     NgbModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ], 
   providers: [
     CashBookService

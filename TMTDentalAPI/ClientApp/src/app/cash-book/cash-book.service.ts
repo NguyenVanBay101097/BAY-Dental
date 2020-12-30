@@ -49,7 +49,7 @@ export class CashBookService {
     return this.http.post<PagedResult2<CashBookDisplay>>(this.baseApi + this.apiUrl + '/GetMoney', val);
   }
 
-  getReport(val: CashBookPaged): Observable<ReportDataResult> {
-    return this.http.post<ReportDataResult>(this.baseApi + this.apiUrl + '/GetReport', val);
+  getSumary(val: any): Observable<ReportDataResult> {
+    return this.http.post<ReportDataResult>(this.baseApi + this.apiUrl + '/GetSumary', val);
   }
 }

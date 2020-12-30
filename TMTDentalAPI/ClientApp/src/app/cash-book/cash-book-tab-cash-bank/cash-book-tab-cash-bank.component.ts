@@ -55,7 +55,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
 
-    this.cashBookService.getReport(this.paged)
+    this.cashBookService.getSumary(this.paged)
     .subscribe(
       (res) => {
         this.reportData = res;
