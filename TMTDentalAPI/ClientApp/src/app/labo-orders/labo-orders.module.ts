@@ -19,7 +19,11 @@ import { OrderLaboListComponent } from './order-labo-list/order-labo-list.compon
 import { LaboOrderExportComponent } from './labo-order-export/labo-order-export.component';
 import { LaboOrderReceiptDialogComponent } from './labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 import { LaboOrderExportDialogComponent } from './labo-order-export-dialog/labo-order-export-dialog.component';
-
+import { LaboManagementComponent } from './labo-management/labo-management.component';
+import { LaboFinishLinesModule } from '../labo-finish-lines/labo-finish-lines.module';
+import { ProductsModule } from '../products/products.module';
+import { LaboBridgesModule } from '../labo-bridges/labo-bridges.module';
+import { LaboBiteJointsModule } from '../labo-bite-joints/labo-bite-joints.module';
 
 @NgModule({
   declarations: [
@@ -34,12 +38,17 @@ import { LaboOrderExportDialogComponent } from './labo-order-export-dialog/labo-
     LaboOrderExportComponent,
     LaboOrderReceiptDialogComponent,
     LaboOrderExportDialogComponent,
+    LaboManagementComponent,
   ],
   imports: [
     CommonModule,
     LaboOrdersRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    ProductsModule,
+    LaboFinishLinesModule,
+    LaboBridgesModule,
+    LaboBiteJointsModule,
     SharedModule,
     MyCustomKendoModule,
     NgbModule

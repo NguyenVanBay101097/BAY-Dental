@@ -135,11 +135,12 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
-        { name: 'Vật liệu Labo', link: '/products/labos' },
-        { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
-        { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
-        { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
-        { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
+        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
+        // { name: 'Vật liệu Labo', link: '/products/labos' },
+        // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
+        // { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
+        // { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
+        // { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
       ]
     },
     {
