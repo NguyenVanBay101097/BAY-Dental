@@ -165,6 +165,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("Count")]
+        public async Task<IActionResult> GetCount(AppointmentGetCountVM val)
+        {
+            var res = await _appointmentService.GetCount(val);
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> SearchRead(AppointmentSearch val)
         {

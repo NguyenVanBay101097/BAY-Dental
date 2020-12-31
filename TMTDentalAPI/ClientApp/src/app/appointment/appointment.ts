@@ -126,8 +126,15 @@ export class AppointmentStatePatch {
     reason:string;
 }
 
-export class  DateFromTo
+export class DateFromTo
 {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class AppointmentGetCountVM
+{
+    state: string;
     dateFrom: string;
     dateTo: string;
 }

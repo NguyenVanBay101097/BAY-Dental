@@ -116,14 +116,22 @@ namespace Infrastructure.Services
                 query = query.Where(x=>x.SaleOrderId == val.SaleOrderId);
             }
 
+            var totalItems = await query.CountAsync();
+
             query = query.OrderByDescending(x => x.DateCreated);
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
-            var totalItems = await query.CountAsync();
-            var items = await _mapper.ProjectTo<AppointmentBasic>(query.Skip(val.Offset).Take(limit)).ToListAsync();
+          
+            var items = await query
+                .Include(x => x.Partner)
+                .Include(x => x.Doctor)
+                .OrderByDescending(x => x.DateCreated)
+                .Skip(val.Offset)
+                .Take(limit)
+                .ToListAsync();
 
             return new PagedResult2<AppointmentBasic>(totalItems, val.Offset, limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<AppointmentBasic>>(items)
             };
         }
 
@@ -184,6 +192,28 @@ namespace Infrastructure.Services
             list.Add(new AppointmentStateCount { State = "cancel", Count = cancelCount, Color = "#cc0000" });
            
             return list;
+        }
+
+        public async Task<long> GetCount(AppointmentGetCountVM val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.Date >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
+            return await query.LongCountAsync();
         }
 
         private async Task InsertAppointmentSequence()

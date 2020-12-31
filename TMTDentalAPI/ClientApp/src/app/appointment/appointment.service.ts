@@ -81,6 +81,10 @@ export class AppointmentService {
     return this.http.post(this.baseApi + "api/Appointments/CountAppointment", val);
   }
 
+  getCount(val: any) {
+    return this.http.post(this.baseApi + "api/Appointments/Count", val);
+  }
+
   searchRead(val: any): Observable<AppointmentBasic[]> {
     return this.http.post<AppointmentBasic[]>(this.baseApi + "api/Appointments/SearchRead", val);
   }

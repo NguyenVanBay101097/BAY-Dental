@@ -49,6 +49,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PartnerDisplayName { get; set; }
 
+        public PartnerBasic Partner { get; set; }
+
         public string Note { get; set; }
     }
 
@@ -198,5 +200,14 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string State { get; set; }
         public string Reason { get; set; }
+    }
+
+    public class AppointmentGetCountVM
+    {
+        public string State { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
     }
 }

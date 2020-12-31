@@ -170,3 +170,11 @@
     background-color: rgba(255,255,255,.3);
     color: #ff6757;
   }
+
+  .state-filter-wrapper {
+     margin-bottom: 10px;
+  }
+
+  .state-filter-wrapper button {
+    margin-right: 10px;
+  }

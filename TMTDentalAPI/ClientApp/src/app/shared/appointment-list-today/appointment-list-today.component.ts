@@ -4,9 +4,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AppointmentPaged, AppointmentPatch, AppointmentStatePatch, DateFromTo } from 'src/app/appointment/appointment';
+import { forkJoin, of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { AppointmentGetCountVM, AppointmentPaged, AppointmentPatch, AppointmentStatePatch, DateFromTo } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
 
@@ -29,9 +29,18 @@ export class AppointmentListTodayComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   public today: Date = new Date(new Date().toDateString());
-  stateFilter: string = 'all';
+  stateFilter: string = '';
 
   stateFilterOptions: any[] = [];
+  stateCount: any = {};
+  states: any[] = [
+    { value: '', text: 'Tổng hẹn'},
+    { value: 'confirmed', text: 'Đang hẹn'},
+    { value: 'waiting', text: 'Chờ khám'},
+    { value: 'examination', text: 'Đang khám'},
+    { value: 'done', text: 'Hoàn thành'},
+    { value: 'cancel', text: 'Hủy hẹn'}
+  ]
 
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
@@ -97,20 +106,25 @@ export class AppointmentListTodayComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadStateCount() {
-    this.loading = true;
-    var val = new DateFromTo();
-    val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    this.appointmentService.getCountState(val).subscribe(
-      (result: any) => {
-        this.stateFilterOptions = result;
-        this.loading = false;
-      },
-      error => {
+  setStateFilter(state: any) {
+    this.stateFilter = state;
+    this.loadDataFromApi();
+  }
 
-      }
-    );
+  loadStateCount() {
+    forkJoin(this.states.map(x => {
+      var val = new AppointmentGetCountVM();
+      val.state = x.value;
+      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      return this.appointmentService.getCount(val).pipe(
+        switchMap(count => of({state: x.value, count: count}))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        this.stateCount[item.state] = item.count;
+      });
+    });
   }
 
   pageChange(event: PageChangeEvent): void {
