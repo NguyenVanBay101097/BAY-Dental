@@ -2,25 +2,25 @@
     <div class="p-2 mr-2">
         <div class="text-center">
             <span class="font-weight-bold">Quỹ đầu kỳ</span>
-            <h4 class="text-primary">{{reportData.begin}}</h4>
+            <h4 class="text-primary">{{reportData.begin | number}}</h4>
         </div>
     </div>
     <div class="p-2 mr-2">
         <div class="text-center">
             <span class="font-weight-bold">Tổng thu</span>
-            <h4 class="text-primary">{{reportData.totalThu}}</h4>
+            <h4 class="text-primary">{{reportData.totalThu | number}}</h4>
         </div>
     </div>
     <div class="p-2 mr-2">
         <div class="text-center">
             <span class="font-weight-bold">Tổng chi</span>
-            <h4 class="text-danger">{{reportData.totalChi}}</h4>
+            <h4 class="text-danger">{{reportData.totalChi | number}}</h4>
         </div>
     </div>
     <div class="p-2 mr-2">
         <div class="text-center">
             <span class="font-weight-bold">Tồn quỹ tiền mặt</span>
-            <h4 class="text-success">{{reportData.totalAmount}}</h4>
+            <h4 class="text-success">{{reportData.totalAmount | number}}</h4>
         </div>
     </div>
 </div>
@@ -46,9 +46,9 @@
             {{dataItem.type2}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="amount" title="Số tiền" width="100">
+    <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount}}
+            {{dataItem.amount | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="recipientPayer" title="Người nhận/ nộp" width="100">

@@ -70,12 +70,6 @@
                                     <span>BBB</span>
                                 </td>
                             </tr>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" formControlName="" id="my-check" (change)="onCheckSaveSamplePrescription($event)">
-                                <label class="form-check-label" for="my-check">
-                                    Lưu làm đơn thuốc mẫu
-                                </label>
-                            </div>
                         </tbody>
                     </table>
                 </div>
@@ -87,7 +81,6 @@
     <button type="button" class="btn btn-primary" (click)="onSave()">Lưu</button>
     <button type="button" class="btn btn-primary" (click)="onConfirm()">Xác nhận</button>
     <button type="button" class="btn btn-primary" (click)="onConfirmPrint()">Xác nhận và In</button>
-    <button type="button" class="btn btn-danger" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-secondary" (click)="onCreate()">Thêm mới</button>
     <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Đóng</button>
 </div>
