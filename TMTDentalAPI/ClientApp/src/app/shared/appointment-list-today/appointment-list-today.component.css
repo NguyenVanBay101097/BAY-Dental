@@ -178,3 +178,13 @@
   .state-filter-wrapper button {
     margin-right: 10px;
   }
+
+  .edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
