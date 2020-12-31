@@ -12,3 +12,66 @@
 .pms-right {
     flex: 1;
 }
+
+.search-input {
+    box-shadow: none;
+}
+
+.list-group-item {
+    border-radius: 0px !important;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.k-widget.k-grid {
+    height: 100% !important;
+}
+
+.cate-item {
+    border-left: none;
+}
+
+.cate-item:not(.active):hover {
+    background-color: rgb(230, 226, 226);
+    cursor: pointer;
+}
+
+.cate-item:first-child {
+    border-top: none;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+}
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
+.edit_remove_action button:last-child {
+    margin-right: 0;
+}

@@ -1,34 +1,69 @@
 <div class="pms-wrapper d-flex">
-    <div class="pms-left border mr-2">
-        <div class="d-flex justify-content-between border-bottom">
-            <label class="" for="">Phân nhóm dịch vụ</label>
-            <button class="btn btn-sm btn-primary">Tạo</button>
+    <div class="pms-left border mr-2 h-100 overflow-hidden d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center border-bottom px-2 py-1 flex-0-0-auto">
+            <label class="font-weight-600" for="">Nhóm dịch vụ</label>
+            <button class="btn btn-sm btn-primary" (click)="createCate()"> <i class="fas fa-plus"></i> Tạo</button>
         </div>
-        <div class="search border-bottom">
-            <input class="form-control" placeholder="Nhập tên nhóm" type="text">
+        <div class="search border-bottom flex-0-0-auto">
+            <div class="has-search">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input [(ngModel)]="searchCate" (ngModelChange)="this.searchCateUpdate.next($event)" class="form-control size-text-14 border-0" placeholder="Tìm kiếm theo tên nhóm..." type="text">
+            </div>
         </div>
-        <ul class="list-group">
-            <li class="list-group-item active">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
-            <li class="list-group-item">Morbi leo risus</li>
-            <li class="list-group-item">Porta ac consectetur ac</li>
-            <li class="list-group-item">Vestibulum at eros</li>
+        <ul class="list-group flex-1-1-100 overflow-auto">
+            <li [ngClass]="{'active': cateId && cateId == cate.id}" (click)="reLoadService(cate)" *ngFor="let cate of categories" class="list-group-item cate-item d-flex justify-content-between align-items-center">
+                <span class="mr-1">{{cate.name}}</span>
+                <div class="edit_remove_action">
+                    <!-- <i class="far fa-edit text-primary"></i>
+                    <i class="far fa-trash-alt text-danger"></i> -->
+                    <button (click)="editCate(cate)">
+                        <i class="far fa-edit text-success"></i></button>
+                    <button (click)="$event.stopPropagation();deleteCate(cate)">
+                        <i class="far fa-trash-alt text-danger"></i></button>
+                </div>
+            </li>
         </ul>
     </div>
-    <div class="pms-right bg-primary border">
-        fdsa
-        <!-- <div class="pms-header"></div>
-        <div class="pms-content">
-            <kendo-grid>
-            <kendo-grid-checkbox-column
-            [width]="45"
-            [headerClass]="{'text-center': true}"
-            [class]="{'text-center': true}"
-            [resizable]="false"
-            [columnMenu]="false"
-            showSelectAll="true"
-        ></kendo-grid-checkbox-column>
-    </kendo-grid>
-        </div> -->
+    <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
+        <div class="flex-0-0-auto mb-3 d-flex align-items-center">
+            <div class="has-search mr-1 flex-fill">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)" class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
+            </div>
+            <div class="flex-fill">
+                <button class="btn btn-sm btn-primary" (click)="createService()">Thêm mới</button>
+                <button type="button" class="btn btn-light bg-white btn-sm" (click)="importFromExcel()">
+                    <i class="fas fa-upload"></i> Import
+                  </button>
+                <button type="button" class="btn btn-light bg-white btn-sm" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+            </div>
+        </div>
+        <div class="flex-1-1-100 h-100 overflow-hidden">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
+                </kendo-grid-column>
+                <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="categName" title="Nhóm dịch vụ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="listPrice" class="text-right" title="Giá bán" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.listPrice | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" (click)="editService(dataItem)">
+                  <i class="far fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteService(dataItem)">
+                  <i class="far fa-trash-alt"></i></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
     </div>
 </div>
