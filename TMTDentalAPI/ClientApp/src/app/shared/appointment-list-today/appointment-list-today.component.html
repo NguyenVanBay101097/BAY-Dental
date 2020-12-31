@@ -52,29 +52,18 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="80">
             <ng-template kendoGridCellTemplate let-dataItem>
+                <!-- <app-popover-state-appointment [item]="dataItem" class="ml-3"
+                            (stateFormGroup)="onChangeState(dataItem.id,$event)">
+                        </app-popover-state-appointment> -->
                 <div class="d-flex justify-content-between">
                     <div>
                         <span class="align-items-">
                             {{stateGet(dataItem.state)}}
                         </span>
                     </div>
-                    <!-- <div>
-                        <app-popover-state-appointment [item]="dataItem" class="ml-3"
+                    <app-popover-state-appointment [item]="dataItem" class="ml-3"
                             (stateFormGroup)="onChangeState(dataItem.id,$event)">
                         </app-popover-state-appointment>
-                    </div> -->
-                    <div class="d-inline-block" ngbDropdown container="body" #myDrop="ngbDropdown">
-                        <div class="edit_remove_action">
-                            <button type="button" id="dropdownManual"  class="o-no-caret text-success" ngbDropdownToggle>
-                                <i class="far fa-edit"></i>
-                            </button>
-                        </div>
-
-                        <div ngbDropdownMenu aria-labelledby="dropdownManual">
-                            <button ngbDropdownItem *ngFor="let state of states" (click)="onChangeState(dataItem.id,$event.target.value)" [value]="state.value"
-                                [class.active]="dataItem.state == state.value">{{state.text}}</button>
-                        </div>
-                    </div>
                 </div>
 
             </ng-template>

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 
 @Component({
@@ -14,6 +14,7 @@ export class PopoverStateAppointmentComponent implements OnInit {
   @Input() item: any;
   submitted = false;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
+  @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
   formGroup: FormGroup;
   stateFilterOptions: any[] = [
     {text:'Đang hẹn' , value:'confirmed'},
@@ -79,7 +80,25 @@ export class PopoverStateAppointmentComponent implements OnInit {
 
     const val = this.formGroup.value;  
     this.stateFormGroup.emit(val);
-    this.popover.close();
+    // this.popover.close();
+    this.myDrop.close();
+  }
+
+  stateGet(state) {
+    switch (state) {
+      case 'waiting':
+        return 'Chờ khám';
+      case 'examination':
+        return 'Đang khám';
+      case 'done':
+        return 'Hoàn thành';
+      case 'cancel':
+        return 'Hủy hẹn';
+      case 'all':
+        return 'Tổng hẹn';
+      default:
+        return 'Đang hẹn';
+    }
   }
 
 }

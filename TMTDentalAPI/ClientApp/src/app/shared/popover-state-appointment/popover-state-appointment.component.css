@@ -1,3 +1,16 @@
-.appointment-state-popover-width {
-    min-width: 250px !important;
+.appointment-state{
+    padding: 15px;
+}
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+}
+
+.dropdown-toggle::after {
+    display:none;
 }

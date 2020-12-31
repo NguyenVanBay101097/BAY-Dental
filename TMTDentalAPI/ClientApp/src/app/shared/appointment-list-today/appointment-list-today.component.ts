@@ -149,10 +149,9 @@ export class AppointmentListTodayComponent implements OnInit {
     }
   }
 
-  onChangeState(id, val) {
-    debugger
+  onChangeState(id, val) {   
     var res = new AppointmentStatePatch();
-    res.state = val;
+    res.state = val.state;
     res.reason = val.reason != null ? val.reason : null;
     this.appointmentService.patchState(id, res).subscribe(() => {
       this.notificationService.show({
