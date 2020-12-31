@@ -60,19 +60,22 @@
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{getState(dataItem.state)}}
         </ng-template>
-    </kendo-grid-column>       
+    </kendo-grid-column>
     <kendo-grid-column field="id" width="80">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button *ngIf="dataItem.state != 'posted'" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
+                class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                 <span class="far fa-edit"></span>
             </button>
-            <button *ngIf="dataItem.state != 'posted'" class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
+            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
+                class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem.id)">
                 <span class="fas fa-trash-alt"></span>
             </button>
-            <button *ngIf="dataItem.state == 'posted'" class="btn btn-info btn-sm mr-2" title="Xem" (click)="deleteItem(dataItem)">
+            <button *ngIf="!(dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi')"
+                class="btn btn-info btn-sm mr-2" title="Xem" (click)="seeItem(dataItem)">
                 <span class="fas fa-eye"></span>
             </button>
         </ng-template>

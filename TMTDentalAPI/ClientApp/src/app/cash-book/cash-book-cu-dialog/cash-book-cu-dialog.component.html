@@ -6,16 +6,41 @@
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="getValueForm('state') !== 'posted'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="getValueForm('state') === 'posted'"
+                        [class.btn-secondary]="getValueForm('state') !== 'posted'" type="button">
+                        Đã xác nhận
+                    </button>
+                    <button [disabled]="getValueForm('state') !== 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="getValueForm('state') === 'draft'"
+                        [class.btn-secondary]="getValueForm('state') !== 'draft'" type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
             <div class="o_form_sheet">
                 <div class="o_group">
+                    <h3 *ngIf="getValueForm('name')" class="font-weight-bold">{{getValueForm('name')}}</h3>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Loại {{type}}</label>
+                                    <label class="o_form_label">Loại {{getType()}}</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">                                                                     
-                                    <span>AAA</span>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="resModel != 'phieu.thu.chi'">{{type2}}</span>
+                                    <span *ngIf="seeForm">{{getValueForm('loaiThuChi') ?
+                                        getValueForm('loaiThuChi').name : ''}}</span>
+                                    <div *ngIf="!seeForm" class="d-flex">
+                                        <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
+                                            #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <a class="btn btn-sm btn-light" (click)="quickCreateLoaiThuChi()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -23,7 +48,12 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>BBB</span>
+                                    <span *ngIf="seeForm">{{getValueForm('journal') ?
+                                        getValueForm('journal').name : ''}}</span>
+                                    <kendo-combobox *ngIf="!seeForm" [data]="filteredJournals"
+                                        [textField]="'name'" [filterable]="true" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
@@ -31,7 +61,10 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>CCC</span>
+                                    <span *ngIf="seeForm">{{getValueForm('amount')}}</span>
+                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0"
+                                        [format]="'n0'" formControlName="amount">
+                                    </kendo-numerictextbox>
                                 </td>
                             </tr>
                             <tr>
@@ -39,9 +72,11 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>DDD</span>
+                                    <span *ngIf="seeForm">{{getValueForm('reason')}}</span>
+                                    <textarea *ngIf="!seeForm" type="text" class="form-control"
+                                        formControlName="reason"></textarea>
                                 </td>
-                            </tr>       
+                            </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -51,15 +86,22 @@
                                     <label class="o_form_label">Ngày</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName=""></kendo-datepicker>
+                                    <span *ngIf="seeForm">{{getValueForm('dateObj') | date:
+                                        'dd/MM/yyyy'}}</span>
+                                    <kendo-datepicker *ngIf="!seeForm"
+                                        formControlName="dateObj">
+                                    </kendo-datepicker>
                                 </td>
-                            </tr>  
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Người nộp tiền</label>
+                                    <label class="o_form_label">Người nhận/ nộp tiền</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">                                                                     
-                                    <span>AAA</span>
+                                <td colspan="1" style="width: 100%;">
+                                    <span
+                                        *ngIf="seeForm">{{getValueForm('payerReceiver')}}</span>
+                                    <input *ngIf="!seeForm" class="form-control"
+                                        formControlName="payerReceiver" />
                                 </td>
                             </tr>
                             <tr>
@@ -67,7 +109,9 @@
                                     <label class="o_form_label">Địa chỉ</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>BBB</span>
+                                    <span *ngIf="seeForm">{{getValueForm('address')}}</span>
+                                    <input *ngIf="!seeForm" class="form-control"
+                                        formControlName="address" />
                                 </td>
                             </tr>
                         </tbody>
@@ -77,10 +121,21 @@
         </div>
     </div>
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()">Lưu</button>
-    <button type="button" class="btn btn-primary" (click)="onConfirm()">Xác nhận</button>
-    <button type="button" class="btn btn-primary" (click)="onConfirmPrint()">Xác nhận và In</button>
-    <button type="button" class="btn btn-secondary" (click)="onCreate()">Thêm mới</button>
-    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Đóng</button>
+<div *ngIf="!seeForm" class="modal-footer">
+    <div *ngIf="getValueForm('state') == 'draft'">
+        <button type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
+        <button type="button" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    </div>
+    <div *ngIf="getValueForm('state') == 'draft' && itemId == null">
+        <button type="button" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+        <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Đóng</button>
+    </div>
+    <div *ngIf="itemId != null">
+        <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+        <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
+    </div>
+</div>
+<div *ngIf="seeForm && resModel == 'phieu.thu.chi'" class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
 </div>
