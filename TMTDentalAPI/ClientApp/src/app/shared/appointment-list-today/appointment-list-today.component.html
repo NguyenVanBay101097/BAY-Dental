@@ -43,8 +43,12 @@
             <div class="form-check form-check-inline" *ngFor="let item of stateFilterOptions ; let i = index">
                 <input class="form-check-input" type="radio" [(ngModel)]="stateFilter"
                     (change)="onChangeOverState(item.state)" id="{{item.state}}" [value]="item.state">
-                <label class="form-check-label-radio" for="{{item.state}}">{{stateGet(item.state)}}
-                    ({{item.count}})</label>
+
+                    <label class="form-check-label-radio" for="{{item.state}}">{{stateGet(item.state)}}
+                        <span class="badge badge-light">{{item.count}}</span>
+                    </label>
+                  
+
             </div>
         </ng-template>
     </div>
