@@ -30,6 +30,12 @@ export class CashBookDisplay {
 }
 
 export class ReportDataResult {
+  constructor(begin?: number, totalAmount?: number, totalChi?: number, totalThu?: number){
+    this.begin = begin || 0; 
+    this.totalAmount = totalAmount || 0; 
+    this.totalChi = totalChi || 0;
+    this.totalThu = totalThu || 0;
+  };
   begin: number;
   totalAmount: number;
   totalChi: number;
