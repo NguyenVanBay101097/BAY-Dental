@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -201,6 +202,13 @@ namespace TMTDentalAPI.Controllers
             }
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UploadImageByBase64(UploadBinaryViewModel data)
+        {
+
+            var result = await _uploadService.UploadImageByBase64Async(data.Uri);
+            return Ok(result);
+        }
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadImages(IList<IFormFile> files)
         {
