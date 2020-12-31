@@ -1,6 +1,11 @@
 <div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
 <div class="state-filter-wrapper">
-    <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
+    <button type="button" class="btn active" (click)="setStateFilter('')"
+        [class.btn-primary]="!stateFilter" [class.btn-light]="stateFilter">
+        Tổng hẹn <span class="badge badge-light bg-white">{{gridData?.total || 0}}</span>
+    </button>
+    <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
+        [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
         {{state.text}} <span class="badge badge-light bg-white">{{stateCount[state.value] || 0}}</span>
     </button>
 </div>
@@ -53,13 +58,20 @@
                             {{stateGet(dataItem.state)}}
                         </span>
                     </div>
-                    <div>
+                    <!-- <div>
                         <app-popover-state-appointment [item]="dataItem" class="ml-3"
                             (stateFormGroup)="onChangeState(dataItem.id,$event)">
                         </app-popover-state-appointment>
+                    </div> -->
+                    <div class="d-inline-block" ngbDropdown container="body" #myDrop="ngbDropdown">
+                        <button type="button" id="dropdownManual" class="o-no-caret text-success" ngbDropdownAnchor
+                            (focus)="myDrop.open()">
+                            <i class="far fa-edit"></i>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                            <button ngbDropdownItem *ngFor="let state of states" [class.active]="dataItem.state == state.value">{{state.text}}</button>
+                        </div>
                     </div>
-
-
                 </div>
 
             </ng-template>
