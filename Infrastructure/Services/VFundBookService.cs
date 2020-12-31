@@ -107,12 +107,12 @@ namespace Infrastructure.Services
             var query = _FilterQueryable(val);
             if (query.Any())
             {
-                fundBookReport.TotalThu = query.Where(x => x.Type == "inbound").Sum(x => x.Amount);
-                fundBookReport.TotalChi = query.Where(x => x.Type == "outbound").Sum(x => x.Amount);
+                fundBookReport.TotalThu = query.Where(x => x.Type == "inbound").Sum(x => x.AmountSigned);
+                fundBookReport.TotalChi = query.Where(x => x.Type == "outbound").Sum(x => x.AmountSigned);
             }
 
             //return total = begin + thu - chi
-            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
+            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu + fundBookReport.TotalChi;
 
             return fundBookReport;
         }

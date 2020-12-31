@@ -7,6 +7,7 @@ export class CashBookPaged {
   limit: number;
   offset: number;
   type: string;
+  companyId: string;
   search: string;
   resultSelection: string;
   dateFrom: string;
@@ -46,7 +47,7 @@ export class ReportDataResult {
 })
 
 export class CashBookService {
-  
+
   apiUrl = 'api/FundBooks';
 
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

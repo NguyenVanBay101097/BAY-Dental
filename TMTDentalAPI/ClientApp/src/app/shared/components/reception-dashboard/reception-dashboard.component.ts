@@ -14,6 +14,8 @@ import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { DataBindingDirective } from '@progress/kendo-angular-grid';
+import { FundBookSearch, FundBookService } from '../../fund-book.service';
+import { CashBookPaged, CashBookService } from 'src/app/cash-book/cash-book.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -34,7 +36,10 @@ export class ReceptionDashboardComponent implements OnInit {
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
   customerReport: PartnerCustomerReportOutput;
-  reportValue: any;
+  reportValueCash: any;
+  reportValueBank: any;
+  reportValueCashByDate: any;
+  reportValueBankByDate: any;
 
   public state: State = {
     skip: this.offset,
@@ -57,7 +62,8 @@ export class ReceptionDashboardComponent implements OnInit {
     private partnerService: PartnerService,
     private router: Router,
     private authService: AuthService,
-    private reportGeneralLedgerService: AccountReportGeneralLedgerService
+    private reportGeneralLedgerService: AccountReportGeneralLedgerService,
+    private cashBookService: CashBookService
   ) { }
 
   ngOnInit() {
@@ -67,6 +73,7 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadLaboOrderReport();
     this.loadPartnerCustomerReport();
     this.loadDataMoney();
+    this.loadDataMoneyByDateTime();
     this.loadService();
   }
 
@@ -98,10 +105,10 @@ export class ReceptionDashboardComponent implements OnInit {
     val.state = 'draft';
     this.saleReportService.getReportService(val).pipe(
       map((response: any) =>
-        (<GridDataResult>{
-          data: response.items,
-          total: response.totalItems
-        }))
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
     ).subscribe(res => {
       this.gridView = res.data;
       this.gridData = res.data;
@@ -187,12 +194,28 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
   loadDataMoney() {
-    var val = new ReportCashBankGeneralLedger();
-    val.companyId = this.authService.userInfo.companyId;
-    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportValue = result['accounts'].find(x => x.name == 'Tiền mặt');
-    }, err => {
-      console.log(err);
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
+    });
+  }
+
+  loadDataMoneyByDateTime() {
+    var dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
     });
   }
 
@@ -255,7 +278,7 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
   getStateDisplay(state) {
-    switch(state) {
+    switch (state) {
       case 'sale':
         return 'Đang điều trị';
       case 'done':
