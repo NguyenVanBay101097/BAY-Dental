@@ -33,19 +33,11 @@ export class CashBookCuDialogComponent implements OnInit {
     });
   }
 
-  getType() {
-    if (this.type == "thu") {
-      return "phiếu thu";
-    } else {
-      return "phiếu chi";
-    }
-  }
-
   getTitle() {
     if (this.item) {
-      this.title = "Chỉnh sửa " + this.getType();
+      this.title = "Chỉnh sửa phiếu " + this.type;
     } else {
-      this.title = "Tạo " + this.getType();
+      this.title = "Tạo phiếu" + this.type;
     }
   }
 }
