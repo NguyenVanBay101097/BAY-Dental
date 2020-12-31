@@ -14,6 +14,8 @@ import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { DataBindingDirective } from '@progress/kendo-angular-grid';
+import { FundBookSearch, FundBookService } from '../../fund-book.service';
+import { CashBookPaged, CashBookService } from 'src/app/cash-book/cash-book.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -60,7 +62,8 @@ export class ReceptionDashboardComponent implements OnInit {
     private partnerService: PartnerService,
     private router: Router,
     private authService: AuthService,
-    private reportGeneralLedgerService: AccountReportGeneralLedgerService
+    private reportGeneralLedgerService: AccountReportGeneralLedgerService,
+    private cashBookService: CashBookService
   ) { }
 
   ngOnInit() {
@@ -191,26 +194,28 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
   loadDataMoney() {
-    var val = new ReportCashBankGeneralLedger();
-    val.companyId = this.authService.userInfo.companyId;
-    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportValueCash = result['accounts'].find(x => x.name == 'Tiền mặt');
-      this.reportValueBank = result['accounts'].find(x => x.name == 'Ngân hàng');
-    }, err => {
-      console.log(err);
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
     });
   }
 
   loadDataMoneyByDateTime() {
-    var val = new ReportCashBankGeneralLedger();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-    val.companyId = this.authService.userInfo.companyId;
-    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportValueCashByDate = result['accounts'].find(x => x.name == 'Tiền mặt');
-      this.reportValueBankByDate = result['accounts'].find(x => x.name == 'Ngân hàng');
-    }, err => {
-      console.log(err);
+    var dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
     });
   }
 

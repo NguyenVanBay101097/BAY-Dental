@@ -66,13 +66,13 @@
                                 <div class="t_report_item">
                                     <span class="font-weight-bold">TIỀN MẶT</span>
                                     <h4 class="text-primary">
-                                        {{(reportValueCash ? reportValueCash.balance : 0) | number}}
+                                        {{(reportValueCash ? reportValueCash : 0) | number}}
                                     </h4>
                                 </div>
                                 <div class="t_report_item">
                                     <span class="font-weight-bold">NGÂN HÀNG</span>
                                     <h4 class="text-primary">
-                                        {{(reportValueBank ? reportValueBank.balance : 0) | number}}
+                                        {{(reportValueBank ? reportValueBank : 0) | number}}
                                     </h4>
                                 </div>
                             </div>
@@ -117,10 +117,10 @@
                     <div class="t_card_right t_card_ghost"></div>
                 </div>
                 <div class="card t_card_right border-secondary w-35">
-                    <div class="card-body">
+                    <div class="card-body-box">
                         <table class="table border-none">
                             <thead>
-                                <tr class="text-center border-bottom">
+                                <tr class="text-center">
                                     <td colspan="2">
                                         <h5 class="font-weight-bold">THU TRONG NGÀY</h5>
                                     </td>
@@ -131,17 +131,17 @@
                                     </td>
                                     <td>
                                         <h5 class="text-primary">
-                                            {{(reportValueCashByDate ? reportValueCashByDate.balance : 0) | number}}
+                                            {{(reportValueCashByDate ? reportValueCashByDate : 0) | number}}
                                         </h5>
                                     </td>
                                 </tr>
-                                <tr class="border-bottom">
+                                <tr class="border_bottom">
                                     <td>
                                         <h5 class="font-weight-bold">NGÂN HÀNG</h5>
                                     </td>
                                     <td>
                                         <h5 class="text-primary">
-                                            {{(reportValueBankByDate ? reportValueBankByDate.balance : 0) | number}}
+                                            {{(reportValueBankByDate ? reportValueBankByDate : 0) | number}}
                                         </h5>
                                     </td>
                                 </tr>
@@ -151,8 +151,8 @@
                                     </td>
                                     <td>
                                         <h5 class="text-primary">
-                                            {{((reportValueCashByDate ? reportValueCashByDate.balance : 0) +
-                                           (reportValueBankByDate ? reportValueBankByDate.balance : 0)) | number}}
+                                            {{((reportValueCashByDate ? reportValueCashByDate : 0) +
+                                           (reportValueBankByDate ? reportValueBankByDate : 0)) | number}}
                                         </h5>
                                     </td>
                                 </tr>

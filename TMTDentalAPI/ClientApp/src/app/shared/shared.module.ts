@@ -69,7 +69,8 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
 import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
-import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { LaboOrderCuDialogComponent } from '../sale-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { FundBookService } from './fund-book.service';
 
 @NgModule({
   declarations: [
@@ -131,7 +132,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     ProductServiceCuDialogComponent,
     PermissionDirective,
     PrintSalaryEmpComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
@@ -194,7 +195,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
-    SaleOrderLineDiscountOdataPopoverComponent, 
+    SaleOrderLineDiscountOdataPopoverComponent,
     LaboOrderCuDialogComponent
   ],
   imports: [
@@ -212,7 +213,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
       }
     })
   ],
-  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
+  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService],
   entryComponents: [
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
@@ -233,7 +234,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     LaboOrderCuDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
