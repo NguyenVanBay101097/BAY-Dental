@@ -15,7 +15,7 @@
             <div class="edit_remove_action">
                 <!-- <i class="far fa-edit text-primary"></i>
             <i class="far fa-trash-alt text-danger"></i> -->
-                <button (click)="editCate(cate)">
+                <button (click)="$event.stopPropagation();editCate(cate)">
                 <i class="far fa-edit text-success"></i></button>
                 <button (click)="$event.stopPropagation();deleteCate(cate)">
                 <i class="far fa-trash-alt text-danger"></i></button>
