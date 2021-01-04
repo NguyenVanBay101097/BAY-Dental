@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task<UploadResult> UploadBinaryAsync(string base64, string fileName);
         Task<IEnumerable<UploadResult>> UploadBinaryAsync(IList<IFormFile> files);
+        Task<UploadResult> UploadImageByBase64Async(string Uri);
     }
 }

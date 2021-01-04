@@ -206,6 +206,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.OrderLabo.Read")]
         public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
         {
 
@@ -214,6 +215,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.ExportLabo.Read")]
         public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
         {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
@@ -221,6 +223,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.OrderLabo.Update")]
         public async Task<IActionResult> UpdateOrderLabo(LaboOrderReceiptSave val)
         {
             var labo = await _laboOrderService.GetByIdAsync(val.Id);
@@ -232,8 +235,8 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.ExportLabo.Update")]
         public async Task<IActionResult> UpdateExportLabo(ExportLaboOrderSave val)
         {
             var labo = await _laboOrderService.GetByIdAsync(val.Id);
