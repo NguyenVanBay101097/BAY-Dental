@@ -27,7 +27,8 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes:SimpleChanges): void { 
-    this.loadDataFromApi();
+    this.loadDataGetSumary();
+    this.loadDataGetMoney();
   }
 
   ngOnInit() {
@@ -50,10 +51,8 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     }
   }
 
-  loadDataFromApi() {
+  loadDataGetSumary() {
     this.loading = true;
-    this.paged.limit = this.limit;
-    this.paged.offset = this.skip;
 
     this.cashBookService.getSumary(this.paged)
     .subscribe(
@@ -66,6 +65,12 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
         this.loading = false;
       }
     );
+  }
+
+  loadDataGetMoney() {
+    this.loading = true;
+    this.paged.limit = this.limit;
+    this.paged.offset = this.skip;
 
     this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
@@ -77,6 +82,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     ).subscribe(
       (res) => {
         this.gridData = res;
+        console.log(res);
         this.loading = false;
       },
       (err) => {
@@ -86,12 +92,25 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     );
   }
 
-  editItem(type, item) {
+  editItem(item) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = type;
-    modalRef.componentInstance.item = item;
+    modalRef.componentInstance.type = item.type;
+    modalRef.componentInstance.itemId = item.resId;
     modalRef.result.then(() => {
-      this.loadDataFromApi();
+      this.loadDataGetSumary();
+      this.loadDataGetMoney();
+    }, er => { });
+  }
+
+  seeItem(item) {
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.type = item.type;
+    modalRef.componentInstance.type2 = item.type2;
+    modalRef.componentInstance.itemId = item.resId;
+    modalRef.componentInstance.resModel = item.resModel;
+    modalRef.componentInstance.seeForm = true;
+    modalRef.result.then(() => {
+
     }, er => { });
   }
 }

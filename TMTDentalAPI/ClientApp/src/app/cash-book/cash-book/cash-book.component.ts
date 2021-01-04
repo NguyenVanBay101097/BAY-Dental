@@ -70,7 +70,7 @@ export class CashBookComponent implements OnInit {
   
   searchChangeDate(value) {
     this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : null;
-    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-dd") : null;
+    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : null;
     this.changeToLoadData = !this.changeToLoadData;
   }
 
@@ -87,7 +87,6 @@ export class CashBookComponent implements OnInit {
   createItem(type) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.type = type;
-    modalRef.componentInstance.item = null;
     modalRef.result.then(() => {
       this.changeToLoadData = !this.changeToLoadData;
     }, er => { });
