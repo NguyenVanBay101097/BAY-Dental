@@ -127,14 +127,14 @@ export class CashBookCuDialogComponent implements OnInit {
       if (this.resModel == "phieu.thu.chi") {
         this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
           this.formGroup.patchValue(result);
-          console.log(result);
           var date = new Date(result.date);
+          console.log(date);
           this.formGroup.get("dateObj").setValue(date);
         });
       } else if (this.resModel == "account.payment") {
         this.paymentService.get(this.itemId).subscribe((result) => {
           this.formGroup.patchValue(result);
-  
+          this.formGroup.get("payerReceiver").setValue(result.partner['name']);
           var date = new Date(result.paymentDate);
           this.formGroup.get("dateObj").setValue(date);
         });
@@ -142,9 +142,9 @@ export class CashBookCuDialogComponent implements OnInit {
         this.salaryPaymentService.getIdSP(this.itemId).subscribe((result) => {
           this.formGroup.patchValue(result);
           console.log(result);
-  
+          this.formGroup.get("payerReceiver").setValue(result.Employee['Name']);
           let date = new Date(result.Date);
-          this.formGroup.get("DateObj").patchValue(date);
+          this.formGroup.get("dateObj").patchValue(date);
         });
       }
     } else {
