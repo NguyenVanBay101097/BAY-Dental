@@ -140,9 +140,14 @@ export class CashBookCuDialogComponent implements OnInit {
         });
       } else if (this.resModel == "salary.payment") {
         this.salaryPaymentService.getIdSP(this.itemId).subscribe((result) => {
+          const x = {};
+          for (const [key, value] of Object.entries(result)) {
+            x[key.toLowerCase()] = value;
+          }
           this.formGroup.patchValue(result);
           console.log(result);
-          this.formGroup.get("payerReceiver").setValue(result.Employee['Name']);
+          console.log(x);
+          this.formGroup.get("payerReceiver").setValue(result.employee['Name']);
           let date = new Date(result.Date);
           this.formGroup.get("dateObj").patchValue(date);
         });
