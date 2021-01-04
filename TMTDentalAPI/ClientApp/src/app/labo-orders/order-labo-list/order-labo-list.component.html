@@ -81,7 +81,7 @@
                 {{GetTeeth(dataItem)}}
             </ng-template>
         </kendo-grid-column> -->    
-        <kendo-grid-column field="quantity" title="Số lượng" width="120">
+        <kendo-grid-column field="quantity" title="Số lượng" width="120" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}
             </ng-template>
@@ -103,7 +103,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{GetState(dataItem)}}
+                <span [ngClass]="getTextColor(dataItem)">{{getState(dataItem)}}</span>
             </ng-template>
         </kendo-grid-column>
 

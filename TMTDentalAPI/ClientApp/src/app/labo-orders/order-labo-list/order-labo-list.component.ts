@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
@@ -29,8 +30,8 @@ export class OrderLaboListComponent implements OnInit {
     { text: 'Chờ nhận', value: 'chonhan' },
     { text: 'Tới hạn', value: 'toihan' }
   ];
-  
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService) { }
+
+  constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal, private intlService: IntlService, private notificationService: NotificationService,) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -65,17 +66,32 @@ export class OrderLaboListComponent implements OnInit {
     })
   }
 
-  GetState(val){
-    var now = this.intlService.formatDate(new Date(), "d");
-    var datePlanned =  this.intlService.formatDate(new Date(val.datePlanned), "d");
-    if(now > datePlanned ){
+  getState(val) {
+    var today = new Date();
+    var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var datePlanned = new Date(val.datePlanned);
+    if (now > datePlanned) {
       return "Trễ hạn";
-    }else if(now == datePlanned){
+    } else if (now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
       return "Tới hạn";
-    }else{
+    } else {
       return "Chờ nhận";
     }
   }
+
+  getTextColor(val){
+    var today = new Date();
+    var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var datePlanned = new Date(val.datePlanned);
+    if (now > datePlanned) {
+      return {'text-danger': true};
+    } else if (now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
+      return {'text-success':true};
+    } else {
+      return;
+    }
+  }
+
 
   onStateSelectChange(data: TmtOptionSelect) {
     this.stateFilter = data.value;
@@ -96,6 +112,13 @@ export class OrderLaboListComponent implements OnInit {
     const modalRef = this.modalService.open(LaboOrderReceiptDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, er => { });
   }
