@@ -87,7 +87,7 @@
     display: flex;
 }
 
-@media(max-width: 1678px) {
+@media(max-width: 1367px) {
     .t_kanban {
         width: 320px;
     }
@@ -101,14 +101,27 @@
         width: 40px;
     }
     .card-body {
-        padding: 15px;
+        padding: 10px;
+    }
+    .font-weight-bold {
+        font-size: 12px;
+    }
+    .t_card_right {
+        width: 200px;
+    }
+    .text-primary {
+        font-size: 18px;
+    }
+    td>.text-primary {
+        font-size: 16px;
+    }
+    .table td, .table th {
+        padding: 3px;
     }
 }
 
-@media(max-width: 1367px) {
-    .t_fast_access {
-        max-width: 330px;
-    }
+.table td, .table th {
+    padding: 4.5px;
 }
 
 .t_fast_access {

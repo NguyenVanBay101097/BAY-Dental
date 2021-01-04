@@ -10,8 +10,13 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Limit = 20;
             Offset = 0;
-            State = "all";
+            Begin = false;
         }
+
+        /// <summary>
+        /// tinh dau ky hay k
+        /// </summary>
+        public bool Begin { get; set; }
 
         /// <summary>
         /// Ngay bat dau
@@ -47,7 +52,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ResultSelection { get; set; }
 
         public int Limit { get; set; }
-        
+
         public int Offset { get; set; }
     }
 }

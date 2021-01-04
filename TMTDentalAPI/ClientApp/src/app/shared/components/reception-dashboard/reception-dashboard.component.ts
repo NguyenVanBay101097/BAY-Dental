@@ -196,8 +196,8 @@ export class ReceptionDashboardComponent implements OnInit {
   loadDataMoney() {
     var companyId = this.authService.userInfo.companyId;
 
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId });
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId, begin: false });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId, begin: false });
 
     forkJoin([cash, bank]).subscribe(results => {
       this.reportValueCash = results[0] ? results[0].totalAmount : 0;
@@ -210,8 +210,8 @@ export class ReceptionDashboardComponent implements OnInit {
     var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     var companyId = this.authService.userInfo.companyId;
 
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
 
     forkJoin([cash, bank]).subscribe(results => {
       this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
