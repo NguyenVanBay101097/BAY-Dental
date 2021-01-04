@@ -59,6 +59,7 @@ export class LaboOrderDisplay {
     dotKham: DotKhamBasic;
     teeth: ToothBasic[];
     saleOrderLine: SaleOrderLineBasic;
+    warrantyCode:string;
     warrantyPeriod: string;
     product: ProductSimple;
     laboOrderProducts: ProductSimple[];
