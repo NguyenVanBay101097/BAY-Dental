@@ -107,7 +107,8 @@
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Người nhận/ nộp tiền</label>
+                                    <label *ngIf="getType() == 'thu'" class="o_form_label">Người nộp tiền</label>
+                                    <label *ngIf="getType() == 'chi'" class="o_form_label">Người nhận tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('payerReceiver')}}</span>

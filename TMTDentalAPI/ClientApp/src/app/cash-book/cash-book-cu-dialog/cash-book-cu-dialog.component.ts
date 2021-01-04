@@ -298,6 +298,7 @@ export class CashBookCuDialogComponent implements OnInit {
                 type: { style: "success", icon: true },
               });
               this.formGroup.get("state").setValue("posted");
+              this.seeForm = true;
               if (print) {
                 this.printPhieu(this.itemId);
               }
@@ -322,6 +323,7 @@ export class CashBookCuDialogComponent implements OnInit {
             type: { style: "success", icon: true },
           });
           this.formGroup.get("state").setValue("posted");
+          this.seeForm = true;
           if (print) {
             this.printPhieu(this.itemId);
           }

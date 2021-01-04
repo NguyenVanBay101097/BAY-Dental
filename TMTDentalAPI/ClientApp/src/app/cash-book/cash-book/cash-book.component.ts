@@ -90,6 +90,7 @@ export class CashBookComponent implements OnInit {
     modalRef.componentInstance.type = type;
     modalRef.result.then(() => {
       this.changeToLoadData = !this.changeToLoadData;
+      this.loadDataFromApi();
     }, er => { });
   }
 }
