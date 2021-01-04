@@ -249,7 +249,6 @@ export class CashBookCuDialogComponent implements OnInit {
           });
           this.itemId = result.id;
           this.setTitle();
-          console.log(result);
         },
         (error) => {
           console.log(error);
@@ -265,8 +264,7 @@ export class CashBookCuDialogComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-          console.log(result);
-          this.activeModal.dismiss();
+          this.activeModal.close();
         },
         (error) => {
           console.log(error);
