@@ -579,7 +579,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> PartnerCustomerReport(PartnerCustomerReportInput val)
         {
-            var result = await _partnerService.GetPartnerCustomerReport(val);
+            var result = await _partnerService.GetPartnerCustomerReportV2(val);
             return Ok(result);
         }
 
