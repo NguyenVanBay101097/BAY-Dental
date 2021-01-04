@@ -19,13 +19,8 @@ import { ProductPaged, ProductService } from '../product.service';
   styleUrls: ['./product-management-services.component.css']
 })
 export class ProductManagementServicesComponent implements OnInit {
-  //category
-  type: string = 'service';
-  searchCate: string;
-  categories: any[];
-  sourceCategories: any[];
-  searchCateUpdate = new Subject<string>();
   //service
+  type = 'service';
   loading = false;
   gridData: GridDataResult;
   limit = 20;
@@ -42,17 +37,6 @@ export class ProductManagementServicesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.route.paramMap.subscribe(params => {
-    // this.type = params.get('type');
-    // this.loadCategories();
-    // });
-
-    this.searchCateUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((value) => {
-        this.searchCategories(value);
-      });
-    this.loadCategories();
     this.searchServiceUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
@@ -61,34 +45,7 @@ export class ProductManagementServicesComponent implements OnInit {
     this.loadServices();
   }
 
-  searchCategories(val) {
-    val = val.trim().toLowerCase();
-    if (val === '') {
-      this.categories = this.sourceCategories;
-      return;
-    }
-    this.categories = this.sourceCategories.filter(x => x.name.toLowerCase().includes(val));
-  }
-
-  loadCategories() {
-    var val = new ProductCategoryPaged();
-    val.limit = 0;
-    val.offset = 0;
-    val.search = this.searchCate || '';
-    val.type = this.type;
-
-    this.productCategoryService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.sourceCategories = res.data;
-      this.categories = this.sourceCategories;
-    }, err => {
-      console.log(err);
-    })
-  }
+  
 
   loadServices() {
     this.loading = true;
@@ -122,7 +79,7 @@ export class ProductManagementServicesComponent implements OnInit {
       );
   }
 
-  reLoadService(cate: any) {
+  onSelectedCate(cate: any) {
     if (this.cateId === cate.id) {
       return;
     }
@@ -135,38 +92,10 @@ export class ProductManagementServicesComponent implements OnInit {
     this.loadServices();
   }
 
-  createCate() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: nhóm dịch vụ';
-    modalRef.componentInstance.type = this.type;
-    modalRef.result.then(result => {
-      this.loadCategories();
-    }, () => {
-    });
-  }
-
-  editCate(item: ProductCategory) {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: nhóm dịch vụ';
-    modalRef.componentInstance.id = item.id;
-    modalRef.componentInstance.type = this.type;
-    modalRef.result.then(() => {
-      this.loadCategories();
-    }, () => {
-    });
-  }
-
-  deleteCate(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: nhóm dịch vụ';
-    modalRef.result.then(() => {
-      this.productCategoryService.delete(item.id).subscribe(() => {
-        this.loadCategories();
-      }, err => {
-        console.log(err);
-      });
-    }, () => {
-    });
+  onDeleteCate(e) {
+    debugger;
+    this.cateId = null;
+    this.loadServices();
   }
 
   createService() {
@@ -249,7 +178,7 @@ export class ProductManagementServicesComponent implements OnInit {
     paged.search = this.searchService || "";
     paged.categId = this.cateId || "";
     this.productService.excelServiceExport(paged).subscribe((rs) => {
-      let filename = "ExportedExcelFile";
+      let filename = "danh_sach_dich_vu";
       let newBlob = new Blob([rs], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

@@ -227,6 +227,10 @@ export class ProductService {
     return this.http.post(this.baseApi + this.apiUrl + "/ExportProductExcel", data, { responseType: "blob" });
   }
 
+  excelMedicineExport(data) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ExportMedicineExcel", data, { responseType: "blob" });
+  }
+
   //==============================PHẦN CÔNG ĐOẠN - STEP=====================================//
 
   getStepByProductId(id): Observable<ProductStepDisplay[]> {

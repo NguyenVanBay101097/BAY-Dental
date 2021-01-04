@@ -35,5 +35,6 @@ namespace Infrastructure.Services
         Task<ProductDisplay> GetProductExport(Guid id);
 
         Task<IEnumerable<ProductProductExportExcel>> GetProductExportExcel(ProductPaged val);
+        Task<IEnumerable<ProductProductExportExcel>> GetMedicineExportExcel(ProductPaged val);
     }
 }

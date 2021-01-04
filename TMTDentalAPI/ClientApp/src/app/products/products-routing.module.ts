@@ -8,20 +8,22 @@ import { ProductProductListComponent } from './product-product-list/product-prod
 import { ProductLaboAttachListComponent } from './product-labo-attach-list/product-labo-attach-list.component';
 import { ProductManagementComponent } from './product-management/product-management.component';
 import { ProductManagementServicesComponent } from './product-management-services/product-management-services.component';
+import { ProductManagementProductsComponent } from './product-management-products/product-management-products.component';
+import { ProductManagementMedicinesComponent } from './product-management-medicines/product-management-medicines.component';
 
 const routes: Routes = [
   // {
   //   path: 'services',
   //   component: ProductServiceListComponent
   // },
-  {
-    path: 'medicines',
-    component: ProductMedicineListComponent
-  },
-  {
-    path: 'products',
-    component: ProductProductListComponent
-  },
+  // {
+  //   path: 'medicines',
+  //   component: ProductMedicineListComponent
+  // },
+  // {
+  //   path: 'products',
+  //   component: ProductProductListComponent
+  // },
   {
     path: 'labos',
     component: ProductLaboListComponent
@@ -35,9 +37,9 @@ const routes: Routes = [
     component: ProductManagementComponent,
     children: [
       { path: '', redirectTo: 'services', pathMatch: 'full' },
-      { path: 'services', component: ProductManagementServicesComponent },
-      // { path: 'products', component: PartnerCustomerTreatmentPaymentComponent },
-      // { path: 'medicines', component: PartnerCustomerAppointmentComponent }
+      { path: 'services',data:{type: 'service'}, component: ProductManagementServicesComponent },
+      { path: 'products', component: ProductManagementProductsComponent },
+      { path: 'medicines', component: ProductManagementMedicinesComponent }
     ]
   }
 ];

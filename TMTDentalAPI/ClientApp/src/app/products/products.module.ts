@@ -36,6 +36,7 @@ import { ProductManagementServicesComponent } from './product-management-service
 import { ProductManagementProductsComponent } from './product-management-products/product-management-products.component';
 import { ProductManagementMedicinesComponent } from './product-management-medicines/product-management-medicines.component';
 import { ProductManagementComponent } from './product-management/product-management.component';
+import { ProductCategoryListComponent } from './product-category-list/product-category-list.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { ProductManagementComponent } from './product-management/product-managem
     ProductStepFormComponent, 
     ProductAdvanceSearchComponent, 
     ProductServiceImportDialogComponent, ProductLaboAttachListComponent, ProductLaboAttachCuDialogComponent, ProductManagementServicesComponent, ProductManagementProductsComponent, ProductManagementMedicinesComponent,
-    ProductManagementComponent 
+    ProductManagementComponent,
+    ProductCategoryListComponent 
   ],
   imports: [
     CommonModule,

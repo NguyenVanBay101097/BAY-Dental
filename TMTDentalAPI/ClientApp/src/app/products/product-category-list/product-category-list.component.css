@@ -1,16 +1,23 @@
-.pms-wrapper {
-    width: 100%;
-    height: 100%;
-    padding: 15px;
+.cate-item {
+    border-left: none;
 }
 
-.pms-left {
-    flex: 0 0 300px;
-    margin-right: 15px;
+.cate-item:not(.active):hover {
+    background-color: rgb(230, 226, 226);
+    cursor: pointer;
 }
 
-.pms-right {
-    flex: 1;
+.cate-item:first-child {
+    border-top: none;
+}
+
+.edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
 }
 
 .search-input {
@@ -39,12 +46,4 @@
     text-align: center;
     pointer-events: none;
     color: #aaa;
-}
-
-.k-widget.k-grid {
-    height: 100% !important;
-}
-
-.edit_remove_action button:last-child {
-    margin-right: 0;
 }

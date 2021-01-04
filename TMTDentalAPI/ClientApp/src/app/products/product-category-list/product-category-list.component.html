@@ -1,0 +1,25 @@
+<div class="h-100 overflow-hidden d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center border-bottom px-2 py-1 flex-0-0-auto">
+        <label class="font-weight-600" for="">Nhóm dịch vụ</label>
+        <button class="btn btn-sm btn-primary" (click)="createCate()"> <i class="fas fa-plus"></i> Tạo</button>
+    </div>
+    <div class="search border-bottom flex-0-0-auto">
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input [(ngModel)]="searchCate" (ngModelChange)="this.searchCateUpdate.next($event)" class="form-control size-text-14 border-0" placeholder="Tìm kiếm theo tên nhóm..." type="text">
+        </div>
+    </div>
+    <ul class="list-group flex-1-1-100 overflow-auto">
+        <li [ngClass]="{'active': category && cate.id == category.id}" (click)="onSelectCate(cate)" *ngFor="let cate of categories" class="list-group-item cate-item d-flex justify-content-between align-items-center">
+            <span class="mr-1">{{cate.name}}</span>
+            <div class="edit_remove_action">
+                <!-- <i class="far fa-edit text-primary"></i>
+            <i class="far fa-trash-alt text-danger"></i> -->
+                <button (click)="editCate(cate)">
+                <i class="far fa-edit text-success"></i></button>
+                <button (click)="$event.stopPropagation();deleteCate(cate)">
+                <i class="far fa-trash-alt text-danger"></i></button>
+            </div>
+        </li>
+    </ul>
+</div>

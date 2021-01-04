@@ -45,33 +45,6 @@
     height: 100% !important;
 }
 
-.cate-item {
-    border-left: none;
-}
-
-.cate-item:not(.active):hover {
-    background-color: rgb(230, 226, 226);
-    cursor: pointer;
-}
-
-.cate-item:first-child {
-    border-top: none;
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-}
-
-.edit_remove_action button {
-    background: none;
-    border: none;
-    margin-right: 5px;
-    border-style: none;
-    padding: 0;
-    outline: none;
-}
-
 .edit_remove_action button:last-child {
     margin-right: 0;
 }
