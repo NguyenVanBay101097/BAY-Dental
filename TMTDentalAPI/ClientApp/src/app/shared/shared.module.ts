@@ -69,9 +69,9 @@ import { SalaryPaymentBindingDirective } from './directives/salary-payment-bindi
 import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-service/sale-order-list-service.component';
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
-import { FundBookService } from './fund-book.service';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
+import { FundBookService } from './fund-book.service';
 
 @NgModule({
   declarations: [

@@ -477,7 +477,7 @@ namespace Infrastructure.Services
                 PartnerId = x.Id,
                 OrderCount = 0
             }).ToListAsync();
-            data.Union(partnersLast);
+            data.AddRange(partnersLast);
             var result = new List<SaleReportPartnerItem>();
             foreach (var item in data)
             {
