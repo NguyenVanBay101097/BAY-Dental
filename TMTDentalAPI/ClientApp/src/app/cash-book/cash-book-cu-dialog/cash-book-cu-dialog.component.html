@@ -1,6 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.close()"
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
@@ -8,14 +8,18 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="getValueForm('state') !== 'posted'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') === 'posted'"
-                        [class.btn-secondary]="getValueForm('state') !== 'posted'" type="button">
+                    <button [disabled]="!(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
+                        class="btn o_arrow_button disabled"
+                        [class.btn-primary]="(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
+                        [class.btn-secondary]="!(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
+                        type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="getValueForm('state') !== 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') === 'draft'"
-                        [class.btn-secondary]="getValueForm('state') !== 'draft'" type="button">
+                    <button [disabled]="!(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
+                        class="btn o_arrow_button disabled"
+                        [class.btn-primary]="(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
+                        [class.btn-secondary]="!(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
+                        type="button">
                         Nháp
                     </button>
                 </div>
@@ -50,9 +54,8 @@
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('journal') ?
                                         getValueForm('journal').name : ''}}</span>
-                                    <kendo-combobox *ngIf="!seeForm" [data]="filteredJournals"
-                                        [textField]="'name'" [filterable]="true" #journalCbx formControlName="journal"
-                                        [valueField]="'id'">
+                                    <kendo-combobox *ngIf="!seeForm" [data]="filteredJournals" [textField]="'name'"
+                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
                             </tr>
@@ -62,8 +65,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('amount')}}</span>
-                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0"
-                                        [format]="'n0'" formControlName="amount">
+                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
+                                        formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -88,8 +91,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('dateObj') | date:
                                         'dd/MM/yyyy'}}</span>
-                                    <kendo-datepicker *ngIf="!seeForm"
-                                        formControlName="dateObj">
+                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
@@ -98,10 +100,8 @@
                                     <label class="o_form_label">Người nhận/ nộp tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span
-                                        *ngIf="seeForm">{{getValueForm('payerReceiver')}}</span>
-                                    <input *ngIf="!seeForm" class="form-control"
-                                        formControlName="payerReceiver" />
+                                    <span *ngIf="seeForm">{{getValueForm('payerReceiver')}}</span>
+                                    <input *ngIf="!seeForm" class="form-control" formControlName="payerReceiver" />
                                 </td>
                             </tr>
                             <tr>
@@ -110,8 +110,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('address')}}</span>
-                                    <input *ngIf="!seeForm" class="form-control"
-                                        formControlName="address" />
+                                    <input *ngIf="!seeForm" class="form-control" formControlName="address" />
                                 </td>
                             </tr>
                         </tbody>
@@ -128,7 +127,7 @@
     </div>
     <div *ngIf="getValueForm('state') == 'draft' && itemId == null">
         <button type="button" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-        <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Đóng</button>
+        <button type="button" class="btn btn-light" (click)="activeModal.close()">Đóng</button>
     </div>
     <div *ngIf="itemId != null">
         <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
