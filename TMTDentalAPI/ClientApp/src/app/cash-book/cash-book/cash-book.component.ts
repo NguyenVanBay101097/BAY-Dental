@@ -23,15 +23,16 @@ export class CashBookComponent implements OnInit {
   reportBankData: ReportDataResult;
   changeToLoadData: boolean = false;
 
-  constructor(    
-    private modalService: NgbModal, 
-    private cashBookService: CashBookService, 
-    private intlService: IntlService, 
+  constructor(
+    private modalService: NgbModal,
+    private cashBookService: CashBookService,
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
     this.paged = new CashBookPaged();
     this.paged.resultSelection = "cash";
+    this.paged.begin = true;
     this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.reportCashData = new ReportDataResult();
     this.reportBankData = new ReportDataResult();
@@ -47,27 +48,27 @@ export class CashBookComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    this.cashBookService.getSumary({resultSelection: "cash"})
-    .subscribe(
-      (res) => {
-        this.reportCashData = res;
-        this.loading = false;
-      },
-      (err) => {
-        console.log(err);
-        this.loading = false;
-      }
-    );
+    this.cashBookService.getSumary({ resultSelection: "cash" })
+      .subscribe(
+        (res) => {
+          this.reportCashData = res;
+          this.loading = false;
+        },
+        (err) => {
+          console.log(err);
+          this.loading = false;
+        }
+      );
 
-    let cash =  this.cashBookService.getSumary({resultSelection: "cash"});
-    let bank =  this.cashBookService.getSumary({resultSelection: "bank"});
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash" });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank" });
 
     forkJoin([cash, bank]).subscribe(results => {
       this.reportCashData = results[0];
       this.reportBankData = results[1];
     });
   }
-  
+
   searchChangeDate(value) {
     this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : null;
     this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : null;
