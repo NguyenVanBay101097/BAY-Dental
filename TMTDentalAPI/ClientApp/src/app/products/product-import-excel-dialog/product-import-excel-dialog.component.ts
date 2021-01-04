@@ -37,6 +37,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.fileBase64 || this.fileBase64 === '') {
+      this.notify('error','Vui lòng chọn file để import');
       return;
     }
     var val = new ProductImportExcelBaseViewModel();
@@ -49,7 +50,6 @@ export class ProductImportExcelDialogComponent implements OnInit {
         this.errors = result.errors;
       }
     }, err => {
-      this.errorService.show(err);
     });
   }
 

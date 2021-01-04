@@ -770,5 +770,16 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<bool> CheckExistWarrantyCode(string code)
+        {
+            if (code.Trim() == "") return false;
+            var exist = await SearchQuery().AnyAsync(x=> x.WarrantyCode.ToLower().Contains(code.Trim().ToLower()));
+            if (exist)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

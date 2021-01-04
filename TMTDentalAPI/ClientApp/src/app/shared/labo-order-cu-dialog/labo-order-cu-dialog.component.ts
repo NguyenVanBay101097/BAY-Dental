@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AsyncValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { Observable, timer } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
 import { LaboBiteJointBasic, LaboBiteJointService } from 'src/app/labo-bite-joints/labo-bite-joint.service';
 import { LaboBridgeBasic, LaboBridgePageSimple, LaboBridgeService } from 'src/app/labo-bridges/labo-bridge.service';
@@ -70,7 +71,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       amountTotal: 0,
       indicated: null,
       note: null,
-      warrantyCode: null,
+      warrantyCode: [null,Validators.compose([]), this.validateWarrantyCode.bind(this)],
       warrantyPeriodObj: null,
       productId: [null],
       product: [null],
@@ -110,6 +111,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get dateOrderObjFC() { return this.myForm.get('dateOrderObj'); }
   get datePlannedObjFC() { return this.myForm.get('datePlannedObj'); }
   get warrantyPeriodObjFC() { return this.myForm.get('warrantyPeriodObj'); }
+  get warrantyCodeFC() {return this.myForm.get('warrantyCode');}
   get saleOrderLine() { return this.laboOrder.saleOrderLine; }
   get teethFA() { return this.myForm.get('teeth') as FormArray; }
   get teeth() { return this.myForm.get('teeth').value; }
@@ -119,11 +121,25 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get quantityFC() { return this.myForm.get('quantity'); }
   get priceUnitFC() { return this.myForm.get('priceUnit'); }
   get amountTotalFC() { return this.myForm.get('amountTotal'); }
-  get partnerFC() {return this.myForm.get('partner');}
-  get indicatedFC() {return this.myForm.get('indicated');}
-  get noteFC() {return this.myForm.get('note');}
-  get technicalNoteFC() {return this.myForm.get('technicalNote');}
+  get partnerFC() { return this.myForm.get('partner'); }
+  get indicatedFC() { return this.myForm.get('indicated'); }
+  get noteFC() { return this.myForm.get('note'); }
+  get technicalNoteFC() { return this.myForm.get('technicalNote'); }
 
+  validateWarrantyCode(
+    control: AbstractControl
+  ): Observable<ValidationErrors | null> {
+    return timer(500).pipe(
+      switchMap(() =>
+        this.laboOrderService.checkExistWarrantyCode(control.value).pipe(
+          map(ex => {
+            if(ex == false) return null; 
+            return ({ exist: true })
+          })
+        )
+      )
+    );
+  }
 
   notify(style, content) {
     this.notificationService.show({
@@ -367,7 +383,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
 
     this.onSave$().subscribe((res: any) => {
-      if(!this.id) {
+      if (!this.id) {
         this.id = res.id;
       }
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
@@ -385,14 +401,14 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   onClose() {
-    if(this.id) {
+    if (this.id) {
       this.activeModal.close(true);
-    } else{
+    } else {
       this.activeModal.close();
     }
   }
 
-  onQuickCreatePartner(){
+  onQuickCreatePartner() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Nhà cung cấp';
 
@@ -407,7 +423,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
-  onQuickUpdatePartner(){
+  onQuickUpdatePartner() {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: Nhà cung cấp';
     modalRef.componentInstance.id = this.partnerFC.value.id;

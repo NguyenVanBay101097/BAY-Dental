@@ -93,29 +93,37 @@ namespace TMTDentalAPI.Controllers
 
             using (var stream = new MemoryStream(fileData))
             {
-                using (ExcelPackage package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-
-                        if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên Đường hoàn tất Labo là bắt buộc");
-
-                        if (errs.Any())
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên Đường hoàn tất Labo là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new LaboFinishLineImportExcelRow
+                            {
+                                Name = name,
+                            };
+                            data.Add(item);
                         }
-
-                        var item = new LaboFinishLineImportExcelRow
-                        {
-                            Name = name,
-                        };
-                        data.Add(item);
                     }
+                }
+                catch (Exception)
+                {
+
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 

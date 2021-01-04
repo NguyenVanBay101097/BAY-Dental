@@ -189,4 +189,8 @@ export class LaboOrderService {
     actionCancelReceipt(val: any){
         return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt" , val);
     }
+
+    checkExistWarrantyCode(code: string) {
+        return this.http.post(this.baseApi + this.apiUrl + "/CheckExistWarrantyCode?code="+ code, null);
+    }
 }

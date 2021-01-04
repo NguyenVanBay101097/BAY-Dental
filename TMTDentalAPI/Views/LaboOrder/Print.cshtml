@@ -252,7 +252,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</span>
+                <span class="font-weight-600">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name.ToUpper() : "")</span>
             </div>
         </div>
     </div>

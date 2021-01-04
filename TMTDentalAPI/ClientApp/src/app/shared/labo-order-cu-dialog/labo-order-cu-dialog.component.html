@@ -223,6 +223,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" formControlName='warrantyCode' class="form-control">
+                                    <label *ngIf="warrantyCodeFC.errors?.exist" for="" class="text-danger">Mã bảo hành đã tồn tại</label>
                                 </td>
                             </tr>
                             <tr>

@@ -7,6 +7,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import * as _ from 'lodash';
 import { UomService } from 'src/app/uoms/uom.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-product-labo-cu-dialog',
@@ -21,7 +22,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
   filterdUoMs = [];
   filterdUoMPOs = [];
 
-  constructor(private productService: ProductService, public activeModal: NgbActiveModal,
+  constructor(private productService: ProductService, public activeModal: NgbActiveModal,private notificationService: NotificationService,
     private fb: FormBuilder) {
   }
 
@@ -68,6 +69,16 @@ export class ProductLaboCuDialogComponent implements OnInit {
       });
     } }
 
+    notify(Style, Content) {
+      this.notificationService.show({
+        content: Content,
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: Style, icon: true }
+      });
+    }
+
   onSave() {
     if (!this.formGroup.valid) {
       return;
@@ -81,10 +92,12 @@ export class ProductLaboCuDialogComponent implements OnInit {
     val.uoMIds.push(val.uom.id);
     if (this.id) {
       this.productService.update(this.id, val).subscribe(() => {
+        this.notify('succes','Lưu thành công');
         this.activeModal.close(true);
       });
     } else {
       return this.productService.create(val).subscribe(result => {
+        this.notify('success','Lưu thành công');
         this.activeModal.close(result);
       });;
     }

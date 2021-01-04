@@ -244,5 +244,12 @@ namespace TMTDentalAPI.Controllers
             await _laboOrderService.UpdateAsync(labo);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CheckExistWarrantyCode(string code)
+        {
+            var res = await _laboOrderService.CheckExistWarrantyCode(code);
+            return Ok(res);
+        }
     }
 }
