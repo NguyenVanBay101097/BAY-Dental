@@ -47,7 +47,7 @@ import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teet
     SaleOrderApplyDiscountDefaultDialogComponent,
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
-    // LaboOrderCuDialogComponent,
+    LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
     PartnerCustomerToathuocListComponent,
     SaleOrderDotkhamListComponent,
