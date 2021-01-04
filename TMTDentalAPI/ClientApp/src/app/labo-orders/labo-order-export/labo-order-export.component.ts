@@ -35,6 +35,7 @@ export class LaboOrderExportComponent implements OnInit {
     { text: 'Đã xuất', value: 'daxuat' },
     { text: 'Chưa xuất', value: 'chuaxuat' }
   ];
+  stateFilterOptionSelected = this.stateFilterOptions[0];
 
   constructor(
     private laboOrderService: LaboOrderService, 
@@ -97,6 +98,7 @@ export class LaboOrderExportComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      console.log(res);
       this.gridData = res;
       this.loading = false;
     }, err => {

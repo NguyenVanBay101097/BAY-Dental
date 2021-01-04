@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -20,7 +19,7 @@
         </kendo-grid-column> -->
             <kendo-grid-column field="name" title="Số phiếu" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+                    <a class="text-primary" (click)="actionLabo(dataItem)"> {{dataItem.name}}</a>
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="NCC Labo" width="150">

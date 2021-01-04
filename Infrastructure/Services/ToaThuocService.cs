@@ -112,29 +112,43 @@ namespace Infrastructure.Services
             return await base.CreateAsync(entity);
         }
 
+        public async Task<ToaThuocDisplay> GetToaThuocFromUIAsync(Guid id)
+        {
+            var toathuoc = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrder).Include(x => x.Employee).Include(x => x.Partner).FirstOrDefaultAsync();
+            if (toathuoc == null)
+                return null;
+            var toathuocDisplay = _mapper.Map<ToaThuocDisplay>(toathuoc);
+
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            toathuocDisplay.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+
+            return toathuocDisplay;
+        }
+
         public async Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val)
         {
             var toathuoc = _mapper.Map<ToaThuoc>(val);
             SaveOrderLines(val, toathuoc);
-            await this.CreateAsync(toathuoc);
+            await CreateAsync(toathuoc);
 
             var samplePrescriptionLineSave = new List<SamplePrescriptionLineSave>();
             if (val.SaveSamplePrescription)
             {
-                var samplePrescriptionSave = new SamplePrescriptionSave() {
+                var samplePrescriptionSave = new SamplePrescriptionSave()
+                {
                     Name = val.NameSamplePrescription,
                     Note = toathuoc.Note
                 };
-                
-                foreach(var line in toathuoc.Lines)
+
+                foreach (var line in toathuoc.Lines)
                 {
                     samplePrescriptionLineSave.Add(new SamplePrescriptionLineSave
-                    { 
-                        ProductId = line.ProductId, 
-                        NumberOfTimes = line.NumberOfTimes, 
-                        AmountOfTimes = line.AmountOfTimes, 
-                        NumberOfDays = line.NumberOfDays, 
-                        Quantity = line.Quantity, 
+                    {
+                        ProductId = line.ProductId,
+                        NumberOfTimes = line.NumberOfTimes,
+                        AmountOfTimes = line.AmountOfTimes,
+                        NumberOfDays = line.NumberOfDays,
+                        Quantity = line.Quantity,
                         UseAt = line.UseAt
                     });
                 }
@@ -145,7 +159,7 @@ namespace Infrastructure.Services
 
             }
 
-            var result = _mapper.Map<ToaThuocBasic>(toathuoc); 
+            var result = _mapper.Map<ToaThuocBasic>(toathuoc);
 
             return result;
         }
@@ -160,7 +174,7 @@ namespace Infrastructure.Services
 
             SaveOrderLines(val, toathuoc);
 
-            await this.Write(toathuoc);
+            await Write(toathuoc);
 
             var samplePrescriptionLineSave = new List<SamplePrescriptionLineSave>();
             if (val.SaveSamplePrescription)
@@ -262,7 +276,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.SaleOrder.Id == val.SaleOrderId);
             }
 
-            if(val.Limit > 0)
+            if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }

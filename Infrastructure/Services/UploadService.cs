@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public class UploadService: IUploadService
+    public class UploadService : IUploadService
     {
         private readonly string _serverUploadApi;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -139,6 +141,31 @@ namespace Infrastructure.Services
                 }
             }
         }
+
+        public async Task<UploadResult> UploadImageByBase64Async(string Uri)
+        {
+            var appId = string.Empty;
+            var host = _httpContextAccessor.HttpContext.Request.Host.Value;
+            if (!string.IsNullOrWhiteSpace(host))
+            {
+                appId = host.Split('.')[0];
+                if (appId.Contains("localhost"))
+                    appId = "localhost";
+            }
+
+            appId = appId.Trim().ToLower();
+
+            ServicePointManager.ServerCertificateValidationCallback +=
+           (sender, certificate, chain, sslPolicyErrors) => true;
+            
+            var client = new RestClient(_serverUploadApi);
+            client.AddDefaultHeader("__TPosId", appId);
+            var req = new RestRequest("Binary").AddJsonBody(new { Uri = Uri });
+            var response = await client.ExecutePostAsync<UploadResult>(req);
+            if (response.IsSuccessful)
+                return response.Data;
+            return null;
+        }
     }
 
     public class UploadResult
@@ -146,4 +173,5 @@ namespace Infrastructure.Services
         public string FileName { get; set; }
         public string FileUrl { get; set; }
     }
+
 }

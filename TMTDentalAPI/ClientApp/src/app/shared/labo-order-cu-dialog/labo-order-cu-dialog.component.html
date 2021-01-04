@@ -32,7 +32,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div [class.d-none]="state == 'confirmed'">
                                         <div class="d-flex">
-                                            <kendo-combobox #partnerCbx [data]="partners"  [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
+                                            <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                             </kendo-combobox>
                                             <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
                                                 <i class="fas fa-external-link-alt"></i>
@@ -404,7 +404,7 @@
 
 <footer class="modal-footer">
     <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
-    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
+    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>

@@ -262,7 +262,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   isAttachSelected(attach: ProductSimple) {
-    debugger;
     const index = this.laboOrderProducts.findIndex(x => x.id == attach.id);
     return index >= 0 ? true : false;
   }

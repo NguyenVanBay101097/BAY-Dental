@@ -231,7 +231,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   }
 
   loadRecord() {
-    this.toaThuocService.get(this.id).subscribe((result: any) => {
+    this.toaThuocService.getFromUI(this.id).subscribe((result: any) => {
       this.toaThuocForm.patchValue(result);
       let date = new Date(result.date);
       this.toaThuocForm.get("dateObj").patchValue(date);
