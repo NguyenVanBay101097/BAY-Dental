@@ -43,6 +43,7 @@
                                         </div>
                                     </div>
                                     <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
+                                    <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Vui lòng chọn nhà cung cấp Labo</label>
                                 </td>
                             </tr>
                         </tbody>
