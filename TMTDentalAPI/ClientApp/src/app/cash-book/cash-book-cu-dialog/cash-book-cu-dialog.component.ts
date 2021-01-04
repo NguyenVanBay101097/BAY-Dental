@@ -128,7 +128,6 @@ export class CashBookCuDialogComponent implements OnInit {
         this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
           this.formGroup.patchValue(result);
           var date = new Date(result.date);
-          console.log(date);
           this.formGroup.get("dateObj").setValue(date);
         });
       } else if (this.resModel == "account.payment") {
@@ -140,22 +139,28 @@ export class CashBookCuDialogComponent implements OnInit {
         });
       } else if (this.resModel == "salary.payment") {
         this.salaryPaymentService.getIdSP(this.itemId).subscribe((result) => {
-          const x = {};
-          for (const [key, value] of Object.entries(result)) {
-            x[key.toLowerCase()] = value;
+          // Convert object keys to lower case
+          var result_keyLowCase = {};
+          for (var [key, value] of Object.entries(result)) {
+            if (value && typeof(value) == "object") {
+              var r_keyLowCase = {};
+              for (var [k, v] of Object.entries(value)) {
+                r_keyLowCase[k.toLowerCase()] = v;
+              }
+              value = r_keyLowCase;
+            }
+            result_keyLowCase[key.toLowerCase()] = value;
           }
+          result = result_keyLowCase;
           this.formGroup.patchValue(result);
-          console.log(result);
-          console.log(x);
-          this.formGroup.get("payerReceiver").setValue(result.employee['Name']);
-          let date = new Date(result.Date);
+          this.formGroup.get("payerReceiver").setValue(result.employee['name']);
+          let date = new Date(result.date);
           this.formGroup.get("dateObj").patchValue(date);
         });
       }
     } else {
       this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
         this.formGroup.patchValue(result);
-        console.log(result);
         var date = new Date(result.date);
         this.formGroup.get("dateObj").setValue(date);
       });

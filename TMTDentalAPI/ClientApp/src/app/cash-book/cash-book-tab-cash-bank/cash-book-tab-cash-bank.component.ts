@@ -17,6 +17,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   skip = 0;
   loading = false;
   reportData: ReportDataResult;
+  changeDateFirst: boolean = true;
 
   @Input() paged: CashBookPaged;
   @Input() changeToLoadData: boolean;
@@ -27,8 +28,12 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes:SimpleChanges): void { 
-    this.loadDataGetSumary();
-    this.loadDataGetMoney();
+    if (this.changeDateFirst == false) {
+      this.loadDataGetSumary();
+      this.loadDataGetMoney();
+    } else {
+      this.changeDateFirst = false;
+    }
   }
 
   ngOnInit() {
