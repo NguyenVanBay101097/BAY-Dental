@@ -37,13 +37,18 @@
                                     <span *ngIf="resModel != 'phieu.thu.chi'">{{type2}}</span>
                                     <span *ngIf="seeForm">{{getValueForm('loaiThuChi') ?
                                         getValueForm('loaiThuChi').name : ''}}</span>
-                                    <div *ngIf="!seeForm" class="d-flex">
-                                        <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
-                                            #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
-                                        </kendo-combobox>
-                                        <a class="btn btn-sm btn-light" (click)="quickCreateLoaiThuChi()">
-                                            <span class="k-icon k-i-plus"></span>
-                                        </a>
+                                    <div *ngIf="!seeForm">
+                                        <div class="d-flex">
+                                            <kendo-combobox [data]="loaiThuChiList" [textField]="'name'" [filterable]="true"
+                                                #loaiThuChiCbx formControlName="loaiThuChi" [valueField]="'id'">
+                                            </kendo-combobox>
+                                            <a class="btn btn-sm btn-light" (click)="quickCreateLoaiThuChi()">
+                                                <span class="k-icon k-i-plus"></span>
+                                            </a>
+                                        </div>
+                                        <div *ngIf="f.loaiThuChi.errors && (f.loaiThuChi.touched || f.loaiThuChi.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.loaiThuChi.errors.required">Vui lòng chọn loại thu</div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -54,9 +59,14 @@
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('journal') ?
                                         getValueForm('journal').name : ''}}</span>
-                                    <kendo-combobox *ngIf="!seeForm" [data]="filteredJournals" [textField]="'name'"
-                                        [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
-                                    </kendo-combobox>
+                                    <div *ngIf="!seeForm">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                            [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.journal.errors.required">Vui lòng chọn phương thức thanh toán</div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
