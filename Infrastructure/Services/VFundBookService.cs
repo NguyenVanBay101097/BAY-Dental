@@ -92,7 +92,7 @@ namespace Infrastructure.Services
             val.State = "posted";
             var fundBookReport = new FundBookReport();
             //neu co datefrom tinh begin -> select sum trong query1
-            if (val.DateFrom.HasValue)
+            if (val.DateFrom.HasValue && val.Begin)
             {
                 IQueryable<VFundBook> query1 = _context.VFundBooks.Where(x => x.Date < val.DateFrom && val.State == "posted");
                 if (!string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")

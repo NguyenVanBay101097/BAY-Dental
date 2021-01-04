@@ -24,37 +24,13 @@
     padding-right: 0 !important;
 }
 
-.t_wrapper {
-    padding: 15px;
-}
-
-.t_kanban {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.t_card {
-    flex: 1 1 auto;
-    width: 240px;
-    margin: 5px 5px;
-    margin-right: 4px;
-}
-
-.t_card_right {
-    flex: 1 1 auto;
-    width: 295px;
-    margin: 5px 5px;
-    margin-right: 4px;
-}
-
 .table td, .table th {
-    padding: 5px;
     vertical-align: top;
     border-top: none;
 }
 
 .border_bottom {
-    border-bottom: 2px solid #7c7f81;  
+    border-bottom: 2px solid #7c7f81;
     padding: 5px;
 }
 
@@ -80,4 +56,88 @@
     -webkit-box-flex: 1;
     flex: 1 1 auto;
     padding: 15px 15px 0 15px;
+}
+
+.mr-custom {
+    margin-right: 20px;
+}
+
+.t_wrapper {
+    padding: 15px;
+}
+
+.t_kanban {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.t_card {
+    flex: 1 1 auto;
+    width: 220px;
+    margin: 5px 5px;
+}
+
+.t_card_right {
+    flex: 1 1 auto;
+    width: 295px;
+    margin: 5px 5px;
+}
+
+.t_wrapper_top {
+    display: flex;
+}
+
+@media(max-width: 1367px) {
+    .t_kanban {
+        width: 320px;
+    }
+    .t_card {
+        width: 150px;
+    }
+    .title-custom {
+        font-size: 12px;
+    }
+    .image-custom {
+        width: 40px;
+    }
+    .card-body {
+        padding: 10px;
+    }
+    .font-weight-bold {
+        font-size: 12px;
+    }
+    .t_card_right {
+        width: 200px;
+    }
+    .text-primary {
+        font-size: 18px;
+    }
+    td>.text-primary {
+        font-size: 16px;
+    }
+    .table td, .table th {
+        padding: 3px;
+    }
+}
+
+.table td, .table th {
+    padding: 4.5px;
+}
+
+.t_fast_access {
+    margin-right: 7.5px;
+}
+
+.t_report_today {
+    margin-left: 7.5px;
+}
+
+.t_report_today_detail {
+    display: flex;
+}
+
+.t_kanban_left {
+    display: flex;
+    flex-flow: row wrap;
+    margin-right: 15px;
 }
