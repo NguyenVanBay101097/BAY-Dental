@@ -61,7 +61,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Note { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public Guid? AccountPaymentId { get; set; }
+        public AccountPayment AccountPayment { get; set; }
 
         ///line
 
