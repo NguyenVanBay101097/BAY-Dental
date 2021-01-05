@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { Observable, of, timer } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -24,12 +26,31 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       dateReceipt : [null, Validators.required],
-      warrantyCode : [null, Validators.required],
+      warrantyCode : [null,Validators.compose([Validators.required]), this.validateWarrantyCode.bind(this)],
       warrantyPeriodObj: null,
       warrantyPeriod: null,
     });
 
     this.loadData();
+  }
+
+  validateWarrantyCode(
+    control: AbstractControl
+  ): Observable<ValidationErrors | null> {
+    const val = control.value;
+    if(!val || (val && val.trim() == '')) {
+      return of(null);
+    }
+    return timer(500).pipe(
+      switchMap(() =>
+        this.laboOrderService.checkExistWarrantyCode({code: control.value, id: this.labo? this.labo.id: ''}).pipe(
+          map(ex => {
+            if(ex == false) return null; 
+            return ({ exist: true })
+          })
+        )
+      )
+    );
   }
 
   loadData() {

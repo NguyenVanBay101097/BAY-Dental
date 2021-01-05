@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">Chi tiết nhận Labo<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="formGroup">
@@ -14,7 +13,7 @@
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">Ngày nhận thực tế</label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">                                                                     
+                                <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="dateReceipt"></kendo-datepicker>
                                     <div *ngIf="f.dateReceipt.errors && (f.dateReceipt.touched || f.dateReceipt.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.dateReceipt.errors.required">Vui lòng chọn ngày nhận thực tế</div>
@@ -29,6 +28,7 @@
                                     <input type="text" class="form-control" formControlName="warrantyCode">
                                     <div *ngIf="f.warrantyCode.errors && (f.warrantyCode.touched || f.warrantyCode.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.warrantyCode.errors.required">Vui lòng nhập mã bảo hành</div>
+                                        <div *ngIf="f.warrantyCode.errors?.exist">Mã bảo hành đã tồn tại</div>
                                     </div>
                                 </td>
                             </tr>
@@ -38,10 +38,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="warrantyPeriodObj"></kendo-datepicker>
-                                 
+
                                 </td>
-                            </tr>       
-                           
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -50,7 +50,6 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s"
-        (click)="onSave()">Lưu</button>
+    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

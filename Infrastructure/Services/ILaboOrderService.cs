@@ -32,6 +32,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<LaboOrderBasic>> GetPagedExportLaboAsync(ExportLaboPaged val);
         Task ActionCancelReceipt(IEnumerable<Guid> ids);
 
-        Task<bool> CheckExistWarrantyCode(string code);
+        Task<bool> CheckExistWarrantyCode(LaboOrderCheck val);
     }
 }

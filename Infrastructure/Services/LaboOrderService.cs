@@ -769,11 +769,12 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<bool> CheckExistWarrantyCode(string code)
+        public async Task<bool> CheckExistWarrantyCode(LaboOrderCheck val)
         {
-            if (code.Trim() == "") return false;
-            var exist = await SearchQuery().AnyAsync(x=> x.WarrantyCode.ToLower().Contains(code.Trim().ToLower()));
-            if (exist)
+            if (string.IsNullOrEmpty(val.Code) || val.Code.Trim() == "") return false;
+            var exist = await SearchQuery(x => x.WarrantyCode.ToLower().Contains(val.Code.Trim().ToLower())).FirstOrDefaultAsync();
+            if (exist == null || val.Id.HasValue && val.Id == exist.Id) return false;
+            if (exist != null)
             {
                 return true;
             }

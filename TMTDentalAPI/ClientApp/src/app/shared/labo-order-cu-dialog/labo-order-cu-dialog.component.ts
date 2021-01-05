@@ -6,7 +6,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { Observable, timer } from 'rxjs';
+import { Observable, of, timer } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { WebService } from 'src/app/core/services/web.service';
 import { LaboBiteJointBasic, LaboBiteJointService } from 'src/app/labo-bite-joints/labo-bite-joint.service';
@@ -129,9 +129,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
   validateWarrantyCode(
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
+    const val = control.value;
+    if(!val || (val && val.trim() == '')) {
+      return of(null);
+    }
     return timer(500).pipe(
       switchMap(() =>
-        this.laboOrderService.checkExistWarrantyCode(control.value).pipe(
+        this.laboOrderService.checkExistWarrantyCode({code: control.value, id: this.id}).pipe(
           map(ex => {
             if(ex == false) return null; 
             return ({ exist: true })
