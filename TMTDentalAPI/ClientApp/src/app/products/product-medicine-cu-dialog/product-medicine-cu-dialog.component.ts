@@ -58,7 +58,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
       uompo: null,
       type: 'consu',
       type2: 'medicine',
-      listPrice: 1,
+      listPrice: [1000, Validators.required],
       standardPrice: 0,
       companyId: null,
       defaultCode: '',
@@ -268,8 +268,9 @@ export class ProductMedicineCuDialogComponent implements OnInit {
     data.categId = data.categ.id;
     data.uoMIds = [];
     data.uomId = data.uom.id;
-    data.uompoId = data.uompo.id;
-    data.uoMIds.push(data.uompo.id);
+    // data.uompoId = data.uompo.id;
+    // data.uoMIds.push(data.uompo.id);
+    data.uompoId = data.uom.id;
     data.uoMIds.push(data.uom.id);
     return data;
   }
