@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -267,13 +268,23 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                   x.Partner.Name.Contains(val.Search));
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
             if (val.SaleOrderId.HasValue)
             {
                 query = query.Where(x => x.SaleOrder.Id == val.SaleOrderId);
+            }
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateOrderTo);
             }
 
             if (val.Limit > 0)
