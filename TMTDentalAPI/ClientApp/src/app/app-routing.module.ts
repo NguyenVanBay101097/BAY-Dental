@@ -4,6 +4,11 @@ import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'medicine-orders',
+    loadChildren: () => import('./medicine-order/medicine-order.module').then(m => m.MedicineOrderModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'sale-dashboard-reports',
     loadChildren: () => import('./sale-dashboard-reports/sale-dashboard-reports.module').then(m => m.SaleDashboardReportsModule),
     canActivate: [AuthGuard]
