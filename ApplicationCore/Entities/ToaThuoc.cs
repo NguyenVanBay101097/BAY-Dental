@@ -55,5 +55,7 @@ namespace ApplicationCore.Entities
         public DateTime? ReExaminationDate { get; set; }
 
         public string Diagnostic { get; set; }
+
+        public ICollection<MedicineOrder> MedicineOrders { get; set; } = new List<MedicineOrder>();
     }
 }

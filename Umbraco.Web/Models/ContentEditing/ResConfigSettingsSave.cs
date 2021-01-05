@@ -32,5 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? GroupTCare { get; set; }
 
         public DateTime? TCareRunAt { get; set; }
+        public bool? GroupMedicine { get; set; }
+
     }
 }

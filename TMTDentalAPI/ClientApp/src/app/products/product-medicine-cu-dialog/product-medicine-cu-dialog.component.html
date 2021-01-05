@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -14,7 +13,7 @@
                         <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
                     </h1>
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                        <div *ngIf="f.name.errors.required">Nhập tên thuốc</div>
+                        <div *ngIf="f.name.errors.required">Vui lòng điền tên thuốc</div>
                     </div>
                 </div>
 
@@ -22,8 +21,7 @@
                 <div class="o_notebook">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
-                                aria-controls="home" aria-selected="true">Thông tin</a>
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab" aria-controls="home" aria-selected="true">Thông tin</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -39,37 +37,50 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
-                                                    <kendo-combobox [data]="filterdCategories"
-                                                        [textField]="'completeName'" [filterable]="true" #categCbx
-                                                        formControlName="categ" [valueField]="'id'">
+                                                    <kendo-combobox [data]="filterdCategories" [textField]="'completeName'" [filterable]="true" #categCbx formControlName="categ" [valueField]="'id'">
                                                     </kendo-combobox>
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
                                                 <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
-                                                    <div *ngIf="f.categ.errors.required">Chọn nhóm thuốc</div>
+                                                    <div *ngIf="f.categ.errors.required">Vui lòng chọn nhóm thuốc</div>
                                                 </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá thuốc
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
+                                                    </kendo-numerictextbox>
+                                                </div>
+                                                <div *ngIf="f.listPrice.errors && (f.listPrice.touched || f.listPrice.dirty || submitted)" class="text-danger">
+                                                    <div *ngIf="f.listPrice.errors.required">Vui lòng điền giá thuốc</div>
+                                                </div>
+
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <table class="o_group o_inner_group o_group_col_6">
                                     <tbody>
-                                        <tr hasGroups [groups]="'product.group_uom'">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Đơn vị mặc định
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox [data]="filterdUoMs" [textField]="'name'"
-                                                    [filterable]="true" #uoMCbx formControlName="uom"
-                                                    [valueField]="'id'" (valueChange)="uoMChange($event)">
+                                                <kendo-combobox [data]="filterdUoMs" [textField]="'name'" [filterable]="true" #uoMCbx formControlName="uom" [valueField]="'id'" (valueChange)="uoMChange($event)">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
-                                        <tr hasGroups [groups]="'product.group_uom'">
+                                        <!-- <tr hasGroups [groups]="'product.group_uom'">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
                                                     Đơn vị mua
@@ -81,7 +92,7 @@
                                                     [valueField]="'id'">
                                                 </kendo-combobox>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -95,6 +106,5 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
 </footer>
