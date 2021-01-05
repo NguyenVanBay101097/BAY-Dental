@@ -46,6 +46,8 @@
     <Compile Remove="Data\Migrations\20201218032617_Bay_UpdateLabo_ver2.Designer.cs" />
     <Compile Remove="Data\Migrations\20201221021726_thuong_Update_LaboOrder_V3.cs" />
     <Compile Remove="Data\Migrations\20201221021726_thuong_Update_LaboOrder_V3.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210105074739_Create_TableMedicineOrders.cs" />
+    <Compile Remove="Data\Migrations\20210105074739_Create_TableMedicineOrders.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

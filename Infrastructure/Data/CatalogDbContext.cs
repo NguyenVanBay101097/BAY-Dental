@@ -221,6 +221,9 @@ namespace Infrastructure.Data
         public DbSet<LaboBridge> LaboBridges { get; set; }
         public DbSet<LaboOrderProductRel> laboOrderProductRels { get; set; }
 
+        public DbSet<MedicineOrder> MedicineOrders { get; set; }
+        public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -396,6 +399,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboBiteJointConfiguration());
             builder.ApplyConfiguration(new LaboBridgeConfiguration());
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
+            builder.ApplyConfiguration(new MedicineOrderConfiguration());
+            builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
