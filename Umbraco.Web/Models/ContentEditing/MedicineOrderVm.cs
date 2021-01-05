@@ -34,7 +34,8 @@ namespace Umbraco.Web.Models.ContentEditing
    
         public string PartnerName { get; set; }
 
-        public SaleOrderBasic SaleOrder { get; set; }
+        public Guid SaleOrderId { get; set; }
+        public string SaleOrderName { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }
