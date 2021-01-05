@@ -46,8 +46,8 @@ export class ToaThuocDisplayFromUI {
     lines: [];
     saleOrderId: string;
     reExaminationDate: string;
-    saveSamplePrescription: boolean;  
-    nameSamplePrescription: string; 
+    saveSamplePrescription: boolean;
+    nameSamplePrescription: string;
 }
 
 export class ToaThuocSave {
@@ -73,12 +73,12 @@ export class ToaThuocLineSave {
     id: string;
     product: ProductSimple;
     productId: string;
-    numberOfTimes: number; 
-    amountOfTimes: number; 
-    quantity: number; 
-    unit: string; 
-    numberOfDays: number; 
-    useAt: string; 
+    numberOfTimes: number;
+    amountOfTimes: number;
+    quantity: number;
+    unit: string;
+    numberOfDays: number;
+    useAt: string;
 }
 
 export class ToaThuocLineDefaultGet {
@@ -112,6 +112,8 @@ export class ToaThuocPaged {
     search: string;
     partnerId: string;
     saleOrderId: string;
+    dateFrom: string;
+    dateTo: string;
 }
 
 export class ToaThuocPaging {
@@ -121,7 +123,7 @@ export class ToaThuocPaging {
     items: [];
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ToaThuocService {
     apiUrl = 'api/toathuocs';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
