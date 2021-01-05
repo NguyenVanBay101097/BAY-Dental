@@ -106,6 +106,18 @@ export class ToaThuocLinePrint {
     sequence: number;
 }
 
+export class ToaThuocVM {
+    dd: string;
+    name: string;
+    date: string;
+    partnerName: string;
+    saleOrderId: string;
+    saleOrderName: string;
+    employeeName: string;
+    diagnostic: string;
+    partnerId: string;
+}
+
 export class ToaThuocPaged {
     limit: number;
     offset: number;
@@ -120,7 +132,7 @@ export class ToaThuocPaging {
     offset: number;
     limit: number;
     totalItems: number;
-    items: [];
+    items: ToaThuocVM[];
 }
 
 @Injectable({ providedIn: 'root' })

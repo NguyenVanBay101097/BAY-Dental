@@ -17,6 +17,8 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   search: string;
   loading = false;
   limit = 20;
+  dateFrom: Date;
+  dateTo: Date;
   offset = 0;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -26,14 +28,16 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // this.searchUpdate.pipe(
-    //   debounceTime(400),
-    //   distinctUntilChanged())
-    //   .subscribe((value) => {
-    //     this.search = value || '';
-    //     this.loadDataFromApi();
-    //   });
-    // this.loadDataFromApi();
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe((value) => {
+        this.search = value || '';
+        this.loadDataFromApi();
+      });
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
@@ -42,8 +46,8 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     paged.limit = this.limit;
     paged.offset = this.offset;
     paged.search = this.search ? this.search : '';
-    paged.dateFrom = this.intlService.formatDate(this.monthStart, "yyyy-MM-dd")
-    paged.dateTo = this.intlService.formatDate(this.monthEnd, "yyyy-MM-dd")
+    paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
+    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd")
     this.toathuocSevice.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -67,5 +71,13 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   createPrescriptionPayment(item) {
 
   }
+
+
+  onSearchDateChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
 
 }

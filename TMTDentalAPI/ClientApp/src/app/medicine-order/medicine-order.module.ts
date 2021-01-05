@@ -17,7 +17,6 @@ import { MedicineOrderService } from './medicine-order.service';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    
     SharedModule,
     MyCustomKendoModule,
     NgbModule,
