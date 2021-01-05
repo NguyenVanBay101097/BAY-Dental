@@ -61,5 +61,11 @@ namespace ApplicationCore.Entities
         [DbColumn("config_parameter", "tcare.run_at")]
         [DbColumn("field_type", "datetime")]
         public DateTime? TCareRunAt { get; set; }
+        /// <summary>
+        /// cấu hình cho bán thuốc
+        /// </summary>
+        [DbColumn("implied_group", "medicineOrder.group_medicine")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupMedicine { get; set; }
     }
 }
