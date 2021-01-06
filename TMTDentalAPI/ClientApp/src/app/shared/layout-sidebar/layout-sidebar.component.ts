@@ -14,7 +14,9 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
-    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
+    { 
+      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' 
+    },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
@@ -61,6 +63,9 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Quản lý tạm ứng - chi lương', link: '/salary-payment' },
         { name: 'Báo cáo thanh toán lương', link: 'hr/salary-reports' },
       ],
+    },
+    {
+      name: 'Sổ quỹ', icon: 'fas fa-wallet', children: [], link: '/cash-book',
     },
     {
       name: 'Thu chi',

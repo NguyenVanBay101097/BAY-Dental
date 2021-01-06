@@ -455,6 +455,47 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<IEnumerable<SaleReportPartnerItem>> GetReportPartnerV2(SaleReportPartnerSearch val)
+        {
+            var saleObj = GetService<ISaleOrderService>();
+            var companyId = CompanyId;
+
+            var states = new string[] { "draft", "cancel" };
+            var query = saleObj.SearchQuery(x => x.CompanyId == companyId && !states.Contains(x.State) && (!x.IsQuotation.HasValue || x.IsQuotation == false));
+            var data = await query.GroupBy(x => x.PartnerId).Select(x => new SaleReportPartnerItem
+            {
+                PartnerId = x.Key,
+                OrderCount = x.Count(),
+                LastDateOrder = x.Max(s => s.DateOrder)
+            }).ToListAsync();
+
+            var partner_ids = data.Select(x => x.PartnerId).ToList();
+            var partnerObj = GetService<IPartnerService>();
+            var partnerDict = await partnerObj.SearchQuery(x => x.Customer == true).ToDictionaryAsync(x => x.Id, x => x);
+            var partnersLast = await partnerObj.SearchQuery(x => x.Customer == true && !partner_ids.Contains(x.Id)).Select(x => new SaleReportPartnerItem()
+            {
+                PartnerId = x.Id,
+                OrderCount = 0
+            }).ToListAsync();
+            data.AddRange(partnersLast);
+            var result = new List<SaleReportPartnerItem>();
+            foreach (var item in data)
+            {
+                if (val.PartnerDisplay == "new" && item.OrderCount > 0)
+                    continue;
+                if (val.PartnerDisplay == "old" && item.OrderCount == 0)
+                    continue;
+                var partner = partnerDict[item.PartnerId];
+                item.PartnerName = partner.Name;
+                item.PartnerPhone = partner.Phone;
+                item.PartnerDisplayName = partner.DisplayName;
+
+                result.Add(item);
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val)
         {
             //thời gian, tiền thực thu, doanh thu, còn nợ

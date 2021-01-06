@@ -73,6 +73,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
 import { AppointmentListTodayComponent } from './appointment-list-today/appointment-list-today.component';
 import { PopoverStateAppointmentComponent } from './popover-state-appointment/popover-state-appointment.component';
 import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
+import { FundBookService } from './fund-book.service';
 import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
 
 @NgModule({
@@ -124,7 +125,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent,
+    LoaiThuChiFormComponent,    
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     ReceptionDashboardComponent,
@@ -137,7 +138,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     ProductServiceCuDialogComponent,
     PermissionDirective,
     PrintSalaryEmpComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
@@ -222,7 +223,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
       }
     })
   ],
-  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
+  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService],
   entryComponents: [
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,

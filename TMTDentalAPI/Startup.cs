@@ -302,6 +302,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddScoped<ITCareMessageService, TCareMessageService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -430,6 +431,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboFinishLineProfile());
                 mc.AddProfile(new LaboBiteJointProfile());
                 mc.AddProfile(new LaboBridgeProfile());
+                mc.AddProfile(new VFundBookProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

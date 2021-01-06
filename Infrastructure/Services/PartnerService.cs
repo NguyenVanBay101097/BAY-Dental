@@ -938,118 +938,118 @@ namespace Infrastructure.Services
             {
                 try
                 {
-                using (var package = new ExcelPackage(stream))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
-
-                    for (int row = 2; row <= rowCount; row++)
+                    using (var package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
 
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        if (string.IsNullOrWhiteSpace(name))
-                            errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
-
-                        var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
-                        if (!string.IsNullOrWhiteSpace(reference))
+                        for (int row = 2; row <= rowCount; row++)
                         {
-                            if (partner_code_list.Contains(reference))
-                                errs.Add($"Đã tồn tại mã {title_dict[val.Type]} {reference}");
-                            else
-                                partner_code_list.Add(reference);
-                        }
+                            var errs = new List<string>();
 
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            if (string.IsNullOrWhiteSpace(name))
+                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
 
-
-                        if (val.Type == "customer")
-                        {
-                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 13].Value);
-                            if (!string.IsNullOrWhiteSpace(medicalHistory))
+                            var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            if (!string.IsNullOrWhiteSpace(reference))
                             {
-                                var medicalHistoryTmp = medicalHistory.Split(",");
-                                foreach (var historyTmp in medicalHistoryTmp)
+                                if (partner_code_list.Contains(reference))
+                                    errs.Add($"Đã tồn tại mã {title_dict[val.Type]} {reference}");
+                                else
+                                    partner_code_list.Add(reference);
+                            }
+
+
+
+                            if (val.Type == "customer")
+                            {
+                                var medicalHistory = Convert.ToString(worksheet.Cells[row, 13].Value);
+                                if (!string.IsNullOrWhiteSpace(medicalHistory))
                                 {
-                                    if (!partner_history_list.Contains(historyTmp))
-                                        partner_history_list.Add(historyTmp);
+                                    var medicalHistoryTmp = medicalHistory.Split(",");
+                                    foreach (var historyTmp in medicalHistoryTmp)
+                                    {
+                                        if (!partner_history_list.Contains(historyTmp))
+                                            partner_history_list.Add(historyTmp);
+                                    }
+                                }
+
+                                try
+                                {
+                                    DateTime? date = null;
+                                    var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
+                                    long dateLong;
+                                    if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
+                                        date = DateTime.FromOADate(dateLong);
+
+                                    var birthDayStr = Convert.ToString(worksheet.Cells[row, 5].Value);
+                                    var birthMonthStr = Convert.ToString(worksheet.Cells[row, 6].Value);
+                                    var birthYearStr = Convert.ToString(worksheet.Cells[row, 7].Value);
+
+                                    data.Add(new PartnerImportRowExcel
+                                    {
+                                        Name = name,
+                                        Ref = reference,
+                                        Date = date,
+                                        Gender = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                        BirthDay = !string.IsNullOrWhiteSpace(birthDayStr) ? Convert.ToInt32(birthDayStr) : (int?)null,
+                                        BirthMonth = !string.IsNullOrWhiteSpace(birthMonthStr) ? Convert.ToInt32(birthMonthStr) : (int?)null,
+                                        BirthYear = !string.IsNullOrWhiteSpace(birthYearStr) ? Convert.ToInt32(birthYearStr) : (int?)null,
+                                        Phone = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                        Street = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                        WardName = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                        DistrictName = Convert.ToString(worksheet.Cells[row, 11].Value),
+                                        CityName = Convert.ToString(worksheet.Cells[row, 12].Value),
+                                        MedicalHistory = medicalHistory,
+                                        Job = Convert.ToString(worksheet.Cells[row, 14].Value),
+                                        Email = Convert.ToString(worksheet.Cells[row, 15].Value),
+                                        Note = Convert.ToString(worksheet.Cells[row, 16].Value),
+                                    });
+                                }
+                                catch (Exception e)
+                                {
+                                    errors.Add($"Dòng {row}: {e.Message}");
+                                    continue;
                                 }
                             }
-
-                            try
+                            else if (val.Type == "supplier")
                             {
-                                DateTime? date = null;
-                                var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
-                                long dateLong;
-                                if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
-                                    date = DateTime.FromOADate(dateLong);
 
-                                var birthDayStr = Convert.ToString(worksheet.Cells[row, 5].Value);
-                                var birthMonthStr = Convert.ToString(worksheet.Cells[row, 6].Value);
-                                var birthYearStr = Convert.ToString(worksheet.Cells[row, 7].Value);
-
-                                data.Add(new PartnerImportRowExcel
+                                try
                                 {
-                                    Name = name,
-                                    Ref = reference,
-                                    Date = date,
-                                    Gender = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                    BirthDay = !string.IsNullOrWhiteSpace(birthDayStr) ? Convert.ToInt32(birthDayStr) : (int?)null,
-                                    BirthMonth = !string.IsNullOrWhiteSpace(birthMonthStr) ? Convert.ToInt32(birthMonthStr) : (int?)null,
-                                    BirthYear = !string.IsNullOrWhiteSpace(birthYearStr) ? Convert.ToInt32(birthYearStr) : (int?)null,
-                                    Phone = Convert.ToString(worksheet.Cells[row, 8].Value),
-                                    Street = Convert.ToString(worksheet.Cells[row, 9].Value),
-                                    WardName = Convert.ToString(worksheet.Cells[row, 10].Value),
-                                    DistrictName = Convert.ToString(worksheet.Cells[row, 11].Value),
-                                    CityName = Convert.ToString(worksheet.Cells[row, 12].Value),
-                                    MedicalHistory = medicalHistory,
-                                    Job = Convert.ToString(worksheet.Cells[row, 14].Value),
-                                    Email = Convert.ToString(worksheet.Cells[row, 15].Value),
-                                    Note = Convert.ToString(worksheet.Cells[row, 16].Value),
-                                });
+                                    data.Add(new PartnerImportRowExcel
+                                    {
+                                        Name = name,
+                                        Ref = reference,
+                                        Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
+                                        Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                        Street = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                        WardName = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                        DistrictName = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                        CityName = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                        Email = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                        Note = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                    });
+                                }
+                                catch (Exception e)
+                                {
+                                    errors.Add($"Dòng {row}: {e.Message}");
+                                    continue;
+                                }
                             }
-                            catch (Exception e)
+                            else
                             {
-                                errors.Add($"Dòng {row}: {e.Message}");
+                                throw new Exception($"Not support type {val.Type}");
+                            }
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-                        }
-                        else if (val.Type == "supplier")
-                        {
-
-                            try
-                            {
-                                data.Add(new PartnerImportRowExcel
-                                {
-                                    Name = name,
-                                    Ref = reference,
-                                    Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
-                                    Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                    Street = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                    WardName = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                    DistrictName = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                    CityName = Convert.ToString(worksheet.Cells[row, 8].Value),
-                                    Email = Convert.ToString(worksheet.Cells[row, 9].Value),
-                                    Note = Convert.ToString(worksheet.Cells[row, 10].Value),
-                                });
-                            }
-                            catch (Exception e)
-                            {
-                                errors.Add($"Dòng {row}: {e.Message}");
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception($"Not support type {val.Type}");
-                        }
-
-                        if (errs.Any())
-                        {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
                         }
                     }
-                }
 
                 }
                 catch (Exception)
@@ -1925,7 +1925,6 @@ namespace Infrastructure.Services
         public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val)
         {
             ISpecification<SaleOrder> spec = new InitialSpecification<SaleOrder>(x => true && (!x.IsQuotation.HasValue || x.IsQuotation.Value == false));
-
             if (val.DateFrom.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder >= val.DateFrom));
 
@@ -1959,6 +1958,34 @@ namespace Infrastructure.Services
                 CustomerNew = temp.Where(x => x.PartnerCount == 1).Count()
             };
 
+            return result;
+        }
+
+        public async Task<PartnerCustomerReportOutput> GetPartnerCustomerReportV2(PartnerCustomerReportInput val)
+        {
+            var result = new PartnerCustomerReportOutput();
+            var partnerIds = SearchQuery(x => x.Customer == true).Select(x => x.Id);
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var querySaleOrder = saleOrderObj.SearchQuery(x => true);
+            if (val.DateFrom.HasValue)
+                querySaleOrder = querySaleOrder.Where(x => x.DateOrder >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                querySaleOrder = querySaleOrder.Where(x => x.DateOrder <= val.DateTo.Value);
+            if (val.CompanyId.HasValue)
+                querySaleOrder = querySaleOrder.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (querySaleOrder.Any())
+            {
+                var temp = await querySaleOrder.Where(x => partnerIds.Contains(x.PartnerId))
+               .GroupBy(x => x.PartnerId)
+               .Select(x => new
+               {
+                   PartnerId = x.Key,
+                   PartnerCount = x.Count()
+               })
+               .OrderBy(x => x.PartnerId).ToListAsync();
+                result.CustomerOld = temp.Where(x => x.PartnerCount >= 1).Count();
+                result.CustomerNew = partnerIds.Count() - result.CustomerOld;
+            }
             return result;
         }
 
@@ -2004,7 +2031,7 @@ namespace Infrastructure.Services
             {
                 details.Add(new CustomerStatisticsDetails
                 {
-                    Location = item.Key, 
+                    Location = item.Key,
                     CustomerTotal = item.Count(),
                     CustomerOld = item.Where(x => x.PartnerCount > 1).Count(),
                     CustomerNew = item.Where(x => x.PartnerCount == 1).Count()
@@ -2015,7 +2042,7 @@ namespace Infrastructure.Services
             {
                 CustomerTotal = temp.Count(),
                 CustomerOld = temp.Where(x => x.PartnerCount > 1).Count(),
-                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count(), 
+                CustomerNew = temp.Where(x => x.PartnerCount == 1).Count(),
                 Details = details
             };
 

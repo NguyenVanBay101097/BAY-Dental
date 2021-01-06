@@ -15,6 +15,7 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
   @Input() dateFrom: Date;
   @Input() title: string;
   @Input() dateTo: Date;
+  @Input() quickOption: string;
   @Output() searchChange = new EventEmitter<any>();
   @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
   quickOptions: {}[] = [];
@@ -62,6 +63,31 @@ export class TaiDateRangeFilterDropdownComponent implements OnInit {
       { text: 'Tháng này', dateFrom: this.monthStart, dateTo: this.monthEnd },
       { text: 'Năm này', dateFrom: this.yearStart, dateTo: this.yearEnd }
     ];
+
+    setTimeout(() => {
+      if (this.quickOption) {
+        switch (this.quickOption) {
+          case 'Hôm nay':
+            this.quickOptionClick(this.quickOptions[0]);
+            return;
+          case 'Hôm qua':
+            this.quickOptionClick(this.quickOptions[1]);
+            return;
+          case 'Tuần này':
+            this.quickOptionClick(this.quickOptions[2]);
+            return;
+          case 'Tháng này':
+            this.quickOptionClick(this.quickOptions[3]);
+            return;
+          case 'Năm này':
+            this.quickOptionClick(this.quickOptions[4]);
+            return;
+          default:
+            return;
+        }
+      }
+    });
+
   }
 
   quickOptionClick(option) {
