@@ -19,5 +19,8 @@ namespace Infrastructure.Services
         Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val);
 
         Task UpdateMedicineOrder(Guid id,MedicineOrderSave val);
+
+        Task ActionPayment(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
     }
 }

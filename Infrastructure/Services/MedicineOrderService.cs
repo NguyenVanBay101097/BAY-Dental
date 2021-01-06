@@ -69,7 +69,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.Partner)
                 .Include(x => x.ToaThuoc)
-                .Include(x => x.Journal)         
+                .Include(x => x.Journal)
                 .FirstOrDefaultAsync();
 
             var medicineOrderLineObj = GetService<IMedicineOrderLineService>();
@@ -132,14 +132,184 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task ActionPayment(IEnumerable<Guid> id)
+        public async Task ActionPayment(IEnumerable<Guid> ids)
         {
+            var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Company)
+                .Include(x => x.MedicineOrderLines)
+                .Include(x => x.AccountPayment)
+                .Include(x => x.Company)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner)
+                .Include(x => x.ToaThuoc)
+                .Include(x => x.Journal)
+                .Include(x => x.Journal.DefaultDebitAccount)
+                .Include(x => x.Journal.DefaultCreditAccount)
+                .ToListAsync();
+
+            var moveObj = GetService<IAccountMoveService>();
+
+            foreach (var medicineOrder in medicineOrders)
+            {
+                if (medicineOrder.State != "draft")
+                    throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
+
+                var moves = await _PrepareAccountMove(medicineOrder);
+                await moveObj.ActionPost(moves);
+
+                medicineOrder.State = "comfirmed";
+
+                ///thanh toán
+                var amountTotal = medicineOrder.Amount;
+                var payment = new AccountPayment()
+                {
+                    Amount = amountTotal,
+                    JournalId = medicineOrder.JournalId,
+                    PaymentType = amountTotal > 0 ? "inbound" : "outbound",
+                    PartnerId = medicineOrder.PartnerId,
+                    PartnerType = "customer",
+                    CompanyId = medicineOrder.CompanyId
+                };
+
+                var paymentObj = GetService<IAccountPaymentService>();
+                await paymentObj.CreateAsync(payment);
+                await paymentObj.Post(new List<Guid>() { payment.Id });
+
+                medicineOrder.AccountPaymentId = payment.Id;
+            }
+
+            await UpdateAsync(medicineOrders);
 
         }
 
-        public async Task ActionCancel(IEnumerable<Guid> id)
+
+
+        public async Task<IEnumerable<AccountMove>> _PrepareAccountMove(MedicineOrder self, bool final = false)
+        {
+            //param final: if True, refunds will be generated if necessary
+
+            var medicineOrderLineObj = GetService<IMedicineOrderLineService>();
+            var invoice_vals_list = new List<AccountMove>();
+            // Invoice values.
+            var invoice_vals = await _PrepareInvoice(self);
+
+            //Invoice line values (keep only necessary sections)
+            foreach (var line in self.MedicineOrderLines)
+            {
+                if (line.Quantity == 0)
+                    continue;
+                if (line.Quantity > 0 || (line.Quantity < 0 && final))
+                {
+
+                    var medicineline = await medicineOrderLineObj.SearchQuery(x => x.Id == line.Id).Include(x => x.ToaThuocLine).ThenInclude(s => s.Product).FirstOrDefaultAsync();
+                    invoice_vals.InvoiceLines.Add(_PrepareInvoiceLine(medicineline));
+                }
+            }
+            invoice_vals_list.Add(invoice_vals);
+
+            var out_invoice_vals_list = new List<AccountMove>();
+            var refund_invoice_vals_list = new List<AccountMove>();
+            if (final)
+            {
+                if (invoice_vals.InvoiceLines.Sum(x => x.Quantity * x.PriceUnit) < 0)
+                {
+                    foreach (var l in invoice_vals.InvoiceLines)
+                        l.Quantity = -l.Quantity;
+                    invoice_vals.Type = "out_refund";
+                    refund_invoice_vals_list.Add(invoice_vals);
+                }
+                else
+                    out_invoice_vals_list.Add(invoice_vals);
+            }
+            else
+                out_invoice_vals_list = invoice_vals_list;
+
+            var moveObj = GetService<IAccountMoveService>();
+            var moves = await moveObj.CreateMoves(out_invoice_vals_list, default_type: "out_invoice");
+            moves = moves.Concat(await moveObj.CreateMoves(refund_invoice_vals_list, default_type: "out_refund"));
+
+            return moves;
+        }
+
+        private async Task<AccountMove> _PrepareInvoice(MedicineOrder self)
+        {
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice");
+            if (journal == null)
+                throw new Exception($"Please define an accounting sales journal for the company {CompanyId}.");
+
+            var invoice_vals = new AccountMove
+            {
+                Ref = "",
+                Type = "out_invoice",
+                Narration = self.Note,
+                PartnerId = self.PartnerId,
+                InvoiceOrigin = self.Name,
+                JournalId = journal.Id,
+                Journal = journal,
+                CompanyId = journal.CompanyId,
+            };
+
+            return invoice_vals;
+        }
+
+        public AccountMoveLine _PrepareInvoiceLine(MedicineOrderLine line)
         {
 
+            var res = new AccountMoveLine
+            {
+                Name = line.ToaThuocLine.Product.Name,
+                ProductId = line.ToaThuocLine.ProductId,
+                Quantity = line.Quantity,
+                PriceUnit = line.Price,
+            };
+
+            return res;
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var moveObj = GetService<IAccountMoveService>();
+            var accountPaymentObj = GetService<IAccountPaymentService>();
+            var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
+               .Include(x => x.Company)
+               .Include(x => x.MedicineOrderLines)
+               .Include(x => x.AccountPayment)
+               .Include(x => x.Company)
+               .Include(x => x.Employee)
+               .Include(x => x.Partner)
+               .Include(x => x.ToaThuoc)
+               .ToListAsync();
+
+            var move_ids = new List<Guid>();
+            var payment_ids = new List<Guid>();
+            foreach (var order in medicineOrders)
+            {
+                var move_id = await moveObj.SearchQuery(x => x.InvoiceOrigin == order.Name).Select(x => x.Id).FirstOrDefaultAsync();
+                if (move_id != null)
+                    move_ids.Add(move_id);
+
+                if (order.AccountPaymentId.HasValue)
+                {
+                    var payment_id = await accountPaymentObj.SearchQuery(x => x.Id == order.AccountPaymentId.Value).Select(x => x.Id).FirstOrDefaultAsync();
+                    if (payment_id != null)
+                        payment_ids.Add(payment_id);
+                }
+
+                order.State = "cancel";
+            }
+
+            if (move_ids.Any())
+            {
+                await moveObj.ButtonDraft(move_ids);
+                await moveObj.Unlink(move_ids);
+            }
+
+            if (payment_ids.Any())
+                await accountPaymentObj.ActionDraftUnlink(payment_ids);
+
+
+            await UpdateAsync(medicineOrders);
         }
 
 
@@ -196,7 +366,7 @@ namespace Infrastructure.Services
             {
                 Code = "medicine.order",
                 Name = "Mã hóa đơn thuốc",
-                Prefix = "HDTT/{dd}{MM}{yy}-",
+                Prefix = "HDTT{dd}{MM}{yy}-",
                 Padding = 5,
             });
         }

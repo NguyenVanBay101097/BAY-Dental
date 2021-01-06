@@ -77,5 +77,27 @@ namespace TMTDentalAPI.Controllers
             var result = await _medicineOrderService.DefaultGet(val);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]    
+        public async Task<IActionResult> ActionPayment(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _medicineOrderService.ActionPayment(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _medicineOrderService.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }
