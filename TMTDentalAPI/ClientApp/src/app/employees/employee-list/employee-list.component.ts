@@ -173,4 +173,16 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
+  actionActive(id) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Ẩn nhân viên';
+    modalRef.result.then(() => {
+      this.service.actionActive(id,false).subscribe(()=> {
+        this.getEmployeesList();
+      });
+    }, () => {
+    });
+   
+  }
+
 }

@@ -217,4 +217,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UserAvatar { get; set; }
     }
+
+    public class EmployeeActive
+    {
+        public bool Active { get; set; }
+    }
 }

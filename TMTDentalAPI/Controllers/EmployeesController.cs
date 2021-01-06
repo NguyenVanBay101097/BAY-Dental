@@ -302,5 +302,13 @@ namespace TMTDentalAPI.Controllers
             var result = await _employeeService.GetPagedResultAsync(val);
             return Ok(result);
         }
+
+        [HttpPost("[action]/{id}")]
+        [CheckAccess(Actions = "Catalog.Employee.Update")]
+        public async Task<IActionResult> ActionActive(Guid id, [FromBody] EmployeeActive val)
+        {
+            var result = await _employeeService.ActionActive(id, val);
+            return Ok(result);
+        }
     }
 }

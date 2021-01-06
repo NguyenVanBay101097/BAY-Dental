@@ -48,7 +48,7 @@ namespace Infrastructure.Services
             if (val.IsAssistant.HasValue)
                 query = query.Where(x => x.IsAssistant == val.IsAssistant);
 
-            query = query.OrderBy(s => s.Name);
+            query = query.Where(x=> x.Active == true).OrderBy(s => s.Name);
             return query;
         }
 
@@ -194,6 +194,15 @@ namespace Infrastructure.Services
                 val.RestDayRate = emp.RestDayRate;
                 val.Allowance = emp.Allowance;
             }
+        }
+
+        public async Task<bool> ActionActive(Guid id, EmployeeActive val)
+        {
+            var entity = SearchQuery(x => x.Id == id).FirstOrDefault();
+            if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
+            entity.Active = val.Active;
+            await UpdateAsync(entity);
+            return true;
         }
     }
 }
