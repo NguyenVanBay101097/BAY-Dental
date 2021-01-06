@@ -63,11 +63,9 @@
                 [quickOption]="quickOptionDate"
                 (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <select class="form-control form-control-sm w-fit-content mr-2" (change)="changeType($event.target.value)">
-                <option value="">Loại chứng từ</option>
-                <option value="inbound">Phiếu thu</option>
-                <option value="outbound">Phiếu chi</option>
-            </select>
+            <kendo-combobox [data]="listType" style="font-size: 0.8rem; width: 200px;" [placeholder]="'Loại chứng từ'" [filterable]="true"
+                (valueChange)="changeType($event)" class="cbbox-sm" [popupSettings]="{width: 'auto'}">
+            </kendo-combobox>
         </div>
         <div class="t-search t-search-left">
             <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"

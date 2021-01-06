@@ -40,6 +40,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.reportData = new ReportDataResult();
+    console.log(this.reportData);
   }
 
   getType(type) {

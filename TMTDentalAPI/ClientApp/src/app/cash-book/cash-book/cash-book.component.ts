@@ -22,6 +22,7 @@ export class CashBookComponent implements OnInit {
   reportCashData: ReportDataResult;
   reportBankData: ReportDataResult;
   changeToLoadData: boolean = false;
+  listType: Array<string> = ['inbound', 'outbound'];
 
   constructor(
     private modalService: NgbModal,

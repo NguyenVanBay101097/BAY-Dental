@@ -94,25 +94,31 @@ namespace Infrastructure.Services
             //neu co datefrom tinh begin -> select sum trong query1
             if (val.DateFrom.HasValue && val.Begin)
             {
-                IQueryable<VFundBook> query1 = _context.VFundBooks.Where(x => x.Date < val.DateFrom && val.State == "posted");
+                IQueryable<VFundBook> query1 = _context.VFundBooks.Where(x => x.Date < val.DateFrom && x.State == val.State);
                 if (!string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
+                {
                     query1 = query1.Where(x => x.Journal.Type == val.ResultSelection);
+                }
+
                 if (query1.Any())
-                    fundBookReport.Begin = query1.Sum(x => x.AmountSigned);
-                else
-                    fundBookReport.Begin = 0;
+                {
+                    var thu = query1.Where(x => x.Type == "inbound").Sum(x => x.Amount);
+                    var chi = query1.Where(x => x.Type == "outbound").Sum(x => x.Amount);
+                    fundBookReport.Begin = thu - chi;
+                }
+
             }
 
             //loc nhung posted và sum trong query2 tinh dc thu chi
             var query = _FilterQueryable(val);
             if (query.Any())
             {
-                fundBookReport.TotalThu = query.Where(x => x.Type == "inbound").Sum(x => x.AmountSigned);
-                fundBookReport.TotalChi = query.Where(x => x.Type == "outbound").Sum(x => x.AmountSigned);
+                fundBookReport.TotalThu = query.Where(x => x.Type == "inbound").Sum(x => x.Amount);
+                fundBookReport.TotalChi = query.Where(x => x.Type == "outbound").Sum(x => x.Amount);
             }
 
             //return total = begin + thu - chi
-            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu + fundBookReport.TotalChi;
+            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
 
             return fundBookReport;
         }

@@ -19,7 +19,9 @@
     </div>
     <div class="p-2 mr-2">
         <div class="text-center">
-            <span class="font-weight-bold">Tồn quỹ tiền mặt</span>
+            <span *ngIf="paged.resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền mặt</span>
+            <span *ngIf="paged.resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân hàng</span>
+            <span *ngIf="paged.resultSelection == 'cash_bank'" class="font-weight-bold">Tồn sổ quỹ</span>
             <h4 class="text-success">{{reportData.totalAmount | number}}</h4>
         </div>
     </div>

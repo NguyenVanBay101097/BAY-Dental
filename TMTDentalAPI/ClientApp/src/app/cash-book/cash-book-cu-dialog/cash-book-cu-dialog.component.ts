@@ -115,9 +115,10 @@ export class CashBookCuDialogComponent implements OnInit {
     var val = { type: this.getType() };
     this.phieuThuChiService.defaultGet(val).subscribe((result: any) => {
       this.formGroup.patchValue(result);
-
+      this.formGroup.get("journal").patchValue(this.filteredJournals[0]);
       var date = new Date(result.date);
       this.formGroup.get("dateObj").setValue(date);
+      this.resModel = "phieu.thu.chi";
     });
   }
 
@@ -342,6 +343,7 @@ export class CashBookCuDialogComponent implements OnInit {
   onCreate() {
     this.loadDefault();
     this.itemId = null;
+    this.seeForm = false;
     this.setTitle();
   }
 
