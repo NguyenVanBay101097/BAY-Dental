@@ -48,7 +48,12 @@ namespace Infrastructure.Services
             if (val.IsAssistant.HasValue)
                 query = query.Where(x => x.IsAssistant == val.IsAssistant);
 
-            query = query.Where(x=> x.Active == true).OrderBy(s => s.Name);
+            if(val.Active.HasValue)
+            {
+                query = query.Where(x => x.Active == val.Active.Value);
+            }
+
+            query = query.OrderBy(s => s.Name);
             return query;
         }
 
@@ -96,7 +101,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-            var items = await query.Skip(val.Offset).Take(val.Limit)
+            var items = await query.Where(x=>x.Active == true).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);

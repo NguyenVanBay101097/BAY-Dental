@@ -10,6 +10,7 @@ export class EmployeePaged {
     isDoctor: boolean;
     isAssistant: boolean;
     ids: string[];
+    active: any = true;
 }
 
 export class EmployeeBasic {

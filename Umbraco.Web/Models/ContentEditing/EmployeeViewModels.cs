@@ -62,6 +62,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// trợ cấp
         /// </summary>
         public decimal? Allowance { get; set; }
+
+        public bool Active { get; set; }
     }
 
     public class EmployeeDisplay
@@ -148,6 +150,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Position { get; set; }
 
         public IEnumerable<Guid> Ids { get; set; }
+
+        public bool? Active { get; set; }
     }
 
     public class EmployeeSave

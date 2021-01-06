@@ -19,7 +19,11 @@ import { ActivatedRoute } from '@angular/router';
   }
 })
 export class EmployeeListComponent implements OnInit {
-
+  filterLaboStatus = [
+    { name: 'Đang làm việc', value: true },
+    { name: 'Ngưng làm việc', value: false }
+  ];
+  defaultFilter: any = this.filterLaboStatus[0];
   constructor(private fb: FormBuilder, private service: EmployeeService,
     private activeroute: ActivatedRoute, private modalService: NgbModal) { }
 
@@ -28,6 +32,7 @@ export class EmployeeListComponent implements OnInit {
   windowOpened: boolean = false;
   skip = 0;
   pageSize = 20;
+  active: boolean = true;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -49,6 +54,7 @@ export class EmployeeListComponent implements OnInit {
     var empPaged = new EmployeePaged();
     empPaged.limit = this.pageSize;
     empPaged.offset = this.skip;
+    empPaged.active = (this.active || this.active == false) ? this.active : '';
     if (this.search) {
       empPaged.search = this.search;
     }
@@ -145,7 +151,7 @@ export class EmployeeListComponent implements OnInit {
   }
 
   deleteEmployee(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa nhân viên';
     modalRef.result.then(() => {
       this.service.deleteEmployee(id).subscribe(
@@ -173,16 +179,22 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
-  actionActive(id) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Ẩn nhân viên';
+  actionActive(emp:any, active: boolean) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = (active ? 'Hiện nhân viên ': 'Ẩn nhân viên ') + emp.name;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ( (active ? 'hiện nhân viên ': 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
-      this.service.actionActive(id,false).subscribe(()=> {
+      this.service.actionActive(emp.id,active).subscribe(()=> {
         this.getEmployeesList();
       });
     }, () => {
     });
    
+  }
+
+  onStateSelectChange(e) {
+    this.active = e? e.value : null;
+    this.getEmployeesList();
   }
 
 }
