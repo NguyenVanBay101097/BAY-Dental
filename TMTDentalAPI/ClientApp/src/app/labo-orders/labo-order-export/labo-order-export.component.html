@@ -6,27 +6,23 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm theo số phiếu, khách hàng"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm theo số phiếu, khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view d-flex">
-                    <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions" [optionSelected]="stateFilterOptionSelected"
-                        (selectChange)="onStateSelectChange($event)">
-                    </app-tmt-option-select-dropdown>
-                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo"
-                        (searchChange)="onDateSearchChange($event)">
+                    <kendo-combobox (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="kendo-combobox-sm mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                    </kendo-combobox>
+                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo" (searchChange)="onDateSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
                 </div>
             </div>
-            <div class="o_cp_sidebar">  
+            <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -36,17 +32,16 @@
                 </div>
             </div>
         </div>
-        <div class="o_cp_right">        
+        <div class="o_cp_right">
             <div class="o_search_options">
-    
+
             </div>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partnerDisplayName}}
@@ -54,8 +49,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>               
+                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
@@ -97,7 +91,7 @@
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getState(dataItem)}}
             </ng-template>
-        </kendo-grid-column>       
+        </kendo-grid-column>
         <kendo-grid-column field="id" width="80">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Xuất khách

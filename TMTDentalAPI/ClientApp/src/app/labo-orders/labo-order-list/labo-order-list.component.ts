@@ -27,6 +27,14 @@ export class LaboOrderListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
+  filterLabo = [
+    {name:'Đã tạo',value:'true'},
+    {name:'Chưa tạo',value:'false'}
+  ];
+  filterLaboStatus = [
+    {name:'Nháp',value:'draft'},
+    {name:'Đơn hàng',value:'confirmed'},
+  ];
 
   // dateOrderFrom: Date;
   // dateOrderTo: Date;
@@ -74,8 +82,8 @@ export class LaboOrderListComponent implements OnInit {
   //   this.loadDataFromApi();
   // }
 
-  onStateLaboChange(event) {
-    var value = event.target.value;
+  onStateLaboChange(e) {
+    var value = e? e.value: null;
     if (value) {
       this.filterPaged.laboState = value;
     } else {
@@ -137,8 +145,8 @@ export class LaboOrderListComponent implements OnInit {
     })
   }
 
-  onChangeLaboStatus(event) {
-    var value = event.target.value;
+  onChangeLaboStatus(e) {
+    var value = e? e.value : null;
     if (value) {
       this.filterPaged.hasAnyLabo = value == 'true';
     } else {

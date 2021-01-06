@@ -29,6 +29,12 @@ export class OrderLaboListComponent implements OnInit {
     { text: 'Chờ nhận', value: 'chonhan' },
     { text: 'Tới hạn', value: 'toihan' }
   ];
+
+  filterLaboStatus = [
+    {name:'Trễ hạn',value:'trehan'},
+    {name:'Chờ nhận',value:'chonhan'},
+    {name:'Tới hạn',value:'toihan'},
+  ];
   
   constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService) { }
 
@@ -82,8 +88,8 @@ export class OrderLaboListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onChangeLaboState(event) {
-    this.stateFilter = event.target.value;
+  onChangeLaboState(e) {
+    this.stateFilter = e? e.value : null;
     this.loadDataFromApi();
   }
 

@@ -35,6 +35,12 @@ export class LaboOrderExportComponent implements OnInit {
     { text: 'Đã xuất', value: 'daxuat' },
     { text: 'Chưa xuất', value: 'chuaxuat' }
   ];
+
+  
+  filterLaboStatus = [
+    { name: 'Đã xuất', value: 'daxuat' },
+    { name: 'Chưa xuất', value: 'chuaxuat' }
+  ];
   stateFilterOptionSelected = this.stateFilterOptions[0];
 
   constructor(
@@ -54,8 +60,8 @@ export class LaboOrderExportComponent implements OnInit {
       });
   }
 
-  onStateSelectChange(data: TmtOptionSelect) {
-    this.stateFilter = data.value;
+  onStateSelectChange(e) {
+    this.stateFilter = e? e.value : null;
     this.loadDataFromApi();
   }
 
