@@ -10,9 +10,10 @@ import { SharedModule } from '../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { MedicineOrderService } from './medicine-order.service';
+import { MedicineOrderCreateDialogComponent } from './medicine-order-create-dialog/medicine-order-create-dialog.component';
 
 @NgModule({
-  declarations: [MedicineOrderComponent, MedicineOrderPrescriptionListComponent, MedicineOrderPrescriptionPaymentListComponent],
+  declarations: [MedicineOrderComponent, MedicineOrderPrescriptionListComponent, MedicineOrderPrescriptionPaymentListComponent, MedicineOrderCreateDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -24,6 +25,9 @@ import { MedicineOrderService } from './medicine-order.service';
   ],
   providers: [
     MedicineOrderService
+  ],
+  entryComponents: [
+    MedicineOrderCreateDialogComponent
   ]
 })
 export class MedicineOrderModule { }

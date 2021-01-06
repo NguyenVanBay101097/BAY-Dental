@@ -5,9 +5,24 @@ export class Paged {
   limit: number;
   offset: number;
   search: string;
-
+  dateFrom: string;
+  dateTo: string;
+  state: string;
 }
 
+export class PrecscriptionPaymentVM {
+  id:string;
+  name:string;
+  state:string;
+  
+}
+
+export class PrescriptionPaymentPagging {
+  limit: number;
+  offset: number;
+  totalItems: number;
+  items: [];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +33,6 @@ export class MedicineOrderService {
   apiUrl = "api/MedicineOrders";
 
   getPaged(val) {
-
+    return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
 }

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
 
 @Component({
   selector: 'app-medicine-order-prescription-list',
@@ -25,6 +27,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   constructor(
     private toathuocSevice: ToaThuocService,
     private intlService: IntlService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -69,9 +72,14 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
 
 
   createPrescriptionPayment(item) {
-
+    const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thanh toán hóa đơn thuốc';
+    modalRef.componentInstance.idToaThuoc = item.id;
+    modalRef.result.then(res => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
-
 
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
