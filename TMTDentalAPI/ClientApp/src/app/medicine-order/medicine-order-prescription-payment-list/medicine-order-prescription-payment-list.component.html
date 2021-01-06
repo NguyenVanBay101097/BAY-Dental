@@ -18,18 +18,15 @@
 </div>
 <div class="filter-toathuoc">
     <div class="w-50 d-flex">
-        <select class="form-control btn-sm cu-style mr-3">
-            <option selected>Trạng thái khi thanh toán</option>
-            <option>Đã thanh toán</option>
-            <option>Chưa thanh toán</option>
-            <option>Hủy thanh toán</option>
-        </select>
-        <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" [dateTo]="monthEnd">
+        <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'"
+            (valueChange)="stateChange($event)" [valueField]="'value'">
+        </kendo-combobox>
+        <app-tai-date-range-filter-dropdown [title]="'Thời gian'" [dateFrom]="monthStart" [dateTo]="monthEnd">
         </app-tai-date-range-filter-dropdown>
     </div>
     <div class="w-50">
-        <input class="form-control btn-sm cu-height" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc" type="text" [(ngModel)]="search"
-            (ngModelChange)="this.searchUpdate.next($event)">
+        <input class="form-control btn-sm cu-height" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
