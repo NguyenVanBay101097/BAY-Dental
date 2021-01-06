@@ -62,4 +62,16 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
+  onSave() {
+
+  }
+
+  onSavePayment() {
+
+  }
+
+  onSavePaymentPrint() {
+
+  }
+
 }
