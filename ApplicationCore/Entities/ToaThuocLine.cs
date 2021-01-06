@@ -37,7 +37,7 @@ namespace ApplicationCore.Entities
         public decimal Quantity { get; set; }
 
         /// <summary>
-        /// Dùng lúc
+        /// Dùng lúcineSaleOrder
         /// Sau khi ăn: after_meal
         /// Trước khi ăn: before_meal
         /// Trong khi ăn: in_meal

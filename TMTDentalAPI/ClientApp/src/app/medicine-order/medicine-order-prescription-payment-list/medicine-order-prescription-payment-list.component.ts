@@ -69,7 +69,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   }
 
   stateChange(item) {
-    this.state = item.value;
+    this.state = item ? item.value : '';
     this.loadDataFromApi();
   }
 

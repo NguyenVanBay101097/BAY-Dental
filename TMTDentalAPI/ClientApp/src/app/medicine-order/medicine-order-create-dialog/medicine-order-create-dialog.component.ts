@@ -163,6 +163,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     val.toaThuocId = this.idToaThuoc;
     val.employeeId = this.precscriptPaymen.employeeId;
     val.partnerId = this.precscriptPaymen.partnerId;
+    val.state = this.precscriptPaymen.state;
     val.companyId = this.authService.userInfo.companyId;
     if (val.medicineOrderLines) {
       var lines = [];
@@ -173,7 +174,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
           price: line.product ? line.product.listPrice : 0,
           amountTotal: line.quantity * line.product.listPrice,
         }
+        lines.push(model);
       });
+      val.medicineOrderLines = lines
     }
     return val;
   }
@@ -203,7 +206,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onPrint() {
-    if(!this.id) {
+    if (!this.id) {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
