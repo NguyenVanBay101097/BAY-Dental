@@ -136,7 +136,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Vật liệu Labo', link: '/products/labos' },
-        { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
+        { name: 'Đường hoàn tất Labo', link: '/labo-finish-lines' },
         { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
         { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
         { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },

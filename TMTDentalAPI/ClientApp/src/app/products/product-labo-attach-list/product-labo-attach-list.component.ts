@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DialogService, WindowService } from '@progress/kendo-angular-dialog';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -16,7 +17,7 @@ import { ProductLaboBasic, ProductPaged, ProductService } from '../product.servi
 })
 
 export class ProductLaboAttachListComponent implements OnInit {
-  constructor(private productService: ProductService,
+  constructor(private productService: ProductService, private notificationService: NotificationService,
     private modalService: NgbModal) { }
   gridData: GridDataResult;
   limit = 20;
@@ -86,12 +87,23 @@ export class ProductLaboAttachListComponent implements OnInit {
     });
   }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
+
   deleteItem(item: ProductLaboBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa gửi kèm Labo';
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửi kèm labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
+        this.notify('success','Xóa thành công');
         this.loadDataFromApi();
       });
     }, () => {

@@ -73,6 +73,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
 import { AppointmentListTodayComponent } from './appointment-list-today/appointment-list-today.component';
 import { PopoverStateAppointmentComponent } from './popover-state-appointment/popover-state-appointment.component';
 import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
+import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
 
 @NgModule({
   declarations: [
@@ -142,7 +143,8 @@ import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.componen
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent,
     LaboOrderCuDialogComponent,
-    PartnerWebcamComponent
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -202,7 +204,8 @@ import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.componen
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent, 
     LaboOrderCuDialogComponent,
-    PartnerWebcamComponent
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent
   ],
   imports: [
     CommonModule,
@@ -242,7 +245,8 @@ import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.componen
     PartnerPhonePopoverComponent,
     ProductServiceCuDialogComponent, 
     LaboOrderCuDialogComponent,
-    PartnerWebcamComponent
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -161,4 +161,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime? DateExport { get; set; }
     }
+
+    public class LaboOrderCheck
+    {
+        public string Code { get; set; }
+        public Guid? Id { get; set; }
+    }
 }

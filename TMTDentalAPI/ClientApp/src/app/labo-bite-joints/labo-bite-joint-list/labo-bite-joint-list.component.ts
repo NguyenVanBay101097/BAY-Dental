@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { LaboFinnishLineImportComponent } from 'src/app/labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
@@ -15,7 +16,7 @@ import { LaboBiteJointBasic, LaboBiteJointPaged, LaboBiteJointService } from '..
 })
 export class LaboBiteJointListComponent implements OnInit {
   constructor(
-    private laboBiteJointService: LaboBiteJointService,
+    private laboBiteJointService: LaboBiteJointService, private notificationService: NotificationService,
     private modalService: NgbModal
   ) { }
 
@@ -88,12 +89,23 @@ export class LaboBiteJointListComponent implements OnInit {
     });
   }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
+
   deleteItem(item: LaboBiteJointBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa kiểu nhịp Labo';
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa kiểu nhịp Labo ${item.name}?`;
     modalRef.result.then(() => {
       this.laboBiteJointService.delete(item.id).subscribe(() => {
+        this.notify('success','Xóa thành công');
         this.loadDataFromApi();
       });
     }, () => {

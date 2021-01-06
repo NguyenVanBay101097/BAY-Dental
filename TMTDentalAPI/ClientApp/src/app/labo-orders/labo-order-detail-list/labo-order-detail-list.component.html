@@ -6,8 +6,7 @@
         <div class="mb-2">
             <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Tạo phiếu Labo</button>
         </div>
-        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
-            [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
             <!-- <kendo-grid-column field="date" title="Ngày">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.date | date: 'shortDate'}}
@@ -15,7 +14,7 @@
             </kendo-grid-column> -->
             <kendo-grid-column field="name" title="Số phiếu" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>               
+                    <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="NCC Labo" width="150">

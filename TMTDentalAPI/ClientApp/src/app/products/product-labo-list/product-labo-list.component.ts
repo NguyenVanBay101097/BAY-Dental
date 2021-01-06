@@ -14,6 +14,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 @Component({
   selector: 'app-product-labo-list',
   templateUrl: './product-labo-list.component.html',
@@ -23,7 +24,7 @@ import { ProductImportExcelDialogComponent } from '../product-import-excel-dialo
   }
 })
 export class ProductLaboListComponent implements OnInit {
-  constructor(private productService: ProductService,
+  constructor(private productService: ProductService, private notificationService: NotificationService,
     private modalService: NgbModal) { }
   gridData: GridDataResult;
   limit = 20;
@@ -76,7 +77,7 @@ export class ProductLaboListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(ProductLaboCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Tạo vật liệu Labo';
+    modalRef.componentInstance.title = 'Thêm vật liệu Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -94,12 +95,23 @@ export class ProductLaboListComponent implements OnInit {
     });
   }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
+
   deleteItem(item: ProductLaboBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa vật liệu Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa vật liệu labo ${item.name}?`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa vật liệu Labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
+        this.notify('success','Xóa thành công');
         this.loadDataFromApi();
       });
     }, () => {

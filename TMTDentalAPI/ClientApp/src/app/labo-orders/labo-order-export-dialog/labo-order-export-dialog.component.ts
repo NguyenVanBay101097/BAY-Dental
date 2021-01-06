@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -21,7 +22,8 @@ export class LaboOrderExportDialogComponent implements OnInit {
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private intelservice: IntlService,
-    private laboOrderService: LaboOrderService
+    private laboOrderService: LaboOrderService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -48,14 +50,16 @@ export class LaboOrderExportDialogComponent implements OnInit {
     val.id = this.labo.id;
     val.dateExport = val.dateExport ? this.intelservice.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
 
-    this.laboOrderService.updateExportLabo(val).subscribe(() => {   
-      this.activeModal.close();
+    this.laboOrderService.updateExportLabo(val).subscribe(() => { 
+      var status = 'update';  
+      this.activeModal.close(status);
     });
   }
 
   onCancelReceipt() {
     this.laboOrderService.actionCancelReceipt([this.labo.id]).subscribe(() => {   
-      this.activeModal.close();
+      var status = 'remove';      
+      this.activeModal.close(status);
     });
   }
 

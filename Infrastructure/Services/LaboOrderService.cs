@@ -116,15 +116,15 @@ namespace Infrastructure.Services
             {
                 if (val.State == "trehan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now.Date > x.DatePlanned.Value.Date);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date > x.DatePlanned.Value);
                 }
                 else if (val.State == "chonhan")
                 {
-                    query = query.Where(x => (x.DatePlanned.HasValue && now.Date < x.DatePlanned.Value.Date) || !x.DatePlanned.HasValue);
+                    query = query.Where(x => (x.DatePlanned.HasValue && now.Date < x.DatePlanned.Value) || !x.DatePlanned.HasValue);
                 }
                 else if (val.State == "toihan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value.Date);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value);
                 }
             }
 
@@ -150,8 +150,8 @@ namespace Infrastructure.Services
             ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => x.State == "confirmed" && x.DateReceipt.HasValue);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
-                x.Customer.Name.Contains(val.Search) || x.Customer.NameNoSign.Contains(val.Search) ||
-                x.Customer.Ref.Contains(val.Search)));
+                x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) ||
+                x.Partner.Ref.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.State))
             {
@@ -769,5 +769,17 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<bool> CheckExistWarrantyCode(LaboOrderCheck val)
+        {
+            if (string.IsNullOrEmpty(val.Code) || val.Code.Trim() == "") return false;
+            var exist = await SearchQuery(x => x.WarrantyCode.ToLower().Contains(val.Code.Trim().ToLower())).FirstOrDefaultAsync();
+            if (exist == null || val.Id.HasValue && val.Id == exist.Id) return false;
+            if (exist != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

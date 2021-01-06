@@ -43,6 +43,7 @@
                                         </div>
                                     </div>
                                     <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
+                                    <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Vui lòng chọn nhà cung cấp Labo</label>
                                 </td>
                             </tr>
                         </tbody>
@@ -222,6 +223,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" formControlName='warrantyCode' class="form-control">
+                                    <label *ngIf="warrantyCodeFC.errors?.exist" for="" class="text-danger">Mã bảo hành đã tồn tại</label>
                                 </td>
                             </tr>
                             <tr>

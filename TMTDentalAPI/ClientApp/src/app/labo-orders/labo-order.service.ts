@@ -59,6 +59,7 @@ export class LaboOrderDisplay {
     dotKham: DotKhamBasic;
     teeth: ToothBasic[];
     saleOrderLine: SaleOrderLineBasic;
+    warrantyCode:string;
     warrantyPeriod: string;
     product: ProductSimple;
     laboOrderProducts: ProductSimple[];
@@ -188,5 +189,9 @@ export class LaboOrderService {
 
     actionCancelReceipt(val: any){
         return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt" , val);
+    }
+
+    checkExistWarrantyCode(val) {
+        return this.http.post(this.baseApi + this.apiUrl + "/CheckExistWarrantyCode", val);
     }
 }
