@@ -33,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
-        public DateTime DateOrder { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public string EmployeeName { get; set; }
    
@@ -83,7 +83,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
-        public DateTime DateOrder { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public Guid? EmployeeId { get; set; }
         public EmployeeSimple Employee { get; set; }
@@ -118,7 +118,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
-        public DateTime DateOrder { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public Guid? EmployeeId { get; set; }
         public EmployeeSimple Employee { get; set; }
