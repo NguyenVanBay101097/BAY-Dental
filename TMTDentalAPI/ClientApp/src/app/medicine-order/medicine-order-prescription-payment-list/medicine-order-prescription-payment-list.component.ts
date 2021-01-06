@@ -22,7 +22,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   limit = 20;
   offset = 0;
   states = [
-    { value: "draft", name: "Chưa thanh toán" },
+    // { value: "draft", name: "Chưa thanh toán" },
     { value: "confirmed", name: "Đã thanh toán" },
     { value: "cancel", name: "Hủy thanh toán" }
   ]
@@ -34,6 +34,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -61,11 +63,19 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(res);
+
       this.loading = false;
     }, err => {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  onSearchDateChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.loadDataFromApi();
   }
 
   stateChange(item) {

@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -8,7 +9,7 @@
         <form class="o_form_view" [formGroup]="formGroup">
             <div class="o_form_sheet_bg">
                 <div class="o_form_sheet">
-                    <h4>{{precscriptPaymen.name ? precscriptPaymen.name : ''}}</h4>
+                    <h4>{{precscriptPayment.name ? precscriptPayment.name : ''}}</h4>
                     <div class="o_group">
                         <h5>THÔNG TIN THANH TOÁN</h5>
                         <table class="o_group o_inner_group o_group_col_6">
@@ -20,7 +21,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                            [filterable]="true" #journalCbx formControlName="journal"
+                                            [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -35,8 +38,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
-                                            formControlName="dateOrder">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="orderDate">
                                         </kendo-datepicker>
                                     </td>
                                 </tr>
@@ -64,7 +66,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px">
-                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.displayName : ''}}
+                                        {{precscriptPayment.partner ? precscriptPayment.partner.displayName : ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -74,7 +76,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px">
-                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.address : ''}}
+                                        {{precscriptPayment.partner ? precscriptPayment.partner.address : ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -84,7 +86,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        {{precscriptPaymen.employee ? precscriptPaymen.employee.name : ''}}
+                                        {{precscriptPayment.employee ? precscriptPayment.employee.name : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -98,7 +100,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        {{precscriptPaymen.partner ? computeGender(precscriptPaymen.partner.gender) :
+                                        {{precscriptPayment.partner ? computeGender(precscriptPayment.partner.gender) :
                                         ''}}
                                     </td>
                                 </tr>
@@ -109,7 +111,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.age : ''}}
+                                        {{precscriptPayment.partner ? precscriptPayment.partner.age : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -131,16 +133,26 @@
                             <tbody formArrayName="medicineOrderLines">
                                 <ng-container *ngFor="let line of medicineOrderLines.controls; let i=index">
                                     <tr [formGroupName]="i">
-                                        <td>{{line.get('product') && line.get('product').value ? line.get('product').value.name : ''}}</td>
-                                        <td class="text-center">{{line.get('numberOfTimes') ? line.get('numberOfTimes').value : ''}}</td>
-                                        <td class="text-center">{{line.get('amountOfTimes') ? line.get('amountOfTimes').value : ''}}</td>
-                                        <td class="text-center">{{line.get('numberOfDays') ? line.get('numberOfDays').value : ''}}</td>
-                                        <td>{{line.get('useAt') ? computeUseAt(line.get('useAt').value) : ''}}</td>
+                                        <td>{{line.get('toaThuocLine') && line.get('toaThuocLine').value ?
+                                            line.get('toaThuocLine').value.product.name : ''}}</td>
+                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                            line.get('toaThuocLine').value ?
+                                            line.get('toaThuocLine').value.numberOfTimes : ''}}</td>
+                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                            line.get('toaThuocLine').value ?
+                                            line.get('toaThuocLine').value.amountOfTimes : ''}}</td>
+                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                            line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays
+                                            : ''}}</td>
+                                        <td>{{line.get('useAt') ? computeUseAt(line.get('toaThuocLine').value.useAt) :
+                                            ''}}</td>
                                         <td class="text-right" style="width: 15%;">
-                                            <input type="number" class="form-control text-right" formControlName="quantity" (change)="computeTotalAmount()" (keyup)="computeTotalAmount()">
+                                            <input type="number" class="form-control text-right"
+                                                formControlName="quantity" (change)="computeTotalAmount()"
+                                                (keyup)="computeTotalAmount()">
                                         </td>
                                         <td class="text-right">
-                                            {{line.get('product') && line.get('product').value ? (line.get('product').value.listPrice | number) : ''}}
+                                            {{line.get('price') ? (line.get('price').value | number) : ''}}
                                         </td>
                                         <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                         <td class="text-center cursor-pointer"
@@ -168,7 +180,9 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        Chưa thanh toán
+                                        <span *ngIf="precscriptPayment.state == 'draft'">Nháp</span>
+                                        <span *ngIf="precscriptPayment.state == 'confirmed'">Đã thanh toán</span>
+                                        <span *ngIf="precscriptPayment.state == 'cancel'">Chưa thanh toán</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -178,7 +192,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        Chống chỉ định dị ứng viuws các thành phân của thuốc
+                                        {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.note : ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -188,7 +202,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        0101/2021
+                                        {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate | date:'shortDate') : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -202,13 +216,14 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
-        Lưu</button>
+    <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Lưu</button> -->
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePayment()">
         Thanh toán</button>
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
         In hóa đơn</button>
-    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
 </footer>

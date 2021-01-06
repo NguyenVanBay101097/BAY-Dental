@@ -92,7 +92,7 @@ namespace Infrastructure.Services
 
             var medicineOrder = new MedicineOrderDisplay()
             {
-                DateOrder = DateTime.Now,
+                OrderDate = DateTime.Now,
                 EmployeeId = toathuoc.EmployeeId.HasValue ? toathuoc.EmployeeId : null,
                 Employee = toathuoc.EmployeeId.HasValue ? _mapper.Map<EmployeeSimple>(toathuoc.Employee) : null,
                 PartnerId = toathuoc.PartnerId,

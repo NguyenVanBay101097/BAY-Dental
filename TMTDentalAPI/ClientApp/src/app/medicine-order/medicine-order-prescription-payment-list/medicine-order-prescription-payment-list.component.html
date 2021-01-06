@@ -21,7 +21,8 @@
         <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'"
             (valueChange)="stateChange($event)" [valueField]="'value'">
         </kendo-combobox>
-        <app-tai-date-range-filter-dropdown [title]="'Thời gian'" [dateFrom]="monthStart" [dateTo]="monthEnd">
+        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+            (searchChange)="onSearchDateChange($event)">
         </app-tai-date-range-filter-dropdown>
     </div>
     <div class="w-50">
@@ -31,9 +32,9 @@
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="dateOrder" title="Ngày thanh toán" width="200">
+    <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="200">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.dateOrder | date: 'shortDate'}}
+            {{dataItem.orderDate | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
@@ -51,9 +52,9 @@
     </kendo-grid-column>
     <kendo-grid-column field="state" title="Trạng thái hóa đơn" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-          <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
-          <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
-          <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
+            <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
+            <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
+            <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

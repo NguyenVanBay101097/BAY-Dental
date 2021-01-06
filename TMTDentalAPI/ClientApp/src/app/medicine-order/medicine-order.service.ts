@@ -18,7 +18,7 @@ export class PrecscriptionPaymentPaged {
 export class PrecscriptionPaymentVM {
   id: string;
   name: string;
-  dateOrder: string;
+  orderDate: string;
   employeeName: string;
   partnerName: string;
   saleOrderId: string;
@@ -38,7 +38,7 @@ export class PrecscriptPaymentDisplay {
   id: string;
   name: string;
   companyId: string;
-  dateOrder: string;
+  orderDate: string;
   employeeId: string;
   employee: EmployeeSimpleContact
   toaThuocId: string;
@@ -49,7 +49,7 @@ export class PrecscriptPaymentDisplay {
   partner: PartnerBasic;
   amount: string;
   state: string;
-  MedicineOrderLines: PrecscriptPaymentLineDisplay[];
+  medicineOrderLines: PrecscriptPaymentLineDisplay[];
 }
 
 export class PrecscriptPaymentLineDisplay {
@@ -62,7 +62,7 @@ export class PrecscriptPaymentLineDisplay {
 }
 
 export class PrecsriptionPaymentSave {
-  dateOrder: string;
+  orderDate: string;
   journalId: string;
   toaThuocId: string;
   employeeId: string;

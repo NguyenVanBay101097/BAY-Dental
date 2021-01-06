@@ -8,6 +8,7 @@ import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } fro
 import { AuthService } from 'src/app/auth/auth.service';
 import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave } from '../medicine-order.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -17,7 +18,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 export class MedicineOrderCreateDialogComponent implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   idToaThuoc: string;
-  precscriptPaymen: PrecscriptPaymentDisplay = new PrecscriptPaymentDisplay();
+  precscriptPayment: PrecscriptPaymentDisplay = new PrecscriptPaymentDisplay();
   filteredJournals: AccountJournalSimple[];
   formGroup: FormGroup;
   title: string;
@@ -29,13 +30,14 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     private printService: PrintService,
     private activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       journal: [null, Validators.required],
-      dateOrder: new Date(),
+      orderDate: new Date(),
       note: '',
       amount: 0,
       medicineOrderLines: this.fb.array([])
@@ -55,19 +57,25 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     if (this.idToaThuoc) {
       this.getDefault();
     }
+    if (this.id) {
+      this.loadRecord();
+    }
+  }
+
+  loadRecord() {
+
   }
 
   getDefault() {
     this.medicineOrderService.getDefault(this.idToaThuoc).subscribe(
       result => {
-        this.precscriptPaymen = result;
-        console.log(this.precscriptPaymen);
+        this.precscriptPayment = result;
+        console.log(result);
 
-        if (this.precscriptPaymen.toaThuoc && this.precscriptPaymen.toaThuoc.lines) {
+        if (this.precscriptPayment.toaThuoc && this.precscriptPayment.toaThuoc.lines) {
           var control = this.formGroup.get('medicineOrderLines') as FormArray;
           control.clear();
-          var totalAmount = 0;
-          var lines = this.precscriptPaymen.toaThuoc.lines;
+          var lines = this.precscriptPayment.medicineOrderLines;
           lines.forEach(line => {
             control.push(this.fb.group(line));
           });
@@ -114,8 +122,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   computeAmountOfLine(line: FormGroup) {
-    var price = line.get('product') && line.get('product').value ? line.get('product').value.listPrice : 0;
+    var price = line.get('price') ? line.get('price').value : 0;
     var quantity = line.get('quantity') ? line.get('quantity').value : 1;
+    line.get('amountTotal').patchValue(quantity * price);
     return quantity * price;
   }
 
@@ -145,7 +154,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
-  onSave() {
+  onSaveConfirm() {
     if (this.formGroup.invalid)
       return
     var val = this.formGroup.value;
@@ -161,23 +170,10 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     val.dateOrder = this.intlService.formatDate(val.dateOrder, "yyyy-MM-ddTHH:mm");
     val.journalId = val.journal ? val.journal.id : null;
     val.toaThuocId = this.idToaThuoc;
-    val.employeeId = this.precscriptPaymen.employeeId;
-    val.partnerId = this.precscriptPaymen.partnerId;
-    val.state = this.precscriptPaymen.state;
+    val.employeeId = this.precscriptPayment.employeeId;
+    val.partnerId = this.precscriptPayment.partnerId;
+    val.state = this.precscriptPayment.state;
     val.companyId = this.authService.userInfo.companyId;
-    if (val.medicineOrderLines) {
-      var lines = [];
-      val.medicineOrderLines.forEach(line => {
-        var model = {
-          toaThuocLineId: line.id,
-          quantity: line.quantity ? line.quantity : 1,
-          price: line.product ? line.product.listPrice : 0,
-          amountTotal: line.quantity * line.product.listPrice,
-        }
-        lines.push(model);
-      });
-      val.medicineOrderLines = lines
-    }
     return val;
   }
 
@@ -185,18 +181,11 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     if (this.formGroup.invalid)
       return
     var val = this.formGroup.value;
-    this.medicineOrderService.create(val).subscribe(
-      result => {
-        if (result) {
-          var ids = [];
-          ids.push(result.id)
-          this.medicineOrderService.confirmPayment(ids).subscribe(
-            () => {
-
-            }
-          )
-          // đéo làm gì
-        }
+    val = this.computeForm(val)
+    this.medicineOrderService.confirmPayment(val).subscribe(
+      () => {
+        this.activeModal.close();
+        this.router.navigateByUrl("medicine-orders/prescription-payments")
       }
     )
   }
