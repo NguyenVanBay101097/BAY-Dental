@@ -1479,9 +1479,17 @@ span.char-count {
 }
 
 .kendo-combobox-sm.k-combobox {
-    font-size: 13px;
-    line-height: 13px;
-    min-width: 200px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.kendo-combobox-sm.k-combobox .k-clear-value {
+    top: 0.25rem;
+}
+
+.kendo-combobox-sm.k-combobox .k-input {
+    padding: 0.25rem .5rem!important;
+    height: auto;
 }
 
 .popover-d-contents {

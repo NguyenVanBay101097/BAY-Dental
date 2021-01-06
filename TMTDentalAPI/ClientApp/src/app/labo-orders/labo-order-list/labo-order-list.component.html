@@ -6,8 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -18,25 +17,18 @@
                     (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown> -->
                     <div class="d-flex">
-                        <select class="form-control form-control-sm" (change)="onChangeLaboStatus($event)">
-                            <option value="">Lọc phiếu labo</option>
-                            <option value="true">Đã tạo</option>
-                            <option value="false">Chưa tạo</option>
-                        </select>
-                        <select class="form-control form-control-sm ml-2" (change)="onStateLaboChange($event)" style="width: auto;">
-                            <option value="">Trạng thái phiếu labo</option>
-                            <option value="draft">Nháp</option>
-                            <option value="confirmed">Đơn hàng</option>
-                        </select>
+                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu labo" class="kendo-combobox-sm mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
+                        </kendo-combobox>
+                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu labo" class="kendo-combobox-sm" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                        </kendo-combobox>
                     </div>
-                   
+
                 </div>
             </div>
-            <div class="o_cp_sidebar">  
+            <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -46,7 +38,7 @@
                 </div>
             </div>
         </div>
-        <div class="o_cp_right">        
+        <div class="o_cp_right">
             <div class="o_search_options">
                 <!-- <app-tai-date-range-filter-dropdown title="Ngày gửi" [dateFrom]="dateOrderFrom" [dateTo]="dateOrderTo"
                     (searchChange)="onDateSearchChange($event)">
@@ -54,17 +46,16 @@
                 <!-- <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="datePlannedFrom"
                     [dateTo]="datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
                 </app-tai-date-range-filter-dropdown> -->
-    
+
             </div>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-labo-order-detail-list [item]="dataItem" [state]="filterPaged.laboState" (reload)="reloaChange($event)" ></app-labo-order-detail-list> 
+            <app-labo-order-detail-list [item]="dataItem" [state]="filterPaged.laboState" (reload)="reloaChange($event)"></app-labo-order-detail-list>
         </div>
         <kendo-grid-column field="orderPartner" title="Khách hàng" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -73,8 +64,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="orderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>               
+                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Dịch vụ" width="150">
@@ -92,12 +82,12 @@
                 {{dataItem.employee == null ? '' : dataItem.employee.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Phiếu Labo"  width="100">
+        <kendo-grid-column title="Phiếu Labo" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.isListLabo === false ? 'Chưa tạo' : 'Đã tạo'}}
             </ng-template>
         </kendo-grid-column>
-       
+
         <!-- <kendo-grid-column field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
