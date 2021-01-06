@@ -1,0 +1,215 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_content">
+        <form class="o_form_view" [formGroup]="formGroup">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <h4>HDTT2020</h4>
+                    <div class="o_group">
+                        <h5>THÔNG TIN THANH TOÁN</h5>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Phương thức
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                            [filterable]="true" #journalCbx formControlName="journal"
+                                            [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày thanh toán
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                            formControlName="datePaymentObj">
+                                        </kendo-datepicker>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Nội dung
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <textarea formControlName="note" class="form-control" rows="2"></textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group">
+                        <h5>THÔNG TIN ĐƠN THUỐC</h5>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Họ tên
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px">
+                                        Nguyễn Văn Thắng
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Địa chỉ
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px">
+                                        Xóm 5 Quỳnh Lương Quỳnh Lưu Nghệ An
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Bác sĩ
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        Nguyễn Thị Đông
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Giới tính
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        Nam
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Tuổi
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        25
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên thuốc</th>
+                                    <th scope="col">Ngày uống</th>
+                                    <th scope="col">Mỗi lần</th>
+                                    <th scope="col">Số ngày</th>
+                                    <th scope="col">Sử dụng</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col" class="text-right">Đơn giá</th>
+                                    <th scope="col" class="text-right">Thành tiền</th>
+                                    <th scope="col" class="text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Aspirin</td>
+                                    <td>1 lần</td>
+                                    <td>1 viên</td>
+                                    <td>1</td>
+                                    <td>Sau khi ăn</td>
+                                    <td>1</td>
+                                    <td class="text-right">120.000</td>
+                                    <td class="text-right">120.000</td>
+                                    <td class="text-center cursor-pointer" title="Xóa thuốc khỏi hóa đơn thanh toán">
+                                        <i class="far fa-trash-alt"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Pilocarpin</td>
+                                    <td>1 lần</td>
+                                    <td>1 viên</td>
+                                    <td>1</td>
+                                    <td>Sau khi ăn</td>
+                                    <td>1</td>
+                                    <td class="text-right">120.000</td>
+                                    <td class="text-right">120.000</td>
+                                    <td class="text-center cursor-pointer" title="Xóa thuốc khỏi hóa đơn thanh toán">
+                                        <i class="far fa-trash-alt"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group">
+                        <table class="o_group o_inner_group o_group_col_12">
+                            <tbody>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Trạng thái
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        Chưa thanh toán
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Lời dặn
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        Chống chỉ định dị ứng viuws các thành phân của thuốc
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Tái khám
+                                        </label>
+                                    </th>
+                                    <td colspan="1" style="width: 100%; padding-top:7px;">
+                                        0101/2021
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Thanh toán</button>
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Thanh toán và in</button>
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        In hóa đơn</button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
