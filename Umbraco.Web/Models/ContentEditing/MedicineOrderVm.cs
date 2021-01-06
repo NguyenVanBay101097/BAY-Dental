@@ -18,6 +18,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
     }
+    public class DefaultGet
+    {     
+        public Guid ToaThuocId { get; set; }
+    }
 
     public class MedicineOrderBasic
     {
@@ -34,8 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
    
         public string PartnerName { get; set; }
 
-        public Guid SaleOrderId { get; set; }
-        public string SaleOrderName { get; set; }
+        public Guid ToaThuocId { get; set; }
+        public string ToaThuocName { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }
@@ -49,8 +53,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime DateOrder { get; set; }
 
-        public Guid JoirnalId { get; set; }
+        public Guid journalId { get; set; }
         public Guid ToaThuocId { get; set; }
+
+        public Guid EmployeeId { get; set; }
+        public Guid PartnerId { get; set; }
+
+        public Guid CompanyId { get; set; }
+
+
 
         public string Note { get; set; }
 
@@ -66,12 +77,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
+        public Guid CompanyId { get; set; }
+
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
         public DateTime DateOrder { get; set; }
 
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public EmployeeSimple Employee { get; set; }
 
         public Guid ToaThuocId { get; set; }
@@ -81,7 +94,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public AccountJournalSimple Journal { get; set; }
 
         public Guid PartnerId { get; set; }
-        public PartnerDisplay Partner { get; set; }
+        public PartnerBasic Partner { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }

@@ -26,13 +26,13 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<MedicineOrderBasic>> GetPagedResultAsync(MedicineOrderPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery(x=>x.CompanyId == CompanyId);
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                    x.Partner.Name.Contains(val.Search));
 
-            if (string.IsNullOrEmpty(val.State))
+            if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 
             if (val.DateFrom.HasValue)
@@ -45,18 +45,131 @@ namespace Infrastructure.Services
             }
 
 
-            if (val.Limit > 0)
-            {
-                query = query.Skip(val.Offset).Take(val.Limit);
-            }
-
-            var items = await _mapper.ProjectTo<MedicineOrderBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
 
-            return new PagedResult2<MedicineOrderBasic>(totalItems, val.Offset, val.Limit)
+            query = query.Include(x => x.Partner).Include(x=>x.Employee).Include(x => x.ToaThuoc);
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<MedicineOrderBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<MedicineOrderBasic>>(items)
             };
+            return paged;
+        }
+
+        public async Task<MedicineOrderDisplay> DefaultGet(DefaultGet val)
+        {
+            var toathuocObj = GetService<IToaThuocService>();
+            var toathuoLinecObj = GetService<IToaThuocLineService>();
+            var toathuoc = await toathuocObj.SearchQuery(x => x.Id == val.ToaThuocId).Include(x=>x.Employee).Include(x=>x.Partner).Include(x=>x.Lines).FirstOrDefaultAsync();
+            if (toathuoc == null)
+                throw new Exception("Toa thuốc không tồn tại ");
+
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
+            var medicineOrder = new MedicineOrderDisplay()
+            {
+                DateOrder = DateTime.Now,
+                EmployeeId = toathuoc.EmployeeId.HasValue ? toathuoc.EmployeeId : null,
+                Employee = toathuoc.EmployeeId.HasValue ? _mapper.Map<EmployeeSimple>(toathuoc.Employee) : null,
+                PartnerId = toathuoc.PartnerId,
+                Partner = _mapper.Map<PartnerBasic>(toathuoc.Partner),
+                State = "draft",
+                ToaThuocId= toathuoc.Id,
+                ToaThuoc = _mapper.Map<ToaThuocDisplay>(toathuoc),
+                CompanyId = CompanyId,   
+                Journal = _mapper.Map<AccountJournalSimple>(journal),
+        };
+
+            medicineOrder.ToaThuoc.Lines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ToListAsync());
+
+            return medicineOrder;
+        }
+
+        public async Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val)
+        {
+            var medicineOrder = _mapper.Map<MedicineOrder>(val);
+            SaveOrderLines(val, medicineOrder);
+            await CreateAsync(medicineOrder);
+
+            return medicineOrder;
+        }
+
+        
+
+        public async Task UpdateMedicineOrder(Guid id , MedicineOrderSave val)
+        {
+            var medicineOrder = await SearchQuery(x => x.Id == id).Include(x => x.MedicineOrderLines).FirstOrDefaultAsync();
+
+            medicineOrder = _mapper.Map(val, medicineOrder);
+
+            SaveOrderLines(val, medicineOrder);
+
+            await UpdateAsync(medicineOrder);
+
+        }
+
+
+
+        private void SaveOrderLines(MedicineOrderSave val, MedicineOrder order)
+        {
+            var lineToRemoves = new List<MedicineOrderLine>();
+
+            foreach (var existLine in order.MedicineOrderLines)
+            {
+                if (!val.MedicineOrderLines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                order.MedicineOrderLines.Remove(line);
+            }
+
+            foreach (var line in val.MedicineOrderLines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<MedicineOrderLine>(line);
+                    order.MedicineOrderLines.Add(item);
+                }
+                else
+                {
+                    var l = order.MedicineOrderLines.SingleOrDefault(c => c.Id == line.Id);
+                    _mapper.Map(line, l);
+                }
+
+            }
+        }
+
+        public async override Task<MedicineOrder> CreateAsync(MedicineOrder entity)
+        {
+            var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            entity.Name = await sequenceService.NextByCode("medicine.order");
+            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            {
+                await InsertMedicineOrderSequence();
+                entity.Name = await sequenceService.NextByCode("medicine.order");
+            }
+
+            await base.CreateAsync(entity);
+            return entity;
+        }
+
+        private async Task InsertMedicineOrderSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Code = "medicine.order",
+                Name = "Mã hóa đơn thuốc",
+                Prefix = "HDTT/{dd}{MM}{yy}-",
+                Padding = 5,
+            });
         }
     }
 }

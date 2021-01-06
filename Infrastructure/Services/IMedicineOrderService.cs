@@ -11,5 +11,11 @@ namespace Infrastructure.Services
     public interface IMedicineOrderService : IBaseService<MedicineOrder>
     {
         Task<PagedResult2<MedicineOrderBasic>> GetPagedResultAsync(MedicineOrderPaged val);
+
+        Task<MedicineOrderDisplay> DefaultGet(DefaultGet val);
+
+        Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val);
+
+        Task UpdateMedicineOrder(Guid id,MedicineOrderSave val);
     }
 }
