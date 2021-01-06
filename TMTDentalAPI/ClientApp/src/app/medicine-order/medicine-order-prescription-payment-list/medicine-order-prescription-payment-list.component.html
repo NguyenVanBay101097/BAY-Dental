@@ -18,56 +18,42 @@
 </div>
 <div class="filter-toathuoc">
     <div class="w-50 d-flex">
-        <select class="form-control btn-sm cu-style mr-3">
-            <option selected>Trạng thái khi thanh toán</option>
-            <option>Đã thanh toán</option>
-            <option>Chưa thanh toán</option>
-            <option>Hủy thanh toán</option>
-        </select>
-        <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" [dateTo]="monthEnd">
+        <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'"
+            (valueChange)="stateChange($event)" [valueField]="'value'">
+        </kendo-combobox>
+        <app-tai-date-range-filter-dropdown [title]="'Thời gian'" [dateFrom]="monthStart" [dateTo]="monthEnd">
         </app-tai-date-range-filter-dropdown>
     </div>
     <div class="w-50">
-        <input class="form-control btn-sm cu-height" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc" type="text" [(ngModel)]="search"
-            (ngModelChange)="this.searchUpdate.next($event)">
+        <input class="form-control btn-sm cu-height" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="orderPartner" title="Ngày thanh toán" width="200">
+    <kendo-grid-column field="dateOrder" title="Ngày thanh toán" width="200">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.orderPartner.displayName }}
+            {{dataItem.dateOrder | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="orderName" title="Khách hàng" width="100">
+    <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
+    </kendo-grid-column>
+    <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Số hóa đơn thuốc" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="employeeName" title="Bác sĩ" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" field="amount" title="Tổng tiền" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.order.id}">
-                {{dataItem.order.name}}</a>
+            {{dataItem.amount | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Phiếu điều trị" width="150">
+    <kendo-grid-column field="state" title="Trạng thái hóa đơn" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.name}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Số hóa đơn thuốc" width="150">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{showInfo(dataItem)}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Bác sĩ" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.employee == null ? '' : dataItem.employee.name}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Tổng tiền" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.employee == null ? '' : dataItem.employee.name}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column title="Trạng thái hóa đơn" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.employee == null ? '' : dataItem.employee.name}}
+          <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
+          <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
+          <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

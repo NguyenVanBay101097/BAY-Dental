@@ -8,7 +8,7 @@
         <form class="o_form_view" [formGroup]="formGroup">
             <div class="o_form_sheet_bg">
                 <div class="o_form_sheet">
-                    <h4>HDTT2020</h4>
+                    <h4>{{precscriptPaymen.name ? precscriptPaymen.name : ''}}</h4>
                     <div class="o_group">
                         <h5>THÔNG TIN THANH TOÁN</h5>
                         <table class="o_group o_inner_group o_group_col_6">
@@ -35,7 +35,8 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="datePaymentObj">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'"
+                                            formControlName="dateOrder">
                                         </kendo-datepicker>
                                     </td>
                                 </tr>
@@ -63,7 +64,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px">
-                                        Nguyễn Văn Thắng
+                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.displayName : ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -73,7 +74,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px">
-                                        Xóm 5 Quỳnh Lương Quỳnh Lưu Nghệ An
+                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.address : ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -83,7 +84,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        Nguyễn Thị Đông
+                                        {{precscriptPaymen.employee ? precscriptPaymen.employee.name : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -97,7 +98,8 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        Nam
+                                        {{precscriptPaymen.partner ? computeGender(precscriptPaymen.partner.gender) :
+                                        ''}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -107,7 +109,7 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        25
+                                        {{precscriptPaymen.partner ? precscriptPaymen.partner.age : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -116,45 +118,45 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Tên thuốc</th>
-                                    <th scope="col">Ngày uống</th>
-                                    <th scope="col">Mỗi lần</th>
-                                    <th scope="col">Số ngày</th>
+                                    <th scope="col" class="text-center">Ngày uống</th>
+                                    <th scope="col" class="text-center">Mỗi lần</th>
+                                    <th scope="col" class="text-center">Số ngày</th>
                                     <th scope="col">Sử dụng</th>
-                                    <th scope="col">Số lượng</th>
+                                    <th scope="col" class="text-center">Số lượng</th>
                                     <th scope="col" class="text-right">Đơn giá</th>
                                     <th scope="col" class="text-right">Thành tiền</th>
                                     <th scope="col" class="text-center">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Aspirin</td>
-                                    <td>1 lần</td>
-                                    <td>1 viên</td>
-                                    <td>1</td>
-                                    <td>Sau khi ăn</td>
-                                    <td>1</td>
-                                    <td class="text-right">120.000</td>
-                                    <td class="text-right">120.000</td>
-                                    <td class="text-center cursor-pointer" title="Xóa thuốc khỏi hóa đơn thanh toán">
-                                        <i class="far fa-trash-alt"></i>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pilocarpin</td>
-                                    <td>1 lần</td>
-                                    <td>1 viên</td>
-                                    <td>1</td>
-                                    <td>Sau khi ăn</td>
-                                    <td>1</td>
-                                    <td class="text-right">120.000</td>
-                                    <td class="text-right">120.000</td>
-                                    <td class="text-center cursor-pointer" title="Xóa thuốc khỏi hóa đơn thanh toán">
-                                        <i class="far fa-trash-alt"></i>
-                                    </td>
-                                </tr>
+                            <tbody formArrayName="medicineOrderLines">
+                                <ng-container *ngFor="let line of medicineOrderLines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td>{{line.get('product') && line.get('product').value ? line.get('product').value.name : ''}}</td>
+                                        <td class="text-center">{{line.get('numberOfTimes') ? line.get('numberOfTimes').value : ''}}</td>
+                                        <td class="text-center">{{line.get('amountOfTimes') ? line.get('amountOfTimes').value : ''}}</td>
+                                        <td class="text-center">{{line.get('numberOfDays') ? line.get('numberOfDays').value : ''}}</td>
+                                        <td>{{line.get('useAt') ? computeUseAt(line.get('useAt').value) : ''}}</td>
+                                        <td class="text-right" style="width: 15%;">
+                                            <input type="number" class="form-control text-right" formControlName="quantity" (change)="computeTotalAmount()" (keyup)="computeTotalAmount()">
+                                        </td>
+                                        <td class="text-right">
+                                            {{line.get('product') && line.get('product').value ? (line.get('product').value.listPrice | number) : ''}}
+                                        </td>
+                                        <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
+                                        <td class="text-center cursor-pointer"
+                                            title="Xóa thuốc khỏi hóa đơn thanh toán">
+                                            <i class="far fa-trash-alt"></i>
+                                        </td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
+                        <div class="w-100">
+                            <div class="float-right d-flex">
+                                <h5 class="mr-3">Tổng tiền</h5>
+                                <h5>{{getAmountTotal | number}}</h5>
+                            </div>
+                        </div>
                     </div>
                     <div class="o_group">
                         <table class="o_group o_inner_group o_group_col_12">
@@ -201,10 +203,12 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Lưu</button>
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onPrint()">
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
         In hóa đơn</button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

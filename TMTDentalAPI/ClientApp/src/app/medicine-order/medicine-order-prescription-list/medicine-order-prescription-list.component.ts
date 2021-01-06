@@ -50,7 +50,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     paged.offset = this.offset;
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
-    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd")
+    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
     this.toathuocSevice.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

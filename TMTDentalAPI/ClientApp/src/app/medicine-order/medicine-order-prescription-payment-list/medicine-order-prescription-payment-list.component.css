@@ -35,3 +35,9 @@
     min-width: 120px;
     height: 31px !important;
 }
+
+.custom {
+    min-width: 200px;
+    padding: 0;
+    margin-right: 15px;
+}

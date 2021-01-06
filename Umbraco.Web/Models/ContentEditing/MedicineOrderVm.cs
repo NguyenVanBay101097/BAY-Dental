@@ -52,7 +52,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
-        public DateTime DateOrder { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public Guid journalId { get; set; }
         public Guid ToaThuocId { get; set; }
