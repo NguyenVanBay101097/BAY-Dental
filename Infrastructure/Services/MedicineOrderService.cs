@@ -370,5 +370,24 @@ namespace Infrastructure.Services
                 Padding = 5,
             });
         }
+
+        public async Task<MedicineOrderPrint> GetPrint(Guid id)
+        {
+            var medicineOrder = await SearchQuery(x => x.Id == id)
+                .Include(x => x.MedicineOrderLines)
+                .Include(x => x.AccountPayment)
+                .Include(x => x.Company.Partner)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner)
+                .Include(x => x.ToaThuoc)
+                .Include(x => x.Journal)
+                .FirstOrDefaultAsync();
+
+            var medicineOrderLineObj = GetService<IMedicineOrderLineService>();
+            medicineOrder.MedicineOrderLines = await medicineOrderLineObj.SearchQuery(x => x.MedicineOrderId == medicineOrder.Id).Include(x => x.ToaThuocLine).ThenInclude(s => s.Product).ToListAsync();
+            var res = _mapper.Map<MedicineOrderPrint>(medicineOrder);
+
+            return res;
+        }
     }
 }

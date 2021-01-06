@@ -35,4 +35,8 @@ export class MedicineOrderService {
   getPaged(val) {
     return this.http.get(this.base_api + this.apiUrl, { params: val });
   }
+
+  getPrint(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+}
 }

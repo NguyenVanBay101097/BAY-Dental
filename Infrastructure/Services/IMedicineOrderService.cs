@@ -22,5 +22,8 @@ namespace Infrastructure.Services
 
         Task ActionPayment(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
+
+        Task<MedicineOrderPrint> GetPrint(Guid id);
+
     }
 }

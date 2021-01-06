@@ -24,6 +24,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<MedicineOrderSave, MedicineOrder>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.MedicineOrderLines, x => x.Ignore());
+
+            CreateMap<MedicineOrder, MedicineOrderPrint>();
+
         }
     }
 }

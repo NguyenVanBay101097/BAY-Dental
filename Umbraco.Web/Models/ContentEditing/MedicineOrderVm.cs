@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -95,6 +96,41 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid PartnerId { get; set; }
         public PartnerBasic Partner { get; set; }
+
+        public Guid? AccountPaymentId { get; set; }
+        public AccountPaymentDisplay AccountPayment { get; set; }
+
+        public decimal Amount { get; set; }
+        public string State { get; set; }
+
+        public IEnumerable<MedicineOrderLineDisplay> MedicineOrderLines { get; set; } = new List<MedicineOrderLineDisplay>();
+    }
+
+    public class MedicineOrderPrint
+    {
+        public Company Company { get; set; }
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public Guid CompanyId { get; set; }
+
+        /// <summary>
+        /// Ngày thanh toán
+        /// </summary>
+        public DateTime DateOrder { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+
+        public Guid ToaThuocId { get; set; }
+        public ToaThuocDisplay ToaThuoc { get; set; }
+
+        public Guid JournalId { get; set; }
+        public AccountJournalSimple Journal { get; set; }
+
+        public Guid PartnerId { get; set; }
+        public PartnerDisplay Partner { get; set; }
 
         public Guid? AccountPaymentId { get; set; }
         public AccountPaymentDisplay AccountPayment { get; set; }
