@@ -12,6 +12,8 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<MedicineOrderBasic>> GetPagedResultAsync(MedicineOrderPaged val);
 
+        Task<MedicineOrderDisplay> GetByIdDisplay(Guid id);
+
         Task<MedicineOrderDisplay> DefaultGet(DefaultGet val);
 
         Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val);

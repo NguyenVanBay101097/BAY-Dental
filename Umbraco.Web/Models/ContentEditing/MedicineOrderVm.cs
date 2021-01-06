@@ -96,6 +96,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public PartnerBasic Partner { get; set; }
 
+        public Guid? AccountPaymentId { get; set; }
+        public AccountPaymentDisplay AccountPayment { get; set; }
+
         public decimal Amount { get; set; }
         public string State { get; set; }
 

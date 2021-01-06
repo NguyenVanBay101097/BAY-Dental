@@ -19,7 +19,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.ToaThuocLine, x => x.Ignore())
                 .ForMember(x => x.MedicineOrder, x => x.Ignore());
 
-            CreateMap<MedicineOrderLine, SamplePrescriptionLineDisplay>();
+            CreateMap<MedicineOrderLine, MedicineOrderLineDisplay>();
 
             CreateMap<MedicineOrderLineDisplay, MedicineOrderLine>()
                 .ForMember(x => x.Id, x => x.Ignore())

@@ -35,6 +35,12 @@ namespace TMTDentalAPI.Controllers
 
 
         ///Get{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _medicineOrderService.GetByIdDisplay(id);
+            return Ok(res);
+        }
 
 
 

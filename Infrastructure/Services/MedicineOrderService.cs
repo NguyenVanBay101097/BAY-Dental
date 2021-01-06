@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<MedicineOrderBasic>> GetPagedResultAsync(MedicineOrderPaged val)
         {
-            var query = SearchQuery(x=>x.CompanyId == CompanyId);
+            var query = SearchQuery(x => x.CompanyId == CompanyId);
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
@@ -47,7 +47,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.Partner).Include(x=>x.Employee).Include(x => x.ToaThuoc);
+            query = query.Include(x => x.Partner).Include(x => x.Employee).Include(x => x.ToaThuoc);
 
             query = query.OrderByDescending(x => x.DateCreated);
 
@@ -60,11 +60,30 @@ namespace Infrastructure.Services
             return paged;
         }
 
+        public async Task<MedicineOrderDisplay> GetByIdDisplay(Guid id)
+        {
+            var medicineOrder = await SearchQuery(x => x.Id == id)
+                .Include(x => x.MedicineOrderLines)
+                .Include(x => x.AccountPayment)
+                .Include(x => x.Company)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner)
+                .Include(x => x.ToaThuoc)
+                .Include(x => x.Journal)         
+                .FirstOrDefaultAsync();
+
+            var medicineOrderLineObj = GetService<IMedicineOrderLineService>();
+            medicineOrder.MedicineOrderLines = await medicineOrderLineObj.SearchQuery(x => x.MedicineOrderId == medicineOrder.Id).Include(x => x.ToaThuocLine).ThenInclude(s => s.Product).ToListAsync();
+            var display = _mapper.Map<MedicineOrderDisplay>(medicineOrder);
+
+            return display;
+        }
+
         public async Task<MedicineOrderDisplay> DefaultGet(DefaultGet val)
         {
             var toathuocObj = GetService<IToaThuocService>();
             var toathuoLinecObj = GetService<IToaThuocLineService>();
-            var toathuoc = await toathuocObj.SearchQuery(x => x.Id == val.ToaThuocId).Include(x=>x.Employee).Include(x=>x.Partner).Include(x=>x.Lines).FirstOrDefaultAsync();
+            var toathuoc = await toathuocObj.SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.Lines).FirstOrDefaultAsync();
             if (toathuoc == null)
                 throw new Exception("Toa thuốc không tồn tại ");
 
@@ -79,11 +98,11 @@ namespace Infrastructure.Services
                 PartnerId = toathuoc.PartnerId,
                 Partner = _mapper.Map<PartnerBasic>(toathuoc.Partner),
                 State = "draft",
-                ToaThuocId= toathuoc.Id,
+                ToaThuocId = toathuoc.Id,
                 ToaThuoc = _mapper.Map<ToaThuocDisplay>(toathuoc),
-                CompanyId = CompanyId,   
+                CompanyId = CompanyId,
                 Journal = _mapper.Map<AccountJournalSimple>(journal),
-        };
+            };
 
             medicineOrder.ToaThuoc.Lines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ToListAsync());
 
@@ -99,9 +118,9 @@ namespace Infrastructure.Services
             return medicineOrder;
         }
 
-        
 
-        public async Task UpdateMedicineOrder(Guid id , MedicineOrderSave val)
+
+        public async Task UpdateMedicineOrder(Guid id, MedicineOrderSave val)
         {
             var medicineOrder = await SearchQuery(x => x.Id == id).Include(x => x.MedicineOrderLines).FirstOrDefaultAsync();
 
@@ -110,6 +129,16 @@ namespace Infrastructure.Services
             SaveOrderLines(val, medicineOrder);
 
             await UpdateAsync(medicineOrder);
+
+        }
+
+        public async Task ActionPayment(IEnumerable<Guid> id)
+        {
+
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> id)
+        {
 
         }
 
