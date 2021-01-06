@@ -21,6 +21,7 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   @Input() width: number;
   @Input() height: number;
   @Input() crop: boolean;
+  @Input() supportWebcam: boolean;
 
   constructor(private webService: WebService, private modalService: NgbModal) { }
 

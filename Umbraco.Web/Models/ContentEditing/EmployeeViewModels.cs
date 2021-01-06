@@ -69,8 +69,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeDisplay()
         {
             IsDoctor = false;
-            IsAssistant = false;
         }
+
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -96,33 +96,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? BirthDay { get; set; }
 
-        public Guid? CategoryId { get; set; }
-        public EmployeeCategoryBasic Category { get; set; }
-
         /// <summary>
         /// Là bác sĩ
         /// </summary>
         public bool? IsDoctor { get; set; }
 
         /// <summary>
-        /// Là phụ tá
-        /// </summary>
-        public bool? IsAssistant { get; set; }
-
-        /// <summary>
         /// kết nối hoa hồng
         /// </summary>
         public Guid? CommissionId { get; set; }
         public CommissionBasic Commission { get; set; }
-
-        /// <summary>
-        /// kết nối người dùng
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
-
-        public Guid? StructureTypeId { get; set; }
-        public HrPayrollStructureTypeDisplay StructureType { get; set; }
 
         public decimal? Wage { get; set; }
         public decimal? HourlyWage { get; set; }
@@ -134,6 +117,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? OvertimeRate { get; set; }
         public decimal? RestDayRate { get; set; }
         public decimal? Allowance { get; set; }
+
+        public bool IsUser { get; set; }
+
+        public string UserName { get; set; }
+
+        public string UserPassword { get; set; }
+
+        public CompanyBasic UserCompany { get; set; }
+
+        public IEnumerable<CompanyBasic> UserCompanies { get; set; } = new List<CompanyBasic>();
+
+        public string UserAvatar { get; set; }
     }
 
     public class EmployeePaged
@@ -153,5 +148,73 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Position { get; set; }
 
         public IEnumerable<Guid> Ids { get; set; }
+    }
+
+    public class EmployeeSave
+    {
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Mã
+        /// </summary>
+        public string Ref { get; set; }
+
+        /// <summary>
+        /// Địa chỉ
+        /// </summary>
+        public string Address { get; set; }
+
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// CMND
+        /// </summary>
+        public string IdentityCard { get; set; }
+
+        public string Email { get; set; }
+
+        public DateTime? BirthDay { get; set; }
+
+        /// <summary>
+        /// Là bác sĩ
+        /// </summary>
+        public bool IsDoctor { get; set; }
+
+        /// <summary>
+        /// hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+
+        public decimal? Wage { get; set; }
+
+        public decimal? HourlyWage { get; set; }
+
+        public DateTime? StartWorkDate { get; set; }
+
+        public string EnrollNumber { get; set; }
+
+        public decimal? LeavePerMonth { get; set; }
+
+        public decimal? RegularHour { get; set; }
+
+        public decimal? OvertimeRate { get; set; }
+
+        public decimal? RestDayRate { get; set; }
+
+        public decimal? Allowance { get; set; }
+
+        public bool IsUser { get; set; }
+
+        public string UserName { get; set; }
+
+        public string UserPassword { get; set; }
+
+        public Guid? UserCompanyId { get; set; }
+
+        public IEnumerable<Guid> UserCompanyIds { get; set; } = new List<Guid>();
+
+        public bool CreateChangePassword { get; set; }
+
+        public string UserAvatar { get; set; }
     }
 }

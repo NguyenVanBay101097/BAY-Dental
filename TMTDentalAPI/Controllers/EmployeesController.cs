@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
@@ -20,12 +22,22 @@ namespace TMTDentalAPI.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IHrPayrollStructureTypeService _structureTypeService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPartnerService _partnerService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IApplicationRoleFunctionService _roleFunctionService;
 
-        public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper)
+        public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper,
+            IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
+            UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService)
         {
             _employeeService = employeeService;
             _structureTypeService = structureTypeService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _partnerService = partnerService;
+            _userManager = userManager;
+            _roleFunctionService = roleFunctionService;
         }
 
         [HttpGet]
@@ -40,33 +52,166 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _mapper.ProjectTo<EmployeeDisplay>(_employeeService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
-            if (res == null)
+            var employee = await _employeeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Commission)
+                .Include(x => x.User).ThenInclude(x => x.Partner)
+                .Include(x => x.User).ThenInclude(x => x.Company)
+                .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
+                .FirstOrDefaultAsync();
+            if (employee == null)
                 return NotFound();
-            return Ok(res);
+            return Ok(_mapper.Map<EmployeeDisplay>(employee));
         }
 
         [HttpPost]
         [CheckAccess(Actions = "Catalog.Employee.Create")]
-        public async Task<IActionResult> Create(EmployeeDisplay val)
+        public async Task<IActionResult> Create(EmployeeSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
+            await _unitOfWork.BeginTransactionAsync();
+
+            var employeePartner = new Partner()
+            {
+                Name = val.Name,
+                Employee = true,
+                Ref = val.Ref,
+                Phone = val.Phone,
+                Email = val.Email,
+                Customer = false
+            };
+
+            await _partnerService.CreateAsync(employeePartner);
+
             var employee = _mapper.Map<Employee>(val);
-            employee.CompanyId = CompanyId;
+            employee.PartnerId = employeePartner.Id;
+            if (!employee.CompanyId.HasValue)
+                employee.CompanyId = CompanyId;
 
+            await SaveUser(employee, val);
 
-            var partner = new Partner();
-            employee.Partner = partner;
-            UpdatePartnerToEmployee(employee);
+            await UpdateSalary(val, employee);
+
             await _employeeService.CreateAsync(employee);
+            _unitOfWork.Commit();
 
-            val.Id = employee.Id;
-            return Ok(val);
+            var basic = _mapper.Map<EmployeeBasic>(employee);
+            return Ok(basic);
         }
 
-        private void UpdatePartnerToEmployee (Employee employee)
+        private async Task SaveUser(Employee employee, EmployeeSave val)
+        {
+            var user = employee.User;
+            if (val.IsUser)
+            {
+                if (user != null)
+                {
+                    if (user.Partner != null)
+                    {
+                        var userPartner = user.Partner;
+                        userPartner.Name = employee.Name;
+                        userPartner.Email = employee.Email;
+                        userPartner.Phone = employee.Phone;
+                        userPartner.Avatar = val.UserAvatar;
+                        await _partnerService.UpdateAsync(userPartner);
+                    }
+
+                    user.Name = employee.Name;
+                    if (user.UserName != val.UserName)
+                    {
+                        if (string.IsNullOrEmpty(val.UserName))
+                            throw new Exception("Tên đăng nhập không được trống");
+                        user.UserName = val.UserName;
+                    }
+
+                    user.Active = true;
+                    user.Email = employee.Email;
+                    user.PhoneNumber = employee.Phone;
+                    var updateResult = await _userManager.UpdateAsync(user);
+                    if (!updateResult.Succeeded)
+                        throw new Exception($"Cập nhật người dùng không thành công");
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(val.UserName))
+                        throw new Exception("Tên đăng nhập không được trống");
+                    if (!val.UserCompanyId.HasValue)
+                        throw new Exception("Chi nhánh hiện tại không được trống");
+
+                    var userPartner = new Partner()
+                    {
+                        Name = employee.Name,
+                        Email = employee.Email,
+                        CompanyId = employee.CompanyId,
+                        Phone = employee.Phone,
+                        Customer = false,
+                        Avatar = val.UserAvatar
+                    };
+
+                    await _partnerService.CreateAsync(userPartner);
+
+                    user = new ApplicationUser()
+                    {
+                        Name = employee.Name,
+                        UserName = val.UserName,
+                        CompanyId = val.UserCompanyId.Value,
+                        PartnerId = userPartner.Id,
+                    };
+
+                    try
+                    {
+                        var result = await _userManager.CreateAsync(user);
+
+                        if (!result.Succeeded)
+                        {
+                            if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                                throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                            else
+                                throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception("Tạo tài khoản người dùng không thành công");
+                    }
+
+                    employee.UserId = user.Id;
+                }
+
+                user.ResCompanyUsersRels.Clear();
+                foreach (var userCompanyId in val.UserCompanyIds)
+                {
+                    user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = userCompanyId });
+                }
+
+                if (val.CreateChangePassword)
+                {
+                    if (string.IsNullOrEmpty(val.UserPassword))
+                        throw new Exception("Mật khẩu không được trống");
+
+                    if (await _userManager.HasPasswordAsync(user))
+                    {
+                        await _userManager.RemovePasswordAsync(user);
+                        await _userManager.AddPasswordAsync(user, val.UserPassword);
+                    }
+                    else
+                    {
+                        await _userManager.AddPasswordAsync(user, val.UserPassword);
+                    }
+                }
+            }
+            else
+            {
+                if (user != null)
+                {
+                    user.Active = false;
+                    await _userManager.UpdateAsync(user);
+                }
+            }
+        }
+
+        private void UpdatePartnerToEmployee(Employee employee)
         {
             if (employee.Partner == null) return;
             var pn = employee.Partner;
@@ -75,35 +220,57 @@ namespace TMTDentalAPI.Controllers
             pn.Ref = employee.Ref;
             pn.Phone = employee.Phone;
             pn.Email = employee.Email;
-            pn.BirthDay = employee.BirthDay.HasValue ? employee.BirthDay.Value.Day : 1;
-            pn.BirthMonth = employee.BirthDay.HasValue ? employee.BirthDay.Value.Month : 1;
-            pn.BirthYear = employee.BirthDay.HasValue ? employee.BirthDay.Value.Year : DateTime.Now.Year;
-            pn.Barcode = employee.EnrollNumber;
+            //pn.BirthDay = employee.BirthDay.HasValue ? employee.BirthDay.Value.Day : 1;
+            //pn.BirthMonth = employee.BirthDay.HasValue ? employee.BirthDay.Value.Month : 1;
+            //pn.BirthYear = employee.BirthDay.HasValue ? employee.BirthDay.Value.Year : DateTime.Now.Year;
+            //pn.Barcode = employee.EnrollNumber;
             pn.Supplier = false;
             pn.Customer = false;
         }
 
+        private async Task UpdateSalary(EmployeeSave val, Employee emp)
+        {
+            var accessResult = await _roleFunctionService.HasAccess(new string[] { "Catalog.Employee.Salary.Update" });
+            if (!accessResult.Access)
+            {
+                emp.Wage = val.Wage;
+                emp.HourlyWage = val.HourlyWage;
+                emp.LeavePerMonth = val.LeavePerMonth;
+                emp.RegularHour = val.RegularHour;
+                emp.OvertimeRate = val.OvertimeRate;
+                emp.RestDayRate = val.RestDayRate;
+                emp.Allowance = val.Allowance;
+            }
+        }
+
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Catalog.Employee.Update")]
-        public async Task<IActionResult> Update(Guid id, EmployeeDisplay val)
+        public async Task<IActionResult> Update(Guid id, EmployeeSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.Category)
-                .Include(x => x.ChamCongs)
-                .Include(x => x.Company)
-                .Include(x => x.StructureType)
-                .Include(x => x.Partner)
-                .Include("StructureType.DefaultResourceCalendar")
-                .Include("StructureType.DefaultStruct")
+
+            var employee = await _employeeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Commission)
+                .Include(x => x.User.Partner)
+                .Include(x => x.User.Company)
+                .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
                 .FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
-            await _employeeService.updateSalary(val, employee);
+
+            await _unitOfWork.BeginTransactionAsync();
+
             employee = _mapper.Map(val, employee);
+            await UpdateSalary(val, employee);
+
             UpdatePartnerToEmployee(employee);
             await _employeeService.UpdateAsync(employee);
+
+            await SaveUser(employee, val);
+
+            _unitOfWork.Commit();
 
             return NoContent();
         }
