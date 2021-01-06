@@ -42,6 +42,8 @@ export class EmployeeService {
     return this.http.post<PagedResult2<EmployeeBasic>>(this.baseApi + "api/Employees" + "/SearchRead", empPaged);
   }
 
-
+  actionActive(id: string, active: boolean) {
+    return this.http.post<any>(this.baseApi + "api/Employees" + "/ActionActive/"+ id, {active:active});
+  }
 
 }

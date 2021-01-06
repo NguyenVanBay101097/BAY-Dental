@@ -6,27 +6,26 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
-                        (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button type="button" class="btn btn-primary btn-sm" accesskey="c"
-                    (click)="createEmployee()">Thêm</button>
+                <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="createEmployee()">Thêm</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
+            <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="kendo-combobox-sm mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+            </kendo-combobox>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="ref" title="Mã"></kendo-grid-column>
         <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
         <kendo-grid-column field="phone" title="Số điện thoại"></kendo-grid-column>
@@ -34,8 +33,12 @@
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editEmployee(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
                         class="far fa-edit"></i></button>
-                <button kendoButton (click)="deleteEmployee(dataItem.id)" class="btn btn-danger btn-sm"><i title="Xóa"
+                <button kendoButton (click)="deleteEmployee(dataItem.id)" class="btn btn-danger btn-sm mr-2"><i title="Xóa"
                         class="far fa-trash-alt"></i></button>
+                <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger btn-sm mr-2"><i title="Ẩn nhân viên"
+                            class="fas fa-eye-slash"></i></button>
+                <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success btn-sm mr-2"><i title="Hiện nhân viên"
+                                class="fas fa-eye"></i></button>
             </ng-template>
         </kendo-grid-command-column>
     </kendo-grid>
