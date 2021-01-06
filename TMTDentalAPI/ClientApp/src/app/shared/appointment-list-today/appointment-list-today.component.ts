@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -40,6 +40,8 @@ export class AppointmentListTodayComponent implements OnInit {
     { value: 'done', text: 'Hoàn thành'},
     { value: 'cancel', text: 'Hủy hẹn'}
   ]
+
+  @Output() valueChange = new EventEmitter<any>();
 
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
@@ -149,11 +151,11 @@ export class AppointmentListTodayComponent implements OnInit {
     }
   }
 
-  onChangeState(id, val) {   
+  onChangeState(item, val) {   
     var res = new AppointmentStatePatch();
     res.state = val.state;
     res.reason = val.reason != null ? val.reason : null;
-    this.appointmentService.patchState(id, res).subscribe(() => {
+    this.appointmentService.patchState(item.id, res).subscribe(() => {
       this.notificationService.show({
         content: 'Lưu thành công',
         hideAfter: 3000,
@@ -161,8 +163,10 @@ export class AppointmentListTodayComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
-      this.loadDataFromApi();
+
+      item.state = val.state;
       this.loadStateCount();
+      this.valueChange.emit(null);
     });
 
   }

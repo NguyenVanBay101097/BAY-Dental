@@ -14,3 +14,7 @@
 .dropdown-toggle::after {
     display:none;
 }
+
+.dropdown-wrapper {
+    width: 200px;
+}
