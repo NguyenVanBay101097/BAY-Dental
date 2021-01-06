@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -19,11 +20,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IMedicineOrderService _medicineOrderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public MedicineOrdersController(IMedicineOrderService medicineOrderService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
+        private readonly IViewRenderService _viewRenderService;
+
+        public MedicineOrdersController(IMedicineOrderService medicineOrderService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
+            IViewRenderService viewRenderService)
         {
             _medicineOrderService = medicineOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
@@ -76,6 +81,19 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _medicineOrderService.DefaultGet(val);
             return Ok(result);
+        }
+
+        [HttpGet("{id}/[action]")]
+        [JobFilters.CheckAccess(Actions = "Basic.LaboOrder.Read")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            //get viewmodel và truyền vào view
+
+            var res = await _medicineOrderService.GetPrint(id);
+
+            var html = _viewRenderService.Render("MedicineOrder/Print", res);
+
+            return Ok(new PrintData() { html = html });
         }
     }
 }

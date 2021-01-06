@@ -50,6 +50,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string UseAt { get; set; }
 
+        public string UseAtDisplay()
+        {
+            switch (this.UseAt)
+            {
+                case "after_meal": return "Sau khi ăn";
+                case "before_meal": return "Trước khi ăn";
+                case "in_meal": return "Trong khi ăn";
+                case "after_wakeup": return "Sau khi dậy";
+                case "before_sleep": return "Trước khi đi ngủ";
+                default:
+                    return "";
+            }
+        }
         /// <summary>
         /// Ghi chú
         /// </summary>

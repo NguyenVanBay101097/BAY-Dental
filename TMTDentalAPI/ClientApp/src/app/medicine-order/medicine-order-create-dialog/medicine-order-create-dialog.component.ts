@@ -5,6 +5,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { MedicineOrderService } from '../medicine-order.service';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -17,11 +19,14 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   filteredJournals: AccountJournalSimple[];
   formGroup: FormGroup;
   title: string;
+  id: string;
   constructor(
     private accountJournalService: AccountJournalService,
     private fb: FormBuilder,
     private authService: AuthService,
-    private activeModal: NgbActiveModal
+    private activeModal: NgbActiveModal,
+    private printService: PrintService,
+    private medicineOrderService: MedicineOrderService
   ) { }
 
   ngOnInit() {
@@ -72,6 +77,15 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
 
   onSavePaymentPrint() {
 
+  }
+
+  onPrint() {
+    if(!this.id) {
+      return;
+    }
+    this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
+    });
   }
 
 }
