@@ -78,7 +78,7 @@ namespace Infrastructure.Services
         {
             var query = _FilterQueryable(val);
             var totalItems = await query.CountAsync();
-            query = query.Take(val.Limit).Skip(val.Offset);
+            query = query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
             var items = await query.Include(x => x.Journal).ToListAsync();
 
             return new PagedResult2<VFundBookDisplay>(totalItems, val.Offset, val.Limit)
@@ -115,6 +115,27 @@ namespace Infrastructure.Services
             fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu + fundBookReport.TotalChi;
 
             return fundBookReport;
+        }
+
+        public async Task<List<FundBookExportExcel>> GetExportExcel(VFundBookSearch val)
+        {
+            var query = _FilterQueryable(val);
+            var totalItems = await query.CountAsync();
+            query = query.Where(x => x.State == "posted").OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
+            var items = await query.Include(x => x.Journal).ToListAsync();
+
+            var res = items.Select(x => new FundBookExportExcel
+            {
+                Date = x.Date,
+                Name = x.Name,
+                Type = x.Type,
+                Type2 = x.Type2,
+                Amount = x.Amount,
+                RecipientPayer = x.RecipientPayer,
+                State = x.State
+            }).ToList();
+
+            return res;
         }
     }
 }

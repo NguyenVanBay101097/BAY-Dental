@@ -106,6 +106,7 @@ export class ProductServiceListComponent implements OnInit {
       .subscribe(
         (res) => {
           this.gridData = res;
+
           this.loading = false;
         },
         (err) => {

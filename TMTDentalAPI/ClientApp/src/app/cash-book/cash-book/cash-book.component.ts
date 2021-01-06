@@ -91,6 +91,33 @@ export class CashBookComponent implements OnInit {
     modalRef.result.then(() => {
       this.changeToLoadData = !this.changeToLoadData;
       this.loadDataFromApi();
-    }, er => { });
+    }, (err) => { });
+  }
+
+  exportExcelFile() {
+    this.cashBookService.exportExcelFile(this.paged).subscribe((res) => {
+      let filename = "TongSoQuy";
+      if (this.paged.resultSelection == "cash") {
+        filename = "SoQuyTienMat";
+      } else if (this.paged.resultSelection == "bank") {
+        filename = "SoQuyNganHang";
+      }
+      
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      console.log(res);
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 }

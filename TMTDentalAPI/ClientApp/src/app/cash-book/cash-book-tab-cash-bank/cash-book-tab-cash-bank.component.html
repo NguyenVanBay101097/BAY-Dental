@@ -31,7 +31,7 @@
             {{dataItem.date | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Loại chứng từ" width="100">
+    <kendo-grid-column field="name" title="Số phiếu" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.name}}
         </ng-template>
@@ -71,7 +71,7 @@
                 <span class="far fa-edit"></span>
             </button>
             <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
-                class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem.id)">
+                class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                 <span class="fas fa-trash-alt"></span>
             </button>
             <button *ngIf="!(dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi')"

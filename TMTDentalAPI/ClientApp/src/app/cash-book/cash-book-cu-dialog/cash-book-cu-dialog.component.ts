@@ -33,7 +33,6 @@ export class CashBookCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   submitted: boolean = false;
   loaiThuChiList: any = [];
-  loaiJournalList: any = [];
   filteredJournals: any = [];
   seeForm: boolean = false;
 
@@ -187,6 +186,7 @@ export class CashBookCuDialogComponent implements OnInit {
     this.accountJournalService.autocomplete(val).subscribe(
       (res) => {
         this.filteredJournals = res;
+        this.formGroup.get("journal").patchValue(this.filteredJournals[0]);
       },
       (error) => {
         console.log(error);
@@ -216,7 +216,7 @@ export class CashBookCuDialogComponent implements OnInit {
       keyboard: false,
       backdrop: "static",
     });
-    modalRef.componentInstance.title = "Thêm loại " + this.type;
+    modalRef.componentInstance.title = "Thêm loại " + this.getType();
     modalRef.componentInstance.type = this.getType();
     modalRef.result.then(
       (result: any) => {

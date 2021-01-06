@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<VFundBookDisplay>> GetMoney(VFundBookSearch val);
         Task<FundBookReport> GetSumary(VFundBookSearch val);
+        Task<List<FundBookExportExcel>> GetExportExcel(VFundBookSearch val);
     }
 }

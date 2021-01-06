@@ -60,4 +60,8 @@ export class CashBookService {
   getSumary(val: any): Observable<ReportDataResult> {
     return this.http.post<ReportDataResult>(this.baseApi + this.apiUrl + '/GetSumary', val);
   }
+
+  exportExcelFile(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile",{ responseType: "blob", params: val });
+  }
 }

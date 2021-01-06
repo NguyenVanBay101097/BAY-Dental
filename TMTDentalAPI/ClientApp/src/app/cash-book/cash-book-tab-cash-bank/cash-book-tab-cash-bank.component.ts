@@ -1,7 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
+import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
@@ -24,13 +26,13 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   constructor(
     private modalService: NgbModal, 
-    private cashBookService: CashBookService
+    private cashBookService: CashBookService,
+    private phieuThuChiService: PhieuThuChiService,
   ) { }
 
   ngOnChanges(changes:SimpleChanges): void { 
     if (this.changeDateFirst == false) {
-      this.loadDataGetSumary();
-      this.loadDataGetMoney();
+      this.loadDataFromApi();
     } else {
       this.changeDateFirst = false;
     }
@@ -56,11 +58,15 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     }
   }
 
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataGetMoney();
+  }
+
   loadDataGetSumary() {
     this.loading = true;
 
-    this.cashBookService.getSumary(this.paged)
-    .subscribe(
+    this.cashBookService.getSumary(this.paged).subscribe(
       (res) => {
         this.reportData = res;
         this.loading = false;
@@ -87,7 +93,6 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     ).subscribe(
       (res) => {
         this.gridData = res;
-        console.log(res);
         this.loading = false;
       },
       (err) => {
@@ -97,14 +102,32 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     );
   }
 
+  loadDataFromApi() {
+    this.loadDataGetSumary();
+    this.loadDataGetMoney();
+  }
+
   editItem(item) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.type = item.type;
     modalRef.componentInstance.itemId = item.resId;
     modalRef.result.then(() => {
-      this.loadDataGetSumary();
-      this.loadDataGetMoney();
+      this.loadDataFromApi();
     }, er => { });
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `Xóa ${this.getType(item.type).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(item.type).toLowerCase()}?`;
+
+    modalRef.result.then(() => {
+      this.phieuThuChiService.delete(item.resId).subscribe(() => {
+        this.loadDataFromApi();
+      }, () => {
+      });
+    }, () => {
+    });
   }
 
   seeItem(item) {
