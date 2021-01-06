@@ -124,6 +124,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
 
   loadData() {
+    debugger
     this.resetData();
     var obs = this.dateList.map(date => {
       var val = new AppointmentSearchByDate();

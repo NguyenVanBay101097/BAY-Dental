@@ -165,6 +165,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("Count")]
+        public async Task<IActionResult> GetCount(AppointmentGetCountVM val)
+        {
+            var res = await _appointmentService.GetCount(val);
+            return Ok(res);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> SearchRead(AppointmentSearch val)
         {
@@ -239,6 +246,27 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _appointmentService.GetBasic(id);
             return Ok(res);
+        }
+
+        [HttpPatch("{id}/[action]")]
+        public async Task<IActionResult> PatchState(Guid id ,AppointmentStatePatch result)
+        {
+            var entity = await _appointmentService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var patch = new JsonPatchDocument<AppointmentStatePatch>();        
+            patch.Replace(x => x.State, result.State);
+            patch.Replace(x => x.Reason, result.Reason);
+            var entityMap = _mapper.Map<AppointmentStatePatch>(entity);
+            patch.ApplyTo(entityMap);
+
+            entity = _mapper.Map(entityMap, entity);
+            await _appointmentService.UpdateAsync(entity);
+
+            return NoContent();
         }
     }
 }

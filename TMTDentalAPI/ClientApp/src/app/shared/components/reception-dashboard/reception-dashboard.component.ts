@@ -196,8 +196,29 @@ export class ReceptionDashboardComponent implements OnInit {
     });
   }
 
+  stateGet(state) {
+    switch (state) {
+      case 'waiting':
+        return 'Chờ khám';
+      case 'examination':
+        return 'Đang khám';
+      case 'done':
+        return 'Hoàn thành';
+      case 'cancel':
+        return 'Hủy hẹn';
+      case 'all':
+        return 'Tổng hẹn';
+      default:
+        return 'Đang hẹn';
+    }
+  }
+
+  onAppointmentTodayChange() {
+    this.loadAppoiment();
+  }
+
   loadAppoiment() {
-    var states = ["confirmed", "done", "cancel"];
+    var states = ["", "waiting,examination,done"];
 
     var obs = states.map(state => {
       var val = new AppointmentPaged();
@@ -208,19 +229,8 @@ export class ReceptionDashboardComponent implements OnInit {
     });
 
     forkJoin(obs).subscribe((result: any) => {
-      result.forEach(item => {
-        if (item.items.length) {
-          var state = item.items[0].state;
-          if (state == "done") {
-            this.appointmentStateCount[state] = item.totalItems;
-          }
-          if (this.appointmentStateCount['all']) {
-            this.appointmentStateCount['all'] += item.totalItems;
-          } else {
-            this.appointmentStateCount['all'] = item.totalItems;
-          }
-        }
-      });
+      this.appointmentStateCount['all'] = result[0].totalItems;
+      this.appointmentStateCount['done'] = result[1].totalItems;
     });
   }
 

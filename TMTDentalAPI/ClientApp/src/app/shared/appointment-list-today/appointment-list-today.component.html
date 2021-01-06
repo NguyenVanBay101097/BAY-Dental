@@ -1,0 +1,81 @@
+<div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
+<div class="state-filter-wrapper">
+    <button type="button" class="btn active" (click)="setStateFilter('')" [class.btn-primary]="!stateFilter"
+        [class.btn-light]="stateFilter">
+        Tổng hẹn <span class="badge badge-light bg-white">{{gridData?.total || 0}}</span>
+    </button>
+    <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
+        [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
+        {{state.text}} <span class="badge badge-light bg-white">{{stateCount[state.value] || 0}}</span>
+    </button>
+</div>
+<div>
+    <kendo-grid [height]="300" [resizable]="true" [data]="gridData" [loading]="loading" [sortable]="true"
+        (pageChange)="pageChange($event)">
+        <!-- <ng-template kendoGridToolbarTemplate>          
+        </ng-template> -->
+        <kendo-grid-column title="Khách hàng" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <div>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.partnerId]">
+                        <span> {{dataItem.partnerDisplayName}}</span>
+                    </a>
+                </div>
+
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Thời gian hẹn" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.time}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Tuổi" width="50">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.partner.age}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Số điện thoại" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.partnerPhone}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Bác sĩ" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.doctorName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Nội dung" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.note}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="80">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <!-- <app-popover-state-appointment [item]="dataItem" class="ml-3"
+                            (stateFormGroup)="onChangeState(dataItem.id,$event)">
+                        </app-popover-state-appointment> -->
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="align-items-">
+                            {{stateGet(dataItem.state)}}
+                        </span>
+                    </div>
+                    <app-popover-state-appointment [item]="dataItem" class="ml-3"
+                            (stateFormGroup)="onChangeState(dataItem,$event)">
+                        </app-popover-state-appointment>
+                </div>
+
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column field="id" width="50">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            
+                   
+            </ng-template>
+        </kendo-grid-column> -->
+    </kendo-grid>
+</div>

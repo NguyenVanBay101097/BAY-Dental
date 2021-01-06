@@ -70,10 +70,14 @@ import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-se
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { AppointmentListTodayComponent } from './appointment-list-today/appointment-list-today.component';
+import { PopoverStateAppointmentComponent } from './popover-state-appointment/popover-state-appointment.component';
 import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
 
 @NgModule({
   declarations: [
+    PopoverStateAppointmentComponent,
+    AppointmentListTodayComponent,
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,

@@ -58,7 +58,7 @@ export class AppointmentService {
   }
 
   getPaged(val: any) {
-    return this.http.get(this.baseApi + "api/Appointments", { params: new HttpParams({ fromObject: val })});
+    return this.http.get(this.baseApi + "api/Appointments", { params: new HttpParams({ fromObject: val }) });
   }
 
   create(val: any) {
@@ -75,6 +75,14 @@ export class AppointmentService {
 
   defaultGet(val: any) {
     return this.http.post(this.baseApi + "api/Appointments/DefaultGet", val);
+  }
+
+  getCountState(val: any) {
+    return this.http.post(this.baseApi + "api/Appointments/CountAppointment", val);
+  }
+
+  getCount(val: any) {
+    return this.http.post(this.baseApi + "api/Appointments/Count", val);
   }
 
   searchRead(val: any): Observable<AppointmentBasic[]> {
@@ -100,6 +108,17 @@ export class AppointmentService {
   patch(id, val) {
     return this.http.patch(this.baseApi + "api/Appointments/" + id, val);
   }
+
+  patchState(id, val): Observable<any> {
+    // const body = [{
+    //   op: "replace",
+    //   path: "/PatchState",
+    //   value: val
+    // }];
+    return this.http.patch(this.baseApi + "api/Appointments/" + id + '/PatchState', val);
+  }
+
+
 
   //cập nhật các cuộc hẹn quá hạn
   // patchMulti(val) {

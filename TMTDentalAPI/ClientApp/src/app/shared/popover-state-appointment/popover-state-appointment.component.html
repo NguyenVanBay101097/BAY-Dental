@@ -1,0 +1,32 @@
+<div class="d-inline-block dropup" ngbDropdown container="body" #myDrop="ngbDropdown">
+    <div class="edit_remove_action">
+        <button type="button" id="dropdownManual" class="o-no-caret text-success" ngbDropdownToggle>
+            <i class="far fa-edit"></i>
+        </button>
+    </div>
+
+    <div ngbDropdownMenu aria-labelledby="dropdownManual" class="dropdown-wrapper">
+        <div class="appointment-state">
+            <div [formGroup]="formGroup">
+                <div class="form-check" *ngFor="let item of stateFilterOptions">
+                    <input class="form-check-input" (change)="onChangeState()" formControlName='state' type="radio"
+                        [id]="item.value" [value]="item.value">
+                    <label class="form-check-label" [for]="item.value">
+                        {{item.text}}
+                    </label>
+                </div>
+                <div *ngIf="stateControl == 'cancel'" class="mt-1">
+                    <textarea formControlName='reason' class="form-control" placeholder="Lý do hủy hẹn"></textarea>
+                    <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.reason.errors.required">Nhập lý do hủy hẹn</div>
+                    </div>
+                </div>
+                <div class="d-flex mt-3">
+                    <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>                 
+                </div>
+            </div>
+        </div>
+        
+        <!-- <button ngbDropdownItem *ngFor="let state of stateFilterOptions" [value]="state.value">{{state.text}}</button> -->
+    </div>
+</div>
