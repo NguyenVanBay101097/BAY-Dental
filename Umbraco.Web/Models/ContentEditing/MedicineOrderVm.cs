@@ -40,7 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
 
         public Guid ToaThuocId { get; set; }
-        public string ToaThuocName { get; set; }
+        public ToaThuocBasic ToaThuoc { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }
