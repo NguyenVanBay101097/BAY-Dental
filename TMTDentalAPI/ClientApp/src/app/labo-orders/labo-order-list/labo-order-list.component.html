@@ -17,9 +17,9 @@
                     (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown> -->
                     <div class="d-flex">
-                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu labo" class="kendo-combobox-sm" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu labo" class="kendo-combobox-sm mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
-                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu labo" class="kendo-combobox-sm" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu labo" class="kendo-combobox-sm" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
                     </div>
 

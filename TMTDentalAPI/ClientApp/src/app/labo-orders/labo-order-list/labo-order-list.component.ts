@@ -28,12 +28,12 @@ export class LaboOrderListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
   filterLabo = [
-    {name:'Đã tạo',value:'true'},
-    {name:'Chưa tạo',value:'false'}
+    { name: 'Đã tạo', value: 'true' },
+    { name: 'Chưa tạo', value: 'false' }
   ];
   filterLaboStatus = [
-    {name:'Nháp',value:'draft'},
-    {name:'Đơn hàng',value:'confirmed'},
+    { name: 'Nháp', value: 'draft' },
+    { name: 'Đơn hàng', value: 'confirmed' },
   ];
 
   // dateOrderFrom: Date;
@@ -44,7 +44,7 @@ export class LaboOrderListComponent implements OnInit {
 
   laboStatusFilter: boolean;
   filterPaged: SaleOrderLinesLaboPaged;
-  
+
 
 
   constructor(private laboOrderService: LaboOrderService,
@@ -83,7 +83,7 @@ export class LaboOrderListComponent implements OnInit {
   // }
 
   onStateLaboChange(e) {
-    var value = e? e.value: null;
+    var value = e ? e.value : null;
     if (value) {
       this.filterPaged.laboState = value;
     } else {
@@ -93,11 +93,11 @@ export class LaboOrderListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  reloaChange(val){
-    if(val){
+  reloaChange(val) {
+    if (val) {
       this.loadDataFromApi();
     }
-   
+
   }
 
   stateGet(state) {
@@ -146,7 +146,7 @@ export class LaboOrderListComponent implements OnInit {
   }
 
   onChangeLaboStatus(e) {
-    var value = e? e.value : null;
+    var value = e ? e.value : null;
     if (value) {
       this.filterPaged.hasAnyLabo = value == 'true';
     } else {
