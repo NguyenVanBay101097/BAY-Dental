@@ -175,7 +175,7 @@ namespace Infrastructure.Services
             var moves = await _PrepareAccountMove(medicineOrder);
             await moveObj.ActionPost(moves);
 
-            medicineOrder.State = "comfirmed";
+            medicineOrder.State = "confirmed";
 
             ///thanh toán
             var amountTotal = medicineOrder.Amount;
