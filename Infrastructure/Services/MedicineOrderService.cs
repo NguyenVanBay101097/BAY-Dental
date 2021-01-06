@@ -104,10 +104,23 @@ namespace Infrastructure.Services
                 Journal = _mapper.Map<AccountJournalSimple>(journal),
             };
 
-            medicineOrder.ToaThuoc.Lines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ToListAsync());
-
+            var medicineOrderLines = new List<MedicineOrderLineDisplay>();
+            var toathuocLines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ToListAsync());
+            foreach (var line in toathuocLines)
+            {
+                medicineOrderLines.Add(new MedicineOrderLineDisplay
+                {
+                    Quantity = line.Quantity,
+                    Price = line.Product.ListPrice.HasValue ? line.Product.ListPrice.Value : 0,
+                    AmountTotal = line.Quantity * line.Product.ListPrice.Value,
+                    ToaThuocLine = line,
+                    ToaThuocLineId = line.Id
+                });
+            }
+            medicineOrder.MedicineOrderLines = medicineOrderLines;
             return medicineOrder;
         }
+
 
         public async Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val)
         {
@@ -132,53 +145,58 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task ActionPayment(IEnumerable<Guid> ids)
+        public async Task ActionPayment(MedicineOrderSave val)
         {
-            var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.Company)
-                .Include(x => x.MedicineOrderLines)
-                .Include(x => x.AccountPayment)
-                .Include(x => x.Company)
-                .Include(x => x.Employee)
-                .Include(x => x.Partner)
-                .Include(x => x.ToaThuoc)
-                .Include(x => x.Journal)
-                .Include(x => x.Journal.DefaultDebitAccount)
-                .Include(x => x.Journal.DefaultCreditAccount)
-                .ToListAsync();
+            //var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
+            //    .Include(x => x.Company)
+            //    .Include(x => x.MedicineOrderLines)
+            //    .Include(x => x.AccountPayment)
+            //    .Include(x => x.Company)
+            //    .Include(x => x.Employee)
+            //    .Include(x => x.Partner)
+            //    .Include(x => x.ToaThuoc)
+            //    .Include(x => x.Journal)
+            //    .Include(x => x.Journal.DefaultDebitAccount)
+            //    .Include(x => x.Journal.DefaultCreditAccount)
+            //    .ToListAsync();
+
+            var medicineOrder = _mapper.Map<MedicineOrder>(val);
+
+            SaveOrderLines(val, medicineOrder);
+
+            await CreateAsync(medicineOrder);
 
             var moveObj = GetService<IAccountMoveService>();
 
-            foreach (var medicineOrder in medicineOrders)
+
+            if (medicineOrder.State != "draft")
+                throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
+
+            var moves = await _PrepareAccountMove(medicineOrder);
+            await moveObj.ActionPost(moves);
+
+            medicineOrder.State = "comfirmed";
+
+            ///thanh toán
+            var amountTotal = medicineOrder.Amount;
+            var payment = new AccountPayment()
             {
-                if (medicineOrder.State != "draft")
-                    throw new Exception("Chỉ những phiếu nháp mới được vào sổ.");
+                Amount = amountTotal,
+                JournalId = medicineOrder.JournalId,
+                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
+                PartnerId = medicineOrder.PartnerId,
+                PartnerType = "customer",
+                CompanyId = medicineOrder.CompanyId
+            };
 
-                var moves = await _PrepareAccountMove(medicineOrder);
-                await moveObj.ActionPost(moves);
+            var paymentObj = GetService<IAccountPaymentService>();
+            await paymentObj.CreateAsync(payment);
+            await paymentObj.Post(new List<Guid>() { payment.Id });
 
-                medicineOrder.State = "comfirmed";
+            medicineOrder.AccountPaymentId = payment.Id;
 
-                ///thanh toán
-                var amountTotal = medicineOrder.Amount;
-                var payment = new AccountPayment()
-                {
-                    Amount = amountTotal,
-                    JournalId = medicineOrder.JournalId,
-                    PaymentType = amountTotal > 0 ? "inbound" : "outbound",
-                    PartnerId = medicineOrder.PartnerId,
-                    PartnerType = "customer",
-                    CompanyId = medicineOrder.CompanyId
-                };
 
-                var paymentObj = GetService<IAccountPaymentService>();
-                await paymentObj.CreateAsync(payment);
-                await paymentObj.Post(new List<Guid>() { payment.Id });
-
-                medicineOrder.AccountPaymentId = payment.Id;
-            }
-
-            await UpdateAsync(medicineOrders);
+            await UpdateAsync(medicineOrder);
 
         }
 

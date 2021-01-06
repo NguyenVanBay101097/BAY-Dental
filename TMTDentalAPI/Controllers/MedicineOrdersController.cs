@@ -84,12 +84,10 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]    
-        public async Task<IActionResult> ActionPayment(IEnumerable<Guid> ids)
+        public async Task<IActionResult> ActionPayment(MedicineOrderSave val)
         {
-            if (ids == null || ids.Count() == 0)
-                return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _medicineOrderService.ActionPayment(ids);
+            await _medicineOrderService.ActionPayment(val);
             _unitOfWork.Commit();
             return NoContent();
         }
