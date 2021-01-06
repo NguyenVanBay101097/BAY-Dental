@@ -7,6 +7,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave } from '../medicine-order.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -20,10 +21,12 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   filteredJournals: AccountJournalSimple[];
   formGroup: FormGroup;
   title: string;
+  id: string;
   constructor(
     private accountJournalService: AccountJournalService,
     private fb: FormBuilder,
     private authService: AuthService,
+    private printService: PrintService,
     private activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
     private intlService: IntlService
@@ -197,6 +200,15 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
 
   onSavePaymentPrint() {
 
+  }
+
+  onPrint() {
+    if(!this.id) {
+      return;
+    }
+    this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
+    });
   }
 
   printPayment() {

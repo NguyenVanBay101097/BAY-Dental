@@ -109,4 +109,8 @@ export class MedicineOrderService {
   getDefault(id):Observable<PrecscriptPaymentDisplay> {
     return this.http.post<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { toaThuocId: id })
   }
+
+  getPrint(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+}
 }
