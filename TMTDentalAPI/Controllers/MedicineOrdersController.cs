@@ -83,13 +83,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]    
+        [HttpPost("[action]")]
         public async Task<IActionResult> ActionPayment(MedicineOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _medicineOrderService.ActionPayment(val);
+            var rs = await _medicineOrderService.ActionPayment(val);
             _unitOfWork.Commit();
-            return NoContent();
+            return Ok(rs);
         }
 
         [HttpPost("[action]")]
@@ -105,7 +105,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         public async Task<IActionResult> GetReport(MedicineOrderFilterReport val)
-        {        
+        {
             await _unitOfWork.BeginTransactionAsync();
             await _medicineOrderService.GetReport(val);
             _unitOfWork.Commit();
