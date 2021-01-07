@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
 import { MedicineOrderService, PrecscriptionPaymentPaged } from '../medicine-order.service';
 
 @Component({
@@ -30,7 +32,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
     private intlService: IntlService,
-    private medicineOrderSerive: MedicineOrderService
+    private medicineOrderSerive: MedicineOrderService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -70,6 +73,24 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  public pageChange(event: PageChangeEvent): void {
+    this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  clickItem(item) {
+    if (item && item.selectedRows[0]) {
+      var id = item.selectedRows[0].dataItem.id
+      const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán hóa đơn thuốc';
+      modalRef.componentInstance.id = id;
+      modalRef.result.then(res => {
+        this.loadDataFromApi();
+      }, () => {
+      });
+    }
   }
 
   onSearchDateChange(data) {

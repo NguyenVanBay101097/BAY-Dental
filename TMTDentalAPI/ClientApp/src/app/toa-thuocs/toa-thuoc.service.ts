@@ -26,6 +26,7 @@ export class ToaThuocDisplay {
     note: string;
     state: string;
     companyId: string;
+    reExaminationDate: string;
     lines: [];
     saleOrderId: string;
 }

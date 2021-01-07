@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave } from '../medicine-order.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { Router } from '@angular/router';
+import { PageChangeEvent } from '@progress/kendo-angular-grid';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -20,6 +21,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   idToaThuoc: string;
   precscriptPayment: PrecscriptPaymentDisplay = new PrecscriptPaymentDisplay();
   filteredJournals: AccountJournalSimple[];
+
   formGroup: FormGroup;
   title: string;
   id: string;
@@ -63,23 +65,45 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   loadRecord() {
+    this.medicineOrderService.getDisplay(this.id).subscribe(
+      result => {
+        if (result) {
+          this.precscriptPayment = result;
+          this.loadData(result);
+        }
+      }
+    )
+  }
 
+  removeLine(line: FormGroup) {
+    if (this.medicineOrderLines) {
+      var index = this.medicineOrderLines.controls.findIndex(x => x.value.toaThuocLineId == line.value.toaThuocLineId);
+      if (index >= 0) {
+        this.medicineOrderLines.controls.splice(index, 1);
+      }
+    }
+    this.computeTotalAmount();
+  }
+
+  loadData(precscriptPayment: PrecscriptPaymentDisplay) {
+    if (precscriptPayment.medicineOrderLines) {
+      var control = this.formGroup.get('medicineOrderLines') as FormArray;
+      control.clear();
+      var lines = this.precscriptPayment.medicineOrderLines;
+      lines.forEach(line => {
+        control.push(this.fb.group(line));
+      });
+      this.computeTotalAmount();
+    }
   }
 
   getDefault() {
     this.medicineOrderService.getDefault(this.idToaThuoc).subscribe(
       result => {
         this.precscriptPayment = result;
-        console.log(result);
-
-        if (this.precscriptPayment.toaThuoc && this.precscriptPayment.toaThuoc.lines) {
-          var control = this.formGroup.get('medicineOrderLines') as FormArray;
-          control.clear();
-          var lines = this.precscriptPayment.medicineOrderLines;
-          lines.forEach(line => {
-            control.push(this.fb.group(line));
-          });
-          this.computeTotalAmount();
+        if (result) {
+          this.precscriptPayment = result;
+          this.loadData(result);
         }
       }
     )
@@ -164,6 +188,18 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         // đéo làm gì
       }
     )
+  }
+
+  onCancelPayment() {
+    if (this.id) {
+      var ids = [];
+      ids.push(this.id);
+      this.medicineOrderService.cancelPayment(ids).subscribe(
+        () => {
+          this.activeModal.close();
+        }
+      )
+    }
   }
 
   computeForm(val) {

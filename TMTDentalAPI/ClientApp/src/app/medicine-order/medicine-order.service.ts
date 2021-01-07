@@ -102,15 +102,23 @@ export class MedicineOrderService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val)
   }
 
+  cancelPayment(ids) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids)
+  }
+
   confirmPayment(ids) {
     return this.http.post(this.base_api + this.apiUrl + "/ActionPayment", ids);
   }
 
-  getDefault(id):Observable<PrecscriptPaymentDisplay> {
+  getDefault(id): Observable<PrecscriptPaymentDisplay> {
     return this.http.post<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { toaThuocId: id })
+  }
+
+  getDisplay(id): Observable<PrecscriptPaymentDisplay> {
+    return this.http.get<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/' + id);
   }
 
   getPrint(id: string) {
     return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
-}
+  }
 }

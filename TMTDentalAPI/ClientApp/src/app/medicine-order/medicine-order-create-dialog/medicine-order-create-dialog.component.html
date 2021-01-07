@@ -21,9 +21,10 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                            [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'">
+                                        <kendo-combobox
+                                            [attr.disabled]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel' ? 'disabled' : null"
+                                            [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                            #journalCbx formControlName="journal" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -38,7 +39,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="orderDate">
+                                        <kendo-datepicker
+                                            [attr.disabled]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel' ? 'disabled' : null"
+                                            [format]="'dd/MM/yyyy HH:mm'" formControlName="orderDate">
                                         </kendo-datepicker>
                                     </td>
                                 </tr>
@@ -49,7 +52,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <textarea formControlName="note" class="form-control" rows="2"></textarea>
+                                        <textarea
+                                            [attr.disabled]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel' ? 'disabled' : null"
+                                            formControlName="note" class="form-control" rows="2"></textarea>
                                     </td>
                                 </tr>
                             </tbody>
@@ -147,9 +152,10 @@
                                         <td>{{line.get('useAt') ? computeUseAt(line.get('toaThuocLine').value.useAt) :
                                             ''}}</td>
                                         <td class="text-right" style="width: 15%;">
-                                            <input type="number" class="form-control text-right"
-                                                formControlName="quantity" (change)="computeTotalAmount()"
-                                                (keyup)="computeTotalAmount()">
+                                            <input
+                                                [attr.disabled]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel' ? 'disabled' : null"
+                                                type="number" class="form-control text-right" formControlName="quantity"
+                                                (change)="computeTotalAmount()" (keyup)="computeTotalAmount()">
                                         </td>
                                         <td class="text-right">
                                             {{line.get('price') ? (line.get('price').value | number) : ''}}
@@ -157,7 +163,9 @@
                                         <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                         <td class="text-center cursor-pointer"
                                             title="Xóa thuốc khỏi hóa đơn thanh toán">
-                                            <i class="far fa-trash-alt"></i>
+                                            <button (click)="removeLine(line)" class="btn btn-secondary btn-sm">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 </ng-container>
@@ -202,7 +210,8 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate | date:'shortDate') : ''}}
+                                        {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate |
+                                        date:'shortDate') : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -218,10 +227,12 @@
 <footer class="modal-footer">
     <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button> -->
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePayment()">
+    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" accesskey="t" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePaymentPrint()">
+    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" accesskey="p" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
+    <button type="button" *ngIf="id" class="btn btn-danger btn-sm" accesskey="c" (click)="onCancelPayment()">
+        Hủy thanh toán</button>
     <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
         In hóa đơn</button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
