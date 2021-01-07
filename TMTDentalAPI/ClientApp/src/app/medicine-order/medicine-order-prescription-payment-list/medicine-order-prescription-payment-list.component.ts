@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
-import { MedicineOrderService, PrecscriptionPaymentPaged } from '../medicine-order.service';
+import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentReport } from '../medicine-order.service';
 
 @Component({
   selector: 'app-medicine-order-prescription-payment-list',
@@ -20,6 +20,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   loading = false;
+  precscriptionPaymentReport: PrecscriptionPaymentReport = new PrecscriptionPaymentReport();
   state: string = '';
   limit = 20;
   offset = 0;
@@ -47,6 +48,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
+    this.getReport();
   }
 
 
@@ -88,6 +90,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
       modalRef.componentInstance.id = id;
       modalRef.result.then(res => {
         this.loadDataFromApi();
+        this.getReport();
       }, () => {
       });
     }
@@ -97,6 +100,21 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();
+    this.getReport();
+  }
+
+  getReport() {
+    var val = {
+      dateTo: this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59"),
+      dateFrom: this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
+    }
+    this.medicineOrderSerive.getReport(val).subscribe(
+      result => {
+        if (result) {
+          this.precscriptionPaymentReport = result;
+        }
+      }
+    )
   }
 
   stateChange(item) {

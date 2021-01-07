@@ -4,15 +4,15 @@
             <h6 class="text-primary">Doanh thu thuốc</h6>
         </div>
         <h4>
-            10.000.000
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
         </h4>
     </div>
     <div class="number-payment">
         <div class="title">
-            <h6 class="text-primary">Doanh thu thuốc</h6>
+            <h6 class="text-primary">Số hóa đơn</h6>
         </div>
         <h4>
-            100
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
         </h4>
     </div>
 </div>

@@ -27,6 +27,11 @@ export class PrecscriptionPaymentVM {
   state: string;
 }
 
+export class PrecscriptionPaymentBasic {
+  id: string;
+  name: string;
+}
+
 export class PrescriptionPaymentPagging {
   limit: number;
   offset: number;
@@ -50,6 +55,15 @@ export class PrecscriptPaymentDisplay {
   amount: string;
   state: string;
   medicineOrderLines: PrecscriptPaymentLineDisplay[];
+}
+
+export class PrecscriptionPaymentReport {
+  constructor() {
+    this.amountTotal = 0;
+    this.medicineOrderCount = 0;
+  }
+  amountTotal: number;
+  medicineOrderCount: number;
 }
 
 export class PrecscriptPaymentLineDisplay {
@@ -106,8 +120,8 @@ export class MedicineOrderService {
     return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids)
   }
 
-  confirmPayment(ids) {
-    return this.http.post(this.base_api + this.apiUrl + "/ActionPayment", ids);
+  confirmPayment(val):Observable<PrecscriptionPaymentBasic> {
+    return this.http.post<PrecscriptionPaymentBasic>(this.base_api + this.apiUrl + "/ActionPayment", val);
   }
 
   getDefault(id): Observable<PrecscriptPaymentDisplay> {
@@ -116,6 +130,10 @@ export class MedicineOrderService {
 
   getDisplay(id): Observable<PrecscriptPaymentDisplay> {
     return this.http.get<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  getReport(val): Observable<PrecscriptionPaymentReport> {
+    return this.http.post<PrecscriptionPaymentReport>(this.base_api + this.apiUrl + '/GetReport', val);
   }
 
   getPrint(id: string) {

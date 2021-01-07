@@ -178,29 +178,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
-  onSaveConfirm() {
-    if (this.formGroup.invalid)
-      return
-    var val = this.formGroup.value;
-    val = this.computeForm(val)
-    this.medicineOrderService.create(val).subscribe(
-      result => {
-        // đéo làm gì
-      }
-    )
-  }
-
-  onCancelPayment() {
-    if (this.id) {
-      var ids = [];
-      ids.push(this.id);
-      this.medicineOrderService.cancelPayment(ids).subscribe(
-        () => {
-          this.activeModal.close();
-        }
-      )
-    }
-  }
 
   computeForm(val) {
     val.dateOrder = this.intlService.formatDate(val.dateOrder, "yyyy-MM-ddTHH:mm");
@@ -227,20 +204,40 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePaymentPrint() {
+    if (this.formGroup.invalid)
+      return
+    var val = this.formGroup.value;
+    val = this.computeForm(val)
+    this.medicineOrderService.confirmPayment(val).subscribe(
+      res => {
+        this.activeModal.close();
+        this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
+          this.printService.printHtml(result.html);
+        });
+      }
+    )
 
   }
 
-  onPrint() {
+  onCancelPayment() {
+    if (this.id) {
+      var ids = [];
+      ids.push(this.id);
+      this.medicineOrderService.cancelPayment(ids).subscribe(
+        () => {
+          this.activeModal.close();
+        }
+      )
+    }
+  }
+
+  onPrintPayment() {
     if (!this.id) {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
       this.printService.printHtml(result.html);
     });
-  }
-
-  printPayment() {
-
   }
 
 }
