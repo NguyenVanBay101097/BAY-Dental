@@ -227,13 +227,13 @@
 <footer class="modal-footer">
     <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button> -->
-    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" accesskey="t" (click)="onSavePayment()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="t" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" accesskey="p" (click)="onSavePaymentPrint()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="p" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
-    <button type="button" *ngIf="id" class="btn btn-danger btn-sm" accesskey="c" (click)="onCancelPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger btn-sm" accesskey="c" (click)="onCancelPayment()">
         Hủy thanh toán</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
+    <button type="button" *ngIf="precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
         In hóa đơn</button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
