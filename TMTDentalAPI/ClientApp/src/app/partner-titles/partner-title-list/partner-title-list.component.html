@@ -1,6 +1,6 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
-        <ol class="breadcrumb">
+        <!-- <ol class="breadcrumb">
             <li class="active">
                 <span>Danh xưng</span>
             </li>
@@ -10,8 +10,8 @@
                 <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
-        </div>
-        <div class="o_cp_left">
+        </div> -->
+        <div class="o_cp_t_left">
             <div class="o_cp_buttons">
                 <button type="button" class="btn btn-primary btn-sm" accesskey="c"
                 (click)="createItem()">Thêm</button>
@@ -19,7 +19,9 @@
             <div class="o_cp_sidebar">
             </div>
         </div>
-        <div class="o_cp_right">
+        <div class="o_cp_t_right">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm..." type="text"
+            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
         </div>
     </div>
 </div>

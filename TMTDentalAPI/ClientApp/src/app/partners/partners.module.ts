@@ -64,6 +64,11 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
 import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
+import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
+import { PartnerTitlesModule } from '../partner-titles/partner-titles.module';
+import { PartnerSourcesModule } from '../partner-sources/partner-sources.module';
+import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
+import { HistoryModule } from '../history/history.module';
 
 
 @NgModule({
@@ -119,7 +124,8 @@ import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer
     PartnerOverviewImageComponent,
     PartnerOverviewSaleOrderLineComponent,
     ApplyDiscountSaleOrderLinePopoverComponent,
-    PartnerCustomerTreatmentPaymentFastComponent
+    PartnerCustomerTreatmentPaymentFastComponent,
+    PartnerInfoCustomerManagementComponent
   ],
   imports: [
     CommonModule,
@@ -131,7 +137,11 @@ import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer
     FlexLayoutModule,
     NgbModule,
     AccountCommonPartnerReportsModule,
-    SaleOrdersModule
+    SaleOrdersModule,
+    PartnerTitlesModule,
+    PartnerSourcesModule,
+    PartnerCategoriesModule,
+    HistoryModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

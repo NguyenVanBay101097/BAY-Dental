@@ -16,6 +16,11 @@ import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer
 import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
 import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
 import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
+import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
+import { PartnerCategoryListComponent } from '../partner-categories/partner-category-list/partner-category-list.component';
+import { PartnerSourceListComponent } from '../partner-sources/partner-source-list/partner-source-list.component';
+import { PartnerTitleListComponent } from '../partner-titles/partner-title-list/partner-title-list.component';
+import { HistoriesListComponent } from '../history/histories-list/histories-list.component';
 
 const routes: Routes = [
   {
@@ -44,7 +49,18 @@ const routes: Routes = [
       { path: 'treatment-histories/form', component: PartnerCustomerTreatmentHistoryFormComponent },
       { path: 'overview', component: PartnerOverviewComponent },
     ]
-  },
+  }, 
+  {
+    path: 'customer-management',
+    component: PartnerInfoCustomerManagementComponent,
+    children: [
+      { path: '', redirectTo: 'customer-categ', pathMatch: 'full' },
+      { path: 'customer-categ', component: PartnerCategoryListComponent },
+      { path: 'customer-source', component: PartnerSourceListComponent },
+      { path: 'customer-title', component: PartnerTitleListComponent },
+      { path: 'customer-history', component: HistoriesListComponent },    
+    ]
+  }
 ];
 
 @NgModule({
