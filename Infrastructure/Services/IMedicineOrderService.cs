@@ -20,7 +20,7 @@ namespace Infrastructure.Services
 
         Task UpdateMedicineOrder(Guid id,MedicineOrderSave val);
 
-        Task ActionPayment(MedicineOrderSave val);
+        Task<MedicineOrderBasic> ActionPayment(MedicineOrderSave val);
         Task ActionCancel(IEnumerable<Guid> ids);
 
         Task<MedicineOrderPrint> GetPrint(Guid id);

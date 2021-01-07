@@ -146,7 +146,7 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task ActionPayment(MedicineOrderSave val)
+        public async Task<MedicineOrderBasic> ActionPayment(MedicineOrderSave val)
         {
             //var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
             //    .Include(x => x.Company)
@@ -198,6 +198,9 @@ namespace Infrastructure.Services
 
 
             await UpdateAsync(medicineOrder);
+
+            var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
+            return basic;
 
         }
 
@@ -423,7 +426,7 @@ namespace Infrastructure.Services
             }
 
             var totalItems = await query.CountAsync();
-            var amountTotal = await query.Where(x=>x.State == "confirmed").SumAsync(x=>x.Amount);
+            var amountTotal = await query.Where(x => x.State == "confirmed").SumAsync(x => x.Amount);
             //var items = await query.ToListAsync();
 
             var report = new MedicineOrderReport

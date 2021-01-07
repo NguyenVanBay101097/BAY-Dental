@@ -87,9 +87,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionPayment(MedicineOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _medicineOrderService.ActionPayment(val);
+            var rs = await _medicineOrderService.ActionPayment(val);
             _unitOfWork.Commit();
-            return NoContent();
+            return Ok(rs);
         }
 
         [HttpPost("[action]")]
