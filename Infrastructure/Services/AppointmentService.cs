@@ -116,15 +116,17 @@ namespace Infrastructure.Services
                 query = query.Where(x=>x.SaleOrderId == val.SaleOrderId);
             }
 
+            if (val.DoctorId.HasValue)
+                query = query.Where(x => x.DoctorId == val.DoctorId);
+
             var totalItems = await query.CountAsync();
 
-            query = query.OrderByDescending(x => x.DateCreated);
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
           
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
-                .OrderByDescending(x => x.DateCreated)
+                .OrderBy(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
                 .ToListAsync();
