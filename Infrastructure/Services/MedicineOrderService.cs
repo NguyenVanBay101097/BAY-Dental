@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<MedicineOrderBasic>> GetPagedResultAsync(MedicineOrderPaged val)
         {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
+            var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
@@ -406,6 +407,44 @@ namespace Infrastructure.Services
             var res = _mapper.Map<MedicineOrderPrint>(medicineOrder);
 
             return res;
+        }
+
+        public async Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val)
+        {
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.OrderDate >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.OrderDate <= dateOrderTo);
+            }
+
+            var totalItems = await query.CountAsync();
+            var amountTotal = await query.Where(x=>x.State == "confirmed").SumAsync(x=>x.Amount);
+            //var items = await query.ToListAsync();
+
+            var report = new MedicineOrderReport
+            {
+                AmountTotal = amountTotal,
+                MedicineOrderCount = totalItems
+            };
+            return report;
+        }
+
+        public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "medicine.order_comp_rule":
+                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
+                default:
+                    return null;
+            }
         }
     }
 }

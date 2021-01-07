@@ -25,5 +25,7 @@ namespace Infrastructure.Services
 
         Task<MedicineOrderPrint> GetPrint(Guid id);
 
+        Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val);
+
     }
 }

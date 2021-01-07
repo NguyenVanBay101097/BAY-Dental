@@ -19,8 +19,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
     }
+
+    public class MedicineOrderFilterReport
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class MedicineOrderReport
+    {
+        public decimal AmountTotal { get; set; }
+        public int MedicineOrderCount { get; set; }
+    }
+
     public class DefaultGet
-    {     
+    {
         public Guid ToaThuocId { get; set; }
     }
 
@@ -36,7 +49,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime OrderDate { get; set; }
 
         public string EmployeeName { get; set; }
-   
+
         public string PartnerName { get; set; }
 
         public Guid ToaThuocId { get; set; }

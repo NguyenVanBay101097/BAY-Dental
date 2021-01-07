@@ -103,8 +103,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetReport(MedicineOrderFilterReport val)
+        {        
+            await _unitOfWork.BeginTransactionAsync();
+            await _medicineOrderService.GetReport(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpGet("{id}/[action]")]
-        [JobFilters.CheckAccess(Actions = "Basic.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             //get viewmodel và truyền vào view
