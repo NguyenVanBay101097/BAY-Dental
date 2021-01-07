@@ -19,7 +19,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
                                     <input class="form-control" formControlName="name" name="name" required #nameInput>
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên</div>
                                     </div>
                                 </td>
@@ -36,9 +37,22 @@
                                     </kendo-combobox>
                                 </td>
                             </tr> -->
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_left">
+                                    <label class="o_form_label">
+                                        Màu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                    <button *ngFor="let item of [].constructor(16); index as i" type="button"
+                                        class="btn btn-rect text-white t-bg-0 mr-2 mb-2" [ngClass]="'t-bg-' + i"
+                                        (click)="clickColor(i)">
+                                        <i *ngIf="i == colorSelected" class="fas fa-check"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>

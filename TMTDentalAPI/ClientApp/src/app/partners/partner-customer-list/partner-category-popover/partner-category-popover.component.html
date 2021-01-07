@@ -1,6 +1,9 @@
 <a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle"
     #popOver="ngbPopover" [placement]="popOverPlace" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
-    <span *ngFor="let tag of tags" class="badge badge-secondary mr-1">{{tag.Name}}</span>
+    <span *ngFor="let tag of tags" class="badge badge-secondary mr-1"
+        [ngClass]="'t-bg-' + tag.Color">
+        {{tag.Name}}
+    </span>
     <span *ngIf="!tags.length" class="badge badge-info">
         <i class="fa fa-tags"></i>
     </span>
@@ -18,9 +21,13 @@
         <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="mytags"
             (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'Name'"
             [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
-            [valueNormalizer]="valueNormalizer" [popupSettings]="{appendTo: 'component'}">
+            [valueNormalizer]="valueNormalizer" [popupSettings]="{appendTo: 'component'}"
+            >
+            <ng-template kendoMultiSelectTagTemplate let-dataItem>
+                <span class="template">{{ dataItem.Name }}</span>
+            </ng-template>
         </kendo-multiselect>
-        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories(mytags)" accesskey="c">
+        <button type="button" class="btn btn-sm mt-1 btn-primary" (click)="SavePartnerCategories(mytags)" accesskey="c">
             Lưu
         </button>
     </div>

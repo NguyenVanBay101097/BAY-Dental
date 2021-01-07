@@ -11,6 +11,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string CompleteName { get; set; }
+
+        public string Color { get; set; }
     }
 
     public class PartnerCategoryPaged
@@ -31,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Color { get; set; }
     }
 
     public class TagModel
@@ -38,5 +42,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Color { get; set; }
     }
 }

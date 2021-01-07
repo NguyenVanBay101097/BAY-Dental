@@ -76,6 +76,7 @@ namespace TMTDentalAPI.OdataControllers
                 {
                     Id = s.CategoryId,
                     Name = s.Category.Name,
+                    Color = s.Category.Color
                 })
             });
 
@@ -130,13 +131,15 @@ namespace TMTDentalAPI.OdataControllers
             {
                 PartnerId = x.PartnerId,
                 CategoryId = x.CategoryId,
-                CategoryName = x.Category.Name
+                CategoryName = x.Category.Name,
+                Color = x.Category.Color
             }).ToListAsync();
 
             var tagDict = partnerCategRels.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => new TagModel
             {
                 Id = s.CategoryId,
-                Name = s.CategoryName
+                Name = s.CategoryName,
+                Color = s.Color
             }).ToList());
 
             foreach (var item in partnerVMList)
@@ -182,7 +185,8 @@ namespace TMTDentalAPI.OdataControllers
                 Categories = x.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
                 {
                     Id = s.CategoryId,
-                    Name = s.Category.Name
+                    Name = s.Category.Name,
+                    Color = s.Category.Color
                 })
             }).FirstOrDefaultAsync();
 
