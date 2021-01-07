@@ -113,6 +113,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? AccountPaymentId { get; set; }
         public AccountPaymentDisplay AccountPayment { get; set; }
 
+        public string Note { get; set; }
+
         public decimal Amount { get; set; }
         public string State { get; set; }
 

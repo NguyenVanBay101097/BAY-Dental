@@ -141,7 +141,6 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             await _resGroupService.UpdateModels();
-            await _resGroupService.UpdateIRules();
             _unitOfWork.Commit();
             return NoContent();
         }

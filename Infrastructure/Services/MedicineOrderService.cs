@@ -437,42 +437,7 @@ namespace Infrastructure.Services
             return report;
         }
 
-        public async Task InsertIrulesIfNotExists()
-        {
-            var modelObj = GetService<IIRModelService>();
-            var modelDataObj = GetService<IIRModelDataService>();
-            var iruleObj = GetService<IIRRuleService>();
-            var model = await modelDataObj.GetRef<IRModel>("medicineOrder.medicine_order_rule");
-            if (model == null)
-            {
-                model = new IRModel
-                {
-                    Name = "Hóa đơn thuốc",
-                    Model = "MedicineOrders",
-                };
-
-                modelObj.Sudo = true;
-                await modelObj.CreateAsync(model);
-
-                var irule = new IRRule
-                {
-                    Name = "MedicineOrder multi-company",
-                    ModelId = model.Id,
-                    
-                };
-
-                iruleObj.Sudo = true;
-                await iruleObj.CreateAsync(irule);
-
-                await modelDataObj.CreateAsync(new IRModelData
-                {
-                    Name = "model_medicine_order_rule",
-                    Module = "medicineOrder",
-                    Model = "ir.rule",
-                    ResId = model.Id.ToString()
-                });
-            }
-        }
+       
 
 
 

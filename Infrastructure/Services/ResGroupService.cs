@@ -302,10 +302,6 @@ namespace Infrastructure.Services
             await salaryPaymentObj.InsertModelsIfNotExists();
         }
 
-        public async Task UpdateIRules()
-        {
-
-        }
 
         public async Task ResetSecurityData()
         {
