@@ -48,7 +48,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       amount: 0,
       medicineOrderLines: this.fb.array([])
     });
-    
+
     this.journalCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.journalCbx.loading = true)),
@@ -223,6 +223,13 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(
       res => {
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 5000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
           this.printService.printHtml(result.html);
