@@ -951,5 +951,45 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Product.Read")]
+        public async Task<IActionResult> ExportMedicineExcel(ProductPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var products = await _productService.GetMedicineExportExcel(val);
+            var sheetName = "thuốc";
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Tên thuốc";
+                worksheet.Cells[1, 2].Value = "Nhóm thuốc";
+
+                var row = 2;
+                foreach (var item in products)
+                {
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.CategName;
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
     }
 }

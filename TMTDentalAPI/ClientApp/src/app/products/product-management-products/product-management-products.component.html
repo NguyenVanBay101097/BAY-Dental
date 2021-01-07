@@ -1,0 +1,54 @@
+<div class="pms-wrapper d-flex">
+    <div class="pms-left border mr-2">
+        <app-product-category-list (onDelete)="onDeletecate($event)" (onSelect)="onSelectedCate($event)" [type]="type"></app-product-category-list>
+    </div>
+    <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
+        <div class="flex-0-0-auto mb-3 d-flex align-items-center">
+            <div class="has-search mr-1 flex-fill">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input [(ngModel)]="searchProduct" (ngModelChange)="this.searchProductUpdate.next($event)" class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
+            </div>
+            <div class="flex-fill">
+                <button class="btn btn-sm btn-primary" (click)="createProduct()">Thêm mới</button>
+                <button type="button" class="btn btn-light bg-white btn-sm" (click)="importFromExcel()">
+                    <i class="fas fa-upload"></i> Import
+                  </button>
+                <button type="button" class="btn btn-light bg-white btn-sm" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
+            </div>
+        </div>
+        <div class="flex-1-1-100 h-100 overflow-hidden">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Tên vật tư" width="250">
+                </kendo-grid-column>
+                <kendo-grid-column field="defaultCode" title="Mã vật tư" width="120">
+                </kendo-grid-column>
+                <kendo-grid-column [hidden]="!permissionService.hasOneDefined(['product.group_uom'])" field="uomName" title="ĐVT" width="120">
+                </kendo-grid-column>
+                <kendo-grid-column field="categName" title="Nhóm vật tư" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="purchasePrice" class="text-right" title="Giá mua" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.purchasePrice | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="qtyAvailable" class="text-right" title="Tồn kho" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.qtyAvailable | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="100">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success btn-sm mr-2" (click)="editProduct(dataItem)">
+                        <i class="far fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteProduct(dataItem)">
+                        <i class="far fa-trash-alt"></i></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

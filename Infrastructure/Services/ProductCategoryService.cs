@@ -69,7 +69,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type))
                 query = query.Where(x => x.Type == val.Type);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).Include(x => x.Parent)
+            query = query.Skip(val.Offset);
+            if (val.Limit > 0)
+            {
+                query = query.Take(val.Limit);
+            }
+            var items = await query.Include(x => x.Parent)
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
