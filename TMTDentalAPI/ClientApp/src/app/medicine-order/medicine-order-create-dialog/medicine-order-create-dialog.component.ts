@@ -198,7 +198,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.medicineOrderService.confirmPayment(val).subscribe(
       () => {
         this.activeModal.close();
-        this.router.navigateByUrl("medicine-orders/prescription-payments")
+        this.router.navigateByUrl("medicine-orders/prescription-payments");
       }
     )
   }
@@ -213,6 +213,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
           this.printService.printHtml(result.html);
+          this.router.navigateByUrl("medicine-orders/prescription-payments");
         });
       }
     )

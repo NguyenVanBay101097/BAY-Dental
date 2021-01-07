@@ -163,8 +163,10 @@
                                         <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                         <td class="text-center cursor-pointer"
                                             title="Xóa thuốc khỏi hóa đơn thanh toán">
-                                            <button (click)="removeLine(line)" class="btn btn-secondary btn-sm">
-                                                <i class="far fa-trash-alt"></i>
+                                            <button
+                                                [attr.disabled]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel' ? 'disabled' : null"
+                                                (click)="removeLine(line)" class="btn btn-danger btn-sm">
+                                                <i class="text-white" class="far fa-trash-alt"></i>
                                             </button>
                                         </td>
                                     </tr>

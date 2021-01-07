@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { matches } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
@@ -14,6 +15,7 @@ import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentRe
   styleUrls: ['./medicine-order-prescription-payment-list.component.css']
 })
 export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
+  @ViewChild(GridComponent, { static: true }) private grid: GridComponent;
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   search: string;
@@ -22,7 +24,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   loading = false;
   precscriptionPaymentReport: PrecscriptionPaymentReport = new PrecscriptionPaymentReport();
   state: string = '';
-  limit = 20;
+  limit = 10;
   offset = 0;
   states = [
     // { value: "draft", name: "Chưa thanh toán" },
@@ -50,7 +52,6 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     this.loadDataFromApi();
     this.getReport();
   }
-
 
   loadDataFromApi() {
     this.loading = true;
@@ -83,8 +84,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   }
 
   clickItem(item) {
-    if (item && item.selectedRows[0]) {
-      var id = item.selectedRows[0].dataItem.id
+    if (item && item.dataItem) {
+      var id = item.dataItem.id
       const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thanh toán hóa đơn thuốc';
       modalRef.componentInstance.id = id;

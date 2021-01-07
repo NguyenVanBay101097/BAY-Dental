@@ -1,17 +1,17 @@
 <div class="report-prescription-payment">
     <div class="revenue">
         <div class="title">
-            <h6 class="text-primary">Doanh thu thuốc</h6>
+            <h6>Doanh thu thuốc</h6>
         </div>
-        <h4>
+        <h4 class="text-primary">
             {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
         </h4>
     </div>
     <div class="number-payment">
         <div class="title">
-            <h6 class="text-primary">Số hóa đơn</h6>
+            <h6>Số hóa đơn</h6>
         </div>
-        <h4>
+        <h4 class="text-primary">
             {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
         </h4>
     </div>
@@ -30,8 +30,8 @@
             type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-    (pageChange)="pageChange($event)" [selectable]="true" (selectionChange)="clickItem($event)">
+<kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+    [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" (cellClick)="clickItem($event)">
     <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.orderDate | date: 'shortDate'}}
@@ -41,7 +41,8 @@
     </kendo-grid-column>
     <kendo-grid-column title="Phiếu điều trị" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary" routerLink="/sale-orders/form" [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
+            <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
+                [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
                 {{dataItem.toaThuoc.saleOrderName}}
             </a>
         </ng-template>
