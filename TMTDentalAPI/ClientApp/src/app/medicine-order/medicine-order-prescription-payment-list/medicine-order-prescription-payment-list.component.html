@@ -32,14 +32,19 @@
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="200">
+    <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.orderDate | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
+    <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
     </kendo-grid-column>
-    <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
+    <kendo-grid-column title="Phiếu điều trị" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <a class="text-primary" routerLink="/sale-orders/form" [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
+                {{dataItem.toaThuoc.saleOrderName}}
+            </a>
+        </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Số hóa đơn thuốc" width="150">
     </kendo-grid-column>
