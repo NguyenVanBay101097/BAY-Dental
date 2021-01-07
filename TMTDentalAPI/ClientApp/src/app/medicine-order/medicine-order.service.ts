@@ -44,6 +44,7 @@ export class PrecscriptPaymentDisplay {
   name: string;
   companyId: string;
   orderDate: string;
+  note: string;
   employeeId: string;
   employee: EmployeeSimpleContact
   toaThuocId: string;
@@ -120,7 +121,7 @@ export class MedicineOrderService {
     return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids)
   }
 
-  confirmPayment(val):Observable<PrecscriptionPaymentBasic> {
+  confirmPayment(val): Observable<PrecscriptionPaymentBasic> {
     return this.http.post<PrecscriptionPaymentBasic>(this.base_api + this.apiUrl + "/ActionPayment", val);
   }
 

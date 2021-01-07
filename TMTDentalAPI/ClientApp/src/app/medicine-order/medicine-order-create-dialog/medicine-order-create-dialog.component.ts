@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave
 import { PrintService } from 'src/app/shared/services/print.service';
 import { Router } from '@angular/router';
 import { PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -33,7 +35,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     private activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
     private intlService: IntlService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -44,9 +48,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       amount: 0,
       medicineOrderLines: this.fb.array([])
     });
-
-    this.loadFilteredJournals();
-
+    
     this.journalCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.journalCbx.loading = true)),
@@ -55,8 +57,10 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       this.filteredJournals = result;
       this.journalCbx.loading = false;
     });
+    this.loadFilteredJournals();
 
     if (this.idToaThuoc) {
+
       this.getDefault();
     }
     if (this.id) {
@@ -68,6 +72,8 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.medicineOrderService.getDisplay(this.id).subscribe(
       result => {
         if (result) {
+          console.log(result);
+          result.orderDate = this.intlService.formatDate(new Date(result.orderDate), "dd/MM/yyyy")
           this.precscriptPayment = result;
           this.loadData(result);
         }
@@ -198,6 +204,13 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.medicineOrderService.confirmPayment(val).subscribe(
       () => {
         this.activeModal.close();
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigateByUrl("medicine-orders/prescription-payments");
       }
     )
@@ -222,13 +235,26 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
 
   onCancelPayment() {
     if (this.id) {
-      var ids = [];
-      ids.push(this.id);
-      this.medicineOrderService.cancelPayment(ids).subscribe(
-        () => {
-          this.activeModal.close();
-        }
-      )
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy thanh toán';
+      modalRef.componentInstance.body = "Bạn có chắc chắn muốn hủy thanh toán ?"
+      modalRef.result.then(() => {
+        var ids = [];
+        ids.push(this.id);
+        this.medicineOrderService.cancelPayment(ids).subscribe(
+          () => {
+            this.notificationService.show({
+              content: 'Hủy thanh toán thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+            this.activeModal.close();
+          }
+        )
+      }, () => {
+      });
     }
   }
 

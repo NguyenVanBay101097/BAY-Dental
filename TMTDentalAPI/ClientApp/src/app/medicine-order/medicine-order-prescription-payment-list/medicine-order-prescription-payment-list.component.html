@@ -39,6 +39,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
     </kendo-grid-column>
+   
     <kendo-grid-column title="Phiếu điều trị" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
@@ -46,6 +47,8 @@
                 {{dataItem.toaThuoc.saleOrderName}}
             </a>
         </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="toaThuoc.name" title="Số đơn thuốc" width="120">
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Số hóa đơn thuốc" width="150">
     </kendo-grid-column>
