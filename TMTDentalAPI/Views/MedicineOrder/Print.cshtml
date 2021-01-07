@@ -179,7 +179,7 @@
                                 Còn lại
                             </label>
                         </td>
-                        <td class="pr-0 text-right font-weight-bold" colspan="1" style="width: 100%;">@(string.Format(culture, "{0:0,0}", (Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount))))</td>
+                        <td class="pr-0 text-right font-weight-bold" colspan="1" style="width: 100%;">@(string.Format(culture, "{0:0}", (Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount))))</td>
                     </tr>
                 </tbody>
             </table>

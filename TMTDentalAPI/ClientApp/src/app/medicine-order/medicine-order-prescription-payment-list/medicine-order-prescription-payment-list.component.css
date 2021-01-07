@@ -41,3 +41,11 @@
     padding: 0;
     margin-right: 15px;
 }
+
+.text-decoraction{
+    text-decoration: revert;
+}
+
+.pointer{
+    cursor: pointer;
+}

@@ -21,9 +21,15 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                            [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'">
+                                        <span
+                                            *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{precscriptPayment && precscriptPayment.journal ?
+                                            precscriptPayment.journal.name : ''}}
+                                        </span>
+                                        <kendo-combobox
+                                            [ngClass]="{'d-none': precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'}"
+                                            [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                            #journalCbx formControlName="journal" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -38,7 +44,13 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="orderDate">
+                                        <span
+                                            *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
+                                        </span>
+                                        <kendo-datepicker
+                                            *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                            [format]="'dd/MM/yyyy'" formControlName="orderDate">
                                         </kendo-datepicker>
                                     </td>
                                 </tr>
@@ -49,7 +61,13 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <textarea formControlName="note" class="form-control" rows="2"></textarea>
+                                        <span
+                                            *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{precscriptPayment ? precscriptPayment.note : ''}}
+                                        </span>
+                                        <textarea
+                                            *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                            formControlName="note" class="form-control" rows="2"></textarea>
                                     </td>
                                 </tr>
                             </tbody>
@@ -116,7 +134,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <table class="table table-striped">
+                        <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">Tên thuốc</th>
@@ -127,7 +145,9 @@
                                     <th scope="col" class="text-center">Số lượng</th>
                                     <th scope="col" class="text-right">Đơn giá</th>
                                     <th scope="col" class="text-right">Thành tiền</th>
-                                    <th scope="col" class="text-center">Thao tác</th>
+                                    <th scope="col" class="text-center"
+                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
+                                        Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="medicineOrderLines">
@@ -144,29 +164,64 @@
                                         <td class="text-center">{{line.get('toaThuocLine') &&
                                             line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays
                                             : ''}}</td>
-                                        <td>{{line.get('useAt') ? computeUseAt(line.get('toaThuocLine').value.useAt) :
+                                        <td>{{line.get('toaThuocLine') ?
+                                            computeUseAt(line.get('toaThuocLine').value.useAt) :
                                             ''}}</td>
-                                        <td class="text-right" style="width: 15%;">
-                                            <input type="number" class="form-control text-right"
-                                                formControlName="quantity" (change)="computeTotalAmount()"
-                                                (keyup)="computeTotalAmount()">
+                                        <td class="text-center" style="width: 15%;">
+                                            <span
+                                                *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                                {{line.get('quantity') ? line.get('quantity').value : 1}}
+                                            </span>
+                                            <input
+                                                *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                                type="number" class="form-control text-right" formControlName="quantity"
+                                                (change)="computeTotalAmount()" (keyup)="computeTotalAmount()">
                                         </td>
                                         <td class="text-right">
                                             {{line.get('price') ? (line.get('price').value | number) : ''}}
                                         </td>
                                         <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                         <td class="text-center cursor-pointer"
-                                            title="Xóa thuốc khỏi hóa đơn thanh toán">
-                                            <i class="far fa-trash-alt"></i>
+                                            *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
+                                            <button title="Xóa thuốc khỏi hóa đơn thanh toán" (click)="removeLine(line)"
+                                                class="btn btn-danger btn-sm">
+                                                <i class="text-white" class="far fa-trash-alt"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 </ng-container>
                             </tbody>
                         </table>
                         <div class="w-100">
-                            <div class="float-right d-flex">
-                                <h5 class="mr-3">Tổng tiền</h5>
-                                <h5>{{getAmountTotal | number}}</h5>
+                            <div class="float-right ">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="cu-th-td">
+                                                <h5>Tổng tiền</h5>
+                                            </th>
+                                            <th class="cu-th-td">
+                                                <h5>{{getAmountTotal | number}}</h5>
+                                            </th>
+                                        </tr>
+                                        <tr *ngIf="id">
+                                            <th class="cu-th-td">
+                                                <h5>Thanh toán</h5>
+                                            </th>
+                                            <th class="cu-th-td">
+                                                <h5>{{getAmountTotal | number}}</h5>
+                                            </th>
+                                        </tr>
+                                        <tr *ngIf="id">
+                                            <th class="cu-th-td">
+                                                <h5>Còn lại</h5>
+                                            </th>
+                                            <th class="cu-th-td">
+                                                <h5>{{(getAmountTotal - getAmountTotal) | number}}</h5>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -180,9 +235,9 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        <span *ngIf="precscriptPayment.state == 'draft'">Nháp</span>
+                                        <span *ngIf="precscriptPayment.state == 'draft'">Chưa thanh toán</span>
                                         <span *ngIf="precscriptPayment.state == 'confirmed'">Đã thanh toán</span>
-                                        <span *ngIf="precscriptPayment.state == 'cancel'">Chưa thanh toán</span>
+                                        <span *ngIf="precscriptPayment.state == 'cancel'">Hủy thanh toán</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -202,7 +257,8 @@
                                         </label>
                                     </th>
                                     <td colspan="1" style="width: 100%; padding-top:7px;">
-                                        {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate | date:'shortDate') : ''}}
+                                        {{precscriptPayment.toaThuoc ? (precscriptPayment.toaThuoc.reExaminationDate |
+                                        date:'shortDate') : ''}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -218,11 +274,17 @@
 <footer class="modal-footer">
     <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
         Lưu</button> -->
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePayment()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm"
+        accesskey="t" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSavePaymentPrint()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm"
+        accesskey="p" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
-    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="printPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger btn-sm" accesskey="c"
+        (click)="onCancelPayment()">
+        Hủy thanh toán</button>
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="s"
+        (click)="onPrintPayment()">
         In hóa đơn</button>
     <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>

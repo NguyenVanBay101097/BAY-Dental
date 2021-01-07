@@ -118,6 +118,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
         public string State { get; set; }
 
+        public string Note { get; set; }
+
         public IEnumerable<MedicineOrderLineDisplay> MedicineOrderLines { get; set; } = new List<MedicineOrderLineDisplay>();
     }
 

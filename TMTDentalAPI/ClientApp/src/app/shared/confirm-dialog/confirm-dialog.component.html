@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title || 'Xác nhận'}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body">
@@ -12,6 +13,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()" accesskey="s"><span>Xác nhận</span></button>
-    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()" accesskey="q"><span>Đóng</span></button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="onConfirm()" accesskey="s"><span>Xác
+            nhận</span></button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
 </footer>

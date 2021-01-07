@@ -27,6 +27,11 @@ export class PrecscriptionPaymentVM {
   state: string;
 }
 
+export class PrecscriptionPaymentBasic {
+  id: string;
+  name: string;
+}
+
 export class PrescriptionPaymentPagging {
   limit: number;
   offset: number;
@@ -39,6 +44,7 @@ export class PrecscriptPaymentDisplay {
   name: string;
   companyId: string;
   orderDate: string;
+  note: string;
   employeeId: string;
   employee: EmployeeSimpleContact
   toaThuocId: string;
@@ -50,6 +56,15 @@ export class PrecscriptPaymentDisplay {
   amount: string;
   state: string;
   medicineOrderLines: PrecscriptPaymentLineDisplay[];
+}
+
+export class PrecscriptionPaymentReport {
+  constructor() {
+    this.amountTotal = 0;
+    this.medicineOrderCount = 0;
+  }
+  amountTotal: number;
+  medicineOrderCount: number;
 }
 
 export class PrecscriptPaymentLineDisplay {
@@ -102,15 +117,27 @@ export class MedicineOrderService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val)
   }
 
-  confirmPayment(ids) {
-    return this.http.post(this.base_api + this.apiUrl + "/ActionPayment", ids);
+  cancelPayment(ids) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids)
   }
 
-  getDefault(id):Observable<PrecscriptPaymentDisplay> {
+  confirmPayment(val): Observable<PrecscriptionPaymentBasic> {
+    return this.http.post<PrecscriptionPaymentBasic>(this.base_api + this.apiUrl + "/ActionPayment", val);
+  }
+
+  getDefault(id): Observable<PrecscriptPaymentDisplay> {
     return this.http.post<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { toaThuocId: id })
+  }
+
+  getDisplay(id): Observable<PrecscriptPaymentDisplay> {
+    return this.http.get<PrecscriptPaymentDisplay>(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  getReport(val): Observable<PrecscriptionPaymentReport> {
+    return this.http.post<PrecscriptionPaymentReport>(this.base_api + this.apiUrl + '/GetReport', val);
   }
 
   getPrint(id: string) {
     return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
-}
+  }
 }

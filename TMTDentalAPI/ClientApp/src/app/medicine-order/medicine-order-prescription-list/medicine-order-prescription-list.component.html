@@ -9,18 +9,18 @@
             (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
     <kendo-grid-column field="date" title="Ngày tạo" width="200">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.date | date:'short'}}
+            {{dataItem.date | date:'shortDate'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
     </kendo-grid-column>
     <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="150">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary" routerLink="/sale-orders/form" [queryParams]="{id: dataItem.saleOrderId}">
+            <a class="text-primary text-decoraction" routerLink="/sale-orders/form" [queryParams]="{id: dataItem.saleOrderId}">
                 {{dataItem.saleOrderName}}
             </a>
         </ng-template>
@@ -30,14 +30,15 @@
     </kendo-grid-column>
     <kendo-grid-column field="employeeName" title="Bác sĩ" width="120">
     </kendo-grid-column>
-    <kendo-grid-column field="id" width="120">
+    <kendo-grid-column class="text-center" field="id" width="100">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-sm" title="Tạo thanh toán toán hóa đơn thuốc"
+            <button class="btn btn-primary btn-sm" title="Tạo thanh toán toán hóa đơn thuốc"
                 (click)="createPrescriptionPayment(dataItem)">
-                <i style="font-size: 14px;" class="fas fa-arrow-right"></i></button>
+                <img src="./assets/images/add-payment.png" alt="">Tạo hóa đơn
+            </button>
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

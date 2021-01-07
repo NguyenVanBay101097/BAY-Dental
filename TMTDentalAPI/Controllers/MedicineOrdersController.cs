@@ -113,9 +113,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetReport(MedicineOrderFilterReport val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _medicineOrderService.GetReport(val);
+            var res = await _medicineOrderService.GetReport(val);
             _unitOfWork.Commit();
-            return NoContent();
+            return Ok(res);
         }
 
         [HttpGet("{id}/[action]")]

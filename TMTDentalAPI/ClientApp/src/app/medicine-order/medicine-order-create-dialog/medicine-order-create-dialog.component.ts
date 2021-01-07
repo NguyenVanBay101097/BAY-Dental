@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -9,6 +9,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave } from '../medicine-order.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { Router } from '@angular/router';
+import { PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -20,6 +23,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   idToaThuoc: string;
   precscriptPayment: PrecscriptPaymentDisplay = new PrecscriptPaymentDisplay();
   filteredJournals: AccountJournalSimple[];
+
   formGroup: FormGroup;
   title: string;
   id: string;
@@ -31,7 +35,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     private activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
     private intlService: IntlService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -43,8 +49,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       medicineOrderLines: this.fb.array([])
     });
 
-    this.loadFilteredJournals();
-
     this.journalCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.journalCbx.loading = true)),
@@ -53,8 +57,10 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       this.filteredJournals = result;
       this.journalCbx.loading = false;
     });
+    this.loadFilteredJournals();
 
     if (this.idToaThuoc) {
+
       this.getDefault();
     }
     if (this.id) {
@@ -63,23 +69,47 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   loadRecord() {
+    this.medicineOrderService.getDisplay(this.id).subscribe(
+      result => {
+        if (result) {
+          console.log(result);
+          result.orderDate = this.intlService.formatDate(new Date(result.orderDate), "dd/MM/yyyy")
+          this.precscriptPayment = result;
+          this.loadData(result);
+        }
+      }
+    )
+  }
 
+  removeLine(line: FormGroup) {
+    if (this.medicineOrderLines) {
+      var index = this.medicineOrderLines.controls.findIndex(x => x.value.toaThuocLineId == line.value.toaThuocLineId);
+      if (index >= 0) {
+        this.medicineOrderLines.controls.splice(index, 1);
+      }
+    }
+    this.computeTotalAmount();
+  }
+
+  loadData(precscriptPayment: PrecscriptPaymentDisplay) {
+    if (precscriptPayment.medicineOrderLines) {
+      var control = this.formGroup.get('medicineOrderLines') as FormArray;
+      control.clear();
+      var lines = this.precscriptPayment.medicineOrderLines;
+      lines.forEach(line => {
+        control.push(this.fb.group(line));
+      });
+      this.computeTotalAmount();
+    }
   }
 
   getDefault() {
     this.medicineOrderService.getDefault(this.idToaThuoc).subscribe(
       result => {
         this.precscriptPayment = result;
-        console.log(result);
-
-        if (this.precscriptPayment.toaThuoc && this.precscriptPayment.toaThuoc.lines) {
-          var control = this.formGroup.get('medicineOrderLines') as FormArray;
-          control.clear();
-          var lines = this.precscriptPayment.medicineOrderLines;
-          lines.forEach(line => {
-            control.push(this.fb.group(line));
-          });
-          this.computeTotalAmount();
+        if (result) {
+          this.precscriptPayment = result;
+          this.loadData(result);
         }
       }
     )
@@ -154,17 +184,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
-  onSaveConfirm() {
-    if (this.formGroup.invalid)
-      return
-    var val = this.formGroup.value;
-    val = this.computeForm(val)
-    this.medicineOrderService.create(val).subscribe(
-      result => {
-        // đéo làm gì
-      }
-    )
-  }
 
   computeForm(val) {
     val.dateOrder = this.intlService.formatDate(val.dateOrder, "yyyy-MM-ddTHH:mm");
@@ -185,26 +204,74 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.medicineOrderService.confirmPayment(val).subscribe(
       () => {
         this.activeModal.close();
-        this.router.navigateByUrl("medicine-orders/prescription-payments")
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.router.navigateByUrl("medicine-orders/prescription-payments");
       }
     )
   }
 
   onSavePaymentPrint() {
+    if (this.formGroup.invalid)
+      return
+    var val = this.formGroup.value;
+    val = this.computeForm(val)
+    this.medicineOrderService.confirmPayment(val).subscribe(
+      res => {
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 5000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.activeModal.close();
+        this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
+          this.printService.printHtml(result.html);
+          this.router.navigateByUrl("medicine-orders/prescription-payments");
+        });
+      }
+    )
 
   }
 
-  onPrint() {
+  onCancelPayment() {
+    if (this.id) {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy thanh toán';
+      modalRef.componentInstance.body = "Bạn có chắc chắn muốn hủy thanh toán ?"
+      modalRef.result.then(() => {
+        var ids = [];
+        ids.push(this.id);
+        this.medicineOrderService.cancelPayment(ids).subscribe(
+          () => {
+            this.notificationService.show({
+              content: 'Hủy thanh toán thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+            this.activeModal.close();
+          }
+        )
+      }, () => {
+      });
+    }
+  }
+
+  onPrintPayment() {
     if (!this.id) {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
       this.printService.printHtml(result.html);
     });
-  }
-
-  printPayment() {
-
   }
 
 }

@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { matches } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { MedicineOrderService, PrecscriptionPaymentPaged } from '../medicine-order.service';
+import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
+import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentReport } from '../medicine-order.service';
 
 @Component({
   selector: 'app-medicine-order-prescription-payment-list',
@@ -12,14 +15,16 @@ import { MedicineOrderService, PrecscriptionPaymentPaged } from '../medicine-ord
   styleUrls: ['./medicine-order-prescription-payment-list.component.css']
 })
 export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
+  @ViewChild(GridComponent, { static: true }) private grid: GridComponent;
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   search: string;
   dateFrom: Date;
   dateTo: Date;
   loading = false;
+  precscriptionPaymentReport: PrecscriptionPaymentReport = new PrecscriptionPaymentReport();
   state: string = '';
-  limit = 20;
+  limit = 10;
   offset = 0;
   states = [
     // { value: "draft", name: "Chưa thanh toán" },
@@ -30,7 +35,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
     private intlService: IntlService,
-    private medicineOrderSerive: MedicineOrderService
+    private medicineOrderSerive: MedicineOrderService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -44,8 +50,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
+    this.getReport();
   }
-
 
   loadDataFromApi() {
     this.loading = true;
@@ -72,10 +78,44 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     })
   }
 
+  public pageChange(event: PageChangeEvent): void {
+    this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  clickItem(item) {
+    if (item && item.dataItem) {
+      var id = item.dataItem.id
+      const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Thanh toán hóa đơn thuốc';
+      modalRef.componentInstance.id = id;
+      modalRef.result.then(res => {
+        this.loadDataFromApi();
+        this.getReport();
+      }, () => {
+      });
+    }
+  }
+
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();
+    this.getReport();
+  }
+
+  getReport() {
+    var val = {
+      dateTo: this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59"),
+      dateFrom: this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
+    }
+    this.medicineOrderSerive.getReport(val).subscribe(
+      result => {
+        if (result) {
+          this.precscriptionPaymentReport = result;
+        }
+      }
+    )
   }
 
   stateChange(item) {

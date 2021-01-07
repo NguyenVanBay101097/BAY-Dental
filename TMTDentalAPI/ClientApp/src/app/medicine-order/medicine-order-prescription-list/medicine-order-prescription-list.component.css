@@ -3,3 +3,7 @@
     display: flex;
     width: 100%;
 }
+
+.text-decoraction{
+    text-decoration: revert;
+}
