@@ -217,7 +217,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@Model.Employee.Name.ToUpper()</span>
+                <span class="font-weight-600">@(Model.Employee == null ? "" : Model.Employee.Name.ToUpper())</span>
             </div>
         </div>
         <div class="col col-sm">

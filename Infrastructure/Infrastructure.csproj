@@ -48,6 +48,8 @@
     <Compile Remove="Data\Migrations\20201221021726_thuong_Update_LaboOrder_V3.Designer.cs" />
     <Compile Remove="Data\Migrations\20210105074739_Create_TableMedicineOrders.cs" />
     <Compile Remove="Data\Migrations\20210105074739_Create_TableMedicineOrders.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210105102347_Update_MedicineOrders_AddAccountPayment.cs" />
+    <Compile Remove="Data\Migrations\20210105102347_Update_MedicineOrders_AddAccountPayment.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

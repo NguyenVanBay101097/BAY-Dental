@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210105102347_Update_MedicineOrders_AddAccountPayment")]
-    partial class Update_MedicineOrders_AddAccountPayment
+    [Migration("20210107100635_Update_MedicineOrder")]
+    partial class Update_MedicineOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4544,7 +4544,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("JournalId")
@@ -5943,6 +5943,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("GroupLoyaltyCard")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("GroupMedicine")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("GroupMultiCompany")
@@ -10832,9 +10835,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
                         .WithMany()

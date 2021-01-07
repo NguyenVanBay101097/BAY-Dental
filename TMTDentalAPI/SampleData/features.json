@@ -73,28 +73,7 @@
           }
         ]
       },
-      {
-        "Name": "Đơn thuốc",
-        "Permission": "Basic.ToaThuoc",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Basic.ToaThuoc.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Basic.ToaThuoc.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Basic.ToaThuoc.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Basic.ToaThuoc.Delete"
-          }
-        ]
-      },
+     
       {
         "Name": "Hóa Đơn thuốc",
         "Permission": "Basic.MedicineOrder",
@@ -186,6 +165,52 @@
       {
         "Name": "Thống kê labo",
         "Permission": "Basic.LaboOrder.Statistics"
+      }
+    ]
+  },
+  {
+    "Name": "Bán Thuốc",
+    "Permission": "Medicine",
+    "Children": [
+      {
+        "Name": "Đơn thuốc",
+        "Permission": "Medicine.ToaThuoc",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Medicine.ToaThuoc.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Medicine.ToaThuoc.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Medicine.ToaThuoc.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Medicine.ToaThuoc.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Hóa Đơn thuốc",
+        "Permission": "Medicine.MedicineOrder",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Medicine.MedicineOrder.Read"
+          },
+          {
+            "Name": "Thanh toán",
+            "Permission": "Medicine.MedicineOrder.Payment"
+          },
+          {
+            "Name": "Hủy thanh toán",
+            "Permission": "Medicine.MedicineOrder.Cancel"
+          }
+        ]
       }
     ]
   },

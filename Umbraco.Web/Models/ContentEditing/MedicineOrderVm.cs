@@ -70,7 +70,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid journalId { get; set; }
         public Guid ToaThuocId { get; set; }
 
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public Guid PartnerId { get; set; }
 
         public Guid CompanyId { get; set; }
@@ -118,7 +118,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
         public string State { get; set; }
 
-        public string Note { get; set; }
 
         public IEnumerable<MedicineOrderLineDisplay> MedicineOrderLines { get; set; } = new List<MedicineOrderLineDisplay>();
     }

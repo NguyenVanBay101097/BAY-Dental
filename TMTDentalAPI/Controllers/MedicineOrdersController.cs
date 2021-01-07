@@ -32,7 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Read")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> Get([FromQuery] MedicineOrderPaged val)
         {
             var result = await _medicineOrderService.GetPagedResultAsync(val);
@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
 
         ///Get{id}
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Read")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _medicineOrderService.GetByIdDisplay(id);
@@ -79,7 +79,7 @@ namespace TMTDentalAPI.Controllers
         ///DefaultGet
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Read")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> DefaultGet(DefaultGet val)
         {
             var result = await _medicineOrderService.DefaultGet(val);
@@ -87,7 +87,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Payment")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Payment")]
         public async Task<IActionResult> ActionPayment(MedicineOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -97,7 +97,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Cancel")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Cancel")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -109,7 +109,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Read")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> GetReport(MedicineOrderFilterReport val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
-        [CheckAccess(Actions = "Basic.MedicineOrder.Read")]
+        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             //get viewmodel và truyền vào view

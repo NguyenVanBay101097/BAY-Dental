@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> Get([FromQuery] ToaThuocPaged val)
         {
             var result = await _toaThuocService.GetPagedResultAsync(val);
@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var toaThuoc = await _toaThuocService.GetToaThuocForDisplayAsync(id);
@@ -53,19 +53,19 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Create")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Create")]
         public async Task<IActionResult> Create(ToaThuocSave val)
         {
             var order = _mapper.Map<ToaThuoc>(val);
             SaveOrderLines(val, order);
             await _toaThuocService.CreateAsync(order);
 
-            var basic = _mapper.Map<ToaThuocBasic>(order);
-            return Ok(basic);
+            var Medicine = _mapper.Map<ToaThuocBasic>(order);
+            return Ok(Medicine);
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Update")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Update")]
         public async Task<IActionResult> Update(Guid id, ToaThuocSave val)
         {
             var toathuoc = await _toaThuocService.SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
@@ -82,7 +82,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Delete")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var toaThuoc = await _toaThuocService.GetByIdAsync(id);
@@ -108,7 +108,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/Print")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);

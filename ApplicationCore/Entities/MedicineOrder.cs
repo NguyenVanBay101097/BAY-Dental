@@ -40,7 +40,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// bác sĩ
         /// </summary>
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
 
         public Guid CompanyId { get; set; }
