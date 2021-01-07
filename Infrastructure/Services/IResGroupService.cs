@@ -24,5 +24,7 @@ namespace Infrastructure.Services
         Task InsertSecurityData();
 
         Task UpdateModels();
+        Task UpdateIRules();
+
     }
 }
