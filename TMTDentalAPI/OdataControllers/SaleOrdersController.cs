@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SaasKit.Multitenancy;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
@@ -48,6 +49,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<SaleOrderViewModel>(_saleOrderService.SearchQuery());
@@ -56,6 +58,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public SingleResult<SaleOrderViewModel> Get([FromODataUri] Guid key)
         {
             var results = _mapper.ProjectTo<SaleOrderViewModel>(_saleOrderService.SearchQuery(x => x.Id == key));
@@ -63,6 +66,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
         {
             var res = await _saleOrderService.GetDisplayAsync(key);
@@ -76,6 +80,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetSaleOrderLines([FromODataUri] Guid key)
         {
             var res = await _saleOrderService.GetSaleOrderLineBySaleOrder(key);
@@ -95,6 +100,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [HttpGet]
         [EnableQuery]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> GetDotKhamStepByOrderLine([FromODataUri] Guid key)
         {
             var res = await _saleOrderService.GetDotKhamStepByOrderLine(key);
@@ -102,6 +108,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrder.Create")]
         public async Task<IActionResult> Post(SaleOrderSave model)
         {
             if (!ModelState.IsValid)
@@ -118,6 +125,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPut]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> PUT([FromODataUri] Guid key, SaleOrderSave val)
         {
             if (!ModelState.IsValid)
@@ -131,6 +139,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var saleOrder = await _saleOrderService.GetSaleOrderByIdAsync(id);
@@ -143,6 +152,7 @@ namespace TMTDentalAPI.OdataControllers
 
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> GetDotKhamListIds([FromODataUri] Guid key)
         {
             if (!ModelState.IsValid)
@@ -154,6 +164,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.DotKham.Create")]
         public async Task<IActionResult> CreateDotKham([FromODataUri] Guid key, [FromBody] DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)
@@ -181,6 +192,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionDone([FromBody] ActionDonePar val)
         {
             if (val.Ids == null || val.Ids.Count() == 0)
@@ -192,6 +204,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionConfirm([FromBody] ActionDonePar val)
         {
             if (val.Ids == null || val.Ids.Count() == 0)

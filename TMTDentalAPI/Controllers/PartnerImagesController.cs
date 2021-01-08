@@ -8,6 +8,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using TMTDentalAPI.ViewModels;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -35,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> BinaryUploadPartnerImage([FromForm]UploadPartnerImageViewModel val)
         {
             var res = await _partnerImageService.BinaryUploadPartnerImage(val);
@@ -42,6 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> SearchRead(PartnerImageSearchRead val)
         {
             var res = await _partnerImageService.SearchRead(val);
@@ -50,6 +53,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var partnerImage = await _partnerImageService.GetByIdAsync(id);

@@ -46,6 +46,8 @@ export class LaboOrderDefaultGet {
 export class LaboOrderDisplay {
     id: string;
     name: string;
+    quantity: number;
+    priceUnit: number;
     state: string;
     partnerRef: string;
     partnerId: string;

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaasKit.Multitenancy;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -33,6 +34,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "TCare.Messaging.Read")]
         public async Task<IActionResult> Get([FromQuery] TCareMessagingPaged val)
         {
             var result = await _tCareMessagingService.GetPagedResultAsync(val);
@@ -40,6 +42,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "TCare.Messaging.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var mes = await _tCareMessagingService.GetDisplay(id);
@@ -51,6 +54,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "TCare.Messaging.Create")]
         public async Task<IActionResult> Create(TCareMessagingSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -64,6 +68,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "TCare.Messaging.Update")]
         public async Task<IActionResult> Update(Guid id ,TCareMessagingSave val)
         {
             if (!ModelState.IsValid)
@@ -73,6 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "TCare.Messaging.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _tCareMessagingService.GetByIdAsync(id);
@@ -84,6 +90,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Messaging.Update")]
         public async Task<IActionResult> RefeshMessaging(IEnumerable<Guid> ids)
         {
             if (!ModelState.IsValid)

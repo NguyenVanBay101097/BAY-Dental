@@ -8,6 +8,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -31,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "ServiceCard.Order.Read")]
         public async Task<IActionResult> Get([FromQuery] ServiceCardOrderPaged val)
         {
             var res = await _cardOrderService.GetPagedResultAsync(val);
@@ -38,6 +40,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "ServiceCard.Order.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _cardOrderService.GetDisplay(id);
@@ -45,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "ServiceCard.Order.Create")]
         public async Task<IActionResult> Create(ServiceCardOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -56,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "ServiceCard.Order.Update")]
         public async Task<IActionResult> Update(Guid id, ServiceCardOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -66,6 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "ServiceCard.Order.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _cardOrderService.Unlink(new List<Guid>() { id });
@@ -73,6 +79,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Order.Update")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -83,6 +90,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Order.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -104,6 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Order.Create")]
         public async Task<IActionResult> CreateAndPaymentServiceCardOrder(CreateAndPaymentServiceCardOrderVm val)
         {
             await _unitOfWork.BeginTransactionAsync();

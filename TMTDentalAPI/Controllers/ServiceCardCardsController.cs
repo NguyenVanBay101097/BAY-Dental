@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -31,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "ServiceCard.Card.Read")]
         public async Task<IActionResult> Get([FromQuery]ServiceCardCardPaged val)
         {
             var res = await _cardCardService.GetPagedResultAsync(val);
@@ -47,6 +49,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonActive(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -57,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Card.Read")]
         public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)
         {
             var stream = new MemoryStream();

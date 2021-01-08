@@ -15,5 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// hãng:  nếu là labo thì hãng nào ?
         /// </summary>
         public string Firm { get; set; }
+
+        public decimal? LaboPrice { get; set; }
     }
 }

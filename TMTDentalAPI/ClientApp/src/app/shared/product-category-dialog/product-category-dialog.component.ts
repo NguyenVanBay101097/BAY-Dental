@@ -54,7 +54,7 @@ export class ProductCategoryDialogComponent implements OnInit {
         this.myform.patchValue(this.defaultCateg);
       }
 
-      this.searchCategories().subscribe(result => (this.filterdCategories = result));
+      // this.searchCategories().subscribe(result => (this.filterdCategories = result));
 
       this.categCbx.filterChange.asObservable().pipe(
         debounceTime(300),

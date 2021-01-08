@@ -66,7 +66,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       datePlannedObj: null,
       teeth: this.fb.array([]),
       color: null,
-      quantity: 0,
+      quantity: 1,
       priceUnit: 0,
       amountTotal: 0,
       indicated: null,
@@ -222,7 +222,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
+      result.quantity = 1;
       this.patchValue(result);
+    (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
     });
   }
 

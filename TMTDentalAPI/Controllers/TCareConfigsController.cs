@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -26,6 +27,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "TCare.Config.Create")]
         public async Task<IActionResult> GetConfig()
         {
             var res = await _tcareConfigService.GetConfig();
@@ -33,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "TCare.Config.Create")]
         public async Task<IActionResult> Update(Guid id, TCareConfigSave config)
         {
             var entity = await _tcareConfigService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();

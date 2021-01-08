@@ -37,7 +37,7 @@ const routes: Routes = [
     component: ProductManagementComponent,
     children: [
       { path: '', redirectTo: 'services', pathMatch: 'full' },
-      { path: 'services',data:{type: 'service'}, component: ProductManagementServicesComponent },
+      { path: 'services', component: ProductManagementServicesComponent },
       { path: 'products', component: ProductManagementProductsComponent },
       { path: 'medicines', component: ProductManagementMedicinesComponent }
     ]

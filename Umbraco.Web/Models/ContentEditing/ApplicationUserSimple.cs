@@ -71,5 +71,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SearchNameUserName { get; set; }
 
         public string Search { get; set; }
+
+        public bool? hasRoot { get; set; }
     }
 }

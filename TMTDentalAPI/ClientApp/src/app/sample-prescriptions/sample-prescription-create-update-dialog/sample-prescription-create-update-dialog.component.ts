@@ -107,7 +107,6 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       this.samplePrescriptionsService.update(this.id, val).subscribe(() => {
        this.activeModal.close();
       }, err => {
-        this.errorService.show(err);
       });
     } else {
       this.samplePrescriptionsService.create(val).subscribe(result => {
@@ -116,7 +115,6 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
           
         });
       }, err => {
-        this.errorService.show(err);
       });
     }
   }

@@ -28,8 +28,8 @@ export class LoaiThuChiListComponent implements OnInit {
     private loaiThuChiService: LoaiThuChiService) { }
 
   ngOnInit() {
-    this.route.queryParamMap.subscribe(params => {
-      this.type = params.get('type');
+    this.route.data.subscribe(data => {
+      this.type = data.type;
       this.loadDataFromApi();
     });
 

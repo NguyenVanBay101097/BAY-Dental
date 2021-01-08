@@ -165,6 +165,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> ActionInvoiceCreateV2(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -379,6 +380,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Create")]
         public async Task<IActionResult> CreateFastSaleOrder(FastSaleOrderSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -411,6 +413,7 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetPrintSaleOrder(Guid id)
         {
             var phieu = await _saleOrderService.GetPrint(id);

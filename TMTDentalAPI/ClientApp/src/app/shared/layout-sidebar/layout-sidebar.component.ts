@@ -67,16 +67,16 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Sổ quỹ', icon: 'fas fa-wallet', children: [], link: '/cash-book',
     },
-    {
-      name: 'Thu chi',
-      icon: 'fas fa-dollar-sign',
-      children: [
-        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
-        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
-        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
-        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
-      ],
-    },
+    // {
+    //   name: 'Thu chi',
+    //   icon: 'fas fa-dollar-sign',
+    //   children: [
+    //     { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+    //     { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+    //     { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+    //     { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
+    //   ],
+    // },
     {
       name: 'Thẻ tiền mặt',
       icon: 'far fa-credit-card',
@@ -137,6 +137,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
+        { name: 'Loại thu-chi', link: '/loai-thu-chi'},
+        // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
         // { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },

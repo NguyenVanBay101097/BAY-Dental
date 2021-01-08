@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -28,6 +29,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
         public async Task<IActionResult> Get([FromQuery]SaleCouponProgramPaged val)
         {
             var result = await _programService.GetPagedResultAsync(val);
@@ -35,6 +37,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var display = await _programService.GetDisplay(id);
@@ -45,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Create")]
         public async Task<IActionResult> Create(SaleCouponProgramSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -59,6 +63,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Update")]
         public async Task<IActionResult> Update(Guid id, SaleCouponProgramSave val)
         {
             if (!ModelState.IsValid)
@@ -70,6 +75,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _programService.Unlink(new List<Guid>() { id });
@@ -77,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCoupons.Create")]
         public async Task<IActionResult> GenerateCoupons(SaleCouponProgramGenerateCoupons val)
         {
             await _programService.GenerateCoupons(val);
@@ -84,6 +91,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -94,6 +102,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Update")]
         public async Task<IActionResult> ToggleActive(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -104,6 +113,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Update")]
         public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -115,6 +125,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCouponProgram.Update")]
         public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
         {
             if (ids == null)

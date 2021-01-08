@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "LoyaltyCard.CardType.Read")]
         public async Task<IActionResult> Get([FromQuery] CardTypePaged val)
         {
             var res = await _cardTypeService.GetPagedResultAsync(val);
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "LoyaltyCard.CardType.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist).FirstOrDefaultAsync();
@@ -47,6 +50,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "LoyaltyCard.CardType.Create")]
         public async Task<IActionResult> Create(CardTypeDisplay val)
         {
             if (null == val || !ModelState.IsValid)
@@ -60,6 +64,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "LoyaltyCard.CardType.Update")]
         public async Task<IActionResult> Update(Guid id, CardTypeDisplay val)
         {
             if (!ModelState.IsValid)
@@ -69,6 +74,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "LoyaltyCard.CardType.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _cardTypeService.GetByIdAsync(id);

@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SaasKit.Multitenancy;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
@@ -50,6 +51,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Get()
         {
             var results = await _partnerService.GetViewModelsAsync();
@@ -58,6 +60,7 @@ namespace TMTDentalAPI.OdataControllers
 
 
         [EnableQuery]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public SingleResult<PartnerInfoVm> Get([FromODataUri] Guid key)
         {
             var results = _partnerService.SearchQuery(x => x.Id == key).Select(x => new PartnerInfoVm
@@ -83,6 +86,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public IActionResult GetSaleOrders([FromODataUri] Guid key)
         {
             var results = _saleOrderService.SearchQuery(x => x.PartnerId == key && (!x.IsQuotation.HasValue || x.IsQuotation == false)).Select(x => new SaleOrderViewModel
@@ -101,6 +105,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpPut]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public IActionResult Put([FromODataUri] Guid key, PartnerViewModel value)
         {
             if (!ModelState.IsValid)
@@ -112,6 +117,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetView(ODataQueryOptions<GridPartnerViewModel> options, [FromQuery] IEnumerable<Guid> tagIds)
         {
             var results = await _partnerService.GetGridViewModelsAsync();
@@ -150,6 +156,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetDisplay([FromODataUri] Guid key)
         {
             var result = await _partnerService.SearchQuery(x => x.Id == key).Select(x => new PartnerDisplay
