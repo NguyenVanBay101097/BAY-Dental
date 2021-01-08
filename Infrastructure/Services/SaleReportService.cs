@@ -324,12 +324,16 @@ namespace Infrastructure.Services
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => !x.Order.State.Equals(val.State));
+
             var items = await query.ToListAsync();
 
             var totalItems = await query.CountAsync();

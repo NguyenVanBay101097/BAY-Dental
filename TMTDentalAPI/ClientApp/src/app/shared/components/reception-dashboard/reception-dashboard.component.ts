@@ -80,7 +80,8 @@ export class ReceptionDashboardComponent implements OnInit {
   loadSaleReport() {
     var val = new SaleReportSearch();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
     val.isQuotation = false;
     val.state = 'sale,done';
     // val.groupBy = "customer"
@@ -118,6 +119,78 @@ export class ReceptionDashboardComponent implements OnInit {
     }, err => {
       console.log(err);
     })
+  }
+
+  loadDataMoney() {
+    var companyId = this.authService.userInfo.companyId;
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId, begin: false });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId, begin: false });
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
+    });
+  }
+
+  loadDataMoneyByDateTime() {
+    var dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
+    });
+  }
+
+  loadAppoiment() {
+    var states = ["", "waiting,examination,done"];
+
+    var obs = states.map(state => {
+      var val = new AppointmentPaged();
+      val.dateTimeFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      val.dateTimeTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+      val.companyId = this.authService.userInfo.companyId;
+      val.state = state;
+      return this.appointmentService.getPaged(val);
+    });
+
+    forkJoin(obs).subscribe((result: any) => {
+      this.appointmentStateCount['all'] = result[0].totalItems;
+      this.appointmentStateCount['done'] = result[1].totalItems;
+    });
+  }
+
+  loadLaboOrderReport() {
+    var val = new LaboOrderReportInput();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
+    this.laboOrderService.getLaboOrderReport(val).subscribe(
+      result => {
+        this.laboOrderReport = result;
+      },
+      error => {
+
+      }
+    );
+  }
+
+  loadPartnerCustomerReport() {
+    var val = new PartnerCustomerReportInput();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
+    this.partnerService.getPartnerCustomerReport(val).subscribe(
+      result => {
+        this.customerReport = result;
+      },
+      error => {
+
+      }
+    );
   }
 
   exportServiceExcelFile() {
@@ -194,33 +267,7 @@ export class ReceptionDashboardComponent implements OnInit {
       this.router.navigateByUrl(`sale-orders/form?id=${item.id}`)
     }
   }
-
-  loadDataMoney() {
-    var companyId = this.authService.userInfo.companyId;
-
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId, begin: false });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId, begin: false });
-
-    forkJoin([cash, bank]).subscribe(results => {
-      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
-      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
-    });
-  }
-
-  loadDataMoneyByDateTime() {
-    var dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-    var companyId = this.authService.userInfo.companyId;
-
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
-
-    forkJoin([cash, bank]).subscribe(results => {
-      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
-      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
-    });
-  }
-
+ 
   stateGet(state) {
     switch (state) {
       case 'waiting':
@@ -242,52 +289,8 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadAppoiment();
   }
 
-  loadAppoiment() {
-    var states = ["", "waiting,examination,done"];
 
-    var obs = states.map(state => {
-      var val = new AppointmentPaged();
-      val.dateTimeFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      val.dateTimeTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      val.state = state;
-      return this.appointmentService.getPaged(val);
-    });
-
-    forkJoin(obs).subscribe((result: any) => {
-      this.appointmentStateCount['all'] = result[0].totalItems;
-      this.appointmentStateCount['done'] = result[1].totalItems;
-    });
-  }
-
-  loadLaboOrderReport() {
-    var val = new LaboOrderReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-
-    this.laboOrderService.getLaboOrderReport(val).subscribe(
-      result => {
-        this.laboOrderReport = result;
-      },
-      error => {
-
-      }
-    );
-  }
-
-  loadPartnerCustomerReport() {
-    var val = new PartnerCustomerReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-
-    this.partnerService.getPartnerCustomerReport(val).subscribe(
-      result => {
-        this.customerReport = result;
-      },
-      error => {
-
-      }
-    );
-  }
+ 
 
   getStateDisplay(state) {
     switch (state) {

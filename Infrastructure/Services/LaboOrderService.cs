@@ -750,6 +750,12 @@ namespace Infrastructure.Services
                 spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= dateTo));
             }
 
+            if (val.CompanyId.HasValue)
+            {
+                spec_1 = spec_1.And(new InitialSpecification<LaboOrderLine>(x => x.CompanyId == val.CompanyId.Value));
+                spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.CompanyId == val.CompanyId.Value));
+            }
+                
             spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate.HasValue == false));
 
             var lineObj = GetService<ILaboOrderLineService>();

@@ -1969,27 +1969,28 @@ namespace Infrastructure.Services
         {
             var result = new PartnerCustomerReportOutput();
             var partnerIds = SearchQuery(x => x.Customer == true).Select(x => x.Id);
-            var saleOrderObj = GetService<ISaleOrderService>();
-            var querySaleOrder = saleOrderObj.SearchQuery(x => true);
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var querySaleOrderLine = saleOrderLineObj.SearchQuery(x => true);
             if (val.DateFrom.HasValue)
-                querySaleOrder = querySaleOrder.Where(x => x.DateOrder >= val.DateFrom.Value);
+                querySaleOrderLine = querySaleOrderLine.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+
             if (val.DateTo.HasValue)
-                querySaleOrder = querySaleOrder.Where(x => x.DateOrder <= val.DateTo.Value);
+                querySaleOrderLine = querySaleOrderLine.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+
             if (val.CompanyId.HasValue)
-                querySaleOrder = querySaleOrder.Where(x => x.CompanyId == val.CompanyId.Value);
-            if (querySaleOrder.Any())
-            {
-                var temp = await querySaleOrder.Where(x => partnerIds.Contains(x.PartnerId))
-               .GroupBy(x => x.PartnerId)
-               .Select(x => new
-               {
-                   PartnerId = x.Key,
-                   PartnerCount = x.Count()
-               })
-               .OrderBy(x => x.PartnerId).ToListAsync();
-                result.CustomerOld = temp.Where(x => x.PartnerCount >= 1).Count();
-                result.CustomerNew = partnerIds.Count() - result.CustomerOld;
-            }
+                querySaleOrderLine = querySaleOrderLine.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            var temp = await querySaleOrderLine.Where(x => partnerIds.Contains(x.OrderPartnerId.Value))
+           .GroupBy(x => x.OrderPartnerId)
+           .Select(x => new
+           {
+               PartnerId = x.Key,
+               PartnerCount = x.Count()
+           })
+           .OrderBy(x => x.PartnerId).ToListAsync();
+
+            result.CustomerOld = temp.Where(x => x.PartnerCount >= 1).Count();
+            result.CustomerNew = partnerIds.Count() - result.CustomerOld;
             return result;
         }
 

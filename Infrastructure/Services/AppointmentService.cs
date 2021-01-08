@@ -93,6 +93,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (val.DotKhamId.HasValue)
                 query = query.Where(x => x.DotKhamId == val.DotKhamId);
 
@@ -113,7 +116,7 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
             {
-                query = query.Where(x=>x.SaleOrderId == val.SaleOrderId);
+                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
             }
 
             if (val.DoctorId.HasValue)
@@ -122,7 +125,7 @@ namespace Infrastructure.Services
             var totalItems = await query.CountAsync();
 
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
-          
+
             var items = await query
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
@@ -192,7 +195,7 @@ namespace Infrastructure.Services
             list.Add(new AppointmentStateCount { State = "examination", Count = expiredCount, Color = "#ffbf00" });
             list.Add(new AppointmentStateCount { State = "done", Count = doneCount, Color = "#666666" });
             list.Add(new AppointmentStateCount { State = "cancel", Count = cancelCount, Color = "#cc0000" });
-           
+
             return list;
         }
 
