@@ -53,6 +53,7 @@ export class PopoverStateAppointmentComponent implements OnInit {
   get f() { return this.formGroup.controls; }
 
   onChangeState() {
+    event.stopPropagation();
     if (this.stateControl == 'cancel') {
       this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("reason").updateValueAndValidity();
