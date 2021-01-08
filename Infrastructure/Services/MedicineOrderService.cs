@@ -31,7 +31,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
-                   x.Partner.Name.Contains(val.Search));
+                   x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) | x.Partner.Ref.Contains(val.Search));
 
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);

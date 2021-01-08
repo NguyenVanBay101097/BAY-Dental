@@ -1,22 +1,4 @@
-<div class="report-prescription-payment">
-    <div class="revenue">
-        <div class="title">
-            <h6>Doanh thu thuốc</h6>
-        </div>
-        <h4 class="text-primary">
-            {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
-        </h4>
-    </div>
-    <div class="number-payment">
-        <div class="title">
-            <h6>Số hóa đơn</h6>
-        </div>
-        <h4 class="text-primary">
-            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
-        </h4>
-    </div>
-</div>
-<div class="filter-toathuoc">
+<!-- <div class="filter-toathuoc">
     <div class="w-50 d-flex">
         <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'"
             (valueChange)="stateChange($event)" [valueField]="'value'">
@@ -29,41 +11,88 @@
         <input class="form-control btn-sm cu-height" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
             type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
+</div> -->
+
+    <div class="report-prescription-payment">
+        <div class="revenue">
+            <div class="title">
+                <h6>Doanh thu thuốc</h6>
+            </div>
+            <h4 class="text-primary">
+                {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
+            </h4>
+        </div>
+        <div class="number-payment">
+            <div class="title">
+                <h6>Số hóa đơn</h6>
+            </div>
+            <h4 class="text-primary">
+                {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
+            </h4>
+        </div>
+    </div>
+    <div class="o_control_panel">
+        <div class="o_cp_t_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <div class="d-flex">
+                        <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                            [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)"
+                            [valueField]="'value'">
+                        </kendo-combobox>
+                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
+                            [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        </app-tai-date-range-filter-dropdown>
+                    </div>
+
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_t_right">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+
+<div class="o_content">
+    <kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset"
+        [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
+        (cellClick)="clickItem($event)">
+        <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.orderDate | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+
+        <kendo-grid-column title="Phiếu điều trị" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
+                    [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
+                    {{dataItem.toaThuoc.saleOrderName}}
+                </a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="toaThuoc.name" title="Số đơn thuốc" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Số hóa đơn thuốc" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Bác sĩ" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="amount" title="Tổng tiền" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái hóa đơn" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
+                <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
+                <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
 </div>
-<kendo-grid id="medicineOrder" class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-    [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" (cellClick)="clickItem($event)">
-    <kendo-grid-column field="orderDate" title="Ngày thanh toán" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.orderDate | date: 'shortDate'}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="partnerName" title="Khách hàng" width="120">
-    </kendo-grid-column>
-   
-    <kendo-grid-column title="Phiếu điều trị" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
-                [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
-                {{dataItem.toaThuoc.saleOrderName}}
-            </a>
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="toaThuoc.name" title="Số đơn thuốc" width="120">
-    </kendo-grid-column>
-    <kendo-grid-column field="name" title="Số hóa đơn thuốc" width="150">
-    </kendo-grid-column>
-    <kendo-grid-column field="employeeName" title="Bác sĩ" width="120">
-    </kendo-grid-column>
-    <kendo-grid-column class="text-right" field="amount" title="Tổng tiền" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="state" title="Trạng thái hóa đơn" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
-            <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
-            <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
-        </ng-template>
-    </kendo-grid-column>
-</kendo-grid>

@@ -51,6 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string EmployeeName { get; set; }
 
         public string PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
 
         public Guid ToaThuocId { get; set; }
         public ToaThuocBasic ToaThuoc { get; set; }
