@@ -447,7 +447,7 @@ namespace Infrastructure.Services
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
-                case "medicine.order_comp_rule":
+                case "base.medicine_order_comp_rule":
                     return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
                 default:
                     return null;
