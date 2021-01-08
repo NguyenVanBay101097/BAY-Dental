@@ -115,8 +115,17 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     return this.toaThuocForm.get("lines") as FormArray;
   }
 
+  onChangeProduct(val){
+    debugger
+  }
+
   getFBValueItem(item) {
     return this.toaThuocForm.get(item).value;
+  }
+
+  getUOM(val){
+    var res = val.value;
+    return res.product.oumName;
   }
 
   searchEmployees(search?: string) {

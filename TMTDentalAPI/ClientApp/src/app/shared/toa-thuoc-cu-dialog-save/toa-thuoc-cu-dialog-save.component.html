@@ -77,7 +77,7 @@
                             <ng-container *ngFor="let item of lines.controls; let i = index;">
                                 <tr [formGroupName]="i">
                                     <td>
-                                        <kendo-combobox [data]="productList" [textField]="'name'"
+                                        <kendo-combobox [data]="productList" [textField]="'name'" (valueChange)="onChangeProduct($event)"
                                             formControlName="product" [kendoDropDownFilter]="filterSettings"
                                             [valueField]="'id'">
                                         </kendo-combobox>
@@ -97,7 +97,7 @@
                                                 [format]="'n0'" formControlName="amountOfTimes"
                                                 (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
-                                            <span>Viên</span>
+                                            <span>{{getUOM(item)}}</span>
                                         </div>
                                     </td>
                                     <td>
