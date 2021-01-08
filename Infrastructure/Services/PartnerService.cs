@@ -178,7 +178,11 @@ namespace Infrastructure.Services
         public async Task<AppointmentBasic> GetNextAppointment(Guid id)
         {
             var apObj = GetService<IAppointmentService>();
-            var res = await _mapper.ProjectTo<AppointmentBasic>(apObj.SearchQuery(x => x.PartnerId == id, orderBy: x => x.OrderByDescending(s => s.Date))).FirstOrDefaultAsync();
+            var appointment = await apObj.SearchQuery(x => x.PartnerId == id, orderBy: x => x.OrderByDescending(s => s.Date))
+                .Include(x => x.Doctor)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+            var res = _mapper.Map<AppointmentBasic>(appointment);
             return res;
         }
 

@@ -64,6 +64,7 @@ export class AppointmentPaged {
     dateTimeTo: string;
     state: string;
     partnerId: string;
+    doctorId: string;
 }
 
 export class AppointmentSearch {
