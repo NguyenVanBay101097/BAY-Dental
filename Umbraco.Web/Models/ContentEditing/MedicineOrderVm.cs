@@ -68,7 +68,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime OrderDate { get; set; }
 
-        public Guid journalId { get; set; }
+        public Guid JournalId { get; set; }
         public Guid ToaThuocId { get; set; }
 
         public Guid? EmployeeId { get; set; }

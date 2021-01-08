@@ -165,6 +165,9 @@ namespace Infrastructure.Services
 
             SaveOrderLines(val, medicineOrder);
 
+            _AmountMedicineLine(medicineOrder.MedicineOrderLines);
+            _AmountMedicine(medicineOrder);
+
             await CreateAsync(medicineOrder);
 
             var moveObj = GetService<IAccountMoveService>();
@@ -202,6 +205,24 @@ namespace Infrastructure.Services
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
+        }
+
+        public void _AmountMedicine(MedicineOrder seft)
+        {
+            var totalAmount = 0M;
+            foreach (var line in seft.MedicineOrderLines)
+            {
+                totalAmount += line.AmountTotal;
+            }
+            seft.Amount = totalAmount;
+        }
+
+        public void _AmountMedicineLine(IEnumerable<MedicineOrderLine> lines)
+        {
+            foreach (var line in lines)
+            {
+                line.AmountTotal = line.Quantity * line.Price;
+            }
         }
 
 

@@ -131,6 +131,17 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     }
   }
 
+  getState(val) {
+    switch (val) {
+      case "confirmed":
+        return "Đã thanh toán";
+      case "cancel":
+        return "Hủy thanh toán";
+      default:
+        return "Chưa thanh toán";
+    }
+  }
+
   computeUseAt(value) {
     switch (value) {
       case "in_meal":

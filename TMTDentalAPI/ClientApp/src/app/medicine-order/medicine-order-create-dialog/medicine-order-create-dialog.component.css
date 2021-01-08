@@ -19,7 +19,10 @@
 }
 
 .table td, .table th {
-    padding: .55rem;
     vertical-align: middle;
     border-top: 1px solid #dee2e6;
+}
+
+.o_form_view .o_group.o_inner_group.oe_subtotal_footer {
+    border-top: none;
 }
