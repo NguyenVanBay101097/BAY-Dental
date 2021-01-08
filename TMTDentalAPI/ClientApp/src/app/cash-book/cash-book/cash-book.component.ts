@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
@@ -22,17 +23,19 @@ export class CashBookComponent implements OnInit {
   reportCashData: ReportDataResult;
   reportBankData: ReportDataResult;
   changeToLoadData: boolean = false;
-  listType: Array<string> = ['inbound', 'outbound'];
+  listType = [{ name: 'Phiếu chi', value: 'outbound' }, { name: 'Phiếu thu', value: 'inbound' }];
 
   constructor(
     private modalService: NgbModal,
     private cashBookService: CashBookService,
     private intlService: IntlService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
     this.paged = new CashBookPaged();
     this.paged.resultSelection = "cash";
+    this.paged.companyId = this.authService.userInfo.companyId
     this.paged.begin = true;
     this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.reportCashData = new ReportDataResult();
@@ -49,7 +52,8 @@ export class CashBookComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    this.cashBookService.getSumary({ resultSelection: "cash" })
+    var companyId = this.authService.userInfo.companyId;
+    this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId })
       .subscribe(
         (res) => {
           this.reportCashData = res;
@@ -61,8 +65,8 @@ export class CashBookComponent implements OnInit {
         }
       );
 
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash" });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank" });
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId });
 
     forkJoin([cash, bank]).subscribe(results => {
       this.reportCashData = results[0];
@@ -76,8 +80,8 @@ export class CashBookComponent implements OnInit {
     this.changeToLoadData = !this.changeToLoadData;
   }
 
-  changeType(value) {
-    this.paged.type = value;
+  changeType(type) {
+    this.paged.type = type.value;
     this.changeToLoadData = !this.changeToLoadData;
   }
 
@@ -103,7 +107,7 @@ export class CashBookComponent implements OnInit {
       } else if (this.paged.resultSelection == "bank") {
         filename = "SoQuyNganHang";
       }
-      
+
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
