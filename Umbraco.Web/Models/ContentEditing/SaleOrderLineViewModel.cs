@@ -17,4 +17,31 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
         public IEnumerable<DotKhamStepBasic> Steps { get; set; } = new List<DotKhamStepBasic>();
     }
+
+    public class SaleOrderLineSaleTodayVM
+    {
+        public Guid Id { get; set; }
+
+        public string OrderName { get; set; }
+
+        public string PartnerDisplayName { get; set; }
+
+        public string EmployeeName { get; set; }
+
+        public string ProductName { get; set; }
+
+        public decimal PriceTotal { get; set; }
+
+        /// <summary>
+        /// Số tiền đã thanh toán
+        /// </summary>
+        public decimal? AmountPaid { get; set; }
+
+        /// <summary>
+        /// Tiền còn nợ
+        /// </summary>
+        public decimal? AmountResidual { get; set; }
+
+        public string State { get; set; }
+    }
 }
