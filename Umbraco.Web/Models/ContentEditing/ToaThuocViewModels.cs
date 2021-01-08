@@ -15,6 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
         public string  PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
 
         public Guid SaleOrderId { get; set; }
         public string SaleOrderName { get; set; }

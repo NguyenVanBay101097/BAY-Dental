@@ -96,6 +96,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       var control = this.formGroup.get('medicineOrderLines') as FormArray;
       control.clear();
       var lines = this.precscriptPayment.medicineOrderLines;
+      console.log(lines);
       lines.forEach(line => {
         control.push(this.fb.group(line));
       });

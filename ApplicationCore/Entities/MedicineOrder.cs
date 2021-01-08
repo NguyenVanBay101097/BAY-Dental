@@ -61,6 +61,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Note { get; set; }
 
+        public Guid? MoveId { get; set; }
+        public AccountMove Move { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

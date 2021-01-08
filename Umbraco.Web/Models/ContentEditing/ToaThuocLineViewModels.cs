@@ -16,7 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public Guid ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public ProductBasic Product { get; set; }
 
         public int? Sequence { get; set; }
 

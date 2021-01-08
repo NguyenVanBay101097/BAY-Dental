@@ -7,3 +7,15 @@
 .text-decoraction{
     text-decoration: revert;
 }
+
+.o_cp_t_right {
+    width: 50%;
+    display: -webkit-box;
+    display: flex;
+}
+
+.o_cp_t_left {
+    width: 50%;
+    display: -webkit-box;
+    display: flex;
+}

@@ -106,14 +106,14 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ToListAsync());
+            var toathuocLines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ThenInclude(s => s.UOM).ToListAsync());
             foreach (var line in toathuocLines)
             {
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
                 {
                     Quantity = line.Quantity,
-                    Price = line.Product.ListPrice.HasValue ? line.Product.ListPrice.Value : 0,
-                    AmountTotal = line.Quantity * line.Product.ListPrice.Value,
+                    Price = line.Product.ListPrice,
+                    AmountTotal = line.Quantity * line.Product.ListPrice,
                     ToaThuocLine = line,
                     ToaThuocLineId = line.Id
                 });
@@ -175,7 +175,7 @@ namespace Infrastructure.Services
 
             var moves = await _PrepareAccountMove(medicineOrder);
             await moveObj.ActionPost(moves);
-
+            medicineOrder.MoveId = moves.FirstOrDefault().Id;
             medicineOrder.State = "confirmed";
 
             ///thanh toán
@@ -256,7 +256,7 @@ namespace Infrastructure.Services
         private async Task<AccountMove> _PrepareInvoice(MedicineOrder self)
         {
             var accountMoveObj = GetService<IAccountMoveService>();
-            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice");
+            var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "out_invoice", default_company_id: self.CompanyId);
             if (journal == null)
                 throw new Exception($"Please define an accounting sales journal for the company {CompanyId}.");
 
@@ -307,9 +307,11 @@ namespace Infrastructure.Services
             var payment_ids = new List<Guid>();
             foreach (var order in medicineOrders)
             {
-                var move_id = await moveObj.SearchQuery(x => x.InvoiceOrigin == order.Name).Select(x => x.Id).FirstOrDefaultAsync();
-                if (move_id != null)
+                if (order.MoveId.HasValue)
+                {
+                    var move_id = await moveObj.SearchQuery(x => x.Id == order.MoveId).Select(x => x.Id).FirstOrDefaultAsync();
                     move_ids.Add(move_id);
+                }
 
                 if (order.AccountPaymentId.HasValue)
                 {
@@ -437,7 +439,7 @@ namespace Infrastructure.Services
             return report;
         }
 
-       
+
 
 
 

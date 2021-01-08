@@ -1,4 +1,4 @@
-<div class="o_cp_controller">
+<!-- <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">Bán thuốc</li>
@@ -28,4 +28,30 @@
 
 <div class="o_content">
     <router-outlet></router-outlet>
+</div> -->
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Bán thuốc</li>
+        </ol>
+        <div>
+            
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="prescriptions" class="nav-link py-1" routerLinkActive="active">Đơn thuốc</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="prescription-payments" class="nav-link px-3 py-1" routerLinkActive="active">Hóa đơn thuốc</a>
+                    </li>
+                   
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
 </div>
+ <router-outlet></router-outlet>

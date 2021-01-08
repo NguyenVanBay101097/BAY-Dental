@@ -87,10 +87,10 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.SearchQuery(x => x.Id == val.ProductId)
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x=>x.ProductUoMRels).Include(x => x.UOM)
                     .FirstOrDefaultAsync();
                 res.ProductId = product.Id;
-                res.Product = _mapper.Map<ProductSimple>(product);
+                res.Product = _mapper.Map<ProductBasic>(product);
                 res.Note = product.KeToaNote;
             }
             return res;
@@ -269,7 +269,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
-                   x.Partner.Name.Contains(val.Search));
+                   x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) | x.Partner.Ref.Contains(val.Search));
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);

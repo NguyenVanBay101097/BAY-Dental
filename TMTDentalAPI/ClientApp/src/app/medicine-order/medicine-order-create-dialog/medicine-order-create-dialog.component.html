@@ -134,7 +134,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-sm table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th scope="col">Tên thuốc</th>
@@ -155,13 +155,18 @@
                                     <tr [formGroupName]="i">
                                         <td>{{line.get('toaThuocLine') && line.get('toaThuocLine').value ?
                                             line.get('toaThuocLine').value.product.name : ''}}</td>
-                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                        <td class="text-center">
+                                            {{line.get('toaThuocLine') &&
                                             line.get('toaThuocLine').value ?
-                                            line.get('toaThuocLine').value.numberOfTimes : ''}}</td>
-                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                            line.get('toaThuocLine').value.numberOfTimes : ''}} lần
+                                        </td>
+                                        <td class="text-center">
+                                            {{line.get('toaThuocLine') &&
                                             line.get('toaThuocLine').value ?
-                                            line.get('toaThuocLine').value.amountOfTimes : ''}}</td>
-                                        <td class="text-center">{{line.get('toaThuocLine') &&
+                                            line.get('toaThuocLine').value.amountOfTimes : ''}}
+                                            {{line.get('toaThuocLine').value.product.uomName}}</td>
+                                        <td class="text-center">
+                                            {{line.get('toaThuocLine') &&
                                             line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays
                                             : ''}}</td>
                                         <td>{{line.get('toaThuocLine') ?
@@ -172,7 +177,7 @@
                                                 *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                                 {{line.get('quantity') ? line.get('quantity').value : 1}}
                                             </span>
-                                            <input
+                                            <input [min]="0"
                                                 *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
                                                 type="number" class="form-control text-right" formControlName="quantity"
                                                 (change)="computeTotalAmount()" (keyup)="computeTotalAmount()">
