@@ -314,7 +314,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var query = lineObj.SearchQuery(x => true)
+            var query = lineObj.SearchQuery(x => (!x.Order.IsQuotation.HasValue || x.Order.IsQuotation == false))
                 .Include(x => x.Order)
                 .Include(x => x.Employee)
                 .Include(x => x.OrderPartner)
