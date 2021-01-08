@@ -790,8 +790,52 @@ html .o_web_client {
  outline: none;
 }
 
-
-
-
-
+.o_tag_color_0 {
+  background-color: #6c757d;
+  color: white !important;
+}
+.o_tag_color_1 {
+  background-color: #F06050;
+  color: white !important;
+}
+.o_tag_color_2 {
+  background-color: #F4A460;
+  color: white !important;
+}
+.o_tag_color_3 {
+  background-color: #F7CD1F;
+  color: white !important;
+}
+.o_tag_color_4 {
+  background-color: #6CC1ED;
+  color: white !important;
+}
+.o_tag_color_5 {
+  background-color: #814968;
+  color: white !important;
+}
+.o_tag_color_6 {
+  background-color: #EB7E7F;
+  color: white !important;
+}
+.o_tag_color_7 {
+  background-color: #2C8397;
+  color: white !important;
+}
+.o_tag_color_8 {
+  background-color: #475577;
+  color: white !important;
+}
+.o_tag_color_9 {
+  background-color: #30C381;
+  color: white !important;
+}
+.o_tag_color_10 {
+  background-color: #F06050;
+  color: white !important;
+}
+.o_tag_color_11 {
+  background-color: #9365B8;
+  color: white !important;
+}
 

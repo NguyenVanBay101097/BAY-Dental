@@ -129,11 +129,4 @@ export class PartnerCategoryPopoverComponent implements OnInit {
         })
       );
   }
-
-  setColorMultiselect() {
-    $(document).ready(function() {
-      console.log("Hello");
-      $(".k-multiselect-wrap li.k-button").css("background-color", "yellow");
-    });
-  }
 }
