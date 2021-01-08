@@ -9,8 +9,8 @@
                 <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)" class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
             </div>
             <div class="flex-fill">
-                <button class="btn btn-sm btn-primary" (click)="createService()">Thêm mới</button>
-                <button type="button" class="btn btn-light bg-white btn-sm" (click)="importFromExcel()">
+                <button class="btn btn-sm btn-primary mr-2" (click)="createService()">Thêm mới</button>
+                <button type="button" class="btn btn-light bg-white btn-sm mr-2" (click)="importFromExcel()">
                     <i class="fas fa-upload"></i> Import
                   </button>
                 <button type="button" class="btn btn-light bg-white btn-sm" (click)="exportExcelFile()">
