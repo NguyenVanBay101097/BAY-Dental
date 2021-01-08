@@ -6,7 +6,6 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';
-declare var $: any;
 
 @Component({
   selector: 'app-partner-category-popover',
