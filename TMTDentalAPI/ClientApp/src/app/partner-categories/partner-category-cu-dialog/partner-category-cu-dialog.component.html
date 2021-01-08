@@ -45,7 +45,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;" class=".o_td_control_left">
                                     <button *ngFor="let item of [].constructor(16); index as i" type="button"
-                                        class="btn btn-rect text-white t-bg-0 mr-2 mb-2" [ngClass]="'t-bg-' + i"
+                                        class="btn btn-sm btn-square text-white t-bg-0 mr-2 mb-2" [ngClass]="'t-bg-' + i"
                                         (click)="clickColor(i)">
                                         <i *ngIf="i == colorSelected" class="fas fa-check"></i>
                                     </button>

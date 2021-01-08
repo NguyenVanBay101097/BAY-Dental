@@ -23,9 +23,6 @@
             [valueField]="'Id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true"
             [valueNormalizer]="valueNormalizer" [popupSettings]="{appendTo: 'component'}"
             >
-            <ng-template kendoMultiSelectTagTemplate let-dataItem>
-                <span class="template">{{ dataItem.Name }}</span>
-            </ng-template>
         </kendo-multiselect>
         <button type="button" class="btn btn-sm mt-1 btn-primary" (click)="SavePartnerCategories(mytags)" accesskey="c">
             Lưu
