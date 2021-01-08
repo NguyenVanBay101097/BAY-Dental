@@ -81,6 +81,8 @@ export class ReceptionDashboardComponent implements OnInit {
     var val = new SaleReportSearch();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.isQuotation = false;
+    val.state = 'sale,done';
     // val.groupBy = "customer"
     this.saleReportService.getReport(val).subscribe(
       result => {
