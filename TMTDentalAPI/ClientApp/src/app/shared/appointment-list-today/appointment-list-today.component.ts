@@ -34,6 +34,7 @@ export class AppointmentListTodayComponent implements OnInit {
   stateFilterOptions: any[] = [];
   stateCount: any = {};
   states: any[] = [
+    { value: '', text: 'Tổng hẹn'},
     { value: 'confirmed', text: 'Đang hẹn'},
     { value: 'waiting', text: 'Chờ khám'},
     { value: 'examination', text: 'Đang khám'},
