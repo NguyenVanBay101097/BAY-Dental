@@ -70,6 +70,19 @@ namespace ApplicationCore.Entities
         public Guid? AccountPaymentId { get; set; }
         public AccountPayment AccountPayment { get; set; }
 
+
+        /// <summary>
+        /// phiếu xuất kho
+        /// </summary>
+        public Guid? StockPickingOutgoingId { get; set; }
+        public StockPicking StockPickingOutgoing { get; set; }
+
+        /// <summary>
+        /// phiếu nhập kho
+        /// </summary>
+        public Guid? StockPickingIncomingId { get; set; }
+        public StockPicking StockPickingIncoming { get; set; }
+
         ///line
 
         public ICollection<MedicineOrderLine> MedicineOrderLines { get; set; } = new List<MedicineOrderLine>();

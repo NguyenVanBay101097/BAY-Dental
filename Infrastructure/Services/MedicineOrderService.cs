@@ -115,7 +115,8 @@ namespace Infrastructure.Services
                     Price = line.Product.ListPrice,
                     AmountTotal = line.Quantity * line.Product.ListPrice,
                     ToaThuocLine = line,
-                    ToaThuocLineId = line.Id
+                    ToaThuocLineId = line.Id,
+                    ProductId = line.ProductId
                 });
             }
             medicineOrder.MedicineOrderLines = medicineOrderLines;
@@ -181,6 +182,8 @@ namespace Infrastructure.Services
             medicineOrder.MoveId = moves.FirstOrDefault().Id;
             medicineOrder.State = "confirmed";
 
+            await _CreatePicking(new List<MedicineOrder>() { medicineOrder });
+
             ///thanh toán
             var amountTotal = medicineOrder.Amount;
             var payment = new AccountPayment()
@@ -205,6 +208,81 @@ namespace Infrastructure.Services
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
+        }
+
+        private async Task _CreatePicking(IEnumerable<MedicineOrder> self, bool cancel = false)
+        {
+            var productTypes = new string[] { "product", "consu" };
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var stockMoveObj = GetService<IStockMoveService>();
+            var pickingObj = GetService<IStockPickingService>();
+            var whObj = GetService<IStockWarehouseService>();
+            var locationObj = GetService<IStockLocationService>();
+
+            foreach (var order in self)
+            {
+                if (!order.MedicineOrderLines.Any(x => productTypes.Contains(x.Product.Type)))
+                    continue;
+
+                var pickingTypeCode = !cancel ? "outgoing" : "incoming";
+                var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == pickingTypeCode && x.Warehouse.CompanyId == order.CompanyId).FirstOrDefaultAsync();
+                if (pickingType == null)
+                    throw new ArgumentNullException("pickingType");
+
+                if (!pickingType.DefaultLocationSrcId.HasValue || !pickingType.DefaultLocationDestId.HasValue)
+                    throw new Exception("DefaultLocationSrcId DefaultLocationDestId required");
+
+                var wh = await whObj.SearchQuery(x => x.CompanyId == order.CompanyId).FirstOrDefaultAsync();
+                if (wh == null)
+                    throw new ArgumentNullException("wh");
+
+                var locationDest = await locationObj.GetDefaultCustomerLocation();
+                if (locationDest == null)
+                    throw new ArgumentNullException("locationDest");
+
+                var locationId = !cancel ? wh.LocationId : locationDest.Id;
+                var locationDestId = !cancel ? locationDest.Id : wh.LocationId;
+
+                var picking_vals = new StockPicking()
+                {
+                    Origin = order.Name,
+                    PartnerId = order.PartnerId,
+                    PickingTypeId = pickingType.Id,
+                    CompanyId = order.CompanyId,
+                    LocationId = locationId,
+                    LocationDestId = locationDestId,
+                };
+
+                await pickingObj.CreateAsync(picking_vals);
+
+                var sequence = 1;
+                var moves = new List<StockMove>();
+                foreach(var line in order.MedicineOrderLines.Where(x => productTypes.Contains(x.Product.Type) && x.Quantity != 0))
+                {
+                    var move = new StockMove
+                    {
+                        Name = line.Product.Name,
+                        ProductUOMId = line.Product.UOMId,
+                        PickingId = picking_vals.Id,
+                        ProductId = line.Product.Id,
+                        ProductUOMQty = line.Quantity,
+                        LocationId = locationId,
+                        LocationDestId = locationDestId,
+                        Sequence = sequence++,
+                        CompanyId = picking_vals.CompanyId
+                    };
+                    moves.Add(move);
+                }
+
+                await stockMoveObj.CreateAsync(moves);
+
+                if (!cancel)
+                    order.StockPickingOutgoingId = picking_vals.Id;
+                else
+                    order.StockPickingIncomingId = picking_vals.Id;
+
+                await pickingObj.ActionDone(new List<Guid>() { picking_vals.Id });
+            }
         }
 
         public void _AmountMedicine(MedicineOrder seft)
@@ -317,6 +395,8 @@ namespace Infrastructure.Services
             var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
                .Include(x => x.Company)
                .Include(x => x.MedicineOrderLines)
+               .ThenInclude(s => s.Product)
+               .ThenInclude(d => d.UOM)
                .Include(x => x.AccountPayment)
                .Include(x => x.Company)
                .Include(x => x.Employee)
@@ -341,6 +421,9 @@ namespace Infrastructure.Services
                         payment_ids.Add(payment_id);
                 }
 
+                //tạo và ghi sổ phiếu nhập kho
+                await _CreatePicking(new List<MedicineOrder>() { order } , true);
+
                 order.State = "cancel";
             }
 
@@ -352,6 +435,8 @@ namespace Infrastructure.Services
 
             if (payment_ids.Any())
                 await accountPaymentObj.ActionDraftUnlink(payment_ids);
+
+           
 
 
             await UpdateAsync(medicineOrders);
@@ -379,6 +464,7 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<MedicineOrderLine>(line);
+                    item.ProductId =  line.ProductId;
                     order.MedicineOrderLines.Add(item);
                 }
                 else

@@ -50,6 +50,10 @@
     <Compile Remove="Data\Migrations\20210105074739_Create_TableMedicineOrders.Designer.cs" />
     <Compile Remove="Data\Migrations\20210105102347_Update_MedicineOrders_AddAccountPayment.cs" />
     <Compile Remove="Data\Migrations\20210105102347_Update_MedicineOrders_AddAccountPayment.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210108050346_Add_AccountMove_MedicineOrder.cs" />
+    <Compile Remove="Data\Migrations\20210108050346_Add_AccountMove_MedicineOrder.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210111043704_Add_AccountMove_StockPicking_MedicineOrder.cs" />
+    <Compile Remove="Data\Migrations\20210111043704_Add_AccountMove_StockPicking_MedicineOrder.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

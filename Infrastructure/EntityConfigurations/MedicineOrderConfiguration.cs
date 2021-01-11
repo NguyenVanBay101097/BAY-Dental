@@ -24,8 +24,8 @@ namespace Infrastructure.EntityConfigurations
             .HasForeignKey(x => x.ToathuocId);
 
             builder.HasOne(x => x.Partner)
-          .WithMany()
-          .HasForeignKey(x => x.PartnerId);
+            .WithMany()
+            .HasForeignKey(x => x.PartnerId);
 
             builder.HasOne(x => x.AccountPayment)
            .WithMany()
@@ -35,9 +35,17 @@ namespace Infrastructure.EntityConfigurations
             .WithMany()
             .HasForeignKey(x => x.MoveId);
 
+            builder.HasOne(x => x.StockPickingIncoming)
+            .WithMany()
+            .HasForeignKey(x => x.StockPickingIncomingId);
+
+            builder.HasOne(x => x.StockPickingOutgoing)
+            .WithMany()
+            .HasForeignKey(x => x.StockPickingOutgoingId);
+
             builder.HasOne(x => x.Journal)
-              .WithMany()
-              .HasForeignKey(x => x.JournalId);
+            .WithMany()
+            .HasForeignKey(x => x.JournalId);
 
             builder.HasOne(x => x.Company)
            .WithMany()

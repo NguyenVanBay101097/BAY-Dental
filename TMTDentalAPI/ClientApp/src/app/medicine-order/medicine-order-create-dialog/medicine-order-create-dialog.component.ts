@@ -109,6 +109,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       result => {
         this.precscriptPayment = result;
         if (result) {
+          debugger
           this.precscriptPayment = result;
           this.loadData(result);
         }

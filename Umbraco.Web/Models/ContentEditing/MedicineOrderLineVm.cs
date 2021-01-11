@@ -12,6 +12,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal AmountTotal { get; set; }
+        public Guid? ProductId { get; set; }
     }
 
     public class MedicineOrderLineSave
@@ -21,6 +22,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal AmountTotal { get; set; }
+        public Guid? ProductId { get; set; }
     }
 
 

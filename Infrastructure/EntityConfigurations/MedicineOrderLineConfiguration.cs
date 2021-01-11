@@ -20,6 +20,10 @@ namespace Infrastructure.EntityConfigurations
              .HasForeignKey(x => x.ToaThuocLineId)
              .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Product)
+           .WithMany()
+           .HasForeignKey(x => x.ProductId);
+
             builder.HasOne(x => x.CreatedBy)
                   .WithMany()
                   .HasForeignKey(x => x.CreatedById);

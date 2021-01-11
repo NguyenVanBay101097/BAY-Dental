@@ -74,6 +74,7 @@ export class PrecscriptPaymentLineDisplay {
   quantity: number;
   price: number;
   amountTotal: number;
+  productId:string;
 }
 
 export class PrecsriptionPaymentSave {

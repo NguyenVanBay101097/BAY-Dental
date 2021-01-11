@@ -7,6 +7,7 @@ namespace ApplicationCore.Entities
     public class MedicineOrderLine : BaseEntity
     {
         public decimal Quantity { get; set; }
+
         public decimal Price { get; set; }
 
         public decimal AmountTotal { get; set; }
@@ -16,5 +17,8 @@ namespace ApplicationCore.Entities
 
         public Guid ToaThuocLineId { get; set; }
         public ToaThuocLine ToaThuocLine { get; set; }
+
+        public Guid? ProductId { get; set; }
+        public Product Product { get; set; }
     }
 }

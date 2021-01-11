@@ -4569,6 +4569,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("StockPickingIncomingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("StockPickingOutgoingId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ToathuocId")
                         .HasColumnType("uniqueidentifier");
 
@@ -4590,6 +4596,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("MoveId");
 
                     b.HasIndex("PartnerId");
+
+                    b.HasIndex("StockPickingIncomingId");
+
+                    b.HasIndex("StockPickingOutgoingId");
 
                     b.HasIndex("ToathuocId");
 
@@ -4622,6 +4632,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -4636,6 +4649,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("MedicineOrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("ToaThuocLineId");
 
@@ -10856,6 +10871,14 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ApplicationCore.Entities.StockPicking", "StockPickingIncoming")
+                        .WithMany()
+                        .HasForeignKey("StockPickingIncomingId");
+
+                    b.HasOne("ApplicationCore.Entities.StockPicking", "StockPickingOutgoing")
+                        .WithMany()
+                        .HasForeignKey("StockPickingOutgoingId");
+
                     b.HasOne("ApplicationCore.Entities.ToaThuoc", "ToaThuoc")
                         .WithMany("MedicineOrders")
                         .HasForeignKey("ToathuocId")
@@ -10878,6 +10901,10 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("MedicineOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("ApplicationCore.Entities.ToaThuocLine", "ToaThuocLine")
                         .WithMany()
