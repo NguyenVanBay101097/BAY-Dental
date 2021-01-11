@@ -16,31 +16,38 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FundBooksController : ControllerBase
+    public class CashBooksController : ControllerBase
     {
         private readonly IVFundBookService _fundBookService;
-        public FundBooksController(IVFundBookService fundBookService)
+        public CashBooksController(IVFundBookService fundBookService)
         {
             _fundBookService = fundBookService;
         }
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetMoney(VFundBookSearch val)
+        public async Task<IActionResult> GetMoney(CashBookSearch val)
         {
             var res = await _fundBookService.GetMoney(val);
             return Ok(res);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetSumary(VFundBookSearch val)
+        public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
             var res = await _fundBookService.GetSumary(val);
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetTotalReport(CashBookSearch val)
+        {
+            var res = await _fundBookService.GetTotalReport(val);
+            return Ok(res);
+        }
+
         [HttpGet("[action]")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery] VFundBookSearch val)
+        public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
@@ -50,7 +57,8 @@ namespace TMTDentalAPI.Controllers
             if (val.ResultSelection == "cash")
             {
                 sheetName = "Sổ quỹ tiền mặt";
-            } else if (val.ResultSelection == "bank")
+            }
+            else if (val.ResultSelection == "bank")
             {
                 sheetName = "Sổ quỹ ngân hàng";
             }

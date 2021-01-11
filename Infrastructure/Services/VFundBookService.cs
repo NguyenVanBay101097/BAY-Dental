@@ -44,12 +44,18 @@ namespace Infrastructure.Services
             }
         }
 
-        public IQueryable<AccountMoveLine> _FilterQueryable(VFundBookSearch val)
+        public IQueryable<AccountMoveLine> _FilterQueryable(CashBookSearch val)
         {
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
             var accMoveLineObj = GetService<IAccountMoveLineService>();
-            var query = accMoveLineObj.SearchQuery(x => company_ids.Contains(x.CompanyId.Value));
+            var query = accMoveLineObj.SearchQuery(x => company_ids.Contains(x.CompanyId.Value) && x.AccountInternalType == "liquidity");
+
+            var types = new string[] { "cash", "bank" };
+            if (val.ResultSelection == "cash")
+                types = new string[] { "cash" };
+            else if (val.ResultSelection == "bank")
+                types = new string[] { "bank" };
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
@@ -66,30 +72,40 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
-            if (!string.IsNullOrEmpty(val.ResultSelection) && val.ResultSelection != "cash_bank")
-                query = query.Where(x => x.Journal.Type.Equals(val.ResultSelection));
+            if (!string.IsNullOrEmpty(val.ResultSelection))
+                query = query.Where(x => types.Contains(x.Journal.Type));
+
             return query;
         }
 
-        public async Task<PagedResult2<VFundBookDisplay>> GetMoney(VFundBookSearch val)
+        public async Task<PagedResult2<AccountMoveLineCashBookVM>> GetMoney(CashBookSearch val)
         {
             var query = _FilterQueryable(val);
             var totalItems = await query.CountAsync();
             query = query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
-            var items = await query.Include(x => x.Journal).ToListAsync();
-
-            return new PagedResult2<VFundBookDisplay>(totalItems, val.Offset, val.Limit)
+            var items = await query.Select(x => new AccountMoveLineCashBookVM()
             {
-                Items = _mapper.Map<IEnumerable<VFundBookDisplay>>(items)
+                PartnerName = x.Partner.Name,
+                Name = x.Name,
+                CompanyId = x.CompanyId.HasValue ? x.CompanyId.Value : Guid.Empty,
+                Credit = x.Credit,
+                Date = x.Date.HasValue ? x.Date.Value : DateTime.Now,
+                Debit = x.Debit,
+                Ref = x.Ref,
+                JournalType = x.Journal.Type
+            }).ToListAsync();
+
+            return new PagedResult2<AccountMoveLineCashBookVM>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
             };
         }
 
-        public async Task<CashBookReport> GetSumary(VFundBookSearch val)
+        public async Task<CashBookReport> GetSumary(CashBookSearch val)
         {
-            val.State = "posted";
-            var fundBookReport = new CashBookReport();
+            var cashBookReport = new CashBookReport();
             //neu co datefrom tinh begin -> select sum trong query1
-            if (val.DateFrom.HasValue && val.Begin)
+            if (val.DateFrom.HasValue)
             {
                 val.Begin = true;
                 var query1 = _FilterQueryable(val);
@@ -97,25 +113,47 @@ namespace Infrastructure.Services
                 {
                     var thu = query1.Sum(x => x.Debit);
                     var chi = query1.Sum(x => x.Credit);
-                    fundBookReport.Begin = thu - chi;
+                    cashBookReport.Begin = thu - chi;
                 }
+                val.Begin = false;
             }
 
             //loc nhung posted và sum trong query2 tinh dc thu chi
             var query = _FilterQueryable(val);
             if (query.Any())
             {
-                fundBookReport.TotalThu = query.Sum(x => x.Debit);
-                fundBookReport.TotalChi = query.Sum(x => x.Credit);
+                cashBookReport.TotalThu = query.Sum(x => x.Debit);
+                cashBookReport.TotalChi = query.Sum(x => x.Credit);
             }
 
             //return total = begin + thu - chi
-            fundBookReport.TotalAmount = fundBookReport.Begin + fundBookReport.TotalThu - fundBookReport.TotalChi;
+            cashBookReport.TotalAmount = cashBookReport.Begin + cashBookReport.TotalThu - cashBookReport.TotalChi;
 
-            return fundBookReport;
+            return cashBookReport;
         }
 
-        public async Task<List<FundBookExportExcel>> GetExportExcel(VFundBookSearch val)
+        public async Task<CashBookReport> GetTotalReport(CashBookSearch val)
+        {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var accMoveLineObj = GetService<IAccountMoveLineService>();
+            var cashBookReport = new CashBookReport();
+            var query = accMoveLineObj.SearchQuery(x => company_ids.Contains(x.CompanyId.Value) && x.AccountInternalType == "liquidity");
+            var types = new string[] { "cash", "bank" };
+            if (val.ResultSelection == "cash")
+                types = new string[] { "cash" };
+            else if (val.ResultSelection == "bank")
+                types = new string[] { "bank" };
+            if (!string.IsNullOrEmpty(val.ResultSelection))
+                query = query.Where(x => types.Contains(x.Journal.Type));
+            if (query.Any())
+            {
+                cashBookReport.TotalAmount = query.Sum(x => x.Debit) - query.Sum(x => x.Credit);
+            }
+            return cashBookReport;
+        }
+
+        public async Task<List<FundBookExportExcel>> GetExportExcel(CashBookSearch val)
         {
             //var query = _FilterQueryable(val);
             //var totalItems = await query.CountAsync();

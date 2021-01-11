@@ -11,7 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public VFundBookProfile()
         {
-            CreateMap<VFundBook, VFundBookDisplay>();
+            CreateMap<VFundBook, AccountMoveLineCashBookVM>();
         }
     }
 }

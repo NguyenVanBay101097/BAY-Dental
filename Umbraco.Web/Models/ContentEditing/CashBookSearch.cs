@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class VFundBookSearch
+    public class CashBookSearch
     {
-        public VFundBookSearch()
+        public CashBookSearch()
         {
             Limit = 20;
             Offset = 0;
@@ -17,7 +17,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// tinh dau ky hay k
         /// </summary>
         public bool Begin { get; set; }
-
         /// <summary>
         /// Ngay bat dau
         /// </summary>
@@ -27,18 +26,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ngay ket thuc
         /// </summary>
         public DateTime? DateFrom { get; set; }
-
-        /// <summary>
-        /// all : lay tat ca
-        /// posted: phieu dc xac nhan
-        /// </summary>
-        public string State { get; set; }
-
-        /// <summary>
-        /// inbound : thu
-        /// outbound : chi
-        /// </summary>
-        public string Type { get; set; }
 
         public Guid? CompanyId { get; set; }
 
@@ -50,7 +37,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cash_bank: tong quy
         /// </summary>
         public string ResultSelection { get; set; }
-
         public int Limit { get; set; }
 
         public int Offset { get; set; }
