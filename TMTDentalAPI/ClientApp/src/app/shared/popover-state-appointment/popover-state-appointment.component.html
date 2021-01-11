@@ -8,11 +8,11 @@
     <div ngbDropdownMenu aria-labelledby="dropdownManual" class="dropdown-wrapper">
         <div class="appointment-state">
             <div [formGroup]="formGroup">
-                <div class="form-check" *ngFor="let item of stateFilterOptions">
+                <div class="form-check" *ngFor="let itemState of stateFilterOptions; let i = index">
                     <input class="form-check-input" (change)="onChangeState()" formControlName='state' type="radio"
-                        [id]="item.value" [value]="item.value">
-                    <label class="form-check-label" [for]="item.value">
-                        {{item.text}}
+                        id="{{itemState.value}}_{{item.id}}" [value]="itemState.value">
+                    <label class="form-check-label" for="{{itemState.value}}_{{item.id}}">
+                        {{itemState.text}}
                     </label>
                 </div>
                 <div *ngIf="stateControl == 'cancel'" class="mt-1">

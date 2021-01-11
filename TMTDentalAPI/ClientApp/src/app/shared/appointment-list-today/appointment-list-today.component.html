@@ -1,9 +1,9 @@
 <div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
 <div class="state-filter-wrapper">
-    <button type="button" class="btn active" (click)="setStateFilter('')" [class.btn-primary]="!stateFilter"
+    <!-- <button type="button" class="btn active" (click)="setStateFilter('')" [class.btn-primary]="!stateFilter"
         [class.btn-light]="stateFilter">
-        Tổng hẹn <span class="badge badge-light bg-white">{{gridData?.total || 0}}</span>
-    </button>
+        Tổng hẹn <span class="badge badge-light bg-white">{{total || 0}}</span>
+    </button> -->
     <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
         [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
         {{state.text}} <span class="badge badge-light bg-white">{{stateCount[state.value] || 0}}</span>
