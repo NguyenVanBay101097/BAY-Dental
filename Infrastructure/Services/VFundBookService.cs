@@ -139,11 +139,16 @@ namespace Infrastructure.Services
             var accMoveLineObj = GetService<IAccountMoveLineService>();
             var cashBookReport = new CashBookReport();
             var query = accMoveLineObj.SearchQuery(x => company_ids.Contains(x.CompanyId.Value) && x.AccountInternalType == "liquidity");
+
             var types = new string[] { "cash", "bank" };
             if (val.ResultSelection == "cash")
                 types = new string[] { "cash" };
             else if (val.ResultSelection == "bank")
                 types = new string[] { "bank" };
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (!string.IsNullOrEmpty(val.ResultSelection))
                 query = query.Where(x => types.Contains(x.Journal.Type));
             if (query.Any())
