@@ -11,6 +11,7 @@ export class CashBookPaged {
   resultSelection: string;
   dateFrom: string;
   dateTo: string;
+  begin: boolean;
 }
 
 export class AccountMoveLineCashBookVM {

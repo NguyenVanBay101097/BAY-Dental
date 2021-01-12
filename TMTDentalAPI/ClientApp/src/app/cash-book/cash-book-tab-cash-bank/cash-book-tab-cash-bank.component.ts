@@ -66,7 +66,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   loadDataGetSumary() {
     this.loading = true;
-
+    this.paged.begin = true;
     this.cashBookService.getSumary(this.paged).subscribe(
       (res) => {
         this.reportData = res;
@@ -83,7 +83,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loading = true;
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
-
+    this.paged.begin = false;
     this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
         <GridDataResult>{
