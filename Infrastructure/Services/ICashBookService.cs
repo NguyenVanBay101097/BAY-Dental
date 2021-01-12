@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IVFundBookService
+    public interface ICashBookService
     {
         Task<PagedResult2<AccountMoveLineCashBookVM>> GetMoney(CashBookSearch val);
         Task<CashBookReport> GetSumary(CashBookSearch val);

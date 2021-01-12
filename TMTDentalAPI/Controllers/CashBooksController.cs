@@ -18,8 +18,8 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class CashBooksController : ControllerBase
     {
-        private readonly IVFundBookService _fundBookService;
-        public CashBooksController(IVFundBookService fundBookService)
+        private readonly ICashBookService _fundBookService;
+        public CashBooksController(ICashBookService fundBookService)
         {
             _fundBookService = fundBookService;
         }

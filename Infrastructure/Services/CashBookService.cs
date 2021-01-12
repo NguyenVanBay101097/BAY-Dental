@@ -13,13 +13,13 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class VFundBookService : IVFundBookService
+    public class CashBookService : ICashBookService
     {
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public VFundBookService(CatalogDbContext context, IMapper mapper,
+        public CashBookService(CatalogDbContext context, IMapper mapper,
            IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
@@ -105,9 +105,8 @@ namespace Infrastructure.Services
         {
             var cashBookReport = new CashBookReport();
             //neu co datefrom tinh begin -> select sum trong query1
-            if (val.DateFrom.HasValue)
+            if (val.DateFrom.HasValue && val.Begin)
             {
-                val.Begin = true;
                 var query1 = _FilterQueryable(val);
                 if (query1.Any())
                 {
@@ -151,6 +150,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.ResultSelection))
                 query = query.Where(x => types.Contains(x.Journal.Type));
+
             if (query.Any())
             {
                 cashBookReport.TotalAmount = query.Sum(x => x.Debit) - query.Sum(x => x.Credit);
