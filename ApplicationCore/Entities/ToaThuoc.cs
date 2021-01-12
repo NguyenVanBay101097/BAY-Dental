@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class ToaThuoc: BaseEntity
     {
+        public ToaThuoc()
+        {
+            Date = DateTime.Now;
+        }
+
         public string Name { get; set; }
 
         /// <summary>

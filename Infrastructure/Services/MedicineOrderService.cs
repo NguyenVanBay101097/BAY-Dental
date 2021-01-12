@@ -84,7 +84,9 @@ namespace Infrastructure.Services
         {
             var toathuocObj = GetService<IToaThuocService>();
             var toathuoLinecObj = GetService<IToaThuocLineService>();
-            var toathuoc = await toathuocObj.SearchQuery(x => x.Id == val.ToaThuocId).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.Lines).FirstOrDefaultAsync();
+            var toathuoc = await toathuocObj.SearchQuery(x => x.Id == val.ToaThuocId)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner).FirstOrDefaultAsync();
             if (toathuoc == null)
                 throw new Exception("Toa thuốc không tồn tại ");
 
@@ -106,7 +108,9 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id).Include(x => x.Product).ThenInclude(s => s.UOM).ToListAsync());
+            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id)
+                .Include(x => x.Product.UOM)
+                .Include(x => x.ProductUoM).ToListAsync();
             foreach (var line in toathuocLines)
             {
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
@@ -114,9 +118,11 @@ namespace Infrastructure.Services
                     Quantity = line.Quantity,
                     Price = line.Product.ListPrice,
                     AmountTotal = line.Quantity * line.Product.ListPrice,
-                    ToaThuocLine = line,
+                    ToaThuocLine = _mapper.Map<ToaThuocLineDisplay>(line),
                     ToaThuocLineId = line.Id,
-                    ProductId = line.ProductId
+                    ProductId = line.ProductId,
+                    Product = _mapper.Map<ProductBasic>(line.Product),
+                    ProductUoM = line.ProductUoM != null ? _mapper.Map<UoMBasic>(line.ProductUoM) : _mapper.Map<UoMBasic>(line.Product.UOM)
                 });
             }
             medicineOrder.MedicineOrderLines = medicineOrderLines;
@@ -509,7 +515,7 @@ namespace Infrastructure.Services
 
         public async Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.State == "confirmed");
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.OrderDate >= val.DateFrom);
@@ -521,8 +527,7 @@ namespace Infrastructure.Services
             }
 
             var totalItems = await query.CountAsync();
-            var amountTotal = await query.Where(x => x.State == "confirmed").SumAsync(x => x.Amount);
-            //var items = await query.ToListAsync();
+            var amountTotal = await query.SumAsync(x => x.Amount);
 
             var report = new MedicineOrderReport
             {

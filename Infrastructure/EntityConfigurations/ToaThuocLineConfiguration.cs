@@ -20,6 +20,10 @@ namespace Infrastructure.EntityConfigurations
               .WithMany(x => x.Lines)
               .HasForeignKey(x => x.ToaThuocId);
 
+            builder.HasOne(x => x.ProductUoM)
+             .WithMany()
+             .HasForeignKey(x => x.ProductUoMId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

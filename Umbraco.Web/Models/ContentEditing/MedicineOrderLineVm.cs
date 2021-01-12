@@ -13,6 +13,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Price { get; set; }
         public decimal AmountTotal { get; set; }
         public Guid? ProductId { get; set; }
+        public ProductBasic Product { get; set; }
+        public Guid? ProductUoMId { get; set; }
+        public UoMBasic ProductUoM { get; set; }
     }
 
     public class MedicineOrderLineSave

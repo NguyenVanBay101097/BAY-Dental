@@ -18,6 +18,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public ProductBasic Product { get; set; }
 
+        public Guid? ProductUoMId { get; set; }
+        public UoMBasic ProductUoM { get; set; }
+
         public int? Sequence { get; set; }
 
         /// <summary>
@@ -67,5 +70,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ghi chú
         /// </summary>
         public string Note { get; set; }
+    }
+
+    public class ToaThuocLineOnChangeProductRequest
+    {
+        public Guid? ProductId { get; set; }
+    }
+
+    public class ToaThuocLineOnChangeProductResponse
+    {
+        public UoMBasic UoM { get; set; }
     }
 }

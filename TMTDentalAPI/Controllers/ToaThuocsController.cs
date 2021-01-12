@@ -7,6 +7,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IViewRenderService _view;
+        private readonly IUnitOfWorkAsync _unitOfWork;
+
         public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
-            IIRModelAccessService modelAccessService)
+            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _view = view;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -131,8 +135,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateFromUI(ToaThuocSaveFromUI val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var result = await _toaThuocService.CreateToaThuocFromUIAsync(val);
-
+            _unitOfWork.Commit();
             return Ok(result);
         }
 

@@ -16,6 +16,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
+        public Guid? ProductUoMId { get; set; }
+        public UoMBasic ProductUoM { get; set; }
+
         /// <summary>
         /// Số lần uống 1 ngày
         /// </summary>
@@ -47,5 +50,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UseAt { get; set; }
 
         public int? Sequence { get; set; }
+    }
+
+    public class SamplePrescriptionLineOnChangeProductRequest
+    {
+        public Guid? ProductId { get; set; }
+    }
+
+    public class SamplePrescriptionLineOnChangeProductResponse
+    {
+        public UoMBasic UoM { get; set; }
     }
 }
