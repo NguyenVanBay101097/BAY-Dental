@@ -37,6 +37,7 @@ import { ProductManagementProductsComponent } from './product-management-product
 import { ProductManagementMedicinesComponent } from './product-management-medicines/product-management-medicines.component';
 import { ProductManagementComponent } from './product-management/product-management.component';
 import { ProductCategoryListComponent } from './product-category-list/product-category-list.component';
+import { ResConfigSettingsModule } from '../res-config-settings/res-config-settings.module';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { ProductCategoryListComponent } from './product-category-list/product-ca
     ReactiveFormsModule,
     FormsModule,
     DragDropModule,
+    ResConfigSettingsModule,
     SharedModule,
     NgbModule
   ],

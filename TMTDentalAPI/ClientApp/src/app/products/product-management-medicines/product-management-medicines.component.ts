@@ -5,6 +5,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ResConfigSettingsService } from 'src/app/res-config-settings/res-config-settings.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
@@ -26,10 +27,12 @@ skip = 0;
 searchMedicine: string;
 cateId: string;
 searchMedicineUpdate = new Subject<string>();
+configsettings:any;
 
 constructor(private route: ActivatedRoute,
   private router: Router,
   private productCategoryService: ProductCategoryService,
+  private configSettingsService: ResConfigSettingsService,
   private productService: ProductService,
   private modalService: NgbModal
 ) { }
@@ -41,6 +44,7 @@ ngOnInit() {
       this.loadMedicines();
     });
   this.loadMedicines();
+  this.loadConfigsettings();
 }
 
 
@@ -83,6 +87,14 @@ onSelectedCate(cate: any) {
   }
   this.cateId = cate.id;
   this.loadMedicines();
+}
+
+loadConfigsettings(){
+  this.configSettingsService.defaultGet().subscribe(
+    (result:any) => {
+      this.configsettings = result;
+    }
+  );
 }
 
 pageChange(event: PageChangeEvent): void {
