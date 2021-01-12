@@ -36,7 +36,6 @@ export class CashBookComponent implements OnInit {
     this.paged = new CashBookPaged();
     this.paged.resultSelection = "cash";
     this.paged.companyId = this.authService.userInfo.companyId
-    this.paged.begin = true;
     this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.reportCashData = new ReportDataResult();
     this.reportBankData = new ReportDataResult();
@@ -81,7 +80,6 @@ export class CashBookComponent implements OnInit {
   }
 
   changeType(type) {
-    this.paged.type = type.value;
     this.changeToLoadData = !this.changeToLoadData;
   }
 

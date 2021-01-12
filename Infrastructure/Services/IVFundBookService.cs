@@ -13,6 +13,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<AccountMoveLineCashBookVM>> GetMoney(CashBookSearch val);
         Task<CashBookReport> GetSumary(CashBookSearch val);
         Task<CashBookReport> GetTotalReport(CashBookSearch val);
-        Task<List<FundBookExportExcel>> GetExportExcel(CashBookSearch val);
+        Task<List<CashBookExportExcel>> GetExportExcel(CashBookSearch val);
     }
 }

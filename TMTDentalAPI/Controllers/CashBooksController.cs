@@ -71,11 +71,10 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells[1, 1].Value = "Ngày";
                 worksheet.Cells[1, 2].Value = "Số phiếu";
-                worksheet.Cells[1, 3].Value = "Loại chứng từ";
-                worksheet.Cells[1, 4].Value = "Loại thu chi";
-                worksheet.Cells[1, 5].Value = "Số tiền";
-                worksheet.Cells[1, 6].Value = "Người nhận/nộp";
-                worksheet.Cells[1, 7].Value = "Trang thái";
+                worksheet.Cells[1, 3].Value = "Loại thu chi";
+                worksheet.Cells[1, 4].Value = "Tiền chi";
+                worksheet.Cells[1, 5].Value = "Tiền thu";
+                worksheet.Cells[1, 6].Value = "Người nhận/ nộp";
                 for (int row = 2; row < services.Count() + 2; row++)
                 {
                     var item = services.ToList()[row - 2];
@@ -83,11 +82,10 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Value = item.Date;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 2].Value = item.Name;
-                    worksheet.Cells[row, 3].Value = item.Type == "inbound" ? "Phiếu thu" : "Phiếu chi";
-                    worksheet.Cells[row, 4].Value = item.Type2;
-                    worksheet.Cells[row, 5].Value = item.Amount;
-                    worksheet.Cells[row, 6].Value = item.RecipientPayer;
-                    worksheet.Cells[row, 7].Value = item.State == "posted" ? "Đã xác nhận" : "Nháp";
+                    worksheet.Cells[row, 3].Value = item.Ref;
+                    worksheet.Cells[row, 4].Value = item.Credit;
+                    worksheet.Cells[row, 5].Value = item.Debit;
+                    worksheet.Cells[row, 6].Value = item.PartnerName;
                 }
 
                 worksheet.Cells.AutoFitColumns();

@@ -38,48 +38,24 @@
             {{dataItem.name}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="type" title="Loại chứng từ" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{getType(dataItem.type)}}
-        </ng-template>
-    </kendo-grid-column>
     <kendo-grid-column field="type2" title="Loại thu chi" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.type2}}
+            {{dataItem.ref}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
+    <kendo-grid-column field="credit" title="Tiền chi" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
+            {{dataItem.credit | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="recipientPayer" title="Người nhận/ nộp" width="100">
+    <kendo-grid-column field="debit" title="Tiền thu" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.recipientPayer}}
+            {{dataItem.debit | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="state" title="Trạng thái" width="100">
+    <kendo-grid-column field="partnerName" title="Người nhận/ nộp" width="100">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{getState(dataItem.state)}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="id" width="80">
-        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-            Thao tác
-        </ng-template>
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
-                class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                <span class="far fa-edit"></span>
-            </button>
-            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
-                class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
-                <span class="fas fa-trash-alt"></span>
-            </button>
-            <button *ngIf="!(dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi')"
-                class="btn btn-info btn-sm mr-2" title="Xem" (click)="seeItem(dataItem)">
-                <span class="fas fa-eye"></span>
-            </button>
+            {{dataItem.partnerName}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

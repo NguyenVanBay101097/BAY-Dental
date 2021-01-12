@@ -158,26 +158,23 @@ namespace Infrastructure.Services
             return cashBookReport;
         }
 
-        public async Task<List<FundBookExportExcel>> GetExportExcel(CashBookSearch val)
+        public async Task<List<CashBookExportExcel>> GetExportExcel(CashBookSearch val)
         {
-            //var query = _FilterQueryable(val);
-            //var totalItems = await query.CountAsync();
-            //query = query.Where(x => x.State == "posted").OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
-            //var items = await query.Include(x => x.Journal).ToListAsync();
+            var query = _FilterQueryable(val);
+            var totalItems = await query.CountAsync();
+            query = query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
 
-            //var res = items.Select(x => new FundBookExportExcel
-            //{
-            //    Date = x.Date,
-            //    Name = x.Name,
-            //    Type = x.Type,
-            //    Type2 = x.Type2,
-            //    Amount = x.Amount,
-            //    RecipientPayer = x.RecipientPayer,
-            //    State = x.State
-            //}).ToList();
+            var res = query.Select(x => new CashBookExportExcel
+            {
+                Date = x.Date.HasValue ? x.Date.Value : DateTime.Now,
+                Name = x.Name,
+                Ref = x.Ref,
+                Credit = x.Credit,
+                Debit = x.Debit,
+                PartnerName = x.Partner.Name,
+            }).ToList();
 
-            //return res;
-            return null;
+            return res;
         }
     }
 }
