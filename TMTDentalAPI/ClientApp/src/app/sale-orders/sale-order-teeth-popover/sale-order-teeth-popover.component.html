@@ -10,7 +10,7 @@
         <!-- <span>Loại răng</span>
         <kendo-combobox [data]="filteredToothCategories" [textField]="'name'" [popupSettings]="{appendTo: 'component'}" [filterable]="true" formControlName="toothCategory" class="btn-sm" (valueChange)="onChangeToothCategory($event)" #toothCategoryCbx [valueField]="'id'">
         </kendo-combobox> -->
-        <span>Răng, Chuẩn đoán</span>
+        <span>Thông tin bổ sung</span>
         <button type="button" class="close ml-auto" (click)="popOver.close()" tabindex="-1">×</button>
 
     </div>
@@ -18,6 +18,16 @@
 
 <ng-template #popContent>
     <div [formGroup]="formGroup">
+        <div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"><h6>Phụ tá</h6></label>
+                <div class="col-sm-9">
+                    <kendo-combobox [popupSettings]="{appendTo: 'component'}" [filterable]="true" (filterChange)="onAssintantFilter($event)" *ngIf="saleOrderState === 'draft'" style="width:100%;" [data]="filteredAssistants" [textField]="'Name'" #assinstantCbx formControlName="Assistant" [valueField]="'Id'">
+                    </kendo-combobox>
+                </div>
+            </div>
+          
+        </div>
         <div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>

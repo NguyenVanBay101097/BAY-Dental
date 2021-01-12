@@ -21,6 +21,20 @@
         <div>
             <div class="form-group row">
                 <label class="col-sm-3 col-form-label">
+                    <h6>Phụ tá</h6>
+                </label>
+                <div class="col-sm-9">
+                    <span *ngIf="line.id">{{line.get('employee').value?.name }}</span>
+                    <kendo-combobox *ngIf="!line.id" style="width: 100%;" [data]="filteredEmployees"
+                       [textField]="'name'" [filterable]="true" [popupSettings]="{appendTo: 'component'}" [filterable]="true" (filterChange)="searchEmployees($event)"
+                        #employeeCbx formControlName="assistant" [valueField]="'id'">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">
                     <h6>Chuẩn đoán</h6>
                 </label>
                 <div class="col-sm-9">
