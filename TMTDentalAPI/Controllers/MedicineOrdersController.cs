@@ -76,11 +76,9 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        ///DefaultGet
-
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
-        public async Task<IActionResult> DefaultGet(DefaultGet val)
+        public async Task<IActionResult> DefaultGet(MedicineOrderDefaultGet val)
         {
             var result = await _medicineOrderService.DefaultGet(val);
             return Ok(result);

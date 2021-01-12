@@ -13,7 +13,7 @@
                     <h3>{{precscriptPayment?.name}}</h3>
                 </div>
                 <div class="o_group my-0 ">
-                    <h6>THÔNG TIN THANH TOÁN</h6>
+                    <h5>THÔNG TIN THANH TOÁN</h5>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -56,18 +56,6 @@
                                     </kendo-datepicker>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                   
-                </div>
-                <div class="o_group my-0 ">
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                          
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -88,36 +76,36 @@
                     </table>
                 </div>
                 <div class="o_group my-0 ">
-                    <h6>THÔNG TIN ĐƠN THUỐC</h6>
+                    <h5>THÔNG TIN ĐƠN THUỐC</h5>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Họ tên
                                     </label>
-                                </th>
-                                <td colspan="1" style="width: 100%; padding-top:7px">
+                                </td>
+                                <td colspan="1" style="width: 100%">
                                     {{precscriptPayment.partner ? precscriptPayment.partner.displayName : ''}}
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Địa chỉ
                                     </label>
-                                </th>
-                                <td colspan="1" style="width: 100%; padding-top:7px">
+                                </td>
+                                <td colspan="1" style="width: 100%">
                                     {{precscriptPayment.partner ? precscriptPayment.partner.address : ''}}
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Bác sĩ
                                     </label>
-                                </th>
-                                <td colspan="1" style="width: 100%; padding-top:7px;">
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.employee ? precscriptPayment.employee.name : ''}}
                                 </td>
                             </tr>
@@ -126,23 +114,23 @@
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Giới tính
                                     </label>
-                                </th>
-                                <td colspan="1" style="width: 100%; padding-top:7px;">
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.partner ? computeGender(precscriptPayment.partner.gender) :
                                     ''}}
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="1" class="o_td_label">
+                                <td colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Tuổi
                                     </label>
-                                </th>
-                                <td colspan="1" style="width: 100%; padding-top:7px;">
+                                </td>
+                                <td colspan="1" style="width: 100%;">
                                     {{precscriptPayment.partner ? precscriptPayment.partner.age : ''}}
                                 </td>
                             </tr>
@@ -193,7 +181,7 @@
                                             *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                             {{line.get('quantity') ? line.get('quantity').value : 1}}
                                         </span>
-                                        <kendo-numerictextbox *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="quantity">
+                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="quantity">
                                         </kendo-numerictextbox>
                                         <!-- <input [min]="0"
                                             *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"

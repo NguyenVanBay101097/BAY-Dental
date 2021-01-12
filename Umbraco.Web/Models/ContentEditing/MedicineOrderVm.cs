@@ -32,7 +32,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int MedicineOrderCount { get; set; }
     }
 
-    public class DefaultGet
+    public class MedicineOrderDefaultGet
     {
         public Guid ToaThuocId { get; set; }
     }
@@ -62,26 +62,22 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class MedicineOrderSave
     {
-
         /// <summary>
         /// Ngày thanh toán
         /// </summary>
         public DateTime OrderDate { get; set; }
 
         public Guid JournalId { get; set; }
+
         public Guid ToaThuocId { get; set; }
 
         public Guid? EmployeeId { get; set; }
+
         public Guid PartnerId { get; set; }
 
         public Guid CompanyId { get; set; }
 
-
-
         public string Note { get; set; }
-
-        public decimal Amount { get; set; }
-        public string State { get; set; }
 
         public IEnumerable<MedicineOrderLineSave> MedicineOrderLines { get; set; } = new List<MedicineOrderLineSave>();
     }

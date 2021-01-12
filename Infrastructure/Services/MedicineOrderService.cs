@@ -80,7 +80,7 @@ namespace Infrastructure.Services
             return display;
         }
 
-        public async Task<MedicineOrderDisplay> DefaultGet(DefaultGet val)
+        public async Task<MedicineOrderDisplay> DefaultGet(MedicineOrderDefaultGet val)
         {
             var toathuocObj = GetService<IToaThuocService>();
             var toathuoLinecObj = GetService<IToaThuocLineService>();
@@ -149,19 +149,6 @@ namespace Infrastructure.Services
 
         public async Task<MedicineOrderBasic> ActionPayment(MedicineOrderSave val)
         {
-            //var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
-            //    .Include(x => x.Company)
-            //    .Include(x => x.MedicineOrderLines)
-            //    .Include(x => x.AccountPayment)
-            //    .Include(x => x.Company)
-            //    .Include(x => x.Employee)
-            //    .Include(x => x.Partner)
-            //    .Include(x => x.ToaThuoc)
-            //    .Include(x => x.Journal)
-            //    .Include(x => x.Journal.DefaultDebitAccount)
-            //    .Include(x => x.Journal.DefaultCreditAccount)
-            //    .ToListAsync();
-
             var medicineOrder = _mapper.Map<MedicineOrder>(val);
 
             SaveOrderLines(val, medicineOrder);
@@ -193,7 +180,9 @@ namespace Infrastructure.Services
                 PaymentType = amountTotal > 0 ? "inbound" : "outbound",
                 PartnerId = medicineOrder.PartnerId,
                 PartnerType = "customer",
-                CompanyId = medicineOrder.CompanyId
+                CompanyId = medicineOrder.CompanyId,
+                Communication = medicineOrder.Note,
+                PaymentDate = medicineOrder.OrderDate
             };
 
             var paymentObj = GetService<IAccountPaymentService>();
@@ -502,10 +491,11 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task<MedicineOrderPrint> GetPrint(Guid id)
+        public async Task<MedicineOrder> GetPrint(Guid id)
         {
             var medicineOrder = await SearchQuery(x => x.Id == id)
-                .Include(x => x.MedicineOrderLines)
+                .Include(x => x.MedicineOrderLines).ThenInclude(x => x.ToaThuocLine)
+                .Include(x => x.MedicineOrderLines).ThenInclude(x => x.Product).ThenInclude(x => x.UOM)
                 .Include(x => x.AccountPayment)
                 .Include(x => x.Company.Partner)
                 .Include(x => x.Employee)
@@ -514,11 +504,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Journal)
                 .FirstOrDefaultAsync();
 
-            var medicineOrderLineObj = GetService<IMedicineOrderLineService>();
-            medicineOrder.MedicineOrderLines = await medicineOrderLineObj.SearchQuery(x => x.MedicineOrderId == medicineOrder.Id).Include(x => x.ToaThuocLine).ThenInclude(s => s.Product).ToListAsync();
-            var res = _mapper.Map<MedicineOrderPrint>(medicineOrder);
-
-            return res;
+            return medicineOrder;
         }
 
         public async Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val)

@@ -16,7 +16,7 @@ namespace Infrastructure.Services
         Task<ToaThuocLineDisplay> LineDefaultGet(ToaThuocLineDefaultGet val);
         Task<IEnumerable<ToaThuocBasic>> GetToaThuocsForDotKham(Guid dotKhamId);
         Task Write(ToaThuoc entity);
-        Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id);
+        Task<ToaThuoc> GetToaThuocPrint(Guid id);
         Task<ToaThuocDisplay> GetToaThuocFromUIAsync(Guid id);
         Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val);
         Task UpdateToaThuocFromUIAsync(Guid id, ToaThuocSaveFromUI val);

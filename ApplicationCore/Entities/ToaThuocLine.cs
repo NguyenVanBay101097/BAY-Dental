@@ -50,5 +50,19 @@ namespace ApplicationCore.Entities
         /// Ghi chú
         /// </summary>
         public string Note { get; set; }
+
+        public string GetUseAtDisplay()
+        {
+            switch (UseAt)
+            {
+                case "after_meal": return "Sau khi ăn";
+                case "before_meal": return "Trước khi ăn";
+                case "in_meal": return "Trong khi ăn";
+                case "after_wakeup": return "Sau khi dậy";
+                case "before_sleep": return "Trước khi đi ngủ";
+                default:
+                    return "";
+            }
+        }
     }
 }

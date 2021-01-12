@@ -1,8 +1,10 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -20,8 +22,13 @@ namespace Infrastructure.Services
         {
             foreach (var line in self)
             {
-                line.Name = string.Format("Ngày uống {0} lần, mỗi lần {1} viên, uống {2}", line.NumberOfTimes, line.AmountOfTimes,
-                    GetUseAt(line.UseAt));
+                if (line.Product == null)
+                {
+                    var productObj = GetService<IProductService>();
+                    line.Product = productObj.SearchQuery(x => x.Id == line.ProductId).Include(x => x.UOM).FirstOrDefault();
+                }  
+                
+                line.Name = $"Ngày uống {line.NumberOfTimes} lần, mỗi lần {line.AmountOfTimes} {line.Product.UOM.Name}, uống {GetUseAt(line.UseAt)}";
             }
         }
 

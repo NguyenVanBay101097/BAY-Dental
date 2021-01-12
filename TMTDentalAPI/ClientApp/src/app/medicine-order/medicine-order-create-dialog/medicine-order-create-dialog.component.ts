@@ -60,7 +60,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.loadFilteredJournals();
 
     if (this.idToaThuoc) {
-
       this.getDefault();
     }
     if (this.id) {
@@ -109,7 +108,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       result => {
         this.precscriptPayment = result;
         if (result) {
-          debugger
           this.precscriptPayment = result;
           this.loadData(result);
         }
@@ -210,8 +208,10 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePayment() {
-    if (this.formGroup.invalid)
-      return
+    if (this.formGroup.invalid) {
+      return false;
+    }
+     
     var val = this.formGroup.value;
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(
@@ -224,7 +224,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-        this.router.navigateByUrl("medicine-orders/prescription-payments");
       }
     )
   }
@@ -246,7 +245,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
           this.printService.printHtml(result.html);
-          this.router.navigateByUrl("medicine-orders/prescription-payments");
         });
       }
     )

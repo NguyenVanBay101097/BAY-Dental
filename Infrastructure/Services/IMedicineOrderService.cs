@@ -14,7 +14,7 @@ namespace Infrastructure.Services
 
         Task<MedicineOrderDisplay> GetByIdDisplay(Guid id);
 
-        Task<MedicineOrderDisplay> DefaultGet(DefaultGet val);
+        Task<MedicineOrderDisplay> DefaultGet(MedicineOrderDefaultGet val);
 
         Task<MedicineOrder> CreateMedicineOrder(MedicineOrderSave val);
 
@@ -23,7 +23,7 @@ namespace Infrastructure.Services
         Task<MedicineOrderBasic> ActionPayment(MedicineOrderSave val);
         Task ActionCancel(IEnumerable<Guid> ids);
 
-        Task<MedicineOrderPrint> GetPrint(Guid id);
+        Task<MedicineOrder> GetPrint(Guid id);
 
         Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val);
 

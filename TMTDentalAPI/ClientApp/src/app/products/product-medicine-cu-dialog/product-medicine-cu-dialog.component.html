@@ -15,6 +15,14 @@
                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
                         <div *ngIf="f.name.errors.required">Vui lòng điền tên thuốc</div>
                     </div>
+                    <div hasGroups [groups]="'medicineOrder.group_medicine'">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="purchaseOK" id="purchaseOK">
+                            <label class="form-check-label" for="purchaseOK">
+                                Có thể mua
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
 

@@ -253,6 +253,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       result.lines.forEach((line) => {
         this.lines.push(
           this.fb.group({
+            id: line.id,
             product: [line.product, Validators.required],
             numberOfTimes: line.numberOfTimes,
             amountOfTimes: line.amountOfTimes,

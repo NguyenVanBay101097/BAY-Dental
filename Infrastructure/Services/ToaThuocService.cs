@@ -220,24 +220,15 @@ namespace Infrastructure.Services
             return toaThuocs;
         }
 
-        public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)
+        public async Task<ToaThuoc> GetToaThuocPrint(Guid id)
         {
             var toaThuoc = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Company.Partner)
                 .Include(x => x.Employee)
+                .Include(x => x.Lines).ThenInclude(x => x.Product.UOM)
                 .Include(x => x.Partner).FirstOrDefaultAsync();
 
-            if (toaThuoc == null)
-                return null;
-
-            var toaThuocLineObj = GetService<IToaThuocLineService>();
-            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))
-                .Include(x => x.Product).ToListAsync();
-
-            var res = _mapper.Map<ToaThuocPrintViewModel>(toaThuoc);
-            res.Lines = _mapper.Map<IEnumerable<ToaThuocLinePrintViewModel>>(lines);
-
-            return res;
+            return toaThuoc;
         }
 
         private async Task InsertToaThuocSequence()
