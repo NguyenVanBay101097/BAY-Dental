@@ -79,10 +79,6 @@ export class CashBookComponent implements OnInit {
     this.changeToLoadData = !this.changeToLoadData;
   }
 
-  changeType(type) {
-    this.changeToLoadData = !this.changeToLoadData;
-  }
-
   clickTab(value) {
     this.paged.resultSelection = value;
     this.changeToLoadData = !this.changeToLoadData;
