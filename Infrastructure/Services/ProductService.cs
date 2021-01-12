@@ -88,8 +88,8 @@ namespace Infrastructure.Services
                     continue;
 
                 //Không phát sinh mã cho thuốc
-                if (product.Type2 == "medicine")
-                    continue;
+                //if (product.Type2 == "medicine")
+                //    continue;
 
                 product.DefaultCode = await seqObj.NextByCode("product_seq");
 
