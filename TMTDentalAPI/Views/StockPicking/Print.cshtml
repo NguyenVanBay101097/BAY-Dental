@@ -1,0 +1,109 @@
+﻿@model ApplicationCore.Entities.StockPicking
+@{
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var now = DateTime.Now;
+}
+
+<div class="o_form_view">
+    <div class="media mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        }
+        <div class="media-body">
+            <h5 class="mb-0">@Model.Company.Name</h5>
+            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+            {
+                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>Điện thoại: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+    <div class="text-center mb-3">
+        <h3 class="mb-0">@(Model.PickingType.Code == "outgoing" ? "PHIẾU XUẤT KHO":"PHIẾU NHẬP KHO")</h3>
+        <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
+        <div class="font-weight-600">Số: @Model.Name</div>
+    </div>
+    <div>
+        <div class="row">
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                @(Model.PickingType.Code == "outgoing" ? "Đối tác" : "Nhà cung cấp")
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Partner != null? Model.Partner.Name : "")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ghi chú
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Note)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Date.HasValue? Model.Date.Value.ToString("dd/MM/yyyy") : "")</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <table class="table table-bordered  table-sm">
+        <thead>
+            <tr>
+                <th class="text-center">STT</th>
+                <th class="text-center">Sản phẩm</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-center">Đơn vị tính</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var item in Model.MoveLines)
+                {
+                    <tr>
+                        <td class="text-center">@item.Sequence</td>
+                        <td class="text-center">@item.Name</td>
+                        <td class="text-center">@item.ProductUOMQty</td>
+                        <td class="text-center">@item.ProductUOM.Name</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col col-sm">
+        </div>
+        <div class="col col-sm">
+            <div class="text-center">
+                <span class="font-weight-600">Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-weight-600">@(Model.CreatedBy.Name)</span>
+            </div>
+        </div>
+    </div>
+</div>

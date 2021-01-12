@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -23,20 +25,22 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IStockMoveService _stockMoveService;
+        private readonly IViewRenderService _viewRenderService;
 
         public StockPickingsController(IStockPickingService stockPickingService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService)
+            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService)
         {
             _stockPickingService = stockPickingService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _modelAccessService = modelAccessService;
             _stockMoveService = stockMoveService;
+            _viewRenderService = viewRenderService;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Stock.Picking.Read")]
-        public async Task<IActionResult> Get([FromQuery]StockPickingPaged val)
+        public async Task<IActionResult> Get([FromQuery] StockPickingPaged val)
         {
             var res = await _stockPickingService.GetPagedResultAsync(val);
             return Ok(res);
@@ -60,11 +64,11 @@ namespace TMTDentalAPI.Controllers
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-           
+
             var picking = _mapper.Map<StockPicking>(val);
             SaveMoveLines(val, picking);
             _stockMoveService._Compute(picking.MoveLines);
-           
+
             await _unitOfWork.BeginTransactionAsync();
             await _stockPickingService.CreateAsync(picking);
             _unitOfWork.Commit();
@@ -196,6 +200,23 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _stockPickingService.OnChangePickingType(val);
             return Ok(res);
+        }
+
+        [HttpPost("[action]/{id}")]
+        [CheckAccess(Actions = "Stock.Picking.Read")]
+        public async Task<IActionResult> Print(Guid id)
+        {
+            var picking = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=>x.PickingType)
+                .Include(x => x.MoveLines)
+                .Include("Company.Partner")
+                .Include(x=> x.CreatedBy)
+                .Include("MoveLines.Product")
+                 .Include("MoveLines.ProductUOM")
+                .FirstOrDefaultAsync();
+            if (picking == null) return NotFound();
+            picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
+            var html = _viewRenderService.Render("StockPicking/Print", picking);
+            return Ok(new PrintData() { html = html });
         }
     }
 }

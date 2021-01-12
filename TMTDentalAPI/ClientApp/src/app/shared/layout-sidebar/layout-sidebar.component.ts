@@ -49,8 +49,9 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Kho',
       icon: 'fas fa-th',
       children: [
-        { name: 'Phiếu xuất kho', link: '/stock/outgoing-pickings' },
-        { name: 'Phiếu nhập kho', link: '/stock/incoming-pickings' },
+        { name: 'Nhập-Xuất-Tồn', link: '/stock/stock-report-xuat-nhap-ton' },
+        { name: 'Nhập kho', link: '/stock/incoming-pickings' },
+        { name: 'Xuất kho', link: '/stock/outgoing-pickings' },
       ],
     },
     {

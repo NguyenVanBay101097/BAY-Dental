@@ -1,0 +1,16 @@
+<table class="table table-sm table-striped table-hover table-custom">
+    <thead>
+        <th class="text-center">STT</th>
+        <th class="text-center">Sản phẩm</th>
+        <th class="text-center">Số lượng</th>
+        <th class="text-center">Đơn vị tính</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of data; let i = index">
+            <td class="text-center">{{item.sequence}}</td>
+            <td class="text-center">{{item.name}}</td>
+            <td class="text-center">{{item.productUOMQty | number}}</td>
+            <td class="text-center">{{item.productUOM.name}}</td>
+        </tr>
+    </tbody>
+</table>

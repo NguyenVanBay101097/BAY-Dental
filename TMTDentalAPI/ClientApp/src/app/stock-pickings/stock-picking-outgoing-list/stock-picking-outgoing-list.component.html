@@ -1,38 +1,35 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
-        <ol class="breadcrumb">
-            <li class="active">Phiếu xuất kho</li>
-        </ol>
+        <div class="breadcrumb">
+            <div class="d-flex">
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
+                </app-tai-date-range-filter-dropdown>
+                <button type="button" class="btn btn-primary btn-sm mx-1" accesskey="c" (click)="createItem()">Tạo phiếu xuất</button>
+            </div>
+        </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã..." type="text" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="c"
-                        (click)="createItem()">Thêm</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
-            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo"
-                (searchChange)="onDateSearchChange($event)">
-            </app-tai-date-range-filter-dropdown>
         </div>
     </div>
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Mã" width="100">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Số phiếu" width="100">
         </kendo-grid-column>
-        <kendo-grid-column field="date" title="Ngày" width="120">
+        <kendo-grid-column field="date" title="Ngày xuất" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date: 'short'}}
             </ng-template>
@@ -53,5 +50,8 @@
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-stock-picking-incoming-detail [item]="dataItem"></app-stock-picking-incoming-detail>
+        </div>
     </kendo-grid>
 </div>

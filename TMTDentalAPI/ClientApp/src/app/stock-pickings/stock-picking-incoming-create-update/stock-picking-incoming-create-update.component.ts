@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
@@ -17,6 +17,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 declare var jquery: any;
 declare var $: any;
 
@@ -53,7 +54,8 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     private pickingTypeService: StockPickingTypeService,
     private stockMoveService: StockMoveService,
     private productService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private printServie: PrintService
   ) { }
 
   ngOnInit() {
@@ -91,6 +93,10 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     this.loadFilteredPartners();
   }
 
+  get state() {return this.pickingForm.get('state').value;}
+  get partner() {return this.pickingForm.get('partner').value;}
+  get note() {return this.pickingForm.get('note').value;}
+
   loadFilteredPartners() {
     this.searchPartners().subscribe(result => {
       this.filteredPartners = result;
@@ -100,7 +106,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
-    val.supplier = true;
+    // val.supplier = true;
     return this.partnerService.getAutocompleteSimple(val);
   }
 
@@ -284,6 +290,14 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
         });
       });
     }
+  }
+
+  onPrint() {
+    this.stockPickingService.Print(this.id).subscribe((res:any) => {
+      console.log(res);
+      
+      this.printServie.printHtml(res.html);
+    });
   }
 }
 
