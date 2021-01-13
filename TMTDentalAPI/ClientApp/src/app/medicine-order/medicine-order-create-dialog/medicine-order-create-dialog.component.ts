@@ -32,7 +32,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private printService: PrintService,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
     private intlService: IntlService,
     private router: Router,
