@@ -70,7 +70,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetReportPartner(SaleReportPartnerSearch val)
         {
             //var res = await _saleReportService.GetReportPartner(val);
-            var res = await _saleReportService.GetReportPartnerV2(val);
+            //var res = await _saleReportService.GetReportPartnerV2(val);
+            var res = await _saleReportService.GetReportPartnerV3(val);
             return Ok(res);
         }
 

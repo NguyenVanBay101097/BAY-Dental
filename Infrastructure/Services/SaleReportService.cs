@@ -497,7 +497,84 @@ namespace Infrastructure.Services
                 result.Add(item);
             }
 
+
+
             return result;
+        }
+
+        public async Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV3(SaleReportPartnerSearch val)
+        {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var queryFilter = saleLineObj.SearchQuery(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+            var query = saleLineObj.SearchQuery(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            var result = query.GroupBy(x => new { DateOrder = x.Order.DateOrder, PartnerId = x.OrderPartnerId, PartnerName = x.Order.Partner.DisplayName, OrderName = x.Order.Name })
+                .Select(x => new SaleReportPartnerV3Detail
+                {
+                    Date = x.Key.DateOrder,
+                    PartnerId = x.Key.PartnerId.Value,
+                    PartnerName = x.Key.PartnerName,
+                    OrderName = x.Key.OrderName,
+                    CountLine = x.Count(),
+                    Type = queryFilter.Where(s => s.OrderPartnerId == x.Key.PartnerId && s.Order.DateOrder < x.Key.DateOrder).Count() >= 1 ? "KHC" : "KHM",
+                }).AsEnumerable().GroupBy(x => new
+                {
+                    Year = x.Date.Year,
+                    WeekStart = DateUtils.FirstDateOfWeekISO8601(x.Date.Year, GetIso8601WeekOfYear(x.Date)),
+                    WeekEnd = DateUtils.FirstDateOfWeekISO8601(x.Date.Year, GetIso8601WeekOfYear(x.Date)).AddDays(6).AddHours(23).AddMinutes(59),
+                    WeekOfYear = GetIso8601WeekOfYear(x.Date)
+                })
+                  .Select(x => new SaleReportPartnerItemV3
+                  {
+                      WeekStart = x.Key.WeekStart,
+                      WeekEnd = x.Key.WeekEnd,
+                      WeekOfYear = x.Key.WeekOfYear,
+                      Year = x.Key.Year,
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
+                      TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
+                      lines = x.ToList()
+                  }).ToList();
+            return result;
+        }
+
+        public static int GetIso8601WeekOfYear(DateTime time)
+        {
+            // Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
+            // be the same week# as whatever Thursday, Friday or Saturday are,
+            // and we always get those right
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                time = time.AddDays(3);
+            }
+
+            // Return the week of our adjusted day
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public async Task<IEnumerable<dynamic>> GetWeeksOfYear()
+        {
+            var jan1 = new DateTime(DateTime.Today.Year, 1, 1);
+            //beware different cultures, see other answers
+            var startOfFirstWeek = jan1.AddDays(1 - (int)(jan1.DayOfWeek));
+            var weeks = Enumerable.Range(0, 54).Select(i => new { weekStart = startOfFirstWeek.AddDays(i * 7) })
+                    .TakeWhile(x => x.weekStart.Year <= jan1.Year)
+                    .Select(x => new { x.weekStart, weekFinish = x.weekStart.AddDays(6) })
+                    .SkipWhile(x => x.weekFinish < jan1.AddDays(1))
+                    .Select((x, i) => new { x.weekStart, x.weekFinish, weekNum = i + 1 });
+
+            return weeks;
         }
 
         public async Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val)

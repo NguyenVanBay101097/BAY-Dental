@@ -10,6 +10,25 @@ export class SaleReportItem {
     name: string;
 }
 
+export class SaleReportPartnerItemV3 {
+    weekStart: string;
+    weekEnd: string;
+    weekOfYear: number;
+    year: number;
+    totalNewPartner: number;
+    totalOldPartner: number;
+    lines: SaleReportPartnerItemV3Detail[];
+}
+
+export class SaleReportPartnerItemV3Detail {
+    date: string;
+    partnerId: string;
+    partnerName: string;
+    orderName: string;
+    countLine: number;
+    type: string;
+}
+
 export class SaleReportItemDetail {
     date: string;
     productUOMQty: number;
@@ -34,6 +53,12 @@ export class SaleReportPartnerSearch {
     monthsFrom: number;
     monthsTo: number;
     search: string;
+}
+
+export class SaleReportPartnerSearchV3 {
+    dateTo: string;
+    dateFrom: string;
+    companyId: string;
 }
 
 
@@ -95,6 +120,10 @@ export class SaleReportService {
 
     getReportPartner(val: SaleReportPartnerSearch): Observable<SaleReportPartnerItem[]> {
         return this.http.post<SaleReportPartnerItem[]>(this.baseApi + this.apiUrl + "/GetReportPartner", val);
+    }
+
+    getReportPartnerV3(val: SaleReportPartnerSearchV3): Observable<SaleReportPartnerItemV3[]> {
+        return this.http.post<SaleReportPartnerItemV3[]>(this.baseApi + this.apiUrl + "/GetReportPartner", val);
     }
 
     exportServiceReportExcelFile(val: any) {

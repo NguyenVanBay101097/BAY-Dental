@@ -886,7 +886,7 @@ namespace Infrastructure.Services
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
-           
+
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity
@@ -1107,8 +1107,10 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<CompanyBasic>> GetPagedResultAsync(CompanyPaged val)
         {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
             var query = GetQueryPaged(val);
-
+            query = query.Where(x => company_ids.Contains(x.Id));
             var items = await query.Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
             var totalItems = await query.CountAsync();

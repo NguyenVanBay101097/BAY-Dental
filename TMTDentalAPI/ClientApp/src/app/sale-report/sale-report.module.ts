@@ -12,9 +12,10 @@ import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-pa
 import { SaleReportPartnerDaysFilterComponent } from './sale-report-partner-days-filter/sale-report-partner-days-filter.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
+import { SaleReportPartnerDetailComponent } from './sale-report-partner-detail/sale-report-partner-detail.component';
 
 @NgModule({
-  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent],
+  declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent],
   imports: [
     CommonModule,
     SaleReportRoutingModule,
