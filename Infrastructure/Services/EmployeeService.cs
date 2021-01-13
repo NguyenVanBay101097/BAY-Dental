@@ -57,6 +57,17 @@ namespace Infrastructure.Services
             return query;
         }
 
+        private void CheckConstraints(Employee self)
+        {
+            if (!string.IsNullOrEmpty(self.UserId))
+            {
+                if (SearchQuery(x => x.UserId == self.UserId).Count() > 1)
+                {
+                    throw new Exception($"Tai khoan {self.User.UserName} da duoc lien ket");
+                }
+            }
+        }
+
         public override ISpecification<Employee> RuleDomainGet(IRRule rule)
         {
             //ra đc list company id ma nguoi dung dc phép
@@ -120,7 +131,9 @@ namespace Infrastructure.Services
                 }
             }
 
-            return await base.CreateAsync(entity);
+            var emp = await base.CreateAsync(entity);
+            CheckConstraints(entity);
+            return emp;
         }
 
         public async Task<Employee> GetByUserIdAsync(string userId)
@@ -166,7 +179,7 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(Employee entity)
         {
-            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
+            //var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
             //if (category.Type == "doctor")
             //{
             //    entity.IsDoctor = true;
@@ -183,6 +196,7 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
+             CheckConstraints(entity);
         }
 
         public async Task updateSalary(EmployeeDisplay val, Employee emp)

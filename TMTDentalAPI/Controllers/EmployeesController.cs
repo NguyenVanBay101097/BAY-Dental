@@ -134,49 +134,59 @@ namespace TMTDentalAPI.Controllers
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(val.UserName))
-                        throw new Exception("Tên đăng nhập không được trống");
-                    if (!val.UserCompanyId.HasValue)
-                        throw new Exception("Chi nhánh hiện tại không được trống");
-
-                    var userPartner = new Partner()
+                    //check if exist user that usernam == val.Username and this user ever map => map this user
+                    var existUser = await _userManager.Users.Where(x => x.UserName == val.UserName).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
+                    if (existUser != null)
                     {
-                        Name = employee.Name,
-                        Email = employee.Email,
-                        CompanyId = employee.CompanyId,
-                        Phone = employee.Phone,
-                        Customer = false,
-                        Avatar = val.UserAvatar
-                    };
-
-                    await _partnerService.CreateAsync(userPartner);
-
-                    user = new ApplicationUser()
+                        user = existUser;
+                        employee.UserId = existUser.Id;
+                    }
+                    else
                     {
-                        Name = employee.Name,
-                        UserName = val.UserName,
-                        CompanyId = val.UserCompanyId.Value,
-                        PartnerId = userPartner.Id,
-                    };
+                        if (string.IsNullOrEmpty(val.UserName))
+                            throw new Exception("Tên đăng nhập không được trống");
+                        if (!val.UserCompanyId.HasValue)
+                            throw new Exception("Chi nhánh hiện tại không được trống");
 
-                    try
-                    {
-                        var result = await _userManager.CreateAsync(user);
-
-                        if (!result.Succeeded)
+                        var userPartner = new Partner()
                         {
-                            if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
-                                throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
-                            else
-                                throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception("Tạo tài khoản người dùng không thành công");
-                    }
+                            Name = employee.Name,
+                            Email = employee.Email,
+                            CompanyId = employee.CompanyId,
+                            Phone = employee.Phone,
+                            Customer = false,
+                            Avatar = val.UserAvatar
+                        };
 
-                    employee.UserId = user.Id;
+                        await _partnerService.CreateAsync(userPartner);
+
+                        user = new ApplicationUser()
+                        {
+                            Name = employee.Name,
+                            UserName = val.UserName,
+                            CompanyId = val.UserCompanyId.Value,
+                            PartnerId = userPartner.Id,
+                        };
+
+                        try
+                        {
+                            var result = await _userManager.CreateAsync(user);
+
+                            if (!result.Succeeded)
+                            {
+                                if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                                    throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                                else
+                                    throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            throw new Exception("Tạo tài khoản người dùng không thành công");
+                        }
+
+                        employee.UserId = user.Id;
+                    }
                 }
 
                 user.ResCompanyUsersRels.Clear();
@@ -200,6 +210,8 @@ namespace TMTDentalAPI.Controllers
                         await _userManager.AddPasswordAsync(user, val.UserPassword);
                     }
                 }
+
+                await _userManager.UpdateAsync(user);
             }
             else
             {
