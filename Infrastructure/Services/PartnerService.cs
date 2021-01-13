@@ -1883,6 +1883,7 @@ namespace Infrastructure.Services
                 {
                     Id = s.CategoryId,
                     Name = s.Category.Name,
+                    Color = s.Category.Color
                 })
             });
         }

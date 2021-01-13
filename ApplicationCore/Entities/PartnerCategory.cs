@@ -24,5 +24,6 @@ namespace ApplicationCore.Entities
 
         public ICollection<PartnerPartnerCategoryRel> PartnerPartnerCategoryRels { get; set; } = new List<PartnerPartnerCategoryRel>();
 
+        public string Color { get; set; }
     }
 }

@@ -24,7 +24,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   @Input() public id: string;
   title: string;
   submitted = false;
-
+  colorSelected = 0;
 
   constructor(private fb: FormBuilder, private partnerCategoryService: PartnerCategoryService,
     public activeModal: NgbActiveModal) {
@@ -32,13 +32,14 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
   ngOnInit() {
     this.myform = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', Validators.required]
     });
 
     if (this.id) {
       setTimeout(() => {
         this.partnerCategoryService.get(this.id).subscribe((result) => {
           this.myform.patchValue(result);
+          this.colorSelected = parseInt(result.color) || 0;
         });
       });
     }
@@ -68,7 +69,6 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(result => {
       if (result) {
-        debugger
         this.activeModal.close(result);
       } else {
         this.activeModal.close(true);
@@ -81,6 +81,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
   saveOrUpdate() {
     var val = this.myform.value;
     val.parentId = val.parent ? val.parent.id : null;
+    val.color = this.colorSelected;
     if (!this.id) {
       return this.partnerCategoryService.create(val);
     } else {
@@ -95,6 +96,10 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
 
   get f() {
     return this.myform.controls;
+  }
+
+  clickColor(i) {
+    this.colorSelected = i;
   }
 }
 

@@ -14,5 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ParentId { get; set; }
         public PartnerCategoryBasic Parent { get; set; }
+
+        public string Color { get; set; }
     }
 }
