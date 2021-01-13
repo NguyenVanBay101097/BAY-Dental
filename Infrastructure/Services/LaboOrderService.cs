@@ -133,7 +133,7 @@ namespace Infrastructure.Services
             query = query.Include(x => x.Partner)
                 .Include(x => x.SaleOrderLine.Order);
 
-            query.OrderByDescending(x => x.DateCreated);
+            query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
