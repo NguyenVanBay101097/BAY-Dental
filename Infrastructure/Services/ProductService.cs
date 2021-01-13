@@ -320,7 +320,7 @@ namespace Infrastructure.Services
         {
             var res = ids.ToDictionary(x => x, x => 0M);
             var quantObj = GetService<IStockQuantService>();
-            var data = await quantObj.SearchQuery(x => ids.Contains(x.Id) && x.Location.Usage == "internal")
+            var data = await quantObj.SearchQuery(x => ids.Contains(x.ProductId) && x.Location.Usage == "internal")
                 .GroupBy(x => x.ProductId)
                 .Select(x => new
                 {
@@ -453,14 +453,14 @@ namespace Infrastructure.Services
             return await CreateAsync(product);
         }
 
-        public void _SetStandardPrice(Product self, double value)
+        public void SetStandardPrice(Product self, double value, Guid? force_company = null)
         {
             //Store the standard price change in order to be able to retrieve the cost of a product for a given date'''
             var list = new List<Product>() { self };
             var propertyObj = GetService<IIRPropertyService>();
 
             //Store the standard price change in order to be able to retrieve the cost of a product for a given date'''
-            propertyObj.set_multi("standard_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)value));
+            propertyObj.set_multi("standard_price", "product.product", list.ToDictionary(x => string.Format("product.product,{0}", x.Id), x => (object)value),force_company: force_company);
 
             var priceHistoryObj = GetService<IProductPriceHistoryService>();
             priceHistoryObj.Create(new ProductPriceHistory
@@ -640,17 +640,11 @@ namespace Infrastructure.Services
             return Convert.ToDouble(val);
         }
 
-        public async Task<double> GetStandardPrice(Guid id)
+        public double GetStandardPrice(Guid id, Guid? force_company_id = null)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels).FirstOrDefaultAsync();
-            var companyId = CompanyId;
-            var pcRel = product.ProductCompanyRels.FirstOrDefault(x => x.CompanyId == companyId);
-            if (pcRel != null)
-            {
-                return pcRel.StandardPrice;
-            }
-
-            return 0;
+            var propertyObj = GetService<IIRPropertyService>();
+            var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company : force_company_id);
+            return Convert.ToDouble(val);
         }
 
         public async Task<ProductDisplay> DefaultGet()
