@@ -18,6 +18,9 @@ namespace ApplicationCore.Entities
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
 
+        public Guid? ProductUoMId { get; set; }
+        public UoM ProductUoM { get; set; }
+
         /// <summary>
         /// STT
         /// </summary>

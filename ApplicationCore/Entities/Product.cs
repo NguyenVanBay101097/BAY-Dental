@@ -120,6 +120,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? LaboPrice { get; set; }
 
+
         /// <summary>
         /// hãng:  nếu là labo thì hãng nào ?
         /// </summary>

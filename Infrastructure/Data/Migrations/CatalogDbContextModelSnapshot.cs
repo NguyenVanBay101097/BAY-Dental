@@ -4524,6 +4524,149 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("MarketingTraces");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MedicineOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AccountPaymentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("JournalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("MoveId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StockPickingIncomingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("StockPickingOutgoingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToathuocId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountPaymentId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("MoveId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("StockPickingIncomingId");
+
+                    b.HasIndex("StockPickingOutgoingId");
+
+                    b.HasIndex("ToathuocId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MedicineOrders");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MedicineOrderLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AmountTotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MedicineOrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProductUoMId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("ToaThuocLineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("MedicineOrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUoMId");
+
+                    b.HasIndex("ToaThuocLineId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MedicineOrderLines");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5828,6 +5971,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool?>("GroupLoyaltyCard")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("GroupMedicine")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("GroupMultiCompany")
                         .HasColumnType("bit");
 
@@ -7029,6 +7175,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ProductUoMId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -7048,6 +7197,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PrescriptionId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUoMId");
 
                     b.HasIndex("WriteById");
 
@@ -8440,6 +8591,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ProductUoMId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -8460,6 +8614,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUoMId");
 
                     b.HasIndex("ToaThuocId");
 
@@ -10697,6 +10853,92 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("WriteById");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.MedicineOrder", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.AccountPayment", "AccountPayment")
+                        .WithMany()
+                        .HasForeignKey("AccountPaymentId");
+
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
+                        .WithMany()
+                        .HasForeignKey("MoveId");
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.StockPicking", "StockPickingIncoming")
+                        .WithMany()
+                        .HasForeignKey("StockPickingIncomingId");
+
+                    b.HasOne("ApplicationCore.Entities.StockPicking", "StockPickingOutgoing")
+                        .WithMany()
+                        .HasForeignKey("StockPickingOutgoingId");
+
+                    b.HasOne("ApplicationCore.Entities.ToaThuoc", "ToaThuoc")
+                        .WithMany("MedicineOrders")
+                        .HasForeignKey("ToathuocId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MedicineOrderLine", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.MedicineOrder", "MedicineOrder")
+                        .WithMany("MedicineOrderLines")
+                        .HasForeignKey("MedicineOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUoM")
+                        .WithMany()
+                        .HasForeignKey("ProductUoMId");
+
+                    b.HasOne("ApplicationCore.Entities.ToaThuocLine", "ToaThuocLine")
+                        .WithMany()
+                        .HasForeignKey("ToaThuocLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Partner", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Company", "Company")
@@ -11805,6 +12047,10 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUoM")
+                        .WithMany()
+                        .HasForeignKey("ProductUoMId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -12451,6 +12697,10 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUoM")
+                        .WithMany()
+                        .HasForeignKey("ProductUoMId");
 
                     b.HasOne("ApplicationCore.Entities.ToaThuoc", "ToaThuoc")
                         .WithMany("Lines")

@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class ToaThuoc: BaseEntity
     {
+        public ToaThuoc()
+        {
+            Date = DateTime.Now;
+        }
+
         public string Name { get; set; }
 
         /// <summary>
@@ -55,5 +60,7 @@ namespace ApplicationCore.Entities
         public DateTime? ReExaminationDate { get; set; }
 
         public string Diagnostic { get; set; }
+
+        public ICollection<MedicineOrder> MedicineOrders { get; set; } = new List<MedicineOrder>();
     }
 }

@@ -32,6 +32,7 @@ namespace Infrastructure.Services
         {
             var groupObj = GetService<IResGroupService>();
             await groupObj.InsertSettingGroupIfNotExist("product.group_uom", "Group UoM");
+            await groupObj.InsertSettingGroupIfNotExist("medicineOrder.group_medicine", "Group Medicine");
             await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
             await groupObj.InsertSettingGroupIfNotExist("tcare.group_tcare", "TCare");
 

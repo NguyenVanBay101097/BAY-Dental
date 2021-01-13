@@ -86,17 +86,21 @@ namespace Infrastructure.Services
 
             int sequence = 1;
             foreach (var line in val.Lines)
-                line.Sequence = sequence++;
-
-            foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
                 {
-                    prescription.Lines.Add(_mapper.Map<SamplePrescriptionLine>(line));
+                    var l = _mapper.Map<SamplePrescriptionLine>(line);
+                    l.Sequence = sequence++;
+                    prescription.Lines.Add(l);
                 }
                 else
                 {
-                    _mapper.Map(line, prescription.Lines.SingleOrDefault(c => c.Id == line.Id));
+                    var l = prescription.Lines.SingleOrDefault(c => c.Id == line.Id);
+                    if (l != null)
+                    {
+                        _mapper.Map(line, l);
+                        l.Sequence = sequence++;
+                    }
                 }
             }
 

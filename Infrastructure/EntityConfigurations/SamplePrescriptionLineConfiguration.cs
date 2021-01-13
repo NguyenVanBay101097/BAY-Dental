@@ -16,6 +16,10 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.ProductUoM)
+              .WithMany()
+              .HasForeignKey(x => x.ProductUoMId);
+
             builder.HasOne(x => x.Prescription)
               .WithMany(x => x.Lines)
               .HasForeignKey(x => x.PrescriptionId);

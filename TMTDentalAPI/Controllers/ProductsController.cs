@@ -458,6 +458,14 @@ namespace TMTDentalAPI.Controllers
                         if (string.IsNullOrEmpty(categName))
                             errs.Add("Nhóm thuốc là bắt buộc");
 
+                        //tìm exist đơn vị tính và gán Id uom cho thuốc
+                        var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                        if (string.IsNullOrEmpty(uomName))
+                            errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+                        var uom = _uomService.SearchQuery(x => x.Name.Trim().ToLower().Contains(uomName.ToLower())).FirstOrDefault();
+                        if (uom == null)
+                            errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+
                         if (errs.Any())
                         {
                             errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
@@ -476,6 +484,8 @@ namespace TMTDentalAPI.Controllers
                         {
                             Name = name,
                             CategName = categName,
+                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                            UomId = uom.Id
                         };
                         data.Add(item);
                     }
@@ -486,13 +496,13 @@ namespace TMTDentalAPI.Controllers
                 return Ok(new { success = false, errors });
 
             var vals = new List<Product>();
-            var uom = await _uomService.DefaultUOM();
+            //var uom = await _uomService.DefaultUOM();
             foreach (var item in data)
             {
                 var pd = new Product();
                 pd.CompanyId = CompanyId;
-                pd.UOMId = uom.Id;
-                pd.UOMPOId = uom.Id;
+                pd.UOMId = item.UomId.Value;
+                pd.UOMPOId = item.UomId.Value;
                 pd.Name = item.Name;
                 pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;

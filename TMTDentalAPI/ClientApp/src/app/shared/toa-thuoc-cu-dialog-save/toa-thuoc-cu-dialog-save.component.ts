@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormBuilder, FormArray, Validators } from "@angular/forms";
+import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from "@angular/forms";
 import { UserPaged, UserService } from "src/app/users/user.service";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { IntlService } from "@progress/kendo-angular-intl";
@@ -26,6 +26,7 @@ import { EmployeeService } from "src/app/employees/employee.service";
 import * as _ from "lodash";
 import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ToaThuocLineService } from "src/app/core/services/toa-thuoc-line.service";
 
 @Component({
   selector: "app-toa-thuoc-cu-dialog-save",
@@ -59,7 +60,8 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     private productService: ProductService,
     private samplePrescriptionsService: SamplePrescriptionsService, 
     private modalService: NgbModal, 
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private toaThuocLineService: ToaThuocLineService
   ) {}
 
   ngOnInit() {
@@ -69,7 +71,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       samplePrescription: null, 
       lines: this.fb.array([]), 
       note: null, 
-      dateObj: null, 
+      reExaminationDateObj: null, 
       saveSamplePrescription: false, 
       nameSamplePrescription: null, 
       partnerId: null,
@@ -117,6 +119,23 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
   getFBValueItem(item) {
     return this.toaThuocForm.get(item).value;
+  }
+
+  getUOM(val){
+    var res = val.value;
+    if(res.product == null){
+      return;
+    }
+    return res.product.uomName;
+  }
+
+
+  onChangeProduct(data: any, item: FormControl) {
+    if (data) {
+      this.toaThuocLineService.onChangeProduct({productId: data.id}).subscribe((result: any) => {
+        item.get('productUoM').setValue(result.uoM);
+      });
+    }
   }
 
   searchEmployees(search?: string) {
@@ -179,6 +198,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
           this.lines.push(
             this.fb.group({
               product: [line.product, Validators.required],
+              productUoM: line.productUoM,
               numberOfTimes: line.numberOfTimes,
               amountOfTimes: line.amountOfTimes,
               quantity: line.quantity,
@@ -221,6 +241,7 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
     lines.push(
       this.fb.group({
         product: null,
+        productUoM: null,
         numberOfTimes: 1,
         amountOfTimes: 1,
         quantity: 1,
@@ -233,8 +254,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
   loadRecord() {
     this.toaThuocService.getFromUI(this.id).subscribe((result: any) => {
       this.toaThuocForm.patchValue(result);
-      let date = new Date(result.date);
-      this.toaThuocForm.get("dateObj").patchValue(date);
+      if (result.reExaminationDate) {
+        let reExaminationDate = new Date(result.reExaminationDate);
+        this.toaThuocForm.get("reExaminationDateObj").setValue(reExaminationDate);
+      }
 
       if (result.employee) {
         this.employeeList = _.unionBy(this.employeeList, [result.employee], "id");
@@ -245,7 +268,9 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
       result.lines.forEach((line) => {
         this.lines.push(
           this.fb.group({
+            id: line.id,
             product: [line.product, Validators.required],
+            productUoM: line.productUoM,
             numberOfTimes: line.numberOfTimes,
             amountOfTimes: line.amountOfTimes,
             quantity: line.quantity,
@@ -281,9 +306,10 @@ export class ToaThuocCuDialogSaveComponent implements OnInit {
 
     var val = Object.assign({}, this.toaThuocForm.value);
     val.employeeId = val.employee ? val.employee.id : null;
-    val.reExaminationDate = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss") : null;
+    val.reExaminationDate = val.reExaminationDateObj ? this.intlService.formatDate(val.reExaminationDateObj, "yyyy-MM-ddTHH:mm:ss") : null;
     val.lines.forEach((line) => {
       line.productId = line.product.id;
+      line.productUoMId = line.productUoM ? line.productUoM.id : null;
     });
 
     if (this.id) {

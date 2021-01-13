@@ -1,4 +1,4 @@
-﻿@model Umbraco.Web.Models.ContentEditing.ToaThuocPrintViewModel;
+﻿@model ApplicationCore.Entities.ToaThuoc;
 @{
     Layout = "~/Views/Shared/_LayoutA5.cshtml";
 }
@@ -11,9 +11,9 @@
         }
         <div class="media-body">
             <h5 class="mb-0">@Model.Company.Name</h5>
-            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
             {
-                <div>Địa chỉ: @Model.Company.Address</div>
+                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
             }
             @if (!string.IsNullOrEmpty(Model.Company.Phone))
             {
@@ -49,7 +49,7 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        @Model.Partner.Address
+                        @Model.Partner.GetAddress()
                     </td>
                 </tr>
             </tbody>
@@ -63,7 +63,7 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        @Model.Partner.DisplayGender
+                        @Model.Partner.GetGender()
                     </td>
                 </tr>
                 <tr>
@@ -73,7 +73,7 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        @(Model.Partner.Age != null ? Model.Partner.Age.ToString() : "")
+                        @Model.Partner.GetAge()
                     </td>
                 </tr>
             </tbody>
@@ -92,7 +92,7 @@
                 {
                     <tr>
                         <td>
-                            <span class="font-weight-bold">@line.ProductName </span> <br />
+                            <span class="font-weight-bold">@line.Product.Name </span> <br />
                             <span class="font-italic">@line.Name </span>
                         </td>
                         <td class="text-right">@line.Quantity.ToString("n0")</td>
@@ -110,7 +110,7 @@
         <div class="col">
             <div class="text-center">
                 <strong>Bác sĩ</strong> <br /> <br /> <br /> <br />
-                <span>@Model.EmployeeName</span>
+                <span>@(Model.Employee != null ? Model.Employee.Name : "")</span>
             </div>
         </div>
     </div>

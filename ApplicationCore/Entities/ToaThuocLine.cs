@@ -14,6 +14,9 @@ namespace ApplicationCore.Entities
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
 
+        public Guid? ProductUoMId { get; set; }
+        public UoM ProductUoM { get; set; }
+
         public int? Sequence { get; set; }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace ApplicationCore.Entities
         public decimal Quantity { get; set; }
 
         /// <summary>
-        /// Dùng lúc
+        /// Dùng lúcineSaleOrder
         /// Sau khi ăn: after_meal
         /// Trước khi ăn: before_meal
         /// Trong khi ăn: in_meal
@@ -50,5 +53,19 @@ namespace ApplicationCore.Entities
         /// Ghi chú
         /// </summary>
         public string Note { get; set; }
+
+        public string GetUseAtDisplay()
+        {
+            switch (UseAt)
+            {
+                case "after_meal": return "Sau khi ăn";
+                case "before_meal": return "Trước khi ăn";
+                case "in_meal": return "Trong khi ăn";
+                case "after_wakeup": return "Sau khi dậy";
+                case "before_sleep": return "Trước khi đi ngủ";
+                default:
+                    return "";
+            }
+        }
     }
 }

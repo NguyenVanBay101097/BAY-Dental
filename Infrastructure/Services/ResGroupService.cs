@@ -302,6 +302,7 @@ namespace Infrastructure.Services
             await salaryPaymentObj.InsertModelsIfNotExists();
         }
 
+
         public async Task ResetSecurityData()
         {
             //xóa tất cả dữ liệu

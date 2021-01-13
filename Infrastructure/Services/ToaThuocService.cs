@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -29,14 +30,25 @@ namespace Infrastructure.Services
 
         public async Task<ToaThuocDisplay> GetToaThuocForDisplayAsync(Guid id)
         {
-            var toathuoc = await _mapper.ProjectTo<ToaThuocDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var toathuoc = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Employee)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
             if (toathuoc == null)
                 return null;
 
-            var toaThuocLineObj = GetService<IToaThuocLineService>();
-            toathuoc.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var res = _mapper.Map<ToaThuocDisplay>(toathuoc);
 
-            return toathuoc;
+            var toaThuocLineObj = GetService<IToaThuocLineService>();
+            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Product)
+                .Include(x => x.ProductUoM)
+                .ToListAsync();
+
+            res.Lines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(lines);
+
+            return res;
         }
 
         public async Task<ToaThuocDisplay> DefaultGet(ToaThuocDefaultGet val)
@@ -86,10 +98,10 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.SearchQuery(x => x.Id == val.ProductId)
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x=>x.ProductUoMRels).Include(x => x.UOM)
                     .FirstOrDefaultAsync();
                 res.ProductId = product.Id;
-                res.Product = _mapper.Map<ProductSimple>(product);
+                res.Product = _mapper.Map<ProductBasic>(product);
                 res.Note = product.KeToaNote;
             }
             return res;
@@ -131,33 +143,8 @@ namespace Infrastructure.Services
             SaveOrderLines(val, toathuoc);
             await CreateAsync(toathuoc);
 
-            var samplePrescriptionLineSave = new List<SamplePrescriptionLineSave>();
             if (val.SaveSamplePrescription)
-            {
-                var samplePrescriptionSave = new SamplePrescriptionSave()
-                {
-                    Name = val.NameSamplePrescription,
-                    Note = toathuoc.Note
-                };
-
-                foreach (var line in toathuoc.Lines)
-                {
-                    samplePrescriptionLineSave.Add(new SamplePrescriptionLineSave
-                    {
-                        ProductId = line.ProductId,
-                        NumberOfTimes = line.NumberOfTimes,
-                        AmountOfTimes = line.AmountOfTimes,
-                        NumberOfDays = line.NumberOfDays,
-                        Quantity = line.Quantity,
-                        UseAt = line.UseAt
-                    });
-                }
-
-                samplePrescriptionSave.Lines = samplePrescriptionLineSave;
-
-                await _samplePrescriptionService.CreatePrescription(samplePrescriptionSave);
-
-            }
+                await _SavePrescriptionSample(toathuoc, val.NameSamplePrescription);
 
             var result = _mapper.Map<ToaThuocBasic>(toathuoc);
 
@@ -170,39 +157,42 @@ namespace Infrastructure.Services
             if (toathuoc == null)
                 return;
 
-            toathuoc = _mapper.Map(val, toathuoc);
+            //toathuoc = _mapper.Map(val, toathuoc); //không nên map như thế này, nên map thủ công
+            toathuoc.ReExaminationDate = val.ReExaminationDate;
+            toathuoc.EmployeeId = val.EmployeeId;
+            toathuoc.Note = val.Note;
 
             SaveOrderLines(val, toathuoc);
 
             await Write(toathuoc);
 
-            var samplePrescriptionLineSave = new List<SamplePrescriptionLineSave>();
             if (val.SaveSamplePrescription)
+                await _SavePrescriptionSample(toathuoc, val.NameSamplePrescription);
+        }
+
+        private async Task _SavePrescriptionSample(ToaThuoc self, string name)
+        {
+            var samplePrescription = new SamplePrescription()
             {
-                var samplePrescriptionSave = new SamplePrescriptionSave()
+                Name = name,
+                Note = self.Note
+            };
+
+            foreach (var line in self.Lines)
+            {
+                samplePrescription.Lines.Add(new SamplePrescriptionLine
                 {
-                    Name = val.NameSamplePrescription,
-                    Note = toathuoc.Note
-                };
-
-                foreach (var line in toathuoc.Lines)
-                {
-                    samplePrescriptionLineSave.Add(new SamplePrescriptionLineSave
-                    {
-                        ProductId = line.ProductId,
-                        NumberOfTimes = line.NumberOfTimes,
-                        AmountOfTimes = line.AmountOfTimes,
-                        NumberOfDays = line.NumberOfDays,
-                        Quantity = line.Quantity,
-                        UseAt = line.UseAt
-                    });
-                }
-
-                samplePrescriptionSave.Lines = samplePrescriptionLineSave;
-
-                await _samplePrescriptionService.CreatePrescription(samplePrescriptionSave);
-
+                    ProductId = line.ProductId,
+                    NumberOfTimes = line.NumberOfTimes,
+                    AmountOfTimes = line.AmountOfTimes,
+                    NumberOfDays = line.NumberOfDays,
+                    Quantity = line.Quantity,
+                    UseAt = line.UseAt,
+                    ProductUoMId = line.ProductUoMId
+                });
             }
+
+            await _samplePrescriptionService.CreateAsync(samplePrescription);
         }
 
         public async Task Write(ToaThuoc entity)
@@ -219,24 +209,15 @@ namespace Infrastructure.Services
             return toaThuocs;
         }
 
-        public async Task<ToaThuocPrintViewModel> GetToaThuocPrint(Guid id)
+        public async Task<ToaThuoc> GetToaThuocPrint(Guid id)
         {
             var toaThuoc = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Company.Partner)
                 .Include(x => x.Employee)
+                .Include(x => x.Lines).ThenInclude(x => x.Product.UOM)
                 .Include(x => x.Partner).FirstOrDefaultAsync();
 
-            if (toaThuoc == null)
-                return null;
-
-            var toaThuocLineObj = GetService<IToaThuocLineService>();
-            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))
-                .Include(x => x.Product).ToListAsync();
-
-            var res = _mapper.Map<ToaThuocPrintViewModel>(toaThuoc);
-            res.Lines = _mapper.Map<IEnumerable<ToaThuocLinePrintViewModel>>(lines);
-
-            return res;
+            return toaThuoc;
         }
 
         private async Task InsertToaThuocSequence()
@@ -267,13 +248,23 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                   x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) | x.Partner.Ref.Contains(val.Search));
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
             if (val.SaleOrderId.HasValue)
             {
                 query = query.Where(x => x.SaleOrder.Id == val.SaleOrderId);
+            }
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateOrderTo);
             }
 
             if (val.Limit > 0)

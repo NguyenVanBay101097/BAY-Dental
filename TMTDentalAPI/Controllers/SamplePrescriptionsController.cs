@@ -27,7 +27,8 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet][CheckAccess(Actions = "Catalog.SamplePrescription.Read")]
+        [HttpGet]
+        [CheckAccess(Actions = "Catalog.SamplePrescription.Read")]
         public async Task<IActionResult> Get([FromQuery]SamplePrescriptionPaged val)
         {
             var result = await _prescriptionService.GetPagedResultAsync(val);

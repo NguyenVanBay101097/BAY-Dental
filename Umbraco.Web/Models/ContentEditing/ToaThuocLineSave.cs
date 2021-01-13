@@ -11,6 +11,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid ProductId { get; set; }
 
+        public Guid? ProductUoMId { get; set; }
+
         /// <summary>
         /// Số lần uống 1 ngày
         /// </summary>

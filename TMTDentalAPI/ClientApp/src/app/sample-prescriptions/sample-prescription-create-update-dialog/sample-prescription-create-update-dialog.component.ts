@@ -1,12 +1,13 @@
 import { SamplePrescriptionLineSave, SamplePrescriptionsService } from './../sample-prescriptions.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { SamplePrescriptionLineService } from 'src/app/core/services/sample-prescription-line.service';
 
 @Component({
   selector: 'app-sample-prescription-create-update-dialog',
@@ -24,7 +25,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
  
   constructor(private fb: FormBuilder, private samplePrescriptionsService: SamplePrescriptionsService, private intlService: IntlService,
     private productService: ProductService, public activeModal: NgbActiveModal,
-    private errorService: AppSharedShowErrorService) { }
+    private errorService: AppSharedShowErrorService, private samplePrescriptionLineService: SamplePrescriptionLineService) { }
 
   ngOnInit() {
     this.PrescriptionForm = this.fb.group({
@@ -49,13 +50,13 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     this.samplePrescriptionsService.get(this.id).subscribe(
       (result: any) => {
         this.PrescriptionForm.patchValue(result);
-        let date = new Date(result.date);      
 
         this.lines.clear();
 
         result.lines.forEach(line => {
           this.lines.push(this.fb.group({
             product: [line.product, Validators.required],
+            productUoM: line.productUoM,
             numberOfTimes: line.numberOfTimes, 
             amountOfTimes: line.amountOfTimes, 
             quantity: line.quantity,  
@@ -101,6 +102,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     var val = Object.assign({}, this.PrescriptionForm.value);   
     val.lines.forEach(line => {
       line.productId = line.product.id;
+      line.productUoMId = line.productUoM ? line.productUoM.id : null;
     });
 
     if (this.id) {
@@ -121,10 +123,19 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     }
   }
 
+  onChangeProduct(data: any, item: FormControl) {
+    if (data) {
+      this.samplePrescriptionLineService.onChangeProduct({productId: data.id}).subscribe((result: any) => {
+        item.get('productUoM').setValue(result.uoM);
+      });
+    }
+  }
+
   onCreate() {
     var lines = this.PrescriptionForm.get('lines') as FormArray;
     lines.push(this.fb.group({
       product: [null, Validators.required],
+      productUoM: null,
       numberOfTimes: 1, 
       amountOfTimes: 1, 
       quantity: 1,  
