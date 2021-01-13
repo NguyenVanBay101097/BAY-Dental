@@ -59,11 +59,13 @@ namespace Infrastructure.Services
                    ProductId = x.Product.Id,
                    ProductName = x.Product.Name,
                    ProductCode = x.Product.DefaultCode,
+                   ProductUomName = x.Product.UOM.Name
                })
                .Select(x => new
                {
                    ProductId = x.Key.ProductId,
                    ProductName = x.Key.ProductName,
+                   ProductUomName = x.Key.ProductUomName,
                    ProductCode = x.Key.ProductCode,
                    Begin = x.Sum(s => s.quantity),
                }).ToListAsync();
@@ -77,6 +79,7 @@ namespace Infrastructure.Services
                         ProductId = item.ProductId,
                         ProductName = item.ProductName,
                         ProductCode = item.ProductCode,
+                        ProductUomName = item.ProductUomName,
                         Begin = item.Begin,
                         DateFrom = date_from,
                         DateTo = date_to
