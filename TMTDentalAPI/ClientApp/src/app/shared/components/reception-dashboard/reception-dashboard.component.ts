@@ -16,6 +16,7 @@ import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sal
 import { DataBindingDirective } from '@progress/kendo-angular-grid';
 import { FundBookSearch, FundBookService } from '../../fund-book.service';
 import { CashBookPaged, CashBookService } from 'src/app/cash-book/cash-book.service';
+import { PartnerOldNewReport, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -35,7 +36,7 @@ export class ReceptionDashboardComponent implements OnInit {
   search: string = '';
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
-  customerReport: PartnerCustomerReportOutput;
+  partnerOldNewReport: PartnerOldNewReport;
   reportValueCash: any;
   reportValueBank: any;
   reportValueCashByDate: any;
@@ -60,6 +61,7 @@ export class ReceptionDashboardComponent implements OnInit {
     private saleReportService: SaleReportService,
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
+    private partnerOldNewReportService: PartnerOldNewReportService,
     private router: Router,
     private authService: AuthService,
     private reportGeneralLedgerService: AccountReportGeneralLedgerService,
@@ -183,9 +185,9 @@ export class ReceptionDashboardComponent implements OnInit {
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     val.companyId = this.authService.userInfo.companyId;
-    this.partnerService.getPartnerCustomerReport(val).subscribe(
+    this.partnerOldNewReportService.getSumaryPartnerOldNewReport(val).subscribe(
       result => {
-        this.customerReport = result;
+        this.partnerOldNewReport = result;
       },
       error => {
 
@@ -267,7 +269,7 @@ export class ReceptionDashboardComponent implements OnInit {
       this.router.navigateByUrl(`sale-orders/form?id=${item.id}`)
     }
   }
- 
+
   stateGet(state) {
     switch (state) {
       case 'waiting':
@@ -290,7 +292,7 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
 
- 
+
 
   getStateDisplay(state) {
     switch (state) {

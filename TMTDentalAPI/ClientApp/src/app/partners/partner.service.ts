@@ -119,8 +119,12 @@ export class PartnerCustomerReportInput {
 }
 
 export class PartnerCustomerReportOutput {
-    customerOld: number;
-    customerNew: number;
+    constructor() {
+        this.totalOldPartner = 0;
+        this.totalNewPartner = 0;
+    }
+    totalOldPartner: number;
+    totalNewPartner: number;
 }
 
 export class CustomerStatisticsInput {

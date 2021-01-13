@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService } from '../partner-old-new-report.service';
 
 @Component({
   selector: 'app-sale-report-partner',
@@ -20,7 +21,7 @@ import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/co
 
 export class SaleReportPartnerComponent implements OnInit {
   loading = false;
-  items: SaleReportPartnerItemV3[] = [];
+  items: PartnerOldNewReport[] = [];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -38,8 +39,7 @@ export class SaleReportPartnerComponent implements OnInit {
 
   constructor(
     private intlService: IntlService,
-    private saleReportService: SaleReportService,
-    private authService: AuthService,
+    private partnerOldNewReportService: PartnerOldNewReportService,
     private companyService: CompanyService
   ) {
   }
@@ -65,12 +65,12 @@ export class SaleReportPartnerComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new SaleReportPartnerSearchV3();
+    var val = new PartnerOldNewReportSearch();
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
     val.companyId = this.companyFilter ? this.companyFilter.id : null;
     this.loading = true;
-    this.saleReportService.getReportPartnerV3(val).subscribe(result => {
+    this.partnerOldNewReportService.getPartnerOldNewReport(val).subscribe(result => {
       this.items = result;
       this.total = aggregateBy(this.items, this.aggregates);
       this.loadItems();

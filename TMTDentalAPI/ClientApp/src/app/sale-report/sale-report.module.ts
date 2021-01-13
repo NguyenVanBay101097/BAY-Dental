@@ -13,6 +13,7 @@ import { SaleReportPartnerDaysFilterComponent } from './sale-report-partner-days
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
 import { SaleReportPartnerDetailComponent } from './sale-report-partner-detail/sale-report-partner-detail.component';
+import { PartnerOldNewReportService } from './partner-old-new-report.service';
 
 @NgModule({
   declarations: [SaleReportOverviewComponent, SaleReportItemDetailComponent, SaleReportPartnerComponent, SaleReportPartnerDaysFilterComponent, SaleReportOldNewPartnerComponent, SaleReportPartnerDetailComponent],
@@ -26,7 +27,7 @@ import { SaleReportPartnerDetailComponent } from './sale-report-partner-detail/s
     ReactiveFormsModule
   ],
   providers: [
-    SaleReportService
+    SaleReportService, PartnerOldNewReportService
   ],
   exports: [SaleReportItemDetailComponent]
 })

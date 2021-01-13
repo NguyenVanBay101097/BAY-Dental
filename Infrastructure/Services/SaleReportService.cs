@@ -537,13 +537,42 @@ namespace Infrastructure.Services
                 })
                   .Select(x => new SaleReportPartnerItemV3
                   {
-                      WeekStart = x.Key.WeekStart,
-                      WeekEnd = x.Key.WeekEnd,
                       WeekOfYear = x.Key.WeekOfYear,
                       Year = x.Key.Year,
                       TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
                       TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
                       lines = x.ToList()
+                  }).ToList();
+            return result;
+        }
+
+        public async Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV4(SaleReportPartnerSearch val)
+        {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewReports.Where(x => company_ids.Contains(x.CompanyId));
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
+            var result =  query.AsEnumerable().GroupBy(x => new
+            {
+                Year = x.Date.Year,
+                WeekOfYear = GetIso8601WeekOfYear(x.Date)
+            })
+                  .Select(x => new SaleReportPartnerItemV3
+                  {
+                      WeekOfYear = x.Key.WeekOfYear,
+                      Year = x.Key.Year,
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
+                      TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
+                      lines = _mapper.Map<IEnumerable<SaleReportPartnerV3Detail>>(x.ToList()),
                   }).ToList();
             return result;
         }

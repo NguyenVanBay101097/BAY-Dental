@@ -28,8 +28,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public int Year { get; set; }
         public int WeekOfYear { get; set; }
-        public DateTime WeekStart { get; set; }
-        public DateTime WeekEnd { get; set; }
         public int TotalNewPartner { get; set; }
         public int TotalOldPartner { get; set; }
         public IEnumerable<SaleReportPartnerV3Detail> lines { get; set; } = new List<SaleReportPartnerV3Detail>();

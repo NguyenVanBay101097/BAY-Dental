@@ -47,7 +47,7 @@
         <kendo-grid-column field="totalOldPartner" title="Số lượng khách hàng cũ">
         </kendo-grid-column>
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-sale-report-partner-detail [details]="dataItem.lines"></app-sale-report-partner-detail>
+            <app-sale-report-partner-detail [details]="dataItem.orderLines"></app-sale-report-partner-detail>
         </div>
     </kendo-grid>
 </div>

@@ -71,7 +71,8 @@ namespace TMTDentalAPI.Controllers
         {
             //var res = await _saleReportService.GetReportPartner(val);
             //var res = await _saleReportService.GetReportPartnerV2(val);
-            var res = await _saleReportService.GetReportPartnerV3(val);
+            //var res = await _saleReportService.GetReportPartnerV3(val);
+            var res = await _saleReportService.GetReportPartnerV4(val);
             return Ok(res);
         }
 

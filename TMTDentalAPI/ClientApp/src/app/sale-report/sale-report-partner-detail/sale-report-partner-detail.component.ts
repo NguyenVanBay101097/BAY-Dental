@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { PartnerOldNewReportDetail } from '../partner-old-new-report.service';
 import { SaleReportPartnerItemV3Detail } from '../sale-report.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { SaleReportPartnerItemV3Detail } from '../sale-report.service';
   styleUrls: ['./sale-report-partner-detail.component.css']
 })
 export class SaleReportPartnerDetailComponent implements OnInit {
-  @Input() public details: SaleReportPartnerItemV3Detail[];
+  @Input() public details: PartnerOldNewReportDetail[];
   skip = 0;
   limit = 10;
   gridData: GridDataResult;
