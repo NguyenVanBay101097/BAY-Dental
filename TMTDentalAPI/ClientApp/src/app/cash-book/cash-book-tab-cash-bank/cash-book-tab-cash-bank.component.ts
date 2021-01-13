@@ -107,39 +107,5 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loadDataGetSumary();
     this.loadDataGetMoney();
   }
-
-  editItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = item.type;
-    modalRef.componentInstance.itemId = item.resId;
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
-    }, er => { });
-  }
-
-  deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(item.type).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(item.type).toLowerCase()}?`;
-
-    modalRef.result.then(() => {
-      this.phieuThuChiService.delete(item.resId).subscribe(() => {
-        this.loadDataFromApi();
-      }, () => {
-      });
-    }, () => {
-    });
-  }
-
-  seeItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = item.type;
-    modalRef.componentInstance.type2 = item.type2;
-    modalRef.componentInstance.itemId = item.resId;
-    modalRef.componentInstance.resModel = item.resModel;
-    modalRef.componentInstance.seeForm = true;
-    modalRef.result.then(() => {
-
-    }, er => { });
-  }
+  
 }

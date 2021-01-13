@@ -1,0 +1,43 @@
+<div class="my-3 d-flex justify-content-between">
+    <div class="d-flex">
+        <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
+            [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
+        </app-tai-date-range-filter-dropdown>
+        <button type="button" class="btn btn-primary btn-sm" (click)="createItem('inbound')">
+            <i class="fas fa-plus mr-2"></i>Phiếu thu
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()">
+            <i class="fas fa-download mr-2"></i>Xuất file
+        </button>
+    </div>
+    <div class="t-search t-search-left">
+        <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"
+            [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
+        <span class="fas fa-search form-control-icon form-control-sm"></span>
+    </div>
+</div>
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="date" title="Ngày" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Số phiếu" width="100"></kendo-grid-column>
+        <kendo-grid-column field="journalName" title="Phương thức thanh toán" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="loaiThuChiName" title="Loại" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getState(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

@@ -4,28 +4,29 @@ import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PhieuThuChiFormComponent } from '../phieu-thu-chi-form/phieu-thu-chi-form.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { loaiThuChiBasic } from 'src/app/loai-thu-chi/loai-thu-chi.service';
-import { PhieuThuChiService, PhieuThuChiPaged } from '../phieu-thu-chi.service';
+import { PhieuThuChiService, PhieuThuChiPaged } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
+import { CashBookPaged } from '../cash-book.service';
 
 @Component({
-  selector: 'app-phieu-thu-chi-list',
-  templateUrl: './phieu-thu-chi-list.component.html',
-  styleUrls: ['./phieu-thu-chi-list.component.css']
+  selector: 'app-cash-book-tab-page-re-pa',
+  templateUrl: './cash-book-tab-page-re-pa.component.html',
+  styleUrls: ['./cash-book-tab-page-re-pa.component.css']
 })
-export class PhieuThuChiListComponent implements OnInit {
+export class CashBookTabPageRePaComponent implements OnInit {
   loading = false;
   items: any[];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   type: string;
+  paged: CashBookPaged;
 
   search: string;
   searchUpdate = new Subject<string>();
-  
+
   constructor(private route: ActivatedRoute, private modalService: NgbModal, 
     private phieuThuChiService: PhieuThuChiService, private router: Router,
     private printService: PrintService) { }
@@ -44,6 +45,27 @@ export class PhieuThuChiListComponent implements OnInit {
       });
   }
 
+  getType(type) {
+    if (type == "inbound") {
+      return "Phiếu thu";
+    } else {
+      return "Phiếu chi";
+    }
+  }
+
+  getState(state) {
+    if (state == "posted") {
+      return "Đã xác nhận";
+    } else {
+      return "Nháp"
+    }
+  }
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = new PhieuThuChiPaged();
@@ -56,69 +78,47 @@ export class PhieuThuChiListComponent implements OnInit {
         data: response.items,
         total: response.totalItems
       }))
-    ).subscribe(res => {
+    ).subscribe((res) => {
       this.gridData = res;
       console.log(res);
       this.loading = false;
-    }, err => {
+    }, (err) => {
       console.log(err);
       this.loading = false;
     })
   }
 
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
-    this.loadDataFromApi();
+  createItem(type) {
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.type = type;
+    modalRef.result.then((res) => {
+      this.loadDataFromApi();
+    }, (err) => { });
   }
 
-  stateGet(state) {
-    switch (state) {
-      case 'posted':
-        return 'Đã xác nhận';
-      default:
-        return 'Nháp';
-    }
+  editItem(item) {
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.type = item.type;
+    modalRef.componentInstance.itemId = item.resId;
+    modalRef.result.then((res) => {
+      this.loadDataFromApi();
+    }, (err) => { });
   }
 
-  converttype() {
-    switch (this.type) {
-      case 'thu':
-        return 'phiếu thu';
-      case 'chi':
-        return 'phiếu chi';
-    }
-  }
-
-  getTypePayerReceiver() {
-    switch (this.type) {
-      case 'thu':
-        return 'Người nhận tiền';
-      case 'chi':
-        return 'Người nộp tiền';
-    }
-  }
-
-  createItem() {
-    this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { type: this.type } });
-  }
-
-  editItem(item: any) {
-    this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: item.id, type: this.type } });
-  }
-
-  deleteItem(item: loaiThuChiBasic) {
+  deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa ' + this.converttype();
+    modalRef.componentInstance.title = `Xóa ${this.getType(item.type).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(item.type).toLowerCase()}?`;
 
-    modalRef.result.then(() => {
-      this.phieuThuChiService.delete(item.id).subscribe(() => {
+    modalRef.result.then((res) => {
+      this.phieuThuChiService.delete(item.resId).subscribe(() => {
         this.loadDataFromApi();
-      }, () => {
+      }, (res) => {
       });
-    }, () => {
+    }, (err) => {
     });
   }
-
+  
   printItem(id) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data.html);
