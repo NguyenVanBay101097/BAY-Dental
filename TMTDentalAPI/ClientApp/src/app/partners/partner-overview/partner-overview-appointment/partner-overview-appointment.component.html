@@ -44,17 +44,9 @@
             <div class="row">
                 <label class="col-sm-4 t_col_form_lable">Trạng thái</label>
                 <div class="col-sm-8">
-                    <span *ngIf="customerAppointment.state == 'done'" class="text-primary">
-                        Đã tới
-                    </span>
-                    <span *ngIf="customerAppointment.state == 'confirmed'" class="text-success">
-                        Đang hẹn
-                    </span>
-                    <span
-                        *ngIf="customerAppointment.state != 'done' && customerAppointment.state != 'confirmed'"
-                        class="text-danger">
-                        Đã hủy
-                    </span>
+                    <span >
+                      {{getState(customerAppointment.state)}}
+                    </span>                   
                 </div>
             </div>
         </div>

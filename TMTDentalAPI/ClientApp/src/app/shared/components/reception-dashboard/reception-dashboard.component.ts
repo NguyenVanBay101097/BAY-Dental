@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { DataStateChangeEvent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { process, State } from '@progress/kendo-data-query';
-import { forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
@@ -54,6 +54,11 @@ export class ReceptionDashboardComponent implements OnInit {
 
   public gridData: any[];
   public gridView: any[];
+  laboOrderStateCount: any = {};
+  laboOrderStates: any[] = [
+    { value: 'danhan', text: 'LABO ĐÃ NHẬN'},
+    { value: 'toihan', text: 'LABO TỚI HẸN'},
+  ]
 
   constructor(private intlService: IntlService,
     private appointmentService: AppointmentService,
@@ -70,7 +75,7 @@ export class ReceptionDashboardComponent implements OnInit {
     this.gridView = this.gridData;
     this.loadSaleReport();
     this.loadAppoiment();
-    this.loadLaboOrderReport();
+    this.loadLaboOrderStateCount();
     this.loadPartnerCustomerReport();
     this.loadDataMoney();
     this.loadDataMoneyByDateTime();
@@ -163,19 +168,36 @@ export class ReceptionDashboardComponent implements OnInit {
     });
   }
 
-  loadLaboOrderReport() {
-    var val = new LaboOrderReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
-    val.companyId = this.authService.userInfo.companyId;
-    this.laboOrderService.getLaboOrderReport(val).subscribe(
-      result => {
-        this.laboOrderReport = result;
-      },
-      error => {
+  // loadLaboOrderReport() {
+  //   var val = new LaboOrderReportInput();
+  //   val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+  //   val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+  //   val.companyId = this.authService.userInfo.companyId;
+  //   this.laboOrderService.getLaboOrderReport(val).subscribe(
+  //     result => {
+  //       this.laboOrderReport = result;
+  //     },
+  //     error => {
 
-      }
-    );
+  //     }
+  //   );
+  // }
+
+  loadLaboOrderStateCount() {
+    forkJoin(this.laboOrderStates.map(x => {
+      var val = new LaboOrderReportInput();
+      val.state = x.value;
+      val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      return this.laboOrderService.getCountLaboOrder(val).pipe(
+        switchMap(count => of({state: x.value, count: count}))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        debugger
+        this.laboOrderStateCount[item.state] = item.count;
+      });
+    });
   }
 
   loadPartnerCustomerReport() {

@@ -48,6 +48,7 @@ export class LaboOrderDisplay {
     name: string;
     quantity: number;
     priceUnit: number;
+    color: string;
     state: string;
     partnerRef: string;
     partnerId: string;
@@ -61,7 +62,7 @@ export class LaboOrderDisplay {
     dotKham: DotKhamBasic;
     teeth: ToothBasic[];
     saleOrderLine: SaleOrderLineBasic;
-    warrantyCode:string;
+    warrantyCode: string;
     warrantyPeriod: string;
     product: ProductSimple;
     laboOrderProducts: ProductSimple[];
@@ -80,7 +81,7 @@ export class LaboOrderStatisticsPaged {
     datePlannedTo: string;
 }
 
-export class OrderLaboPaged{
+export class OrderLaboPaged {
     limit: number;
     offset: number;
     search: string;
@@ -90,7 +91,8 @@ export class OrderLaboPaged{
 export class LaboOrderReportInput {
     dateFrom: string;
     dateTo: string;
-    companyId:string;
+    companyId: string;
+    state: string;
 }
 
 export class LaboOrderReportOutput {
@@ -103,7 +105,7 @@ export class LaboImageBasic {
     url: string;
 }
 
-export class ExportLaboPaged{
+export class ExportLaboPaged {
     limit: number;
     offset: number;
     search: string;
@@ -166,32 +168,32 @@ export class LaboOrderService {
         return this.http.get<PagedResult2<LaboOrderBasic>>(this.baseApi + this.apiUrl + '/GetFromSaleOrder_OrderLine', { params: new HttpParams({ fromObject: val }) });
     }
 
-    getLaboOrderReport(data: any) {
-        return this.http.post<LaboOrderReportOutput>(this.baseApi + this.apiUrl + '/LaboOrderReport', data);
+    getCountLaboOrder(data: any) {
+        return this.http.post<LaboOrderReportOutput>(this.baseApi + this.apiUrl + '/LaboOrderGetCount', data);
     }
 
-    getLaboForSaleOrderLine(val: any): Observable<PagedResult2<any>>{
+    getLaboForSaleOrderLine(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetLaboForSaleOrderLine', { params: new HttpParams({ fromObject: val }) });
     }
 
-    getOrderLabo(val: any): Observable<PagedResult2<any>>{
+    getOrderLabo(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetOrderLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
-    updateReceiptLabo( val: any){
-        return this.http.post(this.baseApi + this.apiUrl + "/UpdateOrderLabo" , val);
+    updateReceiptLabo(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateOrderLabo", val);
     }
 
-    getExportLabo(val: any): Observable<PagedResult2<any>>{
+    getExportLabo(val: any): Observable<PagedResult2<any>> {
         return this.http.get<PagedResult2<any>>(this.baseApi + this.apiUrl + '/GetExportLabo', { params: new HttpParams({ fromObject: val }) });
     }
 
-    updateExportLabo(val: any){
-        return this.http.post(this.baseApi + this.apiUrl + "/UpdateExportLabo" , val);
+    updateExportLabo(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateExportLabo", val);
     }
 
-    actionCancelReceipt(val: any){
-        return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt" , val);
+    actionCancelReceipt(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionCancelReceipt", val);
     }
 
     checkExistWarrantyCode(val) {

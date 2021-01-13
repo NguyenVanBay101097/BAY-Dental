@@ -131,11 +131,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? ReceivedDate { get; set; }
     }
 
-    public class LaboOrderReportInput
+    public class LaboOrderGetCount
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
+        public string State { get; set; }
     }
 
     public class LaboOrderReportOutput

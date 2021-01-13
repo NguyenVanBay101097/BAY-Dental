@@ -193,9 +193,9 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Labo.OrderLabo.Read")]
-        public async Task<IActionResult> LaboOrderReport(LaboOrderReportInput val)
+        public async Task<IActionResult> LaboOrderGetCount(LaboOrderGetCount val)
         {
-            var result = await _laboOrderService.GetLaboOrderReport(val);
+            var result = await _laboOrderService.GetCountLaboOrder(val);
             return Ok(result);
         }
 
