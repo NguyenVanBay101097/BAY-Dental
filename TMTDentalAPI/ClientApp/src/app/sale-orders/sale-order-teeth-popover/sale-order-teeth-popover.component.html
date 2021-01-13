@@ -1,6 +1,8 @@
 <span class="d-flex">
     {{showInfo()}}
-    <a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual" (click)="toggleWithTeeth(popOver)">
+    <a class="ml-auto" [ngbPopover]="popContent" popoverClass="teeth-popover-width" [autoClose]="'outside'"
+        [popoverTitle]="popTitle" #popOver="ngbPopover" placement="left" data-container="body" triggers="manual"
+        (click)="toggleWithTeeth(popOver)">
         <i class="far fa-edit text-info"></i>
     </a>
 </span>
@@ -20,26 +22,41 @@
     <div [formGroup]="formGroup">
         <div>
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label"><h6>Phụ tá</h6></label>
-                <div class="col-sm-9">
-                    <kendo-combobox [popupSettings]="{appendTo: 'component'}" [filterable]="true" (filterChange)="onAssintantFilter($event)" *ngIf="saleOrderState === 'draft'" style="width:100%;" [data]="filteredAssistants" [textField]="'Name'" #assinstantCbx formControlName="Assistant" [valueField]="'Id'">
+                <label class="col-sm-3 col-form-label">
+                    <h6>Phụ tá</h6>
+                </label>
+                <div class="col-sm-9 d-flex align-items-center">
+                    <div *ngIf="saleOrderState !== 'draft'">
+                        <span style="font-weight: 600;">{{line.Assistant.Name}}</span>
+                    </div>
+                    <kendo-combobox [popupSettings]="{appendTo: 'component'}" [filterable]="true"
+                        (filterChange)="onAssintantFilter($event)" *ngIf="saleOrderState === 'draft'"
+                        style="width:100%;" [data]="filteredAssistants" [textField]="'Name'" #assinstantCbx
+                        formControlName="Assistant" [valueField]="'Id'">
                     </kendo-combobox>
                 </div>
             </div>
-          
+
         </div>
         <div>
             <div class="form-group row">
-                <label class="col-sm-3 col-form-label"><h6>Chuẩn đoán</h6></label>
+                <label class="col-sm-3 col-form-label">
+                    <h6>Chuẩn đoán</h6>
+                </label>
                 <div class="col-sm-9">
                     <!-- <input type="text" (keyup)="onDiagnosticChange($event.target.value)" class="form-control" formControlName="Diagnostic"> -->
-                    <textarea formControlName="Diagnostic" (keyup)="onDiagnosticChange($event.target.value)" class="form-control"></textarea>
+                    <textarea formControlName="Diagnostic" (keyup)="onDiagnosticChange($event.target.value)"
+                        class="form-control"></textarea>
                 </div>
             </div>
         </div>
         <div class="d-inline-flex w-100">
-            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline" style="vertical-align: -webkit-baseline-middle;">
-                <input [attr.disabled]="saleOrderState !== 'draft' ? true : null" [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)" class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory" [id]="'toothCategory' + i">
+            <div *ngFor="let item of filteredToothCategories; let i = index" class="form-check form-check-inline"
+                style="vertical-align: -webkit-baseline-middle;">
+                <input [attr.disabled]="saleOrderState !== 'draft' ? true : null"
+                    [checked]="item.Id === ToothCategoryControl.value.Id" (change)="onChangeToothCategory(item)"
+                    class="form-check-input" type="radio" name="ToothCategory" formControlName="ToothCategory"
+                    [id]="'toothCategory' + i">
                 <label class="form-check-label" [for]="'toothCategory' + i">{{item.Name}}</label>
             </div>
         </div>
@@ -48,7 +65,8 @@
                 <tr *ngFor="let ham of hamList | keyvalue">
                     <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
                         <div class="tooth-wrapper">
-                            <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
+                            <div (click)="onSelected(rang)" class="tooth-item"
+                                [ngClass]="{'selected': isSelected(rang)}" *ngFor="let rang of vitri.value">
                                 {{rang.Name}}
                             </div>
                         </div>

@@ -23,8 +23,10 @@
                 <label class="col-sm-3 col-form-label">
                     <h6>Phụ tá</h6>
                 </label>
-                <div class="col-sm-9">
-                    <span *ngIf="line.id">{{line.get('employee').value?.name }}</span>
+                <div class="col-sm-9 d-flex align-items-center">
+                    <div *ngIf="line.id">
+                        <span style="font-weight: 600;">{{line.assistant.name}}</span>
+                    </div>
                     <kendo-combobox *ngIf="!line.id" style="width: 100%;" [data]="filteredEmployees"
                        [textField]="'name'" [filterable]="true" [popupSettings]="{appendTo: 'component'}" [filterable]="true" (filterChange)="searchEmployees($event)"
                         #employeeCbx formControlName="assistant" [valueField]="'id'">
