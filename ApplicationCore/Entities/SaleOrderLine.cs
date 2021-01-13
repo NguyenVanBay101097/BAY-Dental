@@ -173,9 +173,15 @@ namespace ApplicationCore.Entities
         public bool IsCancelled { get; set; }
 
         /// <summary>
-        /// Bac si/phu ta
+        /// Bac si
         /// </summary>
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
+
+        /// <summary>
+        /// phu ta
+        /// </summary>
+        public Guid? AssistantId { get; set; }
+        public Employee Assistant { get; set; }
     }
 }

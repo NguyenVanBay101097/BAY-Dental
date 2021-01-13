@@ -44,5 +44,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountResidual { get; set; }
 
         public Guid? EmployeeId { get; set; }
+
+        public Guid? AssistantId { get; set; }
     }
 }

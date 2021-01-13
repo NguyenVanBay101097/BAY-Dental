@@ -693,8 +693,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.CardId = val.card ? val.card.id : null;
     val.OrderLines.forEach(line => {
       if (line.Employee) {
-        line.EmployeeId = line.Employee.Id;
+        line.EmployeeId = line.Employee.Id;       
       }
+
+      if(line.Assinstant){
+        line.AssistantId = line.Assistant.Id;
+      }
+
       if (line.Teeth) {
         line.ToothIds = line.Teeth.map(x => x.Id);
       }
