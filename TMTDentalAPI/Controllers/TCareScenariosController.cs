@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaasKit.Multitenancy;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -34,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "TCare.Scenario.Read")]
         public async Task<IActionResult> Get([FromQuery] TCareScenarioPaged paged)
         {
             var res = await _scenarioService.GetPagedResultAsync(paged);
@@ -41,6 +43,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "TCare.Scenario.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _scenarioService.GetDisplay(id);
@@ -48,6 +51,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Scenario.Read")]
         public async Task<IActionResult> Autocomplete(TCareScenarioPaged val)
         {
             var res = await _scenarioService.GetAutocompleteAsync(val);
@@ -55,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "TCare.Scenario.Create")]
         public async Task<IActionResult> CreateAsync(TCareScenarioSave val)
         {
             var model = _mapper.Map<TCareScenario>(val);
@@ -64,6 +69,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "TCare.Scenario.Update")]
         public async Task<IActionResult> UpdateAsync(Guid id, TCareScenarioSave val)
         {
             var model = await _scenarioService.GetByIdAsync(id);
@@ -75,6 +81,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "TCare.Scenario.Delete")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var model = await _scenarioService.GetByIdAsync(id);
@@ -86,6 +93,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Scenario.Update")]
         public async Task<IActionResult> ActionStart(IEnumerable<Guid> ids)
         {
             await _scenarioService.ActionStart(ids);

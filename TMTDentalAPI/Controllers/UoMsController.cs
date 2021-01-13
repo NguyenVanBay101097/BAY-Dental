@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -25,6 +26,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "UoM.UoMs.Create")]
         public async Task<IActionResult> Create(UoMSave val)
         {
             var uom = _mapper.Map<UoM>(val);
@@ -39,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "UoM.UoMs.Update")]
         public async Task<IActionResult> Update(Guid id, UoMSave val)
         {
             var uom = await _uoMService.SearchQuery(x => x.Id == id).Include(x => x.Category).FirstOrDefaultAsync();
@@ -57,6 +60,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "UoM.UoMs.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _uoMService.GetByIdAsync(id);
@@ -67,6 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "UoM.UoMs.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var type = await _uoMService.SearchQuery(x => x.Id == id).Include(x => x.Category)
@@ -81,6 +86,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpGet]
+        [CheckAccess(Actions = "UoM.UoMs.Read")]
         public async Task<IActionResult> Get([FromQuery] UoMPaged val)
         {
             var res = await _uoMService.GetPagedResultAsync(val);

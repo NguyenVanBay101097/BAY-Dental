@@ -10,6 +10,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
@@ -47,6 +48,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<DotKhamVm>(_dotkhamService.SearchQuery());
@@ -54,6 +56,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [EnableQuery]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public SingleResult<DotKhamVm> Get([FromODataUri] Guid key)
         {
 
@@ -63,6 +66,7 @@ namespace TMTDentalAPI.OdataControllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> GetInfo([FromODataUri] Guid key)
         {
             if (!ModelState.IsValid)
@@ -128,6 +132,7 @@ namespace TMTDentalAPI.OdataControllers
         //}
 
         [HttpPut]
+        [CheckAccess(Actions = "Basic.DotKham.Update")]
         public async Task<IActionResult> PUT([FromODataUri] Guid key, DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)

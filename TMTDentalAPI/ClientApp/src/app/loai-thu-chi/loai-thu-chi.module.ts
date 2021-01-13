@@ -7,9 +7,10 @@ import { LoaiThuChiService } from './loai-thu-chi.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { LoaiThuChiManagementComponent } from './loai-thu-chi-management/loai-thu-chi-management.component';
 
 @NgModule({
-  declarations: [LoaiThuChiListComponent],
+  declarations: [LoaiThuChiListComponent, LoaiThuChiManagementComponent],
   imports: [
     CommonModule,
     LoaiThuChiRoutingModule, 

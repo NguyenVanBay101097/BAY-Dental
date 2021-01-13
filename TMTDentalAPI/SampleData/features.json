@@ -115,32 +115,6 @@
         ]
       },
       {
-        "Name": "Phiếu labo",
-        "Permission": "LaboOrder",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Basic.LaboOrder.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Basic.LaboOrder.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Basic.LaboOrder.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Basic.LaboOrder.Delete"
-          },
-          {
-            "Name": "Hủy phiếu",
-            "Permission": "Basic.LaboOrder.Cancel"
-          }
-        ]
-      },
-      {
         "Name": "Thanh toán",
         "Permission": "Basic.AccountPayment",
         "Children": [
@@ -161,10 +135,6 @@
             "Permission": "Basic.AccountPayment.Delete"
           }
         ]
-      },
-      {
-        "Name": "Thống kê labo",
-        "Permission": "Basic.LaboOrder.Statistics"
       }
     ]
   },
@@ -357,6 +327,22 @@
           {
             "Name": "Xem",
             "Permission": "Labo.LaboOrder.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Labo.LaboOrder.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Labo.LaboOrder.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Labo.LaboOrder.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Labo.LaboOrder.Cancel"
           }
         ]
       },
@@ -439,24 +425,24 @@
         ]
       },
       {
-        "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửu kèm Labo",
-        "Permission": "Product",
+        "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửi kèm Labo",
+        "Permission": "Catalog.Products",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "Catalog.Product.Read"
+            "Permission": "Catalog.Products.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Catalog.Product.Create"
+            "Permission": "Catalog.Products.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Catalog.Product.Update"
+            "Permission": "Catalog.Products.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Catalog.Product.Delete"
+            "Permission": "Catalog.Products.Delete"
           }
         ]
       },
@@ -737,9 +723,13 @@
     ]
   },
   {
-    "Name": "Thu chi",
+    "Name": "Sổ quỹ",
     "Permission": "Account",
     "Children": [
+      {
+        "Name": "Dữ liệu sổ quỹ",
+        "Permission": "Account.Read"
+      },
       {
         "Name": "Phiếu thu/chi",
         "Permission": "Account.PhieuThuChi",
@@ -818,10 +808,10 @@
         "Name": "Tình hình thu nợ khách hàng",
         "Permission": "Report.RealRevenue"
       },
-      {
-        "Name": "Thống kê công việc",
-        "Permission": "Report.DotKham"
-      },
+      //{
+      //  "Name": "Thống kê công việc",
+      //  "Permission": "Report.DotKham"
+      //},
       {
         "Name": "Thống kê hoa hồng",
         "Permission": "Report.Commission"
@@ -868,24 +858,24 @@
       },
       {
         "Name": "Coupon",
-        "Permission": "SaleCoupon.SaleCoupon",
+        "Permission": "SaleCoupon.SaleCoupons",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "SaleCoupon.SaleCoupon.Read"
+            "Permission": "SaleCoupon.SaleCoupons.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "SaleCoupon.SaleCoupon.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "SaleCoupon.SaleCoupon.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "SaleCoupon.SaleCoupon.Delete"
+            "Permission": "SaleCoupon.SaleCoupons.Create"
           }
+          //{
+          //  "Name": "Cập nhật",
+          //  "Permission": "SaleCoupon.SaleCoupons.Update"
+          //},
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SaleCoupon.SaleCoupons.Delete"
+          //}
         ]
       }
     ],
@@ -1021,23 +1011,23 @@
     "Children": [
       {
         "Name": "Đơn vị tính",
-        "Permission": "UoM.UoM",
+        "Permission": "UoM.UoMs",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "UoM.UoM.Read"
+            "Permission": "UoM.UoMs.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "UoM.UoM.Create"
+            "Permission": "UoM.UoMs.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "UoM.UoM.Update"
+            "Permission": "UoM.UoMs.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "UoM.UoM.Delete"
+            "Permission": "UoM.UoMs.Delete"
           }
         ]
       },
@@ -1111,6 +1101,48 @@
           {
             "Name": "Xóa",
             "Permission": "TCare.Scenario.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê gửu tin",
+        "Permission": "TCare.Messaging",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "TCare.Messaging.Read"
+          }
+        ]
+      },
+      {
+        "Name": "Mẫu tin nhắn",
+        "Permission": "TCare.MessTemplate",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "TCare.MessTemplate.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "TCare.MessTemplate.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "TCare.MessTemplate.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "TCare.MessTemplate.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thiết lập tự động",
+        "Permission": "TCare.Config",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "TCare.Config.Create"
           }
         ]
       }

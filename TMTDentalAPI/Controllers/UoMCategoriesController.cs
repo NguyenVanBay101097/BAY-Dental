@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -26,6 +27,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost]
+        [CheckAccess(Actions = "UoM.UoMCategory.Create")]
         public async Task<IActionResult> Create(UoMCategorySave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "UoM.UoMCategory.Update")]
         public async Task<IActionResult> Update(Guid id, UoMCategorySave val)
         {
             if (!ModelState.IsValid)
@@ -50,6 +53,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "UoM.UoMCategory.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _uoMCategoryService.GetByIdAsync(id);
@@ -60,6 +64,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "UoM.UoMCategory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _uoMCategoryService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -70,6 +75,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpGet]
+        [CheckAccess(Actions = "UoM.UoMCategory.Read")]
         public async Task<IActionResult> Get([FromQuery] UoMCategoryPaged val)
         {
             var res = await _uoMCategoryService.GetPagedResultAsync(val);
@@ -77,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("Autocomplete")]
+        [CheckAccess(Actions = "UoM.UoMCategory.Read")]
         public async Task<IActionResult> Autocomplete(UoMCategoryPaged val)
         {
             var res = await _uoMCategoryService.GetAutocompleteAsync(val);

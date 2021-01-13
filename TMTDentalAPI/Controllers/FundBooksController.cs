@@ -26,6 +26,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetMoney(VFundBookSearch val)
         {
             var res = await _fundBookService.GetMoney(val);
@@ -33,6 +34,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(VFundBookSearch val)
         {
             var res = await _fundBookService.GetSumary(val);
@@ -40,6 +42,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> ExportExcelFile([FromQuery] VFundBookSearch val)
         {
             var stream = new MemoryStream();

@@ -67,7 +67,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.SamplePrescription.Remove")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.SamplePrescription.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var prescription = await _prescriptionService.GetByIdAsync(id);

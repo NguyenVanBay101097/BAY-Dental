@@ -178,6 +178,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("GetPaged")]
+        [CheckAccess(Actions = "Stock.Picking.Read")]
         public async Task<IActionResult> GetPaged(StockPickingPaged val)
         {
             var result = await _stockPickingService.GetPagedResultAsync(val);

@@ -8,6 +8,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -35,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "TCare.Channel.Read")]
         public async Task<IActionResult> Get([FromQuery]FacebookPaged val)
         {
             var lstfbpage = await _facebookPageService.GetPagedResultAsync(val);
@@ -46,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "TCare.Channel.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var fbpage = await _facebookPageService.GetByIdAsync(id);
@@ -57,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "TCare.Channel.Create")]
         public async Task<IActionResult> Create(FacebookPageLinkSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -68,6 +72,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "TCare.Channel.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var page = await _facebookPageService.GetByIdAsync(id);
@@ -79,6 +84,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Channel.Update")]
         public async Task<IActionResult> SyncUsers(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -89,6 +95,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Channel.Update")]
         public async Task<IActionResult> SyncNumberPhoneUsers(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -109,6 +116,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Channel.Update")]
         public async Task<IActionResult> SyncPartnersForNumberPhone(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -140,6 +148,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/[action]")]
+        [CheckAccess(Actions = "TCare.Channel.Read")]
         public async Task<IActionResult> SelectPage(Guid id)
         {
             var user = await _userService.GetCurrentUser();
@@ -186,6 +195,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "TCare.Channel.update")]
         public async Task<IActionResult> RefreshSocialChannel(FacebookPageSimple val)
         {
             if (!ModelState.IsValid)

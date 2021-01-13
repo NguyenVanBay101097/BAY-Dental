@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "SaleCoupon.SaleCoupons.Read")]
         public async Task<IActionResult> Get([FromQuery]SaleCouponPaged val)
         {
             var result = await _couponService.GetPagedResultAsync(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCoupons.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var display = await _couponService.GetDisplay(id);
@@ -44,6 +47,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCoupons.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var program = await _couponService.GetByIdAsync(id);
@@ -55,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "SaleCoupon.SaleCoupons.Read")]
         public async Task<IActionResult> ExportFile(SaleCouponPaged val)
         {
             var stream = new MemoryStream();

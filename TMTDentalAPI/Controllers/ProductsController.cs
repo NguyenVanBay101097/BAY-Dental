@@ -48,21 +48,21 @@ namespace TMTDentalAPI.Controllers
             _uomService = uomService;
         }
 
-        [HttpGet][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Get([FromQuery]ProductPaged val)
-        {
+       {
             var result = await _productService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _productService.GetProductDisplay(id);
             return Ok(res);
         }
 
-        [HttpPost][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> Create(ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -73,7 +73,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Product.Update")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Products.Update")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -84,6 +84,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> GetLabo(Guid id)
         {
             var product = await _productService.SearchQuery(x => x.Id == id).Include(x=>x.Categ).FirstOrDefaultAsync();
@@ -98,7 +99,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Product.Delete")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Products.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -131,21 +132,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var res = await _productService.GetProductsAutocomplete(filter: filter);
             return Ok(res);
         }
 
-        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete2(ProductPaged val)
         {
             var res = await _productService.GetProductsAutocomplete2(val);
             return Ok(res);
         }
 
-        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelViewModel val)
         {
             if (!ModelState.IsValid)
@@ -252,7 +253,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportService(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -428,7 +429,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportMedicine(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -523,7 +524,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportProduct(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -671,7 +672,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Create")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportLabo(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -752,7 +753,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Create")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportLaboAttach(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -864,7 +865,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> ExportServiceExcelFile([FromQuery]ProductPaged val)
         {
             var stream = new MemoryStream();
@@ -912,7 +913,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Read")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> ExportProductExcel(ProductPaged val)
         {
             var stream = new MemoryStream();
@@ -964,7 +965,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Read")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> ExportMedicineExcel(ProductPaged val)
         {
             var stream = new MemoryStream();
