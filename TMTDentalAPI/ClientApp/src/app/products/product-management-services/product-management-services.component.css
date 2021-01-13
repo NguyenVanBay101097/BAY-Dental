@@ -48,3 +48,81 @@
 .edit_remove_action button:last-child {
     margin-right: 0;
 }
+
+.badge .o_delete {
+    color: inherit;
+    cursor: pointer;
+    padding-left: 4px;
+}
+
+.RNNXgb {
+    background: #fff;
+    display: flex;
+    border: 1px solid #dfe1e5;
+    box-shadow: none;
+    border-radius: 4px;
+    z-index: 3;
+    margin: 0 auto;
+    width: 300px;
+}
+
+.SDkEP {
+    flex: 1;
+    display: flex;
+    padding: 0px 8px 0 8px;
+    padding-left: 10px;
+}
+
+.iblpc {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.hsuHs {
+    margin: auto;
+}
+
+.wFncld {
+    margin-top: 3px;
+    color: #9aa0a6;
+    height: 20px;
+    width: 20px;
+}
+
+.z1asCe {
+    display: inline-block;
+    fill: currentColor;
+    height: 24px;
+    line-height: 24px;
+    position: relative;
+}
+
+.a4bIc {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+}
+
+.pR49Ae {
+    color: transparent;
+    flex: 100%;
+    white-space: pre;
+    height: 31px;
+}
+
+.gLFyf {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: rgba(0,0,0,.87);
+    word-wrap: break-word;
+    outline: none;
+    display: flex;
+    flex: 100%;
+    -webkit-tap-highlight-color: transparent;
+    margin-top: -31px;
+    height: 31px;
+    font-size: 0.875rem;
+}

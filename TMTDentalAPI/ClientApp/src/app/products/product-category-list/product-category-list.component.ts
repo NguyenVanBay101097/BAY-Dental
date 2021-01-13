@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -13,40 +13,35 @@ import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-
   templateUrl: './product-category-list.component.html',
   styleUrls: ['./product-category-list.component.css']
 })
-export class ProductCategoryListComponent implements OnInit {
-@Input() type: string;
-@Output() onSelect =new EventEmitter<any>();
-@Output() onDelete =new EventEmitter<any>();
-searchCate: string;
-categories: any[];
-sourceCategories: any[];
-searchCateUpdate = new Subject<string>();
-category: any;
+export class ProductCategoryListComponent implements OnInit, OnChanges {
+  @Input() type: string;
+  @Output() onSelect = new EventEmitter<any>();
+  @Output() onDelete = new EventEmitter<any>();
+  @Output() createBtnEvent = new EventEmitter<any>();
+  searchCate: string;
+  @Input() categories: any[];
+  sourceCategories: any[];
+  searchCateUpdate = new Subject<string>();
+  category: any;
 
   constructor(private productCategoryService: ProductCategoryService,
     private modalService: NgbModal
-    ) { }
+  ) { }
 
-  ngOnInit() {
-    this.searchCateUpdate
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((value) => {
-        this.searchCategories(value);
-      });
-    this.loadCategories();
+  ngOnChanges(changes: SimpleChanges): void {
+    this.sourceCategories = this.categories.slice();
   }
 
-  searchCategories(val) {
-    val = val.trim().toLowerCase();
-    if (val === '') {
-      this.categories = this.sourceCategories;
-      return;
-    }
-    this.categories = this.sourceCategories.filter(x => x.name.toLowerCase().includes(val));
+  ngOnInit() {
+    this.sourceCategories = this.categories.slice();
+  }
+
+  onSearchChange(val: string) {
+    this.sourceCategories = this.categories.filter(x => x.name.toLowerCase().includes(val));
   }
 
   loadCategories() {
-    if(!this.type) {
+    if (!this.type) {
       return;
     }
     var val = new ProductCategoryPaged();
@@ -62,7 +57,7 @@ category: any;
       }))
     ).subscribe(res => {
       this.sourceCategories = res.data;
-      if(!this.searchCate) {
+      if (!this.searchCate) {
         this.categories = this.sourceCategories;
       }
     }, err => {
@@ -75,32 +70,34 @@ category: any;
     modalRef.componentInstance.title = 'Thêm: nhóm dịch vụ';
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
-      debugger;
-      this.loadCategories();
+      this.sourceCategories.unshift(result);
+      // this.createBtnEvent.emit(result);
     }, () => {
     });
   }
 
-  editCate(item: ProductCategory) {
+  editCate(item: ProductCategory, index) {
     let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: nhóm dịch vụ';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
-      this.loadCategories();
+      this.productCategoryService.get(item.id).subscribe((categ: any) => {
+        this.sourceCategories[index] = categ;
+      });
     }, () => {
     });
   }
 
-  deleteCate(item) {
+  deleteCate(item, index) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa: nhóm dịch vụ';
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {
-        this.loadCategories();
-        if(this.category && this.category.id == item.id) {
+        this.sourceCategories.splice(index, 1);
+        if (this.category == item) {
           this.category = null;
-          this.onDelete.emit();
+          this.onSelect.emit(null);
         }
       }, err => {
         console.log(err);
@@ -110,8 +107,12 @@ category: any;
   }
 
   onSelectCate(cate: any) {
-    this.category = cate;
-    this.onSelect.emit(cate);
-  }
+    if (this.category === cate) {
+      this.category = null;
+    } else {
+      this.category = cate;
+    }
 
+    this.onSelect.emit(this.category);
+  }
 }

@@ -27,7 +27,9 @@ export class ProductManagementServicesComponent implements OnInit {
   skip = 0;
   searchService: string;
   cateId: string;
+  selectedCateg: any;
   searchServiceUpdate = new Subject<string>();
+  categories: any[] = [];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -43,6 +45,7 @@ export class ProductManagementServicesComponent implements OnInit {
         this.loadServices();
       });
     this.loadServices();
+    this.loadCategories();
   }
 
   
@@ -53,7 +56,7 @@ export class ProductManagementServicesComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.searchService || "";
-    val.categId = this.cateId || "";
+    val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
 
     this.productService
@@ -79,11 +82,12 @@ export class ProductManagementServicesComponent implements OnInit {
       );
   }
 
+  onCreateBtnEvent(categ) {
+    this.categories.unshift(categ);
+  }
+
   onSelectedCate(cate: any) {
-    if (this.cateId === cate.id) {
-      return;
-    }
-    this.cateId = cate.id;
+    this.selectedCateg = cate;
     this.loadServices();
   }
 
@@ -92,10 +96,24 @@ export class ProductManagementServicesComponent implements OnInit {
     this.loadServices();
   }
 
-  onDeleteCate(e) {
+  onDeleteCate(index) {
     debugger;
-    this.cateId = null;
+    this.categories.splice(index, 1);
     this.loadServices();
+  }
+
+  loadCategories() {
+    var val = new ProductCategoryPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = '';
+    val.type = this.type;
+
+    this.productCategoryService.getPaged(val).subscribe(res => {
+      this.categories = res.items;
+    }, err => {
+      console.log(err);
+    })
   }
 
   createService() {
