@@ -17,9 +17,9 @@
                 </div>
                 <div *ngIf="stateControl == 'cancel'" class="mt-1">
                     <textarea formControlName='reason' class="form-control" placeholder="Lý do hủy hẹn"></textarea>
-                    <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
+                    <!-- <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
                         <div *ngIf="f.reason.errors.required">Nhập lý do hủy hẹn</div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="d-flex mt-3">
                     <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>                 
