@@ -71,14 +71,16 @@ export class OrderLaboListComponent implements OnInit {
     })
   }
 
-  getState(val){
-    var now = this.intlService.formatDate(new Date(), "d");
-    var datePlanned =  this.intlService.formatDate(new Date(val.datePlanned), "d");
-    if(now > datePlanned ){
+  getState(val) {
+    debugger
+    var today = new Date();
+    var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var datePlanned = new Date(val.datePlanned);
+    if (val.datePlanned != null && now > datePlanned) {
       return "Trễ hạn";
-    }else if(now == datePlanned){
+    } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
       return "Tới hạn";
-    }else{
+    } else  {
       return "Chờ nhận";
     }
   }
@@ -87,9 +89,9 @@ export class OrderLaboListComponent implements OnInit {
     var today = new Date();
     var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     var datePlanned = new Date(val.datePlanned);
-    if (now > datePlanned) {
+    if (val.datePlanned != null && now > datePlanned) {
       return {'text-danger': true};
-    } else if (now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
+    } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
       return {'text-success':true};
     } else {
       return;
