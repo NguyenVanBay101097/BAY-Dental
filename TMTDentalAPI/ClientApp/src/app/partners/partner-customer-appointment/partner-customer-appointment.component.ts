@@ -94,9 +94,37 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     }
 
     modalRef.result.then(() => {
+      this.notify('success', 'Lưu thành công');
       this.loadData();
     }, () => {
     });
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
+  }
+
+  stateGet(state) {
+    switch (state) {
+      case 'waiting':
+        return 'Chờ khám';
+      case 'examination':
+        return 'Đang khám';
+      case 'done':
+        return 'Hoàn thành';
+      case 'cancel':
+        return 'Hủy hẹn';
+      case 'all':
+        return 'Tổng hẹn';
+      default:
+        return 'Đang hẹn';
+    }
   }
 
 }

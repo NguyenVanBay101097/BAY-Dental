@@ -375,4 +375,15 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       }
     )
   }
+
+  onChangeState() {
+    event.stopPropagation();
+    if (this.state == 'cancel') {
+      this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
+      this.formGroup.get("reason").updateValueAndValidity();
+    } else {
+      this.formGroup.get('reason').clearValidators();
+      this.formGroup.get('reason').updateValueAndValidity();
+    }
+  }
 }
