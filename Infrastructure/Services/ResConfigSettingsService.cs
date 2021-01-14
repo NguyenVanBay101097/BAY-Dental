@@ -306,7 +306,7 @@ namespace Infrastructure.Services
                     IRModelId = model.Id,
                     Model = "product.product",
                     Name = "standard_price",
-                    TType = "decimal",
+                    TType = "float",
                 };
 
                 await fieldObj.CreateAsync(fieldStd);

@@ -80,13 +80,13 @@
         </thead>
         <tbody>
             @{
-                foreach (var item in Model.MoveLines)
+                foreach (var item in Model.MoveLines.Select((value,i) => (value,i)))
                 {
                     <tr>
-                        <td class="text-center">@item.Sequence</td>
-                        <td class="text-center">@item.Name</td>
-                        <td class="text-center">@item.ProductUOMQty</td>
-                        <td class="text-center">@item.ProductUOM.Name</td>
+                        <td class="text-center">@(item.i + 1)</td>
+                        <td class="text-center">@item.value.Name</td>
+                        <td class="text-center">@item.value.ProductUOMQty.ToString("n0")</td>
+                        <td class="text-center">@item.value.ProductUOM.Name</td>
                     </tr>
                 }
             }
