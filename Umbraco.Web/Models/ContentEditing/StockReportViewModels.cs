@@ -38,6 +38,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public string ProductUomName { get; set; }
+
     }
 
     public class StockReportXuatNhapTonItemDetail

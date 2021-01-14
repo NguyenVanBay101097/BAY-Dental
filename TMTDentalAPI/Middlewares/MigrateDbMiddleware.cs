@@ -3,6 +3,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using HtmlAgilityPack;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,8 @@ namespace TMTDentalAPI.Middlewares
                     if (pendingMigrations.Any())
                         await dbContext.Database.MigrateAsync();
 
+                    //add data nếu cần
+                    await AddMissingData(context);
                     //update version
                     var tenantContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
                     var tnt = await tenantContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();
@@ -66,6 +69,26 @@ namespace TMTDentalAPI.Middlewares
             await _next.Invoke(context);
 
             //lockObj.Release();
+        }
+
+        public async Task AddMissingData(HttpContext context)
+        {
+            var fieldObj = (IIRModelFieldService)context.RequestServices.GetService(typeof(IIRModelFieldService));
+            var fieldStd = await fieldObj.SearchQuery(x => x.Name == "standard_price" && x.Model == "product.product").FirstOrDefaultAsync();
+            if (fieldStd == null)
+            {
+                var modelObj = (IIRModelService)context.RequestServices.GetService(typeof(IIRModelService));
+                var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+                fieldStd = new IRModelField
+                {
+                    IRModelId = model.Id,
+                    Model = "product.product",
+                    Name = "standard_price",
+                    TType = "decimal",
+                };
+
+                await fieldObj.CreateAsync(fieldStd);
+            }
         }
     }
 }

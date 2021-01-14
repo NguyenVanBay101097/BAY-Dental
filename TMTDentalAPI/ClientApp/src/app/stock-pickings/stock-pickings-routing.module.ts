@@ -6,12 +6,15 @@ import { StockPickingOutgoingListComponent } from './stock-picking-outgoing-list
 import { StockPickingOutgoingCreateUpdateComponent } from './stock-picking-outgoing-create-update/stock-picking-outgoing-create-update.component';
 import { StockPickingIncomingListComponent } from './stock-picking-incoming-list/stock-picking-incoming-list.component';
 import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incoming-create-update/stock-picking-incoming-create-update.component';
+import { StockPickingManagementComponent } from './stock-picking-management/stock-picking-management.component';
+import { StockReportXuatNhapTonComponent } from '../stock-reports/stock-report-xuat-nhap-ton/stock-report-xuat-nhap-ton.component';
+import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
 
 const routes: Routes = [
-  {
-    path: 'outgoing-pickings',
-    component: StockPickingOutgoingListComponent
-  },
+  // {
+  //   path: 'outgoing-pickings',
+  //   component: StockPickingOutgoingListComponent
+  // },
   {
     path: 'outgoing-pickings/create',
     component: StockPickingOutgoingCreateUpdateComponent
@@ -20,10 +23,10 @@ const routes: Routes = [
     path: 'outgoing-pickings/edit/:id',
     component: StockPickingOutgoingCreateUpdateComponent
   },
-  {
-    path: 'incoming-pickings',
-    component: StockPickingIncomingListComponent
-  },
+  // {
+  //   path: 'incoming-pickings',
+  //   component: StockPickingIncomingListComponent
+  // },
   {
     path: 'incoming-pickings/create',
     component: StockPickingIncomingCreateUpdateComponent
@@ -32,6 +35,16 @@ const routes: Routes = [
     path: 'incoming-pickings/edit/:id',
     component: StockPickingIncomingCreateUpdateComponent
   },
+  {
+    path: '',
+    component: StockPickingManagementComponent,
+    children: [
+      { path: '', redirectTo: 'stock-report-xuat-nhap-ton', pathMatch: 'full' },
+      { path: 'stock-report-xuat-nhap-ton', component: StockXuatNhapTonComponent },
+      { path: 'incoming-pickings', component: StockPickingIncomingListComponent },
+      { path: 'outgoing-pickings', component: StockPickingOutgoingListComponent }
+    ]
+  }
 ];
 
 @NgModule({

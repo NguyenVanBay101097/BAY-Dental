@@ -14,6 +14,11 @@ import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/pr
 import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+
 declare var jquery: any;
 declare var $: any;
 
@@ -30,9 +35,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   opened = false;
   picking: StockPickingDisplay = new StockPickingDisplay();
   id: string;
-
+  filteredPartners: PartnerSimple[] = [];
   productSearch: string;
   productList: ProductBasic2[] = [];
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
   constructor(
@@ -46,7 +52,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     private pickingTypeService: StockPickingTypeService,
     private stockMoveService: StockMoveService,
     private productService: ProductService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private printServie: PrintService
   ) { }
 
   ngOnInit() {
@@ -71,7 +78,20 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     }
 
     this.loadProductList();
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners = result;
+      this.partnerCbx.loading = false;
+    });
+
+    this.loadFilteredPartners();
   }
+
+  get partner() {return this.pickingForm.get('partner').value;}
+  get note() {return this.pickingForm.get('note').value;}
 
   loadProductList() {
     var val = new ProductPaged();
@@ -99,6 +119,19 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   onProductInputSearchChange(text) {
     this.productSearch = text;
     this.loadProductList();
+  }
+
+  loadFilteredPartners() {
+    this.searchPartners().subscribe(result => {
+      this.filteredPartners = result;
+    });
+  }
+
+  searchPartners(search?: string) {
+    var val = new PartnerPaged();
+    val.search = search;
+    // val.customer = true;
+    return this.partnerService.getAutocompleteSimple(val);
   }
 
   loadDefault() {
@@ -278,6 +311,12 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         });
       });
     }
+  }
+
+  onPrint() {
+    this.stockPickingService.Print(this.id).subscribe((res:any) => {
+      this.printServie.printHtml(res.html);
+    });
   }
 }
 

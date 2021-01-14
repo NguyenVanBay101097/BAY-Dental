@@ -14,9 +14,13 @@ import { StockPickingOutgoingCreateUpdateComponent } from './stock-picking-outgo
 import { SharedModule } from '../shared/shared.module';
 import { StockPickingIncomingListComponent } from './stock-picking-incoming-list/stock-picking-incoming-list.component';
 import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incoming-create-update/stock-picking-incoming-create-update.component';
+import { StockPickingManagementComponent } from './stock-picking-management/stock-picking-management.component';
+import { StockReportService } from '../stock-reports/stock-report.service';
+import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
+import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-detail/stock-picking-incoming-detail.component';
 
 @NgModule({
-  declarations: [StockPickingListComponent, StockPickingCreateUpdateComponent, StockPickingMlDialogComponent, StockPickingOutgoingListComponent, StockPickingOutgoingCreateUpdateComponent, StockPickingIncomingListComponent, StockPickingIncomingCreateUpdateComponent],
+  declarations: [StockPickingListComponent, StockPickingCreateUpdateComponent, StockPickingMlDialogComponent, StockPickingOutgoingListComponent, StockPickingOutgoingCreateUpdateComponent, StockPickingIncomingListComponent, StockPickingIncomingCreateUpdateComponent, StockPickingManagementComponent, StockXuatNhapTonComponent, StockPickingIncomingDetailComponent],
   imports: [
     CommonModule,
     StockPickingsRoutingModule,
@@ -26,7 +30,7 @@ import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incom
     SharedModule
   ],
   providers: [
-    StockPickingService
+    StockPickingService,StockReportService
   ],
   entryComponents: [
     StockPickingMlDialogComponent
