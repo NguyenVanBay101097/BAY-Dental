@@ -8,17 +8,17 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="!getValueForm('state') == 'posted'"
+                    <button [disabled]="getValueForm('state') == 'posted'"
                         class="btn o_arrow_button disabled"
                         [class.btn-primary]="getValueForm('state') == 'posted'"
-                        [class.btn-secondary]="!getValueForm('state') == 'posted'"
+                        [class.btn-secondary]="getValueForm('state') == 'posted'"
                         type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="!getValueForm('state') == 'draft'"
+                    <button [disabled]="getValueForm('state') == 'draft'"
                         class="btn o_arrow_button disabled"
                         [class.btn-primary]="getValueForm('state') == 'draft'"
-                        [class.btn-secondary]="!getValueForm('state') == 'draft'"
+                        [class.btn-secondary]="getValueForm('state') == 'draft'"
                         type="button">
                         Nháp
                     </button>
