@@ -100,7 +100,7 @@ export class ProductLaboAttachListComponent implements OnInit {
   deleteItem(item: ProductLaboBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa gửi kèm Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửi kèm labo ${item.name}?`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa gửi kèm Labo ${item.name}?`;
     modalRef.result.then(() => {
       this.productService.delete(item.id).subscribe(() => {
         this.notify('success','Xóa thành công');

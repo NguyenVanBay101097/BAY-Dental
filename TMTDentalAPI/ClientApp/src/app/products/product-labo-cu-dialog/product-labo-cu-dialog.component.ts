@@ -92,7 +92,7 @@ export class ProductLaboCuDialogComponent implements OnInit {
     val.uoMIds.push(val.uom.id);
     if (this.id) {
       this.productService.update(this.id, val).subscribe(() => {
-        this.notify('succes','Lưu thành công');
+        this.notify('success','Lưu thành công');
         this.activeModal.close(true);
       });
     } else {
