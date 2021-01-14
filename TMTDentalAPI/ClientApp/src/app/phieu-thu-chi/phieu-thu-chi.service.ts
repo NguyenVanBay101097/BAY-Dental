@@ -125,4 +125,11 @@ export class PhieuThuChiService {
   getPrint(id: string) {
     return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
   }
+
+  exportExcelFile(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+      responseType: "blob",
+      params: val,
+    });
+  }
 }

@@ -139,4 +139,29 @@ export class CashBookTabPageRePaComponent implements OnInit {
     }, (err) => {
     });
   }
+
+  exportExcelFile() {
+    this.phieuThuChiService.exportExcelFile(this.paged).subscribe((res) => {
+      let filename = "PhieuThu";
+      if (this.type == "outbound") {
+        filename = "PhieuChi";
+      }
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      console.log(res);
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 }

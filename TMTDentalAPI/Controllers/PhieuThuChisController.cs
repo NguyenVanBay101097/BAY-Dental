@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Utilities;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -146,6 +148,64 @@ namespace TMTDentalAPI.Controllers
             var html = _viewRenderService.Render("PhieuThuChiPrint", phieu);
 
             return Ok(new PrintData() { html = html });
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcelFile([FromQuery] PhieuThuChiPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var services = await _phieuThuChiService.GetExportExcel(val);
+            var sheetName = "Phiếu " + val.Type;
+
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Ngày";
+                worksheet.Cells[1, 2].Value = "Số phiếu";
+                worksheet.Cells[1, 3].Value = "Phương thức thanh toán";
+                worksheet.Cells[1, 4].Value = "Loại " + val.Type;
+                worksheet.Cells[1, 5].Value = "Số tiền";
+                if (val.Type == "thu")
+                {
+                    worksheet.Cells[1, 6].Value = "Người nộp tiền";
+                } else
+                {
+                    worksheet.Cells[1, 6].Value = "Người nhận tiền";
+                }
+                worksheet.Cells[1, 7].Value = "Nội dung";
+                worksheet.Cells[1, 8].Value = "Trạng thái";
+
+                for (int row = 2; row < services.Count() + 2; row++)
+                {
+                    var item = services.ToList()[row - 2];
+
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.JournalName;
+                    worksheet.Cells[row, 4].Value = item.LoaiThuChiName;
+                    worksheet.Cells[row, 5].Value = item.Amount;
+                    worksheet.Cells[row, 6].Value = item.PayerReceiver;
+                    worksheet.Cells[row, 7].Value = item.Reason;
+                    worksheet.Cells[row, 8].Value = item.State;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }
