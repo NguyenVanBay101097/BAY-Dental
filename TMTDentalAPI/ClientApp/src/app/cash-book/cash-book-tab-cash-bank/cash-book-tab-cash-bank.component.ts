@@ -1,10 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
-import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
@@ -25,9 +21,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   @Input() changeToLoadData: boolean;
 
   constructor(
-    private modalService: NgbModal, 
     private cashBookService: CashBookService,
-    private phieuThuChiService: PhieuThuChiService,
   ) { }
 
   ngOnChanges(changes:SimpleChanges): void { 
@@ -66,7 +60,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   loadDataGetSumary() {
     this.loading = true;
-
+    this.paged.begin = true;
     this.cashBookService.getSumary(this.paged).subscribe(
       (res) => {
         this.reportData = res;
@@ -83,7 +77,8 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loading = true;
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
-
+    this.paged.begin = false;
+    console.log(this.paged);
     this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
         <GridDataResult>{
@@ -94,6 +89,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     ).subscribe(
       (res) => {
         this.gridData = res;
+        console.log(res);
         this.loading = false;
       },
       (err) => {
@@ -108,38 +104,4 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loadDataGetMoney();
   }
 
-  editItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = item.type;
-    modalRef.componentInstance.itemId = item.resId;
-    modalRef.result.then(() => {
-      this.loadDataFromApi();
-    }, er => { });
-  }
-
-  deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(item.type).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(item.type).toLowerCase()}?`;
-
-    modalRef.result.then(() => {
-      this.phieuThuChiService.delete(item.resId).subscribe(() => {
-        this.loadDataFromApi();
-      }, () => {
-      });
-    }, () => {
-    });
-  }
-
-  seeItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = item.type;
-    modalRef.componentInstance.type2 = item.type2;
-    modalRef.componentInstance.itemId = item.resId;
-    modalRef.componentInstance.resModel = item.resModel;
-    modalRef.componentInstance.seeForm = true;
-    modalRef.result.then(() => {
-
-    }, er => { });
-  }
 }

@@ -1,93 +1,31 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Sổ quỹ tiền</li>
-    </ol>
-    <div class="o_cp_searchview">
-
-    </div>
-    <div class="o_cp_left">
-        <div class="o_cp_buttons">
-            <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem('inbound')">
-                    <i class="fas fa-plus mr-2"></i>Phiếu thu
-                </button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="createItem('outbound')">
-                    <i class="fas fa-plus mr-2"></i>Phiếu chi
-                </button>
-                <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()">
-                    <i class="fas fa-download mr-2"></i>Xuất file
-                </button>
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Sổ quỹ tiền</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="tab-cabo" class="nav-link px-3 py-1"
+                            routerLinkActive="active">Sổ quỹ tiền</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'inbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu thu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'outbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu chi</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
             </div>
         </div>
-        <div class="o_cp_sidebar">
-
+        <div class="o_cp_right">
         </div>
-    </div>
-    <div class="o_cp_right">
-
     </div>
 </div>
 
-<div class="p-3">
-    <div class="d-flex">
-        <div class="card border-secondary mr-2">
-            <div class="card-body">
-                <div class="text-center">
-                    <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
-                    <h4 class="text-warning">{{reportCashData.totalAmount | number}}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="card border-secondary mr-2">
-            <div class="card-body">
-                <div class="text-center">
-                    <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
-                    <h4 class="text-primary">{{reportBankData.totalAmount | number}}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="card border-secondary mr-2">
-            <div class="card-body">
-                <div class="text-center">
-                    <span class="font-weight-bold">Tổng sổ quỹ</span>
-                    <h4 class="text-success">{{(reportCashData.totalAmount + reportBankData.totalAmount) | number}}</h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="my-3 d-flex justify-content-between">
-        <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" 
-                [dateFrom]="paged.dateFrom" 
-                [dateTo]="paged.dateTo" 
-                [quickOption]="quickOptionDate"
-                (searchChange)="searchChangeDate($event)">
-            </app-tai-date-range-filter-dropdown>
-            <kendo-combobox [data]="listType" [textField]="'name'" [valueField]="'value'" style="font-size: 0.8rem; width: 200px;" [placeholder]="'Loại chứng từ'" [filterable]="true"
-                (valueChange)="changeType($event)" class="cbbox-sm" [popupSettings]="{width: 'auto'}">
-            </kendo-combobox>
-        </div>
-        <div class="t-search t-search-left">
-            <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"
-                [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="fas fa-search form-control-icon form-control-sm"></span>
-        </div>
-    </div>
-    <div>
-        <nav>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
-                    aria-selected="true" (click)="clickTab('cash')">Tiền mặt</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
-                    aria-selected="false" (click)="clickTab('bank')">Ngân hàng</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#nav-1" role="tab" aria-controls="nav-1"
-                    aria-selected="false" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
-            </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane show active" id="nav-1" role="tabpanel">
-                <app-cash-book-tab-cash-bank [paged]="paged" [changeToLoadData]="changeToLoadData"></app-cash-book-tab-cash-bank>
-            </div>
-        </div>
-    </div>
+<div class="o_content">
+    <router-outlet></router-outlet>
 </div>

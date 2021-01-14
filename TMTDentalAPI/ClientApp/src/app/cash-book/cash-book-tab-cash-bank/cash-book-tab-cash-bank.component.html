@@ -1,23 +1,23 @@
 <div class="d-flex justify-content-end mt-2">
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Quỹ đầu kỳ</span>
             <h4 class="text-primary">{{reportData.begin | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Tổng thu</span>
             <h4 class="text-primary">{{reportData.totalThu | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Tổng chi</span>
             <h4 class="text-danger">{{reportData.totalChi | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span *ngIf="paged.resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền mặt</span>
             <span *ngIf="paged.resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân hàng</span>
@@ -33,53 +33,17 @@
             {{dataItem.date | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Số phiếu" width="100">
+    <kendo-grid-column field="name" title="Diễn giải" width="100"></kendo-grid-column>
+    <!-- <kendo-grid-column field="ref" title="Loại thu chi" width="120"></kendo-grid-column> -->
+    <kendo-grid-column field="debit" title="Thu" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.name}}
+            {{dataItem.debit | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="type" title="Loại chứng từ" width="100">
+    <kendo-grid-column field="credit" title="Chi" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{getType(dataItem.type)}}
+            {{dataItem.credit | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="type2" title="Loại thu chi" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.type2}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="recipientPayer" title="Người nhận/ nộp" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.recipientPayer}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="state" title="Trạng thái" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{getState(dataItem.state)}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="id" width="80">
-        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-            Thao tác
-        </ng-template>
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
-                class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                <span class="far fa-edit"></span>
-            </button>
-            <button *ngIf="dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi'"
-                class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
-                <span class="fas fa-trash-alt"></span>
-            </button>
-            <button *ngIf="!(dataItem.state != 'posted' && dataItem.resModel == 'phieu.thu.chi')"
-                class="btn btn-info btn-sm mr-2" title="Xem" (click)="seeItem(dataItem)">
-                <span class="fas fa-eye"></span>
-            </button>
-        </ng-template>
-    </kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Người nhận/nộp tiền" width="100"></kendo-grid-column>
 </kendo-grid>

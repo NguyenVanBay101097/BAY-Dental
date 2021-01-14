@@ -128,8 +128,8 @@ export class ReceptionDashboardComponent implements OnInit {
 
   loadDataMoney() {
     var companyId = this.authService.userInfo.companyId;
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId, begin: false });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", companyId: companyId, begin: false });
+    let cash = this.cashBookService.getTotalReport({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getTotalReport({ resultSelection: "bank", companyId: companyId });
     forkJoin([cash, bank]).subscribe(results => {
       this.reportValueCash = results[0] ? results[0].totalAmount : 0;
       this.reportValueBank = results[1] ? results[1].totalAmount : 0;
@@ -289,7 +289,7 @@ export class ReceptionDashboardComponent implements OnInit {
       this.router.navigateByUrl(`sale-orders/form?id=${item.id}`)
     }
   }
- 
+
   stateGet(state) {
     switch (state) {
       case 'waiting':
@@ -312,7 +312,7 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
 
- 
+
 
   getStateDisplay(state) {
     switch (state) {

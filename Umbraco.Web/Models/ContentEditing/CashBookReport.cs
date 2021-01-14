@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class FundBookReport
+    public class CashBookReport
     {
-        public FundBookReport()
+        public CashBookReport()
         {
             Begin = 0;
             TotalThu = 0;

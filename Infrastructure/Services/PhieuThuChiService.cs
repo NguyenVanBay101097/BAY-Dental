@@ -34,6 +34,13 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
             var items = await _mapper.ProjectTo<PhieuThuChiBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)
@@ -346,6 +353,40 @@ namespace Infrastructure.Services
                 Type = x.Type
             }).ToListAsync();
             return list;
+        }
+
+        public async Task<List<PhieuThuChiExportExcel>> GetExportExcel(PhieuThuChiPaged val)
+        {
+            ISpecification<PhieuThuChi> spec = new InitialSpecification<PhieuThuChi>(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                spec = spec.And(new InitialSpecification<PhieuThuChi>(x => x.Name.Contains(val.Search)));
+
+            spec = spec.And(new InitialSpecification<PhieuThuChi>(x => x.Type == val.Type));
+
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
+            query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = query.Select(x => new PhieuThuChiExportExcel
+            {
+                Date = x.Date,
+                Name = x.Name,
+                JournalName = x.Journal.Name,
+                LoaiThuChiName = x.LoaiThuChi.Name,
+                Amount = x.Amount,
+                PayerReceiver = x.PayerReceiver,
+                Reason = x.Reason,
+                State = (x.State == "posted") ? "Đã xác nhận" : "Nháp",
+            }).ToList();
+
+            return res;
         }
     }
 }
