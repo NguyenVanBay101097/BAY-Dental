@@ -17,6 +17,7 @@ import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiSearch, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { RevenueReportResultDetails, RevenueReportSearch, RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
+import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 
 @Component({
   selector: 'app-sale-dashboard-report-form',
@@ -54,7 +55,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   totalChiPhi: number;
   totalThu: number;
   totalChi: number;
-  customerReport: PartnerCustomerReportOutput;
+  partnerOldNewReport: PartnerOldNewReport;
   filteredCompanies: CompanyBasic[] = [];
   totalHoaHong: number;
   reportLedgerBank: any;
@@ -79,7 +80,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     private reportFinancialService: ReportFinancialService,
     private PhieuThuChiService: PhieuThuChiService,
     private commissionSettlementReportsService: CommissionSettlementsService,
-    private router: Router
+    private router: Router,
+    private partnerOldNewReportService: PartnerOldNewReportService
   ) { }
 
   ngOnInit() {
@@ -178,11 +180,11 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadPartnerCustomerReport() {
-    var val = new PartnerCustomerReportInput();
+    var val = new PartnerOldNewReportSearch();
     val.companyId = val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-    this.partnerService.getPartnerCustomerReport(val).subscribe(
+    this.partnerOldNewReportService.getSumaryPartnerOldNewReport(val).subscribe(
       result => {
-        this.customerReport = result;
+        this.partnerOldNewReport = result;
       },
       error => {
         console.log(error);
@@ -240,7 +242,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
     val.fromDate = this.dateFrom;
-    val.toDate = this.dateTo; 
+    val.toDate = this.dateTo;
     val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.reportService.getSummary(val).subscribe(res => {
       var total = aggregateBy(res, this.aggregates);

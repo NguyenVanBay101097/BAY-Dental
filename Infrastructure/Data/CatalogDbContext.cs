@@ -221,6 +221,7 @@ namespace Infrastructure.Data
         public DbSet<LaboBiteJoint> LaboBiteJoints { get; set; }
         public DbSet<LaboBridge> LaboBridges { get; set; }
         public DbSet<LaboOrderProductRel> laboOrderProductRels { get; set; }
+        public DbSet<PartnerOldNewReport> PartnerOldNewReports { get; set; }
 
         public DbSet<MedicineOrder> MedicineOrders { get; set; }
         public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
@@ -304,6 +305,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new SaleReportConfiguration());
             builder.ApplyConfiguration(new VFundBookConfiguration());
+            builder.ApplyConfiguration(new PartnerOldNewReportConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
             builder.ApplyConfiguration(new ResCompanyUsersRelConfiguration());

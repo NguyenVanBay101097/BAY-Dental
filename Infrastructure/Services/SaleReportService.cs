@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -497,7 +498,114 @@ namespace Infrastructure.Services
                 result.Add(item);
             }
 
+
+
             return result;
+        }
+
+        public async Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV3(SaleReportPartnerSearch val)
+        {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var queryFilter = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+            var query = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            var result = query.Include(x=>x.Partner).AsEnumerable().GroupBy(x => new { PartnerId = x.PartnerId,OrderName = x.Name ,PartnerName  = x.Partner.DisplayName,Date = x.Date })
+                .Select(x => new SaleReportPartnerV3Detail
+                {
+                    Date = x.Key.Date,
+                    OrderName =x.Key.OrderName,
+                    PartnerName = x.Key.PartnerName,
+                    PartnerId = x.Key.PartnerId.Value,
+                    CountLine = x.Count(),
+                    Type = queryFilter.Where(s => s.PartnerId == x.Key.PartnerId && s.Date < DateUtils.FirstDateOfWeekISO8601(x.Key.Date.Year, GetIso8601WeekOfYear(x.Key.Date))).Count() >= 1 ? "KHC" : "KHM"
+                })
+                .GroupBy(x => new
+                {
+                    Year = x.Date.Year,
+                    WeekStart = DateUtils.FirstDateOfWeekISO8601(x.Date.Year, GetIso8601WeekOfYear(x.Date)),
+                    WeekEnd = DateUtils.FirstDateOfWeekISO8601(x.Date.Year, GetIso8601WeekOfYear(x.Date)).AddDays(6).AddHours(23).AddMinutes(59),
+                    WeekOfYear = GetIso8601WeekOfYear(x.Date)
+                })
+                  .Select(x => new SaleReportPartnerItemV3
+                  {
+                      WeekOfYear = x.Key.WeekOfYear,
+                      Year = x.Key.Year,
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").GroupBy(x=>x.PartnerId).Count(),
+                      TotalOldPartner = x.Where(x => x.Type == "KHC").GroupBy(x => x.PartnerId).Count(),
+                      lines = x.ToList()
+                  }).ToList();
+            return result;
+        }
+
+        public async Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV4(SaleReportPartnerSearch val)
+        {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewReports.Where(x => company_ids.Contains(x.CompanyId));
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
+            var result = query.AsEnumerable().GroupBy(x => new
+            {
+                Year = x.Date.Year,
+                WeekOfYear = GetIso8601WeekOfYear(x.Date)
+            })
+                  .Select(x => new SaleReportPartnerItemV3
+                  {
+                      WeekOfYear = x.Key.WeekOfYear,
+                      Year = x.Key.Year,
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
+                      TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
+                      lines = _mapper.Map<IEnumerable<SaleReportPartnerV3Detail>>(x.ToList()),
+                  }).ToList();
+            return result;
+        }
+
+        public static int GetIso8601WeekOfYear(DateTime time)
+        {
+            // Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
+            // be the same week# as whatever Thursday, Friday or Saturday are,
+            // and we always get those right
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                time = time.AddDays(3);
+            }
+
+            // Return the week of our adjusted day
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public async Task<IEnumerable<dynamic>> GetWeeksOfYear()
+        {
+            var jan1 = new DateTime(DateTime.Today.Year, 1, 1);
+            //beware different cultures, see other answers
+            var startOfFirstWeek = jan1.AddDays(1 - (int)(jan1.DayOfWeek));
+            var weeks = Enumerable.Range(0, 54).Select(i => new { weekStart = startOfFirstWeek.AddDays(i * 7) })
+                    .TakeWhile(x => x.weekStart.Year <= jan1.Year)
+                    .Select(x => new { x.weekStart, weekFinish = x.weekStart.AddDays(6) })
+                    .SkipWhile(x => x.weekFinish < jan1.AddDays(1))
+                    .Select((x, i) => new { x.weekStart, x.weekFinish, weekNum = i + 1 });
+
+            return weeks;
         }
 
         public async Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val)

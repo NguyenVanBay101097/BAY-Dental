@@ -7,28 +7,24 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm khách hàng, SĐT" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                </div>
+
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <div class="btn-group mr-2" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of groups"
-                        [class.active]="item.value == partnerDisplay"
-                        (click)="setGroupBy(item.value)">{{item.text}}</button>
-                </div>
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-tai-date-range-filter-dropdown>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
             <div class="d-flex">
-                <app-sale-report-partner-days-filter [monthsFrom]="monthsFrom" [monthsTo]="monthsTo"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-sale-report-partner-days-filter>
+                <kendo-combobox [data]="listCompanies" style="font-size: 0.8rem;min-width: 200px;"
+                    [placeholder]="'Tất cả chi nhánh'" (valueChange)="changeCompany($event)" class="cbbox-sm"
+                    [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
             </div>
         </div>
     </div>
@@ -37,23 +33,21 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="partnerDisplayName" title="Khách hàng">
-        </kendo-grid-column>
-        <kendo-grid-column field="partnerPhone" title="Điện thoại">
-        </kendo-grid-column>
-        <kendo-grid-column field="lastDateOrder" title="Lần cuối điều trị">
+        <kendo-grid-column field="weekOfYear" title="Tuần">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.lastDateOrder | date: 'shortDate'}}
+                <span>Tuần {{dataItem.weekOfYear}}, {{dataItem.year}}</span>
+                <!-- <div>
+                    (Từ ngày {{dataItem.weekStart | date
+                    : 'shortDate'}} đến ngày {{dataItem.weekEnd | date:'shortDate'}})
+                </div> -->
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="orderCount" class="text-right" title="Số phiếu điều trị"
-            footerClass="text-right font-weight-bold">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.orderCount | number}}
-            </ng-template>
-            <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['orderCount']">
-                {{total["orderCount"].sum | number}}
-            </ng-template>
+        <kendo-grid-column field="totalNewPartner" title="Số lượng khách hàng mới">
         </kendo-grid-column>
+        <kendo-grid-column field="totalOldPartner" title="Số lượng khách hàng cũ">
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-sale-report-partner-detail [details]="dataItem.orderLines"></app-sale-report-partner-detail>
+        </div>
     </kendo-grid>
 </div>

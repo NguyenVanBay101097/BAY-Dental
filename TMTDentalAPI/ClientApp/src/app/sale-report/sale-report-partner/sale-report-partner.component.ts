@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import { SaleReportItem, SaleReportService, SaleReportSearch, SaleReportPartnerSearch, SaleReportPartnerItem } from '../sale-report.service';
+import { SaleReportItem, SaleReportService, SaleReportSearch, SaleReportPartnerSearch, SaleReportPartnerItem, SaleReportPartnerItemV3, SaleReportPartnerSearchV3 } from '../sale-report.service';
 import * as _ from 'lodash';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService } from '../partner-old-new-report.service';
 
 @Component({
   selector: 'app-sale-report-partner',
@@ -18,53 +21,56 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 export class SaleReportPartnerComponent implements OnInit {
   loading = false;
-  items: SaleReportPartnerItem[] = [];
+  items: PartnerOldNewReport[] = [];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  partnerDisplay = "all";
-  search: string;
-  searchUpdate = new Subject<string>();
-  monthsFrom: number;
-  monthsTo: number;
-
-  groups: { text: string, value: string }[] = [
-    { text: 'Tất cả', value: 'all' },
-    { text: 'Khách mới', value: 'new' },
-    { text: 'Khách cũ', value: 'old' },
-  ];
-
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  dateFrom: Date;
+  dateTo: Date;
+  listCompanies: CompanyBasic[] = [];
+  companyFilter: CompanyBasic
   public total: any;
   public aggregates: any[] = [
     { field: 'orderCount', aggregate: 'sum' },
   ];
 
 
-  constructor(private intlService: IntlService, private saleReportService: SaleReportService) {
+  constructor(
+    private intlService: IntlService,
+    private partnerOldNewReportService: PartnerOldNewReportService,
+    private companyService: CompanyService
+  ) {
   }
 
   ngOnInit() {
-    // this.dateFrom = new Date(this.monthStart);
-    // this.dateTo = new Date(this.monthEnd);
+    this.dateFrom = new Date(this.monthStart);
+    this.dateTo = new Date(this.monthEnd);
     this.loadDataFromApi();
+    this.loadCompanies();
+  }
 
-    this.searchUpdate.pipe(
-      debounceTime(400),
-      distinctUntilChanged())
-      .subscribe(() => {
-        this.loadDataFromApi();
-      });
+  loadCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val)
+      .subscribe(res => {
+        this.listCompanies = res.items;
+      })
+  }
+
+  changeCompany(event) {
+    this.companyFilter = event;
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
-    var val = new SaleReportPartnerSearch();
-    val.state = "sale,done";
-    val.partnerDisplay = this.partnerDisplay;
-    val.monthsFrom = this.monthsFrom;
-    val.monthsTo = this.monthsTo;
-    val.search = this.search || '';
+    var val = new PartnerOldNewReportSearch();
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
+    val.companyId = this.companyFilter ? this.companyFilter.id : null;
     this.loading = true;
-    this.saleReportService.getReportPartner(val).subscribe(result => {
+    this.partnerOldNewReportService.getPartnerOldNewReport(val).subscribe(result => {
       this.items = result;
       this.total = aggregateBy(this.items, this.aggregates);
       this.loadItems();
@@ -87,14 +93,10 @@ export class SaleReportPartnerComponent implements OnInit {
   }
 
   onSearchDateChange(data) {
-    this.monthsFrom = data.monthsFrom;
-    this.monthsTo = data.monthsTo;
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
     this.loadDataFromApi();
   }
 
-  setGroupBy(groupBy) {
-    this.partnerDisplay = groupBy;
-    this.loadDataFromApi();
-  }
 }
 

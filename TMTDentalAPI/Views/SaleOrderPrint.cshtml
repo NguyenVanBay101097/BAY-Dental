@@ -188,6 +188,7 @@
                         <th>Đợt khám</th>
                         <th>Ngày</th>
                         <th>Bác sĩ</th>
+                        <th>Mô tả</th>
                         <th>Dịch vụ</th>
                         <th>Công đoạn</th>
                         <th>Răng, Chi tiết điều trị</th>
@@ -198,21 +199,22 @@
                     {
                         @foreach (var line in dotkham.Lines)
                         {
-                            <tr>
-                                @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
-                                {
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
-                                }
+                    <tr>
+                        @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
+                        {
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
+                        }
 
-                                <td>@line.Product.Name</td>
-                                <td>@line.NameStep</td>
-                                <td class="text-left">
-                                    <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
-                                    <p>@line.Note</p>
-                                </td>
-                            </tr>
+                        <td>@line.Product.Name</td>
+                        <td>@line.NameStep</td>
+                        <td class="text-left">
+                            <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
+                            <p>@line.Note</p>
+                        </td>
+                    </tr>
                         }
 
 
