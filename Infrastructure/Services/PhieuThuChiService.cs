@@ -34,6 +34,13 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value);
+
             var items = await _mapper.ProjectTo<PhieuThuChiBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
             var totalItems = await query.CountAsync();
             return new PagedResult2<PhieuThuChiBasic>(totalItems, val.Offset, val.Limit)

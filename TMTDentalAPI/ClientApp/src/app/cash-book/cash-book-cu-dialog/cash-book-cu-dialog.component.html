@@ -8,17 +8,17 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="!(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
+                    <button [disabled]="!getValueForm('state') == 'posted'"
                         class="btn o_arrow_button disabled"
-                        [class.btn-primary]="(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
-                        [class.btn-secondary]="!(getValueForm('state') == 'posted' || getValueForm('state') == 'done')"
+                        [class.btn-primary]="getValueForm('state') == 'posted'"
+                        [class.btn-secondary]="!getValueForm('state') == 'posted'"
                         type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="!(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
+                    <button [disabled]="!getValueForm('state') == 'draft'"
                         class="btn o_arrow_button disabled"
-                        [class.btn-primary]="(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
-                        [class.btn-secondary]="!(getValueForm('state') == 'draft' || getValueForm('state') == 'waiting')"
+                        [class.btn-primary]="getValueForm('state') == 'draft'"
+                        [class.btn-secondary]="!getValueForm('state') == 'draft'"
                         type="button">
                         Nháp
                     </button>
@@ -34,7 +34,6 @@
                                     <label class="o_form_label">Loại {{getType()}}</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="resModel != 'phieu.thu.chi'">{{type2}}</span>
                                     <span *ngIf="seeForm">{{getValueForm('loaiThuChi') ?
                                         getValueForm('loaiThuChi').name : ''}}</span>
                                     <div *ngIf="!seeForm">
@@ -145,7 +144,7 @@
         <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
     </div>
 </div>
-<div *ngIf="seeForm && resModel == 'phieu.thu.chi'" class="modal-footer">
+<div *ngIf="seeForm" class="modal-footer">
     <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
     <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
 </div>

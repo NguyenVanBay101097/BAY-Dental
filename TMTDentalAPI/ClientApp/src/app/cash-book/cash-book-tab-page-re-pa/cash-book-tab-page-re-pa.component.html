@@ -3,10 +3,10 @@
         <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
             [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
         </app-tai-date-range-filter-dropdown>
-        <button type="button" class="btn btn-primary btn-sm" (click)="createItem('inbound')">
-            <i class="fas fa-plus mr-2"></i>Phiếu thu
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
+            <i class="fas fa-plus mr-2"></i>Phiếu {{convertType(type)}}
         </button>
-        <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()">
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
             <i class="fas fa-download mr-2"></i>Xuất file
         </button>
     </div>
@@ -37,6 +37,17 @@
         <kendo-grid-column field="state" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{getState(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="id" width="120">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

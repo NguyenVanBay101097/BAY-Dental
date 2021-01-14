@@ -26,13 +26,10 @@
 </div>
 <div class="my-3 d-flex justify-content-between">
     <div class="d-flex">
-        <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" 
-            [dateFrom]="paged.dateFrom" 
-            [dateTo]="paged.dateTo" 
-            [quickOption]="quickOptionDate"
-            (searchChange)="searchChangeDate($event)">
+        <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
+            [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
         </app-tai-date-range-filter-dropdown>
-        <button type="button" class="btn btn-secondary btn-sm" (click)="exportExcelFile()">
+        <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
             <i class="fas fa-download mr-2"></i>Xuất file
         </button>
     </div>
@@ -45,17 +42,15 @@
 <div>
     <nav>
         <div class="nav nav-tabs">
-            <a class="nav-item nav-link active" data-toggle="tab" href="#nav-1" 
-                (click)="clickTab('cash')">Tiền mặt</a>
-            <a class="nav-item nav-link" data-toggle="tab" href="#nav-1"
-                (click)="clickTab('bank')">Ngân hàng</a>
-            <a class="nav-item nav-link" data-toggle="tab" href="#nav-1"
-                (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
+            <a class="nav-item nav-link active" data-toggle="tab" (click)="clickTab('cash')">Tiền mặt</a>
+            <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('bank')">Ngân hàng</a>
+            <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
         </div>
     </nav>
     <div class="tab-content">
-        <div class="tab-pane active" id="nav-1">
-            <app-cash-book-tab-cash-bank [paged]="paged" [changeToLoadData]="changeToLoadData"></app-cash-book-tab-cash-bank>
+        <div class="tab-pane active">
+            <app-cash-book-tab-cash-bank [paged]="paged" [changeToLoadData]="changeToLoadData">
+            </app-cash-book-tab-cash-bank>
         </div>
     </div>
 </div>

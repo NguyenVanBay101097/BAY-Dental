@@ -7,20 +7,17 @@
 <div class="p-3">
     <nav>
         <div class="nav nav-pills">
-            <a class="nav-item nav-link active" data-toggle="tab" href="#nav-page-1" 
-                (click)="clickTabPage('so_quy_tien')">Sổ quỹ tiền</a>
-            <a class="nav-item nav-link" data-toggle="tab" href="#nav-page-2"
-                (click)="clickTabPage('phieu_thu')">Phiếu thu</a>
-            <a class="nav-item nav-link" data-toggle="tab" href="#nav-page-2"
-                (click)="clickTabPage('phieu_chi')">Phiếu chi</a>
+            <a class="nav-item nav-link" [class.active]="href == 'tab-cabo'" data-toggle="tab"
+                [routerLink]="['tab-cabo']">Sổ quỹ tiền</a>
+            <a class="nav-item nav-link" [class.active]="href == 'tab-repa' && type == 'inbound'" data-toggle="tab"
+                [routerLink]="['tab-repa']" [queryParams]="{ type: 'inbound' }">Phiếu thu</a>
+            <a class="nav-item nav-link" [class.active]="href == 'tab-repa' && type == 'outbound'" data-toggle="tab"
+                [routerLink]="['tab-repa']" [queryParams]="{ type: 'outbound' }">Phiếu chi</a>
         </div>
     </nav>
     <div class="tab-content mt-3">
-        <div class="tab-pane active" id="nav-page-1">
-            <app-cash-book-tab-page-ca-bo></app-cash-book-tab-page-ca-bo>
-        </div>
-        <div class="tab-pane" id="nav-page-2">
-            <app-cash-book-tab-page-re-pa></app-cash-book-tab-page-re-pa>
+        <div class="tab-pane active">
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -9,6 +9,8 @@ import { PhieuThuChiService, PhieuThuChiPaged } from 'src/app/phieu-thu-chi/phie
 import { PrintService } from 'src/app/shared/services/print.service';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged } from '../cash-book.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -22,16 +24,21 @@ export class CashBookTabPageRePaComponent implements OnInit {
   limit = 20;
   skip = 0;
   type: string;
-  paged: CashBookPaged;
-
-  search: string;
+  quickOptionDate: string;
+  paged: PhieuThuChiPaged;
+  changeDateFirst: boolean = true;
   searchUpdate = new Subject<string>();
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
-    private phieuThuChiService: PhieuThuChiService, private router: Router,
-    private printService: PrintService) { }
+  constructor(private route: ActivatedRoute, 
+    private modalService: NgbModal, 
+    private phieuThuChiService: PhieuThuChiService, 
+    private intlService: IntlService, 
+    private authService: AuthService) { }
 
   ngOnInit() {
+    this.paged = new PhieuThuChiPaged();
+    this.paged.companyId = this.authService.userInfo.companyId;
+    this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.route.queryParamMap.subscribe(params => {
       this.type = params.get('type');
       this.loadDataFromApi();
@@ -53,6 +60,14 @@ export class CashBookTabPageRePaComponent implements OnInit {
     }
   }
 
+  convertType(type) {
+    if (type == "inbound") {
+      return "thu";
+    } else {
+      return "chi";
+    }
+  }
+
   getState(state) {
     if (state == "posted") {
       return "Đã xác nhận";
@@ -67,20 +82,21 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   loadDataFromApi() {
+    if (this.changeDateFirst == true) {
+      this.changeDateFirst = false;
+      return;
+    }
     this.loading = true;
-    var val = new PhieuThuChiPaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.search = this.search || '';
-    val.type = this.type;
-    this.phieuThuChiService.getPaged(val).pipe(
+    this.paged.limit = this.limit;
+    this.paged.offset = this.skip;
+    this.paged.type = this.convertType(this.type);
+    this.phieuThuChiService.getPaged(this.paged).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
     ).subscribe((res) => {
       this.gridData = res;
-      console.log(res);
       this.loading = false;
     }, (err) => {
       console.log(err);
@@ -88,9 +104,15 @@ export class CashBookTabPageRePaComponent implements OnInit {
     })
   }
 
-  createItem(type) {
+  searchChangeDate(value) {
+    this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : '';
+    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : '';
+    this.loadDataFromApi();
+  }
+
+  createItem() {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = type;
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
     }, (err) => { });
@@ -98,8 +120,8 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = item.type;
-    modalRef.componentInstance.itemId = item.resId;
+    modalRef.componentInstance.type = this.type;
+    modalRef.componentInstance.itemId = item.id;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
     }, (err) => { });
@@ -107,21 +129,14 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(item.type).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(item.type).toLowerCase()}?`;
-
+    modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
     modalRef.result.then((res) => {
-      this.phieuThuChiService.delete(item.resId).subscribe(() => {
+      this.phieuThuChiService.delete(item.id).subscribe(() => {
         this.loadDataFromApi();
       }, (res) => {
       });
     }, (err) => {
-    });
-  }
-  
-  printItem(id) {
-    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
     });
   }
 }

@@ -22,5 +22,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
         public string Search { get; set; }
+
+        /// <summary>
+        /// Ngay bat dau
+        /// </summary>
+        public DateTime? DateTo { get; set; }
+
+        /// <summary>
+        /// ngay ket thuc
+        /// </summary>
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 }

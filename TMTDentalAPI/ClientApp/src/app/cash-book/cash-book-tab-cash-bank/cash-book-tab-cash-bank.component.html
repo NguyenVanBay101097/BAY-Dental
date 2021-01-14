@@ -33,29 +33,17 @@
             {{dataItem.date | date: 'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Số phiếu" width="100">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.name}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="type2" title="Loại thu chi" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.ref}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="credit" title="Tiền chi" width="100" class="text-right">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.credit | number}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="debit" title="Tiền thu" width="100" class="text-right">
+    <kendo-grid-column field="name" title="Diễn giải" width="100"></kendo-grid-column>
+    <!-- <kendo-grid-column field="ref" title="Loại thu chi" width="120"></kendo-grid-column> -->
+    <kendo-grid-column field="debit" title="Thu" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.debit | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="partnerName" title="Người nhận/ nộp" width="100">
+    <kendo-grid-column field="credit" title="Chi" width="100" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.partnerName}}
+            {{dataItem.credit | number}}
         </ng-template>
     </kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Người nhận/nộp tiền" width="100"></kendo-grid-column>
 </kendo-grid>

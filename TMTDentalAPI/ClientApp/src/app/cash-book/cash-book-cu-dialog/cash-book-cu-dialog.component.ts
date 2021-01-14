@@ -26,10 +26,7 @@ import { CashBookService } from "../cash-book.service";
 export class CashBookCuDialogComponent implements OnInit {
   title: string = null;
   type: string = null;
-  type2: string = null;
-  state: string = null;
   itemId: string = null;
-  resModel: string = null;
   formGroup: FormGroup;
   submitted: boolean = false;
   loaiThuChiList: any = [];
@@ -96,14 +93,10 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   setTitle() {
-    if (!this.resModel || this.resModel == "phieu.thu.chi") {
-      if (!this.itemId) {
-        this.title = "Tạo phiếu " + this.getType();
-      } else {
-        this.title = "Chỉnh sửa phiếu " + this.getType();
-      }
+    if (!this.itemId) {
+      this.title = "Tạo phiếu " + this.getType();
     } else {
-      this.title = this.type2;
+      this.title = "Chỉnh sửa phiếu " + this.getType();
     }
   }
 
@@ -118,53 +111,19 @@ export class CashBookCuDialogComponent implements OnInit {
       this.formGroup.get("journal").patchValue(this.filteredJournals[0]);
       var date = new Date(result.date);
       this.formGroup.get("dateObj").setValue(date);
-      this.resModel = "phieu.thu.chi";
     });
   }
 
   loadRecord() {
-    if (this.resModel) {
-      if (this.resModel == "phieu.thu.chi") {
-        this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
-          this.formGroup.patchValue(result);
-          var date = new Date(result.date);
-          this.formGroup.get("dateObj").setValue(date);
-        });
-      } else if (this.resModel == "account.payment") {
-        this.paymentService.get(this.itemId).subscribe((result) => {
-          this.formGroup.patchValue(result);
-          this.formGroup.get("payerReceiver").setValue(result.partner['name']);
-          var date = new Date(result.paymentDate);
-          this.formGroup.get("dateObj").setValue(date);
-        });
-      } else if (this.resModel == "salary.payment") {
-        this.salaryPaymentService.getIdSP(this.itemId).subscribe((result) => {
-          // Convert object keys to lower case
-          var result_keyLowCase = {};
-          for (var [key, value] of Object.entries(result)) {
-            if (value && typeof(value) == "object") {
-              var r_keyLowCase = {};
-              for (var [k, v] of Object.entries(value)) {
-                r_keyLowCase[k.toLowerCase()] = v;
-              }
-              value = r_keyLowCase;
-            }
-            result_keyLowCase[key.toLowerCase()] = value;
-          }
-          result = result_keyLowCase;
-          this.formGroup.patchValue(result);
-          this.formGroup.get("payerReceiver").setValue(result.employee['name']);
-          let date = new Date(result.date);
-          this.formGroup.get("dateObj").patchValue(date);
-        });
+    this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
+      this.formGroup.patchValue(result);
+      var date = new Date(result.date);
+      this.formGroup.get("dateObj").setValue(date);
+      console.log(this.formGroup.value);
+      if (this.formGroup.get("state").value == "posted") {
+        this.seeForm = true;
       }
-    } else {
-      this.phieuThuChiService.get(this.itemId).subscribe((result: any) => {
-        this.formGroup.patchValue(result);
-        var date = new Date(result.date);
-        this.formGroup.get("dateObj").setValue(date);
-      });
-    }
+    });
   }
 
   loadLoaiThuChiList() {
@@ -193,20 +152,6 @@ export class CashBookCuDialogComponent implements OnInit {
         console.log(error);
       }
     );
-  }
-
-  loadItem() {
-    if (this.itemId) {
-      this.phieuThuChiService.get(this.itemId).subscribe(
-        (result: any) => {
-          this.formGroup.patchValue(result);
-          this.formGroup.get("dateObj").patchValue(new Date(result.date));
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
   }
 
   quickCreateLoaiThuChi() {

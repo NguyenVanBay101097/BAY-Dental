@@ -8,6 +8,9 @@ export class PhieuThuChiPaged {
   offset: number;
   search: string;
   type: string;
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
 }
 
 export class PhieuThuChiSearch {

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵConsole } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -10,14 +11,17 @@ import { Component, OnInit } from '@angular/core';
   }
 })
 export class CashBookComponent implements OnInit {
-
+  href: string;
+  type: string;
 
   constructor(
-
+    private router: Router, 
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-
+    this.href = this.router.url.split("?")[0].split("/")[2];
+    this.type = this.route.parent.snapshot.queryParams['type'];
   }
 
   

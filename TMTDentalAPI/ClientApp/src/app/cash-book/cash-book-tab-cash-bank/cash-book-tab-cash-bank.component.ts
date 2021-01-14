@@ -1,10 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
-import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
@@ -25,9 +21,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   @Input() changeToLoadData: boolean;
 
   constructor(
-    private modalService: NgbModal, 
     private cashBookService: CashBookService,
-    private phieuThuChiService: PhieuThuChiService,
   ) { }
 
   ngOnChanges(changes:SimpleChanges): void { 
@@ -84,6 +78,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
     this.paged.begin = false;
+    console.log(this.paged);
     this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
         <GridDataResult>{
@@ -94,6 +89,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     ).subscribe(
       (res) => {
         this.gridData = res;
+        console.log(res);
         this.loading = false;
       },
       (err) => {
@@ -107,5 +103,5 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loadDataGetSumary();
     this.loadDataGetMoney();
   }
-  
+
 }
