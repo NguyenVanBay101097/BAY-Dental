@@ -132,7 +132,7 @@ namespace Infrastructure.Services
             }
 
             var emp = await base.CreateAsync(entity);
-            CheckConstraints(entity);
+            //CheckConstraints(entity);
             return emp;
         }
 
@@ -196,7 +196,7 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
-             CheckConstraints(entity);
+             //CheckConstraints(entity);
         }
 
         public async Task updateSalary(EmployeeDisplay val, Employee emp)

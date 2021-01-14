@@ -7,7 +7,7 @@
     </thead>
     <tbody>
         <tr *ngFor="let item of data; let i = index">
-            <td class="text-center">{{item.sequence}}</td>
+            <td class="text-center">{{i+1 | number}}</td>
             <td class="px-2">{{item.name}}</td>
             <td class="text-right px-2">{{item.productUOMQty | number}}</td>
             <td class="px-2">{{item.productUOM.name}}</td>

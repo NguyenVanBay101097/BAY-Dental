@@ -135,7 +135,7 @@ namespace TMTDentalAPI.Controllers
                 else
                 {
                     //check if exist user that usernam == val.Username and this user ever map => map this user
-                    var existUser = await _userManager.Users.Where(x => x.UserName == val.UserName).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
+                    var existUser = await _userManager.Users.Where(x => x.UserName == val.UserName && x.CompanyId == employee.CompanyId).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
                     if (existUser != null)
                     {
                         user = existUser;
