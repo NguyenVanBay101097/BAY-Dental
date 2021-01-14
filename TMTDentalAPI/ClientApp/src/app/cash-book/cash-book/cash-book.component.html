@@ -1,23 +1,31 @@
-<div class="o_control_panel">
-    <ol class="breadcrumb">
-        <li class="active">Sổ quỹ tiền</li>
-    </ol>
-</div>
-
-<div class="p-3">
-    <nav>
-        <div class="nav nav-pills">
-            <a class="nav-item nav-link" [class.active]="href == 'tab-cabo'" data-toggle="tab"
-                [routerLink]="['tab-cabo']">Sổ quỹ tiền</a>
-            <a class="nav-item nav-link" [class.active]="href == 'tab-repa' && type == 'inbound'" data-toggle="tab"
-                [routerLink]="['tab-repa']" [queryParams]="{ type: 'inbound' }">Phiếu thu</a>
-            <a class="nav-item nav-link" [class.active]="href == 'tab-repa' && type == 'outbound'" data-toggle="tab"
-                [routerLink]="['tab-repa']" [queryParams]="{ type: 'outbound' }">Phiếu chi</a>
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Sổ quỹ tiền</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="tab-cabo" class="nav-link px-3 py-1"
+                            routerLinkActive="active">Sổ quỹ tiền</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'inbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu thu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'outbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu chi</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
         </div>
-    </nav>
-    <div class="tab-content mt-3">
-        <div class="tab-pane active">
-            <router-outlet></router-outlet>
+        <div class="o_cp_right">
         </div>
     </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
 </div>

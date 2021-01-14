@@ -1,23 +1,23 @@
 <div class="d-flex justify-content-end mt-2">
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Quỹ đầu kỳ</span>
             <h4 class="text-primary">{{reportData.begin | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Tổng thu</span>
             <h4 class="text-primary">{{reportData.totalThu | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span class="font-weight-bold">Tổng chi</span>
             <h4 class="text-danger">{{reportData.totalChi | number}}</h4>
         </div>
     </div>
-    <div class="p-2 mr-2">
+    <div class="summary-item">
         <div class="text-center">
             <span *ngIf="paged.resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền mặt</span>
             <span *ngIf="paged.resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân hàng</span>
