@@ -7,6 +7,7 @@ using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -507,28 +508,29 @@ namespace Infrastructure.Services
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var queryFilter = saleLineObj.SearchQuery(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
-            var query = saleLineObj.SearchQuery(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+            var queryFilter = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
+            var query = _context.SaleReports.Where(x => !x.CompanyId.HasValue || company_ids.Contains(x.CompanyId.Value));
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+                query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
-            var result = query.GroupBy(x => new { DateOrder = x.Order.DateOrder, PartnerId = x.OrderPartnerId, PartnerName = x.Order.Partner.DisplayName, OrderName = x.Order.Name })
+            var result = query.Include(x=>x.Partner).AsEnumerable().GroupBy(x => new { PartnerId = x.PartnerId,OrderName = x.Name ,PartnerName  = x.Partner.DisplayName,Date = x.Date })
                 .Select(x => new SaleReportPartnerV3Detail
                 {
-                    Date = x.Key.DateOrder,
-                    PartnerId = x.Key.PartnerId.Value,
+                    Date = x.Key.Date,
+                    OrderName =x.Key.OrderName,
                     PartnerName = x.Key.PartnerName,
-                    OrderName = x.Key.OrderName,
+                    PartnerId = x.Key.PartnerId.Value,
                     CountLine = x.Count(),
-                    Type = queryFilter.Where(s => s.OrderPartnerId == x.Key.PartnerId && s.Order.DateOrder < x.Key.DateOrder).Count() >= 1 ? "KHC" : "KHM",
-                }).AsEnumerable().GroupBy(x => new
+                    Type = queryFilter.Where(s => s.PartnerId == x.Key.PartnerId && s.Date < DateUtils.FirstDateOfWeekISO8601(x.Key.Date.Year, GetIso8601WeekOfYear(x.Key.Date))).Count() >= 1 ? "KHC" : "KHM"
+                })
+                .GroupBy(x => new
                 {
                     Year = x.Date.Year,
                     WeekStart = DateUtils.FirstDateOfWeekISO8601(x.Date.Year, GetIso8601WeekOfYear(x.Date)),
@@ -539,8 +541,8 @@ namespace Infrastructure.Services
                   {
                       WeekOfYear = x.Key.WeekOfYear,
                       Year = x.Key.Year,
-                      TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
-                      TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
+                      TotalNewPartner = x.Where(x => x.Type == "KHM").GroupBy(x=>x.PartnerId).Count(),
+                      TotalOldPartner = x.Where(x => x.Type == "KHC").GroupBy(x => x.PartnerId).Count(),
                       lines = x.ToList()
                   }).ToList();
             return result;
@@ -561,7 +563,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value);
 
-            var result =  query.AsEnumerable().GroupBy(x => new
+            var result = query.AsEnumerable().GroupBy(x => new
             {
                 Year = x.Date.Year,
                 WeekOfYear = GetIso8601WeekOfYear(x.Date)

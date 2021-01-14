@@ -75,8 +75,8 @@ namespace Infrastructure.Services
                   {
                       WeekOfYear = x.Key.WeekOfYear,
                       Year = x.Key.Year,
-                      TotalNewPartner = x.Where(x => x.Type == "KHM").Count(),
-                      TotalOldPartner = x.Where(x => x.Type == "KHC").Count(),
+                      TotalNewPartner = x.Distinct().Where(x => x.Type == "KHM").Count(),
+                      TotalOldPartner = x.Distinct().Where(x => x.Type == "KHC").Count(),
                       OrderLines = _mapper.Map<IEnumerable<PartnerOldNewReportVMDetail>>(x.ToList()),
                   }).ToList();
             return result;
