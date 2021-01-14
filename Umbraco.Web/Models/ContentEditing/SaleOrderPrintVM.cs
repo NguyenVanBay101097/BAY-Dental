@@ -10,6 +10,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
         public CompanyPrintVM Company { get; set; }
 
+        public ApplicationUserSimple User { get; set; }
+
         public PartnerSimpleInfo Partner { get; set; }
 
         public string Name { get; set; }
