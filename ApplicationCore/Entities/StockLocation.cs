@@ -35,5 +35,12 @@ namespace ApplicationCore.Entities
         public Company Company { get; set; }
 
         public string NameGet { get; set; }
+
+        public bool ShouldBeValued()
+        {
+            if (Usage == "internal" || (Usage == "transit" && CompanyId.HasValue))
+                return true;
+            return false;
+        }
     }
 }

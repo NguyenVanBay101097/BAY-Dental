@@ -43,4 +43,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public UoMBasic ProductUOM { get; set; }
     }
+
+    public class StockMovePaged
+    {
+        public StockMovePaged()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? PickingId { get; set; }
+
+    }
+
+    public class StockMoveBasic
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public decimal ProductUOMQty { get; set; }
+        public string ProductUOMName { get; set; }
+        public int Sequence { get; set; }
+    }
 }

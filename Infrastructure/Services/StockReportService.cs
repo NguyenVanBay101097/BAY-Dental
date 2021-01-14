@@ -59,11 +59,13 @@ namespace Infrastructure.Services
                    ProductId = x.Product.Id,
                    ProductName = x.Product.Name,
                    ProductCode = x.Product.DefaultCode,
+                   ProductUomName = x.Product.UOM.Name
                })
                .Select(x => new
                {
                    ProductId = x.Key.ProductId,
                    ProductName = x.Key.ProductName,
+                   ProductUomName = x.Key.ProductUomName,
                    ProductCode = x.Key.ProductCode,
                    Begin = x.Sum(s => s.quantity),
                }).ToListAsync();
@@ -77,6 +79,7 @@ namespace Infrastructure.Services
                         ProductId = item.ProductId,
                         ProductName = item.ProductName,
                         ProductCode = item.ProductCode,
+                        ProductUomName = item.ProductUomName,
                         Begin = item.Begin,
                         DateFrom = date_from,
                         DateTo = date_to
@@ -99,6 +102,7 @@ namespace Infrastructure.Services
                 ProductId = x.Product.Id,
                 ProductName = x.Product.Name,
                 ProductCode = x.Product.DefaultCode,
+                ProductUomName = x.Product.UOM.Name,
                 Import = x.quantity > 0 ? x.quantity : 0,
                 Export = x.quantity < 0 ? -x.quantity : 0
             })
@@ -106,12 +110,14 @@ namespace Infrastructure.Services
                           ProductId = x.ProductId,
                           ProductName = x.ProductName,
                           ProductCode = x.ProductCode,
+                          ProductUomName = x.ProductUomName
                       })
                     .Select(x => new
                     {
                         ProductId = x.Key.ProductId,
                         ProductName = x.Key.ProductName,
                         ProductCode = x.Key.ProductCode,
+                        productUomName = x.Key.ProductUomName,
                         Import = x.Sum(s => s.Import),
                         Export = x.Sum(s => s.Export),
                     }).ToListAsync();
@@ -125,6 +131,7 @@ namespace Infrastructure.Services
                         ProductId = item.ProductId,
                         ProductName = item.ProductName,
                         ProductCode = item.ProductCode,
+                        ProductUomName = item.productUomName,
                         DateFrom = date_from,
                         DateTo = date_to
                     });

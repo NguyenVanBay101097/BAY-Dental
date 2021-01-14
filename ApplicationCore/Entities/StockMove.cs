@@ -113,5 +113,12 @@ namespace ApplicationCore.Entities
 
         public Guid? PurchaseLineId { get; set; }
         public PurchaseOrderLine PurchaseLine { get; set; }
+
+        public bool IsIn()
+        {
+            if (!Location.ShouldBeValued() && LocationDest.ShouldBeValued())
+                return true;
+            return false;
+        }
     }
 }
