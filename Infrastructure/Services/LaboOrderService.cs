@@ -757,7 +757,7 @@ namespace Infrastructure.Services
                 }             
                 else if (val.State == "toihan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value && !x.DateReceipt.HasValue);
                 }
             }         
 

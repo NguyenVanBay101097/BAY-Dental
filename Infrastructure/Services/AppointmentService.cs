@@ -122,6 +122,8 @@ namespace Infrastructure.Services
             if (val.DoctorId.HasValue)
                 query = query.Where(x => x.DoctorId == val.DoctorId);
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var totalItems = await query.CountAsync();
 
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
