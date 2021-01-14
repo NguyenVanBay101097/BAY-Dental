@@ -1628,7 +1628,8 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)
         {
-            var saleOrderLineObj = GetService<ISaleOrderLineService>();           
+            var companyObj = GetService<ICompanyService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == id).Select(x => new SaleOrderPrintVM
             {
                 Id = x.Id,
@@ -1643,21 +1644,22 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,
+                } : null,            
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
                 Residual = x.Residual.HasValue ? x.Residual.Value : 0,
-                Partner = x.Partner != null ? new PartnerSimpleInfo {
-                    Name =  x.Partner.Name ,
-                    Phone =  x.Partner.Phone,
-                    Ref =  x.Partner.Ref ,
+                Partner = x.Partner != null ? new PartnerSimpleInfo
+                {
+                    Name = x.Partner.Name,
+                    Phone = x.Partner.Phone,
+                    Ref = x.Partner.Ref,
                     Street = x.Partner.Street,
                     CityName = x.Partner.CityName,
                     WardName = x.Partner.WardName,
                     DistrictName = x.Partner.DistrictName,
-                } : null,                    
-            }).FirstOrDefaultAsync();          
+                } : null,
+            }).FirstOrDefaultAsync();
             //Lược bỏ những dòng số lượng bằng 0
             order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Select(x => new SaleOrderLinePrintVM
             {
@@ -1668,11 +1670,11 @@ namespace Infrastructure.Services
                 DiscountFixed = x.DiscountFixed,
                 PriceUnit = x.PriceUnit,
                 PriceSubTotal = x.PriceSubTotal,
-                Sequence = x.Sequence               
+                Sequence = x.Sequence
             }).ToListAsync();
-            //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);
+            //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
-            order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);        
+            order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
             return order;
         }
 
@@ -1709,12 +1711,12 @@ namespace Infrastructure.Services
             var dotkhamObj = GetService<IDotKhamService>();
             var dotKhamLineObj = GetService<IDotKhamLineService>();
             var listdotkham = new List<DotKhamDisplayVm>();
-            var order = await SearchQuery(x => x.Id == id)          
+            var order = await SearchQuery(x => x.Id == id)
               .Include(x => x.DotKhams)
               .FirstOrDefaultAsync();
 
             var dotkhamids = order.DotKhams.Select(x => x.Id).ToList();
-            foreach(var dotkhamId in dotkhamids)
+            foreach (var dotkhamId in dotkhamids)
             {
                 var dotkham = await dotkhamObj.SearchQuery(x => x.Id == dotkhamId).Select(x => new DotKhamDisplayVm
                 {
@@ -1750,7 +1752,7 @@ namespace Infrastructure.Services
 
                 listdotkham.Add(dotkham);
             }
-            return listdotkham.OrderBy(x=>x.Sequence);
+            return listdotkham.OrderBy(x => x.Sequence);
 
         }
 

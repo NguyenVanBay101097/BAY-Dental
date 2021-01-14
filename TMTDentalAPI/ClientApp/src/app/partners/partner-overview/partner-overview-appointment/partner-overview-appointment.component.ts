@@ -101,7 +101,7 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
       case 'cancel':
         return 'Đã hủy';
       default:
-        'Đang hẹn';
+        return 'Đang hẹn';
     }
   }
 }

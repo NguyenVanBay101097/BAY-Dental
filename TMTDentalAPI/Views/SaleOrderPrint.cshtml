@@ -28,7 +28,9 @@
     </div>
     <div class="text-center">
         <h2>HỒ SƠ ĐIỀU TRỊ</h2>
-        <span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>
+        <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
+        <div class="font-weight-600">Số: @Model.Name</div>
+        @*<span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>*@
     </div>
     <div class="o_group mt-0 mb-0">
         <table class="o_group o_inner_group">
@@ -225,13 +227,23 @@
 
     <div class="row">
         <div class="col col-sm">
-            <div class="text-center font-weight-600">
-                Khách hàng
+            <div class="text-center">
+                <span class="font-weight-600">Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                @*<span class="font-weight-600">@(Model.User.Name.ToUpper())</span>*@
             </div>
         </div>
         <div class="col col-sm">
-            <div class="text-center font-weight-600">
-                Người lập
+            <div class="text-center">
+                <span class="font-weight-600"> Khách Hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-weight-600">@Model.Partner.Name.ToUpper()</span>
             </div>
         </div>
     </div>
