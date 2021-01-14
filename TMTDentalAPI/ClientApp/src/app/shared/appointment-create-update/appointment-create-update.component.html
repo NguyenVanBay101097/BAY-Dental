@@ -6,7 +6,7 @@
 </header>
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
-        <div class="o_form_sheet">
+        <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <!-- <div class="oe_title">
                     <h1>
@@ -108,12 +108,12 @@
                                         <label class="o_form_label">Trạng thái</label>
                                     </td>
                                     <td>
-                                        <select class="form-control" formControlName="state">
+                                        <select class="form-control" formControlName="state" (change)="onChangeState()">
                                             <option value="confirmed">Đang hẹn</option>
                                             <option value="waiting">Chờ khám</option>
                                             <option value="examination">Đang khám</option>
                                             <option value="done">Hoàn thành</option>
-                                            <option value="cancel">Đã hủy</option>
+                                            <option value="cancel">Hủy hẹn</option>
                                         </select>
                                     </td>
                                 </tr>

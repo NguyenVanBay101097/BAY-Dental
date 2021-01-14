@@ -75,6 +75,8 @@ import { PopoverStateAppointmentComponent } from './popover-state-appointment/po
 import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
 import { FundBookService } from './fund-book.service';
 import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
+import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
+import { ProductsModule } from '../products/products.module';
 
 @NgModule({
   declarations: [
@@ -206,7 +208,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
     SaleOrderLineDiscountOdataPopoverComponent, 
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
-    LaboFinnishLineImportComponent
+    LaboFinnishLineImportComponent,
   ],
   imports: [
     CommonModule,

@@ -89,4 +89,19 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
       this.customerAppointment = rs;
     });
   }
+
+  getState(value) {
+    switch (value) {
+      case 'waiting':
+        return 'Chờ khám';
+      case 'examination':
+        return 'Đang khám';
+      case 'done':
+        return 'Hoàn thành';
+      case 'cancel':
+        return 'Đã hủy';
+      default:
+        'Đang hẹn';
+    }
+  }
 }

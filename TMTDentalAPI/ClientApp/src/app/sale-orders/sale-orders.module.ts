@@ -32,6 +32,7 @@ import { TreatmentProcessServiceListComponent } from './treatment-process-servic
 import { TreatmentProcessServiceDialogComponent } from './treatment-process-service-dialog/treatment-process-service-dialog.component';
 import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teeth-popover/sale-order-dotkham-teeth-popover.component';
+import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teet
     SaleOrdersRoutingModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
+    ToaThuocsModule,
     FormsModule,
     SharedModule,
     NgbModule

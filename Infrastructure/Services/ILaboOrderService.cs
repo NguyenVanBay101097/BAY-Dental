@@ -25,7 +25,7 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<LaboOrderStatisticsBasic>> GetStatisticsPaged(LaboOrderStatisticsPaged val);
 
-        Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val);
+        Task<long> GetCountLaboOrder(LaboOrderGetCount val);
 
         Task<PagedResult2<LaboOrderReceiptBasic>> GetPagedOrderLaboAsync(OrderLaboPaged val);
 

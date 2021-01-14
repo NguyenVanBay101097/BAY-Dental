@@ -244,7 +244,7 @@
                                         </tr> -->
                                         <tr>
                                             <td>Tổng tiền</td>
-                                            <td>{{getAmountTotal ? getAmountTotal : 0 | number}}</td>
+                                            <td>{{getAmountTotal | number}}</td>
                                         </tr>
                                         <tr *ngIf="formGroup.get('State').value !== 'draft'">
                                             <td>Thanh toán</td>

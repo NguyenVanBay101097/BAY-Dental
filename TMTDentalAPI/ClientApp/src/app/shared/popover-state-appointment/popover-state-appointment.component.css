@@ -18,3 +18,8 @@
 .dropdown-wrapper {
     width: 200px;
 }
+
+textarea.ng-invalid {
+    border: 1px solid red;
+    box-shadow: none;
+  }

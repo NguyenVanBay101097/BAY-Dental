@@ -21,9 +21,10 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="state" title="Trạng thái" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <label *ngIf="dataItem.state == 'confirmed'">Đang hẹn</label>
+                        <span>{{stateGet(dataItem.state)}}</span>
+                        <!-- <label *ngIf="dataItem.state == 'confirmed'">Đang hẹn</label>
                         <label *ngIf="dataItem.state =='done'">Đã tới</label>
-                        <label *ngIf="dataItem.state =='cancel'">Đã hủy</label>
+                        <label *ngIf="dataItem.state =='cancel'">Đã hủy</label> -->
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
