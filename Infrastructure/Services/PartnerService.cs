@@ -1013,7 +1013,7 @@ namespace Infrastructure.Services
                                 }
                                 catch (Exception e)
                                 {
-                                    errors.Add($"Dòng {row}: {e.Message}");
+                                    errors.Add($"Dòng {row}: {"Dữ liệu import chưa đúng định dạng"}");
                                     continue;
                                 }
                             }
