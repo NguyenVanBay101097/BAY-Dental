@@ -206,7 +206,6 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
         () => {
           this.activeModal.close(true);
         },
-        (err) => this.showErrorService.show(err)
       );
     } else {
       var val = this.formGroup.value;
@@ -214,7 +213,6 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
         (result) => {
           this.activeModal.close(result);
         },
-        (err) => this.showErrorService.show(err)
       );
     }
   }

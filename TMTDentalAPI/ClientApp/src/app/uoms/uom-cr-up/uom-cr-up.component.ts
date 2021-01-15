@@ -110,13 +110,11 @@ export class UomCrUpComponent implements OnInit {
         value.id = this.id;
         this.activeModal.close(value);
       }, err => {
-        this.showErrorService.show(err);
       });
     } else {
       this.uoMService.create(value).subscribe(result => {
         this.activeModal.close(result);
       }, err => {
-        this.showErrorService.show(err);
       });
     }
   }

@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { Product } from '../product';
@@ -27,7 +27,9 @@ export class ProductManagementProductsComponent implements OnInit {
   skip = 0;
   searchProduct: string;
   cateId: string;
+  selectedCateg: any;
   searchProductUpdate = new Subject<string>();
+  categories: any[] = [];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -44,6 +46,7 @@ export class ProductManagementProductsComponent implements OnInit {
         this.loadProducts();
       });
     this.loadProducts();
+    this.loadCategories();
   }
 
 
@@ -54,7 +57,7 @@ export class ProductManagementProductsComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.searchProduct || "";
-    val.categId = this.cateId || "";
+    val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
 
     this.productService
@@ -80,11 +83,12 @@ export class ProductManagementProductsComponent implements OnInit {
       );
   }
 
+  onCreateBtnEvent(categ) {
+    this.categories.unshift(categ);
+  }
+
   onSelectedCate(cate: any) {
-    if (this.cateId === cate.id) {
-      return;
-    }
-    this.cateId = cate.id;
+    this.selectedCateg = cate;
     this.loadProducts();
   }
 
@@ -93,9 +97,23 @@ export class ProductManagementProductsComponent implements OnInit {
     this.loadProducts();
   }
 
-  onDeletecate(e) {
-    this.cateId = null;
+  onDeletecate(index) {
+    this.categories.splice(index, 1);
     this.loadProducts();
+  }
+
+  loadCategories() {
+    var val = new ProductCategoryPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = '';
+    val.type = this.type;
+
+    this.productCategoryService.getPaged(val).subscribe(res => {
+      this.categories = res.items;
+    }, err => {
+      console.log(err);
+    })
   }
 
   createProduct() {
