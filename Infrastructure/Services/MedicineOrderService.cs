@@ -541,17 +541,17 @@ namespace Infrastructure.Services
 
 
 
-        public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
-        {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
-            switch (rule.Code)
-            {
-                case "base.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
-                default:
-                    return null;
-            }
-        }
+        //public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
+        //{
+        //    var userObj = GetService<IUserService>();
+        //    var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+        //    switch (rule.Code)
+        //    {
+        //        case "base.medicine_order_comp_rule":
+        //            return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

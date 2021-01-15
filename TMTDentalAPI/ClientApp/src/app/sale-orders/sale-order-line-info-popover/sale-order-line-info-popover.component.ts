@@ -252,7 +252,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   onSave() {
     var val = this.formGroup.value;
     val.teeth = this.teethSelected;
-    val.assistantId = val.assistant.id;
+    val.assistantId = val.assistant ? val.assistant.id : null;
     this.eventTeeth.emit(val);
     this.popover.close();
   }

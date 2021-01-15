@@ -206,7 +206,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
   
     createMedicine() {
       let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Thêm: ' + this.title;
+      modalRef.componentInstance.title = "Thêm: Thuốc";
       modalRef.result.then(() => {
         this.notificationService.show({
           content: 'Thêm thuốc mới thành công',

@@ -26,7 +26,7 @@
                     Phụ tá
                 </label>
                 <div class="col-sm-9 d-flex align-items-center">
-                    <span *ngIf="saleOrderState !== 'draft'" class="form-control-plaintext">{{line.Assistant.Name}}</span>
+                    <span *ngIf="saleOrderState !== 'draft'" class="form-control-plaintext">{{line.Assistant?.Name}}</span>
                     <kendo-combobox [popupSettings]="{appendTo: 'component'}" [filterable]="true"
                         (filterChange)="onAssintantFilter($event)" *ngIf="saleOrderState === 'draft'"
                         style="width:100%;" [data]="filteredAssistants" [textField]="'Name'" #assinstantCbx
