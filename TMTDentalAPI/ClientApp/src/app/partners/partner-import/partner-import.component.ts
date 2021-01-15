@@ -14,10 +14,11 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class PartnerImportComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService) { }
+    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService, 
+    private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
-  title = 'Import';
+  title = 'Import excel';
   type: string;
   errors: any = [];
 
@@ -35,6 +36,13 @@ export class PartnerImportComponent implements OnInit {
 
   import() {
     if (!this.formGroup.valid) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn file để import',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return false;
     }
 
