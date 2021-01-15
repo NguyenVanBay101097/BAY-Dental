@@ -1,6 +1,7 @@
 import { HistoryService, HistoryImportExcelBaseViewModel } from './../history.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 @Component({
   selector: 'app-history-import-excel-dialog',
   templateUrl: './history-import-excel-dialog.component.html',
@@ -12,7 +13,8 @@ export class HistoryImportExcelDialogComponent implements OnInit {
   errors: string[];
   title: string;
 
-  constructor(private historyService: HistoryService, public activeModal: NgbActiveModal) { }
+  constructor(private historyService: HistoryService, public activeModal: NgbActiveModal, 
+    private notificationService: NotificationService) { }
 
   ngOnInit() {
   }
@@ -22,6 +24,13 @@ export class HistoryImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.fileBase64 || this.fileBase64 === '') {
+      this.notificationService.show({
+        content: 'Vui lòng chọn file để import',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return;
     }
     var val = new HistoryImportExcelBaseViewModel();

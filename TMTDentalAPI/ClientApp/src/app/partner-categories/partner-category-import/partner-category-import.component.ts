@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PartnerCategoryService } from '../partner-category.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-partner-category-import',
@@ -11,7 +12,8 @@ import { PartnerCategoryService } from '../partner-category.service';
 export class PartnerCategoryImportComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private partnerCategoryService: PartnerCategoryService) { }
+    private partnerCategoryService: PartnerCategoryService, 
+    private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
   title = 'Import excel';
@@ -29,6 +31,13 @@ export class PartnerCategoryImportComponent implements OnInit {
 
   import() {
     if (!this.formGroup.valid) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn file để import',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return false;
     }
 
