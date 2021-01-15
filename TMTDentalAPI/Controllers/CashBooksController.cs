@@ -27,7 +27,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> GetMoney(VFundBookSearch val)
+        public async Task<IActionResult> GetMoney(CashBookSearch val)
         {
             var res = await _fundBookService.GetMoney(val);
             return Ok(res);
@@ -35,7 +35,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> GetSumary(VFundBookSearch val)
+        public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
             var res = await _fundBookService.GetSumary(val);
             return Ok(res);
@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery] VFundBookSearch val)
+        public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
