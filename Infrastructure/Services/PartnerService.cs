@@ -1013,7 +1013,7 @@ namespace Infrastructure.Services
                                 }
                                 catch (Exception e)
                                 {
-                                    errors.Add($"Dòng {row}: {e.Message}");
+                                    errors.Add($"Dòng {row}: {"Dữ liệu import chưa đúng định dạng"}");
                                     continue;
                                 }
                             }
@@ -1203,11 +1203,18 @@ namespace Infrastructure.Services
             }
 
 
-            if (partnersCreate.Any())
-                await CreateAsync(partnersCreate);
+            try
+            {
+                if (partnersCreate.Any())
+                    await CreateAsync(partnersCreate);
 
-            if (partnersUpdate.Any())
-                await UpdateAsync(partnersUpdate);
+                if (partnersUpdate.Any())
+                    await UpdateAsync(partnersUpdate);
+            }
+            catch (Exception ex)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message} };
+            }
 
             return new PartnerImportResponse { Success = true };
         }

@@ -224,7 +224,7 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
     this.line.ToothCategoryId = this.line.ToothCategory.Id;
     this.line.Teeth = this.teethSelected;
     this.line.Assistant = this.line.Assistant;
-    this.line.AssistantId = this.line.Assistant.Id;
+    this.line.AssistantId = this.line.Assistant ? this.line.Assistant.Id : null;
     this.eventTeeth.emit(this.line);
     this.popover.close();
   }

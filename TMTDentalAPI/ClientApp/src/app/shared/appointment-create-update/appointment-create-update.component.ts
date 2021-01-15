@@ -362,7 +362,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
         let date = new Date(rs.date);
         this.formGroup.get('apptDate').patchValue(date);
-        this.formGroup.get('appTime').patchValue('00:00');
+        this.formGroup.get('appTime').patchValue('07:00');
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');

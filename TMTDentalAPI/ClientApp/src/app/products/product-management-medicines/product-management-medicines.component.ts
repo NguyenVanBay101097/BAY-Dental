@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ResConfigSettingsService } from 'src/app/res-config-settings/res-config-settings.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Product } from '../product';
@@ -26,8 +26,10 @@ limit = 20;
 skip = 0;
 searchMedicine: string;
 cateId: string;
+selectedCateg: any;
 searchMedicineUpdate = new Subject<string>();
 configsettings:any;
+categories: any[] = [];
 
 constructor(private route: ActivatedRoute,
   private router: Router,
@@ -45,6 +47,7 @@ ngOnInit() {
     });
   this.loadMedicines();
   this.loadConfigsettings();
+  this.loadCategories();
 }
 
 
@@ -55,7 +58,7 @@ loadMedicines() {
   val.limit = this.limit;
   val.offset = this.skip;
   val.search = this.searchMedicine || "";
-  val.categId = this.cateId || "";
+  val.categId =  this.selectedCateg ? this.selectedCateg.id : '';
   val.type2 = this.type;
 
   this.productService
@@ -81,11 +84,12 @@ loadMedicines() {
     );
 }
 
+onCreateBtnEvent(categ) {
+  this.categories.unshift(categ);
+}
+
 onSelectedCate(cate: any) {
-  if (this.cateId === cate.id) {
-    return;
-  }
-  this.cateId = cate.id;
+  this.selectedCateg = cate;
   this.loadMedicines();
 }
 
@@ -102,9 +106,23 @@ pageChange(event: PageChangeEvent): void {
   this.loadMedicines();
 }
 
-onDeletecate(e) {
-  this.cateId = null;
+onDeletecate(index) {
+  this.categories.splice(index, 1);
   this.loadMedicines();
+}
+
+loadCategories() {
+  var val = new ProductCategoryPaged();
+  val.limit = 0;
+  val.offset = 0;
+  val.search = '';
+  val.type = this.type;
+
+  this.productCategoryService.getPaged(val).subscribe(res => {
+    this.categories = res.items;
+  }, err => {
+    console.log(err);
+  })
 }
 
 createMedicine() {

@@ -21,7 +21,7 @@
                                     <input class="form-control" formControlName="name" name="name" required #nameInput>
                                     <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                                        <div *ngIf="f.name.errors.required">Vui lòng điền nhãn khách hàng</div>
                                     </div>
                                 </td>
                             </tr>

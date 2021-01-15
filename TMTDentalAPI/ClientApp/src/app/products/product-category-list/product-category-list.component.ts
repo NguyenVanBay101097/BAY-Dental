@@ -115,4 +115,17 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
 
     this.onSelect.emit(this.category);
   }
+
+  getTitle() {
+    switch (this.type) {
+      case 'service':
+        return 'Nhóm dịch vụ'
+      case 'product':
+        return 'Nhóm vật tư';
+      case 'medicine':
+        return 'Nhóm thuốc';
+      default:
+        return '';
+    }
+  }
 }

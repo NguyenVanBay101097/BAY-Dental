@@ -7,6 +7,10 @@
     cursor: pointer;
 }
 
+li {
+    cursor: pointer;
+}
+
 .cate-item:first-child {
     border-top: none;
 }

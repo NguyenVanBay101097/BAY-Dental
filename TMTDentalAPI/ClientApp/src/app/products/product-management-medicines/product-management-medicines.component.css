@@ -49,4 +49,6 @@
     margin-right: 0;
 }
 
-li { cursor: pointer; }
+li {
+    cursor: pointer;
+}

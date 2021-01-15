@@ -26,7 +26,7 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       dateReceipt : [null, Validators.required],
-      warrantyCode : [null,Validators.compose([Validators.required]), this.validateWarrantyCode.bind(this)],
+      warrantyCode : [null,Validators.compose([]), this.validateWarrantyCode.bind(this)],
       warrantyPeriodObj: null,
       warrantyPeriod: null,
     });

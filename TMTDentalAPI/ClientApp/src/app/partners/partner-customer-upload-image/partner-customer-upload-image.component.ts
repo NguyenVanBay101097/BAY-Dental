@@ -63,7 +63,6 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     this.partnerService.uploadPartnerImage(formData).subscribe(() => {
       this.getImageIds();
     }, (err) => {
-      this.showErrorService.show(err);
     });
 
   }

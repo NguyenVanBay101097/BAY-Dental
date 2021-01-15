@@ -73,25 +73,6 @@
           }
         ]
       },
-     
-      {
-        "Name": "Hóa Đơn thuốc",
-        "Permission": "Basic.MedicineOrder",
-        "Children": [
-          {
-            "Name": "Xem",
-            "Permission": "Basic.MedicineOrder.Read"
-          },
-          {
-            "Name": "Thanh toán",
-            "Permission": "Basic.MedicineOrder.Payment"
-          },
-          {
-            "Name": "Hủy thanh toán",
-            "Permission": "Basic.MedicineOrder.Cancel"
-          }
-        ]
-      },
       {
         "Name": "Đợt khám",
         "Permission": "Basic.DotKham",

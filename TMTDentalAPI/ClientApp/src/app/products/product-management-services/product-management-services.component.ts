@@ -97,7 +97,6 @@ export class ProductManagementServicesComponent implements OnInit {
   }
 
   onDeleteCate(index) {
-    debugger;
     this.categories.splice(index, 1);
     this.loadServices();
   }

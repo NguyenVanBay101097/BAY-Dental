@@ -1,25 +1,35 @@
-.appointment-state{
-    padding: 15px;
+.appointment-state {
+  padding: 15px;
 }
 
 .edit_remove_action button {
-    background: none;
-    border: none;
-    margin-right: 5px;
-    border-style: none;
-    padding: 0;
-    outline: none;
+  background: none;
+  border: none;
+  margin-right: 5px;
+  border-style: none;
+  padding: 0;
+  outline: none;
 }
 
 .dropdown-toggle::after {
-    display:none;
+  display: none;
 }
 
 .dropdown-wrapper {
-    width: 200px;
+  width: 200px;
 }
 
 textarea.ng-invalid {
-    border: 1px solid red;
-    box-shadow: none;
-  }
+  border: 1px solid red;
+  box-shadow: none;
+}
+
+.style-header {
+  background-color: whitesmoke;
+  height: 45px;
+  font-weight: 600;
+}
+
+.dropdown-wrapper {
+  padding-top: 0;
+}

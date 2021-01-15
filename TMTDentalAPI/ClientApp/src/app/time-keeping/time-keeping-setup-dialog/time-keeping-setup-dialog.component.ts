@@ -141,7 +141,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         x => {
           this.activeModal.close(this.employee);
         }, err => {
-          this.showErrorService.show(err);
         }
       )
     }
@@ -150,7 +149,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
         result => {
           this.activeModal.close(this.employee);
         }, err => {
-          this.showErrorService.show(err);
         }
       )
     }

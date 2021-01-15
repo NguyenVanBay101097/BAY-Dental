@@ -364,7 +364,7 @@ namespace Infrastructure.Services
             var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "sale.order.line_comp_rule":
+                case "sale.sale_order_line_comp_rule":
                     return new InitialSpecification<SaleOrderLine>(x => x.CompanyId == companyId);
                 default:
                     return null;
