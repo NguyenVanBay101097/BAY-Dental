@@ -14,7 +14,7 @@ export class PartnerCategoryImportComponent implements OnInit {
     private partnerCategoryService: PartnerCategoryService) { }
 
   formGroup: FormGroup;
-  title = 'Import';
+  title = 'Import excel';
   errors: any = [];
 
   ngOnInit() {

@@ -17,7 +17,7 @@ export class PartnerImportComponent implements OnInit {
     private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService) { }
 
   formGroup: FormGroup;
-  title = 'Import';
+  title = 'Import excel';
   type: string;
   errors: any = [];
 
