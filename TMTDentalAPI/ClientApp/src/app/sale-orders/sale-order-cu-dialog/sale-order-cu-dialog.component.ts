@@ -45,20 +45,16 @@ export class SaleOrderCuDialogComponent implements OnInit {
         this.saleOrderService.actionConfirm([this.id]).subscribe(() => {
           this.activeModal.close(null);
         }, (err) => {
-          this.showErrorService.show(err);
         });
       }, (err) => {
-        this.showErrorService.show(err);
       });
     } else {
       this.saleOrderService.create(data).subscribe((res) => {
         this.saleOrderService.actionConfirm([res.id]).subscribe(() => {
           this.activeModal.close(res);
         }, (err) => {
-          this.showErrorService.show(err);
         });
       }, (err) => {
-        this.showErrorService.show(err);
       });
     }
   }
@@ -73,13 +69,11 @@ export class SaleOrderCuDialogComponent implements OnInit {
       this.saleOrderService.update(this.id, data).subscribe(() => {
         this.activeModal.close(null);
       }, (err) => {
-        this.showErrorService.show(err);
       });
     } else {
       this.saleOrderService.create(data).subscribe((res) => {
         this.activeModal.close(res);
       }, (err) => {
-        this.showErrorService.show(err);
       });
     }
   }
