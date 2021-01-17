@@ -1,6 +1,6 @@
 <div class="t_wrapper">
     <div class="media mb-3">
-        <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar">
+        <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100" [height]="100">
         </app-image-file-upload>
         <div class="media-body">
             <h3>{{partner? partner.Name: ''}}</h3>

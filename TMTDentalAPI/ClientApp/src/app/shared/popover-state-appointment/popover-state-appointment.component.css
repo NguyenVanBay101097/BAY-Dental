@@ -16,7 +16,7 @@
 }
 
 .dropdown-wrapper {
-  width: 200px;
+  width: 220px;
 }
 
 textarea.ng-invalid {
@@ -26,10 +26,15 @@ textarea.ng-invalid {
 
 .style-header {
   background-color: whitesmoke;
-  height: 45px;
   font-weight: 600;
+  padding: 8px 12px;
 }
 
 .dropdown-wrapper {
   padding-top: 0;
+}
+
+.t_dropdown_header {
+  font-size: 1rem;
+  background-color: #f7f7f7;
 }
