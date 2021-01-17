@@ -33,6 +33,8 @@ namespace Infrastructure.Services
                     move.PriceUnit = productObj.GetStandardPrice(move.ProductId, force_company_id: move.CompanyId);
             }
 
+            await UpdateAsync(self);
+
             await ProductPriceUpdateBeforeDone(self);
 
             foreach (var move in self)
