@@ -213,7 +213,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.loadCategoriesList();
       this.loadHistoriesList();
       this.loadSourceList();
-      this.loadReferralUserList();
+      // this.loadReferralUserList();
       this.loadTitleList();
       this.loadConsultantList();
 
@@ -533,14 +533,12 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         () => {
           this.activeModal.close(true);
         },
-        (err) => this.showErrorService.show(err)
       );
     } else {
       this.partnerService.create(val).subscribe(
         (result) => {
           this.activeModal.close(result);
         },
-        (err) => this.showErrorService.show(err)
       );
     }
   }

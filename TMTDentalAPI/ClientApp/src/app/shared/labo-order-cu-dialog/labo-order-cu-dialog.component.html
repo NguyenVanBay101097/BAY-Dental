@@ -32,7 +32,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div [class.d-none]="state == 'confirmed'">
                                         <div class="d-flex">
-                                            <kendo-combobox #partnerCbx [data]="partners"  [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
+                                            <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                             </kendo-combobox>
                                             <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
                                                 <i class="fas fa-external-link-alt"></i>
@@ -43,6 +43,7 @@
                                         </div>
                                     </div>
                                     <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
+                                    <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Vui lòng chọn nhà cung cấp Labo</label>
                                 </td>
                             </tr>
                         </tbody>
@@ -130,7 +131,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input formControlName='color' type="text" class="form-control">
+                                    <span *ngIf="state == 'confirmed'">{{laboOrder.color}}</span>
+                                    <input *ngIf="state !== 'confirmed'" formControlName='color' type="text" class="form-control">
                                 </td>
                             </tr>
                             <tr>
@@ -186,7 +188,7 @@
                                         <textarea type="text" formControlName="indicated" class="form-control"></textarea>
                                     </ng-container>
                                     <ng-template #indicated>
-                                        <label>
+                                        <label style="white-space: pre-line;">
                                             {{indicatedFC.value}}
                                         </label>
                                     </ng-template>
@@ -203,7 +205,7 @@
                                         <textarea type="text" formControlName='note' class="form-control"></textarea>
                                     </ng-container>
                                     <ng-template #note>
-                                        <label>
+                                        <label style="white-space: pre-line;">
                                                 {{noteFC.value}}
                                             </label>
                                     </ng-template>
@@ -222,6 +224,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" formControlName='warrantyCode' class="form-control">
+                                    <label *ngIf="warrantyCodeFC.errors?.exist" for="" class="text-danger">Mã bảo hành đã tồn tại</label>
                                 </td>
                             </tr>
                             <tr>
@@ -355,7 +358,7 @@
                                         <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
                                     </ng-container>
                                     <ng-template #technicalNote>
-                                        <label>
+                                        <label style="white-space: pre-line;">
                                                 {{technicalNoteFC.value}}
                                             </label>
                                     </ng-template>
@@ -403,8 +406,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Xác nhận</button>
-    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-primary" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu Nháp</button>
+    <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Đặt hàng</button>
+    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>

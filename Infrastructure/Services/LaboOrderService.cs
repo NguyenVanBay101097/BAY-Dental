@@ -19,7 +19,6 @@ namespace Infrastructure.Services
     public class LaboOrderService : BaseService<LaboOrder>, ILaboOrderService
     {
         private readonly IMapper _mapper;
-        private readonly IUploadService _uploadService;
         public LaboOrderService(IAsyncRepository<LaboOrder> repository, IHttpContextAccessor httpContextAccessor, IUploadService uploadService,
             IMapper mapper)
             : base(repository, httpContextAccessor)
@@ -29,56 +28,49 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<LaboOrderBasic>> GetPagedResultAsync(LaboOrderPaged val)
         {
-            ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            //ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => true);
+            //if (!string.IsNullOrEmpty(val.Search))
+            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+            //    x.Partner.Name.Contains(val.Search) ||
+            //    x.Partner.NameNoSign.Contains(val.Search) ||
+            //    x.Partner.Phone.Contains(val.Search)));
+            //if (val.PartnerId.HasValue)
+            //    spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
+
+            var query = SearchQuery();
+
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
+                query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
-            if (val.PartnerId.HasValue)
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
-
-            if (val.DateOrderFrom.HasValue)
-            {
-                var dateFrom = val.DateOrderFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder >= dateFrom));
-            }
-            if (val.DateOrderTo.HasValue)
-            {
-                var dateTo = val.DateOrderTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateOrder <= dateTo));
-            }
-
-            if (val.DatePlannedFrom.HasValue)
-            {
-                var dateFrom = val.DatePlannedFrom.Value.AbsoluteBeginOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned >= dateFrom));
-            }
-            if (val.DatePlannedTo.HasValue)
-            {
-                var dateTo = val.DatePlannedTo.Value.AbsoluteEndOfDate();
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DatePlanned <= dateTo));
-            }
+                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
 
             if (val.SaleOrderLineId.HasValue)
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.SaleOrderLineId == val.SaleOrderLineId));
+                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);          
             }
 
             if (!string.IsNullOrEmpty(val.State))
             {
-                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.State == val.State));
+                query = query.Where(x => x.State == val.State);
             }
 
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-
-            var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
-
             var totalItems = await query.CountAsync();
-            return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
+
+            query = query.Include(x => x.Partner)
+                .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.LaboOrderToothRel).ThenInclude(x => x.Tooth);
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<LaboOrderBasic>>(items)
             };
+
+            return paged;
+
         }
 
         public async Task<PagedResult2<LaboOrderBasic>> GetFromSaleOrder_OrderLine(LaboOrderPaged val)
@@ -124,15 +116,15 @@ namespace Infrastructure.Services
             {
                 if (val.State == "trehan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now > x.DatePlanned.Value);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date > x.DatePlanned.Value);
                 }
                 else if (val.State == "chonhan")
                 {
-                    query = query.Where(x => (x.DatePlanned.HasValue && now < x.DatePlanned.Value) || !x.DatePlanned.HasValue);
+                    query = query.Where(x => (x.DatePlanned.HasValue && now.Date < x.DatePlanned.Value) || !x.DatePlanned.HasValue);
                 }
                 else if (val.State == "toihan")
                 {
-                    query = query.Where(x => x.DatePlanned.HasValue && now == x.DatePlanned.Value);
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value);
                 }
             }
 
@@ -141,7 +133,7 @@ namespace Infrastructure.Services
             query = query.Include(x => x.Partner)
                 .Include(x => x.SaleOrderLine.Order);
 
-            query.OrderByDescending(x => x.DateCreated);
+            query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
@@ -158,8 +150,8 @@ namespace Infrastructure.Services
             ISpecification<LaboOrder> spec = new InitialSpecification<LaboOrder>(x => x.State == "confirmed" && x.DateReceipt.HasValue);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
-                x.Customer.Name.Contains(val.Search) || x.Customer.NameNoSign.Contains(val.Search) ||
-                x.Customer.Ref.Contains(val.Search)));
+                x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) ||
+                x.Partner.Ref.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.State))
             {
@@ -741,41 +733,48 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<LaboOrderReportOutput> GetLaboOrderReport(LaboOrderReportInput val)
+        public async Task<long> GetCountLaboOrder(LaboOrderGetCount val)
         {
-            ISpecification<LaboOrderLine> spec_1 = new InitialSpecification<LaboOrderLine>(x => true);
-            ISpecification<LaboOrderLine> spec_2 = new InitialSpecification<LaboOrderLine>(x => true);
+            var query = SearchQuery();
 
             if (val.DateFrom.HasValue)
             {
-                spec_1 = spec_1.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate >= val.DateFrom));
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.DateOrder >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                spec_1 = spec_1.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate <= dateTo));
-                spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.Order.DatePlanned <= dateTo));
+                query = query.Where(x => x.DateOrder <= dateTo);
             }
-
-            spec_2 = spec_2.And(new InitialSpecification<LaboOrderLine>(x => x.ReceivedDate.HasValue == false));
-
-            var lineObj = GetService<ILaboOrderLineService>();
-
-            var query = lineObj.SearchQuery(spec_1.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            var laboReceived = await query.CountAsync();
-
-            query = lineObj.SearchQuery(spec_2.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            var laboAppointment = await query.CountAsync();
-
-            var result = new LaboOrderReportOutput
+            var now = DateTime.Now;
+            if (!string.IsNullOrEmpty(val.State))
             {
-                LaboReceived = laboReceived,
-                LaboAppointment = laboAppointment
-            };
+                if (val.State == "danhan")
+                {
+                    query = query.Where(x => x.DateReceipt.HasValue);
+                }             
+                else if (val.State == "toihan")
+                {
+                    query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value && !x.DateReceipt.HasValue);
+                }
+            }         
 
-            return result;
+            return await query.LongCountAsync();
         }
 
+        public async Task<bool> CheckExistWarrantyCode(LaboOrderCheck val)
+        {
+            if (string.IsNullOrEmpty(val.Code) || val.Code.Trim() == "") return false;
+            var exist = await SearchQuery(x => x.WarrantyCode.ToLower().Contains(val.Code.Trim().ToLower())).FirstOrDefaultAsync();
+            if (exist == null || val.Id.HasValue && val.Id == exist.Id) return false;
+            if (exist != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -1,17 +1,24 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
 import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDefaultGet, ToaThuocLineDisplay } from '../toa-thuoc.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { ToaThuocLineDialogComponent } from '../toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
 import { update } from 'lodash';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { SamplePrescriptionsPaged, SamplePrescriptionsService, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { ToaThuocLineService } from 'src/app/core/services/toa-thuoc-line.service';
+import * as _ from 'lodash';
+import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog',
@@ -19,296 +26,304 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
   styleUrls: ['./toa-thuoc-cu-dialog.component.css']
 })
 export class ToaThuocCuDialogComponent implements OnInit {
-  toaThuocForm: FormGroup;
-  lineForm: FormGroup;
-  editingLine: FormGroup;//line đang được chỉnh sửa
   id: string;
-  lineId: number;//toa thuoc line Id
-  dotKhamId: string;
-  filteredProducts: ProductSimple[];
-  lineSelected: ToaThuocLineDisplay;
-  lines: ToaThuocLineDisplay[] = [];
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
-  // opened = false;
+  toaThuocForm: FormGroup;
+  employeeList: EmployeeBasic[] = [];
+  productList: ProductSimple[] = [];
+  samplePrescriptionList: SamplePrescriptionsSimple[] = [];
+  defaultVal: any;
+  samplePrescriptionAdded: any;
+  @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild("samplePrescriptionCbx", { static: true }) samplePrescriptionCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private toaThuocService: ToaThuocService, private intlService: IntlService,
-    private productService: ProductService, public activeModal: NgbActiveModal, private windowService: WindowService,
-    private errorService: AppSharedShowErrorService) { }
+  filterSettings: DropDownFilterSettings = {
+    caseSensitive: false,
+    operator: "startsWith",
+  };
 
-  ngOnInit() {
-    this.toaThuocForm = this.fb.group({
-      name: null,
-      dateObj: null,
-      lines: this.fb.array([]),
-      note: null,
-      companyId: null,
-      dotKhamId: null,
-      userId: null,
-      partnerId: null
-    });
+  constructor(private fb: FormBuilder,
+    private toaThuocService: ToaThuocService,
+    public activeModal: NgbActiveModal,
+    private intlService: IntlService,
+    private errorService: AppSharedShowErrorService,
+    private employeeService: EmployeeService,
+    private productService: ProductService,
+    private samplePrescriptionsService: SamplePrescriptionsService, 
+    private modalService: NgbModal, 
+    private notificationService: NotificationService,
+    private toaThuocLineService: ToaThuocLineService) { }
 
-    // this.lineForm = this.fb.group({
-    //   product: [null, Validators.required],
-    //   numberOfTimes: 1,
-    //   numberOfDays: 1,
-    //   amountOfTimes: 1,
-    //   quantity: 1,
-    //   useAt: 'after_meal',
-    //   note: null,
-    // });
-
-    if (this.id) {
+    ngOnInit() {
+      this.toaThuocForm = this.fb.group({
+        partner: null, 
+        employee: null, 
+        samplePrescription: null, 
+        lines: this.fb.array([]), 
+        note: null, 
+        reExaminationDateObj: null, 
+        saveSamplePrescription: false, 
+        nameSamplePrescription: null, 
+        partnerId: null,
+        companyId: null,
+        saleOrderId: null, 
+      });
+  
       setTimeout(() => {
-        this.loadRecord();
-      });
-    } else {
-      setTimeout(() => {
-        this.loadDefault();
+        if (this.id) {
+          this.loadRecord();
+        } else {
+          this.loadDefault(this.defaultVal || {});
+          this.onCreate();
+        }
+  
+        this.employeeCbx.filterChange.asObservable().pipe(
+          debounceTime(300),
+          tap(() => (this.employeeCbx.loading = true)),
+          switchMap((val) => this.searchEmployees(val))
+        )
+        .subscribe((result) => {
+          this.employeeList = result.items;
+          this.employeeCbx.loading = false;
+        });
+  
+        this.samplePrescriptionCbx.filterChange.asObservable().pipe(
+          debounceTime(300),
+          tap(() => (this.samplePrescriptionCbx.loading = true)),
+          switchMap((val) => this.searchSamplePrescriptions(val))
+        )
+        .subscribe((result) => {
+          this.samplePrescriptionList = result.items;
+          this.samplePrescriptionCbx.loading = false;
+        });
+  
+        this.loadEmployeeList();
+        this.loadSamplePrescriptionList();
+        this.loadProductList();
       });
     }
-
-    // this.searchProducts(null).subscribe(result => {
-    //   this.filteredProducts = result;
-    // });
-
-    // this.productCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.productCbx.loading = true)),
-    //   switchMap(value => this.searchProducts(value))
-    // ).subscribe(result => {
-    //   this.filteredProducts = result;
-    //   this.productCbx.loading = false;
-    // });
-  }
-
-  productChange(value: any) {
-    if (value && value.id) {
-      var val = new ToaThuocLineDefaultGet();
-      val.productId = value.id;
-      this.toaThuocService.lineDefaultGet(val).subscribe(result => {
-        var lines = this.toaThuocForm.get('lines') as FormArray;
-        lines.push(this.fb.group(result));
-        this.productCbx.reset();
+  
+    get lines() {
+      return this.toaThuocForm.get("lines") as FormArray;
+    }
+  
+    getFBValueItem(item) {
+      return this.toaThuocForm.get(item).value;
+    }
+  
+    getUOM(val){
+      var res = val.value;
+      if(res.product == null){
+        return;
+      }
+      return res.product.uomName;
+    }
+  
+  
+    onChangeProduct(data: any, item: FormControl) {
+      if (data) {
+        this.toaThuocLineService.onChangeProduct({productId: data.id}).subscribe((result: any) => {
+          item.get('productUoM').setValue(result.uoM);
+        });
+      }
+    }
+  
+    searchEmployees(search?: string) {
+      var val = new EmployeePaged();
+      val.isDoctor = true;
+      val.search = search || "";
+      return this.employeeService.getEmployeePaged(val);
+    }
+  
+    loadEmployeeList() {
+      return this.searchEmployees().subscribe((result) => {
+        this.employeeList = _.unionBy(this.employeeList, result.items, "id");
       });
     }
-  }
-
-  onSelectLine(line: ToaThuocLineDisplay) {
-    this.lineSelected = line;
-  }
-
-  onLineUpdated() {
-    this.lineSelected = null;
-  }
-
-  // showLineAddModal() {
-  //   const windowRef = this.windowService.open({
-  //     title: 'Thêm thuốc',
-  //     content: ToaThuocLineDialogComponent,
-  //     resizable: false,
-  //     autoFocusedElement: '[name="name"]',
-  //   });
-
-  //   this.opened = true;
-
-  //   windowRef.result.subscribe((result) => {
-  //     this.opened = false;
-  //     if (result instanceof WindowCloseResult) {
-  //     } else {
-  //       var line = result as ToaThuocLineDisplay;
-  //       var lines = this.toaThuocForm.get('lines') as FormArray;
-  //       lines.push(this.fb.group(line));
-  //     }
-  //   });
-  // }
-
-  onLineCreated(line: ToaThuocLineDisplay) {
-    this.lines.push(line);
-  }
-
-  deleteLine(index: number) {
-    if (this.lineId == index) {
-      this.lineId = null;
-      this.resetLineForm(this.lineForm);
+  
+    searchSamplePrescriptions(search?: string) {
+      var val = new SamplePrescriptionsPaged();
+      val.search = search || "";
+      return this.samplePrescriptionsService.getPaged(val);
     }
-    this.lines.splice(index, 1);
-  }
-
-  searchProducts(search?: string) {
-    var val = new ProductFilter();
-    val.keToaOK = true;
-    val.search = search;
-    return this.productService.autocomplete2(val);
-  }
-
-  loadDefault() {
-    var val = new ToaThuocDefaultGet();
-    val.dotKhamId = this.dotKhamId;
-    this.toaThuocService.defaultGet(val).subscribe(result => {
-      this.toaThuocForm.patchValue(result);
-      let date = new Date(result.date);
-      this.toaThuocForm.get('dateObj').patchValue(date);
-    });
-  }
-
-  loadRecord() {
-    if (this.id) {
-      this.toaThuocService.get(this.id).subscribe(result => {
+  
+    loadSamplePrescriptionList() {
+      return this.searchSamplePrescriptions().subscribe((result) => {
+        this.samplePrescriptionList = _.unionBy(this.samplePrescriptionList, result.items, "id");
+      });
+    }
+  
+    onCheckSaveSamplePrescription(event: any) {
+      var checked = event.currentTarget.checked;
+      if (checked) {
+        this.toaThuocForm.get('nameSamplePrescription').setValidators(Validators.required);
+        this.toaThuocForm.get('nameSamplePrescription').updateValueAndValidity();
+      } else {
+        this.toaThuocForm.get('nameSamplePrescription').clearValidators();
+        this.toaThuocForm.get('nameSamplePrescription').updateValueAndValidity();
+      }
+    }
+  
+    searchProducts() {
+      var val = new ProductFilter();
+      val.keToaOK = true;
+      val.limit = 1000;
+      return this.productService.autocomplete2(val);
+    }
+  
+    loadProductList() {
+      return this.searchProducts().subscribe((result) => {
+        this.productList = _.unionBy(this.productList, result, "id");
+      });
+    }
+  
+    selectionChangeSamplePrescription(item) {
+      this.samplePrescriptionsService.get(item.id).subscribe(
+        (result) => {
+          this.toaThuocForm.get("note").patchValue(result.note);
+  
+          this.lines.clear();
+  
+          result.lines.forEach((line) => {
+            this.lines.push(
+              this.fb.group({
+                product: [line.product, Validators.required],
+                productUoM: line.productUoM,
+                numberOfTimes: line.numberOfTimes,
+                amountOfTimes: line.amountOfTimes,
+                quantity: line.quantity,
+                numberOfDays: line.numberOfDays,
+                useAt: line.useAt,
+              })
+            );
+          });
+        },
+        (err) => {
+          this.errorService.show(err);
+        }
+      );
+    }
+  
+    createMedicine() {
+      let modalRef = this.modalService.open(ProductMedicineCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = "Thêm: Thuốc";
+      modalRef.result.then(() => {
+        this.notificationService.show({
+          content: 'Thêm thuốc mới thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadProductList();
+      }, () => {
+      });
+    }
+  
+    loadDefault(val: any) {
+      this.toaThuocService.defaultGet(val).subscribe((result) => {
         this.toaThuocForm.patchValue(result);
-        let date = new Date(result.date);
-        this.toaThuocForm.get('dateObj').patchValue(date);
-        this.lines = result.lines;
       });
     }
-  }
-
-  get getDotKham() {
-    return this.toaThuocForm.get('dotKham').value;
-  }
-
-  onSave() {
-    if (!this.toaThuocForm.valid) {
-      return;
+  
+    onCreate() {
+      var lines = this.toaThuocForm.get("lines") as FormArray;
+      lines.push(
+        this.fb.group({
+          product: null,
+          productUoM: null,
+          numberOfTimes: 1,
+          amountOfTimes: 1,
+          quantity: 1,
+          numberOfDays: 1,
+          useAt: "after_meal",
+        })
+      );
     }
-
-    var val = this.toaThuocForm.value;
-    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.lines = this.lines;
-    console.log(val);
-    if (this.id) {
-      this.toaThuocService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
-      }, err => {
-        this.errorService.show(err);
-      });
-    } else {
-      this.toaThuocService.create(val).subscribe(result => {
-        this.activeModal.close(result);
-      }, err => {
-        this.errorService.show(err);
-      });
-    }
-  }
-
-  onSaveAndPrint() {
-    if (!this.toaThuocForm.valid) {
-      return;
-    }
-
-    var val = this.toaThuocForm.value;
-    val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.lines = this.lines;
-    if (this.id) {
-      this.toaThuocService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
-      }, err => {
-        this.errorService.show(err);
-      });
-    } else {
-      this.toaThuocService.create(val).subscribe(result => {
-        this.activeModal.close({ toaThuoc: result, print: true });
-      }, err => {
-        this.errorService.show(err);
+  
+    loadRecord() {
+      this.toaThuocService.getFromUI(this.id).subscribe((result: any) => {
+        this.toaThuocForm.patchValue(result);
+        if (result.reExaminationDate) {
+          let reExaminationDate = new Date(result.reExaminationDate);
+          this.toaThuocForm.get("reExaminationDateObj").setValue(reExaminationDate);
+        }
+  
+        if (result.employee) {
+          this.employeeList = _.unionBy(this.employeeList, [result.employee], "id");
+        }
+  
+        this.lines.clear();
+  
+        result.lines.forEach((line) => {
+          this.lines.push(
+            this.fb.group({
+              id: line.id,
+              product: [line.product, Validators.required],
+              productUoM: line.productUoM,
+              numberOfTimes: line.numberOfTimes,
+              amountOfTimes: line.amountOfTimes,
+              quantity: line.quantity,
+              numberOfDays: line.numberOfDays,
+              useAt: line.useAt,
+            })
+          );
+        });
       });
     }
-  }
-
-  editLine(id: number) {
-    this.lineId = id;
-    var lines = this.toaThuocForm.get('lines') as FormArray;
-    this.lineForm.patchValue(lines.at(id).value);
-  }
-
-  //Thêm toa thuốc list tạm
-  onSaveLines(action) {
-    if (!this.lineForm.valid) {
-      return;
+  
+    updateQuantity(line: FormGroup) {
+      var numberOfTimes = line.get("numberOfTimes").value || 0;
+      var numberOfDays = line.get("numberOfDays").value || 0;
+      var amountOfTimes = line.get("amountOfTimes").value || 0;
+      var quantity = numberOfTimes * amountOfTimes * numberOfDays;
+      line.get("quantity").setValue(quantity);
     }
-    var val = this.lineForm.value;
-    val.productId = val.product.id;
-
-    var line = this.lineForm.value;
-    line.productId = val.product.id;
-    line.name = this.computeName();
-    var lines = this.toaThuocForm.get('lines') as FormArray;
-    if (!action) {
-      lines.push(this.fb.group(line));
-      this.resetLineForm(this.lineForm);
-    } else {
-      lines.at(this.lineId).patchValue(line);
-      this.lineId = null;
-      this.resetLineForm(this.lineForm);
-    }
-  }
-
-  onUpdateToaThuoc() {
-    if (!this.toaThuocForm.valid) {
-      return;
-    }
-
-    if (this.id) {
-      var val = this.toaThuocForm.value;
-      val.date = this.intlService.formatDate(val.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-      this.toaThuocService.update(this.id, val).subscribe(() => {
-        this.activeModal.close(true);
+  
+    onSave(print) {
+      if (!this.toaThuocForm.valid) {
+        return false;
+      }
+  
+      var i = 0;
+      while (i < this.lines.value.length) {
+        if (this.lines.value[i]["product"] == null) {
+          this.lines.removeAt(i);
+          i--;
+        }
+        i++;
+      }
+  
+      var val = Object.assign({}, this.toaThuocForm.value);
+      val.employeeId = val.employee ? val.employee.id : null;
+      val.reExaminationDate = val.reExaminationDateObj ? this.intlService.formatDate(val.reExaminationDateObj, "yyyy-MM-ddTHH:mm:ss") : null;
+      val.lines.forEach((line) => {
+        line.productId = line.product.id;
+        line.productUoMId = line.productUoM ? line.productUoM.id : null;
       });
+  
+      if (this.id) {
+        this.toaThuocService.updateFromUI(this.id, val).subscribe(
+          () => {
+            this.activeModal.close({print,});
+          },
+          (err) => {
+            this.errorService.show(err);
+          }
+        );
+      } else {
+        this.toaThuocService.createFromUI(val).subscribe(
+          (result) => {
+            this.activeModal.close({item: result, print,});
+          },
+          (err) => {
+            this.errorService.show(err);
+          }
+        );
+      }
     }
-  }
-
-  onCancel() {
-    this.activeModal.dismiss();
-  }
-
-  public onChange(value: number) {
-    setTimeout(() => {
-      this.updateQuantity();
-    }, 200);
-  }
-
-  updateQuantity() {
-    var numberOfTimes = this.lineForm.get('numberOfTimes').value || 0;
-    var numberOfDays = this.lineForm.get('numberOfDays').value || 0;
-    var amountOfTimes = this.lineForm.get('amountOfTimes').value || 0;
-    var quantity = numberOfTimes * amountOfTimes * numberOfDays;
-    this.lineForm.get('quantity').setValue(quantity);
-  }
-
-  getNumberOfTimes() {
-    return this.lineForm.get('numberOfTimes').value || 0;
-  }
-
-  getAmountOfTimes() {
-    return this.lineForm.get('amountOfTimes').value || 0;
-  }
-
-  getUsedAt() {
-    var useAt = this.lineForm.get('useAt').value;
-    switch (useAt) {
-      case 'before_meal':
-        return 'trước khi ăn';
-      case 'in_meal':
-        return 'trong khi ăn';
-      case 'after_wakeup':
-        return 'sau khi thức dậy';
-      case 'before_sleep':
-        return 'trước khi đi ngủ';
-      default:
-        return 'sau khi ăn';
+  
+    deleteLine(index: number) {
+      this.lines.removeAt(index);
     }
-  }
-
-  computeName() {
-    return `Ngày uống ${this.getNumberOfTimes()} lần, mỗi lần ${this.getAmountOfTimes()} viên, uống ${this.getUsedAt()}`
-  }
-
-  resetLineForm(form: FormGroup) {
-    form.get('product').setValue(null);
-    form.get('numberOfTimes').setValue(1);
-    form.get('numberOfDays').setValue(1);
-    form.get('amountOfTimes').setValue(1);
-    form.get('quantity').setValue(1);
-    form.get('useAt').setValue('after_meal');
-    form.get('note').setValue(null);
-  }
 }

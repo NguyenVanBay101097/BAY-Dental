@@ -1,12 +1,11 @@
 <div class="t_wrapper">
     <div class="media mb-3">
-        <app-image-file-upload class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar">
+        <app-image-file-upload [supportWebcam]="true" class="t_avatar" (uploaded)="onAvatarUploaded($event)" [imageId]="partner.Avatar" [width]="100" [height]="100">
         </app-image-file-upload>
         <div class="media-body">
             <h3>{{partner? partner.Name: ''}}</h3>
             <div class="t_sub_title">
-                Mã khách hàng: {{partner ? partner.Ref : ''}} <br />
-                Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}
+                Mã khách hàng: {{partner ? partner.Ref : ''}} <br /> Ngày tạo: {{partner ? (partner.Date | date:'shortDate') : '' }}
             </div>
             <button class="btn btn-success btn-sm" (click)="editCustomer()">
                 <i class="fas fa-user-edit"></i> Sửa
@@ -65,8 +64,7 @@
         <div class="row">
             <label class="col-sm-4 t_col_form_lable">Nhãn</label>
             <div class="col-sm-8">
-                <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories"
-                    (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
+                <app-partner-category-popover [popOverPlace]="'top'" [tags]="partner.Categories" (onSave)="partner.Categories = $event" [rowPartnerId]="partner.Id">
                 </app-partner-category-popover>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductService } from '../product.service';
 
@@ -18,7 +19,7 @@ export class ProductLaboAttachCuDialogComponent implements OnInit {
   filterdUoMs = [];
   filterdUoMPOs = [];
 
-  constructor(private productService: ProductService, public activeModal: NgbActiveModal,
+  constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private fb: FormBuilder) {
   }
 
@@ -65,6 +66,16 @@ export class ProductLaboAttachCuDialogComponent implements OnInit {
       });
     } }
 
+    notify(Style, Content) {
+      this.notificationService.show({
+        content: Content,
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: Style, icon: true }
+      });
+    }
+
   onSave() {
     if (!this.formGroup.valid) {
       return;
@@ -78,10 +89,12 @@ export class ProductLaboAttachCuDialogComponent implements OnInit {
     val.uoMIds.push(val.uom.id);
     if (this.id) {
       this.productService.update(this.id, val).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
         this.activeModal.close(true);
       });
     } else {
       return this.productService.create(val).subscribe(result => {
+        this.notify('success', 'Lưu thành công');
         this.activeModal.close(result);
       });;
     }

@@ -90,6 +90,8 @@ export class SaleOrderFastListServiceComponent implements OnInit {
       discountType: 'percentage',
       employee: null,
       employeeId: '',
+      assistant: null,
+      assistantId: '',
       name: item.name,
       priceSubTotal: 0,
       priceUnit: item.listPrice,

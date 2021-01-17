@@ -13,6 +13,7 @@ export class PartnerCategoryDisplay {
     name: string;
     parentId: string;
     parent: PartnerCategoryBasic;
+    color: string;
 }
 
 export class PartnerCategoryPaged {

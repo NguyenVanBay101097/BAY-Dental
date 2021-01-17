@@ -48,8 +48,24 @@ namespace Infrastructure.Services
             if (val.IsAssistant.HasValue)
                 query = query.Where(x => x.IsAssistant == val.IsAssistant);
 
+            if(val.Active.HasValue)
+            {
+                query = query.Where(x => x.Active == val.Active.Value);
+            }
+
             query = query.OrderBy(s => s.Name);
             return query;
+        }
+
+        private void CheckConstraints(Employee self)
+        {
+            if (!string.IsNullOrEmpty(self.UserId))
+            {
+                if (SearchQuery(x => x.UserId == self.UserId).Count() > 1)
+                {
+                    throw new Exception($"Tai khoan {self.User.UserName} da duoc lien ket");
+                }
+            }
         }
 
         public override ISpecification<Employee> RuleDomainGet(IRRule rule)
@@ -96,7 +112,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-            var items = await query.Skip(val.Offset).Take(val.Limit)
+            var items = await query.Where(x=>x.Active == true).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
@@ -115,7 +131,9 @@ namespace Infrastructure.Services
                 }
             }
 
-            return await base.CreateAsync(entity);
+            var emp = await base.CreateAsync(entity);
+            //CheckConstraints(entity);
+            return emp;
         }
 
         public async Task<Employee> GetByUserIdAsync(string userId)
@@ -161,7 +179,7 @@ namespace Infrastructure.Services
 
         public override async Task UpdateAsync(Employee entity)
         {
-            var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
+            //var category = await _employeeCategoryService.SearchQuery(x => x.Id == entity.CategoryId).FirstOrDefaultAsync();
             //if (category.Type == "doctor")
             //{
             //    entity.IsDoctor = true;
@@ -178,6 +196,7 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
+             //CheckConstraints(entity);
         }
 
         public async Task updateSalary(EmployeeDisplay val, Employee emp)
@@ -194,6 +213,15 @@ namespace Infrastructure.Services
                 val.RestDayRate = emp.RestDayRate;
                 val.Allowance = emp.Allowance;
             }
+        }
+
+        public async Task<bool> ActionActive(Guid id, EmployeeActive val)
+        {
+            var entity = SearchQuery(x => x.Id == id).FirstOrDefault();
+            if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
+            entity.Active = val.Active;
+            await UpdateAsync(entity);
+            return true;
         }
     }
 }

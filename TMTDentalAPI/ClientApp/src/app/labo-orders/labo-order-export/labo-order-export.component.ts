@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
@@ -36,10 +37,18 @@ export class LaboOrderExportComponent implements OnInit {
     { text: 'Chưa xuất', value: 'chuaxuat' }
   ];
 
+  
+  filterLaboStatus = [
+    { name: 'Đã xuất', value: 'daxuat' },
+    { name: 'Chưa xuất', value: 'chuaxuat' }
+  ];
+  stateFilterOptionSelected = this.stateFilterOptions[0];
+
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -53,8 +62,8 @@ export class LaboOrderExportComponent implements OnInit {
       });
   }
 
-  onStateSelectChange(data: TmtOptionSelect) {
-    this.stateFilter = data.value;
+  onStateSelectChange(e) {
+    this.stateFilter = e? e.value : null;
     this.loadDataFromApi();
   }
 
@@ -97,6 +106,7 @@ export class LaboOrderExportComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      console.log(res);
       this.gridData = res;
       this.loading = false;
     }, err => {
@@ -108,7 +118,24 @@ export class LaboOrderExportComponent implements OnInit {
   editItem(item) {
     const modalRef = this.modalService.open(LaboOrderExportDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
-    modalRef.result.then(() => {
+    modalRef.result.then(rs => {
+      if(rs == 'update'){
+        this.notificationService.show({
+          content: 'Cập nhật thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }else{
+        this.notificationService.show({
+          content: 'Hủy nhận đơn hàng thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }   
       this.loadDataFromApi();
     }, er => { });
   }

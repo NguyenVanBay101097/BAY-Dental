@@ -48,21 +48,21 @@ namespace TMTDentalAPI.Controllers
             _uomService = uomService;
         }
 
-        [HttpGet][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Get([FromQuery]ProductPaged val)
-        {
+       {
             var result = await _productService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _productService.GetProductDisplay(id);
             return Ok(res);
         }
 
-        [HttpPost][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> Create(ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -73,7 +73,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Product.Update")]
+        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Products.Update")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -84,6 +84,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> GetLabo(Guid id)
         {
             var product = await _productService.SearchQuery(x => x.Id == id).Include(x=>x.Categ).FirstOrDefaultAsync();
@@ -98,7 +99,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Product.Delete")]
+        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Products.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -131,21 +132,21 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var res = await _productService.GetProductsAutocomplete(filter: filter);
             return Ok(res);
         }
 
-        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete2(ProductPaged val)
         {
             var res = await _productService.GetProductsAutocomplete2(val);
             return Ok(res);
         }
 
-        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelViewModel val)
         {
             if (!ModelState.IsValid)
@@ -252,7 +253,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportService(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -428,7 +429,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportMedicine(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -458,6 +459,14 @@ namespace TMTDentalAPI.Controllers
                         if (string.IsNullOrEmpty(categName))
                             errs.Add("Nhóm thuốc là bắt buộc");
 
+                        //tìm exist đơn vị tính và gán Id uom cho thuốc
+                        var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                        if (string.IsNullOrEmpty(uomName))
+                            errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+                        var uom = _uomService.SearchQuery(x => x.Name.Trim().ToLower().Contains(uomName.ToLower())).FirstOrDefault();
+                        if (uom == null)
+                            errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+
                         if (errs.Any())
                         {
                             errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
@@ -476,6 +485,8 @@ namespace TMTDentalAPI.Controllers
                         {
                             Name = name,
                             CategName = categName,
+                            ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                            UomId = uom.Id
                         };
                         data.Add(item);
                     }
@@ -486,13 +497,13 @@ namespace TMTDentalAPI.Controllers
                 return Ok(new { success = false, errors });
 
             var vals = new List<Product>();
-            var uom = await _uomService.DefaultUOM();
+            //var uom = await _uomService.DefaultUOM();
             foreach (var item in data)
             {
                 var pd = new Product();
                 pd.CompanyId = CompanyId;
-                pd.UOMId = uom.Id;
-                pd.UOMPOId = uom.Id;
+                pd.UOMId = item.UomId.Value;
+                pd.UOMPOId = item.UomId.Value;
                 pd.Name = item.Name;
                 pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
@@ -513,7 +524,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Product.Create")]
+        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportProduct(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -661,7 +672,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Create")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportLabo(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -677,29 +688,37 @@ namespace TMTDentalAPI.Controllers
 
             using (var stream = new MemoryStream(fileData))
             {
-                using (ExcelPackage package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-
-                        if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên vật liệu Labo là bắt buộc");
-
-                        if (errs.Any())
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên vật liệu Labo là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new ProductLaboImportExcelRow
+                            {
+                                Name = name,
+                            };
+                            data.Add(item);
                         }
-
-                        var item = new ProductLaboImportExcelRow
-                        {
-                            Name = name,
-                        };
-                        data.Add(item);
                     }
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 
@@ -734,7 +753,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Create")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportLaboAttach(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
@@ -750,29 +769,37 @@ namespace TMTDentalAPI.Controllers
 
             using (var stream = new MemoryStream(fileData))
             {
-                using (ExcelPackage package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    using (ExcelPackage package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-
-                        if (string.IsNullOrEmpty(name))
-                            errs.Add("Tên gửi kèm Labo là bắt buộc");
-
-                        if (errs.Any())
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên gửi kèm Labo là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new ProductLaboImportExcelRow
+                            {
+                                Name = name,
+                            };
+                            data.Add(item);
                         }
-
-                        var item = new ProductLaboImportExcelRow
-                        {
-                            Name = name,
-                        };
-                        data.Add(item);
                     }
+                }
+                catch (Exception)
+                {
+
+                    throw new Exception("Dữ liệu file không đúng định dạng mẫu");
                 }
             }
 
@@ -838,7 +865,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Product.Read")]
+        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> ExportServiceExcelFile([FromQuery]ProductPaged val)
         {
             var stream = new MemoryStream();
@@ -886,7 +913,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Catalog.Product.Read")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> ExportProductExcel(ProductPaged val)
         {
             var stream = new MemoryStream();
@@ -920,6 +947,46 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.DefaultCode;
                     worksheet.Cells[row, 5].Value = item.PurchasePrice ?? 0;
 
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
+        public async Task<IActionResult> ExportMedicineExcel(ProductPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var products = await _productService.GetMedicineExportExcel(val);
+            var sheetName = "thuốc";
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells[1, 1].Value = "Tên thuốc";
+                worksheet.Cells[1, 2].Value = "Nhóm thuốc";
+
+                var row = 2;
+                foreach (var item in products)
+                {
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.CategName;
                     row++;
                 }
 

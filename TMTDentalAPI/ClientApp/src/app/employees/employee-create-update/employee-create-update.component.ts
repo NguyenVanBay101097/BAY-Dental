@@ -17,6 +17,8 @@ import { UserPaged, UserService } from 'src/app/users/user.service';
 import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { MustMatch } from 'src/app/shared/must-match-validator';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -31,7 +33,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private empCategService: EmpCategoryService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal, private notificationService: NotificationService,
-    private intlService: IntlService, private commissionService: CommissionService, private userService: UserService) { }
+    private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
+    private companyService: CompanyService) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
@@ -49,6 +52,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   categoriesList2: EmployeeCategoryDisplay[] = [];
   filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
+  listCompanies: CompanyBasic[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -76,25 +80,31 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       regularHour: 8,
       overtimeRate: 150,
       restDayRate: 100,
-      allowance: 0
+      allowance: 0,
+      isUser: false,
+      userCompany: null,
+      userCompanies: [[]],
+      userName: null,
+      userPassword: null,
+      createChangePassword: false,
+      userAvatar: null
     });
 
     setTimeout(() => {
       this.loadListCommissions();
       this.getEmployeeInfo();
-      this.loadUsers();
-      this.loadstructureTypes();
+      // this.loadUsers();
+      // this.loadstructureTypes();
+      this.loadListCompanies();
 
-     
-
-      this.userCbx.filterChange.asObservable().pipe(
-        debounceTime(300),
-        tap(() => (this.userCbx.loading = true)),
-        switchMap(value => this.searchUsers(value))
-      ).subscribe(result => {
-        this.filteredUsers = result;
-        this.userCbx.loading = false;
-      });
+      // this.userCbx.filterChange.asObservable().pipe(
+      //   debounceTime(300),
+      //   tap(() => (this.userCbx.loading = true)),
+      //   switchMap(value => this.searchUsers(value))
+      // ).subscribe(result => {
+      //   this.filteredUsers = result;
+      //   this.userCbx.loading = false;
+      // });
 
     });
   }
@@ -110,6 +120,18 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get isUser() {
+    return this.formCreate.get('isUser').value;
+  }
+
+  get createChangePassword() {
+    return this.formCreate.get('createChangePassword').value;
+  }
+
+  get userAvatar() {
+    return this.formCreate.get('userAvatar').value;
+  }
+
   getValueForm(key) {
     return this.formCreate.get(key).value;
   }
@@ -118,6 +140,67 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     this.searchUsers().subscribe(result => {
       this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
     });
+  }
+
+  loadListCompanies() {
+    var val = new CompanyPaged();
+    this.companyService.getPaged(val).subscribe(result => {
+      this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
+    });
+  }
+
+  onChangeCreateChangePassword(e) {
+    if (this.createChangePassword) {
+      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+    } else {
+      this.formCreate.get('userPassword').setValidators([]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+    }
+  }
+
+  updateValidation() {
+    if (this.isUser) {
+      this.formCreate.get('userName').setValidators([Validators.required]);
+      this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userCompany').setValidators([Validators.required]);
+      this.formCreate.get('userCompany').updateValueAndValidity();
+    } else {
+      this.formCreate.get('userName').setValidators([]);
+      this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userCompany').setValidators([]);
+      this.formCreate.get('userCompany').updateValueAndValidity();
+    }
+  }
+
+  onChangeIsUser(e) {
+    if (this.isUser) {
+      this.formCreate.get('userName').setValidators([Validators.required]);
+      this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userCompany').setValidators([Validators.required]);
+      this.formCreate.get('userCompany').updateValueAndValidity();
+
+      this.userService.defaultGet().subscribe((result) => {
+        if (result.company) {
+          this.formCreate.get('userCompany').setValue(result.company);
+          this.listCompanies = _.unionBy(this.listCompanies, [result.company], 'id');
+        }
+
+        if (result.companies) {
+          this.formCreate.get('userCompanies').setValue(result.companies);
+          this.listCompanies = _.unionBy(this.listCompanies, result.companies, 'id');
+        }
+      });
+    } else {
+      this.formCreate.get('userName').setValidators([]);
+      this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userCompany').setValidators([]);
+      this.formCreate.get('userCompany').updateValueAndValidity();
+    }
   }
 
 
@@ -147,15 +230,18 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
           this.formCreate.patchValue(rs);
 
-          if (rs.structureType) {
-            this.filteredstructureTypes = _.unionBy(this.filteredstructureTypes, [rs.structureType], 'id');
-          }
+          this.updateValidation();
         },
         er => {
           console.log(er);
         }
       );
     }
+  }
+
+  onAvatarUploaded(data) {
+    var fileUrl = data ? data.fileUrl : null;
+    this.formCreate.get('userAvatar').setValue(fileUrl);
   }
 
   //Tạo hoặc cập nhật NV
@@ -165,33 +251,28 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     }
 
     var value = this.formCreate.value;
-    value.categoryId = value.category ? value.category.id : null;
-    value.commissionId = value.commission ? value.commission.id : null;
-    value.userId = value.user ? value.user.id : null;
     value.birthDay = value.birthDay ? this.intlService.formatDate(value.birthDay, 'yyyy-MM-dd') : null;
-    value.structureTypeId = value.structureType ? value.structureType.id : null;
-    value.structureType = value.structureType ? value.structureType : null;
     value.startWorkDate = value.startWorkDate ? this.intlService.formatDate(value.startWorkDate, 'yyyy-MM-dd') : null;
+    if (value.isUser) {
+      value.userCompanyId = value.userCompany.id;
+      value.userCompanyIds = value.userCompanies.map(x => x.id);
+    }
 
     this.isChange = true;
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = this.empId? 'Sửa nhân viên':'Thêm nhân viên';
-    modalRef.componentInstance.body = this.empId? 'Bạn có chắc chắn muốn sửa nhân viên?':'Bạn có chắc chắn thêm nhân viên?';
-    modalRef.result.then(() => {
-      this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
-        rs => {
-          this.notify('success', 'Lưu thành công');
-          if (this.empId) {
-            this.activeModal.close(true);
-          } else {
-            this.activeModal.close(rs);
-          }
-        },
-        er => {
-          console.log(er);
+
+    this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
+      rs => {
+        this.notify('success', 'Lưu thành công');
+        if (this.empId) {
+          this.activeModal.close(true);
+        } else {
+          this.activeModal.close(rs);
         }
-      );
-    });
+      },
+      er => {
+        console.log(er);
+      }
+    );
   }
 
   notify(style, content) {

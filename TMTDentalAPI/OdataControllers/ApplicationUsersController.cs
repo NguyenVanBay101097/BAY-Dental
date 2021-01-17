@@ -10,6 +10,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.OdataControllers
@@ -35,6 +36,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "System.ApplicationUser.Update")]
         public IActionResult Get()
         {
             var results = _mapper.ProjectTo<ApplicationUserViewModel>(_userManager.Users);

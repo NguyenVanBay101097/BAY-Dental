@@ -7,6 +7,7 @@ using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +25,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IViewRenderService _view;
+        private readonly IUnitOfWorkAsync _unitOfWork;
+
         public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
-            IIRModelAccessService modelAccessService)
+            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _view = view;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> Get([FromQuery] ToaThuocPaged val)
         {
             var result = await _toaThuocService.GetPagedResultAsync(val);
@@ -42,7 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var toaThuoc = await _toaThuocService.GetToaThuocForDisplayAsync(id);
@@ -53,19 +57,19 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Create")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Create")]
         public async Task<IActionResult> Create(ToaThuocSave val)
         {
             var order = _mapper.Map<ToaThuoc>(val);
             SaveOrderLines(val, order);
             await _toaThuocService.CreateAsync(order);
 
-            var basic = _mapper.Map<ToaThuocBasic>(order);
-            return Ok(basic);
+            var Medicine = _mapper.Map<ToaThuocBasic>(order);
+            return Ok(Medicine);
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Update")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Update")]
         public async Task<IActionResult> Update(Guid id, ToaThuocSave val)
         {
             var toathuoc = await _toaThuocService.SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
@@ -82,7 +86,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Delete")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var toaThuoc = await _toaThuocService.GetByIdAsync(id);
@@ -108,7 +112,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/Print")]
-        [CheckAccess(Actions = "Basic.ToaThuoc.Read")]
+        [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
@@ -118,11 +122,22 @@ namespace TMTDentalAPI.Controllers
             return Ok(new PrintData() { html = html });
         }
 
-        [HttpPost("CreateFromUI")]
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetFromUI(Guid id)
+        {
+            var toaThuoc = await _toaThuocService.GetToaThuocFromUIAsync(id);
+            if (toaThuoc == null)
+                return NotFound();
+
+            return Ok(toaThuoc);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateFromUI(ToaThuocSaveFromUI val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var result = await _toaThuocService.CreateToaThuocFromUIAsync(val);
-
+            _unitOfWork.Commit();
             return Ok(result);
         }
 

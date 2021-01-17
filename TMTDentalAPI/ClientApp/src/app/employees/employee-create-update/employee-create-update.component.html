@@ -6,29 +6,30 @@
     <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
+                <div class="float-right">
+                    <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="userAvatar" [width]="200" [height]="200"></app-image-file-upload>
+                </div>
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên nhân viên</label>
+                    <h1>
+                        <input type="text" class="form-control" formControlName="name" />
+                    </h1>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isDoctor" id="isDoctor">
+                            <label class="form-check-label" for="isDoctor">
+                                Là bác sĩ/phụ tá
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isUser" id="isUser" (change)="onChangeIsUser($event)">
+                            <label class="form-check-label" for="isUser">
+                                Là người dùng hệ thống
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 <div class="o_notebook">
-                    <table class="o_group o_inner_group o_group_col_12">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Tên nhân viên <span class="text-danger">*</span></label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name">
-                                    <label *ngIf="!getValueForm('name')" class="text-danger" for="">vui lòng điền tên
-                                        nhân viên</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="o_td_label">
-                                    <input class="" type="checkbox" formControlName="isDoctor" id="isDoctor">
-                                    <label class="form-check-label" for="isDoctor">
-                                     Là bác sĩ ?
-                                    </label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                     <div class="o_group mb-0">
                         <table class="o_group o_inner_group o_group_col_6 mb-0">
                             <tbody>
@@ -50,14 +51,13 @@
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Ngày sinh</label>
+                                        <label class="o_form_label">Email</label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker formControlName="birthDay">
-                                        </kendo-datepicker>
+                                        <input class="form-control" formControlName="email" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">
                                             Người dùng
@@ -67,8 +67,8 @@
                                         <kendo-combobox [filterable]="true" [data]="filteredUsers" [textField]="'name'" #userCbx formControlName="user" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
-                                </tr>
-                                <tr>
+                                </tr> -->
+                                <!-- <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">
                                             Mã vân tay
@@ -77,12 +77,20 @@
                                     <td colspan="1" style="width: 100%;">
                                         <input class="form-control" formControlName="enrollNumber" />
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                         <table class="o_group o_inner_group o_group_col_6 mb-0">
                             <tbody>
-
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Ngày sinh</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker formControlName="birthDay">
+                                        </kendo-datepicker>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">CMND</label>
@@ -93,21 +101,13 @@
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Email</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="email" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">Địa chỉ</label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <input class="form-control" formControlName="address" />
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">
                                             Ngày bắt đầu làm việc
@@ -117,15 +117,71 @@
                                         <kendo-datepicker formControlName="startWorkDate">
                                         </kendo-datepicker>
                                     </td>
-                                </tr>
-
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>
-                    <!-- <div>
-                        <input class="" type="checkbox" (change)="toggleVisibility($event)" id="isShowSalary">
-                        <label class="form-check-label" for="isShowSalary"> Hiện thông tin tính lương</label>
-                    </div> -->
+                    <div class="o_group mb-0" [class.d-none]="!isUser">
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Tên đăng nhập</label>
+                                    </td>
+                                    <td colspan="1" style="width: 50%;">
+                                        <input type="text" class="form-control" formControlName="userName" />
+                                    </td>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">&nbsp;</label>
+                                    </td>
+                                    <td colspan="1" style="width: 50%;">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Mật khẩu</label>
+                                    </td>
+                                    <td colspan="1" style="width: 50%;">
+                                        <input type="password" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
+                                    </td>
+                                    <td colspan="1" class="o_td_label">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" formControlName="createChangePassword" id="createChangePassword" (change)="onChangeCreateChangePassword($event)">
+                                            <label class="form-check-label" for="createChangePassword">
+                                                Tạo/Đổi mật khẩu
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td colspan="1" style="width: 50%;">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Chi nhánh cho phép
+                                        </label>
+                                    </td>
+                                    <td colspan="3" style="width: 100%;">
+                                        <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'" formControlName="userCompanies">
+                                        </kendo-multiselect>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Chi nhánh hiện tại
+                                        </label>
+                                    </td>
+                                    <td colspan="3" style="width: 100%;">
+                                        <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="userCompany" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div *appPermission="['Catalog.Employee.Salary.Update']" class="o_group mt-0">
                         <table class="o_group o_inner_group o_group_col_6 mt-0">
                             <tbody>

@@ -39,7 +39,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> Get([FromQuery]LaboOrderPaged val)
         {
             var result = await _laboOrderService.GetPagedResultAsync(val);
@@ -47,7 +47,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetFromSaleOrder_OrderLine([FromQuery] LaboOrderPaged val)
         {
             var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
@@ -55,7 +55,7 @@ namespace TMTDentalAPI.Controllers
         }   
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _laboOrderService.GetLaboDisplay(id);
@@ -63,7 +63,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "Basic.LaboOrder.Create")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Create")]
         public async Task<IActionResult> Create(LaboOrderSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Update")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Update")]
         public async Task<IActionResult> Update(Guid id, LaboOrderSave val)
         {
             if (!ModelState.IsValid)
@@ -89,7 +89,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -106,7 +106,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Update")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Update")]
         public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Cancel")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Cancel")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -132,7 +132,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Cancel")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Cancel")]
         public async Task<IActionResult> ActionCancelReceipt(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -145,7 +145,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Delete")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
             if (ids == null || !ModelState.IsValid)
@@ -157,7 +157,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Read")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var order = await _laboOrderService.SearchQuery(x => x.Id == id)
@@ -184,7 +184,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.LaboOrder.Statistics")] 
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")] 
         public async Task<IActionResult> Statistics(LaboOrderStatisticsPaged val)
         {
             var result = await _laboOrderService.GetStatisticsPaged(val);
@@ -192,13 +192,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> LaboOrderReport(LaboOrderReportInput val)
+        [CheckAccess(Actions = "Labo.OrderLabo.Read")]
+        public async Task<IActionResult> LaboOrderGetCount(LaboOrderGetCount val)
         {
-            var result = await _laboOrderService.GetLaboOrderReport(val);
+            var result = await _laboOrderService.GetCountLaboOrder(val);
             return Ok(result);
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetLaboForSaleOrderLine([FromQuery] LaboOrderPaged val)
         {
             var res = await _laboOrderService.GetPagedResultAsync(val);
@@ -206,6 +208,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.OrderLabo.Read")]
         public async Task<IActionResult> GetOrderLabo([FromQuery] OrderLaboPaged val)
         {
 
@@ -214,6 +217,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        [CheckAccess(Actions = "Labo.ExportLabo.Read")]
         public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
         {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
@@ -221,6 +225,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.OrderLabo.Update")]
         public async Task<IActionResult> UpdateOrderLabo(LaboOrderReceiptSave val)
         {
             var labo = await _laboOrderService.GetByIdAsync(val.Id);
@@ -232,14 +237,21 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.ExportLabo.Update")]
         public async Task<IActionResult> UpdateExportLabo(ExportLaboOrderSave val)
         {
             var labo = await _laboOrderService.GetByIdAsync(val.Id);
             labo.DateExport = val.DateExport.HasValue ? val.DateExport : null;
             await _laboOrderService.UpdateAsync(labo);
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CheckExistWarrantyCode(LaboOrderCheck val)
+        {
+            var res = await _laboOrderService.CheckExistWarrantyCode(val);
+            return Ok(res);
         }
     }
 }

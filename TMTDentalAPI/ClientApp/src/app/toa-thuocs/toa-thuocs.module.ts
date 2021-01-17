@@ -10,12 +10,14 @@ import { ToaThuocService } from './toa-thuoc.service';
 import { ToaThuocLineDialogComponent } from './toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
 import { ToaThuocLineCuFormComponent } from './toa-thuoc-line-cu-form/toa-thuoc-line-cu-form.component';
 import { ToaThuocLinesSaveCuFormComponent } from './toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
+import { ProductsModule } from '../products/products.module';
 
 @NgModule({
   declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent, ToaThuocLineCuFormComponent, ToaThuocLinesSaveCuFormComponent],
   imports: [
     CommonModule,
     ToaThuocsRoutingModule,
+    ProductsModule,
     MyCustomKendoModule,
     ReactiveFormsModule, 
     FormsModule,

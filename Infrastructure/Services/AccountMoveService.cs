@@ -97,7 +97,7 @@ namespace Infrastructure.Services
                     JournalName = counterpart_line.Journal.Name,
                     Amount = amount,
                     Date = counterpart_line.Date,
-                    PaymentId = counterpart_line.Id,
+                    PaymentId = counterpart_line.Id,                  
                     AccountPaymentId = counterpart_line.PaymentId,
                     MoveId = counterpart_line.MoveId,
                     Ref = reference

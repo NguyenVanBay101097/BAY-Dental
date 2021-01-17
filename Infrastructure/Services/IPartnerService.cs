@@ -61,6 +61,7 @@ namespace Infrastructure.Services
 
         Task<PartnerCustomerReportOutput> GetPartnerCustomerReport(PartnerCustomerReportInput val);
 
+        Task<PartnerCustomerReportOutput> GetPartnerCustomerReportV2(PartnerCustomerReportInput val);
         Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val);
     }
 }

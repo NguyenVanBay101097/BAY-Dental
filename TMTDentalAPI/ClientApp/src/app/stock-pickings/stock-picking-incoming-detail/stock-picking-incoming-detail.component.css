@@ -1,0 +1,9 @@
+.table-custom td,
+.table-custom th {
+    border: 1px solid hsl(210deg 14% 89%);
+    border-collapse: collapse;
+}
+
+.table-custom {
+    border-collapse: collapse;
+}

@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
-import { map } from 'rxjs/operators';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
@@ -20,11 +23,13 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   teethSelected: ToothDisplay[] = [];
   listTeeths: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
+  filteredEmployees: EmployeeSimple[] = [];
   toolCateg: ToothCategoryBasic = new ToothCategoryBasic();
   @Input() saleOrderState = 'draft';
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: any;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
   constructor(
     private partnerCategoriesService: PartnerCategoriesService,
@@ -32,6 +37,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     private partnerService: PartnerService,
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
+    private employeeService: EmployeeService,
     private fb: FormBuilder
   ) { }
 
@@ -40,24 +46,42 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
       note: null,
       diagnostic: null,
       toothCategory: null,
+      assistant: null,
+      assistantId: null,
     })
     this.loadToothCategories();
+    this.loadEmployees();
 
     if (this.line) {
-     this.reLoad();
+      this.reLoad();
+
     } else {
       setTimeout(() => {
         this.formGroup = this.fb.group({
           note: null,
           diagnostic: null,
           toothCategory: null,
+          assistant: null,
+          assistantId: null,
         })
 
       });
     }
+
+    this.employeeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.employeeCbx.loading = true),
+      switchMap(val => this.searchEmployees(val))
+    ).subscribe(
+      rs => {
+        this.filteredEmployees = rs;
+        this.employeeCbx.loading = false;
+      }
+    )
+
   }
 
-  reLoad(){
+  reLoad() {
     console.log(this.saleOrderState);
     var res = this.line.value;
     if (res.toothCategory) {
@@ -65,12 +89,12 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
       this.formGroup.get('toothCategory').patchValue(res.toothCategory);
       this.filteredToothCategories = _.unionBy(this.filteredToothCategories, [res.toothCategory], 'id');
     }
-    if(res.Diagnostic) {
-    this.formGroup.get('diagnostic').patchValue(res.diagnostic);
+    if (res.Diagnostic) {
+      this.formGroup.get('diagnostic').patchValue(res.diagnostic);
     }
     if (res.Teeth) {
       this.teethSelected = Object.assign([], res.teeth);
-    }    
+    }
     // this.teethSelected = [...this.line.teeth];
     // if (this.line.get('toothCategory').value) {
     //   this.loadTeethMap(this.line.get('toothCategory').value)
@@ -81,7 +105,21 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     // }
   }
 
-  get ToothCategoryControl() {return this.formGroup.get('toothCategory').value; }
+  loadEmployees() {
+    this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result, 'id');
+    });
+  }
+
+
+  searchEmployees(filter?: string) {
+    var val = new EmployeePaged();
+    val.search = filter || '';
+    val.isDoctor = true;
+    return this.employeeService.getEmployeeSimpleList(val);
+  }
+
+  get ToothCategoryControl() { return this.formGroup.get('toothCategory').value; }
 
   loadToothCategories() {
     // if (this.line.ToothCategory == null && this.filteredToothCategories.length > 0) {
@@ -93,7 +131,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     // }
     return this.toothCategoryService.getAll().subscribe(
       result => {
-        this.filteredToothCategories = result;      
+        this.filteredToothCategories = result;
         if (this.line.get('toothCategory').value == null) {
           this.formGroup.get('toothCategory').patchValue(this.filteredToothCategories[0])
           this.onChangeToothCategory(this.filteredToothCategories[0]);
@@ -134,10 +172,10 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   onSelected(tooth: ToothDisplay) {
-    if(this.saleOrderState !== 'draft') {
+    if (this.saleOrderState !== 'draft') {
       return;
     }
-    
+
     if (this.isSelected(tooth)) {
       var index = this.getSelectedIndex(tooth);
       this.teethSelected.splice(index, 1);
@@ -190,7 +228,6 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   }
 
   showInfo() {
-    debugger;
     var list = [];
     var teeth = this.line.get('teeth').value;
     if (teeth.length) {
@@ -204,7 +241,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
     return list.join('; ');
   }
 
-  get getDianostic(){
+  get getDianostic() {
     return this.formGroup.get('diagnostic').value;
   }
 
@@ -215,6 +252,7 @@ export class SaleOrderLineInfoPopoverComponent implements OnInit {
   onSave() {
     var val = this.formGroup.value;
     val.teeth = this.teethSelected;
+    val.assistantId = val.assistant ? val.assistant.id : null;
     this.eventTeeth.emit(val);
     this.popover.close();
   }

@@ -1,0 +1,31 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Sổ quỹ tiền</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="tab-cabo" class="nav-link px-3 py-1"
+                            routerLinkActive="active">Sổ quỹ tiền</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'inbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu thu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="tab-repa" [queryParams]="{ type: 'outbound' }" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu chi</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

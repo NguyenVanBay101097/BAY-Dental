@@ -1,0 +1,49 @@
+<div class="d-flex justify-content-end mt-2">
+    <div class="summary-item">
+        <div class="text-center">
+            <span class="font-weight-bold">Quỹ đầu kỳ</span>
+            <h4 class="text-primary">{{reportData.begin | number}}</h4>
+        </div>
+    </div>
+    <div class="summary-item">
+        <div class="text-center">
+            <span class="font-weight-bold">Tổng thu</span>
+            <h4 class="text-primary">{{reportData.totalThu | number}}</h4>
+        </div>
+    </div>
+    <div class="summary-item">
+        <div class="text-center">
+            <span class="font-weight-bold">Tổng chi</span>
+            <h4 class="text-danger">{{reportData.totalChi | number}}</h4>
+        </div>
+    </div>
+    <div class="summary-item">
+        <div class="text-center">
+            <span *ngIf="paged.resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền mặt</span>
+            <span *ngIf="paged.resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân hàng</span>
+            <span *ngIf="paged.resultSelection == 'cash_bank'" class="font-weight-bold">Tồn sổ quỹ</span>
+            <h4 class="text-success">{{reportData.totalAmount | number}}</h4>
+        </div>
+    </div>
+</div>
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="date" title="Ngày" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Diễn giải" width="100"></kendo-grid-column>
+    <!-- <kendo-grid-column field="ref" title="Loại thu chi" width="120"></kendo-grid-column> -->
+    <kendo-grid-column field="debit" title="Thu" width="100" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.debit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" title="Chi" width="100" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.credit | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Người nhận/nộp tiền" width="100"></kendo-grid-column>
+</kendo-grid>

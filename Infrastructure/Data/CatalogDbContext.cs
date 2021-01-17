@@ -166,6 +166,7 @@ namespace Infrastructure.Data
         public DbSet<AccountInvoiceReport> AccountInvoiceReports { get; set; }
         public DbSet<ModelAccessReport> ModelAccessReports { get; set; }
         public DbSet<SaleReport> SaleReports { get; set; }
+        public DbSet<VFundBook> VFundBooks { get; set; }
         public DbSet<FacebookConnect> FacebookConnects { get; set; }
         public DbSet<FacebookConnectPage> FacebookConnectPages { get; set; }
         //Facebook
@@ -220,6 +221,10 @@ namespace Infrastructure.Data
         public DbSet<LaboBiteJoint> LaboBiteJoints { get; set; }
         public DbSet<LaboBridge> LaboBridges { get; set; }
         public DbSet<LaboOrderProductRel> laboOrderProductRels { get; set; }
+        public DbSet<PartnerOldNewReport> PartnerOldNewReports { get; set; }
+
+        public DbSet<MedicineOrder> MedicineOrders { get; set; }
+        public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -299,6 +304,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderConfiguration());
             builder.ApplyConfiguration(new LaboOrderLineToothRelConfiguration());
             builder.ApplyConfiguration(new SaleReportConfiguration());
+            builder.ApplyConfiguration(new VFundBookConfiguration());
+            builder.ApplyConfiguration(new PartnerOldNewReportConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderConfiguration());
             builder.ApplyConfiguration(new PurchaseOrderLineConfiguration());
             builder.ApplyConfiguration(new ResCompanyUsersRelConfiguration());
@@ -396,6 +403,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboBiteJointConfiguration());
             builder.ApplyConfiguration(new LaboBridgeConfiguration());
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
+            builder.ApplyConfiguration(new MedicineOrderConfiguration());
+            builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

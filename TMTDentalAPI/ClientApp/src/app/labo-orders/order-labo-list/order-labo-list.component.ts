@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
@@ -28,8 +29,14 @@ export class OrderLaboListComponent implements OnInit {
     { text: 'Chờ nhận', value: 'chonhan' },
     { text: 'Tới hạn', value: 'toihan' }
   ];
+
+  filterLaboStatus = [
+    {name:'Trễ hạn',value:'trehan'},
+    {name:'Chờ nhận',value:'chonhan'},
+    {name:'Tới hạn',value:'toihan'},
+  ];
   
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal) { }
+  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -64,14 +71,30 @@ export class OrderLaboListComponent implements OnInit {
     })
   }
 
-  GetState(val){
-    var now = new Date();
-    if(now > val.datePlanned ){
+  getState(val) {
+    debugger
+    var today = new Date();
+    var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var datePlanned = new Date(val.datePlanned);
+    if (val.datePlanned != null && now > datePlanned) {
       return "Trễ hạn";
-    }else if(now == val.datePlanned){
+    } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
       return "Tới hạn";
-    }else{
+    } else  {
       return "Chờ nhận";
+    }
+  }
+
+  getTextColor(val){
+    var today = new Date();
+    var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    var datePlanned = new Date(val.datePlanned);
+    if (val.datePlanned != null && now > datePlanned) {
+      return {'text-danger': true};
+    } else if (val.datePlanned != null && now.getDate() == datePlanned.getDate() && now.getMonth() == datePlanned.getMonth() && now.getFullYear() == datePlanned.getFullYear()) {
+      return {'text-success':true};
+    } else {
+      return;
     }
   }
 
@@ -80,8 +103,8 @@ export class OrderLaboListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onChangeLaboState(event) {
-    this.stateFilter = event.target.value;
+  onChangeLaboState(e) {
+    this.stateFilter = e? e.value : null;
     this.loadDataFromApi();
   }
 

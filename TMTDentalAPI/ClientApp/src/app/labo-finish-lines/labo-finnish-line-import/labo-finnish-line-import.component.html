@@ -27,7 +27,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" [disabled]="!fileBase64 || fileBase64==''" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
+    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
     <a *ngIf="type == 'finish_line'" download href="/assets/files/MauFileLaboFinishLine.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>

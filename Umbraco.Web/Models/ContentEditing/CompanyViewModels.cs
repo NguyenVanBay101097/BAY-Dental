@@ -45,6 +45,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CompanyPrintVM
     {
         public string Name { get; set; }
+        public string PartnerName { get; set; }
         public string PartnerCityName { get; set; }
         public string PartnerDistrictName { get; set; }
         public string PartnerWardName { get; set; }

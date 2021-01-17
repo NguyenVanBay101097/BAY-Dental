@@ -6,9 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input"
-                        placeholder="Tìm kiếm theo số phiếu, nhà cung cấp" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, nhà cung cấp" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -18,12 +16,8 @@
                     <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown> -->
-                    <select class="form-control form-control-sm" (change)="onChangeLaboState($event)">
-                        <option value="">Trạng thái</option>
-                        <option value="trehan">Trễ hạn</option>
-                        <option value="chonhan">Chờ nhận</option>
-                        <option value="toihan">Tới hạn</option>
-                    </select>
+                    <kendo-combobox (selectionChange)="onChangeLaboState($event)" placeholder="Lọc trạng thái" class="kendo-combobox-sm" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                    </kendo-combobox>
                 </div>
 
             </div>
@@ -56,8 +50,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partner" title="NCC Labo" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partner.displayName}}
@@ -65,8 +58,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>     
+                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Số phiếu" width="100">
@@ -81,7 +73,7 @@
                 {{GetTeeth(dataItem)}}
             </ng-template>
         </kendo-grid-column> -->    
-        <kendo-grid-column field="quantity" title="Số lượng" width="120">
+        <kendo-grid-column field="quantity" title="Số lượng" width="120" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}
             </ng-template>
@@ -103,7 +95,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{GetState(dataItem)}}
+                <span [ngClass]="getTextColor(dataItem)">{{getState(dataItem)}}</span>
             </ng-template>
         </kendo-grid-column>
 

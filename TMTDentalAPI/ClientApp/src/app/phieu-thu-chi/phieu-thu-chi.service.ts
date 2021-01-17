@@ -8,6 +8,9 @@ export class PhieuThuChiPaged {
   offset: number;
   search: string;
   type: string;
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
 }
 
 export class PhieuThuChiSearch {
@@ -121,5 +124,12 @@ export class PhieuThuChiService {
 
   getPrint(id: string) {
     return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
+  }
+
+  exportExcelFile(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+      responseType: "blob",
+      params: val,
+    });
   }
 }

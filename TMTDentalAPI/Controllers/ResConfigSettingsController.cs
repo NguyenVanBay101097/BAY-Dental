@@ -20,13 +20,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IResConfigSettingsService _configSettingsService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IProductService _productService;
 
         public ResConfigSettingsController(IResConfigSettingsService configSettingsService,
-            IMapper mapper, IUnitOfWorkAsync unitOfWork)
+            IMapper mapper, IUnitOfWorkAsync unitOfWork, IProductService productService)
         {
             _configSettingsService = configSettingsService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _productService = productService;
         }
 
         [HttpGet("{id}")]
@@ -64,6 +66,16 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             await _configSettingsService.Excute(config);
+         
+            if (config.GroupMedicine.HasValue)
+            {
+                var purchaseOK = config.GroupMedicine == true;
+                var medicines = await _productService.SearchQuery(x => x.Type2 == "medicine").ToListAsync();
+                foreach (var medicine in medicines)
+                    medicine.PurchaseOK = purchaseOK;
+                await _productService.UpdateAsync(medicines);
+            }
+
             _unitOfWork.Commit();
 
             return NoContent();

@@ -32,6 +32,7 @@ namespace Infrastructure.Services
         {
             var groupObj = GetService<IResGroupService>();
             await groupObj.InsertSettingGroupIfNotExist("product.group_uom", "Group UoM");
+            await groupObj.InsertSettingGroupIfNotExist("medicineOrder.group_medicine", "Group Medicine");
             await groupObj.InsertSettingGroupIfNotExist("sale.group_service_card", "Service Card");
             await groupObj.InsertSettingGroupIfNotExist("tcare.group_tcare", "TCare");
 
@@ -294,6 +295,22 @@ namespace Infrastructure.Services
                 };
 
                 await fieldObj.CreateAsync(field);
+            }
+
+            var fieldStd = await fieldObj.SearchQuery(x => x.Name == "standard_price" && x.Model == "product.product").FirstOrDefaultAsync();
+            if (fieldStd == null)
+            {
+                var modelObj = GetService<IIRModelService>();
+                var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+                fieldStd = new IRModelField
+                {
+                    IRModelId = model.Id,
+                    Model = "product.product",
+                    Name = "standard_price",
+                    TType = "float",
+                };
+
+                await fieldObj.CreateAsync(fieldStd);
             }
         }
 

@@ -18,7 +18,7 @@ namespace Infrastructure.Services
         Task UpdateProduct(Guid id, ProductSave val);
 
         Task<ProductDisplay> GetProductDisplay(Guid id);
-        Task<double> GetStandardPrice(Guid id);
+        double GetStandardPrice(Guid id, Guid? force_company_id = null);
         Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val);
 
         Task<ProductDisplay> DefaultGet();
@@ -35,5 +35,7 @@ namespace Infrastructure.Services
         Task<ProductDisplay> GetProductExport(Guid id);
 
         Task<IEnumerable<ProductProductExportExcel>> GetProductExportExcel(ProductPaged val);
+        Task<IEnumerable<ProductProductExportExcel>> GetMedicineExportExcel(ProductPaged val);
+        void SetStandardPrice(Product self, double value, Guid? force_company = null);
     }
 }

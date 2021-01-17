@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { Observable, of, timer } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -24,20 +26,44 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       dateReceipt : [null, Validators.required],
-      warrantyCode : [null, Validators.required],
+      warrantyCode : [null,Validators.compose([]), this.validateWarrantyCode.bind(this)],
+      warrantyPeriodObj: null,
       warrantyPeriod: null,
-      warrantyPeriodType: null,
-      warrantyPeriodCustom: null,
     });
 
     this.loadData();
   }
 
+  validateWarrantyCode(
+    control: AbstractControl
+  ): Observable<ValidationErrors | null> {
+    const val = control.value;
+    if(!val || (val && val.trim() == '')) {
+      return of(null);
+    }
+    return timer(500).pipe(
+      switchMap(() =>
+        this.laboOrderService.checkExistWarrantyCode({code: control.value, id: this.labo? this.labo.id: ''}).pipe(
+          map(ex => {
+            if(ex == false) return null; 
+            return ({ exist: true })
+          })
+        )
+      )
+    );
+  }
+
   loadData() {
     if (this.labo) {
-      this.formGroup.get('warrantyPeriod').setValue(this.labo.warrantyPeriod ? new Date(this.labo.warrantyPeriod) : null);
-      this.formGroup.get('warrantyCode').setValue(this.labo.warrantyCode ? this.labo.warrantyCode : null);
-      this.formGroup.get('dateReceipt').setValue(this.labo.dateReceipt ? new Date(this.labo.dateReceipt) : null);
+     this.laboOrderService.get(this.labo.id).subscribe(rs => {   
+      this.formGroup.patchValue(rs);
+      let warrantyPeriodObj = new Date(rs.warrantyPeriod);
+      this.formGroup.get("warrantyPeriodObj").patchValue(rs.warrantyPeriod ? new Date(rs.warrantyPeriod) : null);
+      // this.formGroup.get('warrantyPeriod').setValue(rs.warrantyPeriod ? new Date(rs.warrantyPeriod) : null);
+      // this.formGroup.get('warrantyCode').setValue(rs.warrantyCode ? this.labo.warrantyCode : null);
+      this.formGroup.get('dateReceipt').setValue(new Date());
+    });
+     
     }
   }
 
@@ -76,7 +102,7 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
   
     var val = this.formGroup.value;
     val.id = this.labo.id;
-    val.warrantyPeriod = val.warrantyPeriod ? this.intelservice.formatDate(val.warrantyPeriod, 'yyyy-MM-dd HH:mm:ss') : null;
+    val.warrantyPeriod = val.warrantyPeriodObj ? this.intelservice.formatDate(val.warrantyPeriodObj, 'yyyy-MM-dd HH:mm:ss') : null;
     val.warrantyCode = val.warrantyCode;
     val.dateReceipt = val.dateReceipt ? this.intelservice.formatDate(val.dateReceipt, 'yyyy-MM-dd HH:mm:ss') : null;
 

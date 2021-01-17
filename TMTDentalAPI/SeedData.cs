@@ -29,7 +29,7 @@ namespace TMTDentalAPI
                 {
                     var context = scope.ServiceProvider.GetService<CatalogDbContext>();
                     context.Database.Migrate();
-
+                    
                     var companyPartner = new Partner
                     {
                         Name = "TMT Company",

@@ -32,11 +32,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IUploadService _uploadService;
         private readonly ICompanyService _companyService;
         private readonly IResGroupService _resGroupService;
+        private readonly IIRModelDataService _iRModelDataService;
 
         public ApplicationUsersController(UserManager<ApplicationUser> userManager,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             IIRModelAccessService modelAccessService, IUserService userService,
-            IUploadService uploadService, ICompanyService companyService, IResGroupService resGroupService)
+            IUploadService uploadService, ICompanyService companyService, IResGroupService resGroupService,
+            IIRModelDataService iRModelDataService)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -47,6 +49,7 @@ namespace TMTDentalAPI.Controllers
             _uploadService = uploadService;
             _companyService = companyService;
             _resGroupService = resGroupService;
+            _iRModelDataService = iRModelDataService;
         }
 
         [HttpGet]
@@ -56,6 +59,9 @@ namespace TMTDentalAPI.Controllers
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(val.SearchNameUserName))
                 query = query.Where(x => x.Name.Contains(val.SearchNameUserName) || x.UserName.Contains(val.SearchNameUserName));
+            if (!val.hasRoot.HasValue || val.hasRoot == false)
+                query = query.Where(x=> x.IsUserRoot != true);
+
             var companyId = CompanyId;
             query = query.Where(x => x.CompanyId == companyId);
             query = query.OrderBy(x => x.Name);
@@ -116,7 +122,11 @@ namespace TMTDentalAPI.Controllers
                 user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
             }
 
-            var to_add = val.Groups.Select(x => x.Id).ToList();
+            //get group internal user to add to user then call function add all group to user
+            var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
+            var to_add = new List<Guid>();
+            if (groupInternalUser != null)
+                to_add.Add(groupInternalUser.Id);
             var add_dict = _resGroupService._GetTransImplied(to_add);
 
             foreach (var group_id in to_add)
@@ -145,6 +155,8 @@ namespace TMTDentalAPI.Controllers
                     else
                         throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
                 }
+                //call function excute add all group to user
+                await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
             }
             catch (Exception)
             {

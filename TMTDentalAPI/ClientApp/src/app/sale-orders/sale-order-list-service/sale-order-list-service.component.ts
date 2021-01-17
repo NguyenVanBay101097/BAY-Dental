@@ -123,6 +123,8 @@ export class SaleOrderListServiceComponent implements OnInit {
       DiscountType: 'percentage',
       Employee: null,
       EmployeeId: '',
+      Assistant: null,
+      AssistantId: '',
       Name: item.Name,
       PriceSubTotal: 0,
       PriceUnit: item.ListPrice,

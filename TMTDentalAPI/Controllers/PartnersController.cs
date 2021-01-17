@@ -194,6 +194,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("Autocomplete")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "", bool? customer = null)
         {
             var res = await _partnerService.SearchAutocomplete(filter: filter, customer: customer);
@@ -209,6 +210,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("Autocomplete2")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Autocomplete2(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersCbx(val);
@@ -217,6 +219,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> Autocomplete3(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersConnectSocial(val);
@@ -225,6 +228,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("AutocompleteSimple")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> AutocompleteSimple(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersCbx(val);
@@ -232,6 +236,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> AutocompleteInfos(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnerInfosCbx(val);
@@ -239,6 +244,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("UploadImage/{id}")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
         {
             var path = await _partnerService.UploadImage(file);
@@ -262,6 +268,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> AddTags(PartnerAddRemoveTagsVM val)
         {
             await _partnerService.AddOrRemoveTags(val, true);
@@ -269,6 +276,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> RemoveTags(PartnerAddRemoveTagsVM val)
         {
             await _partnerService.AddOrRemoveTags(val, false);
@@ -276,6 +284,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> UpdateTags(PartnerAddRemoveTagsVM val)
         {
             await _partnerService.UpdateTags(val);
@@ -283,14 +292,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetValidServiceCards(Guid id)
         {
             var cards = await _mapper.ProjectTo<ServiceCardCardBasic>(_serviceCardService.SearchQuery(x => x.PartnerId == id && x.Residual > 0)).ToListAsync();
             return Ok(cards);
         }
-
-
-
 
         private void SaveCategories(PartnerDisplay val, Partner partner)
         {
@@ -333,8 +340,8 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-
         [HttpGet("{id}/GetInfo")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetInfo(Guid id)
         {
             var res = await _partnerService.GetInfo(id);
@@ -343,6 +350,7 @@ namespace TMTDentalAPI.Controllers
 
         //Lấy tất cả hóa đơn của KH 
         [HttpPost("GetCustomerInvoices")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetCustomerInvoice(AccountInvoicePaged val)
         {
             var res = await _partnerService.GetCustomerInvoices(val);
@@ -350,6 +358,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ExcelImportCreate(IFormFile file, [FromQuery] Ex_ImportExcelDirect dir)
         {
             await _partnerService.ImportExcel2(file, dir);
@@ -371,13 +380,12 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/Print")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _partnerService.GetPrint(id);
             return Ok(res);
         }
-
-
 
         [AllowAnonymous]
         [HttpPost("[action]")]
@@ -454,6 +462,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public async Task<IActionResult> UpdateCustomersZaloId()
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -464,6 +473,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IEnumerable<PartnerDisplay>> GetPartnerDisplaysByIds(IEnumerable<Guid> ids)
         {
             var entity = await _partnerService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
@@ -577,13 +587,15 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> PartnerCustomerReport(PartnerCustomerReportInput val)
         {
-            var result = await _partnerService.GetPartnerCustomerReport(val);
+            var result = await _partnerService.GetPartnerCustomerReportV2(val);
             return Ok(result);
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> CustomerStatistics(CustomerStatisticsInput val)
         {
             var result = await _partnerService.GetCustomerStatistics(val);

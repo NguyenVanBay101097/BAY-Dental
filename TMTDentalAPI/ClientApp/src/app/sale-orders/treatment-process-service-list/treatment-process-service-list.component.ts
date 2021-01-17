@@ -58,7 +58,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
           this.services = result['value'];
         },
         (error) => {
-          this.errorService.show(error);
         }
       );
     }

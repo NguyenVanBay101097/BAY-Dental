@@ -14,10 +14,13 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
-    { name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' },
+    { 
+      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' 
+    },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
     },
+    { name: 'Bán thuốc', icon: 'fas fa-capsules', children: [], link: '/medicine-orders', groups: 'medicineOrder.group_medicine' },
 
     // {
     //   name: 'Thống kê labo',
@@ -46,9 +49,8 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Kho',
       icon: 'fas fa-th',
+      link: '/stock/stock-report-xuat-nhap-ton',
       children: [
-        { name: 'Phiếu xuất kho', link: '/stock/outgoing-pickings' },
-        { name: 'Phiếu nhập kho', link: '/stock/incoming-pickings' },
       ],
     },
     {
@@ -63,15 +65,18 @@ export class LayoutSidebarComponent implements OnInit {
       ],
     },
     {
-      name: 'Thu chi',
-      icon: 'fas fa-dollar-sign',
-      children: [
-        { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
-        { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
-        { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
-        { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
-      ],
+      name: 'Sổ quỹ', icon: 'fas fa-wallet', children: [], link: '/cash-book',
     },
+    // {
+    //   name: 'Thu chi',
+    //   icon: 'fas fa-dollar-sign',
+    //   children: [
+    //     { name: 'Phiếu thu', link: '/phieu-thu-chi', params: { type: 'thu' } },
+    //     { name: 'Phiếu chi', link: '/phieu-thu-chi', params: { type: 'chi' } },
+    //     { name: 'Loại thu', link: '/loai-thu-chi', params: { type: 'thu' } },
+    //     { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' } },
+    //   ],
+    // },
     {
       name: 'Thẻ tiền mặt',
       icon: 'far fa-credit-card',
@@ -119,27 +124,26 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
-        { name: 'Nhãn khách hàng', link: '/partner-categories' },
-        { name: "Nguồn khách hàng", link: "/partner-sources" },
+        { name: 'Thông tin khách hàng', link: '/partners/customer-management' },
+        // { name: 'Nhãn khách hàng', link: '/partner-categories' },
+        // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },
-        { name: 'Dịch vụ', link: '/products/services' },
-        { name: 'Nhóm dịch vụ', link: '/product-categories/service' },
-        { name: 'Vật tư', link: '/products/products' },
-        { name: 'Nhóm vật tư', link: '/product-categories/product' },
-        { name: 'Thuốc', link: '/products/medicines' },
-        { name: 'Nhóm thuốc', link: '/product-categories/medicine' },
+        { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products' },
         { name: 'Đơn thuốc mẫu', link: '/sample-prescriptions' },
-        { name: 'Tiểu sử bệnh', link: '/histories' },
-        { name: 'Danh xưng', link: '/partner-titles' },
+        // { name: 'Tiểu sử bệnh', link: '/histories' },
+        // { name: 'Danh xưng', link: '/partner-titles' },
         { name: 'Đơn vị tính', link: '/uoms', groups: 'product.group_uom', },
         { name: 'Nhóm Đơn vị tính', link: '/uom-categories', groups: 'product.group_uom' },
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
-        { name: 'Vật liệu Labo', link: '/products/labos' },
-        { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
-        { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
-        { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
-        { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
+        { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
+        { name: 'Loại thu chi', link: '/loai-thu-chi'},
+        // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
+        // { name: 'Vật liệu Labo', link: '/products/labos' },
+        // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
+        // { name: 'Gửi kèm Labo', link: '/products/labo-attachs' },
+        // { name: 'Kiểu nhịp Labo', link: '/labo-bridges' },
+        // { name: 'Khớp cắn Labo', link: '/labo-bite-joints' },
       ]
     },
     {

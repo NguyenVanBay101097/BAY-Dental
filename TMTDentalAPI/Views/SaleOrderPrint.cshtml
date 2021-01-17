@@ -28,7 +28,9 @@
     </div>
     <div class="text-center">
         <h2>HỒ SƠ ĐIỀU TRỊ</h2>
-        <span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>
+        <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
+        <div class="font-weight-600">Số: @Model.Name</div>
+        @*<span>Số: @Model.Name - Ngày: @Model.DateOrder.ToString("dd/MM/yyyy")</span>*@
     </div>
     <div class="o_group mt-0 mb-0">
         <table class="o_group o_inner_group">
@@ -186,6 +188,7 @@
                         <th>Đợt khám</th>
                         <th>Ngày</th>
                         <th>Bác sĩ</th>
+                        <th>Mô tả</th>
                         <th>Dịch vụ</th>
                         <th>Công đoạn</th>
                         <th>Răng, Chi tiết điều trị</th>
@@ -196,21 +199,22 @@
                     {
                         @foreach (var line in dotkham.Lines)
                         {
-                            <tr>
-                                @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
-                                {
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
-                                    <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
-                                }
+                    <tr>
+                        @if (dotkham.Lines.FirstOrDefault().Id == line.Id)
+                        {
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()"> Đợt khám @dotkham.Sequence</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Date.ToString("dd/MM/yyyy")</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Doctor.Name</td>
+                            <td class="align-middle" rowspan="@dotkham.Lines.Count()">@dotkham.Reason</td>
+                        }
 
-                                <td>@line.Product.Name</td>
-                                <td>@line.NameStep</td>
-                                <td class="text-left">
-                                    <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
-                                    <p>@line.Note</p>
-                                </td>
-                            </tr>
+                        <td>@line.Product.Name</td>
+                        <td>@line.NameStep</td>
+                        <td class="text-left">
+                            <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray())</span>
+                            <p>@line.Note</p>
+                        </td>
+                    </tr>
                         }
 
 
@@ -225,13 +229,23 @@
 
     <div class="row">
         <div class="col col-sm">
-            <div class="text-center font-weight-600">
-                Khách hàng
+            <div class="text-center">
+                <span class="font-weight-600">Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                @*<span class="font-weight-600">@(Model.User.Name.ToUpper())</span>*@
             </div>
         </div>
         <div class="col col-sm">
-            <div class="text-center font-weight-600">
-                Người lập
+            <div class="text-center">
+                <span class="font-weight-600"> Khách Hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-weight-600">@Model.Partner.Name.ToUpper()</span>
             </div>
         </div>
     </div>

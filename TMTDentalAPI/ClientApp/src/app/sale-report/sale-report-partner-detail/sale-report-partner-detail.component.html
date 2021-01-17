@@ -1,0 +1,19 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="partnerName" title="Tên khách hàng">
+    </kendo-grid-column>
+    <kendo-grid-column field="orderName" title="Phiếu điều trị">
+    </kendo-grid-column>
+    <kendo-grid-column field="countLine" title="Tổng số dịch vụ">
+    </kendo-grid-column>
+    <kendo-grid-column field="type" title="Loại">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{computeType(dataItem.type)}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

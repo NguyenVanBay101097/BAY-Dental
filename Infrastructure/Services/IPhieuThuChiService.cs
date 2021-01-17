@@ -22,5 +22,7 @@ namespace Infrastructure.Services
         Task InsertModelsIfNotExists();
 
         Task<IEnumerable<ReportPhieuThuChi>> ReportPhieuThuChi(PhieuThuChiSearch val);
+
+        Task<List<PhieuThuChiExportExcel>> GetExportExcel(PhieuThuChiPaged val);
     }
 }

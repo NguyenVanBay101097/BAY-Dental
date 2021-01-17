@@ -14,6 +14,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày tạo
         /// </summary>
         public DateTime Date { get; set; }
+        public string  PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
+
+        public Guid SaleOrderId { get; set; }
+        public string SaleOrderName { get; set; }
 
         public string EmployeeName { get; set; }
 
@@ -31,6 +36,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
         public int Limit { get; set; }
         public string Search { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
 
         public Guid? PartnerId { get; set; }
         public Guid? SaleOrderId { get; set; }
@@ -54,6 +62,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
         public Guid CompanyId { get; set; }
         public Guid? SaleOrderId { get; set; }
+        public string Name { get; set; }
+        public DateTime? ReExaminationDate { get; set; }
     }
 
     public class ToaThuocDefaultGet

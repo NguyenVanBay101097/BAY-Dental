@@ -1,0 +1,64 @@
+<div class="p-3">
+    <div class="d-flex">
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
+                        <h4 class="text-warning">{{reportCashData.totalAmount | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
+                        <h4 class="text-primary">{{reportBankData.totalAmount | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng sổ quỹ</span>
+                        <h4 class="text-success">{{(reportCashData.totalAmount + reportBankData.totalAmount) | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="my-3 d-flex justify-content-between">
+        <div class="d-flex">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
+                [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
+            </app-tai-date-range-filter-dropdown>
+            <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
+                <i class="fas fa-download mr-2"></i>Xuất file
+            </button>
+        </div>
+        <div class="t-search t-search-left">
+            <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu"
+                [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="fas fa-search form-control-icon form-control-sm"></span>
+        </div>
+    </div>
+    <div>
+        <nav>
+            <div class="nav nav-tabs">
+                <a class="nav-item nav-link active" data-toggle="tab" (click)="clickTab('cash')">Tiền mặt</a>
+                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('bank')">Ngân hàng</a>
+                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane active">
+                <app-cash-book-tab-cash-bank [paged]="paged" [changeToLoadData]="changeToLoadData">
+                </app-cash-book-tab-cash-bank>
+            </div>
+        </div>
+    </div>
+</div>

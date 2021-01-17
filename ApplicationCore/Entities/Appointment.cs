@@ -50,10 +50,12 @@ namespace ApplicationCore.Entities
 
 
         /// <summary>
-        /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
-        /// confirmed, done, cancel
+        /// Trạng thái cuộc hẹn: Đang hẹn, Chờ khám, Đang khám, Hoàn thành, Hủy hẹn
+        /// confirmed, waiting, examination, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        public string Reason { get; set; }
 
         public ICollection<AppointmentMailMessageRel> AppointmentMailMessageRels { get; set; } = new List<AppointmentMailMessageRel>();
 

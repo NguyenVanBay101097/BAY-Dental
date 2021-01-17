@@ -8,6 +8,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI.OdataControllers
 {
@@ -23,6 +24,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
+        [CheckAccess(Actions = "Catalog.Product.Read")]
         public IActionResult Get(ODataQueryOptions<Product> options)
         {
             var result = _productService.SearchQuery();

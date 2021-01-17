@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProductSimple } from '../products/product-simple';
+import { UoMBasic } from '../uoms/uom.service';
 
 
 export class SamplePrescriptionBasic {
@@ -31,6 +32,7 @@ export class SamplePrescriptionLineSave {
   id: string;
   product: ProductSimple;
   productId: string;
+  productUoM: UoMBasic;
   numberOfTimes: number;
   amountOfTimes: number;
   numberOfDays: number;

@@ -102,4 +102,8 @@ export class StockPickingService {
     actionDone(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/actiondone", ids);
     }
+
+    Print(id: string) {
+        return this.http.post(this.baseApi + this.apiUrl + "/Print/" + id, null);
+    }
 }

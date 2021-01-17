@@ -13,9 +13,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string PartnerDisplay { get; set; }
 
-        public int? MonthsFrom { get; set; }
+        public DateTime? DateFrom { get; set; }
 
-        public int? MonthsTo { get; set; }
+        public Guid? CompanyId { get; set; }
+
+        public DateTime? DateTo { get; set; }
         public string Search { get; set; }
     }
 }

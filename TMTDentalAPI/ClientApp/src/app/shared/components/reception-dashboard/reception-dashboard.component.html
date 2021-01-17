@@ -1,49 +1,50 @@
 <div class="t_wrapper">
-    <div class="row mb-3">
-        <div class="col-4">
-            <div>
-                <h4 class="header-title">TRUY CẬP NHANH</h4>
-                <div class="t_kanban">
-                    <a [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/calendar.png"
-                                    alt="Lịch hẹn">
-                                <span class="title-custom">LỊCH HẸN</span>
-                            </div>
+    <div class="t_wrapper_top">
+        <div class="t_fast_access">
+            <h4 class="header-title">TRUY CẬP NHANH</h4>
+            <div class="t_kanban">
+                <a [routerLink]="['/appointments/kanban']" class="card bg-primary t_card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <img class="image-custom" src="./assets/images/icons-tdental/calendar.png" alt="Lịch hẹn">
+                            <span class="title-custom">LỊCH HẸN</span>
                         </div>
-                    </a>
-                    <a [routerLink]="['/partners/customers']" class="card bg-primary t_card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/KH.png" alt="Lịch hẹn">
-                                <span class="title-custom"> KHÁCH HÀNG</span>
-                            </div>
+                    </div>
+                </a>
+                <a [routerLink]="['/partners/customers']" class="card bg-primary t_card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <img class="image-custom" src="./assets/images/icons-tdental/KH.png" alt="Lịch hẹn">
+                            <span class="title-custom"> KHÁCH HÀNG</span>
                         </div>
-                    </a>
-                    <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}" class="card bg-primary t_card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/cart.png" alt="Lịch hẹn">
-                                <span class="title-custom">TẠO MUA HÀNG</span>
-                            </div>
+                    </div>
+                </a>
+                <a [routerLink]="['/purchase/orders/create']" [queryParams]="{type: 'order'}"
+                    class="card bg-primary t_card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <img class="image-custom" src="./assets/images/icons-tdental/cart.png" alt="Lịch hẹn">
+                            <span class="title-custom">TẠO MUA HÀNG</span>
                         </div>
-                    </a>
-                    <a [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
-                        <div class="card-body">
-                            <div class="d-flex">
-                                <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png" alt="Điều trị nhanh">
-                                <span class="title-custom">PHIẾU ĐIỀU TRỊ NHANH</span>
-                            </div>
+                    </div>
+                </a>
+                <a [routerLink]="['/partners/treatment-paymentfast/from']" class="card bg-primary t_card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <img class="image-custom" src="./assets/images/icons-tdental/pdt-n.png"
+                                alt="Điều trị nhanh">
+                            <span class="title-custom">PHIẾU ĐIỀU TRỊ NHANH</span>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+                <div class="t_card t_card_ghost"></div>
+                <div class="t_card t_card_ghost"></div>
             </div>
         </div>
-        <div class="col-8">
-            <div>
-                <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
-                <div class="t_kanban">
+        <div class="t_report_today">
+            <h4 class="header-title">BÁO CÁO HÔM NAY</h4>
+            <div class="t_report_today_detail">
+                <div class="t_kanban_left">
                     <div class="card t_card_right border-secondary">
                         <div class="card-body">
                             <div class="d-flex">
@@ -60,28 +61,20 @@
                     </div>
                     <div class="card t_card_right border-secondary">
                         <div class="card-body">
-                            <div class="text-center">
-                                <span class="font-weight-bold">TIỀN MẶT</span>
-                                <h4 class="text-primary">{{(reportValue ? reportValue.balance : 0) | number}}</h4>
+                            <div class="d-flex">
+                                <div class="t_report_item">
+                                    <span class="font-weight-bold">TIỀN MẶT</span>
+                                    <h4 class="text-primary">
+                                        {{(reportValueCash ? reportValueCash : 0) | number}}
+                                    </h4>
+                                </div>
+                                <div class="t_report_item">
+                                    <span class="font-weight-bold">NGÂN HÀNG</span>
+                                    <h4 class="text-primary">
+                                        {{(reportValueBank ? reportValueBank : 0) | number}}
+                                    </h4>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card t_card_right border-secondary">
-                        <div class="card-body">
-                          <div class="d-flex">
-                            <div class="t_report_item">
-                              <span class="font-weight-bold">LABO TỚI HẸN</span>
-                              <h4 class="text-primary">
-                                {{laboOrderReport ? laboOrderReport.laboAppointment : 0}}
-                              </h4>
-                            </div>
-                            <div class="t_report_item">
-                              <span class="font-weight-bold">LABO ĐÃ NHẬN</span>
-                              <h4 class="text-primary">
-                                {{laboOrderReport ? laboOrderReport.laboReceived : 0}}
-                              </h4>
-                            </div>
-                          </div>
                         </div>
                     </div>
                     <div class="card t_card_right border-secondary">
@@ -90,13 +83,13 @@
                                 <div class="t_report_item">
                                     <span class="font-weight-bold">KHÁCH HÀNG MỚI</span>
                                     <h4 class="text-primary">
-                                        {{customerReport ? customerReport.customerNew : 0}}
+                                        {{partnerOldNewReport ? partnerOldNewReport.totalNewPartner : 0}}
                                     </h4>
                                 </div>
                                 <div class="t_report_item">
                                     <span class="font-weight-bold">KHÁCH HÀNG CŨ</span>
                                     <h4 class="text-primary">
-                                        {{customerReport ? customerReport.customerOld : 0}}
+                                        {{partnerOldNewReport ? partnerOldNewReport.totalOldPartner : 0}}
                                     </h4>
                                 </div>
                             </div>
@@ -105,27 +98,71 @@
                     <div class="card t_card_right border-secondary">
                         <div class="card-body">
                             <div class="d-flex">
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">TỔNG LỊCH HẸN</span>
+                                <div class="t_report_item" *ngFor="let state of laboOrderStates">
+                                    <span class="font-weight-bold">{{state.text}}</span>
                                     <h4 class="text-primary">
-                                        {{appointmentStateCount.all ? appointmentStateCount.all : 0}}
+                                        {{laboOrderStateCount[state.value] || 0}}
                                     </h4>
-                                </div>
-                                <div class="t_report_item">
-                                    <span class="font-weight-bold">LỊCH HẸN ĐÃ TỚI</span>
-                                    <h4 class="text-primary">
-                                        {{appointmentStateCount.done ? appointmentStateCount.done : 0}}
-                                    </h4>
-                                </div>
+                                </div>                              
                             </div>
                         </div>
                     </div>
                     <div class="t_card_right t_card_ghost"></div>
+                    <div class="t_card_right t_card_ghost"></div>
+                </div>
+                <div class="t_kanban_right">
+                    <div class="card border-secondary">
+                        <div class="card-body">
+                            <table class="table border-none mb-0">
+                                <thead>
+                                    <tr class="text-center">
+                                        <td colspan="2">
+                                            <span class="font-weight-bold">THU TRONG NGÀY</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="font-weight-bold">TIỀN MẶT</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <h5 class="text-primary">
+                                                {{(reportValueCashByDate ? reportValueCashByDate : 0) | number}}
+                                            </h5>
+                                        </td>
+                                    </tr>
+                                    <tr class="border_bottom">
+                                        <td>
+                                            <span class="font-weight-bold">NGÂN HÀNG</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <h5 class="text-primary">
+                                                {{(reportValueBankByDate ? reportValueBankByDate : 0) | number}}
+                                            </h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="font-weight-bold">TỔNG THU</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <h5 class="text-primary">
+                                                {{((reportValueCashByDate ? reportValueCashByDate : 0) +
+                                                (reportValueBankByDate ? reportValueBankByDate : 0)) | number}}
+                                            </h5>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div>
+    <div>     
+        <app-appointment-list-today (valueChange)="onAppointmentTodayChange()"></app-appointment-list-today>
+    </div>
+    <div class="mr-2">
         <div class="header-title pb-3">DỊCH VỤ TRONG NGÀY</div>
         <kendo-grid [height]="500" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
             (dataStateChange)="dataStateChange($event)">

@@ -204,5 +204,28 @@ namespace ApplicationCore.Entities
                 list.Add(CityName);
             return string.Join(", ", list);
         }
+
+        public string GetGender()
+        {
+            switch (Gender)
+            {
+                case "female":
+                    return "Nữ";
+                case "other":
+                    return "Khác";
+                default:
+                    return "Nam";
+            }
+        }
+
+        public string GetAge()
+        {
+            if (!BirthYear.HasValue)
+            {
+                return string.Empty;
+            }
+
+            return (DateTime.Now.Year - BirthYear.Value).ToString();
+        }
     }
 }

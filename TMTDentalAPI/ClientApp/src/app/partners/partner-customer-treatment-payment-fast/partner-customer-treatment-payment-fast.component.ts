@@ -201,7 +201,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
           this.filteredJournals = _.unionBy(this.filteredJournals, [result.journal], 'id');
         }
 
-        debugger;
         const control = this.formGroup.get('orderLines') as FormArray;
         control.clear();
         result.orderLines.forEach(line => {
@@ -1151,6 +1150,7 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   updateTeeth(event, line) {
     var teeth = event.teeth;
     var teethFormArray = line.get('teeth') as FormArray;
+    line.patchValue(event);
     teethFormArray.clear();
     teeth.forEach(tooth => {
       teethFormArray.push(this.fb.group(tooth));

@@ -173,7 +173,6 @@ export class CompanyCuDialogComponent implements OnInit {
     this.saveOrUpdate().subscribe(() => {
       this.activeModal.close(true);
     }, err => {
-      this.showErrorService.show(err);
     });
   }
 

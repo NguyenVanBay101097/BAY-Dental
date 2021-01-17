@@ -26,7 +26,7 @@ declare var $: any;
   templateUrl: './labo-order-cu-dialog.component.html',
   styleUrls: ['./labo-order-cu-dialog.component.css']
 })
-export class LaboOrderCuDialogComponent implements OnInit {
+export class  LaboOrderCuDialogComponent implements OnInit {
 
   saleOrderLineId: string;
 

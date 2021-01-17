@@ -26,6 +26,17 @@ namespace Infrastructure.Services
 
         public async Task ActionDone(IEnumerable<StockMove> self)
         {
+            var productObj = GetService<IProductService>();
+            foreach (var move in self)
+            {
+                if (!move.PriceUnit.HasValue)
+                    move.PriceUnit = productObj.GetStandardPrice(move.ProductId, force_company_id: move.CompanyId);
+            }
+
+            await UpdateAsync(self);
+
+            await ProductPriceUpdateBeforeDone(self);
+
             foreach (var move in self)
             {
                 if (!move.PriceUnit.HasValue)
@@ -38,7 +49,6 @@ namespace Infrastructure.Services
                 await quantObj.QuantsMove(quants, move, move.LocationDest);
                 move.State = "done";
             }
-
             await UpdateAsync(self);
         }
 
@@ -47,28 +57,28 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
             var tmpl_dict = new Dictionary<Guid, decimal>();
             var std_price_update = new Dictionary<Guid, decimal>();
-            var usages = new string[] { "supplier", "production" };
-            var moves = self.Where(x => usages.Contains(x.Location.Usage));
-            if (!moves.Any())
-                return;
+            //var usages = new string[] { "supplier", "production" };
+            //var moves = self.Where(x => usages.Contains(x.Location.Usage));
+            //if (!moves.Any())
+            //    return;
 
-            var companyId = CompanyId;
-            if (!self.All(x => x.CompanyId == companyId))
-                throw new Exception("Chi tiết xuất nhập kho phải thuộc chi nhánh bạn đang làm việc");
+            //var companyId = CompanyId;
+            //if (!self.All(x => x.CompanyId == companyId))
+            //    throw new Exception("Chi tiết xuất nhập kho phải thuộc chi nhánh bạn đang làm việc");
 
             var productIds = self.Select(x => x.ProductId).Distinct().ToList();
             var qtyAvailableDict = await productObj.GetQtyAvailableDict(productIds);
             var products = await productObj.SearchQuery(x => productIds.Contains(x.Id)).Include(x => x.ProductCompanyRels).ToListAsync();
             var productDict = products.ToDictionary(x => x.Id, x => x);
 
-            foreach (var move in moves)
+            foreach (var move in self.Where(x => x.IsIn()))
             {
                 if (!tmpl_dict.ContainsKey(move.Product.Id))
                     tmpl_dict.Add(move.Product.Id, 0);
                 var product = productDict[move.ProductId];
                 if (!std_price_update.ContainsKey(move.ProductId))
                 {
-                    var standardPrice = product.StandardPrice(move.CompanyId);
+                    var standardPrice = productObj.GetStandardPrice(move.ProductId, force_company_id: move.CompanyId);
                     std_price_update.Add(move.ProductId, (decimal)standardPrice);
                 }
 
@@ -90,15 +100,17 @@ namespace Infrastructure.Services
 
                 tmpl_dict[move.Product.Id] += move_product_qty;
                 std_price_update[move.ProductId] = new_std_price;
+                // update standprice and add product price history
+                productObj.SetStandardPrice(product, (double)Math.Round(new_std_price, 2), move.CompanyId);
             }
 
-            foreach(var item in std_price_update)
-            {
-                var product = productDict[item.Key];
-                product.SetStandardPrice((double)item.Value, companyId);
-                product.PriceHistories.Add(new ProductPriceHistory { Cost = (double)item.Value, CompanyId = companyId });
-            }
-            await productObj.UpdateAsync(productDict.Values);
+            //foreach (var item in std_price_update)
+            //{
+            //    var product = productDict[item.Key];
+            //    product.SetStandardPrice((double)item.Value, companyId);
+            //    product.PriceHistories.Add(new ProductPriceHistory { Cost = (double)item.Value, CompanyId = companyId });
+            //}
+            //await productObj.UpdateAsync(productDict.Values);
         }
 
         public decimal _GetPriceUnit(StockMove self)
@@ -151,7 +163,7 @@ namespace Infrastructure.Services
 
                 move.ProductQty = uomObj.ComputeQtyObj(move.ProductUOM, move.ProductUOMQty, move.Product.UOM);
             }
-               
+
         }
 
 

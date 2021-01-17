@@ -1,6 +1,6 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
-        <ol class="breadcrumb">
+        <!-- <ol class="breadcrumb">
             <li class="active">
                 <span>Danh xưng</span>
             </li>
@@ -10,8 +10,8 @@
                 <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
-        </div>
-        <div class="o_cp_left">
+        </div> -->
+        <div class="o_cp_t_left">
             <div class="o_cp_buttons">
                 <button type="button" class="btn btn-primary btn-sm" accesskey="c"
                 (click)="createItem()">Thêm</button>
@@ -19,7 +19,9 @@
             <div class="o_cp_sidebar">
             </div>
         </div>
-        <div class="o_cp_right">
+        <div class="o_cp_t_right">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm..." type="text"
+            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
         </div>
     </div>
 </div>
@@ -27,7 +29,7 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên danh xưng khách hàng"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"

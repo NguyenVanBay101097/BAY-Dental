@@ -3,6 +3,9 @@ import { WebService } from 'src/app/core/services/web.service';
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
+import { PartnerWebcamComponent } from '../partner-webcam/partner-webcam.component';
+import { IrAttachmentBasic } from '../shared';
+import { PartnerImageBasic } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-image-file-upload',
@@ -18,6 +21,7 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   @Input() width: number;
   @Input() height: number;
   @Input() crop: boolean;
+  @Input() supportWebcam: boolean;
 
   constructor(private webService: WebService, private modalService: NgbModal) { }
 
@@ -52,7 +56,25 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
 
       return url;
     }
-    
+
     return this.imageId;
+  }
+
+  onWebcam() {
+    const modalRef = this.modalService.open(PartnerWebcamComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then(res => {
+      if (res) {
+        this.uploaded.emit(res);
+      }
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  onViewImage() {
+    var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
+    const img = {uploadId: this.imageFileUrl, name: this.imageId, id: this.imageId,note: null,date: Date() } as (PartnerImageBasic);
+    modalRef.componentInstance.partnerImages = [img];
+    modalRef.componentInstance.partnerImageSelected = img;
   }
 }

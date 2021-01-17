@@ -1,0 +1,28 @@
+.o_td_label {
+    min-width: 150px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.table thead th {
+    border-bottom: none;
+}
+
+.table td, .table th {
+    border-top: none;
+}
+
+.cu-th-td {
+    padding: 0 0.75rem;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.o_form_view .o_group.o_inner_group.oe_subtotal_footer {
+    border-top: none;
+}

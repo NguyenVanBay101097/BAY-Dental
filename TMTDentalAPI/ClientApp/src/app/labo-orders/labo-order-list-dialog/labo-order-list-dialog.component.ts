@@ -78,7 +78,6 @@ export class LaboOrderListDialogComponent implements OnInit {
       this.laboOrderService.delete(item.id).subscribe(res => {
         this.LoadLaboOrderList();
       }, (err) => {
-        this.showErrorService.show(err);
       });
     });
   }

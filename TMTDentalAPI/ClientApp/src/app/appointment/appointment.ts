@@ -64,6 +64,8 @@ export class AppointmentPaged {
     dateTimeTo: string;
     state: string;
     partnerId: string;
+    companyId: string;
+    doctorId: string;
 }
 
 export class AppointmentSearch {
@@ -118,4 +120,21 @@ export class AppointmentPatch {
     id: string;
     state: string;
     date: string;
+    reason: string;
+}
+
+export class AppointmentStatePatch {
+    state: string;
+    reason: string;
+}
+
+export class DateFromTo {
+    dateFrom: string;
+    dateTo: string;
+}
+
+export class AppointmentGetCountVM {
+    state: string;
+    dateFrom: string;
+    dateTo: string;
 }

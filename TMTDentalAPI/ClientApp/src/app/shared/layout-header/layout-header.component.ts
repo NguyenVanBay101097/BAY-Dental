@@ -46,7 +46,7 @@ export class LayoutHeaderComponent implements OnInit {
 
   loadExpire() {
     this.webService.getExpire().subscribe((res: any) => {
-      if(res && res.expireText) {
+      if (res && res.expireText) {
         this.expire = res.expireText;
       }
     });
@@ -61,9 +61,13 @@ export class LayoutHeaderComponent implements OnInit {
 
   switchCompany(companyId) {
     this.userService.switchCompany({ companyId: companyId }).subscribe(() => {
-      this.authService.refresh().subscribe(result => {
+      this.authService.refresh().subscribe(() => {
         this.userService.getChangeCurrentCompany().subscribe(result => {
           localStorage.setItem('user_change_company_vm', JSON.stringify(result));
+          var userInfo = JSON.parse(localStorage.getItem("user_info"));
+          localStorage.removeItem('user_info');
+          userInfo.companyId = result.currentCompany.id;
+          localStorage.setItem('user_info',JSON.stringify(userInfo));
           window.location.reload();
         });
       });

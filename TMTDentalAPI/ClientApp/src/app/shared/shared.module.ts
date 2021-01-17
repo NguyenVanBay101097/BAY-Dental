@@ -70,9 +70,18 @@ import { SaleOrderListServiceComponent } from '../sale-orders/sale-order-list-se
 import { SaleOrderTeethPopoverComponent } from '../sale-orders/sale-order-teeth-popover/sale-order-teeth-popover.component';
 import { SaleOrderLineDiscountOdataPopoverComponent } from '../sale-orders/sale-order-line-discount-odata-popover/sale-order-line-discount-odata-popover.component';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { AppointmentListTodayComponent } from './appointment-list-today/appointment-list-today.component';
+import { PopoverStateAppointmentComponent } from './popover-state-appointment/popover-state-appointment.component';
+import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.component';
+import { FundBookService } from './fund-book.service';
+import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
+import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
+import { ProductsModule } from '../products/products.module';
 
 @NgModule({
   declarations: [
+    PopoverStateAppointmentComponent,
+    AppointmentListTodayComponent,
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
     LayoutSidebarComponent,
@@ -118,7 +127,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent,
+    LoaiThuChiFormComponent,    
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     ReceptionDashboardComponent,
@@ -131,12 +140,14 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     ProductServiceCuDialogComponent,
     PermissionDirective,
     PrintSalaryEmpComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent,
-    LaboOrderCuDialogComponent
+    LaboOrderCuDialogComponent,
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -195,7 +206,9 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
     SaleOrderLineDiscountOdataPopoverComponent, 
-    LaboOrderCuDialogComponent
+    LaboOrderCuDialogComponent,
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent,
   ],
   imports: [
     CommonModule,
@@ -212,7 +225,7 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
       }
     })
   ],
-  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService],
+  providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService],
   entryComponents: [
     ConfirmDialogComponent,
     ChangePasswordDialogComponent,
@@ -234,7 +247,9 @@ import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
     ProductServiceCuDialogComponent, 
-    LaboOrderCuDialogComponent
+    LaboOrderCuDialogComponent,
+    PartnerWebcamComponent,
+    LaboFinnishLineImportComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

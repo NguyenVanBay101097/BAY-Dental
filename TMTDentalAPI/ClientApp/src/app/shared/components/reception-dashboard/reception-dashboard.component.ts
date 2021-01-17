@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { DataStateChangeEvent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { process, State } from '@progress/kendo-data-query';
-import { forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
@@ -14,6 +14,9 @@ import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { SaleReportItem, SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { DataBindingDirective } from '@progress/kendo-angular-grid';
+import { FundBookSearch, FundBookService } from '../../fund-book.service';
+import { CashBookPaged, CashBookService } from 'src/app/cash-book/cash-book.service';
+import { PartnerOldNewReport, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -33,8 +36,11 @@ export class ReceptionDashboardComponent implements OnInit {
   search: string = '';
   totalService: number;
   laboOrderReport: LaboOrderReportOutput;
-  customerReport: PartnerCustomerReportOutput;
-  reportValue: any;
+  partnerOldNewReport: PartnerOldNewReport;
+  reportValueCash: any;
+  reportValueBank: any;
+  reportValueCashByDate: any;
+  reportValueBankByDate: any;
 
   public state: State = {
     skip: this.offset,
@@ -49,31 +55,40 @@ export class ReceptionDashboardComponent implements OnInit {
 
   public gridData: any[];
   public gridView: any[];
+  laboOrderStateCount: any = {};
+  laboOrderStates: any[] = [
+    { value: 'danhan', text: 'LABO ĐÃ NHẬN'},
+    { value: 'toihan', text: 'LABO TỚI HẸN'},
+  ]
 
   constructor(private intlService: IntlService,
     private appointmentService: AppointmentService,
     private saleReportService: SaleReportService,
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
+    private partnerOldNewReportService: PartnerOldNewReportService,
     private router: Router,
     private authService: AuthService,
-    private reportGeneralLedgerService: AccountReportGeneralLedgerService
+    private reportGeneralLedgerService: AccountReportGeneralLedgerService,
+    private cashBookService: CashBookService
   ) { }
 
   ngOnInit() {
     this.gridView = this.gridData;
     this.loadSaleReport();
     this.loadAppoiment();
-    this.loadLaboOrderReport();
+    this.loadLaboOrderStateCount();
     this.loadPartnerCustomerReport();
     this.loadDataMoney();
+    this.loadDataMoneyByDateTime();
     this.loadService();
   }
 
   loadSaleReport() {
     var val = new SaleReportSearch();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
     val.isQuotation = false;
     val.state = 'sale,done';
     // val.groupBy = "customer"
@@ -100,10 +115,10 @@ export class ReceptionDashboardComponent implements OnInit {
     val.state = 'draft';
     this.saleReportService.getReportService(val).pipe(
       map((response: any) =>
-        (<GridDataResult>{
-          data: response.items,
-          total: response.totalItems
-        }))
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
     ).subscribe(res => {
       this.gridView = res.data;
       this.gridData = res.data;
@@ -111,6 +126,95 @@ export class ReceptionDashboardComponent implements OnInit {
     }, err => {
       console.log(err);
     })
+  }
+
+  loadDataMoney() {
+    var companyId = this.authService.userInfo.companyId;
+    let cash = this.cashBookService.getTotalReport({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getTotalReport({ resultSelection: "bank", companyId: companyId });
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
+    });
+  }
+
+  loadDataMoneyByDateTime() {
+    var dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    var companyId = this.authService.userInfo.companyId;
+
+    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+
+    forkJoin([cash, bank]).subscribe(results => {
+      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
+      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
+    });
+  }
+
+  loadAppoiment() {
+    var states = ["", "waiting,examination,done"];
+
+    var obs = states.map(state => {
+      var val = new AppointmentPaged();
+      val.dateTimeFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      val.dateTimeTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+      val.companyId = this.authService.userInfo.companyId;
+      val.state = state;
+      return this.appointmentService.getPaged(val);
+    });
+
+    forkJoin(obs).subscribe((result: any) => {
+      this.appointmentStateCount['all'] = result[0].totalItems;
+      this.appointmentStateCount['done'] = result[1].totalItems;
+    });
+  }
+
+  // loadLaboOrderReport() {
+  //   var val = new LaboOrderReportInput();
+  //   val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+  //   val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+  //   val.companyId = this.authService.userInfo.companyId;
+  //   this.laboOrderService.getLaboOrderReport(val).subscribe(
+  //     result => {
+  //       this.laboOrderReport = result;
+  //     },
+  //     error => {
+
+  //     }
+  //   );
+  // }
+
+  loadLaboOrderStateCount() {
+    forkJoin(this.laboOrderStates.map(x => {
+      var val = new LaboOrderReportInput();
+      val.state = x.value;
+      val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+      return this.laboOrderService.getCountLaboOrder(val).pipe(
+        switchMap(count => of({state: x.value, count: count}))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        debugger
+        this.laboOrderStateCount[item.state] = item.count;
+      });
+    });
+  }
+
+  loadPartnerCustomerReport() {
+    var val = new PartnerCustomerReportInput();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.companyId = this.authService.userInfo.companyId;
+    this.partnerOldNewReportService.getSumaryPartnerOldNewReport(val).subscribe(
+      result => {
+        this.partnerOldNewReport = result;
+      },
+      error => {
+
+      }
+    );
   }
 
   exportServiceExcelFile() {
@@ -188,76 +292,32 @@ export class ReceptionDashboardComponent implements OnInit {
     }
   }
 
-  loadDataMoney() {
-    var val = new ReportCashBankGeneralLedger();
-    val.companyId = this.authService.userInfo.companyId;
-    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportValue = result['accounts'].find(x => x.name == 'Tiền mặt');
-    }, err => {
-      console.log(err);
-    });
+  stateGet(state) {
+    switch (state) {
+      case 'waiting':
+        return 'Chờ khám';
+      case 'examination':
+        return 'Đang khám';
+      case 'done':
+        return 'Hoàn thành';
+      case 'cancel':
+        return 'Hủy hẹn';
+      case 'all':
+        return 'Tổng hẹn';
+      default:
+        return 'Đang hẹn';
+    }
   }
 
-  loadAppoiment() {
-    var states = ["confirmed", "done", "cancel"];
-
-    var obs = states.map(state => {
-      var val = new AppointmentPaged();
-      val.dateTimeFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      val.dateTimeTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-      val.state = state;
-      return this.appointmentService.getPaged(val);
-    });
-
-    forkJoin(obs).subscribe((result: any) => {
-      result.forEach(item => {
-        if (item.items.length) {
-          var state = item.items[0].state;
-          if (state == "done") {
-            this.appointmentStateCount[state] = item.totalItems;
-          }
-          if (this.appointmentStateCount['all']) {
-            this.appointmentStateCount['all'] += item.totalItems;
-          } else {
-            this.appointmentStateCount['all'] = item.totalItems;
-          }
-        }
-      });
-    });
+  onAppointmentTodayChange() {
+    this.loadAppoiment();
   }
 
-  loadLaboOrderReport() {
-    var val = new LaboOrderReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
 
-    this.laboOrderService.getLaboOrderReport(val).subscribe(
-      result => {
-        this.laboOrderReport = result;
-      },
-      error => {
 
-      }
-    );
-  }
-
-  loadPartnerCustomerReport() {
-    var val = new PartnerCustomerReportInput();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-
-    this.partnerService.getPartnerCustomerReport(val).subscribe(
-      result => {
-        this.customerReport = result;
-      },
-      error => {
-
-      }
-    );
-  }
 
   getStateDisplay(state) {
-    switch(state) {
+    switch (state) {
       case 'sale':
         return 'Đang điều trị';
       case 'done':

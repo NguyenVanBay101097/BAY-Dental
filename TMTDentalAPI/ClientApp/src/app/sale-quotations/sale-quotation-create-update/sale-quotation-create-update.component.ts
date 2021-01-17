@@ -134,7 +134,8 @@ export class SaleQuotationCreateUpdateComponent implements OnInit {
       filter: {
         logic: 'and',
         filters: [
-          { field: 'IsDoctor ', operator: 'eq', value: true }
+          { field: 'IsDoctor ', operator: 'eq', value: true },
+          { field: 'Active ', operator: 'eq', value: true }
         ]
       }
     };

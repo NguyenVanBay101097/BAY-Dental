@@ -69,7 +69,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.PartnerOldNew")]
         public async Task<IActionResult> GetReportPartner(SaleReportPartnerSearch val)
         {
-            var res = await _saleReportService.GetReportPartner(val);
+            //var res = await _saleReportService.GetReportPartner(val);
+            //var res = await _saleReportService.GetReportPartnerV2(val);
+            var res = await _saleReportService.GetReportPartnerV3(val);
+            //var res = await _saleReportService.GetReportPartnerV4(val);
             return Ok(res);
         }
 

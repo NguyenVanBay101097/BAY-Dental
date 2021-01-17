@@ -45,6 +45,7 @@ import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathu
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
+import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 
 declare var $: any;
 
@@ -126,7 +127,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       filter: {
         logic: 'and',
         filters: [
-          { field: 'IsDoctor ', operator: 'eq', value: true }
+          { field: 'IsDoctor ', operator: 'eq', value: true },
+          { field: 'Active ', operator: 'eq', value: true }
         ]
       }
     };
@@ -692,8 +694,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.CardId = val.card ? val.card.id : null;
     val.OrderLines.forEach(line => {
       if (line.Employee) {
-        line.EmployeeId = line.Employee.Id;
+        line.EmployeeId = line.Employee.Id;       
       }
+
+      if(line.Assinstant){
+        line.AssistantId = line.Assistant.Id;
+      }
+
       if (line.Teeth) {
         line.ToothIds = line.Teeth.map(x => x.Id);
       }
@@ -1219,7 +1226,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
   createProductToaThuoc() {
-    let modalRef = this.modalService.open(ToaThuocCuDialogSaveComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ToaThuocCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Đơn Thuốc';
     modalRef.componentInstance.defaultVal = { partnerId: (this.partnerId || this.partner.Id), saleOrderId: this.saleOrderId };
     modalRef.result.then((result: any) => {

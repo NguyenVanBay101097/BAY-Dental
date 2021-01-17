@@ -1,0 +1,8 @@
+.card-wrapper {
+    flex: 0 0 260px;
+    margin-right: 5px;
+}
+
+.t-search {
+    min-width: 300px;
+}

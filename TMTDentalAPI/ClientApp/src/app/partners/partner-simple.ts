@@ -25,6 +25,8 @@ export class PartnerBasic {
     ref: string;
     address: string;
     birthYear: number;
+    displayName: string;
+    age: string;
 }
 export class PartnerDisplay extends PartnerBasic {
     supplier: boolean;

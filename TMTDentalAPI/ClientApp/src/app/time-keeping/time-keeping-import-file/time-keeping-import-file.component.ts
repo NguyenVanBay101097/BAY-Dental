@@ -55,7 +55,6 @@ export class TimeKeepingImportFileComponent implements OnInit {
         this.errors = result.errors;
       }
     }, (err) => {
-      this.showErrorService.show(err);
     });
   }
 

@@ -32,6 +32,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateOrderTo { get; set; }
         public bool? IsQuotation { get; set; }
 
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Đơn hàng
+        /// </summary>
         public string LaboState { get; set; }
 
         /// <summary>
@@ -39,5 +43,31 @@ namespace Umbraco.Web.Models.ContentEditing
         /// created: Đã tạo
         /// </summary>
         public string LaboStatus { get; set; }
+    }
+
+    public class SaleOrderLinesLaboPaged
+    {
+        public SaleOrderLinesLaboPaged()
+        {
+            Limit = 20;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public string Search { get; set; }
+
+        /// <summary>
+        /// true: Đã tạo
+        /// false: Chưa tạo
+        /// </summary>
+        public bool? HasAnyLabo { get; set; }
+
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Đã tạo
+        /// </summary>
+        public string LaboState { get; set; }
     }
 }

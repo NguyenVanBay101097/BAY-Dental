@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { AppointmentVMService } from '../appointment-vm.service';
 import { AppointmentService } from '../appointment.service';
 import { forkJoin, Subject } from 'rxjs';
-import { AppointmentSearchByDate, AppointmentBasic } from '../appointment';
+import { AppointmentSearchByDate, AppointmentBasic, AppointmentPaged } from '../appointment';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PagedResult2 } from 'src/app/core/paged-result-2';
 import * as _ from 'lodash';
@@ -49,7 +49,7 @@ export class AppointmentKanbanComponent implements OnInit {
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal, private dotkhamService: DotKhamService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) {  }
+    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.dateFrom = this.today;
@@ -125,26 +125,21 @@ export class AppointmentKanbanComponent implements OnInit {
 
   loadData() {
     this.resetData();
-    var obs = this.dateList.map(date => {
-      var val = new AppointmentSearchByDate();
-      val.limit = 1000;
-      if (this.state) {
-        val.state = this.state;
-      }
-      if (this.search) {
-        val.search = this.search;
-      }
+    var val = new AppointmentPaged();
+    val.limit = 1000;
+    if (this.state) {
+      val.state = this.state;
+    }
+    if (this.search) {
+      val.search = this.search;
+    }
 
-      val.employeeId = this.filterEmployee ? this.filterEmployee.id : null;
-      
-      val.date = this.intlService.formatDate(date, 'yyyy-MM-dd');
-      return this.appointmentService.searchReadByDate(val);
-    });
+    val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
 
-    forkJoin(obs).subscribe(result => {
-      result.forEach(item => {
-        this.addAppointments(item);
-      });
+    val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
+    val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
+    this.appointmentService.getPaged(val).subscribe((result: any) => {
+      this.addAppointments(result);
     });
   }
 

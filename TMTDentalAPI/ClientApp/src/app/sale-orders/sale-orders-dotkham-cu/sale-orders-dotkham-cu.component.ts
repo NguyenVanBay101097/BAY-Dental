@@ -191,7 +191,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
         logic: 'and',
         filters: [
           { field: 'Name', operator: 'contains', value: val || '' },
-          { field: 'IsDoctor', operator: 'eq', value: true }
+          { field: 'IsDoctor', operator: 'eq', value: true },
+          { field: 'Active', operator: 'eq', value: true }
         ]
       }
     };

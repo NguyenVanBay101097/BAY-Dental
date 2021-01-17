@@ -75,7 +75,6 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   // }
 
   SavePartnerCategories(tags) {
-    debugger;
     tags = tags || [];
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;

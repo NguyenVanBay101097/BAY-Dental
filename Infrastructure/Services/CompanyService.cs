@@ -134,8 +134,37 @@ namespace Infrastructure.Services
             await InsertModuleDentalData();
 
             await groupObj.InsertSecurityData();
+
+            //insert những irmodelfield
+            await InsertIrModelFieldData();
         }
 
+        public async Task InsertIrModelFieldData()
+        {
+            var fieldObj = GetService<IIRModelFieldService>();
+            var modelObj = GetService<IIRModelService>();
+
+            var model = await modelObj.SearchQuery(x => x.Model == "Product").FirstOrDefaultAsync();
+            var toAdd = new List<IRModelField>();
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = model.Id,
+                Model = "product.product",
+                Name = "list_price",
+                TType = "decimal",
+            });
+
+            toAdd.Add(new IRModelField
+            {
+                IRModelId = model.Id,
+                Model = "product.product",
+                Name = "standard_price",
+                TType = "float",
+            });
+
+            await fieldObj.CreateAsync(toAdd);
+        }
 
         public async Task InsertCompanyData(Company company)
         {
@@ -886,7 +915,7 @@ namespace Infrastructure.Services
 
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(PrepareModelData(partner_title_dict, "res.partner.title"));
-           
+
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity
@@ -1107,8 +1136,10 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<CompanyBasic>> GetPagedResultAsync(CompanyPaged val)
         {
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
             var query = GetQueryPaged(val);
-
+            query = query.Where(x => company_ids.Contains(x.Id));
             var items = await query.Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
             var totalItems = await query.CountAsync();

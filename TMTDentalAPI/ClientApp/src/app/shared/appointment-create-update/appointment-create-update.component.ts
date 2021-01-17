@@ -68,6 +68,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       companyId: null,
       doctor: null,
       state: 'confirmed',
+      reason: null,
       saleOrderId: null
     })
 
@@ -130,6 +131,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = appoint.appTime;    
     appoint.date = `${apptDate}T00:00:00`;
     appoint.time = appTime;
+    if (this.state != 'cancel') {
+      appoint.reason = null;
+    }
 
     if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
@@ -290,6 +294,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.formGroup.get('partnerPhone').value;
   }
 
+  get state(){
+    return this.formGroup.get('state').value;
+  }
+
   updateCustomerModal() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa khách hàng';
@@ -323,7 +331,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         $expand: 'Tags'
       };
       this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
-        debugger
         this.formGroup.get('partnerAge').patchValue(rs.Age);
         this.formGroup.get('partnerPhone').patchValue(rs.Phone);
         this.tags.clear();
@@ -351,12 +358,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }
     this.appointmentService.defaultGet(val).subscribe(
       (rs: any) => {
-        debugger
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
         this.formGroup.get('apptDate').patchValue(date);
-        this.formGroup.get('appTime').patchValue('00:00');
+        this.formGroup.get('appTime').patchValue('07:00');
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
@@ -368,5 +374,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         }
       }
     )
+  }
+
+  onChangeState() {
+    event.stopPropagation();
+    if (this.state == 'cancel') {
+      this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
+      this.formGroup.get("reason").updateValueAndValidity();
+    } else {
+      this.formGroup.get('reason').clearValidators();
+      this.formGroup.get('reason').updateValueAndValidity();
+    }
   }
 }

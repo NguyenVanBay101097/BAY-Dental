@@ -1,5 +1,5 @@
 <div class="o_control_panel">
-    <ol class="breadcrumb">
+    <!-- <ol class="breadcrumb">
         <li class="active">Nhãn khách hàng</li>
     </ol>
     <div class="o_cp_searchview">
@@ -7,8 +7,8 @@
             <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
                 (ngModelChange)="this.searchUpdate.next($event)">
         </div>
-    </div>
-    <div class="o_cp_left">
+    </div> -->
+    <div class="o_cp_t_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="createItem()">Thêm</button>
@@ -20,7 +20,9 @@
         <div class="o_cp_sidebar">
         </div>
     </div>
-    <div class="o_cp_right">
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)">
         <!-- <div class="dropdown">
             <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false" type="button" id="dropdownMenuButton">
@@ -36,7 +38,7 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên">
+        <kendo-grid-column field="name" title="Tên nhãn khách hàng">
         </kendo-grid-column>
         <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

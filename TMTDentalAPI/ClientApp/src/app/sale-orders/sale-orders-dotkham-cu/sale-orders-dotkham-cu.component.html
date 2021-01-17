@@ -87,8 +87,8 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea *ngIf="editModeActive" formControlName="Reason" rows="2" placeholder="nhập mô tả..." class="form-control"></textarea>
-            <label *ngIf="!editModeActive">
+            <textarea *ngIf="editModeActive" formControlName="Reason" rows="2" placeholder="Nhập mô tả..." class="form-control"></textarea>
+            <label style="white-space: pre-line;" *ngIf="!editModeActive">
                 {{reason}}
             </label>
         </div>

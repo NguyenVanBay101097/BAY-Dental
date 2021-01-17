@@ -199,7 +199,8 @@ namespace Infrastructure.Services
             return SearchQuery().Select(x => new PartnerCategoryViewModel
             {
                 Id = x.Id,
-                Name = x.Name
+                Name = x.Name,
+                Color = x.Color
             });
         }
 
