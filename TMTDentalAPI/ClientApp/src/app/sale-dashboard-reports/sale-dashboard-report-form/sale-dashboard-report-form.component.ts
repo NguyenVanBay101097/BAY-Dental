@@ -4,13 +4,15 @@ import { Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import { observable, Observable } from 'rxjs';
+import { values } from 'lodash';
+import { forkJoin, observable, Observable } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { CashBookService } from 'src/app/cash-book/cash-book.service';
 import { CommissionSettlementReport, CommissionSettlementReportOutput, CommissionSettlementsService } from 'src/app/commission-settlements/commission-settlements.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
@@ -59,10 +61,11 @@ export class SaleDashboardReportFormComponent implements OnInit {
   filteredCompanies: CompanyBasic[] = [];
   totalHoaHong: number;
   reportLedgerBank: any;
-  moneyledger: number;
+  moneyCash: number;
   moneyBank: number;
   public reportCurrentYears: any[];
   public reportOldYears: any[];
+  companyId: string;
 
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
@@ -81,7 +84,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     private PhieuThuChiService: PhieuThuChiService,
     private commissionSettlementReportsService: CommissionSettlementsService,
     private router: Router,
-    private partnerOldNewReportService: PartnerOldNewReportService
+    private partnerOldNewReportService: PartnerOldNewReportService,
+    private cashBookService: CashBookService
   ) { }
 
   ngOnInit() {
@@ -118,6 +122,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   changeCompany() {
+    this.companyId = this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
     this.loadAllData();
   }
 
@@ -166,16 +171,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadDataMoney() {
-    var val = new ReportCashBankGeneralLedger();
-    val.companyId = val.companyId = this.formGroup.get('company') && this.formGroup.get('company').value ? this.formGroup.get('company').value.id : null;
-    this.reportGeneralLedgerService.getCashBankReport(val).subscribe(result => {
-      this.reportLedgerBank = result;
-      if (this.reportLedgerBank && this.reportLedgerBank.accounts && this.reportLedgerBank.accounts.length > 0) {
-        this.moneyledger = this.reportLedgerBank.accounts[0] ? this.reportLedgerBank.accounts[0].balance : 0;
-        this.moneyBank = this.reportLedgerBank.accounts[1] ? this.reportLedgerBank.accounts[1].balance : 0;
-      }
-    }, err => {
-      console.log(err);
+    var companyId = this.companyId ? this.companyId : null;
+    let cash = this.cashBookService.getTotalReport({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getTotalReport({ resultSelection: "bank", companyId: companyId });
+    forkJoin([cash, bank]).subscribe(results => {
+      this.moneyCash = results[0] ? results[0].totalAmount : 0;
+      this.moneyBank = results[1] ? results[1].totalAmount : 0;
     });
   }
 
