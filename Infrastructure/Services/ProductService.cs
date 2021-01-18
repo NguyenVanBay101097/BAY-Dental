@@ -977,9 +977,6 @@ namespace Infrastructure.Services
                 CategName = x.Categ.Name,
                 Name = x.Name,
                 Type = x.Type,
-                ListPrice = x.ListPrice,
-                PurchaseOK = x.PurchaseOK,
-                UOMName = x.UOM.Name
             }).ToListAsync();
 
             return res;
