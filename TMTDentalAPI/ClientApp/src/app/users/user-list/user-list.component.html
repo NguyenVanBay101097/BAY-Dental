@@ -8,7 +8,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <!-- <button class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm</button> -->
+                    <button class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm</button>
                     <!-- <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
                         <i class="fas fa-upload"></i> Import
                     </button> -->
@@ -23,13 +23,12 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên">
         </kendo-grid-column>
         <kendo-grid-column field="userName" title="Tên đăng nhập">
         </kendo-grid-column>
-        <!-- <kendo-grid-column field="id">
+        <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
@@ -39,7 +38,7 @@
                 <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
     </kendo-grid>
 </div>
 
