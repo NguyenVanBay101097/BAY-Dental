@@ -19,6 +19,8 @@
         </div>
     </div>
     <div class="o_cp_right">
+        <kendo-combobox [(ngModel)]="defaultFilterActive" (selectionChange)="onChangeFilterActive($event)" placeholder="Tất cả" class="kendo-combobox-sm mr-1" [data]="filterActive" [textField]="'name'" [valueField]="'value'"  [popupSettings]="{ width: 200}">
+        </kendo-combobox>
     </div>
 </div>
 
@@ -37,8 +39,12 @@
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button title="Sửa" (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-1"><i
                         class="fas fa-edit"></i></button>
-                <button title="Xóa" (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i
+                <button title="Xóa" (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm mr-1"><i
                         class="far fa-trash-alt"></i></button>
+                <button *ngIf="dataItem.active == true"  (click)="onClickActive(dataItem)"
+                    class="btn btn-danger btn-sm"><i title="Ẩn nhà cung cấp" class="fas fa-eye-slash" ></i></button>
+                <button *ngIf="dataItem.active == false" (click)="onClickActive(dataItem)"
+                    class="btn btn-success btn-sm"><i title="Hiện nhà cung cấp" class="fas fa-eye" ></i></button>
             </ng-template>
         </kendo-grid-command-column>
         <div *kendoGridDetailTemplate="let dataItem">

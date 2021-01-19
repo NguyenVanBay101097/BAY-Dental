@@ -90,5 +90,7 @@ namespace TMTDentalAPI.Middlewares
                 await fieldObj.CreateAsync(fieldStd);
             }
         }
+
+        
     }
 }

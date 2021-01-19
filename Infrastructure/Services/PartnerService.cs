@@ -486,12 +486,15 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Employee == val.Employee);
             if (val.Supplier.HasValue)
                 query = query.Where(x => x.Supplier == val.Supplier);
+            if (val.Active.HasValue)
+                query = query.Where(x => x.Active == val.Active);
             if (!string.IsNullOrEmpty(val.Search))
             {
 
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
             }
+
 
             query = query.OrderBy(s => s.DisplayName);
             return query;
@@ -1213,7 +1216,7 @@ namespace Infrastructure.Services
             }
             catch (Exception ex)
             {
-                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message} };
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message } };
             }
 
             return new PartnerImportResponse { Success = true };

@@ -55,6 +55,13 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Partner, PartnerInfoVm>();
             CreateMap<Partner, PartnerCustomerDonThuoc>();
+
+            CreateMap<Partner, PartnerActivePatch>();
+            CreateMap<PartnerActivePatch, Partner>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Source, x => x.Ignore())
+                .ForMember(x => x.ReferralUser, x => x.Ignore())
+                .ForMember(x => x.Title, x => x.Ignore());
         }
     }
 }

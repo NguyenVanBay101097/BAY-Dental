@@ -34,16 +34,29 @@ namespace Infrastructure.Services
             }
         }
 
-        //public override Task<AccountMove> CreateAsync(AccountMove self)
-        //{
-        //    var amlObj = GetService<IAccountMoveLineService>();
-        //    amlObj._AmountResidual(self.Lines);
-        //    amlObj._StoreBalance(self.Lines);
+        public override Task<AccountMove> CreateAsync(AccountMove self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
 
-        //    _ComputeAmount(new List<AccountMove>() { self });
-        //    _ComputePartner(new List<AccountMove>() { self });
-        //    return base.CreateAsync(self);
-        //}
+            foreach(var line in self.Lines)
+            {
+                line.Date = self.Date;
+                line.ParentState = self.State;
+                line.JournalId = self.JournalId;
+                line.CompanyId = self.CompanyId;
+                if (line.Account == null)
+                    throw new Exception("Null Account");
+                line.AccountInternalType = line.Account.InternalType;
+            }
+
+            amlObj._AmountResidual(self.Lines);
+            amlObj._StoreBalance(self.Lines);
+
+            _ComputeAmount(new List<AccountMove>() { self });
+            _ComputePartner(new List<AccountMove>() { self });
+            return base.CreateAsync(self);
+        }
+
 
         public async Task<IEnumerable<AccountMove>> _ComputePaymentsWidgetReconciledInfo(IEnumerable<Guid> ids)
         {

@@ -46,7 +46,7 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderLineId.HasValue)
             {
-                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);          
+                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);
             }
 
             if (!string.IsNullOrEmpty(val.State))
@@ -463,12 +463,13 @@ namespace Infrastructure.Services
             {
                 if (order.State != "draft")
                     throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp.");
+
                 var move = await _PrepareAccountMove(order);
 
                 var amlObj = GetService<IAccountMoveLineService>();
                 amlObj.PrepareLines(move.Lines);
 
-                await moveObj.CreateMoves(new List<AccountMove>() { move });
+                await moveObj.CreateMoves(new List<AccountMove>() { move }, "in_invoice");
                 await moveObj.ActionPost(new List<AccountMove>() { move });
 
                 order.State = "confirmed";
@@ -480,52 +481,79 @@ namespace Infrastructure.Services
 
         private async Task<AccountMove> _PrepareAccountMove(LaboOrder self)
         {
+            //tạo account move
             var accountObj = GetService<IAccountAccountService>();
-            var account = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
+            var amlObj = GetService<IAccountMoveLineService>();
 
             var accountMoveObj = GetService<IAccountMoveService>();
             var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice", default_company_id: self.CompanyId);
             if (journal == null)
                 throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
 
-            var balance = self.AmountTotal;
-            var move_vals = new AccountMove
+            var invoice_vals = new AccountMove
             {
+                Type = "in_invoice",
+                PartnerId = self.PartnerId,
                 JournalId = journal.Id,
                 Journal = journal,
-                PartnerId = self.PartnerId,
-                CompanyId = journal.CompanyId,
+                CompanyId = self.CompanyId,
+                InvoiceOrigin = self.Name,
             };
 
+            var payableAccount = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
+            var productAccount = await accountObj.SearchQuery(x => x.CompanyId == self.CompanyId && x.Code == "1561").FirstOrDefaultAsync();
+
+            var amountTotal = self.AmountTotal;
             var lines = new List<AccountMoveLine>()
             {
                 new AccountMoveLine
                 {
-                    Name = self.Name,
-                    Debit = balance,
+                    Move = invoice_vals,
+                    ProductId = self.ProductId,
+                    PartnerId = invoice_vals.PartnerId,
+                    Name = self.Product.Name,
+                    Debit = amountTotal,
                     Credit = 0,
-                    PartnerId = self.PartnerId,
-                    AccountId = journal.DefaultDebitAccount.Id,
-                    Account = journal.DefaultDebitAccount,
-                    CompanyId = self.CompanyId,
-                    Move = move_vals,
+                    AccountId = productAccount.Id,
+                    Account = productAccount,
                 },
                 new AccountMoveLine
                 {
-                    Name = self.Name,
+                    Move = invoice_vals,
+                    ProductId = self.ProductId,
+                    PartnerId = invoice_vals.PartnerId,
                     Debit = 0,
-                    Credit = balance,
-                    PartnerId = self.PartnerId,
-                    AccountId = account.Id,
-                    Account = account,
-                    CompanyId = self.CompanyId,
-                    Move = move_vals,
-                },
+                    Credit = amountTotal,
+                    AccountId = payableAccount.Id,
+                    Account = payableAccount,
+                }
             };
 
-            move_vals.Lines = lines;
+            //compute balance
+            //compute residual
+            //compute property
 
-            return move_vals;
+            amlObj._ComputeBalance(lines);
+
+            return invoice_vals;
+        }
+
+        public AccountMoveLine _PrepareAccountMoveLine(LaboOrderLine self, AccountMove move)
+        {
+            var qty = self.ProductQty - (self.QtyInvoiced);
+            if (qty < 0)
+                qty = 0;
+
+            return new AccountMoveLine
+            {
+                Name = $"{self.Order.Name}: {self.Name}",
+                Move = move,
+                PurchaseLineId = self.Id,
+                ProductId = self.ProductId,
+                PriceUnit = self.PriceUnit,
+                Quantity = qty,
+                PartnerId = move.PartnerId,
+            };
         }
 
         public async Task ButtonCancel(IEnumerable<Guid> ids)
@@ -754,12 +782,12 @@ namespace Infrastructure.Services
                 if (val.State == "danhan")
                 {
                     query = query.Where(x => x.DateReceipt.HasValue);
-                }             
+                }
                 else if (val.State == "toihan")
                 {
                     query = query.Where(x => x.DatePlanned.HasValue && now.Date == x.DatePlanned.Value && !x.DateReceipt.HasValue);
                 }
-            }         
+            }
 
             return await query.LongCountAsync();
         }

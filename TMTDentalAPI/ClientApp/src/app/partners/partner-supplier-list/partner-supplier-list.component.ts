@@ -1,8 +1,9 @@
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
-import { PartnerService } from '../partner.service';
+import { PartnerActivePatch, PartnerService } from '../partner.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -26,7 +27,13 @@ export class PartnerSupplierListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   title = 'Nhà cung cấp';
-  constructor(private partnerService: PartnerService, private modalService: NgbModal) { }
+  filterActive = [
+    { name: 'Hoạt động', value: true },
+    { name: 'Ngưng hoạt động', value: false }
+  ];
+  active: boolean = true;
+  defaultFilterActive: any = this.filterActive[0];
+  constructor(private partnerService: PartnerService, private modalService: NgbModal, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -49,6 +56,7 @@ export class PartnerSupplierListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.supplier = true;
+    val.active = (this.active || this.active == false) ? this.active : '';
     val.search = this.search || '';
     val.computeCreditDebit = true;
 
@@ -114,4 +122,33 @@ export class PartnerSupplierListComponent implements OnInit {
     }, () => {
     });
   }
+
+  onChangeFilterActive(e) {
+    this.active = e ? e.value : null;
+    this.loadDataFromApi();
+  }
+
+  onClickActive(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = (item.active ? 'Hiện nhà cung cấp ' : 'Ẩn nhà cung cấp ') + item.name;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((item.active ? 'hiện nhà cung cấp ' : 'ẩn nhà cung cấp ') + item.name);
+    modalRef.result.then(() => {
+      var res = new PartnerActivePatch();
+      res.active = item.active ? false : true;
+      this.partnerService.patchActive(item.id, res).subscribe(() => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadDataFromApi();
+      });
+    }, () => {
+    });
+
+
+  }
+
 }
