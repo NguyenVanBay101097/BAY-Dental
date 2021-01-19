@@ -2,9 +2,10 @@
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center justify-content-between">
-                <h5>Đợt khám {{dotkham.Sequence}}</h5>
+                <h5>Đợt khám {{sequence}}</h5>
                 <div>
-                    <button *ngIf="!editModeActive" (click)="onEditDotkham()" class="btn btn-sm btn-primary">Chỉnh sửa</button>
+                    <button *ngIf="!editModeActive" (click)="onEditDotkham()" class="btn btn-sm btn-primary mr-1">Chỉnh sửa</button>
+                    <button type="button" *ngIf="!editModeActive" (click)="onDeleteDotkham()" class="btn btn-sm btn-danger">Xóa</button>
                     <div *ngIf="editModeActive" class="footer d-flex align-items-center">
                         <button (click)="onSave()" class="btn btn-sm btn-primary mr-2">Lưu</button>
                         <button (click)="onCancel()" class="btn btn-sm btn-secondary">Đóng</button>

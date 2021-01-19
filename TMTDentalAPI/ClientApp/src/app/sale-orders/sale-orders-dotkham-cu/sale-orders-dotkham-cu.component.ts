@@ -10,7 +10,9 @@ import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
@@ -29,10 +31,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   @Input() dotkham: any;
   @Output() dotkhamChange = new EventEmitter<any>();
   @Input() activeDotkham: any;
+  @Input() index: number = 0;
+  @Input() sequence: number = 0;
 
   @Output() btnSaveEvent = new EventEmitter<any>();
   @Output() btnCancelEvent = new EventEmitter<any>();
   @Output() btnEditEvent = new EventEmitter<any>();
+  @Output() btnDeleteEvent = new EventEmitter<any>();
 
   dotkhamForm: FormGroup;
   empList: any[];
@@ -49,12 +54,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     private empService: EmployeesOdataService,
     private intelService: IntlService,
     private authService: AuthService,
-    private dotkhamService: DotkhamOdataService,
+    private dotkhamODataService: DotkhamOdataService,
     private notificationService: NotificationService,
     private differs: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
     private modalService: NgbModal,
-    private saleOrdersOdataService: SaleOrdersOdataService
+    private saleOrdersOdataService: SaleOrdersOdataService,
+    private dotKhamService: DotKhamService
   ) { }
   ngDoCheck(): void {
     const changes = this.differ.diff(this.dotkham.Lines);
@@ -143,7 +149,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   stopPropagation(e) {
     e.stopPropagation();
   }
-  
+
   loadRecord() {
     this.dotkhamForm.get('Date').setValue(new Date(this.dotkham.Date));
     this.dotkhamForm.get('Doctor').setValue(this.dotkham.Doctor);
@@ -246,6 +252,23 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     // this.onEmitDotkham(this.dotkham, false, this.dotkham);
   }
 
+  onDeleteDotkham() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Xóa đợt khám " + this.sequence;
+
+    modalRef.result.then(() => {
+      this.dotKhamService.delete(this.dotkham.Id).subscribe(() => {
+        this.btnDeleteEvent.emit(this.dotkham);
+      }, (err) => {
+        console.log(err);
+      });
+    }, () => { });
+  }
+
   onSave() {
     if (this.dotkhamForm.invalid) {
       return;
@@ -269,9 +292,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       // });
       this.btnSaveEvent.emit(val);
     } else {
-      // this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
+      // this.dotkhamODataService.update(this.Id, val).subscribe((res: any) => {
       //   this.notify('success', 'Lưu thành công');
-      //   this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
+      //   this.dotkhamODataService.getInfo(this.Id).subscribe((res2: any) => {
       //     this.dotkham = res2;
       //     this.onEmitDotkham(this.dotkham, false, null);
       //   });
@@ -280,18 +303,18 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     }
 
     // if (!this.Id) {
-    //   this.dotkhamService.create(val).subscribe((res: any) => {
+    //   this.dotkhamODataService.create(val).subscribe((res: any) => {
     //     this.notify('success', 'Lưu thành công');
-    //     this.dotkhamService.getInfo(res.Id).subscribe((res2: any) => {
+    //     this.dotkhamODataService.getInfo(res.Id).subscribe((res2: any) => {
     //       this.dotkham = res2;
     //       this.onEmitDotkham(this.dotkham, false, null);
     //       this.loadRecord();
     //     });
     //   });
     // } else {
-    //   this.dotkhamService.update(this.Id, val).subscribe((res: any) => {
+    //   this.dotkhamODataService.update(this.Id, val).subscribe((res: any) => {
     //     this.notify('success', 'Lưu thành công');
-    //     this.dotkhamService.getInfo(this.Id).subscribe((res2: any) => {
+    //     this.dotkhamODataService.getInfo(this.Id).subscribe((res2: any) => {
     //       this.dotkham = res2;
     //       this.onEmitDotkham(this.dotkham, false, null);
     //     });
