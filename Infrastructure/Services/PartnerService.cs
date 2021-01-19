@@ -146,33 +146,34 @@ namespace Infrastructure.Services
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            //var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
-            //                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
 
-            //if (val.ComputeCreditDebit)
-            //{
-
-            //    var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
-            //    foreach (var item in items)
-            //    {
-            //        item.Credit = creditDebitDict[item.Id].Credit;
-            //        item.Debit = creditDebitDict[item.Id].Debit;
-            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-            //    }
-            //}
-            //else
-            //{
-            //    foreach (var item in items)
-            //    {
-            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-            //    }
-            //}
-
-            return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+            if (val.ComputeCreditDebit)
             {
-                Items = _mapper.Map<IEnumerable<PartnerBasic>>(items)
-            };
+                var partnerBasics = _mapper.Map<List<PartnerBasic>>(items);
+                var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
+                foreach (var item in partnerBasics)
+                {
+                    item.Credit = creditDebitDict[item.Id].Credit;
+                    item.Debit = creditDebitDict[item.Id].Debit;
+                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+                }
+                return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+                {
+                    Items = partnerBasics
+                };
+            }
+            else
+            {
+                return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+                {
+                    Items = _mapper.Map<IEnumerable<PartnerBasic>>(items)
+                };
+            }
+
         }
+
 
 
         public async Task<AppointmentBasic> GetNextAppointment(Guid id)
@@ -1213,7 +1214,7 @@ namespace Infrastructure.Services
             }
             catch (Exception ex)
             {
-                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message} };
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message } };
             }
 
             return new PartnerImportResponse { Success = true };

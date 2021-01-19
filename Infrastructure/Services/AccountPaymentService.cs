@@ -696,6 +696,26 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val)
+        {
+            var accMoveObj = GetService<IAccountMoveService>();
+            var queryAccMove = accMoveObj.SearchQuery(x => x.Type == "in_invoice" && x.InvoicePaymentState == "not_paid" && x.AmountResidual != 0);
+            if (val.InvoicesIds != null && val.InvoicesIds.Any())
+                queryAccMove = queryAccMove.Where(x => val.InvoicesIds.Contains(x.Id));
+
+            if (val.PartnerId.HasValue)
+                queryAccMove = queryAccMove.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            var result = await queryAccMove.Select(x => new AccountRegisterPaymentDisplay
+            {
+                Amount = queryAccMove.Sum(x => x.AmountResidual.Value),
+                PaymentType = "outbound",
+                PartnerId = x.PartnerId,
+                PartnerType = x.Partner.Customer ? "customer" : (x.Partner.Supplier ? "supplier" : ""),
+            }).FirstOrDefaultAsync();
+            return result;
+        }
+
         public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
         {
             var payment = _mapper.Map<AccountPayment>(val);

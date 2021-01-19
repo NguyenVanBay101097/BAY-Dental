@@ -26,13 +26,17 @@
     <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
         [loading]="loading">
         <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>
-        <kendo-grid-column field="name" title="Tên" width="200"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a routerLink="/partners/supplier/{{dataItem.id}}" class="text-primary">{{dataItem.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="phone" title="Điện thoại" width="120"></kendo-grid-column>
-        <!-- <kendo-grid-column field="debit" title="Công nợ" width="120">
+        <kendo-grid-column field="debit" title="Công nợ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.debit | number}}
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button title="Sửa" (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-1"><i

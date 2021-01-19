@@ -26,6 +26,7 @@ export class PartnerBasic {
     address: string;
     birthYear: number;
     displayName: string;
+    dateCreated: string;
     age: string;
 }
 export class PartnerDisplay extends PartnerBasic {
@@ -89,7 +90,7 @@ export class PartnerPaged {
     limit: number;
     customer: boolean;
     employee: boolean;
-    companyId:string;
+    companyId: string;
     supplier: boolean;
     search: string;
     categoryId: string;

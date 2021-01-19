@@ -424,6 +424,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(rec);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDefaultPayment(PartnerDefaultSearch val)
+        {
+            var rec = await _paymentService.PartnerDefaultGetV2(val);
+            return Ok(rec);
+        }
+
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.PartnerLocation")]
         public async Task<IActionResult> ReportLocationCompanyWard(PartnerReportLocationCompanySearch val)
