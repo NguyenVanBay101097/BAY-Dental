@@ -157,8 +157,7 @@ namespace TMTDentalAPI.OdataControllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            //return ve list<Guid>;
-            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).OrderByDescending(x => x.Sequence).Select(x => x.Id).ToListAsync();
+            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == key).OrderByDescending(x => x.DateCreated).Select(x => x.Id).ToListAsync();
 
             return Ok(dotKhamIds);
         }
