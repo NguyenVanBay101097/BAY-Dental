@@ -75,14 +75,10 @@ namespace TMTDentalAPI.Controllers
 
             try
             {
-                var a = User.Identity.IsAuthenticated;
-
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).FirstOrDefaultAsync();
-                    var ad = User.Identity.IsAuthenticated;
-
                     if (!user.Active)
                     { await _signInManager.SignOutAsync();
                         throw new Exception("Tài khoản đã bị dừng hoạt động");
