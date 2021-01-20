@@ -14,7 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<Partner, PartnerSimpleContact>();
             CreateMap<Partner, PartnerBasic>()
-                .ForMember(x => x.LastAppointmentDate, x => x.MapFrom(s => s.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date));
+                .ForMember(x => x.LastAppointmentDate, x => x.MapFrom(s => s.Appointments.OrderByDescending(s => s.Date).FirstOrDefault().Date))
+                .ForMember(x =>x.Categories, x=> x.MapFrom(s=> s.PartnerPartnerCategoryRels.Select(x=>x.Category).ToList()));
 
             CreateMap<Partner, PartnerDisplay>()
                 .ForMember(x => x.Categories, x => x.MapFrom(s => s.PartnerPartnerCategoryRels))

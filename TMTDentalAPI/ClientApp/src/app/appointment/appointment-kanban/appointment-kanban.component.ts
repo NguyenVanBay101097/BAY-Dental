@@ -280,4 +280,32 @@ export class AppointmentKanbanComponent implements OnInit {
       }
     });
   }
+
+  exportExcelFile() {
+    var val = new AppointmentPaged();
+    val.limit = 0;
+    if (this.state) {
+      val.state = this.state;
+    }
+    if (this.search) {
+      val.search = this.search;
+    }
+
+    val.doctorId = this.filterEmployee ? this.filterEmployee.id : '';
+
+    val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
+    val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
+    this.appointmentService.exportExcel(val).subscribe((result: any) => {
+      let filenam = 'ExportAppoiment';
+      let newBlob = new Blob([result], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement('a');
+      link.href = data;
+      link.download = filenam;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 }

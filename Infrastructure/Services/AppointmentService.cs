@@ -349,6 +349,67 @@ namespace Infrastructure.Services
             }).FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<AppointmentBasic>> GetExelData(AppointmentPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Doctor.Name.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                || x.Partner.Ref.Contains(val.Search));
 
+            if (val.DateTimeFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateTimeFrom);
+
+            if (val.DateTimeTo.HasValue)
+            {
+                var dateTo = val.DateTimeTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateTo);
+            }
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DotKhamId.HasValue)
+                query = query.Where(x => x.DotKhamId == val.DotKhamId);
+
+            if (!string.IsNullOrEmpty(val.UserId))
+                query = query.Where(x => x.UserId == val.UserId);
+
+            string[] stateList = null;
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                stateList = (val.State).Split(",");
+                query = query.Where(x => stateList.Contains(x.State));
+            }
+
+            if (val.PartnerId.HasValue)
+            {
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            }
+
+            if (val.SaleOrderId.HasValue)
+            {
+                query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
+            }
+
+            if (val.DoctorId.HasValue)
+                query = query.Where(x => x.DoctorId == val.DoctorId);
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var totalItems = await query.CountAsync();
+
+            var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
+
+            var items = await query
+                .Include(x => x.Partner).Include("Partner.PartnerPartnerCategoryRels.Category")
+                .Include(x => x.Doctor)
+                .OrderBy(x => x.Date).ThenBy(x => x.Time)
+                .Skip(val.Offset)
+                .Take(limit)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<AppointmentBasic>>(items);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using TMTDentalAPI.Services;
 using Umbraco.Web.Models.ContentEditing;
@@ -267,6 +269,61 @@ namespace TMTDentalAPI.Controllers
             await _appointmentService.UpdateAsync(entity);
 
             return NoContent();
+        }
+
+        [CheckAccess(Actions = "Basic.Appointment.Update")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcel([FromQuery] AppointmentPaged appointmentPaged)
+        {
+            var data = await _appointmentService.GetExelData(appointmentPaged);
+            var stream = new MemoryStream();
+            byte[] fileContent;
+            var stateDict = new Dictionary<string, string>() {
+                {"confirmed", "Đang hẹn" },
+                {"waiting", "Chờ khám" },
+                {"examination", "Đang khám" },
+                {"done", "Hoàn thành" },
+                {"cancel", "Hủy hẹn" },
+            };
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                worksheet.Cells[1, 1].Value = "Khách hàng";
+                worksheet.Cells[1, 2].Value = "Bác sĩ";
+                worksheet.Cells[1, 3].Value = "Thời gian";
+                worksheet.Cells[1, 4].Value = "Số điện thoại";
+                worksheet.Cells[1, 5].Value = "Tuổi";
+                worksheet.Cells[1, 6].Value = "Nhãn khách hàng";
+                worksheet.Cells[1, 7].Value = "Trạng thái";
+                worksheet.Cells[1, 8].Value = "Nội dung";
+
+                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
+                    worksheet.Cells[row, 2].Value = item.DoctorName;
+                    worksheet.Cells[row, 3].Value = item.Date;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 4].Value = item.PartnerPhone;
+                    worksheet.Cells[row, 5].Value = item.Partner.Age;
+                    worksheet.Cells[row, 6].Value = string.Join(", ", item.Partner.Categories.OrderBy(x=> x.Name).Select(x => x.Name));
+                    worksheet.Cells[row, 7].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                    worksheet.Cells[row, 8].Value = item.Note;
+
+                    row++;
+                }
+                worksheet.Column(4).Style.Numberformat.Format = "@";
+                worksheet.Cells.AutoFitColumns();
+                package.Save();
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }
