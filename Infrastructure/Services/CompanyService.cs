@@ -1156,6 +1156,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
+            if (val.Active != null)
+            {
+                query = query.Where(x => x.Active == val.Active);
+            }
+
             query = query.OrderBy(s => s.Name);
             return query;
         }
@@ -1174,6 +1179,27 @@ namespace Infrastructure.Services
 
         }
 
+
+        public async Task ActionArchive(IEnumerable<Guid> ids)
+        {
+            var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach(var company in companies)
+            {
+                if (company.Id == CompanyId)
+                    throw new Exception("Không thể đóng chi nhánh đang làm việc");
+                company.Active = false;
+            }
+            await UpdateAsync(companies);
+        }
+
+        public async Task ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var company in companies)
+                company.Active = true;
+
+            await UpdateAsync(companies);
+        }
     }
 
     public class IRModelCsvLine

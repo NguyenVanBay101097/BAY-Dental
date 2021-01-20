@@ -239,6 +239,34 @@ namespace TMTDentalAPI.Controllers
             return Ok(true);
         }
 
+        /// <summary>
+        /// Đóng
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.ActionArchive(ids);
+            _unitOfWork.Commit();
+            return Ok(true);
+        }
+
+        /// <summary>
+        /// Mở
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.ActionUnArchive(ids);
+            _unitOfWork.Commit();
+            return Ok(true);
+        }
+
         private async Task SaveLogo(Company company, CompanyDisplay val)
         {
             if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))

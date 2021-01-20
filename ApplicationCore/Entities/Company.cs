@@ -33,5 +33,10 @@ namespace ApplicationCore.Entities
         public AccountAccount AccountExpense { get; set; }
 
         public string Logo { get; set; }
+
+        /// <summary>
+        /// Trạng thái chi nhánh
+        /// </summary>
+        public bool Active { get; set; }
     }
 }

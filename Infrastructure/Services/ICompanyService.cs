@@ -20,5 +20,7 @@ namespace Infrastructure.Services
         Task Unlink(Company self);
         Task InsertModuleProductData();
         Task InsertModuleDentalData();
+        Task ActionArchive(IEnumerable<Guid> ids);
+        Task ActionUnArchive(IEnumerable<Guid> ids);
     }
 }
