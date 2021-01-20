@@ -239,6 +239,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(true);
         }
 
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Active(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.Active(id);
+            _unitOfWork.Commit();
+            return Ok(true);
+        }
+
         private async Task SaveLogo(Company company, CompanyDisplay val)
         {
             if (!string.IsNullOrEmpty(val.Logo) && ImageHelper.IsBase64String(val.Logo))

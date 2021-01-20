@@ -6,6 +6,7 @@ import { CompanyService, CompanyPaged, CompanyBasic } from '../company.service';
 import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-company-list',
@@ -19,10 +20,18 @@ export class CompanyListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  active = true;
   opened = false;
   loading = false;
 
-  constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService) { }
+  constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService, 
+    private notificationService: NotificationService) { }
+
+  filterCompanyStatus = [
+    { name: 'Đang hoạt động', value: true },
+    { name: 'Ngưng hoạt động', value: false }
+  ];
+  defaultFilter: any = this.filterCompanyStatus[0];
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -38,7 +47,7 @@ export class CompanyListComponent implements OnInit {
     var val = new CompanyPaged();
     val.offset = this.skip;
     val.limit = this.limit;
-
+    val.active = this.active;
     this.companyService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -46,6 +55,7 @@ export class CompanyListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(res);
       this.loading = false;
     }, err => {
       console.log(err);
@@ -85,6 +95,37 @@ export class CompanyListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  actionActive(item, active) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    if (active) {
+      modalRef.componentInstance.title = "Hiện chi nhánh " + item.name;
+      modalRef.componentInstance.body = "Bạn có chắc chắn muốn hiện chi nhánh " + item.name;
+    } else {
+      modalRef.componentInstance.title = "Ẩn chi nhánh " + item.name;
+      modalRef.componentInstance.body = "Bạn có chắc chắn muốn ẩn chi nhánh " + item.name;
+    }
+    modalRef.result.then(() => {
+      this.companyService.active(item.id).subscribe((res) => {
+        this.loadDataFromApi();
+        this.notificationService.show({
+          content: active ? "Hiện chi nhánh thành công" : "Ẩn chi nhánh thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
+      }, (err) => {
+  
+      })
+    }, () => {
+    });
+  }
+
+  onStateSelectChange(event){
+    this.active = event != null ? event.value : '';
+    this.loadDataFromApi();
   }
 
 }

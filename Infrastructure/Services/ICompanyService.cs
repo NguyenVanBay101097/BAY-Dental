@@ -20,5 +20,6 @@ namespace Infrastructure.Services
         Task Unlink(Company self);
         Task InsertModuleProductData();
         Task InsertModuleDentalData();
+        Task Active(Guid id);
     }
 }

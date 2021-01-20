@@ -1156,6 +1156,11 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
+            if (val.Active != null)
+            {
+                query = query.Where(x => x.Active == val.Active);
+            }
+
             query = query.OrderBy(s => s.Name);
             return query;
         }
@@ -1172,6 +1177,19 @@ namespace Infrastructure.Services
                     return null;
             }
 
+        }
+
+        public async Task Active(Guid id)
+        {
+            if (CompanyId == id)
+                throw new Exception("Không thể thực hiện trên chi nhánh đang làm việc");
+
+            var company = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (company == null)
+                throw new Exception("Không tìm thấy chi nhánh");
+
+            company.Active = !company.Active;
+            await UpdateAsync(company);
         }
 
     }

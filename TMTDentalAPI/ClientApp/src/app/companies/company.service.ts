@@ -6,6 +6,7 @@ export class CompanyPaged {
     search: string;
     limit: number;
     offset: number;
+    active: boolean;
 }
 
 export class CompanyBasic {
@@ -61,5 +62,9 @@ export class CompanyService {
 
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    active(id: string){
+        return this.http.put(this.baseApi + this.apiUrl + "/Active/" + id, {});
     }
 }
