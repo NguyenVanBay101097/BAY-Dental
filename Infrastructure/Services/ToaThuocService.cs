@@ -267,15 +267,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
-            if (val.Limit > 0)
-            {
-                query = query.Skip(val.Offset).Take(val.Limit);
-            }
-
-            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
 
-            return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, val.Limit)
+            var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
+            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(limit)).ToListAsync();
+          
+            return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, limit)
             {
                 Items = items
             };
