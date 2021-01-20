@@ -239,11 +239,30 @@ namespace TMTDentalAPI.Controllers
             return Ok(true);
         }
 
-        [HttpPut("[action]/{id}")]
-        public async Task<IActionResult> Active(Guid id)
+        /// <summary>
+        /// Đóng
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _companyService.Active(id);
+            await _companyService.ActionArchive(ids);
+            _unitOfWork.Commit();
+            return Ok(true);
+        }
+
+        /// <summary>
+        /// Mở
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _companyService.ActionUnArchive(ids);
             _unitOfWork.Commit();
             return Ok(true);
         }

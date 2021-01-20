@@ -1179,17 +1179,25 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task Active(Guid id)
+
+        public async Task ActionArchive(IEnumerable<Guid> ids)
         {
-            if (CompanyId == id)
-                throw new Exception("Không thể thực hiện trên chi nhánh đang làm việc");
+            var companies = await SearchQuery(x => ids.Contains(x.Id) && CompanyId != x.Id).ToListAsync();
+            foreach(var company in companies)
+            {
+                company.Active = true;
+            }
+            await UpdateAsync(companies);
+        }
 
-            var company = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (company == null)
-                throw new Exception("Không tìm thấy chi nhánh");
-
-            company.Active = !company.Active;
-            await UpdateAsync(company);
+        public async Task ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            var companies = await SearchQuery(x => ids.Contains(x.Id) && CompanyId != x.Id).ToListAsync();
+            foreach (var company in companies)
+            {
+                company.Active = false;
+            }
+            await UpdateAsync(companies);
         }
 
     }
