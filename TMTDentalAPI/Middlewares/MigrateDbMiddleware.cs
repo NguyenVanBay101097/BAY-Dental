@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -73,6 +74,12 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task AddMissingData(HttpContext context)
         {
+            await AddMissingModelField(context);
+            await AddMissingResGroupUserRel(context);
+        }
+
+        public async Task AddMissingModelField(HttpContext context)
+        {
             var fieldObj = (IIRModelFieldService)context.RequestServices.GetService(typeof(IIRModelFieldService));
             var fieldStd = await fieldObj.SearchQuery(x => x.Name == "standard_price" && x.Model == "product.product").FirstOrDefaultAsync();
             if (fieldStd == null)
@@ -84,11 +91,32 @@ namespace TMTDentalAPI.Middlewares
                     IRModelId = model.Id,
                     Model = "product.product",
                     Name = "standard_price",
-                    TType = "decimal",
+                    TType = "float",
                 };
 
                 await fieldObj.CreateAsync(fieldStd);
             }
+        }
+
+        public async Task AddMissingResGroupUserRel(HttpContext context)
+        {
+            var _userManager = (UserManager<ApplicationUser>)context.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
+            var _iRModelDataService = (IIRModelDataService)context.RequestServices.GetService(typeof(IIRModelDataService));
+            var _resGroupService = (IResGroupService)context.RequestServices.GetService(typeof(IResGroupService));
+            //get group internal user to add to user then call function add all group to user
+            var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
+            //find all users who don't have internal group
+            var users = await _userManager.Users.Where(x => !x.ResGroupsUsersRels.Any(x => x.GroupId == groupInternalUser.Id)).Include(x => x.ResGroupsUsersRels).ToListAsync();
+            if (!users.Any())
+                return;
+
+            foreach (var user in users)
+            {
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = groupInternalUser.Id });
+                await _userManager.UpdateAsync(user);
+            }
+
+            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { groupInternalUser });
         }
     }
 }

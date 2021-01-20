@@ -29,7 +29,8 @@ export class LoginComponent implements OnInit {
       if (data.succeeded) {
         this.router.navigateByUrl('/');
       } else {
-        alert("Tài khoản hoặc mật khẩu không đúng");
+        // alert("Tài khoản hoặc mật khẩu không đúng");
+        alert(data.message);
       }
     }, error => {
       console.log('error login', error);

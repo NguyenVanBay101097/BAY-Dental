@@ -217,9 +217,10 @@ namespace Infrastructure.Services
 
         public async Task<bool> ActionActive(Guid id, EmployeeActive val)
         {
-            var entity = SearchQuery(x => x.Id == id).FirstOrDefault();
+            var entity = SearchQuery(x => x.Id == id).Include(x=>x.User).FirstOrDefault();
             if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
             entity.Active = val.Active;
+            entity.User.Active = val.Active;
             await UpdateAsync(entity);
             return true;
         }

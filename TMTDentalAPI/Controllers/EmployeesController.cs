@@ -26,10 +26,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerService _partnerService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
+        private readonly IIRModelDataService _iRModelDataService;
+        private readonly IResGroupService _resGroupService;
 
         public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
-            UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService)
+            UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService,
+            IIRModelDataService iRModelDataService, IResGroupService resGroupService
+            )
         {
             _employeeService = employeeService;
             _structureTypeService = structureTypeService;
@@ -38,6 +42,8 @@ namespace TMTDentalAPI.Controllers
             _partnerService = partnerService;
             _userManager = userManager;
             _roleFunctionService = roleFunctionService;
+            _iRModelDataService = iRModelDataService;
+            _resGroupService = resGroupService;
         }
 
         [HttpGet]
@@ -179,6 +185,8 @@ namespace TMTDentalAPI.Controllers
                                 else
                                     throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
                             }
+
+                            await SaveUserResGroup(user);
                         }
                         catch (Exception)
                         {
@@ -221,6 +229,33 @@ namespace TMTDentalAPI.Controllers
                     await _userManager.UpdateAsync(user);
                 }
             }
+        }
+
+        private async Task SaveUserResGroup( ApplicationUser user)
+        {
+            //get group internal user to add to user then call function add all group to user
+            var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
+            var to_add = new List<Guid>();
+            if (groupInternalUser != null)
+                to_add.Add(groupInternalUser.Id);
+            var add_dict = _resGroupService._GetTransImplied(to_add);
+
+            foreach (var group_id in to_add)
+            {
+                var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
+                if (rel2 == null)
+                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
+
+                var groups = add_dict[group_id];
+                foreach (var group in groups)
+                {
+                    var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
+                    if (rel == null)
+                        user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
+                }
+            }
+            await _userManager.UpdateAsync(user);
+            await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
         }
 
         private void UpdatePartnerToEmployee(Employee employee)
@@ -291,11 +326,18 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Employee.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var employee = await _employeeService.GetByIdAsync(id);
+            //var employee = await _employeeService.GetByIdAsync(id);
+            await _unitOfWork.BeginTransactionAsync();
+            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
+
             if (employee == null)
                 return NotFound();
+            if(employee.User != null )
+            {
+                await _userManager.DeleteAsync(employee.User);
+            }
             await _employeeService.DeleteAsync(employee);
-
+            _unitOfWork.Commit();
             return NoContent();
         }
 
