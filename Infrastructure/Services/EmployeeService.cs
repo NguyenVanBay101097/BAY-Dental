@@ -48,7 +48,7 @@ namespace Infrastructure.Services
             if (val.IsAssistant.HasValue)
                 query = query.Where(x => x.IsAssistant == val.IsAssistant);
 
-            if(val.Active.HasValue)
+            if (val.Active.HasValue)
             {
                 query = query.Where(x => x.Active == val.Active.Value);
             }
@@ -87,13 +87,13 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.Category).OrderByDescending(x => x.DateCreated);
-            if (val.Limit > 0 )
+            query = query.Include(x => x.User).OrderByDescending(x => x.DateCreated);
+            if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
-            var items = await query
-                .ToListAsync();
+
+            var items = await query.ToListAsync();
 
             return new PagedResult2<EmployeeBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -112,7 +112,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-            var items = await query.Where(x=>x.Active == true).Skip(val.Offset).Take(val.Limit)
+            var items = await query.Where(x => x.Active == true).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
@@ -196,7 +196,7 @@ namespace Infrastructure.Services
             //    entity.IsDoctor = false;
             //}
             await base.UpdateAsync(entity);
-             //CheckConstraints(entity);
+            //CheckConstraints(entity);
         }
 
         public async Task updateSalary(EmployeeDisplay val, Employee emp)
