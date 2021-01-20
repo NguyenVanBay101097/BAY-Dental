@@ -102,25 +102,27 @@ export class CompanyListComponent implements OnInit {
     if (active) {
       modalRef.componentInstance.title = "Hiện chi nhánh " + item.name;
       modalRef.componentInstance.body = "Bạn có chắc chắn muốn hiện chi nhánh " + item.name;
+      modalRef.result.then(() => {
+        this.companyService.actionArchive([item.id]).subscribe((res) => {
+          this.loadDataFromApi();
+        }, (err) => {
+    
+        })
+      }, () => {
+      });
     } else {
       modalRef.componentInstance.title = "Ẩn chi nhánh " + item.name;
       modalRef.componentInstance.body = "Bạn có chắc chắn muốn ẩn chi nhánh " + item.name;
+      modalRef.result.then(() => {
+        this.companyService.actionUnArchive([item.id]).subscribe((res) => {
+          this.loadDataFromApi();
+        }, (err) => {
+    
+        })
+      }, () => {
+      });
     }
-    modalRef.result.then(() => {
-      this.companyService.active(item.id).subscribe((res) => {
-        this.loadDataFromApi();
-        this.notificationService.show({
-          content: active ? "Hiện chi nhánh thành công" : "Ẩn chi nhánh thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
-      }, (err) => {
-  
-      })
-    }, () => {
-    });
+
   }
 
   onStateSelectChange(event){

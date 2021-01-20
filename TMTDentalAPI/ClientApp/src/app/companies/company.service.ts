@@ -64,7 +64,11 @@ export class CompanyService {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    active(id: string){
-        return this.http.put(this.baseApi + this.apiUrl + "/Active/" + id, {});
+    actionArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionArchive", ids);
+    }
+
+    actionUnArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionUnArchive", ids);
     }
 }
