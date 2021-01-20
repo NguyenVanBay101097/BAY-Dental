@@ -41,8 +41,6 @@ namespace TMTDentalAPI.Controllers
         private readonly ITCareJobService _tcareJobService;
         private readonly IApplicationRoleFunctionService _applicationRoleFunctionService;
 
-        private readonly CatalogDbContext _context;
-
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,
@@ -75,15 +73,16 @@ namespace TMTDentalAPI.Controllers
 
             try
             {
+                var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).FirstOrDefaultAsync();
+                if (user == null)
+                    throw new Exception($"Tên đăng nhập {model.UserName} không tồn tại");
+
+                if (!user.Active)
+                    throw new Exception($"Tên đăng nhập {model.UserName} không khả dụng");
+
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).FirstOrDefaultAsync();
-                    if (!user.Active)
-                    { await _signInManager.SignOutAsync();
-                        throw new Exception("Tài khoản đã bị dừng hoạt động");
-                    }
-
                     var refreshToken = await GenerateRefreshToken(user);
                     var roles = new List<string>();
 
@@ -128,7 +127,7 @@ namespace TMTDentalAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("Refresh")]
-        public async Task<ActionResult> Refresh([FromBody]RefreshViewModel model)
+        public async Task<ActionResult> Refresh([FromBody] RefreshViewModel model)
         {
             var refreshToken = await _userRefreshTokenRepository.SearchQuery(x => x.Token == model.RefreshToken)
                 .Include(x => x.User).FirstOrDefaultAsync();
@@ -313,7 +312,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetUserInfo(string id)
         {
-            var entity = await _userManager.Users.Where(x => x.Id == id).Include(x=>x.Partner).FirstOrDefaultAsync();
+            var entity = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Partner).FirstOrDefaultAsync();
             var user = new UserInfo
             {
                 Name = entity.Name,
