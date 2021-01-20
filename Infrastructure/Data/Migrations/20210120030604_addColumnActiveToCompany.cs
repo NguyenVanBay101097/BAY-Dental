@@ -10,7 +10,7 @@ namespace Infrastructure.Data.Migrations
                 name: "Active",
                 table: "Companies",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

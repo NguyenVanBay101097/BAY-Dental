@@ -1182,24 +1182,24 @@ namespace Infrastructure.Services
 
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
-            var companies = await SearchQuery(x => ids.Contains(x.Id) && CompanyId != x.Id).ToListAsync();
+            var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach(var company in companies)
             {
-                company.Active = true;
+                if (company.Id == CompanyId)
+                    throw new Exception("Không thể đóng chi nhánh đang làm việc");
+                company.Active = false;
             }
             await UpdateAsync(companies);
         }
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
         {
-            var companies = await SearchQuery(x => ids.Contains(x.Id) && CompanyId != x.Id).ToListAsync();
+            var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var company in companies)
-            {
-                company.Active = false;
-            }
+                company.Active = true;
+
             await UpdateAsync(companies);
         }
-
     }
 
     public class IRModelCsvLine

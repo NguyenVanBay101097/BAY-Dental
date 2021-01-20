@@ -103,7 +103,7 @@ export class CompanyListComponent implements OnInit {
       modalRef.componentInstance.title = "Hiện chi nhánh " + item.name;
       modalRef.componentInstance.body = "Bạn có chắc chắn muốn hiện chi nhánh " + item.name;
       modalRef.result.then(() => {
-        this.companyService.actionArchive([item.id]).subscribe((res) => {
+        this.companyService.actionUnArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
         }, (err) => {
     
@@ -114,7 +114,7 @@ export class CompanyListComponent implements OnInit {
       modalRef.componentInstance.title = "Ẩn chi nhánh " + item.name;
       modalRef.componentInstance.body = "Bạn có chắc chắn muốn ẩn chi nhánh " + item.name;
       modalRef.result.then(() => {
-        this.companyService.actionUnArchive([item.id]).subscribe((res) => {
+        this.companyService.actionArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
         }, (err) => {
     
