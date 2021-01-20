@@ -64,6 +64,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Allowance { get; set; }
 
         public bool Active { get; set; }
+
+        public string UserName { get; set; }
     }
 
     public class EmployeeDisplay

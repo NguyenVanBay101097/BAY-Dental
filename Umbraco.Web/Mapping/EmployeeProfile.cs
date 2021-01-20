@@ -14,7 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<Employee, EmployeeSimple>();
             CreateMap<Employee, EmployeeSimpleContact>();
-            CreateMap<Employee, EmployeeBasic>();
+            CreateMap<Employee, EmployeeBasic>()
+                .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName));
 
             CreateMap<EmployeeDisplay, Employee>()
                 .ForMember(x => x.Id, x => x.Ignore())

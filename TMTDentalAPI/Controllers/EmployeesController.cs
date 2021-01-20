@@ -243,7 +243,7 @@ namespace TMTDentalAPI.Controllers
         private async Task UpdateSalary(EmployeeSave val, Employee emp)
         {
             var accessResult = await _roleFunctionService.HasAccess(new string[] { "Catalog.Employee.Salary.Update" });
-            if (!accessResult.Access)
+            if (accessResult.Access)
             {
                 emp.Wage = val.Wage;
                 emp.HourlyWage = val.HourlyWage;
