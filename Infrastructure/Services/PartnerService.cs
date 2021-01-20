@@ -50,6 +50,7 @@ namespace Infrastructure.Services
             }
         }
 
+
         public async Task<PagedResult2<Partner>> GetPagedResultAsync(int offset, int limit, string search = "", string searchBy = "", bool? customer = null)
         {
             //Tìm kiếm partner search theo tên hoặc mã khách hàng, hoặc theo số điện thoại

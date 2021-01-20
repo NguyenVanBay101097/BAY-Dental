@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AccountRegisterPaymentDisplay } from 'src/app/account-payments/account-register-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
@@ -21,6 +23,7 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   partnerId: string;
   partnerType: string;
   formGroup: FormGroup;
+  defaultVal: AccountRegisterPaymentDisplay;
   loading = false;
   public aggregates: any[] = [
     { field: 'amountResidual', aggregate: 'sum' }
@@ -32,7 +35,8 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
     private authService: AuthService,
     private accountJournalService: AccountJournalService,
     private paymentService: AccountPaymentService,
-    private intlService: IntlService
+    private intlService: IntlService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -57,12 +61,15 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
       this.filteredJournals = result;
       this.journalCbx.loading = false;
     });
-
-    if (this.rowsSelected) {
-      var total = aggregateBy(this.rowsSelected, this.aggregates);
-      this.formGroup.get('amount').setValue(total && total.amountResidual ? total.amountResidual.sum : 0)
+    if (this.defaultVal) {
+      this.loadFormApi();
     }
 
+  }
+
+  loadFormApi() {
+    this.formGroup.patchValue(this.defaultVal);
+    this.rowsSelected = this.rowsSelected.filter(x => this.defaultVal.invoiceIds.includes(x.id));
   }
 
   loadFilteredJournals() {
@@ -83,6 +90,13 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   onPayment() {
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Thanh toán thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.activeModal.close(true);
       }, (err) => {
       });
@@ -90,12 +104,15 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
     });
   }
 
-  create() {
+  checkAmount() {
+    if (!this.formGroup.get('amount').value ) {
+      this.formGroup.get('amount').setValue(0);
+    }
+  }
+
+  create() {  
     var val = this.formGroup.value;
     val.journalId = val.journal.id;
-    val.partnerId = this.partnerId;
-    val.partnerType = this.partnerType;
-    val.invoiceIds = this.rowsSelected.map(x => x.id);
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
     return this.paymentService.create(val);
   }

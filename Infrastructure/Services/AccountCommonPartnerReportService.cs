@@ -435,6 +435,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.InvoiceOrigin.Contains(val.Search));
+
             var results = await query.ToListAsync();
             return _mapper.Map<IEnumerable<AccountMoveBasic>>(results);
         }

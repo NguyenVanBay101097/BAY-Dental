@@ -7,7 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PartnerDefaultSearch
     {
         public Guid? PartnerId { get; set; }
-        public IEnumerable<Guid> InvoicesIds { get; set; } = new List<Guid>();
-        public string ResultSelection { get; set; }
+        public IEnumerable<Guid> InvoiceIds { get; set; } = new List<Guid>();
+        public Guid? CompanyId { get; set; }
     }
 }

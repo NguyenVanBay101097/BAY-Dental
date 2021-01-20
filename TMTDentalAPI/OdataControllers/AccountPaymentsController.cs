@@ -44,7 +44,11 @@ namespace TMTDentalAPI.OdataControllers
         public async Task<IActionResult> GetPrint([FromODataUri] Guid key)
         {
             var res = await _accountPaymentService.GetPrint(key);
-            var html = _view.Render("AccountPaymentPrint", res);
+            string html;
+            if (res.PartnerType == "customer")
+                html = _view.Render("AccountPaymentPrint", res);
+            else
+                html = _view.Render("PaymentSupplierPrint", res);
             return Ok(new PrintData() { html = html });
         }
     }

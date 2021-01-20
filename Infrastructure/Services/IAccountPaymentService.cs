@@ -24,6 +24,7 @@ namespace Infrastructure.Services
 
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
 
+
         Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val);
     }

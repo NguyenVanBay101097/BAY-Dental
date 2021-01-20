@@ -1,8 +1,11 @@
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
-            <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
-            <button class="btn btn-primary btn-sm">Xuất file</button>
+            <div class="payment">
+                <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
+                <span *ngIf="countPayment != 0" class="count-payment">{{countPayment}}</span>
+            </div>
+            <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
@@ -22,11 +25,11 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" 
-        [selectable]="selectableSettings" (pageChange)="pageChange($event)"
-        kendoGridSelectBy="id" (selectedKeysChange)="chooseRows($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        [selectable]="selectableSettings" (pageChange)="pageChange($event)" kendoGridSelectBy="id"
+        (selectedKeysChange)="chooseRows($event)">
         <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}"
-            [columnMenu]="true" showSelectAll="true"></kendo-grid-checkbox-column>
+            showSelectAll="true"></kendo-grid-checkbox-column>
         <kendo-grid-column field="invoiceDate" title="Ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.invoiceDate | date:'shortDate'}}

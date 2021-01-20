@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PartnerDisplay } from '../partner-simple';
 import { PartnerService } from '../partner.service';
@@ -16,6 +17,7 @@ export class PartnerSupplierFormInforComponent implements OnInit {
   constructor(
     private activeRoute: ActivatedRoute,
     private modalService: NgbModal,
+    private notificationService: NotificationService,
     private partnerService: PartnerService
   ) { }
 
@@ -28,8 +30,6 @@ export class PartnerSupplierFormInforComponent implements OnInit {
   LoadData() {
     this.partnerService.getPartner(this.id).subscribe((result) => {
       this.supplier = result;
-      console.log(result);
-
     })
   }
 
@@ -39,6 +39,13 @@ export class PartnerSupplierFormInforComponent implements OnInit {
     modalRef.componentInstance.id = this.id;
 
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.LoadData();
     }, () => {
     });

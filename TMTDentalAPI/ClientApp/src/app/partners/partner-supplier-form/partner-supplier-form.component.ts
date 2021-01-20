@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PartnerDisplay } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 
 @Component({
@@ -8,15 +9,24 @@ import { PartnerService } from '../partner.service';
   styleUrls: ['./partner-supplier-form.component.css']
 })
 export class PartnerSupplierFormComponent implements OnInit {
+  id: string;
+  supplier: PartnerDisplay = new PartnerDisplay();
   constructor(
     private activeRoute: ActivatedRoute,
     private partnerService: PartnerService
   ) { }
 
   ngOnInit() {
-   
+    this.id = this.id = this.activeRoute.paramMap.source['value'].id;
+    if (this.id) {
+      this.LoadData();
+    }
   }
 
-  
+  LoadData() {
+    this.partnerService.getPartner(this.id).subscribe((result) => {
+      this.supplier = result;
+    })
+  }
 
 }

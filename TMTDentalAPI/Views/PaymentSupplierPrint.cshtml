@@ -1,0 +1,157 @@
+﻿@model Umbraco.Web.Models.ContentEditing.AccountPaymentPrintVM
+@{
+    Layout = "~/Views/Shared/_LayoutA5.cshtml";
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var today = DateTime.Now;
+}
+    <style>
+        .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+            padding: 2px 10px;
+        }
+    </style>
+
+<div class="o_form_view">
+    <div class="media mb-2">
+        @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+        {
+            <img class="mr-3 company_logo" src="@Model.CompanyLogo" alt="@Model.CompanyName">
+        }
+        <div class="media-body">
+            <h5 class="mb-0">@Model.CompanyName</h5>
+            @if (!string.IsNullOrEmpty(Model.CompanyAddress))
+            {
+                <div>Địa chỉ: @Model.CompanyAddress</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.CompanyPhone))
+            {
+                <div>Điện thoại: @Model.CompanyPhone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.CompanyEmail))
+            {
+                <div>Email: @Model.CompanyEmail</div>
+            }
+        </div>
+    </div>
+    <div class="text-center">
+        <h2>BIÊN LAI THANH TOÁN</h2>
+        <div>Ngày @today.Day tháng @today.Month năm @today.Year</div>
+        <div class="font-weight-600">Số: @Model.PaymentName</div>
+    </div>
+    <div class="o_group mb-0">
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Ngày thanh toán:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:dd/MM/yyyy}", Model.PaymentDate))</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Địa chỉ:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PartnerAddress)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Loại chi:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PaymentType)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số tiền:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:0,0}", Model.Amount))</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Bằng chữ:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:0,0}", Model.AmountText))</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Nhà cung cấp:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PartnerName)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số điện thoại:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.PartnerPhone)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help" style="white-space:nowrap">
+                            Phương thức thanh toán:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.JournalName)</td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Nội dung:
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">@(Model.Communication)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row mt-3">
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                <div class="text-center">
+                    <span>
+                        Người lập phiếu
+                    </span> <br />
+                    <em>
+                        (Ký, họ tên)
+                    </em>
+                </div><br />
+
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.UserName</span>
+            </div>
+        </div>
+        <div class="col col-sm">
+            <div class="text-center font-weight-600">
+                <div class="text-center">
+                    <span>
+                        Người nhận tiền
+                    </span> <br />
+                    <em>
+                        (Ký, họ tên)
+                    </em>
+                </div><br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span>@Model.PartnerName</span>
+            </div>
+        </div>
+    </div>
+</div>
