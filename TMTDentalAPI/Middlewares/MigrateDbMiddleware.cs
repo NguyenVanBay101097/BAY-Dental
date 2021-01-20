@@ -74,7 +74,7 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task AddMissingData(HttpContext context)
         {
-           await AddMissingModelField(context);
+            await AddMissingModelField(context);
             await AddMissingResGroupUserRel(context);
         }
 
@@ -91,7 +91,7 @@ namespace TMTDentalAPI.Middlewares
                     IRModelId = model.Id,
                     Model = "product.product",
                     Name = "standard_price",
-                    TType = "decimal",
+                    TType = "float",
                 };
 
                 await fieldObj.CreateAsync(fieldStd);
@@ -105,33 +105,18 @@ namespace TMTDentalAPI.Middlewares
             var _resGroupService = (IResGroupService)context.RequestServices.GetService(typeof(IResGroupService));
             //get group internal user to add to user then call function add all group to user
             var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
-            var to_add = new List<Guid>();
-            if (groupInternalUser != null)
-                to_add.Add(groupInternalUser.Id);
-            var add_dict = _resGroupService._GetTransImplied(to_add);
-
             //find all users who don't have internal group
-            var users = await _userManager.Users.Where(x => !x.ResGroupsUsersRels.Any(x => x.GroupId == groupInternalUser.Id)).Include(x=>x.ResGroupsUsersRels).ToListAsync();
+            var users = await _userManager.Users.Where(x => !x.ResGroupsUsersRels.Any(x => x.GroupId == groupInternalUser.Id)).Include(x => x.ResGroupsUsersRels).ToListAsync();
+            if (!users.Any())
+                return;
 
             foreach (var user in users)
             {
-                foreach (var group_id in to_add)
-                {
-                    var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
-                    if (rel2 == null)
-                        user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
-
-                    var groups = add_dict[group_id];
-                    foreach (var group in groups)
-                    {
-                        var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
-                        if (rel == null)
-                            user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
-                    }
-                }
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = groupInternalUser.Id });
                 await _userManager.UpdateAsync(user);
             }
-            await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
+
+            await _resGroupService.AddAllImpliedGroupsToAllUser(new List<ResGroup>() { groupInternalUser });
         }
     }
 }

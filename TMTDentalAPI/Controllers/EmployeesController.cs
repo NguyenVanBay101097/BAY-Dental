@@ -229,7 +229,6 @@ namespace TMTDentalAPI.Controllers
                     await _userManager.UpdateAsync(user);
                 }
             }
-
         }
 
         private async Task SaveUserResGroup( ApplicationUser user)
