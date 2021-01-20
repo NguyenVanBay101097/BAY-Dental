@@ -86,6 +86,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string comment { get; set; }
         public int? BirthMonth { get; set; }
         public int? BirthDay { get; set; }
+
+        public bool Active { get; set; }
     }
 
     public class PartnerPaged
@@ -110,11 +112,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> TagIds { get; set; } = new List<Guid>();
 
         public bool ComputeCreditDebit { get; set; }
+
+        public bool? Active { get; set; }
     }
 
     public class PartnerPatch
     {
         public string Avatar { get; set; }
+    }
+
+    public class PartnerActivePatch
+    {
+        public bool Active { get; set; }
     }
 
     public class PartnerImportExcel

@@ -146,6 +146,10 @@ export class CustomerStatisticsOutput {
     details: CustomerStatisticsDetails;
 }
 
+export class PartnerActivePatch {
+    active: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -476,6 +480,11 @@ export class PartnerService {
     getCustomerStatistics(data: any) {
         return this.http.post<CustomerStatisticsOutput>(this.baseApi + this.apiUrl + '/CustomerStatistics', data);
     }
+
+    patchActive(id, val): Observable<any> {
+        return this.http.patch(this.baseApi + "api/Partners/" + id + '/PatchActive', val);
+    }
+
 }
 
 

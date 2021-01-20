@@ -174,6 +174,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     var val = new PartnerPaged();
     val.supplier = true;
     val.search = filter;
+    val.active = true;
     return this.partnerService.getAutocompleteSimple(val);
   }
 

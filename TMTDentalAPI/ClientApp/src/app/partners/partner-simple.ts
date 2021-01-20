@@ -91,6 +91,7 @@ export class PartnerPaged {
     employee: boolean;
     companyId:string;
     supplier: boolean;
+    active: any = true;
     search: string;
     categoryId: string;
     tagIds: string[];
