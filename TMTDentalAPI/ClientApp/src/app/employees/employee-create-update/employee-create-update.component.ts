@@ -257,6 +257,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
     }
+    value.commissionId = value.commission ? value.commission.id : null;
 
     this.isChange = true;
 
