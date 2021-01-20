@@ -105,6 +105,13 @@ export class CompanyListComponent implements OnInit {
       modalRef.result.then(() => {
         this.companyService.actionArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
+          this.notificationService.show({
+            content: "Hiện chi nhánh thành công",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
         }, (err) => {
     
         })
@@ -116,6 +123,13 @@ export class CompanyListComponent implements OnInit {
       modalRef.result.then(() => {
         this.companyService.actionUnArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
+          this.notificationService.show({
+            content: "Ẩn chi nhánh thành công",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
         }, (err) => {
     
         })
