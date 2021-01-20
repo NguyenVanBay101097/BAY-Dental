@@ -98,7 +98,7 @@ namespace Infrastructure.Services
             if (val.ProductId.HasValue)
             {
                 var productObj = GetService<IProductService>();
-                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x=>x.ProductUoMRels).Include(x => x.UOM)
+                var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.ProductUoMRels).Include(x => x.UOM)
                     .FirstOrDefaultAsync();
                 res.ProductId = product.Id;
                 res.Product = _mapper.Map<ProductBasic>(product);
@@ -267,17 +267,16 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
-            if (val.Limit > 0)
-            {
-                query = query.Skip(val.Offset).Take(val.Limit);
-            }
+            query = query.OrderByDescending(x => x.DateCreated);
 
-            var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            //var items = await _mapper.ProjectTo<ToaThuocBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ToaThuocBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<ToaThuocBasic>>(items)
             };
         }
 

@@ -466,10 +466,14 @@ namespace Infrastructure.Services
 
                 var move = await _PrepareAccountMove(order);
 
-                var amlObj = GetService<IAccountMoveLineService>();
-                amlObj.PrepareLines(move.Lines);
+                //var amlObj = GetService<IAccountMoveLineService>();
+                //amlObj.PrepareLines(move.Lines);
 
-                await moveObj.CreateMoves(new List<AccountMove>() { move }, "in_invoice");
+                //await moveObj.CreateMoves(new List<AccountMove>() { move }, "in_invoice");
+
+                //tạo accountmove , override create move handing compute movelines, compute move 
+                await moveObj.CreateAsync(move);
+
                 await moveObj.ActionPost(new List<AccountMove>() { move });
 
                 order.State = "confirmed";
@@ -484,13 +488,14 @@ namespace Infrastructure.Services
             //tạo account move
             var accountObj = GetService<IAccountAccountService>();
             var amlObj = GetService<IAccountMoveLineService>();
-
+            var payableAccount = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
+            var productAccount = await accountObj.SearchQuery(x => x.CompanyId == self.CompanyId && x.Code == "1561").FirstOrDefaultAsync();
             var accountMoveObj = GetService<IAccountMoveService>();
             var journal = await accountMoveObj.GetDefaultJournalAsync(default_type: "in_invoice", default_company_id: self.CompanyId);
             if (journal == null)
                 throw new Exception($"Please define an accounting purchase journal for the company {CompanyId}.");
 
-            var invoice_vals = new AccountMove
+            var move = new AccountMove
             {
                 Type = "in_invoice",
                 PartnerId = self.PartnerId,
@@ -500,17 +505,16 @@ namespace Infrastructure.Services
                 InvoiceOrigin = self.Name,
             };
 
-            var payableAccount = await accountObj.SearchQuery(x => x.InternalType == "payable" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
-            var productAccount = await accountObj.SearchQuery(x => x.CompanyId == self.CompanyId && x.Code == "1561").FirstOrDefaultAsync();
+           
 
             var amountTotal = self.AmountTotal;
             var lines = new List<AccountMoveLine>()
             {
                 new AccountMoveLine
                 {
-                    Move = invoice_vals,
+                    Move = move,
                     ProductId = self.ProductId,
-                    PartnerId = invoice_vals.PartnerId,
+                    PartnerId = move.PartnerId,
                     Name = self.Product.Name,
                     Debit = amountTotal,
                     Credit = 0,
@@ -519,9 +523,9 @@ namespace Infrastructure.Services
                 },
                 new AccountMoveLine
                 {
-                    Move = invoice_vals,
+                    Move = move,
                     ProductId = self.ProductId,
-                    PartnerId = invoice_vals.PartnerId,
+                    PartnerId = move.PartnerId,
                     Debit = 0,
                     Credit = amountTotal,
                     AccountId = payableAccount.Id,
@@ -533,9 +537,7 @@ namespace Infrastructure.Services
             //compute residual
             //compute property
 
-            amlObj._ComputeBalance(lines);
-
-            return invoice_vals;
+            return move;
         }
 
         public AccountMoveLine _PrepareAccountMoveLine(LaboOrderLine self, AccountMove move)
