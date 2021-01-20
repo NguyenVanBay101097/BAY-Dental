@@ -38,7 +38,7 @@ namespace Infrastructure.Services
         //{
         //    var amlObj = GetService<IAccountMoveLineService>();
 
-        //    foreach(var line in self.Lines)
+        //    foreach (var line in self.Lines)
         //    {
         //        line.Date = self.Date;
         //        line.ParentState = self.State;
