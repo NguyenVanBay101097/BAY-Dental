@@ -281,6 +281,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
+      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }
