@@ -349,7 +349,7 @@ namespace Infrastructure.Services
             }).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<AppointmentBasic>> GetExelData(AppointmentPaged val)
+        public async Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))

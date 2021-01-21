@@ -296,7 +296,7 @@ export class AppointmentKanbanComponent implements OnInit {
     val.dateTimeFrom = this.intlService.formatDate(this.dateList[0], 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.dateList[this.dateList.length - 1], 'yyyy-MM-dd');
     this.appointmentService.exportExcel(val).subscribe((result: any) => {
-      let filenam = 'ExportAppoiment';
+      let filenam = 'DanhSachLichHen';
       let newBlob = new Blob([result], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement('a');
