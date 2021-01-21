@@ -362,7 +362,7 @@ namespace TMTDentalAPI.Controllers
             var res = new UserChangeCurrentCompanyVM
             {
                 CurrentCompany = _mapper.Map<CompanyBasic>(user.Company),
-                Companies = _mapper.Map<IEnumerable<CompanyBasic>>(user.ResCompanyUsersRels.Select(x => x.Company))
+                Companies = _mapper.Map<IEnumerable<CompanyBasic>>(user.ResCompanyUsersRels.Select(x => x.Company).Where(x => x.Active == true))
             };
 
             return Ok(res);

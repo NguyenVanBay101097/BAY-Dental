@@ -73,12 +73,16 @@ namespace TMTDentalAPI.Controllers
 
             try
             {
-                var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).FirstOrDefaultAsync();
+                var user = await _userManager.Users.Where(x => x.UserName == model.UserName).Include(x => x.Partner).Include(x=>x.Company).FirstOrDefaultAsync();
+               
                 if (user == null)
                     throw new Exception($"Tên đăng nhập {model.UserName} không tồn tại");
 
                 if (!user.Active)
                     throw new Exception($"Tên đăng nhập {model.UserName} không khả dụng");
+
+                if(user.Company.Active == false)
+                    throw new Exception($"Tên đăng nhập {model.UserName} không thể truy cập vào chi nhánh đã bị đóng");
 
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
