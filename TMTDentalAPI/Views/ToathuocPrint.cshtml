@@ -8,7 +8,7 @@
     <div class="d-flex mb-1">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-        <img class="me-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        <img class="me-3" style="width: 100px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
         <div class="media-body">
             @if (!string.IsNullOrEmpty(Model.Company.Name))
