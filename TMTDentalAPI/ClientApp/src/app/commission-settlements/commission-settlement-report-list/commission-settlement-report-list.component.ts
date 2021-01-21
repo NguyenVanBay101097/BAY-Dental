@@ -123,6 +123,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
   searchCompanies(filter?: string) {
     var val = new CompanyPaged();
     val.search = filter || '';
+    val.active = true;
     return this.companyService.getPaged(val);
   }
 

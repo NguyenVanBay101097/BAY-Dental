@@ -91,6 +91,7 @@ export class SaleReportOverviewComponent implements OnInit {
 
   loadCompanies() {
     var val = new CompanyPaged();
+    val.active = true;
     this.companyService.getPaged(val)
       .subscribe(res => {
         this.listCompanies = res.items;
