@@ -5,27 +5,27 @@
 }
 
 <div class="o_form_view">
-    <div class="media mb-1">
+    <div class="d-flex mb-1">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        <img class="me-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
-    <div class="media-body">
-        @if (!string.IsNullOrEmpty(Model.Company.Name))
+        <div class="media-body">
+            @if (!string.IsNullOrEmpty(Model.Company.Name))
         {
             <h5 class="mb-0">@Model.Company.Name</h5>
         }
-        @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
         {
             <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
         }
-        @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
         {
             <div>
                 <span>ĐT: @Model.Company.Phone</span>
                 @if (!string.IsNullOrEmpty(Model.Company.Email))
                 {
-                    <span> - Email: @Model.Company.Email</span>
+                <span> - Email: @Model.Company.Email</span>
                 }
             </div>
         }
@@ -33,10 +33,10 @@
         {
             @if (!string.IsNullOrEmpty(Model.Company.Email))
             {
-                <span>Email: @Model.Company.Email</span>
+            <span>Email: @Model.Company.Email</span>
             }
         }
-    </div>
+        </div>
     </div>
     <div class="text-center mb-1">
         <h4 class="mb-0">ĐƠN THUỐC</h4>
@@ -83,7 +83,7 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.Partner.GetGender()</td>
                     </tr>
-                 
+
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
@@ -102,25 +102,25 @@
                 @{ var index = 1; }
                 @foreach (var line in Model.Lines)
                 {
-                    <tr>
-                        <td><span class="pl-3 font-weight-600">@(index++).</span></td>
-                        <td>
-                            <div>
-                                <span class="font-weight-600">@line.Product.Name</span>
-                            </div>
-                            <div class="pl-3">
-                                Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
-                                mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
-                                uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày
-                            </div>
-                        </td>
-                        <td class="text-right">
-                            <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
-                        </td>
-                        <td>
-                            @line.Product.UOM.Name
-                        </td>
-                    </tr>
+                <tr>
+                    <td><span class="pl-3 font-weight-600">@(index++).</span></td>
+                    <td>
+                        <div>
+                            <span class="font-weight-600">@line.Product.Name</span>
+                        </div>
+                        <div class="pl-3">
+                            Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
+                            mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
+                            uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
+                    </td>
+                    <td>
+                        @line.Product.UOM.Name
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>

@@ -4,16 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - TPOS.VN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
 
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <!-- Load paper.css for happy printing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
     <style>
         @@page {
-            size: A5
-        }
-
-        body {
-            font-size: 10.5pt;
+            size: A5!important;
         }
 
         .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
