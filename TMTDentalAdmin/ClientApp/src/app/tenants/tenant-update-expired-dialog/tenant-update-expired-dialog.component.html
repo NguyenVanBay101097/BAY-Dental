@@ -10,19 +10,30 @@
             <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ngày hết hạn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateExpired">
-                                    </kendo-datepicker>
-                                </td>
-                            </tr>
-                        </tbody>
+                      <tbody>
+                        <tr>
+                          <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                              Ngày hết hạn
+                            </label>
+                          </td>
+                          <td colspan="1" style="width: 100%;">
+                            <kendo-datepicker formControlName="dateExpired">
+                            </kendo-datepicker>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                              Số chi nhánh được mở
+                            </label>
+                          </td>
+                          <td colspan="1" style="width: 100%;">
+                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="activeCompaniesNbr">
+                            </kendo-numerictextbox>
+                          </td>
+                        </tr>
+                      </tbody>
                     </table>
                 </div>
             </div>

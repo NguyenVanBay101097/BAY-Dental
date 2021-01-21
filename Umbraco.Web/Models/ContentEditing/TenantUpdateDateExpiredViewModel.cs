@@ -8,5 +8,6 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public DateTime? DateExpired { get; set; }
+        public int ActiveCompaniesNbr { get; set; }
     }
 }

@@ -67,6 +67,10 @@ export class TenantListComponent implements OnInit {
     modalRef.componentInstance.id = dataItem.id;
     modalRef.componentInstance.title = `Gia hạn: ${dataItem.hostname}`;
     modalRef.componentInstance.dateExpired = dataItem.dateExpired ? new Date(dataItem.dateExpired) : null;
+    modalRef.componentInstance.tenant = {
+      dateExpired: dataItem.dateExpired ? new Date(dataItem.dateExpired) : null,
+      activeCompaniesNbr: dataItem.activeCompaniesNbr
+    };
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

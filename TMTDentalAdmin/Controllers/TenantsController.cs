@@ -108,7 +108,7 @@ namespace TMTDentalAdmin.Controllers
                 clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
                 using (var client = new HttpClient(new RetryHandler(clientHandler)))
                 {
-                    response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                    response = await client.PostAsJsonAsync($"https://localhost:4200/api/companies/setuptenant", new
                     {
                         CompanyName = val.CompanyName,
                         Name = val.Name,
@@ -141,6 +141,7 @@ namespace TMTDentalAdmin.Controllers
             var tenant = await _tenantService.GetByIdAsync(val.Id);
             var oldDateExpired = tenant.DateExpired;
             tenant.DateExpired = val.DateExpired;
+            tenant.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
             await _tenantService.UpdateAsync(tenant);
 
             try
@@ -149,13 +150,7 @@ namespace TMTDentalAdmin.Controllers
                 clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
 
                 HttpResponseMessage response = null;
-                using (var client = new HttpClient(new RetryHandler(clientHandler)))
-                {
-                    response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
-                }
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Có lỗi xảy ra");
+                
             }
             catch(Exception e)
             {

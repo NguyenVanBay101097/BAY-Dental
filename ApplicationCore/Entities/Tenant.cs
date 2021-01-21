@@ -29,5 +29,7 @@ namespace ApplicationCore.Entities
         public DateTime? DateExpired { get; set; }
 
         public string Version { get; set; }
+
+        public int ActiveCompaniesNbr { get; set; } = 0;
     }
 }

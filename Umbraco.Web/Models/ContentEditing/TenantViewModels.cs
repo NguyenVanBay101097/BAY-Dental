@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateCreated { get; set; }
 
         public DateTime? DateExpired { get; set; }
+
+        public int ActiveCompaniesNbr { get; set; }
     }
 
     public class TenantDisplay
