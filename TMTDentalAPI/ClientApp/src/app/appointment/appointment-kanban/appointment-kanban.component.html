@@ -6,8 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -18,13 +17,13 @@
                         <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
                     <button class="btn btn-primary btn-sm" (click)="refreshData()">
                         <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
+                                <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
                 <div>
-                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
-                        class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx
-                        [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
+                    <kendo-combobox [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)" class="kendo-combobox-sm" [filterable]="true" [data]="listEmployees" #employeeCbx [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox>
                 </div>
             </div>
@@ -33,8 +32,7 @@
             <div class="btn-group o_search_options">
                 <app-appointment-state-filter (searchChange)="onStateSearchChange($event)">
                 </app-appointment-state-filter>
-                <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onDateSearchChange($event)">
+                <app-appointment-date-filter [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-appointment-date-filter>
             </div>
         </div>
@@ -47,38 +45,31 @@
             <div class="o_kanban_group o_kanban_has_progressbar" *ngFor="let date of dateList">
                 <div class="o_kanban_header">
                     <div class="o_kanban_header_title">
-                        <span class="o_column_title"
-                            *ngIf="date.toDateString() != today.toDateString()">{{date | date: 'EEEE'}},
+                        <span class="o_column_title" *ngIf="date.toDateString() != today.toDateString()">{{date | date: 'EEEE'}},
                             {{date | date: 'dd/MM'}}</span>
-                        <span class="o_column_title text-success"
-                            *ngIf="date.toDateString() == today.toDateString()">Hôm
+                        <span class="o_column_title text-success" *ngIf="date.toDateString() == today.toDateString()">Hôm
                             nay,
                             {{date | date: 'dd/MM'}}</span>
                     </div>
                 </div>
-                <div class="oe_kanban_color_0 oe_kanban_card o_kanban_record"
-                    [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 
+                <div class="oe_kanban_color_0 oe_kanban_card o_kanban_record" [ngClass]="{'oe_kanban_color_11': appointment.state == 'confirmed', 
                         'oe_kanban_color_3': appointment.state == 'waiting', 
                         'oe_kanban_color_7': appointment.state == 'examination', 
                         'oe_kanban_color_2': appointment.state == 'done', 
-                        'oe_kanban_color_5': appointment.state == 'cancel'}"
-                    *ngFor="let appointment of appointmentByDate[date.toDateString()]">
+                        'oe_kanban_color_5': appointment.state == 'cancel'}" *ngFor="let appointment of appointmentByDate[date.toDateString()]">
                     <div class="oe_kanban_content">
                         <div class="o_kanban_record_top">
                             <div class="o_kanban_record_headings">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <a class="text-primary o_kanban_record_title" title="Xem hồ sơ khách hàng"
-                                            [routerLink]="['/partners/customer/' + appointment.partnerId]">
+                                        <a class="text-primary o_kanban_record_title" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + appointment.partnerId]">
                                             <span>{{appointment.partnerDisplayName}}</span>
                                         </a>
                                     </div>
                                     <div>
                                         <div class="d-flex">
-                                            <i class="far fa-edit text-success mr-1 click_i "
-                                                (click)="editAppointment(appointment);$event.stopPropagation();"></i>
-                                            <i class="far fa-trash-alt text-danger click_i "
-                                                (click)="deleteAppointment(appointment)"></i>
+                                            <i class="far fa-edit text-success mr-1 click_i " (click)="editAppointment(appointment);$event.stopPropagation();"></i>
+                                            <i class="far fa-trash-alt text-danger click_i " (click)="deleteAppointment(appointment)"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -98,7 +89,7 @@
                                 </div>
                             </div>
                         </div>
-             
+
                     </div>
                 </div>
             </div>
