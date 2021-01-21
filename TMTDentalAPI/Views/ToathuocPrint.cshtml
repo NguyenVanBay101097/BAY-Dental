@@ -103,22 +103,20 @@
                 @foreach (var line in Model.Lines)
                 {
                 <tr>
-                    <td><span class="pl-3 font-weight-600">@(index++).</span></td>
+                    <td width="30"><span class="font-weight-600">@(index++).</span></td>
                     <td>
-                        <div>
-                            <span class="font-weight-600">@line.Product.Name</span>
+                        <div class="d-flex justify-content-between">
+                            <div class="font-weight-600">@line.Product.Name</div>
+                            <div>
+                                <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
+                                @line.Product.UOM.Name
+                            </div>
                         </div>
-                        <div class="pl-3">
+                        <div>
                             Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
                             mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
-                            uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày
+                            uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày (<span class="font-weight-600">@line.GetUseAtDisplay()</span>)
                         </div>
-                    </td>
-                    <td class="text-right">
-                        <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
-                    </td>
-                    <td>
-                        @line.Product.UOM.Name
                     </td>
                 </tr>
                 }
