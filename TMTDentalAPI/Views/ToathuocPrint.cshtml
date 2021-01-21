@@ -5,38 +5,47 @@
 }
 
 <div class="o_form_view">
-    <div class="media mb-2">
+    <div class="media mb-1">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
             <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
-        <div class="media-body">
-            @if (!string.IsNullOrEmpty(Model.Company.Name))
-            {
-                <h5> @Model.Company.Name</h5>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
-            {
-                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>Điện thoại: @Model.Company.Phone</div>
-            }
+    <div class="media-body">
+        @if (!string.IsNullOrEmpty(Model.Company.Name))
+        {
+            <h5 class="mb-0">@Model.Company.Name</h5>
+        }
+        @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+        {
+            <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Company.Phone))
+        {
+            <div>
+                <span>ĐT: @Model.Company.Phone</span>
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <span> - Email: @Model.Company.Email</span>
+                }
+            </div>
+        }
+        else
+        {
             @if (!string.IsNullOrEmpty(Model.Company.Email))
             {
-                <div>Email: @Model.Company.Email</div>
+                <span>Email: @Model.Company.Email</span>
             }
-        </div>
+        }
     </div>
-    <div class="text-center mb-3">
-        <h3 class="mb-0">ĐƠN THUỐC</h3>
+    </div>
+    <div class="text-center mb-1">
+        <h4 class="mb-0">ĐƠN THUỐC</h4>
         <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
         <div class="font-weight-600">Số: @Model.Name</div>
     </div>
     <div>
-        <div class="row">
-            <table class="o_group o_inner_group col-8">
+        <div class="o_group mt-0 mb-0">
+            <table class="o_group o_inner_group o_group_col_8">
                 <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -44,15 +53,7 @@
                                 Khách hàng
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">[@Model.Partner.Ref] &nbsp; @Model.Partner.Name</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Giới tính
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@Model.Partner.GetGender()</td>
+                        <td colspan="1" style="width: 100%;">@Model.Partner.DisplayName</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -62,10 +63,6 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@Model.Partner.GetAddress()</td>
                     </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group col-4">
-                <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
@@ -74,6 +71,19 @@
                         </td>
                         <td colspan="1" style="width: 100%;">@(Model.Employee == null ? "" : Model.Employee.Name)</td>
                     </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_4">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Giới tính
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.Partner.GetGender()</td>
+                    </tr>
+                 
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
@@ -87,27 +97,29 @@
         </div>
     </div>
     <div>
-        <table class="table table-sm mb-0">
-            <thead>
-                <tr>
-                    <th>Tên thuốc</th>
-                    <th class="text-center">Ngày uống</th>
-                    <th class="text-center">Mỗi lần</th>
-                    <th class="text-center">Số ngày</th>
-                    <th>Sử dụng</th>
-                    <th class="text-center">Số lượng</th>
-                </tr>
-            </thead>
+        <table class="table table-sm table-borderless">
             <tbody>
+                @{ var index = 1; }
                 @foreach (var line in Model.Lines)
                 {
                     <tr>
-                        <td>@line.Product.Name</td>
-                        <td class="text-center">@line.NumberOfTimes.ToString("n0") lần</td>
-                        <td class="text-center">@line.AmountOfTimes.ToString("n0") @line.Product.UOM.Name</td>
-                        <td class="text-center">@line.NumberOfDays.ToString("n0")</td>
-                        <td>@line.GetUseAtDisplay()</td>
-                        <td class="text-center">@line.Quantity.ToString("n0", culture)</td>
+                        <td><span class="pl-3 font-weight-600">@(index++).</span></td>
+                        <td>
+                            <div>
+                                <span class="font-weight-600">@line.Product.Name</span>
+                            </div>
+                            <div class="pl-3">
+                                Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
+                                mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
+                                uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
+                        </td>
+                        <td>
+                            @line.Product.UOM.Name
+                        </td>
                     </tr>
                 }
             </tbody>
