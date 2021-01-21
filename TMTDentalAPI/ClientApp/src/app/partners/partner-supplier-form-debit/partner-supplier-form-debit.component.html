@@ -4,22 +4,14 @@
             <div class="payment">
                 <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
                 <span *ngIf="countPayment != 0" class="count-payment">{{countPayment}}</span>
+                <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
             </div>
-            <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
                 <input class="o_searchview_input" placeholder="Tìm kiếm theo số hóa đơn, số phiếu labo" type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
-        </div>
-        <div class="o_cp_right">
         </div>
     </div>
 </div>
