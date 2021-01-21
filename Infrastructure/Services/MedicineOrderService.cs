@@ -191,6 +191,9 @@ namespace Infrastructure.Services
                 PaymentDate = medicineOrder.OrderDate
             };
 
+            foreach (var move in moves)
+                payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = move.Id });
+
             var paymentObj = GetService<IAccountPaymentService>();
             await paymentObj.CreateAsync(payment);
             await paymentObj.Post(new List<Guid>() { payment.Id });
