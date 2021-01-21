@@ -73,7 +73,7 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
 
   onViewImage() {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    const img = {uploadId: this.imageFileUrl, name: this.imageId, id: this.imageId,note: null,date: Date() } as (PartnerImageBasic);
+    const img = {uploadId: this.imageId, name: this.imageId, id: this.imageId,note: null,date: Date() } as (PartnerImageBasic);
     modalRef.componentInstance.partnerImages = [img];
     modalRef.componentInstance.partnerImageSelected = img;
   }
