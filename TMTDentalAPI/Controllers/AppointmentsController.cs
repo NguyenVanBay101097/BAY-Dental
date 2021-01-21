@@ -309,8 +309,7 @@ namespace TMTDentalAPI.Controllers
                     {
                         worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
                         worksheet.Cells[row, 2].Value = item.DoctorName;
-                        worksheet.Cells[row, 3].Value = item.Date;
-                        worksheet.Cells[row, 3].Style.Numberformat.Format = "dd/MM/yyyy";
+                        worksheet.Cells[row, 3].Value = item.Time;
                         worksheet.Cells[row, 4].Value = item.PartnerPhone;
                         worksheet.Cells[row, 5].Value = item.Partner.Age;
                         worksheet.Cells[row, 6].Value = string.Join(", ", item.Partner.Categories.OrderBy(x => x.Name).Select(x => x.Name));
