@@ -446,10 +446,10 @@ namespace TMTDentalAPI.Controllers
                 var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                 worksheet.Cells[1, 1].Value = "Ngày";
-                worksheet.Cells[1, 2].Value = "Mã";
+                worksheet.Cells[1, 2].Value = "Nguồn";
                 worksheet.Cells[1, 3].Value = "Tổng tiền";
                 worksheet.Cells[1, 4].Value = "Thanh toán";
-                worksheet.Cells[1, 5].Value = "Công nợ";
+                worksheet.Cells[1, 5].Value = "Còn nợ";
 
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
@@ -460,12 +460,15 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 2].Value = item.InvoiceOrigin;
                     worksheet.Cells[row, 3].Value = item.AmountTotal;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "#,##";
                     worksheet.Cells[row, 4].Value = item.AmountTotal - item.AmountResidual;
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##";
                     worksheet.Cells[row, 5].Value = item.AmountResidual;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##";
+
                     row++;
                 }
 
-                worksheet.Column(8).Style.Numberformat.Format = "@";
                 worksheet.Cells.AutoFitColumns();
 
                 package.Save();
@@ -655,6 +658,14 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _partnerService.GetCustomerStatistics(val);
             return Ok(result);
+        }
+
+        //lấy danh sách hóa đơn còn nợ của 1 partner
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery]string search = "")
+        {
+            var moves = await _partnerService.GetUnreconcileInvoices(id, search);
+            return Ok(_mapper.Map<IEnumerable<AccountMoveBasic>>(moves));
         }
     }
 }

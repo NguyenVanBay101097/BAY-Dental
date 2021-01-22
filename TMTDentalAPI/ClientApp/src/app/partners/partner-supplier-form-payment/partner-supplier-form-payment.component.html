@@ -1,18 +1,17 @@
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
-    [loading]="gridLoading">
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [loading]="gridLoading">
     <kendo-grid-column field="paymentDate" title="Ngày" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.paymentDate | date : 'shortDate' }}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Số tiền" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
-        </ng-template>
-    </kendo-grid-column>
     <kendo-grid-column title="Phương thức" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.journalName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" title="Số tiền" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="communication" title="Nội dung" width="120">

@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AccountCommonPartnerReportItemDetail, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService, AccountMoveBasic } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerSupplierFormDebitPaymentDialogComponent } from '../partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
 import { PartnerService } from '../partner.service';
@@ -35,7 +36,9 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     private authService: AuthService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private accountPaymentService: AccountPaymentService,
+
   ) { }
 
   ngOnInit() {
@@ -81,8 +84,8 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     val.partnerId = this.id;
     val.search = this.search ? this.search : '';
     val.companyId = this.authService.userInfo.companyId;
-    this.reportService.getListReportPartner(val).subscribe(
-      res => {
+    this.partnerService.getUnreconcileInvoices(this.id, this.search).subscribe(
+      (res: any) => {
         this.details = res;
         this.loadItems();
         this.loading = false;
@@ -118,10 +121,11 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
       companyId: this.authService.userInfo.companyId,
       invoiceIds: this.rowsSelected.map(x => x.id)
     }
-    this.partnerService.GetDefaultPayment(val).subscribe(result => {
+    this.accountPaymentService.supplierDefaultGet(val).subscribe(result => {
       let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.rowsSelected = this.rowsSelected;
       modalRef.componentInstance.defaultVal = result;
+      modalRef.componentInstance.title = "Thanh toán nhà cung cấp";
       modalRef.result.then(() => {
         this.loadDataFromApi();
         this.rowsSelected = [];

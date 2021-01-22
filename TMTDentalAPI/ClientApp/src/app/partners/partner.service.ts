@@ -484,6 +484,14 @@ export class PartnerService {
     getCustomerStatistics(data: any) {
         return this.http.post<CustomerStatisticsOutput>(this.baseApi + this.apiUrl + '/CustomerStatistics', data);
     }
+
+    getUnreconcileInvoices(id: string, search?: string) {
+        if (search) {
+            return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetUnreconcileInvoices', { params: new HttpParams({ fromObject: { search } }) });
+        } else {
+            return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetUnreconcileInvoices');
+        }
+    }
 }
 
 

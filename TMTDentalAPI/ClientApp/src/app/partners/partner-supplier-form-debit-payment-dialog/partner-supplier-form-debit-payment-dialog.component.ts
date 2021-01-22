@@ -18,7 +18,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
-
+  title: string;
   rowsSelected: any[] = [];
   partnerId: string;
   partnerType: string;

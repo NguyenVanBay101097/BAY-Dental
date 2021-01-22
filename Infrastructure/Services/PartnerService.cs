@@ -2063,6 +2063,19 @@ namespace Infrastructure.Services
 
             return result;
         }
+
+        public async Task<IEnumerable<AccountMove>> GetUnreconcileInvoices(Guid id, string search = "")
+        {
+            var amObj = GetService<IAccountMoveService>();
+            //lấy những hóa đơn còn nợ
+            var types = new string[] { "in_invoice", "in_refund", "out_invoice", "out_refund" };
+            var query = amObj.SearchQuery(x => x.PartnerId == id && types.Contains(x.Type) && x.AmountResidual != 0);
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(x => x.InvoiceOrigin.Contains(search));
+
+            var moves = await query.OrderBy(x => x.DateCreated).ToListAsync();
+            return moves;
+        }
     }
 
     public class PartnerCreditDebitItem

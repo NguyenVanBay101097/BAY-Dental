@@ -5,6 +5,7 @@ using HtmlAgilityPack;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.TenantData;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -73,6 +74,8 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task AddMissingData(HttpContext context)
         {
+            var _unit = (IUnitOfWorkAsync)context.RequestServices.GetService(typeof(IUnitOfWorkAsync));
+           await _unit.BeginTransactionAsync();
             var fieldObj = (IIRModelFieldService)context.RequestServices.GetService(typeof(IIRModelFieldService));
             var fieldStd = await fieldObj.SearchQuery(x => x.Name == "standard_price" && x.Model == "product.product").FirstOrDefaultAsync();
             if (fieldStd == null)
@@ -88,6 +91,7 @@ namespace TMTDentalAPI.Middlewares
                 };
 
                 await fieldObj.CreateAsync(fieldStd);
+                _unit.Commit();
             }
         }
     }
