@@ -82,7 +82,7 @@ namespace Infrastructure.Services
         {
             var query = _FilterQueryable(val);
             var totalItems = await query.CountAsync();
-            query = query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit);
+            query = query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit);
             var items = await query.Select(x => new AccountMoveLineCashBookVM()
             {
                 PartnerName = x.Partner.Name,

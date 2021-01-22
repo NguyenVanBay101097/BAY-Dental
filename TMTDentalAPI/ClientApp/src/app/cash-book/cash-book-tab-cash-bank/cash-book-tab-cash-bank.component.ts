@@ -24,7 +24,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     private cashBookService: CashBookService,
   ) { }
 
-  ngOnChanges(changes:SimpleChanges): void { 
+  ngOnChanges(changes: SimpleChanges): void {
     if (this.changeDateFirst == false) {
       this.loadDataFromApi();
     } else {
@@ -34,7 +34,6 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.reportData = new ReportDataResult();
-    console.log(this.reportData);
   }
 
   getType(type) {
@@ -42,6 +41,14 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
       return "Phiếu thu";
     } else {
       return "Phiếu chi";
+    }
+  }
+
+  getTypePayment(type) {
+    if (type == "cash") {
+      return "Tiền mặt";
+    } else {
+      return "Ngân hàng";
     }
   }
 
@@ -67,7 +74,6 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
         this.loading = false;
       },
       (err) => {
-        console.log(err);
         this.loading = false;
       }
     );
@@ -78,22 +84,19 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
     this.paged.begin = false;
-    console.log(this.paged);
     this.cashBookService.getMoney(this.paged).pipe(map(
       (response: any) =>
         <GridDataResult>{
           data: response.items,
           total: response.totalItems,
         }
-      )
+    )
     ).subscribe(
       (res) => {
         this.gridData = res;
-        console.log(res);
         this.loading = false;
       },
       (err) => {
-        console.log(err);
         this.loading = false;
       }
     );

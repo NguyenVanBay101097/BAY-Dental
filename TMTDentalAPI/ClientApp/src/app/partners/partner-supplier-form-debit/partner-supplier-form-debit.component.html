@@ -1,10 +1,18 @@
-<div class="d-flex p-3">
-    <div class="o_cp_buttons flex-fill">
-        <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
-        <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
-    </div>
-    <div class="flex-fill">
-        <input class="form-control form-control-sm" placeholder="Tìm kiếm theo nguồn" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <div class="payment">
+                <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
+                <span *ngIf="countPayment != 0" class="count-payment">{{countPayment}}</span>
+                <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
+            </div>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo số hóa đơn, số phiếu labo" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
     </div>
 </div>
 

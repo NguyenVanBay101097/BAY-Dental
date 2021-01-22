@@ -433,8 +433,10 @@ namespace Infrastructure.Services
             var query = accMoveObj.SearchQuery(x => x.AmountResidual != 0 && x.Type == "in_invoice" && x.InvoicePaymentState == "not_paid");
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId.Value);
+
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.InvoiceOrigin.Contains(val.Search));
 
