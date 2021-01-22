@@ -1201,7 +1201,7 @@ namespace Infrastructure.Services
             if (_tenant != null && _tenant.ActiveCompaniesNbr > 0)
             {
                 var count = await SearchQuery(x => x.Active == true).CountAsync();
-                if (_tenant.ActiveCompaniesNbr <= (count + ids.Count())) throw new Exception("Tổng chi nhánh được phép mở là " + count);
+                if (_tenant.ActiveCompaniesNbr < (count + ids.Count())) throw new Exception("Tổng chi nhánh được phép mở là " + count);
             }
 
             var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
