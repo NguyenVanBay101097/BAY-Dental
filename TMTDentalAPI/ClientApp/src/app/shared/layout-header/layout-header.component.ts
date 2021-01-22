@@ -33,6 +33,7 @@ export class LayoutHeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    debugger;
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }

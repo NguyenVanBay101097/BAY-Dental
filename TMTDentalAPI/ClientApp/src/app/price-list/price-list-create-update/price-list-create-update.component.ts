@@ -90,6 +90,7 @@ export class PriceListCreateUpdateComponent implements OnInit {
 
   loadListCompanies() {
     var val = new CompanyPaged();
+    val.active = true;
     this.companyService.getPaged(val).subscribe(result => {
       this.listCompanies = result.items;
     });

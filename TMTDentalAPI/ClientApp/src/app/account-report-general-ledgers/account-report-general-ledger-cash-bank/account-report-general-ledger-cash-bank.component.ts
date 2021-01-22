@@ -76,6 +76,7 @@ export class AccountReportGeneralLedgerCashBankComponent implements OnInit {
   searchCompanies(search?: string) {
     var params = new CompanyPaged();
     params.search = search || '';
+    params.active = true;
     return this.companyService.getPaged(params);
   }
 }
