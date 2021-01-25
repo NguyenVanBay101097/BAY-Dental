@@ -50,6 +50,7 @@ namespace Infrastructure.Services
             }
         }
 
+
         public async Task<PagedResult2<Partner>> GetPagedResultAsync(int offset, int limit, string search = "", string searchBy = "", bool? customer = null)
         {
             //Tìm kiếm partner search theo tên hoặc mã khách hàng, hoặc theo số điện thoại
@@ -146,33 +147,34 @@ namespace Infrastructure.Services
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
-            //var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
-            //                                                                            .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
+            var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => items.Select(i => i.Id).Contains(s.PartnerId)))
+                                                                                        .Include(x => x.PartnerPartnerCategoryRels).ToListAsync();
 
-            //if (val.ComputeCreditDebit)
-            //{
-
-            //    var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
-            //    foreach (var item in items)
-            //    {
-            //        item.Credit = creditDebitDict[item.Id].Credit;
-            //        item.Debit = creditDebitDict[item.Id].Debit;
-            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-            //    }
-            //}
-            //else
-            //{
-            //    foreach (var item in items)
-            //    {
-            //        item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
-            //    }
-            //}
-
-            return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+            if (val.ComputeCreditDebit)
             {
-                Items = _mapper.Map<IEnumerable<PartnerBasic>>(items)
-            };
+                var partnerBasics = _mapper.Map<List<PartnerBasic>>(items);
+                var creditDebitDict = CreditDebitGet(items.Select(x => x.Id).ToList());
+                foreach (var item in partnerBasics)
+                {
+                    item.Credit = creditDebitDict[item.Id].Credit;
+                    item.Debit = creditDebitDict[item.Id].Debit;
+                    item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(cateList.Where(x => x.PartnerPartnerCategoryRels.Any(s => s.PartnerId == item.Id)));
+                }
+                return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+                {
+                    Items = partnerBasics
+                };
+            }
+            else
+            {
+                return new PagedResult2<PartnerBasic>(totalItems, val.Offset, val.Limit)
+                {
+                    Items = _mapper.Map<IEnumerable<PartnerBasic>>(items)
+                };
+            }
+
         }
+
 
 
         public async Task<AppointmentBasic> GetNextAppointment(Guid id)
@@ -2063,6 +2065,19 @@ namespace Infrastructure.Services
             };
 
             return result;
+        }
+
+        public async Task<IEnumerable<AccountMove>> GetUnreconcileInvoices(Guid id, string search = "")
+        {
+            var amObj = GetService<IAccountMoveService>();
+            //lấy những hóa đơn còn nợ
+            var types = new string[] { "in_invoice", "in_refund", "out_invoice", "out_refund" };
+            var query = amObj.SearchQuery(x => x.PartnerId == id && types.Contains(x.Type) && x.AmountResidual != 0);
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(x => x.InvoiceOrigin.Contains(search));
+
+            var moves = await query.OrderBy(x => x.DateCreated).ToListAsync();
+            return moves;
         }
     }
 

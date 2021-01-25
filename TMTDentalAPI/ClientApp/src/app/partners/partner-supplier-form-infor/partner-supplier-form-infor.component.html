@@ -1,0 +1,76 @@
+<form class="o_form_view">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <h1>
+                    {{supplier ? supplier.name : ''}}
+                </h1>
+                <button (click)="editSupplier()" class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Sửa</button>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Mã nhà cung cấp</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                {{supplier ? supplier.ref : ''}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Số điện thoại</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span>{{supplier ? supplier.phone : ''}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Địa chỉ</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span>{{supplier ? supplier.address : ''}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <!-- <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Ngày tạo
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span>{{supplier ? (supplier.dateCreated | date:'shortDate') : ''}}</span>
+                            </td>
+                        </tr> -->
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Số Fax
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span>{{supplier ? supplier.fax : ''}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Email
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <span>{{supplier ? supplier.email : ''}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

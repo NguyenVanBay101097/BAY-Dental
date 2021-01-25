@@ -1,0 +1,36 @@
+<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [loading]="gridLoading">
+    <kendo-grid-column field="paymentDate" title="Ngày" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.paymentDate | date : 'shortDate' }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="paymentType" title="Loại" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{showPaymentType(dataItem.paymentType)}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Phương thức" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.journalName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column class="text-right" title="Số tiền" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="communication" title="Nội dung" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column field="id" width="60">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            Thao tác
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <button type="button" class="btn btn-sm btn-secondary mr-1" (click)="printPayment(dataItem)">
+                <span class="k-icon k-i-print"></span>
+            </button>
+            <button class="btn btn-danger btn-sm" title="Xóa" (click)="draftUnlinkPayment(dataItem)">
+                <span class="far fa-trash-alt"></span></button>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

@@ -40,6 +40,11 @@ export class AccountPaymentDisplay {
     communication: string;
 }
 
+export class AccountPaymentSupplierDefaultGetRequest {
+    partnerId: string;
+    invoiceIds: string[];
+}
+
 @Injectable({providedIn: 'root'})
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
@@ -85,5 +90,7 @@ export class AccountPaymentService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
     }
 
-   
+    supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest){
+        return this.http.post(this.baseApi + this.apiUrl + '/SupplierDefaultGet', val);
+    }
 }

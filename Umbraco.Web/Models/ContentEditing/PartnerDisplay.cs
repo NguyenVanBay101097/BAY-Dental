@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Phone { get; set; }
 
+        public DateTime? DateCreated { get; set; }
         /// <summary>
         /// Mã khách hàng
         /// </summary>

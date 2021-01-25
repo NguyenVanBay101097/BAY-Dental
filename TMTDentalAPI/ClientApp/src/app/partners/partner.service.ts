@@ -272,6 +272,10 @@ export class PartnerService {
         return this.http.get(this.baseApi + "api/Partners/" + id + '/GetDefaultRegisterPayment');
     }
 
+    GetDefaultPayment(val) {
+        return this.http.post(this.baseApi + 'api/Partners/GetDefaultPayment', val);
+    }
+
     readonly ashipApiUrl = "https://aship.skyit.vn/api/ApiShipping";
 
     getProvinceAship(request): Observable<City[]> {
@@ -287,6 +291,10 @@ export class PartnerService {
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
+    exportUnreconcileInvoices(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + "/ExportUnreconcileInvoices", { responseType: "blob" });
+    }
+
     uploadImage(id, img: File) {
         var formData: FormData = new FormData();
         formData.append('file', img);
@@ -295,7 +303,7 @@ export class PartnerService {
     }
 
     getPaged(val?: any): Observable<PagedResult2<PartnerBasic>> {
-        return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl + "", { params: new HttpParams({ fromObject: val }) });
+        return this.http.get<PagedResult2<PartnerBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     getInfo(id: string): Observable<PartnerInfoViewModel> {
@@ -479,6 +487,14 @@ export class PartnerService {
 
     getCustomerStatistics(data: any) {
         return this.http.post<CustomerStatisticsOutput>(this.baseApi + this.apiUrl + '/CustomerStatistics', data);
+    }
+
+    getUnreconcileInvoices(id: string, search?: string) {
+        if (search) {
+            return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetUnreconcileInvoices', { params: new HttpParams({ fromObject: { search } }) });
+        } else {
+            return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetUnreconcileInvoices');
+        }
     }
 
     patchActive(id, val): Observable<any> {

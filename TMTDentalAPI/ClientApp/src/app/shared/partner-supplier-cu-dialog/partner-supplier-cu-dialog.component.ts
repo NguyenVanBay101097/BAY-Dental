@@ -61,18 +61,20 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private showErrorService: AppSharedShowErrorService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ["", Validators.required],
       street: null,
+      fax: '',
       city: null,
       district: null,
       ward: null,
       email: null,
       phone: null,
       comment: null,
+      dateCreated: null,
       supplier: true,
       customer: false,
       ref: null,

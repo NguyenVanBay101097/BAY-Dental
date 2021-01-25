@@ -228,7 +228,7 @@
   border-style: solid;
   border-color: #ccc;
   border-image: initial;
-  border-radius: 4px 0 0 4px !important;
+  border-radius: 5px !important;
   padding: 1px 25px 3px 5px;
 }
 

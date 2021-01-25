@@ -164,7 +164,6 @@ html .o_web_client .o_content .o_view_controller {
 
 .o_cp_searchview_group .o_searchview {
     flex: 1 1 100%;
-    border-radius: 0!important;
 }
 
 .o_cp_searchview_group .o_searchview_advance {

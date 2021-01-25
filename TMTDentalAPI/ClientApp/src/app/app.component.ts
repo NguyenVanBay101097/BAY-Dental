@@ -43,7 +43,6 @@ export class AppComponent {
         });
       }
     });
-    
     if (this.authService.isAuthenticated()) {
       this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
@@ -51,6 +50,7 @@ export class AppComponent {
       });
     }
   }
+
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
     if (!this._areAccessKeyVisible &&
       (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&

@@ -196,7 +196,6 @@ export class ReceptionDashboardComponent implements OnInit {
       );
     })).subscribe((result) => {
       result.forEach(item => {
-        debugger
         this.laboOrderStateCount[item.state] = item.count;
       });
     });

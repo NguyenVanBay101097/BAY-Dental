@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Infrastructure.Data;
@@ -696,6 +697,30 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val)
+        {
+            var accMoveObj = GetService<IAccountMoveService>();
+            var queryAccMove = accMoveObj.SearchQuery(x => x.Type == "in_invoice" && x.InvoicePaymentState == "not_paid" && x.AmountResidual != 0);
+            if (val.InvoiceIds != null && val.InvoiceIds.Any())
+                queryAccMove = queryAccMove.Where(x => val.InvoiceIds.Contains(x.Id));
+
+            if (val.PartnerId.HasValue)
+                queryAccMove = queryAccMove.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            if (val.CompanyId.HasValue)
+                queryAccMove = queryAccMove.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            var result = await queryAccMove.Select(x => new AccountRegisterPaymentDisplay
+            {
+                Amount = queryAccMove.Sum(x => x.AmountResidual.Value),
+                PaymentType = "outbound",
+                PartnerId = x.PartnerId,
+                PartnerType = x.Partner.Customer ? "customer" : (x.Partner.Supplier ? "supplier" : ""),
+                InvoiceIds = queryAccMove.Select(x => x.Id)
+            }).FirstOrDefaultAsync();
+            return result;
+        }
+
         public async Task<AccountPayment> CreateUI(AccountPaymentSave val)
         {
             var payment = _mapper.Map<AccountPayment>(val);
@@ -1132,8 +1157,10 @@ namespace Infrastructure.Services
                 CompanyStreet = x.Company.Partner.Street,
                 CompanyCity = x.Company.Partner.CityName,
                 CompanyDistrict = x.Company.Partner.DistrictName,
+
                 CompanyWard = x.Company.Partner.WardName,
                 Amount = x.Amount,
+                AmountText = AmountToText.amount_to_text(x.Amount, "VND"),
                 Communication = x.Communication,
                 CompanyEmail = x.Company.Email,
                 CompanyPhone = x.Company.Phone,
@@ -1145,8 +1172,11 @@ namespace Infrastructure.Services
                 PartnerPhone = x.Partner.Phone,
                 PartnerRef = x.Partner.Ref,
                 PartnerStreet = x.Partner.Street,
+                PartnerType = x.PartnerType,
                 PartnerWard = x.Partner.WardName,
                 PaymentDate = x.PaymentDate,
+                PaymentName = x.Name,
+                PaymentType = x.PaymentType == "outbound" && x.PartnerType == "supplier" ? "Thanh toán NCC" : "",
                 UserName = user.Name,
                 SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
                 {
@@ -1183,8 +1213,6 @@ namespace Infrastructure.Services
                 tmp2.Add(res.PartnerCity);
 
             res.PartnerAddress = string.Join(", ", tmp2);
-
-
             return res;
         }
 

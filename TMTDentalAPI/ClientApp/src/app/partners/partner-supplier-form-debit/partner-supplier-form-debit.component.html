@@ -1,0 +1,49 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <div class="payment">
+                <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
+                <!-- <span *ngIf="countPayment != 0" class="count-payment">{{countPayment}}</span> -->
+                <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
+            </div>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="selectableSettings" (pageChange)="pageChange($event)" kendoGridSelectBy="id" (selectedKeysChange)="chooseRows($event)">
+        <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+        <kendo-grid-column field="invoiceDate" title="Ngày">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.invoiceDate | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="invoiceOrigin" title="Nguồn">
+        </kendo-grid-column>
+        <kendo-grid-column field="type" title="Loại">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{showType(dataItem.type)}}</ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" class="text-right" title="Tổng tiền">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountTotal| number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" title="Thanh toán">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{(dataItem.amountTotal - dataItem.amountResidual) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountResidual" class="text-right" title="Còn nợ" footerClass="text-right font-weight-bold">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountResidual | number}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

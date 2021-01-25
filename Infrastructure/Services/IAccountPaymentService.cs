@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface IAccountPaymentService: IBaseService<AccountPayment>
+    public interface IAccountPaymentService : IBaseService<AccountPayment>
     {
         Task Post(IEnumerable<Guid> ids);
         Task<PagedResult2<AccountPaymentBasic>> GetPagedResultAsync(AccountPaymentPaged val);
@@ -24,6 +24,8 @@ namespace Infrastructure.Services
 
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
 
+
         Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds);
+        Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val);
     }
 }

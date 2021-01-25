@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,8 +15,10 @@ namespace Infrastructure.Services
     public class AccountCommonPartnerReportService : IAccountCommonPartnerReportService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountCommonPartnerReportService(IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
+            _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -422,6 +425,23 @@ namespace Infrastructure.Services
             }
 
             return list2;
+        }
+
+        public async Task<IEnumerable<AccountMoveBasic>> GetListReportPartner(AccountCommonPartnerReportSearch val)
+        {
+            var accMoveObj = (IAccountMoveService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveService));
+            var query = accMoveObj.SearchQuery(x => x.AmountResidual != 0 && x.Type == "in_invoice" && x.InvoicePaymentState == "not_paid");
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId.Value);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.InvoiceOrigin.Contains(val.Search));
+
+            var results = await query.ToListAsync();
+            return _mapper.Map<IEnumerable<AccountMoveBasic>>(results);
         }
     }
 

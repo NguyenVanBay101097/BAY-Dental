@@ -23,14 +23,19 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _viewRenderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IAccountMoveService _accountMoveService;
+        private readonly IPartnerService _partnerService;
 
         public AccountPaymentsController(IAccountPaymentService paymentService, IViewRenderService viewRenderService,
-            IMapper mapper, IUnitOfWorkAsync unitOfWork)
+            IMapper mapper, IUnitOfWorkAsync unitOfWork, IAccountMoveService accountMoveService,
+            IPartnerService partnerService)
         {
             _paymentService = paymentService;
             _viewRenderService = viewRenderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _accountMoveService = accountMoveService;
+            _partnerService = partnerService;
         }
 
         [HttpGet]
@@ -136,6 +141,33 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-      
+        //get default thanh toán cho nhà cung cấp
+        [HttpPost("[action]")]
+        public IActionResult SupplierDefaultGet(AccountPaymentSupplierDefaultGetRequest val)
+        {
+            //nếu list invoices ko có gì thì lấy công nợ hiện tại, else sum công nợ của invoice
+            decimal? amountTotal = 0;
+            if (val.InvoiceIds.Any())
+            {
+                amountTotal = _accountMoveService.SearchQuery(x => val.InvoiceIds.Contains(x.Id)).Sum(x => x.AmountResidualSigned);
+            }
+            else
+            {
+                var creditDebitGet = _partnerService.CreditDebitGet(new List<Guid>() { val.PartnerId });
+                amountTotal = -creditDebitGet[val.PartnerId].Debit;
+            }
+
+
+            var result = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(amountTotal ?? 0),
+                PaymentType = (amountTotal ?? 0) < 0 ? "outbound" : "inbound",
+                PartnerId = val.PartnerId,
+                PartnerType = "supplier",
+                InvoiceIds = val.InvoiceIds
+            };
+
+            return Ok(result);
+        }
     }
 }
