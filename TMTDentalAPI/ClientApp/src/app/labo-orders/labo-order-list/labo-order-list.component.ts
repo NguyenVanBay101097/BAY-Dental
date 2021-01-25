@@ -20,13 +20,15 @@ import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } fr
 })
 export class LaboOrderListComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 20;
+  limit = 10;
   skip = 0;
   loading = false;
   opened = false;
   search: string;
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
+  islabo: string = '';
+  stateLabo: string;
   filterLabo = [
     { name: 'Đã tạo', value: 'true' },
     { name: 'Chưa tạo', value: 'false' }
@@ -53,9 +55,7 @@ export class LaboOrderListComponent implements OnInit {
     private modalService: NgbModal, private intlService: IntlService) { }
 
   ngOnInit() {
-    this.filterPaged = new SaleOrderLinesLaboPaged();
-    this.filterPaged.limit = this.limit;
-    this.filterPaged.offset = this.skip;
+
 
     this.loadDataFromApi();
 
@@ -85,9 +85,11 @@ export class LaboOrderListComponent implements OnInit {
   onStateLaboChange(e) {
     var value = e ? e.value : null;
     if (value) {
-      this.filterPaged.laboState = value;
+      // this.filterPaged.laboState = value;
+      this.stateLabo = value;
     } else {
-      delete this.filterPaged['laboState'];
+      // delete this.filterPaged['laboState'];
+      this.stateLabo = null;
     }
 
     this.loadDataFromApi();
@@ -131,7 +133,13 @@ export class LaboOrderListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    this.saleOrderLineService.getListLineIsLabo(this.filterPaged).pipe(
+    var filterPaged = new SaleOrderLinesLaboPaged();
+    filterPaged.limit = this.limit;
+    filterPaged.offset = this.skip;
+    filterPaged.hasAnyLabo = this.islabo ? this.islabo : '';
+    filterPaged.laboState = this.stateLabo ? this.stateLabo : '';
+    filterPaged.search = this.search ? this.search : '';
+    this.saleOrderLineService.getListLineIsLabo(filterPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -148,9 +156,11 @@ export class LaboOrderListComponent implements OnInit {
   onChangeLaboStatus(e) {
     var value = e ? e.value : null;
     if (value) {
-      this.filterPaged.hasAnyLabo = value == 'true';
+      // this.filterPaged.hasAnyLabo = value == 'true';
+      this.islabo = value;
     } else {
-      delete this.filterPaged['hasAnyLabo'];
+      // delete this.filterPaged['hasAnyLabo'];
+      this.islabo = null;
     }
 
     this.loadDataFromApi();
@@ -193,5 +203,3 @@ export class LaboOrderListComponent implements OnInit {
     });
   }
 }
-
-
