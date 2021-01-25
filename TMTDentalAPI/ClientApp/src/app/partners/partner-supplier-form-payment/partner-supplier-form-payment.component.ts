@@ -60,10 +60,21 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
     );
   }
 
+  showPaymentType(type: string) {
+    switch (type) {
+      case 'inbound':
+        return 'Hoàn tiền';
+      case 'outbound':
+        return 'Trả tiền';
+      default:
+        return '';
+    }
+  }
+
   draftUnlinkPayment(payment) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa NCC?';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán này?';
     modalRef.result.then(() => {
       this.paymentService.unlink([payment.id]).subscribe(() => {
         this.loadPayments();

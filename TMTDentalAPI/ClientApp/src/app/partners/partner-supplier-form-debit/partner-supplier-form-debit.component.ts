@@ -57,11 +57,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   }
 
   exportExcelFile() {
-    var val = new AccountCommonPartnerReportSearch();
-    val.partnerId = this.id;
-    val.search = this.search ? this.search : '';
-    val.companyId = this.authService.userInfo.companyId;
-    this.partnerService.exportExcelFileNCC(val).subscribe((res) => {
+    this.partnerService.exportUnreconcileInvoices(this.id).subscribe((res) => {
       let filename = "CongNoNCC";
       let newBlob = new Blob([res], {
         type:
@@ -91,6 +87,17 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
         this.loading = false;
       }
     )
+  }
+
+  showType(type: string) {
+    switch (type) {
+      case 'in_invoice':
+        return 'Mua hàng';
+      case 'in_refund':
+        return 'Trả hàng';
+      default:
+        return '';
+    }
   }
 
   public pageChange(event: PageChangeEvent): void {
@@ -125,7 +132,6 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
       let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.rowsSelected = this.rowsSelected;
       modalRef.componentInstance.defaultVal = result;
-      modalRef.componentInstance.title = "Thanh toán nhà cung cấp";
       modalRef.result.then(() => {
         this.loadDataFromApi();
         this.rowsSelected = [];

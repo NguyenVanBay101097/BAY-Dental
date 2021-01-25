@@ -287,8 +287,8 @@ export class PartnerService {
         return this.http.post<Ward[]>(this.ashipApiUrl + "Ward/GetWards", request);
     }
 
-    exportExcelFileNCC(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFileNCC", val, { responseType: "blob" });
+    exportUnreconcileInvoices(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + "/ExportUnreconcileInvoices", { responseType: "blob" });
     }
 
     uploadImage(id, img: File) {

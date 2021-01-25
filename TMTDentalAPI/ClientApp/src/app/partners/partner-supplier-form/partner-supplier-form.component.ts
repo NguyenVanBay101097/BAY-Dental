@@ -17,7 +17,7 @@ export class PartnerSupplierFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.id = this.activeRoute.paramMap.source['value'].id;
+    this.id = this.activeRoute.snapshot.paramMap.get('id');
     if (this.id) {
       this.LoadData();
     }

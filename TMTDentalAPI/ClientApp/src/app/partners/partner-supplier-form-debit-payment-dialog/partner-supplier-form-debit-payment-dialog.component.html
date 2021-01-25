@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">{{getTitle()}}<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
@@ -28,7 +28,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [disabled]="rowsSelected && rowsSelected.length > 0" [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="checkAmount()" formControlName="amount">
+                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [step]="1000" [format]="'n0'" [autoCorrect]="true" formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -63,6 +63,7 @@
                             <tr>
                                 <th scope="col">Ngày</th>
                                 <th scope="col">Nguồn</th>
+                                <th scope="col">Loại</th>
                                 <th class="text-right" scope="col">Số tiền</th>
                                 <th class="text-right" scope="col">Thanh toán</th>
                                 <th class="text-right" scope="col">Còn nợ</th>
@@ -75,6 +76,9 @@
                                 </td>
                                 <td>
                                     {{item.invoiceOrigin}}
+                                </td>
+                                <td>
+                                    {{showType(item.type)}}
                                 </td>
                                 <td class="text-right">
                                     {{item.amountTotal | number}}

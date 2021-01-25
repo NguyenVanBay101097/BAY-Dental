@@ -105,12 +105,34 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   }
 
   checkAmount() {
-    if (!this.formGroup.get('amount').value ) {
+    if (!this.formGroup.get('amount').value) {
       this.formGroup.get('amount').setValue(0);
     }
   }
 
-  create() {  
+  showType(type: string) {
+    switch (type) {
+      case 'in_invoice':
+        return 'Mua hàng';
+      case 'in_refund':
+        return 'Trả hàng';
+      default:
+        return '';
+    }
+  }
+
+  getTitle() {
+    switch (this.defaultVal.paymentType) {
+      case 'inbound':
+        return 'Nhà cung cấp hoàn tiền';
+      case 'outbound':
+        return 'Thanh toán nhà cung cấp';
+      default:
+        return '';
+    }
+  }
+
+  create() {
     var val = this.formGroup.value;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
