@@ -968,6 +968,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<ProductProductExportExcel>> GetMedicineExportExcel(ProductPaged val)
         {
             var query = SearchQuery(x => x.Active && x.Type2 == "medicine");
+            query.Include(x => x.UOM);
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
             if (val.CategId.HasValue)
@@ -977,6 +978,8 @@ namespace Infrastructure.Services
                 CategName = x.Categ.Name,
                 Name = x.Name,
                 Type = x.Type,
+                ListPrice = x.ListPrice,
+                UomName = x.UOM.Name
             }).ToListAsync();
 
             return res;

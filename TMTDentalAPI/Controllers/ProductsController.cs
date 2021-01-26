@@ -453,11 +453,14 @@ namespace TMTDentalAPI.Controllers
                         var errs = new List<string>();
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                         var categName = Convert.ToString(worksheet.Cells[row, 2].Value);
-
+                        var price = Convert.ToString(worksheet.Cells[row, 3].Value);
+                        
                         if (string.IsNullOrEmpty(name))
                             errs.Add("Tên thuốc là bắt buộc");
                         if (string.IsNullOrEmpty(categName))
                             errs.Add("Nhóm thuốc là bắt buộc");
+                        if (string.IsNullOrEmpty(price))
+                            errs.Add("Giá thuốc là bắt buộc");
 
                         //tìm exist đơn vị tính và gán Id uom cho thuốc
                         var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
@@ -512,7 +515,7 @@ namespace TMTDentalAPI.Controllers
                 pd.Type = "consu";
                 pd.Type2 = "medicine";
                 pd.CategId = categDict[item.CategName].Id;
-                pd.ListPrice = 0;
+                pd.ListPrice = item.ListPrice;
                 pd.PurchasePrice = 0;
                 vals.Add(pd);
             }
@@ -981,12 +984,16 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells[1, 1].Value = "Tên thuốc";
                 worksheet.Cells[1, 2].Value = "Nhóm thuốc";
+                worksheet.Cells[1, 3].Value = "Giá thuốc";
+                worksheet.Cells[1, 4].Value = "Đơn vị tính mặc định";
 
                 var row = 2;
                 foreach (var item in products)
                 {
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.CategName;
+                    worksheet.Cells[row, 3].Value = item.ListPrice;
+                    worksheet.Cells[row, 4].Value = item.UomName;
                     row++;
                 }
 

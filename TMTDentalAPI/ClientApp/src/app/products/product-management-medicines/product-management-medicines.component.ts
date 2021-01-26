@@ -76,6 +76,7 @@ loadMedicines() {
       (res) => {
         this.gridData = res;
         this.loading = false;
+      //  console.log(res);
       },
       (err) => {
         console.log(err);
@@ -97,6 +98,7 @@ loadConfigsettings(){
   this.configSettingsService.defaultGet().subscribe(
     (result:any) => {
       this.configsettings = result;
+      console.log(this.configsettings);
     }
   );
 }
