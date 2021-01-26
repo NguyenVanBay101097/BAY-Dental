@@ -24,6 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Diagnostic { get; set; }
         public Guid PartnerId { get; set; }
+        public string InvoiceStatus { get; set; }
 
     }
 

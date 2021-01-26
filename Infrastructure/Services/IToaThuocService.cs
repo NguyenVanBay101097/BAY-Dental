@@ -20,5 +20,6 @@ namespace Infrastructure.Services
         Task<ToaThuocDisplay> GetToaThuocFromUIAsync(Guid id);
         Task<ToaThuocBasic> CreateToaThuocFromUIAsync(ToaThuocSaveFromUI val);
         Task UpdateToaThuocFromUIAsync(Guid id, ToaThuocSaveFromUI val);
+        Task ComputeToInvoiceQuantityLines(Guid id);
     }
 }

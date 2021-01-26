@@ -108,14 +108,16 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id)
+            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id &&
+            (x.ToInvoiceQuantity == null || (x.ToInvoiceQuantity != null && x.ToInvoiceQuantity > 0))
+            )
                 .Include(x => x.Product.UOM)
                 .Include(x => x.ProductUoM).ToListAsync();
             foreach (var line in toathuocLines)
             {
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
                 {
-                    Quantity = line.Quantity,
+                    Quantity = line.ToInvoiceQuantity.HasValue? line.ToInvoiceQuantity.Value : line.Quantity,
                     Price = line.Product.ListPrice,
                     AmountTotal = line.Quantity * line.Product.ListPrice,
                     ToaThuocLine = _mapper.Map<ToaThuocLineDisplay>(line),
@@ -203,6 +205,10 @@ namespace Infrastructure.Services
 
             await UpdateAsync(medicineOrder);
 
+            //update invoice status toa thuoc
+            var toaThuocObj = GetService<IToaThuocService>();
+            await toaThuocObj.ComputeToInvoiceQuantityLines(medicineOrder.ToathuocId);
+
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
@@ -255,7 +261,7 @@ namespace Infrastructure.Services
 
                 var sequence = 1;
                 var moves = new List<StockMove>();
-                foreach(var line in order.MedicineOrderLines.Where(x => productTypes.Contains(x.Product.Type) && x.Quantity != 0))
+                foreach (var line in order.MedicineOrderLines.Where(x => productTypes.Contains(x.Product.Type) && x.Quantity != 0))
                 {
                     var move = new StockMove
                     {
@@ -389,6 +395,7 @@ namespace Infrastructure.Services
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
             var moveObj = GetService<IAccountMoveService>();
+            var toaThuocObj = GetService<IToaThuocService>();
             var accountPaymentObj = GetService<IAccountPaymentService>();
             var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
                .Include(x => x.Company)
@@ -420,9 +427,12 @@ namespace Infrastructure.Services
                 }
 
                 //tạo và ghi sổ phiếu nhập kho
-                await _CreatePicking(new List<MedicineOrder>() { order } , true);
+                await _CreatePicking(new List<MedicineOrder>() { order }, true);
 
                 order.State = "cancel";
+
+                //update invoice status toa thuoc
+                await toaThuocObj.ComputeToInvoiceQuantityLines(order.ToathuocId);
             }
 
             if (move_ids.Any())
@@ -433,9 +443,6 @@ namespace Infrastructure.Services
 
             if (payment_ids.Any())
                 await accountPaymentObj.ActionDraftUnlink(payment_ids);
-
-           
-
 
             await UpdateAsync(medicineOrders);
         }
@@ -462,7 +469,7 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<MedicineOrderLine>(line);
-                    item.ProductId =  line.ProductId;
+                    item.ProductId = line.ProductId;
                     order.MedicineOrderLines.Add(item);
                 }
                 else
@@ -484,7 +491,8 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("medicine.order");
             }
 
-            await base.CreateAsync(entity);
+            await base.CreateAsync(entity); 
+
             return entity;
         }
 
