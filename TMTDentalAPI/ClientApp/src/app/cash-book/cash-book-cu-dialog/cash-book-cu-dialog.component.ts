@@ -32,7 +32,7 @@ export class CashBookCuDialogComponent implements OnInit {
   loaiThuChiList: any = [];
   filteredJournals: any = [];
   seeForm: boolean = false;
-
+  money: string;
   get f() {
     return this.formGroup.controls;
   }
@@ -51,8 +51,8 @@ export class CashBookCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private printService: PrintService,
     private paymentService: AccountPaymentService,
-    private salaryPaymentService: SalaryPaymentService, 
-  ) {}
+    private salaryPaymentService: SalaryPaymentService,
+  ) { }
 
   ngOnInit() {
     this.setTitle();
@@ -73,6 +73,7 @@ export class CashBookCuDialogComponent implements OnInit {
       type: null,
     });
 
+
     setTimeout(() => {
       this.loadLoaiThuChiList();
       this.loadFilteredJournals();
@@ -82,6 +83,12 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loadRecord();
       }
     });
+  }
+
+  keydownHanlder() {
+    this.money = new Intl.NumberFormat().format(this.formGroup.get('amount').value);
+    console.log(this.money);
+
   }
 
   getType() {
@@ -169,7 +176,7 @@ export class CashBookCuDialogComponent implements OnInit {
         this.formGroup.get("loaiThuChi").patchValue(result);
         this.loaiThuChiList = _.unionBy(this.loaiThuChiList, [result], "id");
       },
-      () => {}
+      () => { }
     );
   }
 

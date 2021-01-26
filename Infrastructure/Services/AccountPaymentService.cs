@@ -37,6 +37,7 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
+                .Include(x => x.DestinationAccount)
                 .Include(x => x.Journal).Include(x => x.Journal.DefaultCreditAccount)
                 .Include(x => x.Journal.DefaultDebitAccount).ToListAsync();
 
@@ -74,6 +75,14 @@ namespace Infrastructure.Services
                                 sequence_code = "account.payment.supplier.invoice";
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.supplier.refund";
+                        }
+                        if (rec.PartnerType == "employee.advance")
+                        {
+                            sequence_code = "account.payment.advance";
+                        }
+                        if (rec.PartnerType == "employee.salary")
+                        {
+                            sequence_code = "account.payment.salary";
                         }
                     }
 
@@ -179,6 +188,30 @@ namespace Infrastructure.Services
             }
 
             await settlementObj.CreateAsync(settlements);
+        }
+
+        private async Task _InsertAccountPaymentAdvanceSequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu tạm ứng",
+                Code = "account.payment.advance",
+                Prefix = "AVC/{yyyy}/",
+                Padding = 4
+            });
+        }
+
+        private async Task _InsertAccountPaymentSalarySequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu chi lương",
+                Code = "account.payment.salary",
+                Prefix = "PW/{yyyy}/",
+                Padding = 4
+            });
         }
 
         private async Task _AutoReconcile(AccountPayment self, IEnumerable<AccountMove> invoices = null)
@@ -320,8 +353,6 @@ namespace Infrastructure.Services
 
             return all_move_vals;
         }
-
-
 
         private async Task<AccountMove> _GetMoveVals(AccountPayment rec, AccountJournal journal = null)
         {
@@ -729,7 +760,6 @@ namespace Infrastructure.Services
 
             payment.CompanyId = journal.CompanyId;
 
-
             foreach (var invoice_id in val.InvoiceIds)
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = invoice_id });
 
@@ -741,6 +771,8 @@ namespace Infrastructure.Services
 
             foreach (var rel in val.SaleOrderLinePaymentRels)
                 payment.SaleOrderLinePaymentRels.Add(new SaleOrderLinePaymentRel { SaleOrderLineId = rel.SaleOrderLineId, AmountPrepaid = rel.AmountPrepaid });
+
+            await _ComputeDestinationAccount(new List<AccountPayment>() { payment });
 
             await CreateAsync(payment);
 
@@ -768,7 +800,6 @@ namespace Infrastructure.Services
             await base.CreateAsync(payment);
             return payment;
         }
-
 
         public async Task _ComputeSaleOrderLines(Guid saleOrderId)
         {
@@ -850,7 +881,6 @@ namespace Infrastructure.Services
             return Math.Abs(total);
         }
 
-
         private async Task<AccountMoveLine> _GetCounterpartMoveLineVals(AccountPayment rec, IEnumerable<AccountInvoice> invoices = null)
         {
             string name = "";
@@ -888,7 +918,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            await _ComputeDestinationAccount(new List<AccountPayment>() { rec });
+            //await _ComputeDestinationAccount(new List<AccountPayment>() { rec });
             var account = rec.DestinationAccount;
             return new AccountMoveLine
             {
@@ -906,24 +936,38 @@ namespace Infrastructure.Services
 
         public async Task _ComputeDestinationAccount(IEnumerable<AccountPayment> self)
         {
+            var accountObj = GetService<IAccountAccountService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var loaiThuChiObj = GetService<ILoaiThuChiService>();
             foreach (var payment in self)
             {
                 if (payment.AccountMovePaymentRels.Any())
                 {
-                    var amlObj = GetService<IAccountMoveLineService>();
                     var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId).ToList();
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
                         .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
+                else if (payment.LoaiThuChiId.HasValue)
+                {
+                    var loaiThuChi = await loaiThuChiObj.SearchQuery(x => x.Id == payment.LoaiThuChiId.Value).Include(x => x.Account).FirstOrDefaultAsync();
+                    payment.DestinationAccountId = loaiThuChi.AccountId;
+                }
                 else if (payment.PartnerType == "customer")
                 {
-                    var accountObj = GetService<IAccountAccountService>();
-                    payment.DestinationAccount = await accountObj.GetAccountReceivableCurrentCompany();
+                    var account = await accountObj.GetAccountReceivableCurrentCompany();
+                    payment.DestinationAccountId = account.Id;
                 }
+
                 else if (payment.PartnerType == "supplier")
                 {
-                    var accountObj = GetService<IAccountAccountService>();
-                    payment.DestinationAccount = await accountObj.GetAccountPayableCurrentCompany();
+                    var account = await accountObj.GetAccountPayableCurrentCompany();
+                    payment.DestinationAccountId = account.Id;
+                }
+
+                else if (payment.PartnerType == "employee")
+                {
+                    var account = await accountObj.GetAccount334CurrentCompany();
+                    payment.DestinationAccountId = account.Id;
                 }
             }
         }

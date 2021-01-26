@@ -13,6 +13,16 @@ export class AccountPaymentBasic {
     amount: number;
 }
 
+export class AccountPaymentSave {
+    paymentDate: string;
+    communication: string;
+    journalId: string;
+    partnerType: string;
+    amount: number;
+    paymentType: string;
+    partnerId: string;
+}
+
 export class AccountPaymentPaged {
     offset: number;
     limit: number;
@@ -45,7 +55,7 @@ export class AccountPaymentSupplierDefaultGetRequest {
     invoiceIds: string[];
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -60,6 +70,10 @@ export class AccountPaymentService {
 
     create(val: any) {
         return this.http.post(this.baseApi + this.apiUrl, val);
+    }
+
+    update(id, val) {
+        return this.http.put(this.baseApi + this.apiUrl + '/' + id, val);
     }
 
     actionCancel(ids: any) {
@@ -90,7 +104,7 @@ export class AccountPaymentService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
     }
 
-    supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest){
+    supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {
         return this.http.post(this.baseApi + this.apiUrl + '/SupplierDefaultGet', val);
     }
 }
