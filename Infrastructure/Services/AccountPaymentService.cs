@@ -56,7 +56,14 @@ namespace Infrastructure.Services
                 string sequence_code = "";
                 if (string.IsNullOrEmpty(rec.Name))
                 {
-                    if (rec.PaymentType == "transfer")
+                    if (rec.LoaiThuChiId.HasValue)
+                    {
+                        if (rec.PaymentType == "outbound")
+                            sequence_code = "phieu.chi";
+                        if (rec.PaymentType == "inbound")
+                            sequence_code = "phieu.thu";
+                    }
+                    else if (rec.PaymentType == "transfer")
                     {
                         sequence_code = "account.payment.transfer";
                     }
@@ -69,20 +76,17 @@ namespace Infrastructure.Services
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.customer.invoice";
                         }
-                        if (rec.PartnerType == "supplier")
+                        else if (rec.PartnerType == "supplier")
                         {
                             if (rec.PaymentType == "outbound")
                                 sequence_code = "account.payment.supplier.invoice";
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.supplier.refund";
                         }
-                        if (rec.PartnerType == "employee.advance")
+                        else if (rec.PartnerType == "employee")
                         {
-                            sequence_code = "account.payment.advance";
-                        }
-                        if (rec.PartnerType == "employee.salary")
-                        {
-                            sequence_code = "account.payment.salary";
+                            if (rec.PaymentType == "outbound")
+                                sequence_code = "account.payment.employee.outbound";
                         }
                     }
 
