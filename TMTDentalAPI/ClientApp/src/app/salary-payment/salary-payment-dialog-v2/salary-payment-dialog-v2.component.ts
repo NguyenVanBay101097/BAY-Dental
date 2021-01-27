@@ -130,7 +130,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
     var value = this.formGroup.value;
     value.journalId = value.journal.id;
     value.partnerId = value.partner.id;
-    value.partnerType = "employee.advance";
+    value.partnerType = "employee";
     value.paymentDate = this.intlService.formatDate(value.paymentDate, "yyyy-MM-ddTHH:mm");
     value.paymentType = "outbound";
     return value;

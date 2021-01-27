@@ -96,6 +96,7 @@ export class HrPayslipSaveDefaultValue {
     isCheck = false;
     isHidden = false;
     salaryPayment = null;
+    accountPayment = null;
 }
 
 // line

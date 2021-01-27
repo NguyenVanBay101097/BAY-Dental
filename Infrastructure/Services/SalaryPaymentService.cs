@@ -390,7 +390,7 @@ namespace Infrastructure.Services
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
             var JournalObj = GetService<IAccountJournalService>();
-            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId).Include("Slips.SalaryPayment")
+            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
                 .Include(x => x.Slips).ThenInclude(x => x.Employee).Select(x => new
                 {
                     Date = x.Date,
@@ -406,9 +406,9 @@ namespace Infrastructure.Services
             var payments = new List<SalaryPaymentDisplay>();
             foreach (var slip in slipRun.Slips)
             {
-                if (slip.SalaryPayment != null) continue;
+                if (slip.AccountPaymentId.HasValue) continue;
                 payments.Add(new SalaryPaymentDisplay()
-                {   
+                {
                     Amount = slip.NetSalary.GetValueOrDefault(),
                     Date = DateTime.Now,
                     EmployeeId = slip.EmployeeId,

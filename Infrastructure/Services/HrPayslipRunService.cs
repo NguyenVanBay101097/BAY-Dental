@@ -48,7 +48,7 @@ namespace Infrastructure.Services
         public async Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id)
         {
             var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)
-                .Include("Slips.SalaryPayment").Include(x => x.Slips).ThenInclude(x => x.Employee))
+                .Include("Slips.AccountPayment").Include(x => x.Slips).ThenInclude(x => x.Employee))
                 .FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");

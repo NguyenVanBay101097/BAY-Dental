@@ -40,10 +40,7 @@
                 {{dataItem.partnerName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Loại phiếu" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{computePaymentType(dataItem.partnerType)}}
-            </ng-template>
+        <kendo-grid-column field="communication" title="Nội dung" width="120">
         </kendo-grid-column>
         <kendo-grid-column title="Phương thức" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

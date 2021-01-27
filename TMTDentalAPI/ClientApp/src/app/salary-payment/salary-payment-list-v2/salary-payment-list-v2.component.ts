@@ -37,17 +37,6 @@ export class SalaryPaymentListV2Component implements OnInit {
     this.loadDataFromApi();
   }
 
-  computePaymentType(type) {
-    switch (type) {
-      case "employee.advance":
-        return "Tạm ứng";
-      case "employee.salary":
-        return "Chi lương";
-      default:
-        break;
-    }
-  }
-
   computeState(state) {
     switch (state) {
       case "posted":
@@ -94,7 +83,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = (item.partnerType == "employee.advance" ? "Phiếu chi tạm ứng" : "Phiếu chi lương");
+    modalRef.componentInstance.title = "Phiếu chi tạm ứng";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       () => {

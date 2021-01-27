@@ -156,7 +156,7 @@ export class HrSalaryPaymentComponent implements OnInit {
       payment.hrPayslipId = val.HrPayslipId;
       payment.journalId = val.JournalId;
       payment.partnerId = val.Employee ? val.Employee.PartnerId : null;
-      payment.partnerType = "employee.salary";
+      payment.partnerType = "employee";
       payment.paymentType = "outbound";
       vals.push(payment);
     });
