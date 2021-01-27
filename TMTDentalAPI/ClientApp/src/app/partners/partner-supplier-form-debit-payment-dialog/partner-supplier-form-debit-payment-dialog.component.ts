@@ -31,7 +31,7 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   filteredJournals: any;
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private authService: AuthService,
     private accountJournalService: AccountJournalService,
     private paymentService: AccountPaymentService,
