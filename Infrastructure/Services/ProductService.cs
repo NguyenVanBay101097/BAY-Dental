@@ -39,9 +39,9 @@ namespace Infrastructure.Services
 
             await _GenerateCodeIfEmpty(entities);
 
-            await _CheckProductExistCode(entities);
-
             await base.CreateAsync(entities);
+
+            await _CheckProductExistCode(entities);
 
             await _SetListPrice(entities);
 
@@ -60,9 +60,9 @@ namespace Infrastructure.Services
 
             await _GenerateCodeIfEmpty(entities);
 
-            await _CheckProductExistCode(entities);
-
             await base.UpdateAsync(entities);
+
+            await _CheckProductExistCode(entities);
 
             await _SetListPrice(entities);
         }
@@ -114,8 +114,8 @@ namespace Infrastructure.Services
                 if (string.IsNullOrWhiteSpace(product.DefaultCode))
                     continue;
 
-                var exist = await SearchQuery(x => x.DefaultCode == product.DefaultCode && x.Id != product.Id).FirstOrDefaultAsync();
-                if (exist != null)
+                var count = await SearchQuery(x => x.DefaultCode == product.DefaultCode).CountAsync();
+                if (count >= 2)
                     list.Add(product);
             }
 
