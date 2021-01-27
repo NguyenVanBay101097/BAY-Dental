@@ -1,0 +1,120 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.close()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg overflow-hidden">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <!-- <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                  <span style="font-weight: 600;">{{id?(salaryPayment?salaryPayment.Name:''):'Hệ thống sẽ tạo tự động'}}</span>
+                                </td>
+                            </tr> -->
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
+                                        formControlName="datePayment" [rangeValidation]="true"
+                                        (valueChange)="onChangeDate($event)" [disableControl]="checkIsDisable(id)">
+                                    </kendo-datepicker>
+                                    <div *ngIf="f.datePayment.errors" class="text-danger">
+                                        <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
+                                            date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="checkIsDisable(id)" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người nhận
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="checkIsDisable(id)" #partnerCbx formControlName="partner"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người nhận</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount"
+                                        [disableControl]="checkIsDisable(id)">
+                                    </kendo-numerictextbox>
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" [disableControl]="checkIsDisable(id)"
+                                        formControlName="communication"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <div *ngIf="salaryPayment ? salaryPayment.State === 'waiting' : '';else other_content">
+        <button type="button" class="btn btn-primary" (click)="onSaveV2()" accesskey="s">Lưu và In</button>
+        <button type="button" *ngIf="id" class="btn btn-primary ml-1" (click)="actionConfirmV2()">Xác nhận</button>
+    </div>
+    <ng-template #other_content>
+        <button type="button" *ngIf="id" class="btn btn-primary" (click)="printSalaryPayment(id)">In</button>
+    </ng-template>
+    <div *ngIf="!salaryPayment">
+        <button type="button" class="btn btn-primary" (click)="onSaveV2()" accesskey="s">Lưu và In</button>
+        <button type="button" class="btn btn-primary ml-1" (click)="actionConfirmV2()">Xác nhận</button>
+    </div>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.close()"
+        accesskey="q">Đóng</button>
+</footer>

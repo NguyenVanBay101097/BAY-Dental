@@ -997,8 +997,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)));
 
-            if (!string.IsNullOrEmpty(val.PartnerType))
+            if (!string.IsNullOrEmpty(val.PartnerType) && val.PartnerType != "employee")
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerType == val.PartnerType));
+
+            if (!string.IsNullOrEmpty(val.PartnerType) && val.PartnerType == "employee")
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerType == "employee.advance" || x.PartnerType == "employee.salary"));
 
             if (!string.IsNullOrEmpty(val.State))
             {

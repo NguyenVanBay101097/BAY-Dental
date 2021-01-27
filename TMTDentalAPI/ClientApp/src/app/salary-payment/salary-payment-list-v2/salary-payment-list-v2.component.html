@@ -1,0 +1,81 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span>Quản lý tạm ứng, chi lương</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " type="text" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+                    Tạm ứng lương
+                </button>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [loading]="loading" [resizable]="true" [sort]="gridSort"
+        [advanceFilter]="advanceFilter" [skip]="skip" [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
+        <kendo-grid-column field="name" title="Mã phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div>
+                    <a class="text-primary" title="Xem phiếu" (click)="editItem(dataItem)">
+                        {{dataItem.name}}
+                    </a>
+                </div>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="paymentDate" title="Ngày" width="80">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.paymentDate | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Người nhận" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.partnerName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Loại phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{computePaymentType(dataItem.partnerType)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Phương thức" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.journalName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Số tiền" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{computeState(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#"
+            width="40">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button *ngIf="dataItem.state == 'draft'" type="button" class="btn btn-icon btn-sm btn-danger"
+                    (click)="deleteItem(dataItem)">
+                    <span class="k-icon k-i-delete"></span>
+                </button>
+            </ng-template>
+        </kendo-grid-column>
+
+    </kendo-grid>
+</div>
