@@ -101,7 +101,7 @@ export class CompanyListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (active) {
       modalRef.componentInstance.title = "Hiện chi nhánh " + item.name;
-      modalRef.componentInstance.body = "Bạn có chắc chắn muốn hiện chi nhánh " + item.name;
+      modalRef.componentInstance.body = `Bạn có chắc chắn muốn hiện chi nhánh ${item.name}?`;
       modalRef.result.then(() => {
         this.companyService.actionUnArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
@@ -119,7 +119,7 @@ export class CompanyListComponent implements OnInit {
       });
     } else {
       modalRef.componentInstance.title = "Ẩn chi nhánh " + item.name;
-      modalRef.componentInstance.body = "Bạn có chắc chắn muốn ẩn chi nhánh " + item.name;
+      modalRef.componentInstance.body = `Bạn có chắc chắn muốn ẩn chi nhánh ${item.name}?`;
       modalRef.result.then(() => {
         this.companyService.actionArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
