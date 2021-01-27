@@ -408,7 +408,7 @@ namespace Infrastructure.Services
             {
                 if (slip.SalaryPayment != null) continue;
                 payments.Add(new SalaryPaymentDisplay()
-                {
+                {   
                     Amount = slip.NetSalary.GetValueOrDefault(),
                     Date = DateTime.Now,
                     EmployeeId = slip.EmployeeId,

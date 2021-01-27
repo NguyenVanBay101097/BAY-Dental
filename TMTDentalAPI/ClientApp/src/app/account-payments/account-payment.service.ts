@@ -21,6 +21,7 @@ export class AccountPaymentSave {
     amount: number;
     paymentType: string;
     partnerId: string;
+    hrPayslipId: string;
 }
 
 export class AccountPaymentPaged {
@@ -68,8 +69,12 @@ export class AccountPaymentService {
         return this.http.get<AccountPaymentDisplay>(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    create(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl, val);
+    create(val: any): Observable<AccountPaymentBasic> {
+        return this.http.post<AccountPaymentBasic>(this.baseApi + this.apiUrl, val);
+    }
+
+    createMultipleAndConfirmUI(vals: any): Observable<AccountPaymentBasic[]> {
+        return this.http.post<AccountPaymentBasic[]>(this.baseApi + this.apiUrl+'/CreateMultipleAndConfirmUI', vals);
     }
 
     update(id, val) {

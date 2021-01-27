@@ -42,7 +42,6 @@ export class SalaryPaymentDialogV2Component implements OnInit {
     private authService: AuthService,
     private partnerService: PartnerService,
     private accountJournalService: AccountJournalService,
-    private employeeService: EmployeeService,
     private intlService: IntlService,
     private printService: PrintService
   ) { }
@@ -50,7 +49,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: null,
-      datePayment: [null, Validators.required],
+      paymentDate: [null, Validators.required],
       journal: [null, Validators.required],
       partner: [null, Validators.required],
       amount: [0, Validators.required],
@@ -69,10 +68,8 @@ export class SalaryPaymentDialogV2Component implements OnInit {
         this.partnerCbx.loading = false;
       });
 
-    setTimeout(() => {
-      this.loadFilteredJournals();
-      this.loadEmployees();
-    });
+    this.loadFilteredJournals();
+    this.loadEmployees();
 
     if (this.id) {
       this.loadData();
@@ -82,17 +79,15 @@ export class SalaryPaymentDialogV2Component implements OnInit {
   }
 
   defaultGet() {
-    this.formGroup.get('datePayment').patchValue(new Date());
+    this.formGroup.get('paymentDate').patchValue(new Date());
   }
 
   loadData() {
     this.accountPaymentService.get(this.id).subscribe(
-      (result) => {
-        console.log(result);
+      result => {
         this.salaryPayment = result;
-        let date = new Date(result.paymentDate);
-        this.formGroup.get('datePayment').patchValue(date);
-        this.formGroup.patchValue(result);
+        this.salaryPayment.paymentDate = new Date(result.paymentDate);
+        this.formGroup.patchValue(this.salaryPayment);
       },
       (error) => {
         console.log(error);
@@ -108,7 +103,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
       (result) => {
         this.filteredJournals = result;
         if (this.filteredJournals.length) {
-          this.formGroup.get('Journal').patchValue(this.filteredJournals[0]);
+          this.formGroup.get('journal').patchValue(this.filteredJournals[0]);
         }
       },
       (error) => {
@@ -131,26 +126,30 @@ export class SalaryPaymentDialogV2Component implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
-  onSaveV2() {
+  getValueForm() {
     var value = this.formGroup.value;
-    var val = new AccountPaymentSave();
-    val.amount = value.Amount;
-    val.communication = value.Reason;
-    val.journalId = value.Journal.id;
-    val.partnerId = value.Partner.id;
-    val.partnerType = "employee.advance";
-    val.paymentDate = this.intlService.formatDate(value.DateObj, "yyyy-MM-ddTHH:mm");
-    val.paymentType = "outbound";
+    value.journalId = value.journal.id;
+    value.partnerId = value.partner.id;
+    value.partnerType = "employee.advance";
+    value.paymentDate = this.intlService.formatDate(value.paymentDate, "yyyy-MM-ddTHH:mm");
+    value.paymentType = "outbound";
+    return value;
+  }
+
+  onSaveV2() {
+    var value = this.getValueForm();
     if (this.id) {
-      this.accountPaymentService.update(this.id, val).subscribe(
+      this.accountPaymentService.update(this.id, value).subscribe(
         result => {
+          this.notify('success', 'Sửa tạm ứng lương thành công');
           this.activeModal.close()
           this.printSalaryPayment(this.id);
         }
       )
     } else {
-      this.accountPaymentService.create(val).subscribe(
+      this.accountPaymentService.create(value).subscribe(
         result => {
+          this.notify('success', 'Tạo tạm ứng lương thành công');
           this.activeModal.close()
           this.printSalaryPayment(this.id);
         }
@@ -164,11 +163,28 @@ export class SalaryPaymentDialogV2Component implements OnInit {
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
     modalRef.result.then(
       () => {
-        this.accountPaymentService.post(['e7b74910-12b4-43cc-c74e-08d8c1d8ca78']).subscribe(
-          result => {
-            this.notify('success', 'Xác nhận tạm ứng lương thành công')
-          }
-        )
+        if (this.id) {
+          this.accountPaymentService.post([this.id]).subscribe(
+            result => {
+              this.notify('success', 'Xác nhận tạm ứng lương thành công');
+              this.activeModal.close();
+            }
+          )
+        } else {
+          var value = this.getValueForm();
+          this.accountPaymentService.create(value).subscribe(
+            result => {
+              if (result) {
+                this.accountPaymentService.post([result.id]).subscribe(
+                  () => {
+                    this.notify('success', 'Tạo tạm ứng và xác nhận lương thành công');
+                    this.activeModal.close();
+                  }
+                )
+              }
+            }
+          )
+        }
       })
   }
 
@@ -195,7 +211,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
   }
 
   checkIsDisable(id) {
-    if (id && this.salaryPayment && this.salaryPayment.State !== 'waiting') {
+    if (id && this.salaryPayment && this.salaryPayment.state == 'posted') {
       return true;
     } else {
       return false;

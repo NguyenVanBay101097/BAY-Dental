@@ -95,5 +95,6 @@ namespace ApplicationCore.Entities
 
         public Guid? LoaiThuChiId { get; set; }
         public LoaiThuChi LoaiThuChi { get; set; }
+
     }
 }

@@ -93,7 +93,6 @@ export class SalaryPaymentListV2Component implements OnInit {
   }
 
   editItem(item) {
-    debugger
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = (item.partnerType == "employee.advance" ? "Phiếu chi tạm ứng" : "Phiếu chi lương");
     modalRef.componentInstance.id = item.id;
@@ -110,7 +109,7 @@ export class SalaryPaymentListV2Component implements OnInit {
     modalRef.componentInstance.title = "Xóa: " + (item.partnerType == "employee.advance" ? "phiếu chi tạm ứng" : "phiếu chi lương");
     modalRef.result.then(
       () => {
-        this.accountPaymentService.unlink(item.id).subscribe(
+        this.accountPaymentService.unlink([item.id]).subscribe(
           () => {
             this.loadDataFromApi();
           },

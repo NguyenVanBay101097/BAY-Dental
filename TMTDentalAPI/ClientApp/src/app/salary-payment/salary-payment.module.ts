@@ -23,6 +23,5 @@ import { SalaryPaymentDialogV2Component } from './salary-payment-dialog-v2/salar
     MyCustomKendoModule
   ],
   entryComponents: [SalaryPaymentDialogV2Component],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SalaryPaymentModule { }

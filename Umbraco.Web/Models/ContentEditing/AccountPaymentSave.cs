@@ -21,6 +21,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerId { get; set; }
 
+        public Guid? HrPayslipId { get; set; }
+
         public IEnumerable<Guid> InvoiceIds { get; set; } = new List<Guid>();
 
         public IEnumerable<Guid> SaleOrderIds { get; set; } = new List<Guid>();

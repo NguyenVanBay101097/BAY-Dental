@@ -293,6 +293,16 @@ namespace Infrastructure.Services
                             rec_pay_line_name += "Thanh toán nhà cung cấp";
                     }
 
+                    else if (payment.PartnerType == "employee.salary")
+                    {
+                        rec_pay_line_name = payment.Name + " Chi lương";
+                    }
+
+                    else if (payment.PartnerType == "employee.advance")
+                    {
+                        rec_pay_line_name = payment.Name + " Tạm ứng";
+                    }
+
                     if (payment.AccountMovePaymentRels.Any())
                     {
                         var moveObj = GetService<IAccountMoveService>();
@@ -779,6 +789,31 @@ namespace Infrastructure.Services
             return payment;
         }
 
+        public async Task<IEnumerable<AccountPayment>> CreateMultipleAndConfirmUI(IEnumerable<AccountPaymentSave> vals)
+        {
+            var payments = new List<AccountPayment>();
+            var listHrPaySlip = new List<HrPayslip>();
+            var hrPayslipObj = GetService<IHrPayslipService>();
+            var hrPaySlips = hrPayslipObj.SearchQuery(x => vals.Select(s => s.HrPayslipId).Contains(x.Id));
+            foreach (var val in vals)
+            {
+                var payment = await CreateUI(val);
+
+                var slip = await hrPaySlips.Where(x => x.Id == val.HrPayslipId).FirstOrDefaultAsync();
+                if (slip != null)
+                {
+                    slip.AccountPaymentId = payment.Id;
+                    listHrPaySlip.Add(slip);
+                }
+                payments.Add(payment);
+            }
+
+            await Post(payments.Select(x => x.Id));
+            await hrPayslipObj.UpdateAsync(listHrPaySlip);
+
+            return payments;
+        }
+
         /// <summary>
         /// kiểm tra số tiền thanh toán trước khi tạo
         /// </summary>
@@ -964,7 +999,7 @@ namespace Infrastructure.Services
                     payment.DestinationAccountId = account.Id;
                 }
 
-                else if (payment.PartnerType == "employee")
+                else if (payment.PartnerType == "employee.advance" || payment.PartnerType == "employee.salary")
                 {
                     var account = await accountObj.GetAccount334CurrentCompany();
                     payment.DestinationAccountId = account.Id;

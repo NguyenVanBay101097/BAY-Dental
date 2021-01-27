@@ -29,10 +29,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
-                                        formControlName="datePayment" [rangeValidation]="true"
-                                        (valueChange)="onChangeDate($event)" [disableControl]="checkIsDisable(id)">
+                                        formControlName="paymentDate" [rangeValidation]="true"
+                                        [disableControl]="checkIsDisable(id)">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.datePayment.errors" class="text-danger">
+                                    <div *ngIf="f.paymentDate.errors" class="text-danger">
                                         <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
                                             date:'dd/MM/yyyy'}}</div>
                                     </div>
@@ -104,7 +104,7 @@
 </div>
 
 <footer class="modal-footer">
-    <div *ngIf="salaryPayment ? salaryPayment.State === 'waiting' : '';else other_content">
+    <div *ngIf="salaryPayment ? salaryPayment.state === 'draft' : '';else other_content">
         <button type="button" class="btn btn-primary" (click)="onSaveV2()" accesskey="s">Lưu và In</button>
         <button type="button" *ngIf="id" class="btn btn-primary ml-1" (click)="actionConfirmV2()">Xác nhận</button>
     </div>
