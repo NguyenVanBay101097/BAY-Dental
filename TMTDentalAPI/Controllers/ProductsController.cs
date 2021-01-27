@@ -48,32 +48,36 @@ namespace TMTDentalAPI.Controllers
             _uomService = uomService;
         }
 
-        [HttpGet][CheckAccess(Actions = "Catalog.Products.Read")]
-        public async Task<IActionResult> Get([FromQuery]ProductPaged val)
-       {
+        [HttpGet]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
+        public async Task<IActionResult> Get([FromQuery] ProductPaged val)
+        {
             var result = await _productService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpGet("{id}")][CheckAccess(Actions = "Catalog.Products.Read")]
+        [HttpGet("{id}")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _productService.GetProductDisplay(id);
             return Ok(res);
         }
 
-        [HttpPost][CheckAccess(Actions = "Catalog.Products.Create")]
+        [HttpPost]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> Create(ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
             var product = await _productService.CreateProduct(val);
             _unitOfWork.Commit();
 
-             var res = _mapper.Map<ProductBasic>(product);
+            var res = _mapper.Map<ProductBasic>(product);
             return Ok(res);
         }
 
-        [HttpPut("{id}")][CheckAccess(Actions = "Catalog.Products.Update")]
+        [HttpPut("{id}")]
+        [CheckAccess(Actions = "Catalog.Products.Update")]
         public async Task<IActionResult> Update(Guid id, ProductSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -87,19 +91,20 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> GetLabo(Guid id)
         {
-            var product = await _productService.SearchQuery(x => x.Id == id).Include(x=>x.Categ).FirstOrDefaultAsync();
+            var product = await _productService.SearchQuery(x => x.Id == id).Include(x => x.Categ).FirstOrDefaultAsync();
             var display = _mapper.Map<ProductLaboDisplay>(product);
             return Ok(display);
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetLaboPaged([FromQuery]ProductPaged val)
+        public async Task<IActionResult> GetLaboPaged([FromQuery] ProductPaged val)
         {
             var result = await _productService.GetLaboPagedResultAsync(val);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")][CheckAccess(Actions = "Catalog.Products.Delete")]
+        [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Catalog.Products.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -132,21 +137,24 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("Autocomplete")][CheckAccess(Actions = "Catalog.Products.Read")]
+        [HttpGet("Autocomplete")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
         {
             var res = await _productService.GetProductsAutocomplete(filter: filter);
             return Ok(res);
         }
 
-        [HttpPost("Autocomplete2")][CheckAccess(Actions = "Catalog.Products.Read")]
+        [HttpPost("Autocomplete2")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete2(ProductPaged val)
         {
             var res = await _productService.GetProductsAutocomplete2(val);
             return Ok(res);
         }
 
-        [HttpPost("ImportExcel")][CheckAccess(Actions = "Catalog.Products.Create")]
+        [HttpPost("ImportExcel")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportExcel(ProductImportExcelViewModel val)
         {
             if (!ModelState.IsValid)
@@ -172,7 +180,7 @@ namespace TMTDentalAPI.Controllers
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    for(var row = 2; row <= worksheet.Dimension.Rows; row++)
+                    for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                     {
                         var errs = new List<string>();
                         var name = Convert.ToString(worksheet.Cells[row, 1].Value);
@@ -193,7 +201,7 @@ namespace TMTDentalAPI.Controllers
                             errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                             continue;
                         }
-                      
+
                         if (!categDict.ContainsKey(categName))
                         {
                             var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == val.Type2).FirstOrDefaultAsync();
@@ -253,7 +261,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportService(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -301,7 +310,7 @@ namespace TMTDentalAPI.Controllers
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
             }
@@ -351,6 +360,7 @@ namespace TMTDentalAPI.Controllers
                 if (product == null)
                 {
                     product = new Product();
+                    product.CompanyId = CompanyId;
                     product.ListPrice = item.ListPrice ?? 0;
                     product.IsLabo = item.IsLabo ?? false;
                     product.CategId = categDict[item.CategName].Id;
@@ -362,7 +372,7 @@ namespace TMTDentalAPI.Controllers
                     product.PurchaseOK = false;
                     product.Type = "service";
                     product.Type2 = "service";
-                    product.DefaultCode = item.DefaultCode;                  
+                    product.DefaultCode = item.DefaultCode;
                     if (!string.IsNullOrWhiteSpace(item.Steps))
                     {
                         var stepsArr = item.Steps.Split(";");
@@ -429,12 +439,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportMedicine(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)
             {
-
                 return BadRequest();
             }
 
@@ -500,7 +510,7 @@ namespace TMTDentalAPI.Controllers
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
             }
@@ -530,7 +540,7 @@ namespace TMTDentalAPI.Controllers
             if (productCodes.Any())
             {
                 var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type2 == "medicine").ToListAsync();
-                    
+
                 foreach (var product in products)
                 {
                     if (string.IsNullOrEmpty(product.DefaultCode) || productDict.ContainsKey(product.DefaultCode))
@@ -545,14 +555,13 @@ namespace TMTDentalAPI.Controllers
             foreach (var item in data)
             {
                 var product = !string.IsNullOrEmpty(item.DefaultCode) && productDict.ContainsKey(item.DefaultCode) ? productDict[item.DefaultCode] : null;
-                if(product == null)
+                if (product == null)
                 {
                     var pd = new Product();
                     pd.CompanyId = CompanyId;
                     pd.UOMId = item.UomId.Value;
                     pd.UOMPOId = item.UomId.Value;
                     pd.Name = item.Name;
-                    pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                     pd.SaleOK = false;
                     pd.PurchaseOK = false;
                     pd.KeToaOK = true;
@@ -591,7 +600,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.Products.Create")]
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportProduct(ProductImportExcelBaseViewModel val)
         {
             var fileData = Convert.FromBase64String(val.FileBase64);
@@ -648,7 +658,7 @@ namespace TMTDentalAPI.Controllers
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
             }
@@ -932,8 +942,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("[action]")][CheckAccess(Actions = "Catalog.Products.Read")]
-        public async Task<IActionResult> ExportServiceExcelFile([FromQuery]ProductPaged val)
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
+        public async Task<IActionResult> ExportServiceExcelFile([FromQuery] ProductPaged val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
@@ -952,7 +963,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 4].Value = "Mã dịch vụ";
                 worksheet.Cells[1, 5].Value = "Giá bán";
                 worksheet.Cells[1, 6].Value = "Công đoạn";
-                worksheet.Cells[1, 7].Value = "Giá đặt labo";              
+                worksheet.Cells[1, 7].Value = "Giá đặt labo";
                 for (int row = 2; row < services.Count() + 2; row++)
                 {
                     var item = services.ToList()[row - 2];
@@ -962,7 +973,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.CategName;
                     worksheet.Cells[row, 4].Value = item.DefaultCode;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
-                    worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x=>x.Name).ToList());
+                    worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
                     worksheet.Cells[row, 7].Value = item.PurchasePrice ?? 0;
                 }
 
