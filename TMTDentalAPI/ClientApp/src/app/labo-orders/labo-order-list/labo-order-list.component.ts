@@ -45,7 +45,7 @@ export class LaboOrderListComponent implements OnInit {
   stateFilter: string = '';
 
   laboStatusFilter: boolean;
-  filterPaged: SaleOrderLinesLaboPaged;
+  filterPaged: SaleOrderLinesLaboPaged = new SaleOrderLinesLaboPaged();
 
 
 
@@ -55,8 +55,8 @@ export class LaboOrderListComponent implements OnInit {
     private modalService: NgbModal, private intlService: IntlService) { }
 
   ngOnInit() {
-
-
+    this.filterPaged.limit = this.limit;
+    this.filterPaged.offset = this.skip;
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -133,13 +133,12 @@ export class LaboOrderListComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var filterPaged = new SaleOrderLinesLaboPaged();
-    filterPaged.limit = this.limit;
-    filterPaged.offset = this.skip;
-    filterPaged.hasAnyLabo = this.islabo ? this.islabo : '';
-    filterPaged.laboState = this.stateLabo ? this.stateLabo : '';
-    filterPaged.search = this.search ? this.search : '';
-    this.saleOrderLineService.getListLineIsLabo(filterPaged).pipe(
+    this.filterPaged.limit = this.limit;
+    this.filterPaged.offset = this.skip;
+    this.filterPaged.hasAnyLabo = this.islabo ? this.islabo : '';
+    this.filterPaged.laboState = this.stateLabo ? this.stateLabo : '';
+    this.filterPaged.search = this.search ? this.search : '';
+    this.saleOrderLineService.getListLineIsLabo(this.filterPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
