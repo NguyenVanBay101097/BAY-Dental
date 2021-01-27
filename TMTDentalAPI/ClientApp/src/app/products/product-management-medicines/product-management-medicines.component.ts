@@ -76,6 +76,7 @@ loadMedicines() {
       (res) => {
         this.gridData = res;
         this.loading = false;
+        console.log(res);
       },
       (err) => {
         console.log(err);

@@ -975,6 +975,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CategId == val.CategId);
             var res = await query.OrderBy(x => x.Name).Select(x => new ProductProductExportExcel
             {
+                DefaultCode = x.DefaultCode,
                 CategName = x.Categ.Name,
                 Name = x.Name,
                 Type = x.Type,
