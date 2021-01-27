@@ -54,6 +54,8 @@
     <Compile Remove="Data\Migrations\20210108050346_Add_AccountMove_MedicineOrder.Designer.cs" />
     <Compile Remove="Data\Migrations\20210111043704_Add_AccountMove_StockPicking_MedicineOrder.cs" />
     <Compile Remove="Data\Migrations\20210111043704_Add_AccountMove_StockPicking_MedicineOrder.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />
+    <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,7 +11,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// loại câu hỏi: loại radio hoặc loại text
+        /// loại câu hỏi: loại 'radio' hoặc loại 'text'
         /// </summary>
         public string Type { get; set; }
         /// <summary>
@@ -21,5 +21,9 @@ namespace ApplicationCore.Entities
 
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
+        /// <summary>
+        /// số thứ tự câu hỏi
+        /// </summary>
+        public int? Sequence { get; set; }
     }
 }

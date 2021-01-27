@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210127070036_bay_add_survey")]
-    partial class bay_add_survey
+    [Migration("20210127080217_bay_add_surveyModun")]
+    partial class bay_add_surveyModun
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -8147,6 +8147,44 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("SurveyAssignments");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.SurveyCallContent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserInputId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("UserInputId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("SurveyCallContents");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.SurveyQuestion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8167,6 +8205,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
@@ -12754,6 +12795,22 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.SurveyCallContent", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.SurveyUserInput", "UserInput")
+                        .WithMany("CallContents")
+                        .HasForeignKey("UserInputId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

@@ -230,6 +230,7 @@ namespace Infrastructure.Data
         public DbSet<SurveyUserInputLine> surveyUserInputLines { get; set; }
         public DbSet<SurveyQuestion> SurveyQuestions { get; set; }
         public DbSet<SurveyAnswer> SurveyAnswers { get; set; }
+        public DbSet<SurveyCallContent> SurveyCallContents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -415,6 +416,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SurveyAnswerConfiguration());
             builder.ApplyConfiguration(new SurveyUserInputConfiguration());
             builder.ApplyConfiguration(new SurveyUserInputLineConfiguration());
+            builder.ApplyConfiguration(new SurveyCallContentConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

@@ -24,5 +24,7 @@ namespace ApplicationCore.Entities
         /// danh sách kết quả câu hỏi kèm câu trả lời của khách hàng
         /// </summary>
         public ICollection<SurveyUserInputLine> Lines { get; set; } = new List<SurveyUserInputLine>();
+
+        public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
     }
 }
