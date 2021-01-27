@@ -119,5 +119,9 @@ namespace ApplicationCore.Entities
         /// trợ cấp
         /// </summary>
         public decimal? Allowance { get; set; }
+        /// <summary>
+        /// được phép làm khảo sát hay không
+        /// </summary>
+        public bool IsAllowSurvey { get; set; }
     }
 }
