@@ -70,6 +70,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ghi chú
         /// </summary>
         public string Note { get; set; }
+
+        /// <summary>
+        /// số lượng còn lại để tạo hóa đơn thuốc
+        /// </summary>
+        public decimal? ToInvoiceQuantity { get; set; }
     }
 
     public class ToaThuocLineOnChangeProductRequest

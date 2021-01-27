@@ -144,12 +144,12 @@
                         <tbody formArrayName="medicineOrderLines">
                             <ng-container *ngFor="let line of medicineOrderLines.controls; let i=index">
                                 <tr [formGroupName]="i">
-                                    <td>{{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.product.name : ''}}</td>
+                                    <td>{{line.get('product').value.name}}</td>
                                     <td class="text-center">
                                         {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfTimes : ''}} lần
                                     </td>
                                     <td class="text-center">
-                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.amountOfTimes : ''}} {{line.get('toaThuocLine').value.product.uomName}}
+                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.amountOfTimes : ''}} {{line.get('productUoM').value.name}}
                                     </td>
                                     <td class="text-center">
                                         {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays : ''}}</td>
@@ -157,9 +157,9 @@
                                     </td>
                                     <td class="text-center" style="width: 10%;">
                                         <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                            {{line.get('quantity') ? line.get('quantity').value : 1}}
+                                            {{line.get('quantity').value | number}}
                                         </span>
-                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="quantity">
+                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" [max]="line.get('toaThuocLine').value.toInvoiceQuantity" [autoCorrect]="true" formControlName="quantity">
                                         </kendo-numerictextbox>
                                         <!-- <input [min]="0"
                                             *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
@@ -167,9 +167,11 @@
                                             (change)="computeTotalAmount()" (keyup)="computeTotalAmount()"> -->
                                     </td>
                                     <td class="text-right">
-                                        <kendo-numerictextbox [disabled]="id && precscriptPayment.state != 'draft'" [min]="0" [format]="'n0'" formControlName="price">
+                                        <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                            {{line.get('price').value | number}}
+                                        </span>
+                                        <kendo-numerictextbox *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="price">
                                         </kendo-numerictextbox>
-                                        <!-- {{line.get('price') ? (line.get('price').value | number) : ''}} -->
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                     <td class="text-center cursor-pointer" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
@@ -212,7 +214,7 @@
                                     <span>{{getState(precscriptPayment.state)}}</span>
                                 </td>
                             </tr>
-                            <tr *ngIf="precscriptPayment.toaThuoc.note">
+                            <tr *ngIf="precscriptPayment.toaThuoc?.note">
                                 <th colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Lời dặn
@@ -222,7 +224,7 @@
                                     {{precscriptPayment.toaThuoc ? precscriptPayment.toaThuoc.note : ''}}
                                 </td>
                             </tr>
-                            <tr *ngIf="precscriptPayment.toaThuoc.reExaminationDate">
+                            <tr *ngIf="precscriptPayment.toaThuoc?.reExaminationDate">
                                 <th colspan="1" class="o_td_label">
                                     <label class="o_form_label">
                                         Tái khám

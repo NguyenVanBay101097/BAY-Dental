@@ -115,6 +115,7 @@ namespace Infrastructure.Services
                 .Include(x => x.ProductUoM).ToListAsync();
             foreach (var line in toathuocLines)
             {
+                var uom = line.ProductUoM != null ? line.ProductUoM : line.Product.UOM;
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
                 {
                     Quantity = line.ToInvoiceQuantity.HasValue? line.ToInvoiceQuantity.Value : line.Quantity,
@@ -124,7 +125,8 @@ namespace Infrastructure.Services
                     ToaThuocLineId = line.Id,
                     ProductId = line.ProductId,
                     Product = _mapper.Map<ProductBasic>(line.Product),
-                    ProductUoM = line.ProductUoM != null ? _mapper.Map<UoMBasic>(line.ProductUoM) : _mapper.Map<UoMBasic>(line.Product.UOM)
+                    ProductUoM = _mapper.Map<UoMBasic>(uom),
+                    ProductUoMId = uom.Id
                 });
             }
             medicineOrder.MedicineOrderLines = medicineOrderLines;
@@ -266,7 +268,7 @@ namespace Infrastructure.Services
                     var move = new StockMove
                     {
                         Name = line.Product.Name,
-                        ProductUOMId = line.Product.UOMId,
+                        ProductUOMId = line.ProductUoMId.HasValue ? line.ProductUoMId.Value : line.Product.UOMId,
                         PickingId = picking_vals.Id,
                         ProductId = line.Product.Id,
                         ProductUOMQty = line.Quantity,
@@ -469,7 +471,6 @@ namespace Infrastructure.Services
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<MedicineOrderLine>(line);
-                    item.ProductId = line.ProductId;
                     order.MedicineOrderLines.Add(item);
                 }
                 else

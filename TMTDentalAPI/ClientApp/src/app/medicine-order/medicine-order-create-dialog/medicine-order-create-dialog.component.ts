@@ -49,22 +49,24 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       medicineOrderLines: this.fb.array([])
     });
 
-    this.journalCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.journalCbx.loading = true)),
-      switchMap(value => this.searchJournals(value))
-    ).subscribe(result => {
-      this.filteredJournals = result;
-      this.journalCbx.loading = false;
-    });
-    this.loadFilteredJournals();
+    setTimeout(() => {
+      this.journalCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap(value => this.searchJournals(value))
+      ).subscribe(result => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+      });
 
-    if (this.idToaThuoc) {
-      this.getDefault();
-    }
-    if (this.id) {
-      this.loadRecord();
-    }
+      this.loadFilteredJournals();
+  
+      if (this.idToaThuoc) {
+        this.getDefault();
+      } else if (this.id) {
+        this.loadRecord();
+      }
+    });
   }
 
   loadRecord() {
@@ -106,6 +108,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   getDefault() {
     this.medicineOrderService.getDefault(this.idToaThuoc).subscribe(
       result => {
+        console.log(result);
         this.precscriptPayment = result;
         if (result) {
           this.precscriptPayment = result;
