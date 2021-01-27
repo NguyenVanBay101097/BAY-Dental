@@ -327,7 +327,7 @@ namespace TMTDentalAPI.Controllers
                .Select(x => x.DefaultCode).Distinct().ToList();
             if (productCodes.Any())
             {
-                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type == "service")
+                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type2 == "service")
                     .Include(x => x.Steps).ToListAsync();
                 foreach (var product in products)
                 {
@@ -351,6 +351,7 @@ namespace TMTDentalAPI.Controllers
                 if (product == null)
                 {
                     product = new Product();
+                    product.CompanyId = CompanyId;
                     product.ListPrice = item.ListPrice ?? 0;
                     product.IsLabo = item.IsLabo ?? false;
                     product.CategId = categDict[item.CategName].Id;
@@ -609,7 +610,7 @@ namespace TMTDentalAPI.Controllers
                 .Select(x => x.DefaultCode).Distinct().ToList();
             if (productCodes.Any())
             {
-                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type == "product").ToListAsync();
+                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type2 == "product").ToListAsync();
                 foreach (var product in products)
                 {
                     if (string.IsNullOrEmpty(product.DefaultCode) || productDict.ContainsKey(product.DefaultCode))
