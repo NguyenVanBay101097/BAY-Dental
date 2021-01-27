@@ -26,5 +26,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Price { get; set; }
         public decimal AmountTotal { get; set; }
         public Guid? ProductId { get; set; }
+        public Guid? ProductUoMId { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ToaThuocLineDisplay, ToaThuocLine>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Product, x => x.Ignore())
-                .ForMember(x => x.ToaThuoc, x => x.Ignore());
+                .ForMember(x => x.ToaThuoc, x => x.Ignore())
+                .ForMember(x => x.ToInvoiceQuantity, x => x.Ignore());
 
             CreateMap<ToaThuocLine, ToaThuocLinePrintViewModel>();
 

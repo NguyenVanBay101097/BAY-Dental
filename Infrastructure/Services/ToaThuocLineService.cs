@@ -53,5 +53,14 @@ namespace Infrastructure.Services
                     return "sau khi ăn";
             }
         } 
+
+        public void ComputeQtyToInvoice(IEnumerable<ToaThuocLine> self)
+        {
+            foreach(var line in self)
+            {
+                var qtyInvoiced = line.MedicineOrderLines.Where(x => x.MedicineOrder.State == "confirmed").Sum(x => x.Quantity);
+                line.ToInvoiceQuantity = line.Quantity - qtyInvoiced;
+            }
+        }
     }
 }

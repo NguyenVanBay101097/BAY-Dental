@@ -12,11 +12,11 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<MedicineOrderLine> builder)
         {
             builder.HasOne(x => x.MedicineOrder)
-            .WithMany(x=>x.MedicineOrderLines)
+            .WithMany(x => x.MedicineOrderLines)
             .HasForeignKey(x => x.MedicineOrderId);
 
             builder.HasOne(x => x.ToaThuocLine)
-             .WithMany()
+             .WithMany(x => x.MedicineOrderLines)
              .HasForeignKey(x => x.ToaThuocLineId)
              .OnDelete(DeleteBehavior.Restrict);
 

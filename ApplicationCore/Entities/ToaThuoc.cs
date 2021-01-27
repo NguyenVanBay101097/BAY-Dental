@@ -9,6 +9,7 @@ namespace ApplicationCore.Entities
         public ToaThuoc()
         {
             Date = DateTime.Now;
+            InvoiceStatus = "to_invoice";
         }
 
         public string Name { get; set; }
@@ -62,5 +63,13 @@ namespace ApplicationCore.Entities
         public string Diagnostic { get; set; }
 
         public ICollection<MedicineOrder> MedicineOrders { get; set; } = new List<MedicineOrder>();
+
+        /// <summary>
+        /// trạng thái của toa thuốc
+        /// no: Chưa hóa đơn
+        /// partially_invoice: Hóa đơn 1 phần
+        /// invoiced: Đã tạo hóa đơn đủ
+        /// </summary>
+        public string InvoiceStatus { get; set; }
     }
 }
