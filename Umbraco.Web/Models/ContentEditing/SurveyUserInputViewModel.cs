@@ -30,7 +30,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string Type { get; set; }
         public int? Sequence { get; set; }
-        public List<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
+        public IEnumerable<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
     }
 
     public class SurveyUserInputSave
@@ -38,6 +38,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string Type { get; set; }
         public int? Sequence { get; set; }
-        public ICollection<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
+        public IEnumerable<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
     }
 }

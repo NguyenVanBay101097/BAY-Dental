@@ -444,6 +444,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SurveyQuestionProfile());
                 mc.AddProfile(new SurveyAnswerProfile());
                 mc.AddProfile(new SurveyAssignmentProfile());
+                mc.AddProfile(new SurveyCallContentProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

@@ -74,6 +74,45 @@ namespace Infrastructure.Services
         {
             return SearchQuery();
         }
+        public async Task<SurveyAssignmentDisplay> GetDisplay(Guid id)
+        {
+            var saleorderObj = GetService<ISaleOrderService>();
+            var assign = await SearchQuery(x => x.Id == id).Include(x=>x.CallContents).Include(x=>x.SaleOrder).FirstOrDefaultAsync();
+            var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
+            assignDisplay.SaleOrder = await saleorderObj.GetDisplayAsync(id);
+
+            return assignDisplay;
+        }
+
+        /// <summary>
+        /// xử lý nút liên hệ
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task ActionContact(IEnumerable<Guid> ids)
+        {
+
+        }
+
+        /// <summary>
+        /// xử lý nút khảo sát
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task ActionSurvey(IEnumerable<Guid> ids)
+        {
+
+        }
+
+        /// <summary>
+        /// xử lý nút hủy khảo sát
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+
+        }
 
         public Task<SurveyAssignmentSummary> GetSummary(SurveyAssignmentPaged val)
         {

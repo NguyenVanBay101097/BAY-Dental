@@ -98,6 +98,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]      
+        public async Task<IActionResult> ActionContact(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await .ButtonConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPatch("{id}")]
         public async Task<IActionResult> JsonPatchWithModelState(Guid id, [FromBody]JsonPatchDocument<SurveyAssignmentPatch> patchDoc)
         {

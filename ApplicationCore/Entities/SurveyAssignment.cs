@@ -23,7 +23,7 @@ namespace ApplicationCore.Entities
         public Guid SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
         /// <summary>
-        /// trạng thái: draft(chưa gọi), nocontact(chưa liên hệ được), done(hoàn thành)
+        /// trạng thái: draft(chưa gọi), contact(liên hệ ), done(hoàn thành)
         /// </summary>
         public string Status { get; set; }
 

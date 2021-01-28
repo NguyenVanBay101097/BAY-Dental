@@ -25,6 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? dateTo { get; set; }
 
     }
+
     public class SurveyAssignmentBasic
     {
         public Guid Id { get; set; }
@@ -35,10 +36,28 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? CompleteDate { get; set; }
     }
 
+    public class SurveyAssignmentDisplay
+    {
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// detail
+        /// </summary>
+        public Guid SaleOrderId { get; set; }
+        public SaleOrderDisplay SaleOrder {get;set;}
+
+        public IEnumerable<SurveyCallContentDisplay> CallContents { get; set; } = new List<SurveyCallContentDisplay>();
+
+        public string Status { get; set; }
+    }
+
     public class SurveyAssignmentSave
     {
         public Guid EmployeeId { get; set; }
         public Guid SaleOrderId { get; set; }
+
+        public IEnumerable<SurveyCallContentSave> CallContents { get; set; } = new List<SurveyCallContentSave>();
+
         public string Status { get; set; }
     }
 
@@ -56,6 +75,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateOrder { get; set; }
         public string Status { get; set; }
     }
+
+
 
     public class SurveyAssignmentPatch
     {
