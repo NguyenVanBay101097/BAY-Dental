@@ -42,6 +42,11 @@ namespace ApplicationCore.Entities
         /// có 1 list chăm sóc gọi điện
         /// </summary>
         public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
+        /// <summary>
+        /// gán khách hàng cho 1 phân quyền
+        /// </summary>
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
 
     }
 }

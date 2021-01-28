@@ -120,7 +120,10 @@ namespace TMTDentalAPI.Controllers
             }
             var entityMap = _mapper.Map<SurveyAssignmentPatch>(entity);
             patchDoc.ApplyTo(entityMap, ModelState);
-
+            _mapper.Map(entityMap, entity);
+            await _unitOfWork.BeginTransactionAsync();
+            await _SurveyAssignmentService.UpdateAsync(entity);
+            _unitOfWork.Commit();
             return NoContent();
         }
 
@@ -147,7 +150,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetSummary(SurveyAssignmentPaged val)
+        public async Task<IActionResult> GetSummary([FromQuery]SurveyAssignmentPaged val)
         {
             var result = await _SurveyAssignmentService.GetSummary(val);
             return Ok(result);

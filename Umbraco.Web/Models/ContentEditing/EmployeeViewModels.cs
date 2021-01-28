@@ -154,6 +154,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> Ids { get; set; }
 
         public bool? Active { get; set; }
+        public bool? IsAllowSurvey { get; set; }
     }
 
     public class EmployeeSave

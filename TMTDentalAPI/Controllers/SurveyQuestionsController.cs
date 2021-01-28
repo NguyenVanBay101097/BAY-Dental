@@ -155,5 +155,26 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Swap(SwapPar val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var from = await _surveyQuestionService.GetByIdAsync(val.IdFrom);
+            var to = await _surveyQuestionService.GetByIdAsync(val.IdTo);
+            if (from == null || to == null)
+                return NotFound();
+
+             await _unitOfWork.BeginTransactionAsync();
+            var temp = from.Sequence;
+            from.Sequence = to.Sequence;
+            to.Sequence = temp;
+            await _surveyQuestionService.UpdateAsync(new List<SurveyQuestion>(){from, to});
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
     }
 }
