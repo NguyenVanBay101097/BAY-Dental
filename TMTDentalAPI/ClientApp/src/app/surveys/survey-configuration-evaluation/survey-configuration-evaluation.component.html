@@ -1,0 +1,43 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">{{title}}</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <button class="btn btn-primary btn-sm" (click)="createQuestion()">Thêm</button>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="date" title="Ngày tạo" width="80">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-center" field="id" width="100">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button *ngIf="dataItem.invoiceStatus != 'invoiced'" class="btn btn-primary btn-sm"
+                    title="Tạo thanh toán toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
+                    <img src="./assets/images/add-payment.png" alt="">Tạo hóa đơn
+                </button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

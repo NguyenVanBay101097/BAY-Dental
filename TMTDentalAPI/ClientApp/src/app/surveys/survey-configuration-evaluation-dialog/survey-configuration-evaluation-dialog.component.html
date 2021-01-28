@@ -1,0 +1,95 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Tên câu hỏi</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" />
+                                    <span class="text-danger" *ngIf="formGroup.get('name').errors">Vui lòng điền câu
+                                        hỏi</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="o_td_label ">
+                                    <label class="o_form_label">Chọn hình câu thức trả lời</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="width: 50%;">
+                                    <input value="radio" class="mr-2" formControlName="type" type="radio" name="type"
+                                        id="radioType">
+                                    <label class="form-check-label" for="radioType">
+                                        Đánh giá theo điểm hài lòng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 50%;">
+                                    <input value="text" class="mr-2" formControlName="type" type="radio" name="type"
+                                        id="radioType1">
+                                    <label class="form-check-label" for="radioType1">
+                                        Đánh giá theo nội dung
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered table-sm table-hover"
+                        *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
+                        <thead>
+                            <tr>
+                                <th class="text-center" scope="col">STT</th>
+                                <th scope="col">Câu trả lời</th>
+                                <th class="text-center" scope="col">Điểm</th>
+                                <th scope="col">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="answers">
+                            <ng-container *ngFor="let answer of answers.controls; let i=index">
+                                <tr [formGroupName]="i">
+                                    <th class="text-center">
+                                        <span>
+                                            {{answer.get('sequence') ? answer.get('sequence').value : 1}}
+                                        </span>
+                                    </th>
+                                    <td>
+                                        <input type="text" style="width: 100%; border-radius: 5px;"
+                                            formControlName="name" required>
+                                    </td>
+                                    <td class="text-center">
+                                        <span>
+                                            {{answer.get('score') ? answer.get('score').value : 1}}
+                                        </span>
+                                    </td>
+                                    <td class="text-center" style="width: 80px;">
+                                        <div class="sort">
+                                            <i class="fas fa-sort-up"></i>
+                                            <i class="fas fa-sort-down"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>
