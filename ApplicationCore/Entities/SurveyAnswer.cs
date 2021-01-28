@@ -6,6 +6,7 @@ namespace ApplicationCore.Entities
 {
     public class SurveyAnswer: BaseEntity
     {
+        public string Name { get; set; }
         /// <summary>
         /// thuộc câu hỏi nào
         /// </summary>
