@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var question = await _surveyQuestionService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers).FirstOrDefaultAsync();
+            var question = await _surveyQuestionService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers.OrderBy(x=>x.Sequence)).FirstOrDefaultAsync();
             if (question == null)
                 return NotFound();
             return Ok(_mapper.Map<SurveyQuestionDisplay>(question));
@@ -144,8 +144,8 @@ namespace TMTDentalAPI.Controllers
             foreach (var item in question.Answers)
             {
                 newQuestion.Answers.Add(new SurveyAnswer() { 
-                Score = question.Answers.Max(x=> x.Score) + 1,
-                Sequence = question.Answers.Max(x=> x.Sequence) + 1
+                Score = item.Score,
+                Sequence = item.Sequence
                 });
             }
             await _surveyQuestionService.CreateAsync(newQuestion);
