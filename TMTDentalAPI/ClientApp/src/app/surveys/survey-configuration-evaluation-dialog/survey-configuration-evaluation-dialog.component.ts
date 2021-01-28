@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -24,6 +25,7 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       type: ['radio', Validators.required],
+      sequence: 0,
       answers: this.fb.array([
       ])
     });
@@ -39,7 +41,19 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   }
 
   loadDataFromApi() {
+    this.surveyQuestionService.get(this.id).subscribe(
+      result => {
+        this.question = result;
+        this.formGroup.patchValue(this.question);
+        if (this.question && this.question.answers) {
+          var answers = this.formGroup.get('answers') as FormArray;
+          this.question.answers.sort((a, b) => a.sequence - b.sequence).forEach(item => {
+            answers.push(this.fb.group(item));
+          })
+        }
 
+      }
+    )
   }
 
   loadDefaultAnswer() {
@@ -54,26 +68,54 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   }
 
   getValueFromFormGroup() {
-    if (this.formGroup.invalid) { return false; }
+    if (this.formGroup.get('name').invalid) { return false; }
+    if (this.formGroup.get('type').value == "radio" && this.formGroup.get('answers').invalid) { return false }
     var value = this.formGroup.value;
-    console.log(value);
     return value;
   }
 
   onSave() {
     var val = this.getValueFromFormGroup();
-    this.surveyQuestionService.create(val).subscribe(
-      res => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.activeModal.close();
-      }
-    )
+    if (this.id) {
+      this.surveyQuestionService.update(this.id, val).subscribe(
+        res => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.activeModal.close();
+        }
+      )
+    } else {
+      this.surveyQuestionService.create(val).subscribe(
+        res => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.activeModal.close();
+        }
+      )
+    }
+  }
+
+  onDrop(event: CdkDragDrop<any>) {
+    var answers = this.formGroup.get('answers').value;
+    var doc = document.getElementById('2')
+    event.item.element.nativeElement.innerHTML = doc.innerHTML;
+    moveItemInArray(answers, event.previousIndex, event.currentIndex);
+    this.answers.clear();
+    answers.forEach((item, idx) => {
+      item.sequence = idx + 1;
+      item.score = idx + 1;
+      this.answers.push(this.fb.group(item));
+    });
   }
 
 

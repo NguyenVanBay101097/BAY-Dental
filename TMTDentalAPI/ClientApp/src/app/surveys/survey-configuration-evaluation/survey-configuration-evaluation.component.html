@@ -38,19 +38,18 @@
                     <td class="col-md">{{item.name}}</td>
                     <td class="col-sm">
                         <div class="d-flex text-center">
-                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(dataItem)">
+                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi"
-                                (click)="doubleQuestion(dataItem)">
+                                (click)="doubleQuestion(item)">
                                 <i class="far fa-copy"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(dataItem)">
+                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
                     </td>
-
                 </tr>
             </tbody>
         </table>

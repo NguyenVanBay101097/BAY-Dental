@@ -59,4 +59,16 @@ export class SurveyQuestionService {
   update(id: string, val: any) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
+
+  doublicateQuestion(id: string) {
+    return this.http.post(this.base_api + this.apiUrl + '/' + id + '/Duplicate', null);
+  }
+
+  updateListSequence(vals: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/UpdateListSequence', vals)
+  }
+
+  delete(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
 }

@@ -6,6 +6,7 @@ import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-a
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyConfigurationEvaluationDialogComponent } from '../survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
 import { SurveyQuestionBasic, SurveyQuestionDisplay, SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
 
@@ -50,8 +51,6 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
     })
   }
 
-
-
   createQuestion() {
     let modalRef = this.modalService.open(SurveyConfigurationEvaluationDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm câu hỏi';
@@ -61,17 +60,69 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
     });
   }
 
-  pageChange(event: PageChangeEvent): void {
-    this.offset = event.skip;
-    this.loadDataFromApi();
+  editQuestion(item) {
+    let modalRef = this.modalService.open(SurveyConfigurationEvaluationDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa câu hỏi';
+    modalRef.componentInstance.id = item.id
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
+  doubleQuestion(item) {
+    this.surveyQuestionService.doublicateQuestion(item.id).subscribe(
+      () => {
+        this.loadDataFromApi();
+        this.notificationService.show({
+          content: 'Sao chép thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    )
+  }
 
-  onDrop(event: CdkDragDrop<SurveyQuestionBasic[]>) {
+  removeQuestion(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa câu hỏi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa câu hỏi ?';
+
+    modalRef.result.then(() => {
+      this.surveyQuestionService.delete(item.id).subscribe(() => {
+        this.loadDataFromApi();
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      })
+    })
+  }
+
+  onDrop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.questions, event.previousIndex, event.currentIndex);
     this.questions.forEach((item, idx) => {
       item.sequence = idx + 1;
     });
+    setTimeout(() => {
+      this.surveyQuestionService.updateListSequence(this.questions).subscribe(
+        () => {
+          this.notificationService.show({
+            content: 'Sắp xếp thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }
+      )
+    }, 5000);
+
   }
 
 }

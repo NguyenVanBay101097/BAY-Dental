@@ -44,7 +44,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="table table-bordered table-sm table-hover"
+                    <!-- <table class="table table-bordered table-sm table-hover"
                         *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
                         <thead>
                             <tr>
@@ -81,7 +81,42 @@
                             </ng-container>
 
                         </tbody>
-                    </table>
+                    </table> -->
+                    <div class="table-responsive user-list">
+                        <table class="table"
+                            *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
+                            <thead>
+                                <th class="text-center" scope="col">STT</th>
+                                <th scope="col">Câu trả lời</th>
+                                <th class="text-center" scope="col">Điểm</th>
+                            </thead>
+                            <tbody cdkDropList (cdkDropListDropped)="onDrop($event)" formArrayName="answers">
+                                <ng-container *ngFor="let answer of answers.controls; let i=index">
+                                    <tr cdkDrag cdkDragLockAxis="y" [formGroupName]="i"
+                                        [id]="answer.get('sequence') ? answer.get('sequence').value : 1">
+                                        <th class="col-xs">
+                                            <div class="drag-handle text-center">
+                                                <ng-container [ngTemplateOutlet]="dragHandleTmpl">
+                                                </ng-container>
+                                                {{answer.get('sequence') ? answer.get('sequence').value : 1}}
+                                            </div>
+                                        </th>
+                                        <td class="col-md">
+                                            <input type="text"
+                                                style="width: 100%;border: 1px solid whitesmoke ; border-radius: 5px;"
+                                                formControlName="name" required>
+                                        </td>
+                                        <td class="col-xs">
+                                            <span>
+                                                {{answer.get('score') ? answer.get('score').value : 1}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,3 +128,12 @@
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>
+
+<ng-template #dragHandleTmpl>
+    <svg class="bi bi-list handle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+            d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"
+            clip-rule="evenodd" />
+    </svg>
+</ng-template>
