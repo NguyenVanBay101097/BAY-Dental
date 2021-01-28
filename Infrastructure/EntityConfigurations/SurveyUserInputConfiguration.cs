@@ -11,6 +11,11 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ApplicationCore.Entities.SurveyUserInput> builder)
         {
+
+            builder.HasOne(x => x.SurveyAssignment)
+          .WithMany()
+          .HasForeignKey(x => x.SurveyAssignmentId).OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(x => x.CreatedBy)
            .WithMany()
            .HasForeignKey(x => x.CreatedById);

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210127080217_bay_add_surveyModun")]
-    partial class bay_add_surveyModun
+    [Migration("20210128013930_bay_add_surveymodun")]
+    partial class bay_add_surveymodun
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -8124,9 +8124,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("SurveyId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -8139,8 +8136,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("SaleOrderId");
-
-                    b.HasIndex("SurveyId");
 
                     b.HasIndex("WriteById");
 
@@ -8247,12 +8242,17 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("Score")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("SurveyAssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("SurveyAssignmentId");
 
                     b.HasIndex("WriteById");
 
@@ -12790,12 +12790,6 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.SurveyUserInput", "UserInput")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -12837,6 +12831,12 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.SurveyAssignment", "SurveyAssignment")
+                        .WithMany()
+                        .HasForeignKey("SurveyAssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

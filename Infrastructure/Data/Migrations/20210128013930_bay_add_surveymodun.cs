@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class bay_add_surveyModun : Migration
+    public partial class bay_add_surveymodun : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,55 @@ namespace Infrastructure.Data.Migrations
                 table: "Employees",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.CreateTable(
+                name: "SurveyAssignments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedById = table.Column<string>(nullable: true),
+                    WriteById = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: true),
+                    LastUpdated = table.Column<DateTime>(nullable: true),
+                    EmployeeId = table.Column<Guid>(nullable: false),
+                    SaleOrderId = table.Column<Guid>(nullable: false),
+                    Status = table.Column<string>(nullable: true),
+                    CompanyId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SurveyAssignments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SurveyAssignments_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SurveyAssignments_AspNetUsers_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SurveyAssignments_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SurveyAssignments_SaleOrders_SaleOrderId",
+                        column: x => x.SaleOrderId,
+                        principalTable: "SaleOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SurveyAssignments_AspNetUsers_WriteById",
+                        column: x => x.WriteById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
 
             migrationBuilder.CreateTable(
                 name: "SurveyQuestions",
@@ -60,7 +109,8 @@ namespace Infrastructure.Data.Migrations
                     DateCreated = table.Column<DateTime>(nullable: true),
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Score = table.Column<decimal>(nullable: true),
-                    MaxScore = table.Column<decimal>(nullable: true)
+                    MaxScore = table.Column<decimal>(nullable: true),
+                    SurveyAssignmentId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,6 +121,12 @@ namespace Infrastructure.Data.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SurveyUserInputs_SurveyAssignments_SurveyAssignmentId",
+                        column: x => x.SurveyAssignmentId,
+                        principalTable: "SurveyAssignments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SurveyUserInputs_AspNetUsers_WriteById",
                         column: x => x.WriteById,
@@ -109,62 +165,6 @@ namespace Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SurveyAnswers_AspNetUsers_WriteById",
-                        column: x => x.WriteById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SurveyAssignments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CreatedById = table.Column<string>(nullable: true),
-                    WriteById = table.Column<string>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: true),
-                    LastUpdated = table.Column<DateTime>(nullable: true),
-                    SurveyId = table.Column<Guid>(nullable: false),
-                    EmployeeId = table.Column<Guid>(nullable: false),
-                    SaleOrderId = table.Column<Guid>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
-                    CompanyId = table.Column<Guid>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SurveyAssignments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_SaleOrders_SaleOrderId",
-                        column: x => x.SaleOrderId,
-                        principalTable: "SaleOrders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_SurveyUserInputs_SurveyId",
-                        column: x => x.SurveyId,
-                        principalTable: "SurveyUserInputs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAssignments_AspNetUsers_WriteById",
                         column: x => x.WriteById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -293,11 +293,6 @@ namespace Infrastructure.Data.Migrations
                 column: "SaleOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SurveyAssignments_SurveyId",
-                table: "SurveyAssignments",
-                column: "SurveyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SurveyAssignments_WriteById",
                 table: "SurveyAssignments",
                 column: "WriteById");
@@ -363,6 +358,11 @@ namespace Infrastructure.Data.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SurveyUserInputs_SurveyAssignmentId",
+                table: "SurveyUserInputs",
+                column: "SurveyAssignmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SurveyUserInputs_WriteById",
                 table: "SurveyUserInputs",
                 column: "WriteById");
@@ -370,9 +370,6 @@ namespace Infrastructure.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "SurveyAssignments");
-
             migrationBuilder.DropTable(
                 name: "SurveyCallContents");
 
@@ -387,6 +384,9 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "SurveyQuestions");
+
+            migrationBuilder.DropTable(
+                name: "SurveyAssignments");
 
             migrationBuilder.DropColumn(
                 name: "IsAllowSurvey",

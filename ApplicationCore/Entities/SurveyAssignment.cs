@@ -6,18 +6,19 @@ namespace ApplicationCore.Entities
 {
     public class SurveyAssignment: BaseEntity
     {
+
+        public SurveyAssignment()
+        {
+            Status = "draft";
+        }
+
         /// <summary>
-        /// phân việc khảo sát cho 1 survey
-        /// </summary>
-        public Guid SurveyId { get; set; }
-        public SurveyUserInput UserInput { get; set; }
-        /// <summary>
-        /// phân việc khảo sát cho 1 nhân viên
+        /// phân việc khảo sát giao cho 1 nhân viên
         /// </summary>
         public Guid EmployeeId { get; set; }
         public Employee employee { get; set; }
         /// <summary>
-        /// phân việc khảo sát cho 1 phiếu điều trị
+        /// phân việc khảo sát của 1 phiếu điều trị
         /// </summary>
         public Guid SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
