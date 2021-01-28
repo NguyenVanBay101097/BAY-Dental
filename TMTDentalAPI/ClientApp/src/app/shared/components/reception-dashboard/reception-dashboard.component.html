@@ -193,14 +193,16 @@
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
                 width="150">
             </kendo-grid-column>
-
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{getTeethDisplay(dataItem.teeth)}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="productUOMQty" title="Số lượng"
-                width="150">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}"  class="text-right" field="productUOMQty" title="Số lượng"
+                width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.productUOMQty | number}}
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán"
                 width="150">
