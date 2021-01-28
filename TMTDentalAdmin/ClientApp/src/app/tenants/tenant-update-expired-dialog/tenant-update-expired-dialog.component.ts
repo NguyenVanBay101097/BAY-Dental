@@ -14,13 +14,15 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   dateExpired: any;
+  tenant: any;
 
   constructor(private fb: FormBuilder, private intlService: IntlService, private tenantService: TenantService,
     public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateExpired: this.dateExpired
+      dateExpired: this.dateExpired,
+      activeCompaniesNbr: this.tenant.activeCompaniesNbr
     });
   }
 

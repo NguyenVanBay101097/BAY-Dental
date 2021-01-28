@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '@env';
 
 @Component({
   selector: 'app-trial-registration-success',
@@ -10,7 +11,10 @@ export class TrialRegistrationSuccessComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(history.state);
     this.data = history.state;
+  }
+
+  getHostName() {
+    return environment.catalogScheme + '://' + this.data.hostName + '.' + environment.catalogHost;
   }
 }

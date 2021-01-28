@@ -11,6 +11,7 @@ namespace ApplicationCore.Entities
         public AppTenant()
         {
             Version = "1.0";
+            ActiveCompaniesNbr = 1;
         }
 
         public string Name { get; set; }
@@ -29,5 +30,17 @@ namespace ApplicationCore.Entities
         public DateTime? DateExpired { get; set; }
 
         public string Version { get; set; }
+
+        public int ActiveCompaniesNbr { get; set; }
+
+        /// <summary>
+        /// Nguồn khách hàng
+        /// </summary>
+        public string CustomerSource { get; set; }
+
+        /// <summary>
+        /// Người triển khai
+        /// </summary>
+        public string SupporterName { get; set; }
     }
 }

@@ -17,8 +17,6 @@ import localeVi from '@angular/common/locales/vi';
 import { IntlModule } from '@progress/kendo-angular-intl';
 // Load all required data for the bg locale
 import '@progress/kendo-angular-intl/locales/vi/all';
-import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
-import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CoreModule } from '@app/core.module';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
@@ -39,8 +37,6 @@ registerLocaleData(localeVi, 'vi');
     ContentLayoutComponent,
     AppComponent,
     NavMenuComponent,
-    TrialRegistrationComponent,
-    TrialRegistrationSuccessComponent,
     SidebarComponent,
     HeaderComponent
   ],
