@@ -7,6 +7,7 @@ import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-company-list',
@@ -25,7 +26,7 @@ export class CompanyListComponent implements OnInit {
   loading = false;
 
   constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService, 
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService, private showErrorService: AppSharedShowErrorService) { }
 
   filterCompanyStatus = [
     { name: 'Đang hoạt động', value: true },
@@ -101,7 +102,7 @@ export class CompanyListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (active) {
       modalRef.componentInstance.title = "Hiện chi nhánh " + item.name;
-      modalRef.componentInstance.body = "Bạn có chắc chắn muốn hiện chi nhánh " + item.name;
+      modalRef.componentInstance.body = `Bạn có chắc chắn muốn hiện chi nhánh ${item.name}?`;
       modalRef.result.then(() => {
         this.companyService.actionUnArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
@@ -113,13 +114,12 @@ export class CompanyListComponent implements OnInit {
             type: { style: "success", icon: true },
           });
         }, (err) => {
-    
         })
       }, () => {
       });
     } else {
       modalRef.componentInstance.title = "Ẩn chi nhánh " + item.name;
-      modalRef.componentInstance.body = "Bạn có chắc chắn muốn ẩn chi nhánh " + item.name;
+      modalRef.componentInstance.body = `Bạn có chắc chắn muốn ẩn chi nhánh ${item.name}?`;
       modalRef.result.then(() => {
         this.companyService.actionArchive([item.id]).subscribe((res) => {
           this.loadDataFromApi();
@@ -131,7 +131,6 @@ export class CompanyListComponent implements OnInit {
             type: { style: "success", icon: true },
           });
         }, (err) => {
-    
         })
       }, () => {
       });

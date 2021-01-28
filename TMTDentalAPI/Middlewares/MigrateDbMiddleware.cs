@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Middlewares
                         await dbContext.Database.MigrateAsync();
 
                     //add data nếu cần
-                    await AddMissingData(context);
+                    //await AddMissingData(context);
                     //update version
                     var tenantContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
                     var tnt = await tenantContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();

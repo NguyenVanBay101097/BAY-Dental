@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using CsvHelper;
 using Infrastructure.Data;
+using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -27,15 +28,17 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppTenant _tenant;
+        private readonly TenantDbContext _tenantDbContext;
         public CompanyService(IAsyncRepository<Company> repository, IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment, IMapper mapper, ITenant<AppTenant> tenant,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, TenantDbContext tenantDbContext)
         : base(repository, httpContextAccessor)
         {
             _hostingEnvironment = hostingEnvironment;
             _mapper = mapper;
             _userManager = userManager;
             _tenant = tenant?.Value;
+            _tenantDbContext = tenantDbContext;
         }
 
         public async Task SetupCompany(string companyName, string userName, string email, string password, string name = "")
@@ -1182,6 +1185,32 @@ namespace Infrastructure.Services
 
         }
 
+        private async Task CheckAtLeastOneCompanyActive()
+        {
+            if (await SearchQuery(x => x.Active).CountAsync() <= 0)
+                throw new Exception("Phải có tối thiểu 1 chi nhánh đang hoạt động");
+        }
+
+        private async Task CheckNotArchiveUserRootCompany()
+        {
+            //kiểm tra ràng buộc không được đóng chi nhánh đang làm việc của tài khoản root
+            var userRoot = await _userManager.Users.Where(x => x.IsUserRoot).FirstOrDefaultAsync();
+            var company = await SearchQuery(x => x.Id == userRoot.CompanyId).FirstOrDefaultAsync();
+            if (!company.Active)
+                throw new Exception("Không được phép đóng chi nhánh của tài khoản admin");
+        }
+
+        //Kiểm tra số chi nhánh được phép hoạt động
+        private async Task CheckNbrCompanyActives()
+        {
+            if (_tenant != null && _tenant.ActiveCompaniesNbr > 0)
+            {
+                var count = await SearchQuery(x => x.Active).CountAsync();
+                if (_tenant.ActiveCompaniesNbr < count)
+                    throw new Exception($"Số chi nhánh được phép hoạt động là {_tenant.ActiveCompaniesNbr}, vui lòng liên hệ người quản trị phần mềm để được trợ giúp.");
+            }
+        }
+
 
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
@@ -1192,18 +1221,16 @@ namespace Infrastructure.Services
                     throw new Exception("Không thể đóng chi nhánh đang làm việc");
                 company.Active = false;
             }
+
             await UpdateAsync(companies);
+
+            await CheckAtLeastOneCompanyActive();
+
+            await CheckNotArchiveUserRootCompany();
         }
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
         {
-             //validate 
-            if (_tenant != null && _tenant.ActiveCompaniesNbr > 0)
-            {
-                var count = await SearchQuery(x => x.Active == true).CountAsync();
-                if (_tenant.ActiveCompaniesNbr < (count + ids.Count())) throw new Exception("Tổng chi nhánh được phép mở là " + count);
-            }
-
             var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var company in companies)
                 company.Active = true;
@@ -1213,26 +1240,16 @@ namespace Infrastructure.Services
 
         public override async Task<Company> CreateAsync(Company entity)
         {
-            await CheckActiveCompaniesNbr();
-            return await base.CreateAsync(entity);
+            await base.CreateAsync(entity);
+            await CheckNbrCompanyActives();
+
+            return entity;
         }
 
         public override async Task UpdateAsync(Company entity)
         {
-            await CheckActiveCompaniesNbr();
             await base.UpdateAsync(entity);
-        }
-
-        public async Task CheckActiveCompaniesNbr()
-        {
-            if (_tenant != null && _tenant.ActiveCompaniesNbr > 0)
-            {
-                var count = await SearchQuery(x => x.Active == true).CountAsync();
-                if (_tenant.ActiveCompaniesNbr <= count)
-                {
-                    throw new Exception("Tổng chi nhánh được phép mở đã hết!");
-                }
-            }
+            await CheckNbrCompanyActives();
         }
     }
 

@@ -22,6 +22,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateExpired { get; set; }
 
         public int ActiveCompaniesNbr { get; set; }
+
+        /// <summary>
+        /// Nguồn khách hàng
+        /// </summary>
+        public string CustomerSource { get; set; }
+
+        /// <summary>
+        /// Người triển khai
+        /// </summary>
+        public string SupporterName { get; set; }
     }
 
     public class TenantDisplay
@@ -68,6 +78,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
+
+        /// <summary>
+        /// Nguồn khách hàng
+        /// </summary>
+        public string CustomerSource { get; set; }
+
+        /// <summary>
+        /// Người triển khai
+        /// </summary>
+        public string SupporterName { get; set; }
     }
 
     public class TenantPaged

@@ -13,8 +13,9 @@
     </div>
     <div class="o_cp_left">
       <div class="o_cp_buttons">
-        <div class="o_form_buttons_view">
-        </div>
+        <a routerLink="register" class="btn btn-primary btn-sm" accesskey="c">
+          Thêm
+        </a>
       </div>
       <div class="o_cp_sidebar">
       </div>
@@ -27,16 +28,26 @@
 
 <div class="o_content">
   <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-              (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="id" width="70">
+      <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+        Thao tác
+      </ng-template>
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        <button class="btn btn-success btn-sm" (click)="updateExpired(dataItem)">
+          Sửa
+        </button>
+      </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="name" title="Khách hàng" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="phone" title="Điện thoại" width="120">
     </kendo-grid-column>
-    <kendo-grid-column field="companyName" title="Tên công ty" width="150">
+    <kendo-grid-column field="companyName" title="Tên phòng khám" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="hostname" title="Hostname" width="100">
     </kendo-grid-column>
-    <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="số chi nhánh được mở" width="120">
+    <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">
     </kendo-grid-column>
     <kendo-grid-column field="dateExpired" title="Ngày hết hạn" width="120">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -48,15 +59,9 @@
         {{dataItem.dateCreated | date : 'short'}}
       </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="id" width="150">
-      <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-        Thao tác
-      </ng-template>
-      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        <button class="btn btn-success btn-sm" (click)="updateExpired(dataItem)">
-          Sửa
-        </button>
-      </ng-template>
+    <kendo-grid-column field="customerSource" class="text-right" title="Nguồn KH" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column field="supporterName" class="text-right" title="Người triển khai" width="120">
     </kendo-grid-column>
   </kendo-grid>
 </div>

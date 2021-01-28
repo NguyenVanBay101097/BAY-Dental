@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { environment } from '../../environments/environment';
-import { MustMatch } from '../shared/must-match-validator';
-import { TenantService } from '../tenants/tenant.service';
+import { environment } from '../../../environments/environment';
+import { MustMatch } from '../../shared/must-match-validator';
+import { TenantService } from '../tenant.service';
 import { Router } from '@angular/router';
+import { NullTemplateVisitor } from '@angular/compiler';
 
 @Component({
   selector: 'app-trial-registration',
@@ -12,6 +13,8 @@ import { Router } from '@angular/router';
 })
 export class TrialRegistrationComponent implements OnInit {
   formGroup: FormGroup;
+  registerSuccess = false;
+  registerResult: any;
   constructor(private fb: FormBuilder, private tenantService: TenantService,
     private router: Router) { }
 
@@ -20,6 +23,8 @@ export class TrialRegistrationComponent implements OnInit {
       name: ['', Validators.required],
       email: [null, [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      customerSource: null,
+      supporterName: null,
       companyName: ['', Validators.required],
       hostName: ['', [Validators.required, Validators.pattern('^[a-z0-9]*$'), Validators.minLength(4)]],
       userName: ['', Validators.required],
@@ -40,8 +45,8 @@ export class TrialRegistrationComponent implements OnInit {
 
   get confirmPassword() { return this.formGroup.get('confirmPassword'); }
 
-  getHostName() {
-    return environment.catalogScheme + '://' + this.hostName.value + '.' + environment.catalogHost;
+  getHostName(host) {
+    return environment.catalogScheme + '://' + host + '.' + environment.catalogHost;
   }
 
   onSubmit() {
@@ -50,9 +55,10 @@ export class TrialRegistrationComponent implements OnInit {
     }
 
     var value = this.formGroup.value;
-    this.tenantService.register(value).subscribe(() => {
-      value.hostName = this.getHostName();
-      this.router.navigate(['/register-success'], { state: value });
+    this.tenantService.register(value).subscribe((result: any) => {
+      console.log(result);
+      this.registerSuccess = true;
+      this.registerResult = result;
     }, (err) => {
       console.log(err);
     });
