@@ -18,7 +18,7 @@ import { IrConfigParameterService } from './core/services/ir-config-parameter.se
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'tmt-dental';
+  title = 'TDental';
   _areAccessKeyVisible = false;
   value: string;
   constructor(

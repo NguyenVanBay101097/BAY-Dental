@@ -23,6 +23,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MyErrorHandler } from './my-error-handler';
 import { FacebookModule } from 'ngx-facebook';
 import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -55,7 +57,8 @@ registerLocaleData(localeVi, "vi");
         m: 59,
       },
     }),
-    FacebookModule.forRoot()
+    FacebookModule.forRoot(),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
