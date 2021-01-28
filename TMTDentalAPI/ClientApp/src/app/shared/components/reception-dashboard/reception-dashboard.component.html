@@ -103,7 +103,7 @@
                                     <h4 class="text-primary">
                                         {{laboOrderStateCount[state.value] || 0}}
                                     </h4>
-                                </div>                              
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -159,7 +159,7 @@
             </div>
         </div>
     </div>
-    <div>     
+    <div>
         <app-appointment-list-today (valueChange)="onAppointmentTodayChange()"></app-appointment-list-today>
     </div>
     <div class="mr-2">
@@ -183,21 +183,29 @@
             <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
                 title="Phiếu điều trị" class="text-center" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị "
+                    <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị {{dataItem.order.name}}"
                         (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
                 title="Khách hàng" width="150">
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ" width="150">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
+                width="150">
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{getTeethDisplay(dataItem.teeth)}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán" width="150">
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}"  class="text-right" field="productUOMQty" title="Số lượng"
+                width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.productUOMQty | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán"
+                width="150">
             </kendo-grid-column>
             <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
             </kendo-grid-column>
