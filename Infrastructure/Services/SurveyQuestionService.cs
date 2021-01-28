@@ -34,8 +34,13 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x=> x.Type == val.Type);
             }
+
             var count = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).OrderBy(x=> x.Sequence).ToListAsync();
+            query = query.Skip(val.Offset);
+            if (val.Limit > 0)
+                query = query.Take(val.Limit);
+            var items = await query.OrderBy(x=> x.Sequence).ToListAsync();
+
             return new PagedResult2<SurveyQuestionBasic>(count, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<SurveyQuestionBasic>>(items)
