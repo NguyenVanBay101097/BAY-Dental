@@ -179,6 +179,7 @@ export class ProductManagementProductsComponent implements OnInit {
       windowClass: "o_technical_modal",
       keyboard: false,
       backdrop: "static",
+      scrollable: true
     });
     modalRef.componentInstance.title = "Import excel";
     modalRef.componentInstance.type = "product";

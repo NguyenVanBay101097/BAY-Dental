@@ -124,7 +124,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   importFromExcel() {
-    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'customer';
     modalRef.result.then(() => {
       this.refreshData();
