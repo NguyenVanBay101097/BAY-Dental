@@ -53,6 +53,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Active == val.Active.Value);
             }
 
+            if (val.IsAllowSurvey.HasValue)
+            {
+                query = query.Where(x=> x.IsAllowSurvey == val.IsAllowSurvey.Value);
+            }
+
             query = query.OrderBy(s => s.Name);
             return query;
         }

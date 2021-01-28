@@ -4,14 +4,6 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-
-    public class SurveyAssignmentSummary
-    {
-        public int SumDraft { get; set; }
-        public int SumNocontact{ get; set; }
-        public int SumDone { get; set; }
-    }
-
     public class SurveyAssignmentPaged {
         public SurveyAssignmentPaged()
         {
@@ -23,11 +15,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Status { get; set; }
         public DateTime? dateFrom { get; set; }
         public DateTime? dateTo { get; set; }
+        public bool? IsGetScore { get; set; }
 
     }
     public class SurveyAssignmentBasic
     {
         public Guid Id { get; set; }
+        public string EmployeeName { get; set; }
         public EmployeeSimple Employee { get; set; }
         public Guid SaleOrderId { get; set; }
         public SaleOrderSurveyBasic SaleOrder { get; set; }
@@ -40,6 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid EmployeeId { get; set; }
         public Guid SaleOrderId { get; set; }
         public string Status { get; set; }
+        public Guid PartnerId { get; set; }
     }
 
     public class SurveyAssignmentDefaultGet
@@ -59,7 +54,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyAssignmentPatch
     {
-        public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
     }
 

@@ -42,9 +42,10 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var question = await _surveyQuestionService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers.OrderBy(x=>x.Sequence)).FirstOrDefaultAsync();
+            var question = await _surveyQuestionService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers).FirstOrDefaultAsync();
             if (question == null)
                 return NotFound();
+            question.Answers.OrderBy(x=> x.Sequence);
             return Ok(_mapper.Map<SurveyQuestionDisplay>(question));
         }
 
