@@ -58,6 +58,8 @@ namespace TMTDentalAPI.Controllers
 
             var question = _mapper.Map<SurveyQuestion>(val);
             SaveAnswers(val, question);
+            var maxSequence = await _surveyQuestionService.SearchQuery().MaxAsync(x => x.Sequence);
+            question.Sequence = maxSequence == null ? 1 : maxSequence + 1;
             await _surveyQuestionService.CreateAsync(question);
 
             _unitOfWork.Commit();
@@ -150,6 +152,27 @@ namespace TMTDentalAPI.Controllers
             }
             await _surveyQuestionService.CreateAsync(newQuestion);
             _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Swap(SwapPar val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var from = await _surveyQuestionService.GetByIdAsync(val.IdFrom);
+            var to = await _surveyQuestionService.GetByIdAsync(val.IdTo);
+            if (from == null || to == null)
+                return NotFound();
+
+             await _unitOfWork.BeginTransactionAsync();
+            var temp = from.Sequence;
+            from.Sequence = to.Sequence;
+            to.Sequence = temp;
+            await _surveyQuestionService.UpdateAsync(new List<SurveyQuestion>(){from, to});
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 

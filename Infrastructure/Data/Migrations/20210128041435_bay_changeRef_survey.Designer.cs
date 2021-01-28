@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210128041435_bay_changeRef_survey")]
+    partial class bay_changeRef_survey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8157,14 +8159,8 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssignmentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
@@ -8175,14 +8171,20 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserInputId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignmentId");
-
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("UserInputId");
 
                     b.HasIndex("WriteById");
 
@@ -12805,14 +12807,14 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SurveyCallContent", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.SurveyAssignment", "Assignment")
-                        .WithMany("CallContents")
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.SurveyUserInput", "UserInput")
+                        .WithMany("CallContents")
+                        .HasForeignKey("UserInputId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

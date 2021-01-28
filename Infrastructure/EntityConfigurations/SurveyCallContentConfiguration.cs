@@ -11,9 +11,9 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<SurveyCallContent> builder)
         {
-            builder.HasOne(x => x.UserInput)
+            builder.HasOne(x => x.Assignment)
             .WithMany(x=> x.CallContents)
-           .HasForeignKey(x => x.UserInputId).OnDelete(DeleteBehavior.Cascade);
+           .HasForeignKey(x => x.AssignmentId).OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.CreatedBy)
              .WithMany()

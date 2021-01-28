@@ -5,8 +5,8 @@ using System.Text;
 namespace Umbraco.Web.Models.ContentEditing
 {
 
-    public class SurveyQuestionPaged {
-        public SurveyQuestionPaged()
+    public class SurveyUserInputPaged {
+        public SurveyUserInputPaged()
         {
             Limit = 20;
         }
@@ -16,7 +16,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
     }
-    public class SurveyQuestionBasic
+    public class SurveyUserInputBasic
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -24,7 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? Sequence { get; set; }
     }
 
-    public class SurveyQuestionDisplay
+    public class SurveyUserInputDisplay
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -33,17 +33,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public List<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
     }
 
-    public class SurveyQuestionSave
+    public class SurveyUserInputSave
     {
         public string Name { get; set; }
         public string Type { get; set; }
         public int? Sequence { get; set; }
         public ICollection<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
-    }
-
-    public class SwapPar
-    {
-        public Guid IdFrom { get; set; }
-        public Guid IdTo { get; set; }
     }
 }

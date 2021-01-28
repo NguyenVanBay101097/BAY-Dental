@@ -29,5 +29,19 @@ namespace ApplicationCore.Entities
 
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
+        /// <summary>
+        /// ngày hoàn thành khảo sát
+        /// </summary>
+        public DateTime? CompleteDate { get; set; }
+        /// <summary>
+        /// có 1 phiếu khảo sát
+        /// </summary>
+        public Guid? UserInputId { get; set; }
+        public SurveyUserInput UserInput { get; set; }
+        /// <summary>
+        /// có 1 list chăm sóc gọi điện
+        /// </summary>
+        public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
+
     }
 }

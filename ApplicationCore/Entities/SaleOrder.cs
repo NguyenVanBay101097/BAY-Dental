@@ -133,6 +133,9 @@ namespace ApplicationCore.Entities
 
         public Guid? JournalId { get; set; }
         public AccountJournal Journal { get; set; }
- 
+        /// <summary>
+        /// list phân việc khảo sát
+        /// </summary>
+        public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
     }
 }

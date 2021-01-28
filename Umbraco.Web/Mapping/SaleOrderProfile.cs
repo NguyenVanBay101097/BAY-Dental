@@ -39,6 +39,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OrderLines, x => x.Ignore());
 
             CreateMap<SaleOrder, SaleOrderPrintVM>();
+            CreateMap<SaleOrder, SaleOrderSurveyBasic>().ForMember(
+                x=>x.PartnerCategories, x=> x.MapFrom(s=> s.Partner.PartnerPartnerCategoryRels.Select(i=> i.Category))
+                );
         }
     }
 }
