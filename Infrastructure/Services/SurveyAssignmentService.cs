@@ -42,17 +42,29 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SurveyAssignmentBasic>> GetPagedResultAsync(SurveyAssignmentPaged val)
         {
+            var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
+
             var query = getAllQuery(val);
             var count = await query.CountAsync();
             if (val.IsGetScore.HasValue && val.IsGetScore == true)
             {
                 query = query.Include(x=> x.UserInput);
             }
-            query = query.Include(x => x.employee).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).ThenInclude(x => x.PartnerPartnerCategoryRels).ThenInclude(x => x.Category);
+            query = query.Include(x => x.employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
+                .Select(x=> new { ParnerId = x.PartnerId, CategoryName = x.Category.Name}).ToListAsync();
+
+            var resItems = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items);
+            foreach (var item in resItems)
+            {
+                item.PartnerCategoriesDisplay =string.Join(", ", pnCategories.Where(x => x.ParnerId == item.PartnerId).Select(x => x.CategoryName));
+            }
+
             return new PagedResult2<SurveyAssignmentBasic>(count, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items)
+                Items = resItems
             };
         }
 

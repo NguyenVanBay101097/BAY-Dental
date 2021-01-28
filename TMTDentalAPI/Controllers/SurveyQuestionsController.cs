@@ -77,6 +77,7 @@ namespace TMTDentalAPI.Controllers
                 question.Answers.Remove(item);
             }
 
+            question.Answers.Clear();
             foreach (var ans in val.Answers)
             {
                 if (ans.Id == Guid.Empty)
@@ -108,6 +109,30 @@ namespace TMTDentalAPI.Controllers
             question = _mapper.Map(val, question);
             SaveAnswers(val, question);
             await _surveyQuestionService.UpdateAsync(question);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateList( [FromBody]IEnumerable<SurveyQuestionUpdateListPar> vals)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            var questions = await _surveyQuestionService.SearchQuery(x => vals.Select(s=> s.Id).Contains(x.Id)).Include(x => x.Answers).ToListAsync();
+            if (questions.Count() == 0)
+                return NotFound();
+            foreach (var val in vals)
+            {
+                var question = questions.FirstOrDefault(x => x.Id == val.Id);
+                if (question == null) throw new Exception($"Không tìm thấy câu hỏi {val.Name}");
+                _mapper.Map(val, question);
+            }
+            await _surveyQuestionService.UpdateAsync(questions);
 
             _unitOfWork.Commit();
 
