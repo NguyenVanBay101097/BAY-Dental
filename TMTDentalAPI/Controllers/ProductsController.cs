@@ -441,6 +441,157 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Catalog.Products.Create")]
+        public async Task<IActionResult> UpdateServiceFromExcel(ProductImportExcelBaseViewModel val)
+        {
+            var fileData = Convert.FromBase64String(val.FileBase64);
+            var data = new List<ProductServiceImportExcelRow>();
+            var categDict = new Dictionary<string, ProductCategory>();
+            var errors = new List<string>();
+
+            try
+            {
+                using (var stream = new MemoryStream(fileData))
+                {
+                    using (ExcelPackage package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        for (var row = 2; row <= worksheet.Dimension.Rows; row++)
+                        {
+                            var errs = new List<string>();
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var serviceCode = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var exist = await _productService.SearchQuery(x => x.DefaultCode == serviceCode && x.Type == "service").FirstOrDefaultAsync();
+                            if (string.IsNullOrEmpty(serviceCode))
+                                continue;
+                            if (exist == null)
+                                continue;
+                            if (string.IsNullOrEmpty(name))
+                                errs.Add("Tên sản phẩm là bắt buộc");
+                            if (string.IsNullOrEmpty(categName))
+                                errs.Add("Nhóm sản phẩm là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            var item = new ProductServiceImportExcelRow
+                            {
+                                Name = name,
+                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
+                                CategName = categName,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                            };
+                            data.Add(item);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lỗi đọc dữ liệu: {e.Message}" } });
+            }
+
+            var categNames = data.Select(x => x.CategName).Distinct().ToList();
+            if (categNames.Any())
+            {
+                var categs = await _productCategoryService.SearchQuery(x => categNames.Contains(x.Name) && x.Type == "service").ToListAsync();
+                foreach (var categName in categNames)
+                {
+                    if (categDict.ContainsKey(categName))
+                        continue;
+
+                    var categ = categs.FirstOrDefault(x => x.Name == categName);
+                    if (categ == null)
+                        categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "service" });
+                    categDict.Add(categName, categ);
+                }
+            }
+
+            var productDict = new Dictionary<string, Product>();
+            var productCodes = data.Where(x => !string.IsNullOrEmpty(x.DefaultCode))
+               .Select(x => x.DefaultCode).Distinct().ToList();
+            if (productCodes.Any())
+            {
+                var products = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode) && x.Type == "service")
+                    .Include(x => x.Steps).ToListAsync();
+                foreach (var product in products)
+                {
+                    if (string.IsNullOrEmpty(product.DefaultCode) || productDict.ContainsKey(product.DefaultCode))
+                        continue;
+                    productDict.Add(product.DefaultCode, product);
+                }
+            }
+
+            if (errors.Any())
+                return Ok(new { success = false, errors });
+
+            var uom = await _uomService.DefaultUOM();
+           // var productsCreate = new List<Product>();
+            var productsUpdate = new List<Product>();
+
+            foreach (var item in data)
+            {
+                var product = !string.IsNullOrEmpty(item.DefaultCode) && productDict.ContainsKey(item.DefaultCode) ?
+                    productDict[item.DefaultCode] : null;
+                if (product == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    product.Name = item.Name;
+                    product.SaleOK = true;
+                    product.PurchaseOK = false;
+                    product.IsLabo = item.IsLabo ?? false;
+                    product.CategId = categDict[item.CategName].Id;
+                    product.DefaultCode = item.DefaultCode;
+                    product.ListPrice = item.ListPrice ?? 0;
+                    product.LaboPrice = item.LaboPrice ?? 0;
+                    product.Steps.Clear();
+                    if (!string.IsNullOrWhiteSpace(item.Steps))
+                    {
+                        var stepsArr = item.Steps.Split(";");
+                        var order = 1;
+                        foreach (var st in stepsArr)
+                        {
+                            if (string.IsNullOrWhiteSpace(st))
+                                continue;
+                            product.Steps.Add(new ProductStep
+                            {
+                                Name = st,
+                                Order = order++
+                            });
+                        }
+                    }
+
+                    productsUpdate.Add(product);
+                }
+            }
+
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                await _productService.UpdateAsync(productsUpdate);
+
+                _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                return Ok(new { success = false, errors = new List<string>() { $"Lưu thất bại: {e.Message}" } });
+            }
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Products.Create")]
         public async Task<IActionResult> ImportMedicine(ProductImportExcelBaseViewModel val)
         {
             if (!ModelState.IsValid)

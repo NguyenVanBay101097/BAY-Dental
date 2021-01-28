@@ -5,6 +5,7 @@ import { PartnerService, ImportExcelDirect } from '../partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { PartnerPaged } from '../partner-simple';
 
 @Component({
   selector: 'app-partner-import',
@@ -20,6 +21,8 @@ export class PartnerImportComponent implements OnInit {
   formGroup: FormGroup;
   title = 'Import excel';
   type: string;
+  update:string;
+  isUpdate:boolean;
   errors: any = [];
 
   ngOnInit() {
@@ -55,6 +58,57 @@ export class PartnerImportComponent implements OnInit {
         this.errors = result.errors;
       }
     }, (err) => {
+    });
+  }
+
+  updateFileExcel(){
+    if (!this.formGroup.valid) {
+      this.notificationService.show({
+        content: 'Vui lòng chọn file để cập nhật',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
+
+    var val = this.formGroup.value;
+    val.type = this.type;
+    this.partnerService.actionUpdateFromExcel(val).subscribe((result: any) => {
+      if (result.success) {
+        this.activeModal.close(true);
+      } else {
+        this.errors = result.errors;
+      }
+    }, (err) => {
+    });
+  }
+
+  loadExcelUpdateFile(){
+    var paged = new PartnerPaged();
+    paged.customer = true;
+   // paged.search = this.search || "";
+
+   // var categs = this.searchCategs || [];
+   // paged.tagIds = categs.map(x => x.id);
+    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
+    this.partnerService.exportPartnerExcelFile(paged).subscribe((rs) => {
+      let filename = "danh_sach_khach_hang";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
     });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel } from '../product.service';
+import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel, ProductPaged } from '../product.service';
 import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -15,6 +15,8 @@ export class ProductImportExcelDialogComponent implements OnInit {
   type: string;
   errors: string[];
   title: string;
+  update: string;
+  isUpdate: boolean;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService) { }
 
@@ -72,5 +74,34 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onCancel() {
     this.activeModal.dismiss();
+  }
+
+  updateFileExcel(){
+    //this.productService.updateServiceFromExcel()
+  }
+
+  loadExcelUpdateFile(){
+    var paged = new ProductPaged();
+
+    // paged.search = this.searchService || "";
+    // paged.categId = this.cateId || "";
+    this.productService.excelServiceExport(paged).subscribe((rs) => {
+      let filename = "danh_sach_dich_vu";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      console.log(rs);
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 }

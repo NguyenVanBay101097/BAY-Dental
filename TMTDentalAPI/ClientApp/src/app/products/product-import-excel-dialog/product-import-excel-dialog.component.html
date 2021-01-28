@@ -27,10 +27,23 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
-    <a *ngIf="type == 'service'" download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
+    <div *ngIf="update!=null; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+        <button type="button" class="btn btn-success btn-sm" (click)="updateFileExcel()">
+        Cập nhật
+        </button>
+    </ng-template>
+    <ng-template #elseBlock>
+        <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+        Import
+        </button>
+    </ng-template>
+    <a *ngIf="type == 'service' && isUpdate != true" download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
+    <button *ngIf="type == 'service' && isUpdate == true"  (click)="loadExcelUpdateFile()" class="btn btn-info btn-sm">
+        Tải file mẫu
+    </button>
     <a *ngIf="type == 'medicine'" download href="/assets/files/MauFileThuoc.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>

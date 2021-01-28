@@ -214,4 +214,23 @@ export class ProductManagementServicesComponent implements OnInit {
     });
   }
 
+  updateServiceFromExcel(){
+    let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Cập nhật Excel";
+    modalRef.componentInstance.type = "service";
+    modalRef.componentInstance.update = "update";
+    modalRef.componentInstance.isUpdate = true;
+    modalRef.result.then(
+      () => {
+        this.loadServices();
+      },
+      () => { }
+    );
+  }
+
 }
