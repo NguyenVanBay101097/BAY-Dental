@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SurveyService } from './survey.service';
 import { SurveyConfigurationEvaluationDialogComponent } from './survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [SurveyConfigurationEvaluationComponent, SurveyConfigurationEvaluationDialogComponent],
@@ -18,6 +19,7 @@ import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     NgbModalModule,
     ReactiveFormsModule,
+    DragDropModule
   ],
   providers: [SurveyService],
   entryComponents: [

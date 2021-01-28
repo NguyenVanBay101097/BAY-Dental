@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export class SurveyQuestionBasic {
   id: string;
   name: string;
+  sequence: number;
 }
 
 export class SurveyQuestionDisplay {
