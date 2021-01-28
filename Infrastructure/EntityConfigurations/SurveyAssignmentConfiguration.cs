@@ -12,12 +12,16 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<SurveyAssignment> builder)
         {
 
+            builder.HasOne(x => x.UserInput)
+        .WithMany()
+        .HasForeignKey(x => x.UserInputId);
+
             builder.HasOne(x => x.employee)
            .WithMany()
            .HasForeignKey(x => x.EmployeeId);
 
             builder.HasOne(x => x.SaleOrder)
-           .WithMany()
+           .WithMany(x=> x.Assignments)
            .HasForeignKey(x => x.SaleOrderId);
 
             builder.HasOne(x => x.Company)

@@ -11,13 +11,13 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// số thứ tự
+        /// ngày nào
         /// </summary>
-        public int? Sequence { get; set; }
+        public DateTime? Date { get; set; }
         /// <summary>
         /// thuộc 1 phiếu phân việc đánh giá
         /// </summary>
-        public SurveyUserInput UserInput { get; set; }
-        public Guid? UserInputId { get; set; }
+        public SurveyAssignment Assignment { get; set; }
+        public Guid? AssignmentId { get; set; }
     }
 }

@@ -21,15 +21,9 @@ namespace ApplicationCore.Entities
         public decimal? MaxScore { get; set; }
 
         /// <summary>
-        /// thuộc 1 phân việc khảo sát
-        /// </summary>
-        public Guid SurveyAssignmentId { get; set; }
-        public SurveyAssignment SurveyAssignment{ get; set; }
-        /// <summary>
         /// danh sách kết quả câu hỏi kèm câu trả lời của khách hàng
         /// </summary>
         public ICollection<SurveyUserInputLine> Lines { get; set; } = new List<SurveyUserInputLine>();
 
-        public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
     }
 }
