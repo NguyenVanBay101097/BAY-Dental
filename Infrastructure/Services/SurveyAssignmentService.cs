@@ -42,6 +42,22 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SurveyAssignmentBasic>> GetPagedResultAsync(SurveyAssignmentPaged val)
         {
+            var query = getAllQuery(val);
+            var count = await query.CountAsync();
+            if (val.IsGetScore.HasValue && val.IsGetScore == true)
+            {
+                query = query.Include(x=> x.UserInput);
+            }
+            query = query.Include(x => x.employee).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).ThenInclude(x => x.PartnerPartnerCategoryRels).ThenInclude(x => x.Category);
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            return new PagedResult2<SurveyAssignmentBasic>(count, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items)
+            };
+        }
+
+        private IQueryable<SurveyAssignment> getAllQuery(SurveyAssignmentPaged val)
+        {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
@@ -55,29 +71,19 @@ namespace Infrastructure.Services
             }
             if (val.dateFrom.HasValue)
             {
-                query = query.Where(x => x.CompleteDate >= val.dateFrom.Value);
+                query = query.Where(x => x.SaleOrder.LastUpdated >= val.dateFrom.Value);
             }
             if (val.dateTo.HasValue)
             {
-                query = query.Where(x => x.CompleteDate <= val.dateTo.Value);
+                query = query.Where(x => x.SaleOrder.LastUpdated <= val.dateTo.Value);
             }
-            var count = await query.CountAsync();
-            query = query.Include(x => x.employee).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).ThenInclude(x => x.PartnerPartnerCategoryRels).ThenInclude(x => x.Category);
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
-            return new PagedResult2<SurveyAssignmentBasic>(count, val.Offset, val.Limit)
-            {
-                Items = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items)
-            };
+            return query;
         }
 
-        private IQueryable getQuery()
+        public async Task<int> GetSummary(SurveyAssignmentPaged val)
         {
-            return SearchQuery();
-        }
-
-        public Task<SurveyAssignmentSummary> GetSummary(SurveyAssignmentPaged val)
-        {
-            throw new NotImplementedException();
+            var query = getAllQuery(val);
+            return await query.CountAsync();
         }
     }
 }

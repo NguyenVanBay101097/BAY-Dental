@@ -14,7 +14,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SurveyAssignment, SurveyAssignmentBasic>();
             CreateMap<SurveyAssignment, SurveyAssignmentDefaultGet>();
             CreateMap<SurveyAssignmentSave, SurveyAssignment>();
-            CreateMap<SurveyAssignment, SurveyAssignmentPatch>().ForMember(x => x.Id, x => x.Ignore()); ;
+            CreateMap<SurveyAssignment, SurveyAssignmentPatch>();
             CreateMap<SurveyAssignmentPatch, SurveyAssignment>()
                 .ForMember(x => x.Id, x => x.Ignore());
         }
