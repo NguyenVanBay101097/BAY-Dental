@@ -55,12 +55,12 @@ namespace Infrastructure.Services
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
-                .Select(x=> new { ParnerId = x.PartnerId, CategoryName = x.Category.Name}).ToListAsync();
+                .Select(x => new { ParnerId = x.PartnerId, CategoryName = x.Category.Name }).ToListAsync();
 
             var resItems = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items);
             foreach (var item in resItems)
             {
-                item.PartnerCategoriesDisplay =string.Join(", ", pnCategories.Where(x => x.ParnerId == item.PartnerId).Select(x => x.CategoryName));
+                item.PartnerCategoriesDisplay = string.Join(", ", pnCategories.Where(x => x.ParnerId == item.PartnerId).Select(x => x.CategoryName));
             }
 
             return new PagedResult2<SurveyAssignmentBasic>(count, val.Offset, val.Limit)
@@ -92,20 +92,22 @@ namespace Infrastructure.Services
             }
             if (val.EmployeeId.HasValue)
             {
-                query = query.Where(x=> x.EmployeeId == val.EmployeeId.Value);
+                query = query.Where(x => x.EmployeeId == val.EmployeeId.Value);
             }
             return query;
         }
 
         public async Task<SurveyAssignmentDisplay> GetDisplay(Guid id)
         {
-            var saleorderObj = GetService<ISaleOrderService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var surveyCallContentObj = GetService<ISurveyCallContentService>();
-            var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s=>s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
+            var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
-            assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplay>(await saleorderObj.SearchQuery(x=>x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
-            //assignDisplay.SaleOrder.Dotkhams = await saleorderObj._GetListDotkhamInfo(id);
-            assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>( await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
+            assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplayVm>(await saleOrderObj.SearchQuery(x => x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
+            assignDisplay.SaleOrder.OrderLines = await saleOrderLineObj.GetDisplayBySaleOrder(assignDisplay.SaleOrderId);
+            assignDisplay.SaleOrder.DotKhams = await saleOrderObj._GetListDotkhamInfo(assignDisplay.SaleOrderId);
+            assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>(await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
             return assignDisplay;
         }
 
@@ -123,7 +125,7 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrder)
                 .ToListAsync();
 
-            foreach(var assign in assigns)
+            foreach (var assign in assigns)
             {
                 assign.Status = "contact";
             }
@@ -131,6 +133,25 @@ namespace Infrastructure.Services
             await UpdateAsync(assigns);
         }
 
+        /// <summary>
+        /// xu ly hoan thanh khao sat
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public async Task ActionDone(AssignmentActionDone val)
+        {
+            var userInputObj = GetService<ISurveyUserInputService>();
+            var assign = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+            var now = DateTime.Now;
+            //xu ly tao userinput
+            var userInput = await userInputObj.CreateUserInput(val.SurveyUserInput);
+
+            assign.UserInputId = userInput.Id;
+            assign.Status = "done";
+            assign.CompleteDate = now;
+
+            await UpdateAsync(assign);
+        }
 
         /// <summary>
         /// xử lý nút hủy khảo sát
@@ -139,7 +160,22 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
+            var userInputObj = GetService<ISurveyUserInputService>();
+            var assigns = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.UserInput).ToListAsync();
 
+            foreach (var assign in assigns)
+            {
+                if (assign.Status != "done")
+                    throw new Exception("Phiếu khảo sát chưa hoàn thành");
+
+                //xóa userinput
+                await userInputObj.Unlink(assign.Id);
+
+                assign.Status = "draft";
+                assign.CompleteDate = null;
+            }
+
+            await UpdateAsync(assigns);
         }
 
         public async Task<int> GetSummary(SurveyAssignmentPaged val)

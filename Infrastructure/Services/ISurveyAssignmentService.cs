@@ -15,6 +15,10 @@ namespace Infrastructure.Services
 
         Task ActionContact(IEnumerable<Guid> ids);
 
+        Task ActionCancel(IEnumerable<Guid> ids);
+
+        Task ActionDone(AssignmentActionDone val);
+
         Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList();
         Task<int> GetSummary(SurveyAssignmentPaged val);
     }

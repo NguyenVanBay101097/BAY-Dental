@@ -82,7 +82,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// detail
         /// </summary>
         public Guid SaleOrderId { get; set; }
-        public SaleOrderDisplay SaleOrder {get;set;}
+        public SaleOrderDisplayVm SaleOrder { get; set; }
 
         public Guid SurveyUserInputId { get; set; }
         public SurveyUserInputDisplay SurveyUserInput { get; set; }
@@ -124,7 +124,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Status { get; set; }
     }
 
-
+    public class AssignmentActionDone
+    {
+        public Guid Id { get; set; }
+        public SurveyUserInputSave  SurveyUserInput {get;set;}
+    }
 
     public class SurveyAssignmentPatch
     {

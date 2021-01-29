@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         public SaleOrderProfile()
         {
             CreateMap<SaleOrder, SaleOrderBasic>().ReverseMap();
+            CreateMap<SaleOrder, SaleOrderDisplayVm>();
 
             CreateMap<SaleOrder, SaleOrderViewModel>();
 

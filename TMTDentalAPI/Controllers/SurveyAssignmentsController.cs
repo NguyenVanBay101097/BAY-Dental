@@ -108,6 +108,27 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _SurveyAssignmentService.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(AssignmentActionDone val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _SurveyAssignmentService.ActionDone(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPatch("{id}")]
         public async Task<IActionResult> JsonPatchWithModelState(Guid id, [FromBody]JsonPatchDocument<SurveyAssignmentPatch> patchDoc)
         {

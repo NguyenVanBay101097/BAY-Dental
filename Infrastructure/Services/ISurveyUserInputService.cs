@@ -16,5 +16,7 @@ namespace Infrastructure.Services
         Task<SurveyUserInput> CreateUserInput(SurveyUserInputSave val);
 
         Task UpdateUserInput(Guid id, SurveyUserInputSave val);
+
+        Task Unlink(Guid id);
     }
 }

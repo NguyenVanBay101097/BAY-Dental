@@ -165,5 +165,14 @@ namespace Infrastructure.Services
             await UpdateAsync(userInput);
         }
 
+        public async Task Unlink(Guid id)
+        {
+            var userInput = SearchQuery(x => x.Id == id).Include(x=>x.Lines).FirstOrDefault();
+            if (userInput == null)
+                throw new Exception("Khảo sát không tồn tại");
+
+            await DeleteAsync(userInput);
+        }
+
     }
 }
