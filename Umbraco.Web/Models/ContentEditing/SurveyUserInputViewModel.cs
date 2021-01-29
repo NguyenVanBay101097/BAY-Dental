@@ -49,6 +49,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyUserInputSave
     {
+
         /// <summary>
         /// Số điểm đạt được, compute
         /// </summary>

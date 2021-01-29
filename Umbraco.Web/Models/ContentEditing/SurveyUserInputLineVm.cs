@@ -38,6 +38,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyUserInputLineSave
     {
+        public Guid Id { get; set; }
         public decimal? Score { get; set; }
 
         /// <summary>

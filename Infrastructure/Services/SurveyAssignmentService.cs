@@ -103,7 +103,8 @@ namespace Infrastructure.Services
             var surveyCallContentObj = GetService<ISurveyCallContentService>();
             var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s=>s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
-            assignDisplay.SaleOrder = await saleorderObj.GetDisplayAsync(id);
+            assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplay>(await saleorderObj.SearchQuery(x=>x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
+            //assignDisplay.SaleOrder.Dotkhams = await saleorderObj._GetListDotkhamInfo(id);
             assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>( await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
             return assignDisplay;
         }

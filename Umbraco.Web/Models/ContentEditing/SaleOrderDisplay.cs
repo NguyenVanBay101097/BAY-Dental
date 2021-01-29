@@ -51,6 +51,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SaleOrderLineDisplay> OrderLines { get; set; } = new List<SaleOrderLineDisplay>();
 
+
+
         public Guid CompanyId { get; set; }
 
         /// <summary>
