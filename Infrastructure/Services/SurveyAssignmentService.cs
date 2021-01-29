@@ -27,15 +27,15 @@ namespace Infrastructure.Services
         {
             var saleOrderObj = GetService<ISaleOrderService>();
 
-            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x => x.Partner)
-                .Select(x => new SurveyAssignmentDefaultGet()
-                {
-                    DateOrder = x.DateOrder,
-                    PartnerName = x.Partner.Name,
-                    PartnerPhone = x.Partner.Phone,
-                    PartnerRef = x.Partner.Ref,
-                    SaleOrderId = x.Id,
-                    SaleOrderName = x.Name
+            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x=> x.Partner)
+                .Select(x =>new SurveyAssignmentDefaultGet() { 
+                DateOrder = x.DateOrder,
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+                PartnerRef = x.Partner.Ref,
+                SaleOrderId = x.Id,
+                SaleOrderName = x.Name,
+                PartnerId = x.PartnerId
                 }).ToListAsync();
 
             return res;
