@@ -34,7 +34,8 @@ namespace Infrastructure.Services
                 PartnerPhone = x.Partner.Phone,
                 PartnerRef = x.Partner.Ref,
                 SaleOrderId = x.Id,
-                SaleOrderName = x.Name
+                SaleOrderName = x.Name,
+                PartnerId = x.PartnerId
                 }).ToListAsync();
 
             return res;
