@@ -52,7 +52,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <button class="btn btn-primary btn-sm">Tạo phân việc</button>
+                    <button class="btn btn-primary btn-sm" (click)="createEmpAssign()">Tạo phân việc</button>
                 </div>
             </div>
         </div>
@@ -60,11 +60,15 @@
 </div>
 <div class="o_content">
     <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" (cellClick)="clickItem($event)">
+        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
+        (dataStateChange)="onStateChange($event)" (cellClick)="cellClickHandler($event)"
+        (cellClose)="cellCloseHandler($event)" (cancel)="cancelHandler($event)" (save)="saveHandler($event)"
+        (remove)="removeHandler($event)" (add)="addHandler($event)" [navigable]="true">
         <kendo-grid-column title="Nhân viên" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
-                    [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
+                <span></span>
+                <kendo-combobox [data]="filteredEmployees" ngbAutofocus [textField]="'name'" [filterable]="true"
+                    (valueChange)="onChangeProduct($event)" #employeeCbx formControlName="product" [valueField]="'id'">
                 </kendo-combobox>
             </ng-template>
         </kendo-grid-column>
