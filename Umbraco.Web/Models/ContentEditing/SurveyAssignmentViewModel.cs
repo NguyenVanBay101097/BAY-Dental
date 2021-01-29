@@ -117,7 +117,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid SaleOrderId { get; set; }
         public string PartnerName { get; set; }
         public string PartnerRef { get; set; }
-        public string PartnerId { get; set; }
+        public Guid PartnerId { get; set; }
         public string PartnerPhone { get; set; }
         public string SaleOrderName { get; set; }
         public DateTime DateOrder { get; set; }

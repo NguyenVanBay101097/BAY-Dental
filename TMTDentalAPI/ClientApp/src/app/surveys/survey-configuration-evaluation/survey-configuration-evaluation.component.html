@@ -4,8 +4,8 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo câu hỏi"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo câu hỏi" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
     <div class="o_cp_left">
@@ -29,7 +29,7 @@
             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
                 <tr *ngFor="let item of questions" cdkDrag cdkDragLockAxis="y">
                     <th class="col-xs">
-                        <div class="drag-handle text-center" >
+                        <div class="drag-handle text-center">
                             <ng-container [ngTemplateOutlet]="dragHandleTmpl">
                             </ng-container>
                             {{item.sequence}}

@@ -14,7 +14,6 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   question: SurveyQuestionDisplay
   formGroup: FormGroup;
   activeNote: string;
-  zIndexSerial: number = 1000;
   id: string;
   constructor(
     private fb: FormBuilder,
