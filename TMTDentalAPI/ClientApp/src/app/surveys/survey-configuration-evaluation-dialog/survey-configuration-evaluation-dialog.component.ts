@@ -13,6 +13,8 @@ import { SurveyAnswerDisplay, SurveyQuestionDisplay, SurveyQuestionService } fro
 export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   question: SurveyQuestionDisplay
   formGroup: FormGroup;
+  activeNote: string;
+  zIndexSerial: number = 1000;
   id: string;
   constructor(
     private fb: FormBuilder,
@@ -105,11 +107,10 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
     }
   }
 
-  onDrop(event: CdkDragDrop<any>) {
-    var answers = this.formGroup.get('answers').value;
-    var doc = document.getElementById('2')
-    event.item.element.nativeElement.innerHTML = doc.innerHTML;
-    moveItemInArray(answers, event.previousIndex, event.currentIndex);
+  onDrop(event: CdkDragDrop<any[]>) {
+    var answers = this.answers.value;
+    moveItemInArray(this.answers.controls, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.answers.value, event.previousIndex, event.currentIndex);
     this.answers.clear();
     answers.forEach((item, idx) => {
       item.sequence = idx + 1;
@@ -117,6 +118,4 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
       this.answers.push(this.fb.group(item));
     });
   }
-
-
 }

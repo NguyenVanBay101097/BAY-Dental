@@ -21,6 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
 
     }
+
     public class SurveyAssignmentBasic
     {
         public Guid Id { get; set; }
@@ -73,10 +74,36 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerCategoriesDisplay { get; set; }
     }
 
+    public class SurveyAssignmentDisplay
+    {
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// detail
+        /// </summary>
+        public Guid SaleOrderId { get; set; }
+        public SaleOrderDisplay SaleOrder {get;set;}
+
+        public Guid SurveyUserInputId { get; set; }
+        public SurveyUserInputDisplay SurveyUserInput { get; set; }
+
+        public IEnumerable<SurveyCallContentDisplay> CallContents { get; set; } = new List<SurveyCallContentDisplay>();
+
+        public string Status { get; set; }
+    }
+
     public class SurveyAssignmentSave
     {
+        public SurveyAssignmentSave()
+        {
+            Status = "draft";
+        }
+
         public Guid EmployeeId { get; set; }
         public Guid SaleOrderId { get; set; }
+
+        public IEnumerable<SurveyCallContentSave> CallContents { get; set; } = new List<SurveyCallContentSave>();
+
         public string Status { get; set; }
         public Guid PartnerId { get; set; }
     }
@@ -96,6 +123,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime DateOrder { get; set; }
         public string Status { get; set; }
     }
+
+
 
     public class SurveyAssignmentPatch
     {

@@ -40,14 +40,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id)
-        //{
-        //    var question = await _SurveyAssignmentService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers.OrderBy(x=>x.Sequence)).FirstOrDefaultAsync();
-        //    if (question == null)
-        //        return NotFound();
-        //    return Ok(_mapper.Map<SurveyAssignmentDisplay>(question));
-        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var res = await _SurveyAssignmentService.GetDisplay(id);
+            return Ok(res);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(SurveyAssignmentSave val)
@@ -95,6 +93,18 @@ namespace TMTDentalAPI.Controllers
 
             _unitOfWork.Commit();
 
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]      
+        public async Task<IActionResult> ActionContact(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+           
+            await _unitOfWork.BeginTransactionAsync();
+            await _SurveyAssignmentService.ActionContact(ids);
+            _unitOfWork.Commit();
             return NoContent();
         }
 

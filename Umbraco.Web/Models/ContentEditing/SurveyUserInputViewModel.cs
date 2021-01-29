@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,25 +20,46 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SurveyUserInputBasic
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public int? Sequence { get; set; }
+        /// <summary>
+        /// Số điểm đạt được, compute
+        /// </summary>
+        public decimal? Score { get; set; }
+
+        /// <summary>
+        /// Số điểm tối đa, compute
+        /// </summary>
+        public decimal? MaxScore { get; set; }
     }
 
     public class SurveyUserInputDisplay
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public int? Sequence { get; set; }
-        public List<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
+        /// <summary>
+        /// Số điểm đạt được, compute
+        /// </summary>
+        public decimal? Score { get; set; }
+
+        /// <summary>
+        /// Số điểm tối đa, compute
+        /// </summary>
+        public decimal? MaxScore { get; set; }
+
+        public IEnumerable<SurveyUserInputLineDisplay> Lines { get; set; } = new List<SurveyUserInputLineDisplay>();
     }
 
     public class SurveyUserInputSave
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public int? Sequence { get; set; }
-        public ICollection<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
+
+        /// <summary>
+        /// Số điểm đạt được, compute
+        /// </summary>
+        public decimal? Score { get; set; }
+
+        /// <summary>
+        /// Số điểm tối đa, compute
+        /// </summary>
+        public decimal? MaxScore { get; set; }
+
+        public IEnumerable<SurveyUserInputLineSave> Lines { get; set; } = new List<SurveyUserInputLineSave>();
     }
 }

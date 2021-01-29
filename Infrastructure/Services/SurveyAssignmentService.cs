@@ -13,7 +13,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class SurveyAssignmentService: BaseService<SurveyAssignment>, ISurveyAssignmentService
+    public class SurveyAssignmentService : BaseService<SurveyAssignment>, ISurveyAssignmentService
     {
         readonly public IMapper _mapper;
         public SurveyAssignmentService(IAsyncRepository<SurveyAssignment> repository, IHttpContextAccessor httpContextAccessor,
@@ -49,7 +49,7 @@ namespace Infrastructure.Services
             var count = await query.CountAsync();
             if (val.IsGetScore.HasValue && val.IsGetScore == true)
             {
-                query = query.Include(x=> x.UserInput);
+                query = query.Include(x => x.UserInput);
             }
             query = query.Include(x => x.employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
@@ -95,6 +95,51 @@ namespace Infrastructure.Services
                 query = query.Where(x=> x.EmployeeId == val.EmployeeId.Value);
             }
             return query;
+        }
+
+        public async Task<SurveyAssignmentDisplay> GetDisplay(Guid id)
+        {
+            var saleorderObj = GetService<ISaleOrderService>();
+            var surveyCallContentObj = GetService<ISurveyCallContentService>();
+            var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s=>s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
+            var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
+            assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplay>(await saleorderObj.SearchQuery(x=>x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
+            //assignDisplay.SaleOrder.Dotkhams = await saleorderObj._GetListDotkhamInfo(id);
+            assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>( await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
+            return assignDisplay;
+        }
+
+        /// <summary>
+        /// xử lý nút liên hệ
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task ActionContact(IEnumerable<Guid> ids)
+        {
+            var assigns = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.CallContents)
+                .Include(x => x.UserInput)
+                .ThenInclude(s => s.Lines)
+                .Include(x => x.SaleOrder)
+                .ToListAsync();
+
+            foreach(var assign in assigns)
+            {
+                assign.Status = "contact";
+            }
+
+            await UpdateAsync(assigns);
+        }
+
+
+        /// <summary>
+        /// xử lý nút hủy khảo sát
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+
         }
 
         public async Task<int> GetSummary(SurveyAssignmentPaged val)

@@ -309,6 +309,7 @@ namespace TMTDentalAPI
             services.AddScoped<ICashBookService, CashBookService>();
             services.AddScoped<ISurveyQuestionService, SurveyQuestionService>();
             services.AddScoped<ISurveyAssignmentService, SurveyAssignmentService>();
+            services.AddScoped<ISurveyCallContentService, SurveyCallContentService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -444,6 +445,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SurveyQuestionProfile());
                 mc.AddProfile(new SurveyAnswerProfile());
                 mc.AddProfile(new SurveyAssignmentProfile());
+                mc.AddProfile(new SurveyCallContentProfile());
+                mc.AddProfile(new SurveyUserInputProfile());
+                mc.AddProfile(new SurveyUserInputLineProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

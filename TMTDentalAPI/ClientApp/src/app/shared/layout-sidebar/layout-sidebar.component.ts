@@ -14,8 +14,8 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
-    { 
-      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' 
+    {
+      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers'
     },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
@@ -36,6 +36,15 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Quản lý phiếu Labo', link: '/labo-orders' },
         { name: 'Đơn hàng Labo', link: '/labo-orders/order' },
         { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
+      ],
+    },
+    {
+      name: 'Khảo sát đánh giá',
+      icon: 'fas fa-poll',
+      children: [
+        // { name: 'Danh sách khảo sát', link: '/labo-orders' },
+        { name: 'Quản lý phần việc', link: '/surveys/manage' },
+        { name: 'Cấu hình đánh giá', link: '/surveys/config' },
       ],
     },
     {
@@ -137,7 +146,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
-        { name: 'Loại thu chi', link: '/loai-thu-chi'},
+        { name: 'Loại thu chi', link: '/loai-thu-chi' },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },

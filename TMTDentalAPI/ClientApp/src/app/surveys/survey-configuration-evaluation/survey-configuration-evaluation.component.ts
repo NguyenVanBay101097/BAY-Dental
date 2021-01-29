@@ -109,19 +109,17 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
     this.questions.forEach((item, idx) => {
       item.sequence = idx + 1;
     });
-    setTimeout(() => {
-      this.surveyQuestionService.updateListSequence(this.questions).subscribe(
-        () => {
-          this.notificationService.show({
-            content: 'Sắp xếp thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-        }
-      )
-    }, 5000);
+    this.surveyQuestionService.updateListSequence(this.questions).subscribe(
+      () => {
+        this.notificationService.show({
+          content: 'Sắp xếp thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    )
 
   }
 

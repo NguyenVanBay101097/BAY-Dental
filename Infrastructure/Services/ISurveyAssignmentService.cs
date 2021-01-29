@@ -11,6 +11,10 @@ namespace Infrastructure.Services
     public interface ISurveyAssignmentService: IBaseService<SurveyAssignment>
     {
         Task<PagedResult2<SurveyAssignmentBasic>> GetPagedResultAsync(SurveyAssignmentPaged val);
+        Task<SurveyAssignmentDisplay> GetDisplay(Guid id);
+
+        Task ActionContact(IEnumerable<Guid> ids);
+
         Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList();
         Task<int> GetSummary(SurveyAssignmentPaged val);
     }

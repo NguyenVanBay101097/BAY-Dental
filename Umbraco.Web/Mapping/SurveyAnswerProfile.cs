@@ -13,7 +13,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<SurveyAnswer, SurveyAnswerBasic>();
             CreateMap<SurveyAnswer, SurveyAnswerDisplay>();
-            CreateMap<SurveyAnswerDisplay, SurveyAnswer>().ForMember(x=> x.Id, x=> x.Ignore());
+            CreateMap<SurveyAnswerDisplay, SurveyAnswer>()
+                .ForMember(x=> x.Id, x=> x.Ignore());
         }
     }
 }
