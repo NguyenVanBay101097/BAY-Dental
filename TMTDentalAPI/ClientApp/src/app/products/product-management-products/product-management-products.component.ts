@@ -225,6 +225,8 @@ export class ProductManagementProductsComponent implements OnInit {
     });
     modalRef.componentInstance.title = "Cập nhật Excel";
     modalRef.componentInstance.type = "product";
+    modalRef.componentInstance.update = "Cập nhật";
+    modalRef.componentInstance.isUpdate = true;
     modalRef.result.then(
       () => {
         this.loadProducts();

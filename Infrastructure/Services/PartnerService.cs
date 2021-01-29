@@ -1257,11 +1257,17 @@ namespace Infrastructure.Services
                                 errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
 
                             var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
+
+                            if (string.IsNullOrEmpty(reference))
+                                continue;
+
                             if (!string.IsNullOrWhiteSpace(reference))
                             {
                                 var exist = await SearchQuery(x => x.Ref == reference).FirstOrDefaultAsync();
                                 if(exist != null)
                                     partner_code_list.Add(reference);
+                                else
+                                    errs.Add("Mã khách hàng không tồn tại");
                             }
                                 
 
@@ -1566,48 +1572,48 @@ namespace Infrastructure.Services
                 return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
             }
 
-            var data_to_update = data.Where(x => !string.IsNullOrEmpty(x.Ref) &&
-              partner_code_list.Contains(x.Ref)).ToList();
+            //var data_to_update = data.Where(x => !string.IsNullOrEmpty(x.Ref) &&
+            //  partner_code_list.Contains(x.Ref)).ToList();
 
-            var partner_update_dict = await GetPartnerDictByRefs(partner_code_list, type: "supplier");
-            var partners_to_update = new List<Partner>();
-            foreach (var item in data_to_update)
-            {
-                var partner = partner_update_dict[item.Ref];
-                partner.Name = item.Name;
-                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
-                partner.Ref = item.Ref;
-                partner.Phone = item.Phone;
-                partner.Fax = item.Fax;
-                partner.Comment = item.Note;
-                partner.Email = item.Email;
+            //var partner_update_dict = await GetPartnerDictByRefs(partner_code_list, type: "supplier");
+            //var partners_to_update = new List<Partner>();
+            //foreach (var item in data_to_update)
+            //{
+            //    var partner = partner_update_dict[item.Ref];
+            //    partner.Name = item.Name;
+            //    partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
+            //    partner.Ref = item.Ref;
+            //    partner.Phone = item.Phone;
+            //    partner.Fax = item.Fax;
+            //    partner.Comment = item.Note;
+            //    partner.Email = item.Email;
 
-                if (!string.IsNullOrEmpty(item.Address))
-                {
-                    var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
-                    if (addResult != null)
-                    {
-                        partner.Street = addResult.ShortAddress;
-                        partner.WardCode = addResult.WardCode;
-                        partner.WardName = addResult.WardName;
-                        partner.DistrictCode = addResult.DistrictCode;
-                        partner.DistrictName = addResult.DistrictName;
-                        partner.CityCode = addResult.CityCode;
-                        partner.CityName = addResult.CityName;
-                    }
-                }
+            //    if (!string.IsNullOrEmpty(item.Address))
+            //    {
+            //        var addResult = address_dict.ContainsKey(item.Address) ? address_dict[item.Address] : null;
+            //        if (addResult != null)
+            //        {
+            //            partner.Street = addResult.ShortAddress;
+            //            partner.WardCode = addResult.WardCode;
+            //            partner.WardName = addResult.WardName;
+            //            partner.DistrictCode = addResult.DistrictCode;
+            //            partner.DistrictName = addResult.DistrictName;
+            //            partner.CityCode = addResult.CityCode;
+            //            partner.CityName = addResult.CityName;
+            //        }
+            //    }
 
-                partners_to_update.Add(partner);
-            }
+            //    partners_to_update.Add(partner);
+            //}
 
-            try
-            {
-                await UpdateAsync(partners_to_update);
-            }
-            catch (Exception e)
-            {
-                return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
-            }
+            //try
+            //{
+            //    await UpdateAsync(partners_to_update);
+            //}
+            //catch (Exception e)
+            //{
+            //    return new PartnerImportResponse { Success = false, Errors = new List<string>() { e.Message } };
+            //}
 
             return new PartnerImportResponse { Success = true };
         }

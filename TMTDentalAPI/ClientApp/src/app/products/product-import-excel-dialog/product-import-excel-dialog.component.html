@@ -41,15 +41,21 @@
     <a *ngIf="type == 'service' && isUpdate != true" download href="/assets/files/MauFileDichVu.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <button *ngIf="type == 'service' && isUpdate == true"  (click)="loadExcelUpdateFile()" class="btn btn-info btn-sm">
+    <button *ngIf="type == 'service' && isUpdate == true"  (click)="loadExcelUpdateSeviceFile()" class="btn btn-info btn-sm">
         Tải file mẫu
     </button>
-    <a *ngIf="type == 'medicine'" download href="/assets/files/MauFileThuoc.xlsx" class="btn btn-sm btn-light">
+    <a *ngIf="type == 'medicine' && isUpdate != true" download href="/assets/files/MauFileThuoc.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'product'" download href="/assets/files/MauFileVatTu.xlsx" class="btn btn-sm btn-light">
+    <button *ngIf="type == 'medicine' && isUpdate == true"  (click)="loadExcelUpdateMedicineFile()" class="btn btn-info btn-sm">
+        Tải file mẫu
+    </button>
+    <a *ngIf="type == 'product' && isUpdate != true" download href="/assets/files/MauFileVatTu.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>
+    <button *ngIf="type == 'product' && isUpdate == true"  (click)="loadExcelUpdateProductFile()" class="btn btn-info btn-sm">
+        Tải file mẫu
+    </button>
     <a *ngIf="type == 'labo'" download href="/assets/files/MauFileVatlieuLabo.xlsx" class="btn btn-sm btn-light">
         Tải file mẫu
     </a>

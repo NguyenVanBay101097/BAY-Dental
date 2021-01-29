@@ -32,6 +32,15 @@ export class PartnerImportComponent implements OnInit {
     });
   }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
 
   onFileChange(data) {
     this.formGroup.get('fileBase64').patchValue(data);
@@ -78,8 +87,10 @@ export class PartnerImportComponent implements OnInit {
     this.partnerService.actionUpdateFromExcel(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
+        this.notify('success', 'Cập nhật dữ liệu thành công');
       } else {
         this.errors = result.errors;
+        this.notify('error', 'Cập nhật dữ liệu không thành công');
       }
     }, (err) => {
     });
