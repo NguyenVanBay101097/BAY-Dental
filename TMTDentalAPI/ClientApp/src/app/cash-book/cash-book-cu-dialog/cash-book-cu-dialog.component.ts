@@ -126,7 +126,6 @@ export class CashBookCuDialogComponent implements OnInit {
 
   loadRecord() {
     this.accountPaymentService.get(this.itemId).subscribe((result: any) => {
-      console.log(result);
       this.formGroup.patchValue(result); 
       var paymentDate = new Date(result.paymentDate);
       this.formGroup.get("paymentDateObj").patchValue(paymentDate);
@@ -141,7 +140,6 @@ export class CashBookCuDialogComponent implements OnInit {
       if (this.formGroup.get("state").value == "posted") {
         this.seeForm = true;
       }
-      console.log(this.formGroup.value);
     });
   }
 
