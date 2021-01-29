@@ -4,7 +4,6 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
@@ -78,15 +77,6 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   clickTab(value) {
     this.paged.resultSelection = value;
     this.changeToLoadData = !this.changeToLoadData;
-  }
-
-  createItem(type) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = type;
-    modalRef.result.then(() => {
-      this.changeToLoadData = !this.changeToLoadData;
-      this.loadDataFromApi();
-    }, (err) => { });
   }
 
   exportExcelFile() {

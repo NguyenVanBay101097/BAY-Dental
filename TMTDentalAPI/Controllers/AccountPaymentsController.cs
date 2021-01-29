@@ -50,7 +50,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var payment = await _paymentService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.Journal)
+            var payment = await _paymentService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.Journal)
+                .Include(x => x.LoaiThuChi)
                 .FirstOrDefaultAsync();
             if (payment == null)
             {

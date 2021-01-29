@@ -992,7 +992,7 @@ namespace Infrastructure.Services
 
                 else if (payment.LoaiThuChiId.HasValue)
                 {
-                    var loaiThuChi = await loaiThuChiObj.SearchQuery(x => x.Id == payment.LoaiThuChiId.Value).Include(x => x.Account).FirstOrDefaultAsync();
+                    var loaiThuChi = await loaiThuChiObj.SearchQuery(x => x.Id == payment.LoaiThuChiId.Value).FirstOrDefaultAsync();
                     payment.DestinationAccountId = loaiThuChi.AccountId;
                 }
 
@@ -1051,7 +1051,7 @@ namespace Infrastructure.Services
             }
 
             if (val.PaymentDateFrom.HasValue)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate <= val.PaymentDateFrom));
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= val.PaymentDateFrom));
 
             if (val.PaymentDateTo.HasValue)
             {
@@ -1079,6 +1079,16 @@ namespace Infrastructure.Services
             if (val.PartnerId.HasValue)
             {
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
+            }
+
+            if (val.PhieuThuChi.HasValue && val.PhieuThuChi.Value == true)
+            {
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.LoaiThuChiId.HasValue));
+            }
+
+            if (!string.IsNullOrEmpty(val.PaymentType))
+            {
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentType == val.PaymentType));
             }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));

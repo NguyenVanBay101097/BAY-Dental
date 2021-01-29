@@ -75,8 +75,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{getValueForm('amount')}}</span>
-                                    <kendo-numerictextbox [value]="money" *ngIf="!seeForm" [min]="0" [format]="'n0'"
-                                        formControlName="amount" (keyup)="keydownHanlder()">
+                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
+                                        formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -85,9 +85,9 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('reason')}}</span>
+                                    <span *ngIf="seeForm">{{getValueForm('communication')}}</span>
                                     <textarea *ngIf="!seeForm" type="text" class="form-control"
-                                        formControlName="reason"></textarea>
+                                        formControlName="communication"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -99,10 +99,36 @@
                                     <label class="o_form_label">Ngày</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('dateObj') | date:
-                                        'dd/MM/yyyy'}}</span>
-                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
+                                    <span *ngIf="seeForm">
+                                        {{getValueForm('paymentDateObj') | date: 'dd/MM/yyyy'}}
+                                    </span>
+                                    <kendo-datepicker *ngIf="!seeForm" formControlName="paymentDateObj">
                                     </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Đối tượng {{ getType() == 'thu' ? 'nộp' : 'nhận' }}</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="seeForm">
+                                        {{getValueForm('partnerTypeObj') ? getValueForm('partnerTypeObj').text : ''}}
+                                    </span>
+                                    <div *ngIf="!seeForm">
+                                        <kendo-combobox [data]="filteredPartnerTypes" 
+                                            [textField]="'text'" [valueField]="'value'"
+                                            [filterable]="true" #partnerTypeCbx formControlName="partnerTypeObj"
+                                            (valueChange)="change_partnerType($event)"
+                                            [filterable]="true"
+                                            (filterChange)="filter_partnerType($event)">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.partnerTypeObj.errors && (f.partnerTypeObj.touched || f.partnerTypeObj.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.partnerTypeObj.errors.required">
+                                                Vui lòng chọn đối tượng {{ getType() == 'thu' ? 'nộp' : 'nhận' }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -111,17 +137,15 @@
                                     <label *ngIf="getType() == 'chi'" class="o_form_label">Người nhận tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('payerReceiver')}}</span>
-                                    <input *ngIf="!seeForm" class="form-control" formControlName="payerReceiver" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Địa chỉ</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('address')}}</span>
-                                    <input *ngIf="!seeForm" class="form-control" formControlName="address" />
+                                    <kendo-combobox [class.d-none]="seeForm" [data]="filteredPartners" 
+                                        [textField]="'name'" [valueField]="'id'" [filterable]="true"
+                                        #partnerCbx formControlName="partner">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người {{ getType() == 'thu' ? 'nộp' : 'nhận' }} tiền</div>
+                                    </div>
+                                    <span *ngIf="seeForm">{{getValueForm('partner').name}}</span>
                                 </td>
                             </tr>
                         </tbody>

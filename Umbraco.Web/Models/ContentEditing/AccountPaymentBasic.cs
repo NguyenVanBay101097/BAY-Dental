@@ -25,5 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
 
         public string Communication { get; set; }
+
+        public string LoaiThuChiName { get; set; }
     }
 }

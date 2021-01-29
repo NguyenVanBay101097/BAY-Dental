@@ -30,6 +30,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> ServiceCardOrderIds { get; set; } = new List<Guid>();
 
         public IEnumerable<SaleOrderLinePaymentRelSave> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRelSave>();
+    
+        public Guid? LoaiThuChiId { get; set; }
     }
 
    
