@@ -35,13 +35,21 @@ namespace TMTDentalAPI.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__migrate");
-            //var lockObj = LockUtils.Get(key);
-            //await lockObj.WaitAsync();
+            //nếu có nhiều request cùng vào, nếu tenant version chưa update thì chỉ cho phép 1 thằng được thực thi,
+            //đến khi version update xong thì request sau vào thì không chạy vào đoạn code update database
 
-            try
+            var tenantContext = context.GetTenantContext<AppTenant>();
+            var tenant = tenantContext.Tenant;
+            if (tenant != null && _appSettings.Version == tenant.Version)
             {
-                var tenant = context.GetTenant<AppTenant>();
+                await _next.Invoke(context);
+            }
+            else
+            {
+                var key = AppConstants.GetLockRequestKey(context.Request.Host.Host, "__migrate");
+                var lockObj = LockUtils.Get(key);
+                await lockObj.WaitAsync();
+
                 if (tenant != null && _appSettings.Version != tenant.Version)
                 {
                     var dbContext = (CatalogDbContext)context.RequestServices.GetService(typeof(CatalogDbContext));
@@ -52,24 +60,20 @@ namespace TMTDentalAPI.Middlewares
                     //add data nếu cần
                     //await AddMissingData(context);
                     //update version
-                    var tenantContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
-                    var tnt = await tenantContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();
-                    if (tnt != null)
-                    {
-                        tnt.Version = _appSettings.Version;
-                        tenantContext.SaveChanges();
+                    var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
+                    var tnt = await tenantDbContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();
+                    tnt.Version = _appSettings.Version;
+                    tenantDbContext.SaveChanges();
 
-                        _cache.Remove(tenant.Hostname); //clear cache
-                    }
+                    _cache.Remove(tenant.Hostname); //clear cache
+                    tenant.Version = _appSettings.Version;
+
+                    context.SetTenantContext(tenantContext);
                 }
-            }
-            catch
-            {
-            }
 
-            await _next.Invoke(context);
-
-            //lockObj.Release();
+                await _next.Invoke(context);
+                lockObj.Release();
+            }
         }
 
         public async Task AddMissingData(HttpContext context)
