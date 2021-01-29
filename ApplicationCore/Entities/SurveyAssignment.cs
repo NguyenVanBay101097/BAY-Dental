@@ -33,6 +33,7 @@ namespace ApplicationCore.Entities
         /// ngày hoàn thành khảo sát
         /// </summary>
         public DateTime? CompleteDate { get; set; }
+
         /// <summary>
         /// có 1 phiếu khảo sát
         /// </summary>
@@ -42,6 +43,7 @@ namespace ApplicationCore.Entities
         /// có 1 list chăm sóc gọi điện
         /// </summary>
         public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
+
         /// <summary>
         /// gán khách hàng cho 1 phân quyền
         /// </summary>

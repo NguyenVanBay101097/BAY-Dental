@@ -25,8 +25,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.CallContents, x => x.Ignore());
 
-            CreateMap<SurveyAssignment, SurveyAssignmentPatch>()
-                .ForMember(x => x.Id, x => x.Ignore()); 
+            CreateMap<SurveyAssignment, SurveyAssignmentPatch>(); 
 
             CreateMap<SurveyAssignmentPatch, SurveyAssignment>()
                 .ForMember(x => x.Id, x => x.Ignore());

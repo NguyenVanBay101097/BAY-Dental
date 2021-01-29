@@ -105,7 +105,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await .ButtonConfirm(ids);
+       
             _unitOfWork.Commit();
             return NoContent();
         }

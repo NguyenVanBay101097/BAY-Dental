@@ -13,7 +13,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class SurveyAssignmentService: BaseService<SurveyAssignment>, ISurveyAssignmentService
+    public class SurveyAssignmentService : BaseService<SurveyAssignment>, ISurveyAssignmentService
     {
         readonly public IMapper _mapper;
         public SurveyAssignmentService(IAsyncRepository<SurveyAssignment> repository, IHttpContextAccessor httpContextAccessor,
@@ -27,14 +27,15 @@ namespace Infrastructure.Services
         {
             var saleOrderObj = GetService<ISaleOrderService>();
 
-            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x=> x.Partner)
-                .Select(x =>new SurveyAssignmentDefaultGet() { 
-                DateOrder = x.DateOrder,
-                PartnerName = x.Partner.Name,
-                PartnerPhone = x.Partner.Phone,
-                PartnerRef = x.Partner.Ref,
-                SaleOrderId = x.Id,
-                SaleOrderName = x.Name
+            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x => x.Partner)
+                .Select(x => new SurveyAssignmentDefaultGet()
+                {
+                    DateOrder = x.DateOrder,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                    PartnerRef = x.Partner.Ref,
+                    SaleOrderId = x.Id,
+                    SaleOrderName = x.Name
                 }).ToListAsync();
 
             return res;
@@ -46,7 +47,7 @@ namespace Infrastructure.Services
             var count = await query.CountAsync();
             if (val.IsGetScore.HasValue && val.IsGetScore == true)
             {
-                query = query.Include(x=> x.UserInput);
+                query = query.Include(x => x.UserInput);
             }
             query = query.Include(x => x.employee).Include(x => x.SaleOrder).ThenInclude(x => x.Partner).ThenInclude(x => x.PartnerPartnerCategoryRels).ThenInclude(x => x.Category);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
@@ -79,13 +80,15 @@ namespace Infrastructure.Services
             }
             return query;
         }
+
         public async Task<SurveyAssignmentDisplay> GetDisplay(Guid id)
         {
             var saleorderObj = GetService<ISaleOrderService>();
-            var assign = await SearchQuery(x => x.Id == id).Include(x=>x.CallContents).Include(x=>x.SaleOrder).FirstOrDefaultAsync();
+            var surveyCallContentObj = GetService<ISurveyCallContentService>();
+            var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s=>s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
             assignDisplay.SaleOrder = await saleorderObj.GetDisplayAsync(id);
-
+            assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>( await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
             return assignDisplay;
         }
 
@@ -96,18 +99,21 @@ namespace Infrastructure.Services
         /// <returns></returns>
         public async Task ActionContact(IEnumerable<Guid> ids)
         {
+            var assigns = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.CallContents)
+                .Include(x => x.UserInput)
+                .ThenInclude(s => s.Lines)
+                .Include(x => x.SaleOrder)
+                .ToListAsync();
 
+            foreach(var assign in assigns)
+            {
+                assign.Status = "contact";
+            }
+
+            await UpdateAsync(assigns);
         }
 
-        /// <summary>
-        /// xử lý nút khảo sát
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        public async Task ActionSurvey(IEnumerable<Guid> ids)
-        {
-
-        }
 
         /// <summary>
         /// xử lý nút hủy khảo sát
