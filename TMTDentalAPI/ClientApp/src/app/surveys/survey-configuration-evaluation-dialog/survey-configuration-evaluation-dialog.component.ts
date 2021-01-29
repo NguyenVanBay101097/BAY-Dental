@@ -118,17 +118,4 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
       this.answers.push(this.fb.group(item));
     });
   }
-
-  // onDrop(event: CdkDragDrop<any[]>) {
-  //   var answers = this.formGroup.get('answers').value;
-  //   moveItemInArray(this.answers.controls, event.previousIndex, event.currentIndex);
-  //   this.answers.clear();
-  //   answers.forEach((item, idx) => {
-  //     item.sequence = idx + 1;
-  //     item.score = idx + 1;
-  //     this.answers.push(this.fb.group(item));
-  //   });
-  // }
-
-
 }
