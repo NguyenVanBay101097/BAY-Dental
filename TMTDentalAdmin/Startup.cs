@@ -39,6 +39,8 @@ namespace TMTDentalAdmin
         {
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
 
+            services.Configure<ConnectionStrings>(Configuration.GetSection("ConnectionStrings"));
+
             // configure jwt authentication
             var appSettingsSection = Configuration.GetSection("AdminAppSettings");
             services.Configure<AdminAppSettings>(appSettingsSection);
