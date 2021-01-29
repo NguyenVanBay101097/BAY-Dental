@@ -64,56 +64,54 @@
         (dataStateChange)="onStateChange($event)" (cellClick)="cellClickHandler($event)"
         (cellClose)="cellCloseHandler($event)" (cancel)="cancelHandler($event)" (save)="saveHandler($event)"
         (remove)="removeHandler($event)" (add)="addHandler($event)" [navigable]="true">
-        <kendo-grid-column title="Nhân viên" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        <kendo-grid-column field="employeeName" title="Nhân viên" width="100">
+            <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span></span>
                 <kendo-combobox [data]="filteredEmployees" ngbAutofocus [textField]="'name'" [filterable]="true"
                     (valueChange)="onChangeProduct($event)" #employeeCbx formControlName="product" [valueField]="'id'">
                 </kendo-combobox>
-            </ng-template>
+            </ng-template> -->
         </kendo-grid-column>
         <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="150">
         </kendo-grid-column>
-        <kendo-grid-column title="Mã khách hàng" width="100">
+        <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerGenderDisplay" title="Giới tính" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="partnerCategoriesDisplay" title="Nhãn khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
-                    [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
-                    {{dataItem.toaThuoc.saleOrderName}}
-                </a>
+                {{dataItem.saleOrder.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="toaThuoc.name" title="Điện thoại" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="name" title="Tuổi" width="100">
-        </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Giới tính" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column class="text-right" field="amount" title="Nhãn khách hàng" width="100">
+        <kendo-grid-column title="Ngày tạo phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.amount | number}}
+                {{dataItem.saleOrder.dateOrder | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Phiếu điều trị" width="100">
+        <kendo-grid-column title="Ngày hoàn thành điều trị" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
-                <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
-                <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
+                {{dataItem.saleOrder.lastUpdated | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Ngày tạo phiếu" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Ngày hoàn thành điều trị" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Ngày hoàn thành khảo sát" width="120">
-        </kendo-grid-column>
-        <kendo-grid-column field="employeeName" title="Trạng thái" width="120">
+        <kendo-grid-column title="Ngày hoàn thành khảo sát" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span *ngIf="dataItem.state == 'done'">Hoàn thành</span>
-                <span *ngIf="dataItem.state == 'draft'">Chưa gọi</span>
-                <span *ngIf="dataItem.state == 'contact'">Đang liên hệ</span>
+                {{dataItem.saleOrder.completeDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="state" title="Thao tác" width="100">
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.status == 'done'">Hoàn thành</span>
+                <span *ngIf="dataItem.status == 'draft'">Chưa gọi</span>
+                <span *ngIf="dataItem.status == 'contact'">Đang liên hệ</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <button class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
             </ng-template>

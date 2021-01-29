@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyAssignmentDefaultGet, SurveyService } from '../survey.service';
 
@@ -23,7 +24,7 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
     private activeModal: NgbActiveModal,
     private notificationService: NotificationService,
     private surveyService: SurveyService,
-    private partnerService: PartnerService
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -56,10 +57,11 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
   }
 
   searchEmployees(search?: string) {
-    var val = new PartnerFilter();
-    val.search = search;
-    val.employee = true;
-    return this.partnerService.autocomplete2(val);
+    var val = {
+      search: search,
+      isAllowSurvey: true
+    }
+    return this.employeeService.getEmployeeSimpleList(val);
   }
 
   onSave() {
