@@ -18,6 +18,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? dateFrom { get; set; }
         public DateTime? dateTo { get; set; }
         public bool? IsGetScore { get; set; }
+        public Guid? EmployeeId { get; set; }
 
     }
     public class SurveyAssignmentBasic

@@ -89,6 +89,10 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.SaleOrder.LastUpdated <= val.dateTo.Value);
             }
+            if (val.EmployeeId.HasValue)
+            {
+                query = query.Where(x=> x.EmployeeId == val.EmployeeId.Value);
+            }
             return query;
         }
 

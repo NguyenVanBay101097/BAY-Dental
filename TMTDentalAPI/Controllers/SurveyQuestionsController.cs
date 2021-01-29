@@ -115,8 +115,8 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateList( [FromBody]IEnumerable<SurveyQuestionUpdateListPar> vals)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateListSequence([FromBody]IEnumerable<SurveyQuestionUpdateListPar> vals)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
