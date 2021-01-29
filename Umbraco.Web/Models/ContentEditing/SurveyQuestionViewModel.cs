@@ -41,6 +41,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public ICollection<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
     }
 
+    public class SurveyQuestionUpdateListPar
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int? Sequence { get; set; }
+    }
+
     public class SwapPar
     {
         public Guid IdFrom { get; set; }

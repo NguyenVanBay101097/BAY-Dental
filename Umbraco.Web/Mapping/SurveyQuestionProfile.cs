@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SurveyQuestion, SurveyQuestionBasic>();
             CreateMap<SurveyQuestion, SurveyQuestionDisplay>();
             CreateMap<SurveyQuestionSave, SurveyQuestion>().ForMember(x=> x.Answers, x=> x.Ignore());
+            CreateMap<SurveyQuestionUpdateListPar, SurveyQuestion>().ForMember(x=> x.Answers, x=> x.Ignore());
         }
     }
 }

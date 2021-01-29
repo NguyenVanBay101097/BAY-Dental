@@ -1,0 +1,67 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">{{title}}</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <button class="btn btn-primary btn-sm" (click)="createQuestion()">Thêm</button>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+<div class="o_content">
+    <div class="table-responsive user-list">
+        <table class="table">
+            <thead>
+                <th scope="col">STT</th>
+                <th scope="col">Câu hỏi</th>
+                <th scope="col">Thao tác</th>
+            </thead>
+            <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
+                <tr *ngFor="let item of questions" cdkDrag cdkDragLockAxis="y">
+                    <th class="col-xs">
+                        <div class="drag-handle text-center">
+                            <ng-container [ngTemplateOutlet]="dragHandleTmpl">
+                            </ng-container>
+                            {{item.sequence}}
+                        </div>
+                    </th>
+                    <td class="col-md">{{item.name}}</td>
+                    <td class="col-sm">
+                        <div class="d-flex text-center">
+                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi"
+                                (click)="doubleQuestion(item)">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<ng-template #dragHandleTmpl>
+    <svg class="bi bi-list handle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+            d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"
+            clip-rule="evenodd" />
+    </svg>
+</ng-template>
