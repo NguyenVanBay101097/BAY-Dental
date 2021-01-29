@@ -77,7 +77,6 @@ namespace TMTDentalAPI.Controllers
                 question.Answers.Remove(item);
             }
 
-            question.Answers.Clear();
             foreach (var ans in val.Answers)
             {
                 if (ans.Id == Guid.Empty)
@@ -173,7 +172,8 @@ namespace TMTDentalAPI.Controllers
             {
                 newQuestion.Answers.Add(new SurveyAnswer() { 
                 Score = item.Score,
-                Sequence = item.Sequence
+                Sequence = item.Sequence,
+                Name = item.Name
                 });
             }
             await _surveyQuestionService.CreateAsync(newQuestion);
