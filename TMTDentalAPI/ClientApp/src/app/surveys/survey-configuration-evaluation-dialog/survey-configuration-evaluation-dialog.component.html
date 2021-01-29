@@ -44,44 +44,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    <!-- <table class="table table-bordered table-sm table-hover"
-                        *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
-                        <thead>
-                            <tr>
-                                <th class="text-center" scope="col">STT</th>
-                                <th scope="col">Câu trả lời</th>
-                                <th class="text-center" scope="col">Điểm</th>
-                                <th scope="col">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody formArrayName="answers">
-                            <ng-container *ngFor="let answer of answers.controls; let i=index">
-                                <tr [formGroupName]="i">
-                                    <th class="text-center">
-                                        <span>
-                                            {{answer.get('sequence') ? answer.get('sequence').value : 1}}
-                                        </span>
-                                    </th>
-                                    <td>
-                                        <input type="text" style="width: 100%; border-radius: 5px;"
-                                            formControlName="name" required>
-                                    </td>
-                                    <td class="text-center">
-                                        <span>
-                                            {{answer.get('score') ? answer.get('score').value : 1}}
-                                        </span>
-                                    </td>
-                                    <td class="text-center" style="width: 80px;">
-                                        <div class="sort">
-                                            <i class="fas fa-sort-up"></i>
-                                            <i class="fas fa-sort-down"></i>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-
-                        </tbody>
-                    </table> -->
                     <div class="table-responsive user-list">
                         <table class="table"
                             *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
@@ -91,11 +53,10 @@
                                 <th class="text-center" scope="col">Điểm</th>
                             </thead>
                             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)" formArrayName="answers">
-                                <ng-container *ngFor="let answer of answers.controls; let i=index">
-                                    <tr cdkDrag cdkDragLockAxis="y" [formGroupName]="i"
-                                        [id]="answer.get('sequence') ? answer.get('sequence').value : 1">
+                                <tr *ngFor="let answer of answers.controls; let i=index" cdkDrag cdkDragLockAxis="y">
+                                    <ng-container [formGroupName]="i">
                                         <th class="col-xs">
-                                            <div class="drag-handle text-center">
+                                            <div class="drag-handle text-center" cdkDragHandle>
                                                 <ng-container [ngTemplateOutlet]="dragHandleTmpl">
                                                 </ng-container>
                                                 {{answer.get('sequence') ? answer.get('sequence').value : 1}}
@@ -111,9 +72,8 @@
                                                 {{answer.get('score') ? answer.get('score').value : 1}}
                                             </span>
                                         </td>
-                                    </tr>
-                                </ng-container>
-
+                                    </ng-container>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

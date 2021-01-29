@@ -8,10 +8,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SurveyService } from './survey.service';
 import { SurveyConfigurationEvaluationDialogComponent } from './survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { SurveyManageAssignComponent } from './survey-manage-assign/survey-manage-assign.component';
+import { SurveyManageAssignEmployeeComponent } from './survey-manage-assign-employee/survey-manage-assign-employee.component';
+import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
 
 @NgModule({
-  declarations: [SurveyConfigurationEvaluationComponent, SurveyConfigurationEvaluationDialogComponent],
+  declarations: [SurveyConfigurationEvaluationComponent, SurveyConfigurationEvaluationDialogComponent, SurveyManageAssignComponent, SurveyManageAssignEmployeeComponent, SurveyManageEmployeeComponent],
   imports: [
     CommonModule,
     SurveysRoutingModule,

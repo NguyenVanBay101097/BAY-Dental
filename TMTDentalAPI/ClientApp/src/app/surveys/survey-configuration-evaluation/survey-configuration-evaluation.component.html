@@ -4,7 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Theo mã, tên hoặc số điện thoại"
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo câu hỏi"
                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
@@ -29,7 +29,7 @@
             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
                 <tr *ngFor="let item of questions" cdkDrag cdkDragLockAxis="y">
                     <th class="col-xs">
-                        <div class="drag-handle text-center">
+                        <div class="drag-handle text-center" >
                             <ng-container [ngTemplateOutlet]="dragHandleTmpl">
                             </ng-container>
                             {{item.sequence}}
@@ -41,8 +41,7 @@
                             <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi"
-                                (click)="doubleQuestion(item)">
+                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi" (click)="doubleQuestion(item)">
                                 <i class="far fa-copy"></i>
                             </button>
                             <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)">
