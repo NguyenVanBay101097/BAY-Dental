@@ -12,6 +12,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SurveyManageAssignComponent } from './survey-manage-assign/survey-manage-assign.component';
 import { SurveyManageAssignEmployeeComponent } from './survey-manage-assign-employee/survey-manage-assign-employee.component';
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [SurveyConfigurationEvaluationComponent, SurveyConfigurationEvaluationDialogComponent, SurveyManageAssignComponent, SurveyManageAssignEmployeeComponent, SurveyManageEmployeeComponent],
@@ -21,6 +22,7 @@ import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-m
     MyCustomKendoModule,
     FormsModule,
     NgbModalModule,
+    SharedModule,
     ReactiveFormsModule,
     DragDropModule
   ],

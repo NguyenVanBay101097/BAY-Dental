@@ -1,1 +1,118 @@
-<p>survey-manage-assign-employee works!</p>
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                        [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
+                    </kendo-combobox>
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
+                        (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                </div>
+
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+</div>
+<div class="report-prescription-payment">
+    <div class="revenue">
+        <div class="title">
+            <h6>Hoàn thành</h6>
+        </div>
+        <h4 class="text-primary">
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
+        </h4>
+    </div>
+    <div class="number-payment">
+        <div class="title">
+            <h6>Đang liên hệ</h6>
+        </div>
+        <h4 class="text-primary">
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
+        </h4>
+    </div>
+    <div class="number-payment">
+        <div class="title">
+            <h6>Chưa gọi</h6>
+        </div>
+        <h4 class="text-primary">
+            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
+        </h4>
+    </div>
+</div>
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <button class="btn btn-primary btn-sm">Tạo phân việc</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" (cellClick)="clickItem($event)">
+        <kendo-grid-column title="Nhân viên" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                    [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
+                </kendo-combobox>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Mã khách hàng" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
+                    [queryParams]="{id: dataItem.toaThuoc.saleOrderId}">
+                    {{dataItem.toaThuoc.saleOrderName}}
+                </a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="toaThuoc.name" title="Điện thoại" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Tuổi" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Giới tính" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="amount" title="Nhãn khách hàng" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Phiếu điều trị" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.state == 'confirmed'">Đã thanh toán</span>
+                <span *ngIf="dataItem.state == 'draft'">Chưa thanh toán</span>
+                <span *ngIf="dataItem.state == 'cancel'">Hủy thanh toán</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Ngày tạo phiếu" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Ngày hoàn thành điều trị" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Ngày hoàn thành khảo sát" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.state == 'done'">Hoàn thành</span>
+                <span *ngIf="dataItem.state == 'draft'">Chưa gọi</span>
+                <span *ngIf="dataItem.state == 'contact'">Đang liên hệ</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Thao tác" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
