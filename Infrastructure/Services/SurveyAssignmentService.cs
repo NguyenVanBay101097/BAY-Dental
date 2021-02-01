@@ -210,13 +210,13 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
             {
                 var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.SaleOrder.DateOrder >= val.DateFrom);
+                query = query.Where(x => x.SaleOrder.LastUpdated >= val.DateFrom);
             }
 
             if (val.DateTo.HasValue)
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.SaleOrder.DateOrder <= dateTo);
+                query = query.Where(x => x.SaleOrder.LastUpdated <= dateTo);
             }
 
             return await query.LongCountAsync();
