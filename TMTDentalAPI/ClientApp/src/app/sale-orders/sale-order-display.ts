@@ -1,3 +1,4 @@
+import { PartnerDisplay } from './../partners/partner-simple';
 import { AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { UserSimple } from '../users/user-simple';
 import { SaleOrderLineDisplay } from './sale-order-line-display';
@@ -33,7 +34,7 @@ export class SaleOrderDisplay {
 
 export class SaleOrderDisplayVm {
     id: string;
-    partner: PartnerSimple;
+    partner: PartnerDisplay;
     partnerId: string;
     dateOrder: string;
     user: UserSimple;

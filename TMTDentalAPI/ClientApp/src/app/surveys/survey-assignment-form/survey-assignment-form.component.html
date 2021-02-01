@@ -11,14 +11,15 @@
             </li>
         </ol>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
+            <!-- <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm">
+                    <button type="button" class="btn btn-primary btn-sm" >
                         Liên hệ</button>
-                    <button type="button" class="btn btn-secondary btn-sm" *ngIf="id">
-                        Khảo sát</button>
+                    <button type="button" class="btn btn-secondary btn-sm"  
+                        *ngIf="id">
+                      Khảo sát</button>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="o_cp_right">
             <!-- <div class="dropdown">
@@ -36,47 +37,59 @@
 
 <div class="o_content">
     <form class="o_form_view" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_statusbar">
-                <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="['done'].indexOf(surveyAssignment.status) !== -1"
-                        class="btn btn-primary btn-sm" accesskey="1">
-                        Liên hệ
-                    </button>
-                    <button type="button" *ngIf="" class="btn btn-primary btn-sm" accesskey="1">
-                        Khảo sát
-                    </button>
-                    <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
+
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <button type="button" class="btn btn-primary btn-sm" accesskey="1">
+                    Liên hệ
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" accesskey="1">
+                    Khảo sát
+                </button>
+                <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
                     </button> -->
-                </div>
-                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="surveyAssignment.status !== 'done'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
-                        type="button">
-                        Hoàn thành
-                    </button>
-                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
-                        type="button">
-                        Đang liên hệ
-                    </button>
-                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
-                        type="button">
-                        Chưa gọi
-                    </button>
+            </div>
+            <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
+                    type="button">
+                    Hoàn thành
+                </button>
+                <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
+                    type="button">
+                    Đang liên hệ
+                </button>
+                <button *ngIf="surveyAssignment.status === 'draft'" [disabled]="surveyAssignment.status !== 'draft'"
+                    class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
+                    type="button">
+                    Chưa gọi
+                </button>
+            </div>
+        </div>
+        <div class="t_wrapper">
+            <div class="oe_title">
+                <h5>
+                    <span>THÔNG TIN KHÁCH HÀNG</span>
+                </h5>
+            </div>
+            <div class="media mb-3">
+                <app-image-file-upload [supportWebcam]="true" class="t_avatar" [imageId]="surveyAssignment.saleOrder.partner.avatar" [width]="100" [height]="100">
+                </app-image-file-upload>
+                <div class="media-body">
+                    <h3>{{surveyAssignment.saleOrder.partner? surveyAssignment.saleOrder.partner.name: ''}}</h3>
+                    <div class="t_sub_title">
+                        Mã khách hàng: {{surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder.partner ? (surveyAssignment.saleOrder.partner.date | date:'shortDate') : '' }}
+                    </div>
+                    <!-- <button class="btn btn-success btn-sm" (click)="editCustomer()">
+                        <i class="fas fa-user-edit"></i> Sửa
+                    </button> -->
                 </div>
             </div>
-            <div class="o_form_sheet">
-                <div class="oe_title">
-                    <h5>
-                        <span>THÔNG TIN KHÁCH HÀNG</span>
-                    </h5>
-                </div>
-                <!-- <div class="o_group">
+            <!-- <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -251,7 +264,7 @@
                     </div>
                 </div> -->
 
-            </div>
         </div>
+
     </form>
 </div>

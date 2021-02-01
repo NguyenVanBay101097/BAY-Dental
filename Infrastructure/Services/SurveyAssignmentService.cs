@@ -127,7 +127,7 @@ namespace Infrastructure.Services
             assignDisplay.SaleOrder.Partner = await partnerObj.GetInfoPartner(assignDisplay.SaleOrder.PartnerId);
             assignDisplay.SaleOrder.OrderLines = await saleOrderLineObj.GetDisplayBySaleOrder(assignDisplay.SaleOrderId);
             assignDisplay.SaleOrder.DotKhams = await saleOrderObj._GetListDotkhamInfo(assignDisplay.SaleOrderId);
-            assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>(await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
+            //assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>(await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
             return assignDisplay;
         }
 
