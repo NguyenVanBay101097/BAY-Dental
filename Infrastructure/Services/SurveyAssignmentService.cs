@@ -117,10 +117,12 @@ namespace Infrastructure.Services
         {
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var partnerObj = GetService<IPartnerService>();
             var surveyCallContentObj = GetService<ISurveyCallContentService>();
             var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
             assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplayVm>(await saleOrderObj.SearchQuery(x => x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
+            assignDisplay.SaleOrder.Partner = await partnerObj.GetInfoPartner(assignDisplay.SaleOrder.PartnerId);
             assignDisplay.SaleOrder.OrderLines = await saleOrderLineObj.GetDisplayBySaleOrder(assignDisplay.SaleOrderId);
             assignDisplay.SaleOrder.DotKhams = await saleOrderObj._GetListDotkhamInfo(assignDisplay.SaleOrderId);
             assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>(await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
@@ -217,6 +219,11 @@ namespace Infrastructure.Services
             {
                 var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.SaleOrder.LastUpdated <= dateTo);
+            }
+
+            if (val.EmployeeId.HasValue)
+            {
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
             }
 
             return await query.LongCountAsync();

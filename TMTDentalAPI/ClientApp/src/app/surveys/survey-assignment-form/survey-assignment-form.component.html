@@ -40,18 +40,14 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="!id" class="btn btn-primary btn-sm" (click)="onSaveConfirm()"
+                    <button type="button" *ngIf="['done'].indexOf(surveyAssignment.status) !== -1" class="btn btn-primary btn-sm" 
                         accesskey="1">
-                        Xác nhận
+                      Liên hệ
                     </button>
-                    <button type="button" accesskey="1" *ngIf="id && purchaseOrder.state == 'draft'"
-                        class="btn btn-primary btn-sm" (click)="buttonConfirm()">
-                        Xác nhận
-                    </button>
-                    <button *ngIf="['purchase', 'done'].indexOf(purchaseOrder.state) !== -1 && purchaseOrder.amountResidual > 0" type="button"
-                        class="btn btn-primary btn-sm" (click)="actionRegisterPayment()">
-                        Thanh toán
-                    </button>
+                    <button type="button" *ngIf="" class="btn btn-primary btn-sm" 
+                    accesskey="1">
+                        Khảo sát
+                        </button>
                     <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
@@ -78,11 +74,11 @@
             </div>
             <div class="o_form_sheet">
                 <div class="oe_title">
-                    <h1>
+                    <h5>
                         <span>THÔNG TIN KHÁCH HÀNG</span>
-                    </h1>
+                    </h5>
                 </div>
-                <div class="o_group">
+                <!-- <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -255,7 +251,7 @@
                         </table>
                         <div class="clearfix"></div>
                     </div>
-                </div>
+                </div> -->
 
             </div>
         </div>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { SurveyAssignmentFormComponent } from './survey-assignment-form/survey-assignment-form.component';
 import { SurveyAssignmentListComponent } from './survey-assignment-list/survey-assignment-list.component';
 import { SurveyConfigurationEvaluationComponent } from './survey-configuration-evaluation/survey-configuration-evaluation.component';
 import { SurveyManageAssignEmployeeComponent } from './survey-manage-assign-employee/survey-manage-assign-employee.component';
@@ -16,7 +17,11 @@ const routes: Routes = [
       { path: 'employees', component: SurveyManageEmployeeComponent },
     ]
   },
-  {path: '' , component: SurveyAssignmentListComponent }
+  {path: '' , component: SurveyAssignmentListComponent },
+  {
+    path: 'form',
+    component: SurveyAssignmentFormComponent
+  }
 ];
 
 @NgModule({

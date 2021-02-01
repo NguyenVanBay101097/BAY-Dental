@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
@@ -44,6 +45,7 @@ export class SurveyAssignmentListComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
+    private router: Router,
     private partnerService: PartnerService,
     private surveyService: SurveyService,
     private fb: FormBuilder
@@ -97,6 +99,17 @@ export class SurveyAssignmentListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  clickItem(item) {
+    debugger
+    var id = item.dataItem.id;
+    this.router.navigate(['/surveys/form'], { queryParams: { id: id} });
+  }
+
+  public pageChange(event: PageChangeEvent): void {
+    this.offset = event.skip;
+    this.loadDataFromApi();
   }
 
   loadStatusCount() {

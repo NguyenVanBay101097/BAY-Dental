@@ -1900,6 +1900,15 @@ namespace Infrastructure.Services
             });
         }
 
+        public async Task<PartnerDisplay> GetInfoPartner(Guid id)
+        {
+            var partner = await SearchQuery(x=> x.Id == id).Include(x=>x.PartnerHistoryRels).Include(x=>x.PartnerPartnerCategoryRels).FirstOrDefaultAsync();
+
+            var partnerDisplay = _mapper.Map<PartnerDisplay>(partner);
+
+            return partnerDisplay;
+        }
+
         public IQueryable<GridPartnerViewModel> GetGridViewModels()
         {
             return SearchQuery().Select(x => new GridPartnerViewModel

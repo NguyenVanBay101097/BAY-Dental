@@ -29,6 +29,12 @@ export class SurveyAssignmentFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    
+    this.route.queryParamMap.subscribe(params => {
+      this.id = params.get('id'); 
+    });
+
+    // this.id = this.route.snapshot.paramMap.get('id');
     this.formGroup = this.fb.group({
       saleOrderId: null,
       saleOrder: null,
@@ -36,16 +42,15 @@ export class SurveyAssignmentFormComponent implements OnInit {
       callContents: this.fb.array([]),
       status: null
     });
-
-    this.id = this.route.snapshot.paramMap.get('id');
-
     this.loadDataFromApi();
   }
 
   loadDataFromApi() {
     if (this.id) {
       this.surveyService.get(this.id).subscribe(result => {
+        debugger
         this.surveyAssignment = result;
+        console.log(this.surveyAssignment);
         this.formGroup.patchValue(this.surveyAssignment);
         // let dateOrder = new Date(result.dateOrder);
         // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
