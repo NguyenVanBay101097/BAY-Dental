@@ -39,6 +39,7 @@ export class SurveyAssignmentBasic {
 export class SurveyAssignmentPagging {
   limit: number;
   offset: number;
+  employeeId: string;
   totalItems: number;
   items: SurveyAssignmentBasic[];
 }
@@ -59,6 +60,7 @@ export class SurveyAssignmentDefaultGet {
 export class SurveyAssignmentGetCountVM {
   status: string;
   dateFrom: string;
+  employeeId: string; 
   dateTo: string;
 }
 
@@ -103,6 +105,10 @@ export class SurveyService {
 
   actionCancel(ids: string[]) {
     return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
+  }
+
+  updateAssignment(id: string, val: any) {
+    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
 }

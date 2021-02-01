@@ -5,8 +5,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
@@ -22,7 +25,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  filteredEmployees: PartnerSimple[];
+  filteredEmployees: EmployeeSimple[];
   search: string;
   limit = 10;
   offset = 0;
@@ -35,6 +38,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   status: string = '';
   loading = false;
   formGroup: FormGroup;
+  employeeId: string;
   private editedRowIndex: number;
   statusCount: any = {};
   statuses = [
@@ -50,6 +54,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
+    private employeeService: EmployeeService,
+    private notificationService: NotificationService,
     private surveyService: SurveyService,
     private fb: FormBuilder
   ) { }
@@ -74,6 +80,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     var paged = new SurveyAssignmentPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
+    paged.employeeId = this.employeeId ? this.employeeId : null;
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
@@ -97,6 +104,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     forkJoin(this.statuses.map(x => {
       var val = new SurveyAssignmentGetCountVM();
       val.status = x.value;
+      val.employeeId = this.employeeId ? this.employeeId : null;
       val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
       val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       return this.surveyService.getSumary(val).pipe(
@@ -117,7 +125,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     var val = new PartnerFilter();
     val.search = search;
     val.employee = true;
-    return this.partnerService.autocomplete2(val);
+    return this.employeeService.getEmployeeSimpleList(val);
   }
 
   onSearchDateChange(event) {
@@ -144,8 +152,10 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   // click in cell to edit
   editHandler({ sender, rowIndex, dataItem }) {
     this.closeEditor(sender);
-
-    this.formGroup = this.fb.group(dataItem);
+    this.formGroup = this.fb.group({
+      id: dataItem.id,
+      employee: dataItem.employee
+    });
 
     this.editedRowIndex = rowIndex;
 
@@ -158,12 +168,40 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     this.formGroup = undefined;
   }
 
-  onChangeEmployee(emp, item) {
-    if (item) {
-      var survey = item.value;
-    }
+  public cancelHandler({ sender, rowIndex }) {
+    this.closeEditor(sender, rowIndex);
   }
 
+  public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
+    const survey = formGroup.value;
+    var surveyOld = this.gridData.data.find(x => x.id === survey.id)
+    surveyOld.employee = survey.employee;
+    surveyOld.employeeId = survey.employee.id;
+    this.surveyService.updateAssignment(survey.id, surveyOld).subscribe(
+      () => {
+        this.notificationService.show({
+          content: 'Cập nhật thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    )
+    sender.closeRow(rowIndex);
+  }
+
+  onChaneEmp(emp) {
+    this.employeeId = emp.id;
+    this.loadDataFromApi();
+    this.loadStatusCount();
+
+  }
+
+  employee(id) {
+    var emp = this.filteredEmployees.find(x => x.id == id);
+    return emp;
+  }
 
   public createFormGroup(dataItem: any): FormGroup {
     return this.fb.group({
