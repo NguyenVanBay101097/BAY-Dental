@@ -9,6 +9,7 @@ import { TenantListComponent } from './tenant-list/tenant-list.component';
 import { MyCustomKendoModule } from '../my-custom-kendo.module';
 import { TenantUpdateExpiredDialogComponent } from './tenant-update-expired-dialog/tenant-update-expired-dialog.component';
 import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
+import { TenantUpdateInfoDialogComponent } from './tenant-update-info-dialog/tenant-update-info-dialog.component';
 
 @NgModule({
   imports: [
@@ -22,13 +23,15 @@ import { TrialRegistrationComponent } from './trial-registration/trial-registrat
     TenantRegisterComponent,
     TenantListComponent,
     TenantUpdateExpiredDialogComponent,
-    TrialRegistrationComponent
+    TrialRegistrationComponent,
+    TenantUpdateInfoDialogComponent
   ],
   providers: [
     TenantService
   ],
   entryComponents: [
-    TenantUpdateExpiredDialogComponent
+    TenantUpdateExpiredDialogComponent,
+    TenantUpdateInfoDialogComponent
   ]
 })
 export class TenantsModule { }

@@ -42,5 +42,7 @@ namespace ApplicationCore.Entities
         /// Người triển khai
         /// </summary>
         public string SupporterName { get; set; }
+
+        public string Address { get; set; }
     }
 }

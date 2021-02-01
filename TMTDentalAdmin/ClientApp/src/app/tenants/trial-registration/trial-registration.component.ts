@@ -30,6 +30,7 @@ export class TrialRegistrationComponent implements OnInit {
       userName: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: null,
+      address: null
     }, {
       validators: MustMatch('password', 'confirmPassword')
     });
@@ -46,7 +47,7 @@ export class TrialRegistrationComponent implements OnInit {
   get confirmPassword() { return this.formGroup.get('confirmPassword'); }
 
   getHostName(host) {
-    return environment.catalogScheme + '://' + host + '.' + environment.catalogHost;
+    return environment.catalogScheme + '://' + (host || '') + '.' + environment.catalogHost;
   }
 
   onSubmit() {
@@ -56,11 +57,15 @@ export class TrialRegistrationComponent implements OnInit {
 
     var value = this.formGroup.value;
     this.tenantService.register(value).subscribe((result: any) => {
-      console.log(result);
       this.registerSuccess = true;
       this.registerResult = result;
     }, (err) => {
       console.log(err);
     });
+  }
+
+  createNew() {
+    this.registerSuccess = false;
+    this.formGroup.reset();
   }
 }

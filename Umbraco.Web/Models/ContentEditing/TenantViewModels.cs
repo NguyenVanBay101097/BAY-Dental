@@ -46,7 +46,17 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string CompanyName { get; set; }
 
-        public string Hostname { get; set; }
+        /// <summary>
+        /// Nguồn khách hàng
+        /// </summary>
+        public string CustomerSource { get; set; }
+
+        /// <summary>
+        /// Người triển khai
+        /// </summary>
+        public string SupporterName { get; set; }
+
+        public string Address { get; set; }
     }
 
     public class TenantRegisterViewModel
@@ -88,6 +98,37 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Người triển khai
         /// </summary>
         public string SupporterName { get; set; }
+
+        public string Address { get; set; }
+    }
+
+    public class TenantUpdateInfoViewModel
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; }
+
+        [Required]
+        public string CompanyName { get; set; }
+
+        /// <summary>
+        /// Nguồn khách hàng
+        /// </summary>
+        public string CustomerSource { get; set; }
+
+        /// <summary>
+        /// Người triển khai
+        /// </summary>
+        public string SupporterName { get; set; }
+
+        public string Address { get; set; }
     }
 
     public class TenantPaged

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TenantUpdateExpiredDialogComponent } from '../tenant-update-expired-dialog/tenant-update-expired-dialog.component';
 import { Subject } from 'rxjs';
+import { TenantUpdateInfoDialogComponent } from '../tenant-update-info-dialog/tenant-update-info-dialog.component';
 
 @Component({
   selector: 'app-tenant-list',
@@ -65,12 +66,22 @@ export class TenantListComponent implements OnInit {
   updateExpired(dataItem) {
     let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.id = dataItem.id;
-    modalRef.componentInstance.title = `Sửa: ${dataItem.hostname}`;
+    modalRef.componentInstance.title = `Gia hạn: ${dataItem.hostname}`;
     modalRef.componentInstance.dateExpired = dataItem.dateExpired ? new Date(dataItem.dateExpired) : null;
     modalRef.componentInstance.tenant = {
       dateExpired: dataItem.dateExpired ? new Date(dataItem.dateExpired) : null,
       activeCompaniesNbr: dataItem.activeCompaniesNbr
     };
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    });
+  }
+
+  editItem(dataItem) {
+    let modalRef = this.modalService.open(TenantUpdateInfoDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.id = dataItem.id;
+    modalRef.componentInstance.title = `Cập nhật thông tin: ${dataItem.hostname}`;
+ 
     modalRef.result.then(() => {
       this.loadDataFromApi();
     });

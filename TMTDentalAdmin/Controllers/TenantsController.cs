@@ -54,6 +54,14 @@ namespace TMTDentalAdmin.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var result = await _tenantService.GetByIdAsync(id);
+            var display = _mapper.Map<TenantDisplay>(result);
+            return Ok(display);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> Register(TenantRegisterViewModel val)
         {
@@ -68,37 +76,36 @@ namespace TMTDentalAdmin.Controllers
             tenant.DateExpired = DateTime.Today.AddDays(15);
             await _tenantService.CreateAsync(tenant);
 
-            //try
-            //{
-            //    var db = val.Hostname;
-            //    CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db, _configuration);
-            //    await context.Database.MigrateAsync();
+            try
+            {
+                var db = val.Hostname;
+                CatalogDbContext context = DbContextHelper.GetCatalogDbContext(db, _configuration);
+                await context.Database.MigrateAsync();
 
-            //    //chạy api setuptenant -> fail
-            //    HttpResponseMessage response = null;
-            //    HttpClientHandler clientHandler = new HttpClientHandler();
-            //    clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-            //    using (var client = new HttpClient(new RetryHandler(clientHandler)))
-            //    {
-            //        response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
-            //        {
-            //            CompanyName = val.CompanyName,
-            //            Name = val.Name,
-            //            Username = val.Username,
-            //            Password = val.Password,
-            //            Phone = val.Phone,
-            //            Email = val.Email
-            //        });
-            //    }
+                HttpResponseMessage response = null;
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                {
+                    response = await client.PostAsJsonAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/companies/setuptenant", new
+                    {
+                        CompanyName = val.CompanyName,
+                        Name = val.Name,
+                        Username = val.Username,
+                        Password = val.Password,
+                        Phone = val.Phone,
+                        Email = val.Email
+                    });
+                }
 
-            //    if (!response.IsSuccessStatusCode)
-            //        throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
-            //}
-            //catch (Exception e)
-            //{
-            //    await _tenantService.DeleteAsync(tenant);
-            //    throw e;
-            //}
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
+            }
+            catch (Exception e)
+            {
+                await _tenantService.DeleteAsync(tenant);
+                throw e;
+            }
 
             return Ok(val);
         }
@@ -137,6 +144,16 @@ namespace TMTDentalAdmin.Controllers
                 await _tenantService.UpdateAsync(tenant);
                 throw e;
             }
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> UpdateInfo(Guid id, TenantUpdateInfoViewModel val)
+        {
+            var tenant = await _tenantService.GetByIdAsync(id);
+            tenant = _mapper.Map(val, tenant);
+            await _tenantService.UpdateAsync(tenant);
 
             return NoContent();
         }
