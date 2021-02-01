@@ -62,6 +62,13 @@ export class SurveyAssignmentGetCountVM {
   dateTo: string;
 }
 
+export class SurveyAssignmentDefaultGetPar {
+  constructor() {
+    this.IsRandomAssign = false;
+  }
+  IsRandomAssign: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -74,8 +81,8 @@ export class SurveyService {
     return this.http.get<SurveyAssignmentPagging>(this.base_api + this.apiUrl, { params: val });
   }
 
-  defaultGetList(): Observable<SurveyAssignmentDefaultGet[]> {
-    return this.http.post<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList', null);
+  defaultGetList(val): Observable<SurveyAssignmentDefaultGet[]> {
+    return this.http.post<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList', val);
   }
 
   createListAssign(vals) {

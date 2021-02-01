@@ -161,7 +161,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> DefaultGetList([FromBody]SurveyAssignmentDefaultGetPar val)
+        public async Task<IActionResult> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
             var result = await _SurveyAssignmentService.DefaultGetList(val);
             return Ok(result);
