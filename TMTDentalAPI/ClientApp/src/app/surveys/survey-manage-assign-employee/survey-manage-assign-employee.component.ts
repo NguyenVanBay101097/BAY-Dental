@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
@@ -29,6 +29,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   edit = false;
   dateFrom: Date;
   dateTo: Date;
+  numberDone: number = 0;
+  numberContact: number = 0;
+  numberDraft: number = 0;
   status: string = '';
   loading = false;
 
@@ -70,6 +73,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     // });
 
     this.loadDataFromApi();
+    this.loadSumary();
   }
 
   loadDataFromApi() {
@@ -94,6 +98,19 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     }, err => {
       console.log(err);
       this.loading = false;
+    })
+  }
+
+  loadSumary() {
+    var dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    var dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
+    var request = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "done" });
+    var request1 = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "contact" });
+    var request2 = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "draft" });
+    forkJoin([request, request1, request2]).subscribe((result) => {
+      this.numberDone = result[0];
+      this.numberContact = result[1];
+      this.numberDraft = result[2];
     })
   }
 

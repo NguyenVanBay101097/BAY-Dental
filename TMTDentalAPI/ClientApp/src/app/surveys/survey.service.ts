@@ -75,4 +75,8 @@ export class SurveyService {
   createListAssign(vals) {
     return this.http.post(this.base_api + this.apiUrl + '/CreateList', vals);
   }
+
+  getSumary(val): Observable<number> {
+    return this.http.post<number>(this.base_api + this.apiUrl + '/GetSummary', val);
+  }
 }
