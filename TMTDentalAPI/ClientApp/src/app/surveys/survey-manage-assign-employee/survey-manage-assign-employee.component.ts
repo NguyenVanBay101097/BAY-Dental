@@ -34,7 +34,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   numberDraft: number = 0;
   status: string = '';
   loading = false;
-
+  formGroup: FormGroup;
+  private editedRowIndex: number;
   statusCount: any = {};
   statuses = [
     { value: "draft", name: "Chưa gọi" },
@@ -63,19 +64,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.search = value || '';
         this.loadDataFromApi();
       });
-
-    // this.employeeCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.employeeCbx.loading = true)),
-    //   switchMap(value => this.searchEmployees(value))
-    // ).subscribe(result => {
-    //   this.filteredEmployees = result;
-    //   this.employeeCbx.loading = false;
-    // });
-
     this.loadDataFromApi();
-    this.loadSumary();
     this.loadStatusCount();
+    this.loadEmployees();
   }
 
   loadDataFromApi() {
@@ -95,24 +86,10 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       console.log(res);
-
       this.loading = false;
     }, err => {
       console.log(err);
       this.loading = false;
-    })
-  }
-
-  loadSumary() {
-    var dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    var dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
-    var request = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "done" });
-    var request1 = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "contact" });
-    var request2 = this.surveyService.getSumary({ dateFrom: dateFrom, dateTo: dateTo, status: "draft" });
-    forkJoin([request, request1, request2]).subscribe((result) => {
-      this.numberDone = result[0];
-      this.numberContact = result[1];
-      this.numberDraft = result[2];
     })
   }
 
@@ -123,7 +100,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
       val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       return this.surveyService.getSumary(val).pipe(
-        switchMap(count => of({status: x.value, count: count}))
+        switchMap(count => of({ status: x.value, count: count }))
       );
     })).subscribe((result) => {
       result.forEach(item => {
@@ -143,6 +120,13 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
+  onSearchDateChange(event) {
+    this.dateTo = event.dateTo;
+    this.dateFrom = event.dateFrom;
+    this.loadDataFromApi();
+    this.loadStatusCount();
+  }
+
   createEmpAssign() {
     let modalRef = this.modalService.open(SurveyManageAssignEmployeeCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phân việc';
@@ -152,55 +136,41 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     });
   }
 
-  public onStateChange(state) {
-
+  public onStatusChange(state) {
+    this.status = state ? state.value : '';
+    this.loadDataFromApi();
   }
 
-  public cellClickHandler({ sender, rowIndex, columnIndex, dataItem, isEdited }) {
-    if (!isEdited) {
-      sender.editCell(rowIndex, columnIndex, this.createFormGroup(dataItem));
+  // click in cell to edit
+  editHandler({ sender, rowIndex, dataItem }) {
+    this.closeEditor(sender);
+
+    this.formGroup = this.fb.group(dataItem);
+
+    this.editedRowIndex = rowIndex;
+
+    sender.editRow(rowIndex, this.formGroup);
+  }
+
+  private closeEditor(grid, rowIndex = this.editedRowIndex) {
+    grid.closeRow(rowIndex);
+    this.editedRowIndex = undefined;
+    this.formGroup = undefined;
+  }
+
+  onChangeEmployee(emp, item) {
+    if (item) {
+      var survey = item.value;
     }
   }
 
-  public cellCloseHandler(args: any) {
-    const { formGroup, dataItem } = args;
-
-    if (!formGroup.valid) {
-      // prevent closing the edited cell if there are invalid values.
-      args.preventDefault();
-    } else if (formGroup.dirty) {
-      //  do something
-    }
-  }
-
-  public cancelHandler({ sender, rowIndex }) {
-    sender.closeRow(rowIndex);
-  }
-
-  public saveHandler({ sender, formGroup, rowIndex }) {
-    if (formGroup.valid) {
-      // this.editService.create(formGroup.value);
-      sender.closeRow(rowIndex);
-    }
-  }
-
-  public saveChanges(grid: any): void {
-    grid.closeCell();
-    grid.cancelCell();
-
-    // this.editService.saveChanges();
-  }
-
-  public cancelChanges(grid: any): void {
-    grid.cancelCell();
-
-    // this.editService.cancelChanges();
-  }
 
   public createFormGroup(dataItem: any): FormGroup {
     return this.fb.group({
-      empId: null
+      id: dataItem.id,
+      employee: dataItem.employee
     });
   }
+
 
 }

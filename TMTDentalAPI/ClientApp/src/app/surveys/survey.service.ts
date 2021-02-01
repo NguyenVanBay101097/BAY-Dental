@@ -75,6 +75,13 @@ export class SurveyAssignmentGetCountVM {
   dateTo: string;
 }
 
+export class SurveyAssignmentDefaultGetPar {
+  constructor() {
+    this.IsRandomAssign = false;
+  }
+  IsRandomAssign: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
