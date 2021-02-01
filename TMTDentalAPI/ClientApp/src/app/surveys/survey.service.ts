@@ -3,6 +3,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { SaleOrderDisplay, SaleOrderDisplayVm } from '../sale-orders/sale-order-display';
+import { SurveyCallContentDisplay } from './survey-callcontent.service';
+import { SurveyUserInputDisplay } from './survey-userinput.service';
 
 export class SurveyAssignmentPaged {
   limit: number;
@@ -39,6 +42,7 @@ export class SurveyAssignmentBasic {
 export class SurveyAssignmentPagging {
   limit: number;
   offset: number;
+  employeeId: string;
   totalItems: number;
   items: SurveyAssignmentBasic[];
 }
@@ -56,6 +60,30 @@ export class SurveyAssignmentDefaultGet {
   status: string;
 }
 
+export class SurveyAssignmentDisplay {
+  id: string;
+  saleOrderId: string;
+  saleOrder: SaleOrderDisplayVm;
+  surveyUserInputId: string;
+  surveyUserInput: SurveyUserInputDisplay;
+  callContents: SurveyCallContentDisplay[];
+  status: string;
+}
+
+export class SurveyAssignmentGetCountVM {
+  status: string;
+  dateFrom: string;
+  employeeId: string; 
+  dateTo: string;
+}
+
+export class SurveyAssignmentDefaultGetPar {
+  constructor() {
+    this.IsRandomAssign = false;
+  }
+  IsRandomAssign: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -68,11 +96,36 @@ export class SurveyService {
     return this.http.get<SurveyAssignmentPagging>(this.base_api + this.apiUrl, { params: val });
   }
 
-  defaultGetList(): Observable<SurveyAssignmentDefaultGet[]> {
-    return this.http.get<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList');
+  get(id: string): Observable<SurveyAssignmentDisplay> {
+    return this.http.get<SurveyAssignmentDisplay>(this.base_api + this.apiUrl + '/' + id);
+  }
+
+  defaultGetList(val): Observable<SurveyAssignmentDefaultGet[]> {
+    return this.http.post<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList', val);
   }
 
   createListAssign(vals) {
     return this.http.post(this.base_api + this.apiUrl + '/CreateList', vals);
   }
+
+  getSumary(val): Observable<number> {
+    return this.http.post<number>(this.base_api + this.apiUrl + '/GetSummary', val);
+  }
+
+  actionContact(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionContact', ids);
+  }
+
+  actionDone(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionDone', val);
+  }
+
+  actionCancel(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
+  }
+
+  updateAssignment(id: string, val: any) {
+    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  }
+
 }

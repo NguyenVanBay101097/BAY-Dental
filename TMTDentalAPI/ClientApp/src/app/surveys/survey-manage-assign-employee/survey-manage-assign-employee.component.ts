@@ -5,12 +5,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
-import { SurveyAssignmentPaged, SurveyService } from '../survey.service';
+import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-assign-employee',
@@ -22,16 +25,22 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  filteredEmployees: PartnerSimple[];
+  filteredEmployees: EmployeeSimple[];
   search: string;
   limit = 10;
   offset = 0;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
+  numberDone: number = 0;
+  numberContact: number = 0;
+  numberDraft: number = 0;
   status: string = '';
   loading = false;
-
+  formGroup: FormGroup;
+  employeeId: string;
+  private editedRowIndex: number;
+  statusCount: any = {};
   statuses = [
     { value: "draft", name: "Chưa gọi" },
     { value: "done", name: "Hoàn thành" },
@@ -45,6 +54,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
+    private employeeService: EmployeeService,
+    private notificationService: NotificationService,
     private surveyService: SurveyService,
     private fb: FormBuilder
   ) { }
@@ -59,17 +70,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.search = value || '';
         this.loadDataFromApi();
       });
-
-    // this.employeeCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.employeeCbx.loading = true)),
-    //   switchMap(value => this.searchEmployees(value))
-    // ).subscribe(result => {
-    //   this.filteredEmployees = result;
-    //   this.employeeCbx.loading = false;
-    // });
-
     this.loadDataFromApi();
+    this.loadStatusCount();
+    this.loadEmployees();
   }
 
   loadDataFromApi() {
@@ -77,6 +80,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     var paged = new SurveyAssignmentPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
+    paged.employeeId = this.employeeId ? this.employeeId : null;
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
@@ -89,12 +93,28 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       console.log(res);
-
       this.loading = false;
     }, err => {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  loadStatusCount() {
+    forkJoin(this.statuses.map(x => {
+      var val = new SurveyAssignmentGetCountVM();
+      val.status = x.value;
+      val.employeeId = this.employeeId ? this.employeeId : null;
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+      return this.surveyService.getSumary(val).pipe(
+        switchMap(count => of({ status: x.value, count: count }))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        this.statusCount[item.status] = item.count;
+      });
+    });
   }
 
   loadEmployees() {
@@ -105,7 +125,14 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     var val = new PartnerFilter();
     val.search = search;
     val.employee = true;
-    return this.partnerService.autocomplete2(val);
+    return this.employeeService.getEmployeeSimpleList(val);
+  }
+
+  onSearchDateChange(event) {
+    this.dateTo = event.dateTo;
+    this.dateFrom = event.dateFrom;
+    this.loadDataFromApi();
+    this.loadStatusCount();
   }
 
   createEmpAssign() {
@@ -117,55 +144,71 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     });
   }
 
-  public onStateChange(state) {
-
+  public onStatusChange(state) {
+    this.status = state ? state.value : '';
+    this.loadDataFromApi();
   }
 
-  public cellClickHandler({ sender, rowIndex, columnIndex, dataItem, isEdited }) {
-    if (!isEdited) {
-      sender.editCell(rowIndex, columnIndex, this.createFormGroup(dataItem));
-    }
+  // click in cell to edit
+  editHandler({ sender, rowIndex, dataItem }) {
+    this.closeEditor(sender);
+    this.formGroup = this.fb.group({
+      id: dataItem.id,
+      employee: dataItem.employee
+    });
+
+    this.editedRowIndex = rowIndex;
+
+    sender.editRow(rowIndex, this.formGroup);
   }
 
-  public cellCloseHandler(args: any) {
-    const { formGroup, dataItem } = args;
-
-    if (!formGroup.valid) {
-      // prevent closing the edited cell if there are invalid values.
-      args.preventDefault();
-    } else if (formGroup.dirty) {
-      //  do something
-    }
+  private closeEditor(grid, rowIndex = this.editedRowIndex) {
+    grid.closeRow(rowIndex);
+    this.editedRowIndex = undefined;
+    this.formGroup = undefined;
   }
 
   public cancelHandler({ sender, rowIndex }) {
+    this.closeEditor(sender, rowIndex);
+  }
+
+  public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
+    const survey = formGroup.value;
+    var surveyOld = this.gridData.data.find(x => x.id === survey.id)
+    surveyOld.employee = survey.employee;
+    surveyOld.employeeId = survey.employee.id;
+    this.surveyService.updateAssignment(survey.id, surveyOld).subscribe(
+      () => {
+        this.notificationService.show({
+          content: 'Cập nhật thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+      }
+    )
     sender.closeRow(rowIndex);
   }
 
-  public saveHandler({ sender, formGroup, rowIndex }) {
-    if (formGroup.valid) {
-      // this.editService.create(formGroup.value);
-      sender.closeRow(rowIndex);
-    }
+  onChaneEmp(emp) {
+    this.employeeId = emp.id;
+    this.loadDataFromApi();
+    this.loadStatusCount();
+
   }
 
-  public saveChanges(grid: any): void {
-    grid.closeCell();
-    grid.cancelCell();
-
-    // this.editService.saveChanges();
-  }
-
-  public cancelChanges(grid: any): void {
-    grid.cancelCell();
-
-    // this.editService.cancelChanges();
+  employee(id) {
+    var emp = this.filteredEmployees.find(x => x.id == id);
+    return emp;
   }
 
   public createFormGroup(dataItem: any): FormGroup {
     return this.fb.group({
-      empId: null
+      id: dataItem.id,
+      employee: dataItem.employee
     });
   }
+
 
 }

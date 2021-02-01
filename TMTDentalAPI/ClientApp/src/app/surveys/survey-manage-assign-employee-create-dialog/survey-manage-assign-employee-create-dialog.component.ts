@@ -7,7 +7,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { SurveyAssignmentDefaultGet, SurveyService } from '../survey.service';
+import { SurveyAssignmentDefaultGet, SurveyAssignmentDefaultGetPar, SurveyService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-assign-employee-create-dialog',
@@ -37,7 +37,9 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.surveyService.defaultGetList().subscribe(
+    var val = new SurveyAssignmentDefaultGetPar();
+    val.IsRandomAssign = false;
+    this.surveyService.defaultGetList(val).subscribe(
       result => {
         this.surveyAssignments = result;
         this.surveyAssignments.forEach(item => {
@@ -62,6 +64,21 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
       isAllowSurvey: true
     }
     return this.employeeService.getEmployeeSimpleList(val);
+  }
+
+  onAutoAssign() {
+    this.surveyAssignments = [];
+    this.arrs.clear();
+    var val = new SurveyAssignmentDefaultGetPar();
+    val.IsRandomAssign = true;
+    this.surveyService.defaultGetList(val).subscribe(
+      result => {
+        this.surveyAssignments = result;
+        this.surveyAssignments.forEach(item => {
+          this.arrs.push(this.fb.group(item));
+        })
+      }
+    )
   }
 
   onSave() {

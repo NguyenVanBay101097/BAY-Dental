@@ -3,47 +3,25 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
-                        [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
+                    <kendo-combobox [data]="statuses" [textField]="'name'" class="custom btn-sm"
+                        [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)"
+                        [valueField]="'value'">
                     </kendo-combobox>
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
-                        (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <kendo-combobox [data]="filteredEmployees" class="mr-2" [textField]="'name'" class="custom btn-sm"
+                        [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                    </kendo-combobox>
                 </div>
-
             </div>
         </div>
-        <div class="o_cp_sidebar">
-        </div>
-    </div>
-    <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
-            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 <div class="report-prescription-payment">
-    <div class="revenue">
+    <div class="revenue" *ngFor="let status of statuses">
         <div class="title">
-            <h6>Hoàn thành</h6>
+            <h6>{{status.name}}</h6>
         </div>
         <h4 class="text-primary">
-            {{precscriptionPaymentReport ? (precscriptionPaymentReport.amountTotal | number) : 0}}
-        </h4>
-    </div>
-    <div class="number-payment">
-        <div class="title">
-            <h6>Đang liên hệ</h6>
-        </div>
-        <h4 class="text-primary">
-            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
-        </h4>
-    </div>
-    <div class="number-payment">
-        <div class="title">
-            <h6>Chưa gọi</h6>
-        </div>
-        <h4 class="text-primary">
-            {{precscriptionPaymentReport ? (precscriptionPaymentReport.medicineOrderCount | number) : 0}}
+            {{statusCount[status.value] || 0}}
         </h4>
     </div>
 </div>
@@ -52,27 +30,37 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
+                    <kendo-combobox [data]="statuses" [textField]="'name'" class="custom btn-sm"
+                        [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)"
+                        [valueField]="'value'">
+                    </kendo-combobox>
                     <button class="btn btn-primary btn-sm" (click)="createEmpAssign()">Tạo phân việc</button>
                 </div>
             </div>
         </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị"
+            type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
 <div class="o_content">
     <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
-        (dataStateChange)="onStateChange($event)" (cellClick)="cellClickHandler($event)"
-        (cellClose)="cellCloseHandler($event)" (cancel)="cancelHandler($event)" (save)="saveHandler($event)"
-        (remove)="removeHandler($event)" (add)="addHandler($event)" [navigable]="true">
-        <kendo-grid-column field="employeeName" title="Nhân viên" width="100">
-            <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <span></span>
+        [loading]="loading" (pageChange)="pageChange($event)" (edit)="editHandler($event)" [selectable]="true"
+        [resizable]="true" [navigable]="true" (save)="saveHandler($event)" (cancel)="cancelHandler($event)">
+        <kendo-grid-column field="employee" title="Nhân viên" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{employee(dataItem.employeeId)?.name}}
+            </ng-template>
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem" let-column="column" let-formGroup="formGroup">
                 <kendo-combobox [data]="filteredEmployees" ngbAutofocus [textField]="'name'" [filterable]="true"
-                    (valueChange)="onChangeProduct($event)" #employeeCbx formControlName="product" [valueField]="'id'">
+                    #employeeCbx [formControl]="formGroup.get(column.field)" [valueField]="'id'">
                 </kendo-combobox>
-            </ng-template> -->
+            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="150">
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">
         </kendo-grid-column>
@@ -112,8 +100,16 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Thao tác" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
+            <ng-template kendoGridCellTemplate let-isNew="isNew">
+                <button kendoGridEditCommand [primary]="true" class="btn btn-success btn-sm mr-2">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button kendoGridSaveCommand class="btn btn-primary btn-sm mr-2" [disabled]="formGroup?.invalid"><i
+                        class="fas fa-save"></i>
+                </button>
+                <button class="btn btn-secondary btn-sm" kendoGridCancelCommand>
+                    <i class="fas fa-window-close"></i>
+                </button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>
