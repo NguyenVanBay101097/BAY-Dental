@@ -12,13 +12,14 @@ import { CommissionPaged, CommissionService, Commission } from 'src/app/commissi
 import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { UserSimple } from 'src/app/users/user-simple';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { MustMatch } from 'src/app/shared/must-match-validator';
+import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -34,7 +35,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal, private notificationService: NotificationService,
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
-    private companyService: CompanyService) { }
+    private companyService: CompanyService,
+    private resGroupService: ResGroupService) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
@@ -53,6 +55,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
+  groupSurvey: any[]=[];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -87,7 +90,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userName: null,
       userPassword: null,
       createChangePassword: false,
-      userAvatar: null
+      userAvatar: null,
+      groupId: null,
+      isAllowSurvey: false
     });
 
     setTimeout(() => {
@@ -105,7 +110,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       //   this.filteredUsers = result;
       //   this.userCbx.loading = false;
       // });
-
+      this.loadGroupSurvey();
     });
   }
 
@@ -119,6 +124,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.commissionCbx.loading = false;
     });
   }
+
+  get groupIdFC(){return this.formCreate.get('groupId');}
+  get isAllowSurveyFC(){return this.formCreate.get('isAllowSurvey');}
 
   get isUser() {
     return this.formCreate.get('isUser').value;
@@ -395,5 +403,23 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   toggleVisibility(e){
     this.isShowSalary= e.target.checked;
+  }
+
+  loadGroupSurvey() {
+    this.resGroupService.getByModelDataModuleName("survey.survey_assignment")
+    .subscribe(
+      (res: any) => {
+        this.groupSurvey = res;
+      }
+    );
+  }
+
+  onChangeIsAllowSurvey(e) {
+    var value = e.target.checked;
+    if(value == false) {
+      this.groupIdFC.setValue(null);
+    } else {
+      this.groupIdFC.setValue(this.groupSurvey[0].id);
+    }
   }
 }

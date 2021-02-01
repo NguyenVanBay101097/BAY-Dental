@@ -203,5 +203,12 @@ namespace TMTDentalAPI.Controllers
                 });
             }
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetByModelDataModuleName(ResGroupByModulePar val)
+        {
+            var res = await _resGroupService.GetByModelDataModuleName(val);
+            return Ok(res);
+        }
     }
 }

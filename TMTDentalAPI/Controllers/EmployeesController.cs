@@ -99,6 +99,8 @@ namespace TMTDentalAPI.Controllers
 
             await UpdateSalary(val, employee);
 
+            await _employeeService.UpdateResgroupForSurvey(employee);
+
             await _employeeService.CreateAsync(employee);
             _unitOfWork.Commit();
 
@@ -313,6 +315,9 @@ namespace TMTDentalAPI.Controllers
             await UpdateSalary(val, employee);
 
             UpdatePartnerToEmployee(employee);
+
+            await _employeeService.UpdateResgroupForSurvey(employee);
+
             await _employeeService.UpdateAsync(employee);
 
             await SaveUser(employee, val);

@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -67,7 +68,7 @@ namespace Infrastructure.Services
             {
                 query = query.Include(x => x.UserInput);
             }
-            query = query.Include(x => x.employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            query = query.Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
@@ -90,7 +91,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.SaleOrder.Partner.Name.Contains(val.Search) || x.employee.Name.Contains(val.Search)
+                query = query.Where(x => x.SaleOrder.Partner.Name.Contains(val.Search) || x.Employee.Name.Contains(val.Search)
                 || x.SaleOrder.Name.Contains(val.Search)
                 );
             }
@@ -228,5 +229,17 @@ namespace Infrastructure.Services
 
             return await query.LongCountAsync();
         }
+
+        public override ISpecification<SurveyAssignment> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "survey.assignment_employee": // group cho việc : nếu là nhân viên thuộc group nhân viên viên thì get theo nhân viên
+                    return new InitialSpecification<SurveyAssignment>(x => x.Employee.UserId == UserId);
+                default:
+                    return null;
+            }
+        }
+        
     }
 }

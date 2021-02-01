@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
         /// phân việc khảo sát giao cho 1 nhân viên
         /// </summary>
         public Guid EmployeeId { get; set; }
-        public Employee employee { get; set; }
+        public Employee Employee { get; set; }
         /// <summary>
         /// phân việc khảo sát của 1 phiếu điều trị
         /// </summary>

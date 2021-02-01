@@ -20,7 +20,7 @@ namespace Infrastructure.EntityConfigurations
         .WithMany()
         .HasForeignKey(x => x.UserInputId);
 
-            builder.HasOne(x => x.employee)
+            builder.HasOne(x => x.Employee)
            .WithMany()
            .HasForeignKey(x => x.EmployeeId);
 

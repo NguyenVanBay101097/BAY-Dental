@@ -629,5 +629,85 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task<IEnumerable<ResGroupBasic>> GetByModelDataModuleName(ResGroupByModulePar val)
+        {
+            var modelDataObj = GetService<IIRModelDataService>();
+
+            var moduleCate = await modelDataObj.GetRef<IrModuleCategory>(val.ModuleName);
+
+            var res = await SearchQuery(x => x.CategoryId == moduleCate.Id).ToListAsync();
+
+            int max = 1;
+            if (max > 0 && res.Count == 0 && val.ModuleName == "survey.survey_assignment")
+            {
+                max = max - 1;
+                await AddMissingIrDataForSurvey();
+                return await GetByModelDataModuleName(val);
+            }
+            return _mapper.Map<IEnumerable<ResGroupBasic>>(res);
+        }
+
+        public async Task AddMissingIrDataForSurvey()
+        {
+            //tao cate
+            var cateObj = GetService<IIrModuleCategoryService>();
+            var cateSequenceMax = await cateObj.SearchQuery().MaxAsync(x => x.Sequence);
+            var cate = await cateObj.CreateAsync(new IrModuleCategory()
+            {
+                Name = "Survey",
+                Sequence = cateSequenceMax == null ? 1 : cateSequenceMax + 1,
+                Visible = false
+            });
+            //tao resgroup include
+            var groupObj = GetService<IResGroupService>();
+            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
+             new ResGroup() {
+             CategoryId = cate.Id,
+             Name = "Nhân viên",
+             },
+             new ResGroup() {
+             CategoryId = cate.Id,
+             Name = "Quản lý",
+             }
+             });
+            //tao model data
+            var modelDataObj = GetService<IIRModelDataService>();
+            var modelData = await modelDataObj.CreateAsync(new IRModelData()
+            {
+                Name = "survey_assignment",
+                Module = "survey",
+                ResId = cate.Id.ToString(),
+                Model = "ir.module.category"
+            });
+            // tao rule cho việc get assignment by employee
+            var ruleObj = GetService<IIRRuleService>();
+            var modelObj = GetService<IIRModelService>();
+            var model = await modelObj.CreateAsync(new IRModel()
+            {
+                Name = "Survey Assignment",
+                Model = "SurveyAssignment",
+                Transient = true,
+            });
+            var rule = new IRRule()
+            {
+                Name = "survey assignment by employee",
+                Global = true,
+                Active = true,
+                PermUnlink = true,
+                PermWrite = true,
+                PermRead = true,
+                PermCreate = true,
+                ModelId = model.Id,
+                Code = "survey.assignment_employee",
+            };
+
+            foreach (var group in groups)
+            {
+                if (group.Name == "SurveyAssignmentByEmployee")
+                    rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
+            }
+            await ruleObj.CreateAsync(rule);
+        }
     }
 }

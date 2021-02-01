@@ -15,5 +15,7 @@ namespace Infrastructure.Services
         Task<Employee> GetByUserIdAsync(string userId);
         Task updateSalary(EmployeeDisplay val, Employee emp);
         Task<Boolean> ActionActive(Guid id, EmployeeActive val);
+
+        Task UpdateResgroupForSurvey(Employee empl);
     }
 }
