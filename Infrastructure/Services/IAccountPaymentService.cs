@@ -19,7 +19,6 @@ namespace Infrastructure.Services
         Task<AccountRegisterPaymentDisplay> SaleDefaultGet(IEnumerable<Guid> saleOrderIds);
         Task<AccountPayment> CreateUI(AccountPaymentSave val);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId);
-        Task ActionDraftUnlink(IEnumerable<Guid> ids);
         Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids);
         Task<AccountPaymentPrintVM> GetPrint(Guid id);
         Task<IEnumerable<AccountPayment>> CreateMultipleAndConfirmUI(IEnumerable<AccountPaymentSave> vals);

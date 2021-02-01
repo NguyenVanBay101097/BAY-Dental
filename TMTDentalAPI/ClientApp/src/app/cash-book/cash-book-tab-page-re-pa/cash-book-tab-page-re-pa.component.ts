@@ -10,6 +10,7 @@ import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-d
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -34,6 +35,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
     private intlService: IntlService, 
     private authService: AuthService, 
     private accountPaymentService: AccountPaymentService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
@@ -135,6 +137,13 @@ export class CashBookTabPageRePaComponent implements OnInit {
     modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.paymentType).toLowerCase()}?`;
     modalRef.result.then((res) => {
       this.accountPaymentService.unlink([item.id]).subscribe(() => {
+        this.notificationService.show({
+          content: "Xóa phiếu thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
         this.loadDataFromApi();
       }, (res) => {
       });

@@ -117,15 +117,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.AccountPayment.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
+            //Chỉ xóa account payment ở trạng thái nháp hoặc cancel
+            //Muốn xóa thì phải hủy trước
             if (ids == null || !ids.Any())
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _paymentService.ActionDraftUnlink(ids);
+            await _paymentService.UnlinkAsync(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -181,7 +182,6 @@ namespace TMTDentalAPI.Controllers
                 var creditDebitGet = _partnerService.CreditDebitGet(new List<Guid>() { val.PartnerId });
                 amountTotal = -creditDebitGet[val.PartnerId].Debit;
             }
-
 
             var result = new AccountRegisterPaymentDisplay
             {

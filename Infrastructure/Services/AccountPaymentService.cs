@@ -146,16 +146,16 @@ namespace Infrastructure.Services
                     }
                     else if (rec.CardOrderPaymentRels.Any())
                     {
-                        //tìm tất cả các moves của các sale orders
-                        var sale_order_ids = rec.CardOrderPaymentRels.Select(x => x.CardOrderId).ToList();
-                        var sale_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.CardOrderLineRels.Any(m => sale_order_ids.Contains(m.OrderLine.OrderId))))
+                        //tìm tất cả các moves của các card orders
+                        var card_order_ids = rec.CardOrderPaymentRels.Select(x => x.CardOrderId).ToList();
+                        var card_moves = await moveObj.SearchQuery(x => x.Lines.Any(s => s.CardOrderLineRels.Any(m => card_order_ids.Contains(m.OrderLine.OrderId))))
                             .Include(x => x.Lines).Include("Lines.Account").ToListAsync();
 
-                        var invoices = moves.Concat(sale_moves);
+                        var invoices = moves.Concat(card_moves);
                         await _AutoReconcile(rec, invoices);
 
                         var cardOrderObj = GetService<IServiceCardOrderService>();
-                        await cardOrderObj.UpdateResidual(sale_order_ids);
+                        await cardOrderObj.UpdateResidual(card_order_ids);
                     }
                     else
                     {
@@ -280,42 +280,39 @@ namespace Infrastructure.Services
                 var liquidity_amount = counterpart_amount;
 
                 var rec_pay_line_name = "";
-                if (payment.PaymentType == "transfer")
-                    rec_pay_line_name = payment.Name;
-                else
+                if (payment.LoaiThuChiId.HasValue)
                 {
-                    if (payment.PartnerType == "customer")
-                    {
-                        if (payment.PaymentType == "inbound")
-                            rec_pay_line_name += "Khách hàng thanh toán";
-                        else if (payment.PaymentType == "outbound")
-                            rec_pay_line_name += "Hoàn tiền khách hàng";
-                    }
-                    else if (payment.PartnerType == "supplier")
-                    {
-                        if (payment.PaymentType == "inbound")
-                            rec_pay_line_name += "Nhà cung cấp hoàn tiền";
-                        else if (payment.PaymentType == "outbound")
-                            rec_pay_line_name += "Thanh toán nhà cung cấp";
-                    }
+                    rec_pay_line_name = payment.LoaiThuChi.Name;
+                }
+                else if (payment.PaymentType == "transfer")
+                {
+                    rec_pay_line_name = payment.Name;
+                }
+                else if (payment.PartnerType == "customer")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Khách hàng thanh toán";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Hoàn tiền khách hàng";
+                }
+                else if (payment.PartnerType == "supplier")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Nhà cung cấp hoàn tiền";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Thanh toán nhà cung cấp";
+                }
+                else if (payment.PartnerType == "employee")
+                {
+                    rec_pay_line_name = payment.Name + " Chi lương, tạm ứng";
+                }
 
-                    else if (payment.PartnerType == "employee.salary")
-                    {
-                        rec_pay_line_name = payment.Name + " Chi lương";
-                    }
-
-                    else if (payment.PartnerType == "employee.advance")
-                    {
-                        rec_pay_line_name = payment.Name + " Tạm ứng";
-                    }
-
-                    if (payment.AccountMovePaymentRels.Any())
-                    {
-                        var moveObj = GetService<IAccountMoveService>();
-                        var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
-                        var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-                        rec_pay_line_name += $": {string.Join(", ", move_names)}";
-                    }
+                if (payment.AccountMovePaymentRels.Any())
+                {
+                    var moveObj = GetService<IAccountMoveService>();
+                    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
+                    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
+                    rec_pay_line_name += $": {string.Join(", ", move_names)}";
                 }
 
                 var liquidity_line_name = "";
@@ -1108,27 +1105,6 @@ namespace Infrastructure.Services
                 .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountMovePaymentRels).ToList());
         }
 
-        public async Task<IEnumerable<AccountPayment>> ActionDraft(IEnumerable<Guid> ids)
-        {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).Include(x => x.SaleOrderPaymentRels).Include(x => x.SaleOrderLinePaymentRels).ToListAsync();
-            var moveObj = GetService<IAccountMoveService>();
-            var move_ids = self.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();
-            var moves = await moveObj.ButtonDraft(move_ids);
-
-            await moveObj.Unlink(move_ids);
-
-
-            foreach (var rec in self)
-            {
-
-
-                rec.State = "draft";
-            }
-
-            await UpdateAsync(self);
-            return self;
-        }
-
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
         {
             var moveObj = GetService<IAccountMoveService>();
@@ -1144,26 +1120,24 @@ namespace Infrastructure.Services
                     await moveObj.Unlink(new List<Guid>() { move.Id });
                 }
 
-                rec.State = "draft";
+                rec.State = "cancel";
             }
 
             await UpdateAsync(payments);
-        }
-
-        public async Task ActionDraftUnlink(IEnumerable<Guid> ids)
-        {
-            var self = await ActionDraft(ids);
-            await UnlinkAsync(ids);
         }
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
             var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
-            foreach (var rec in self)
 
+            foreach (var rec in self)
+            {
                 if (rec.MoveLines.Any())
+                {
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
+                }
+            }
 
             await settlementObj.Unlink(ids);
 
@@ -1313,8 +1287,5 @@ namespace Infrastructure.Services
             res.PartnerAddress = string.Join(", ", tmp2);
             return res;
         }
-
     }
-
-
 }

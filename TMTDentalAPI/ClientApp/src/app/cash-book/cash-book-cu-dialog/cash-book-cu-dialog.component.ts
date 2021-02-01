@@ -15,6 +15,7 @@ import { AuthService } from "src/app/auth/auth.service";
 import { LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
 import { PartnerSimple } from "src/app/partners/partner-simple";
 import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { LoaiThuChiFormComponent } from "src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component";
 import { PrintService } from "src/app/shared/services/print.service";
 
@@ -398,6 +399,27 @@ export class CashBookCuDialogComponent implements OnInit {
   printPhieu(id: string) {
     this.accountPaymentService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data.html);
+    });
+  }
+
+  onCancel() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `Hủy phiếu ${this.getType().toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn hủy phiếu ${this.getType().toLowerCase()}?`;
+    modalRef.result.then((result) => {
+      this.accountPaymentService.actionCancel([this.itemId]).subscribe((result) => {
+        this.notificationService.show({
+          content: "Hủy phiếu thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
+        this.formGroup.get("state").setValue("draft");
+        this.seeForm = false;
+      }, (error) => {
+      });
+    }, (error) => {
     });
   }
 }
