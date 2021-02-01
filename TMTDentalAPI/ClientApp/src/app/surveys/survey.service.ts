@@ -56,6 +56,12 @@ export class SurveyAssignmentDefaultGet {
   status: string;
 }
 
+export class SurveyAssignmentGetCountVM {
+  status: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
