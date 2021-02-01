@@ -80,7 +80,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     var paged = new SurveyAssignmentPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
-    paged.employeeId = this.employeeId ? this.employeeId : null;
+    paged.employeeId = this.employeeId ? this.employeeId : '';
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
