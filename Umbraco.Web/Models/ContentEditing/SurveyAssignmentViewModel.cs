@@ -143,5 +143,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid EmployeeId { get; set; }
     }
 
+    public class SurveyAssignmentGetCountVM
+    {
+        public string Status { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+    }
 
 }

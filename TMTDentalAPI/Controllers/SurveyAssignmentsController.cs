@@ -169,9 +169,9 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetSummary(SurveyAssignmentPaged val)
+        public async Task<IActionResult> GetSummary(SurveyAssignmentGetCountVM val)
         {
-            var result = await _SurveyAssignmentService.GetSummary(val);
+            var result = await _SurveyAssignmentService.GetCount(val);
             return Ok(result);
         }
 

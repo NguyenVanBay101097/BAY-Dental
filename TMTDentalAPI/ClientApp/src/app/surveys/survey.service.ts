@@ -79,4 +79,17 @@ export class SurveyService {
   getSumary(val): Observable<number> {
     return this.http.post<number>(this.base_api + this.apiUrl + '/GetSummary', val);
   }
+
+  actionContact(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionContact', ids);
+  }
+
+  actionDone(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionDone', val);
+  }
+
+  actionCancel(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
+  }
+
 }
