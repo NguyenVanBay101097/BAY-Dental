@@ -82,4 +82,8 @@ export class ResGroupService {
     updateModels() {
         return this.http.post(this.baseApi + this.apiUrl + '/UpdateModels', {});
     }
+
+    getByModelDataModuleName(moduleName: string) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetByModelDataModuleName', {moduleName:moduleName});
+    }
 }

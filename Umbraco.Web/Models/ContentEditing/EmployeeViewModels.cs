@@ -134,6 +134,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UserAvatar { get; set; }
         public bool IsAllowSurvey { get; set; }
+        public Guid? GroupId { get; set; }
+        public ResGroupBasic Group { get; set; }
     }
 
     public class EmployeePaged
@@ -225,6 +227,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string UserAvatar { get; set; }
         public bool IsAllowSurvey { get; set; }
+        public Guid? GroupId { get; set; }
     }
 
     public class EmployeeActive

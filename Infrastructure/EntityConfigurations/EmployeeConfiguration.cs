@@ -13,6 +13,11 @@ namespace Infrastructure.EntityConfigurations
         {
             builder.Property(x => x.Name).IsRequired();
 
+            builder.HasOne(x => x.Group)
+               .WithMany()
+               .HasForeignKey(x => x.GroupId);
+
+
             builder.HasOne(x => x.Category)
                 .WithMany()
                 .HasForeignKey(x => x.CategoryId);

@@ -4,7 +4,9 @@ using ApplicationCore.Models;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +19,19 @@ namespace Infrastructure.Services
     public class EmployeeService : BaseService<Employee>, IEmployeeService
     {
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmployeeCategoryService _employeeCategoryService;
+        private readonly IMyCache _cache;
+        private readonly AppTenant _tenant;
         public EmployeeService(IAsyncRepository<Employee> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, IEmployeeCategoryService employeeCategoryService)
+            IMapper mapper, IEmployeeCategoryService employeeCategoryService, UserManager<ApplicationUser> userManager, IMyCache cache, ITenant<AppTenant> tenant)
         : base(repository, httpContextAccessor)
         {
             _employeeCategoryService = employeeCategoryService;
             _mapper = mapper;
+            _userManager = userManager;
+            _cache = cache;
+            _tenant = tenant?.Value;
         }
 
         private IQueryable<Employee> GetQueryPaged(EmployeePaged val)
@@ -228,6 +236,34 @@ namespace Infrastructure.Services
             entity.User.Active = val.Active;
             await UpdateAsync(entity);
             return true;
+        }
+
+        public async Task UpdateResgroupForSurvey(Employee empl)
+        {
+            if (empl.IsAllowSurvey == false)
+                empl.GroupId = null;
+
+            var groupObj = GetService<IResGroupService>();
+            var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
+
+            var user = await _userManager.Users.Where(x => x.Id == empl.UserId).Include(x=> x.ResGroupsUsersRels).FirstOrDefaultAsync();
+
+            foreach (var group in groups)
+            {
+                // clear all
+                var rels = user.ResGroupsUsersRels.Where(x => x.GroupId == group.Id).ToList();
+                foreach (var rel in rels)
+                {
+                    user.ResGroupsUsersRels.Remove(rel);
+                }
+            }
+            //then add only 1 group
+            if (empl.GroupId.HasValue)
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel() { GroupId = empl.GroupId.Value });
+            await _userManager.UpdateAsync(user);
+
+            //clear cache survey domainruleget
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}-SurveyAssignment");
         }
     }
 }

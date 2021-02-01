@@ -137,6 +137,13 @@ namespace Infrastructure.Services
 
             //insert những irmodelfield
             await InsertIrModelFieldData();
+            await AddIrDataForSurvey();
+        }
+
+        public async Task AddIrDataForSurvey()
+        {
+            var groupObj = GetService<IResGroupService>();
+            await groupObj.AddMissingIrDataForSurvey();
         }
 
         public async Task InsertIrModelFieldData()
