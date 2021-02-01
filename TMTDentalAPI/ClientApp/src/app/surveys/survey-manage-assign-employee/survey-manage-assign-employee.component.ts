@@ -125,6 +125,12 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     return this.partnerService.autocomplete2(val);
   }
 
+  onSearchDateChange(event) {
+    this.dateTo = event.dateTo;
+    this.dateFrom = event.dateFrom;
+    this.loadDataFromApi();
+  }
+
   createEmpAssign() {
     let modalRef = this.modalService.open(SurveyManageAssignEmployeeCreateDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phân việc';
