@@ -76,11 +76,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string ValueText { get; set; }
 
-        /// <summary>
-        /// thuộc 1 phiếu khảo sát
-        /// </summary>
-        public Guid UserInputId { get; set; }
-        public SurveyUserInputDisplay UserInput { get; set; }
 
         /// <summary>
         /// nếu là radio thì dựa vào Id để match câu trả lời, delete cascade

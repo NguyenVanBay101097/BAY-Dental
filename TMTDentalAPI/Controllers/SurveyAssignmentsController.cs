@@ -168,10 +168,10 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSummary([FromQuery]SurveyAssignmentPaged val)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSummary(SurveyAssignmentGetCountVM val)
         {
-            var result = await _SurveyAssignmentService.GetSummary(val);
+            var result = await _SurveyAssignmentService.GetCount(val);
             return Ok(result);
         }
 

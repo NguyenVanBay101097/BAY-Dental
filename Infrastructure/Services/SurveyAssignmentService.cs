@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -182,6 +183,28 @@ namespace Infrastructure.Services
         {
             var query = getAllQuery(val);
             return await query.CountAsync();
+        }
+
+        public async Task<long> GetCount(SurveyAssignmentGetCountVM val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Status))
+                query = query.Where(x => x.Status == val.Status);
+
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.SaleOrder.DateOrder >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.SaleOrder.DateOrder <= dateTo);
+            }
+
+            return await query.LongCountAsync();
         }
     }
 }

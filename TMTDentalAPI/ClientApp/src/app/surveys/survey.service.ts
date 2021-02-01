@@ -75,4 +75,17 @@ export class SurveyService {
   createListAssign(vals) {
     return this.http.post(this.base_api + this.apiUrl + '/CreateList', vals);
   }
+
+  actionContact(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionContact', ids);
+  }
+
+  actionDone(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionDone', val);
+  }
+
+  actionCancel(ids: string[]) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
+  }
+
 }

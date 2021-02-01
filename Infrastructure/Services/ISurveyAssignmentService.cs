@@ -21,5 +21,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList();
         Task<int> GetSummary(SurveyAssignmentPaged val);
+
+        Task<long> GetCount(SurveyAssignmentGetCountVM val);
     }
 }
