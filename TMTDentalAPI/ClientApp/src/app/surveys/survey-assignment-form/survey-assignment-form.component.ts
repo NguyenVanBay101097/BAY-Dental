@@ -29,7 +29,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    
+
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id'); 
     });
@@ -48,7 +48,6 @@ export class SurveyAssignmentFormComponent implements OnInit {
   loadDataFromApi() {
     if (this.id) {
       this.surveyService.get(this.id).subscribe(result => {
-        debugger
         this.surveyAssignment = result;
         console.log(this.surveyAssignment);
         this.formGroup.patchValue(this.surveyAssignment);

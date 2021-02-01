@@ -111,6 +111,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId.Value);
             }
+
             return query;
         }
 
