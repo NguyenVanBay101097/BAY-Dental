@@ -75,6 +75,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
     this.loadDataFromApi();
     this.loadSumary();
+    this.loadStatusCount();
   }
 
   loadDataFromApi() {
@@ -115,7 +116,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     })
   }
 
-  loadStateCount() {
+  loadStatusCount() {
     forkJoin(this.statuses.map(x => {
       var val = new SurveyAssignmentGetCountVM();
       val.status = x.value;
