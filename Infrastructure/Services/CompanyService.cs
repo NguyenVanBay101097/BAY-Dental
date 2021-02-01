@@ -1238,17 +1238,16 @@ namespace Infrastructure.Services
             await UpdateAsync(companies);
         }
 
-        public override async Task<Company> CreateAsync(Company entity)
+        public override async Task<IEnumerable<Company>> CreateAsync(IEnumerable<Company> entities)
         {
-            await base.CreateAsync(entity);
+            await base.CreateAsync(entities);
             await CheckNbrCompanyActives();
-
-            return entity;
+            return entities;
         }
 
-        public override async Task UpdateAsync(Company entity)
+        public override async Task UpdateAsync(IEnumerable<Company> entities)
         {
-            await base.UpdateAsync(entity);
+            await base.UpdateAsync(entities);
             await CheckNbrCompanyActives();
         }
     }
