@@ -1,0 +1,106 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Danh sách khảo sát</li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text"
+                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <div class="d-flex">
+                        <kendo-combobox [data]="statuses" [textField]="'name'" class="custom btn-sm"
+                            [placeholder]="'Tất cả trạng thái'" (valueChange)="statusChange($event)"
+                            [valueField]="'value'">
+                        </kendo-combobox>
+                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
+                            [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        </app-tai-date-range-filter-dropdown>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      
+        <div class="o_cp_t_right">
+            <!-- <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"> -->
+        </div>
+    </div>
+
+    <div class="report-prescription-payment">
+        <div class="revenue" *ngFor="let status of statuses">
+            <div class="title">
+                <h6>{{status.name}}</h6>
+            </div>
+            <h4 class="text-primary">
+                {{statusCount[status.value] || 0}}
+            </h4>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [resizable]="true"
+        (dataStateChange)="onStateChange($event)" (cellClick)="cellClickHandler($event)"
+        (cellClose)="cellCloseHandler($event)" (cancel)="cancelHandler($event)" (save)="saveHandler($event)"
+        (remove)="removeHandler($event)" (add)="addHandler($event)" [navigable]="true">
+        <!-- <kendo-grid-column field="employeeName" title="Nhân viên" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span></span>
+                <kendo-combobox [data]="filteredEmployees" ngbAutofocus [textField]="'name'" [filterable]="true"
+                    (valueChange)="onChangeProduct($event)" #employeeCbx formControlName="product" [valueField]="'id'">
+                </kendo-combobox>
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="80">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerGenderDisplay" title="Giới tính" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="partnerCategoriesDisplay" title="Nhãn khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column title="Phiếu điều trị" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày tạo phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.dateOrder | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày hoàn thành điều trị" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.lastUpdated | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày hoàn thành khảo sát" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.completeDate | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{GetStatus(dataItem.status)}}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column title="Thao tác" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm"><i class="fas fa-edit"></i></button>
+            </ng-template>
+        </kendo-grid-column> -->
+    </kendo-grid>
+</div>
