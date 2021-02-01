@@ -27,6 +27,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string EmployeeName { get; set; }
         public EmployeeSimple Employee { get; set; }
+        public Guid EmployeeId { get; set; }
         public Guid SaleOrderId { get; set; }
         public SaleOrderSurveyBasic SaleOrder { get; set; }
         public string Status { get; set; }
@@ -121,7 +122,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerPhone { get; set; }
         public string SaleOrderName { get; set; }
         public DateTime DateOrder { get; set; }
+        public EmployeeSimple Employee { get; set; }
+        public Guid EmployeeId { get; set; }
         public string Status { get; set; }
+    }
+
+    public class SurveyAssignmentDefaultGetPar
+    {
+        public bool? IsRandomAssign { get; set; } // có phân việc ngẫu nhiên hay ko ?
     }
 
     public class AssignmentActionDone

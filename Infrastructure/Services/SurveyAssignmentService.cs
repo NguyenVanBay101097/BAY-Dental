@@ -24,7 +24,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList()
+        public async Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
 
@@ -38,6 +38,21 @@ namespace Infrastructure.Services
                 SaleOrderName = x.Name,
                 PartnerId = x.PartnerId
                 }).ToListAsync();
+
+            if (val.IsRandomAssign.HasValue && val.IsRandomAssign == true && res.Count > 0)
+            {
+                var employeeObj = GetService<IEmployeeService>();
+                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x=> new EmployeeSimple {Id = x.Id, Name = x.Name}).ToListAsync();
+                if (employees.Count > 0)
+                {
+                    var random = new Random();
+                    foreach (var item in res)
+                    {
+                        item.Employee = employees[random.Next(employees.Count)];
+                        item.EmployeeId = item.Employee.Id;
+                    }
+                }
+            }
 
             return res;
         }

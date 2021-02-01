@@ -160,10 +160,10 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> DefaultGetList()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGetList([FromBody]SurveyAssignmentDefaultGetPar val)
         {
-            var result = await _SurveyAssignmentService.DefaultGetList();
+            var result = await _SurveyAssignmentService.DefaultGetList(val);
             return Ok(result);
         }
 
