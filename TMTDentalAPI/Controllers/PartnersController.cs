@@ -382,20 +382,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.Partner.Create")]
-        public async Task<IActionResult> ActionUpdateFromExcel(PartnerImportExcelViewModel val)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-
-            var result = await _partnerService.ActionUpdateFromExcel(val);
-
-            if (result.Success)
-                _unitOfWork.Commit();
-
-            return Ok(result);
-        }
-
         [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
@@ -687,7 +673,7 @@ namespace TMTDentalAPI.Controllers
 
         //lấy danh sách hóa đơn còn nợ của 1 partner
         [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery]string search = "")
+        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery] string search = "")
         {
             var moves = await _partnerService.GetUnreconcileInvoices(id, search);
             return Ok(_mapper.Map<IEnumerable<AccountMoveBasic>>(moves));

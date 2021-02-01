@@ -221,9 +221,8 @@ export class ProductManagementServicesComponent implements OnInit {
       keyboard: false,
       backdrop: "static",
     });
-    modalRef.componentInstance.title = "Cập nhật Excel";
+    modalRef.componentInstance.title = "Cập nhật excel";
     modalRef.componentInstance.type = "service";
-    modalRef.componentInstance.update = "update";
     modalRef.componentInstance.isUpdate = true;
     modalRef.result.then(
       () => {

@@ -184,18 +184,6 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
-  updatePartnerExcelFile(){
-    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable:true });
-    modalRef.componentInstance.type = 'customer';
-    modalRef.componentInstance.title = 'Cập nhật Excel';
-    modalRef.componentInstance.update = 'Cập nhật';
-    modalRef.componentInstance.isUpdate = true;
-    modalRef.result.then(() => {
-      this.refreshData();
-    }, () => {
-    });
-  }
-
   createItem() {
     const modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm khách hàng';

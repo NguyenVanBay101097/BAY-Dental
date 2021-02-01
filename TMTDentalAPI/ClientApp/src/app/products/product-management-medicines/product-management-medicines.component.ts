@@ -226,7 +226,6 @@ exportExcelFile() {
 }
 
 updateMedicineFromExcel(){
-  debugger;
   let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
     size: "lg",
     windowClass: "o_technical_modal",
@@ -236,7 +235,6 @@ updateMedicineFromExcel(){
   });
   modalRef.componentInstance.title = "Cập nhật Excel";
   modalRef.componentInstance.type = "medicine";
-  modalRef.componentInstance.update = "Cập nhật";
   modalRef.componentInstance.isUpdate = true;
   
   modalRef.result.then(
