@@ -22,15 +22,15 @@
     </div>
 </div>
 <div class="report-prescription-payment">
-    <div class="revenue">
+    <div class="revenue" *ngFor="let status of statuses" >
         <div class="title">
-            <h6>Hoàn thành</h6>
+            <h6>{{status.name}}</h6>
         </div>
         <h4 class="text-primary">
-            {{numberDone ? (numberDone | number) : 0}}
+            {{statusCount[status.value] || 0}}
         </h4>
     </div>
-    <div class="number-payment">
+    <!-- <div class="number-payment">
         <div class="title">
             <h6>Đang liên hệ</h6>
         </div>
@@ -45,7 +45,7 @@
         <h4 class="text-primary">
             {{numberDraft ? (numberDraft | number) : 0}}
         </h4>
-    </div>
+    </div> -->
 </div>
 <div class="o_control_panel">
     <div class="o_cp_t_left">

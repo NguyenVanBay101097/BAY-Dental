@@ -5,12 +5,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
-import { SurveyAssignmentPaged, SurveyService } from '../survey.service';
+import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-assign-employee',
@@ -35,6 +35,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   status: string = '';
   loading = false;
 
+  statusCount: any = {};
   statuses = [
     { value: "draft", name: "Chưa gọi" },
     { value: "done", name: "Hoàn thành" },
@@ -112,6 +113,22 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       this.numberContact = result[1];
       this.numberDraft = result[2];
     })
+  }
+
+  loadStateCount() {
+    forkJoin(this.statuses.map(x => {
+      var val = new SurveyAssignmentGetCountVM();
+      val.status = x.value;
+      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+      return this.surveyService.getSumary(val).pipe(
+        switchMap(count => of({status: x.value, count: count}))
+      );
+    })).subscribe((result) => {
+      result.forEach(item => {
+        this.statusCount[item.status] = item.count;
+      });
+    });
   }
 
   loadEmployees() {
