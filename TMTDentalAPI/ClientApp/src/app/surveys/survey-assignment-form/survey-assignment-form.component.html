@@ -13,11 +13,10 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" >
+                    <button type="button" class="btn btn-primary btn-sm">
                         Liên hệ</button>
-                    <button type="button" class="btn btn-secondary btn-sm"  
-                        *ngIf="id">
-                      Khảo sát</button>
+                    <button type="button" class="btn btn-secondary btn-sm" *ngIf="id">
+                        Khảo sát</button>
                 </div>
             </div>
         </div>
@@ -40,35 +39,34 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="['done'].indexOf(surveyAssignment.status) !== -1" class="btn btn-primary btn-sm" 
-                        accesskey="1">
-                      Liên hệ
+                    <button type="button" *ngIf="['done'].indexOf(surveyAssignment.status) !== -1"
+                        class="btn btn-primary btn-sm" accesskey="1">
+                        Liên hệ
                     </button>
-                    <button type="button" *ngIf="" class="btn btn-primary btn-sm" 
-                    accesskey="1">
+                    <button type="button" *ngIf="" class="btn btn-primary btn-sm" accesskey="1">
                         Khảo sát
-                        </button>
+                    </button>
                     <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
                         class="btn btn-danger btn-sm" (click)="buttonCancel()">
                         Hủy đơn
                     </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
+                    <button [disabled]="surveyAssignment.status !== 'done'"
+                        class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
                         type="button">
-                        Chưa gọi
+                        Hoàn thành
                     </button>
                     <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
                         type="button">
                         Đang liên hệ
                     </button>
-                    <button *ngIf="surveyAssignment.status === 'done'" [disabled]="surveyAssignment.status !== 'done'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
+                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
                         type="button">
-                        Hoàn thành
+                        Chưa gọi
                     </button>
                 </div>
             </div>
