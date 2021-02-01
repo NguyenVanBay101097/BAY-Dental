@@ -69,7 +69,7 @@ export class SurveyService {
   }
 
   defaultGetList(): Observable<SurveyAssignmentDefaultGet[]> {
-    return this.http.get<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList');
+    return this.http.post<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList', null);
   }
 
   createListAssign(vals) {
