@@ -42,7 +42,7 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        // { name: 'Danh sách khảo sát', link: '/labo-orders' },
+        { name: 'Danh sách khảo sát', link: '/surveys' },
         { name: 'Quản lý phần việc', link: '/surveys/manage' },
         { name: 'Cấu hình đánh giá', link: '/surveys/config' },
       ],

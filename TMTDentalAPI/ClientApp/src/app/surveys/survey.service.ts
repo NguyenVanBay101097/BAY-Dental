@@ -3,6 +3,9 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { SaleOrderDisplay, SaleOrderDisplayVm } from '../sale-orders/sale-order-display';
+import { SurveyCallContentDisplay } from './survey-callcontent.service';
+import { SurveyUserInputDisplay } from './survey-userinput.service';
 
 export class SurveyAssignmentPaged {
   limit: number;
@@ -57,6 +60,16 @@ export class SurveyAssignmentDefaultGet {
   status: string;
 }
 
+export class SurveyAssignmentDisplay {
+  id: string;
+  saleOrderId: string;
+  saleOrder: SaleOrderDisplayVm;
+  surveyUserInputId: string;
+  surveyUserInput: SurveyUserInputDisplay;
+  callContents: SurveyCallContentDisplay[];
+  status: string;
+}
+
 export class SurveyAssignmentGetCountVM {
   status: string;
   dateFrom: string;
@@ -81,6 +94,10 @@ export class SurveyService {
 
   getPaged(val: any): Observable<SurveyAssignmentPagging> {
     return this.http.get<SurveyAssignmentPagging>(this.base_api + this.apiUrl, { params: val });
+  }
+
+  get(id: string): Observable<SurveyAssignmentDisplay> {
+    return this.http.get<SurveyAssignmentDisplay>(this.base_api + this.apiUrl + '/' + id);
   }
 
   defaultGetList(val): Observable<SurveyAssignmentDefaultGet[]> {

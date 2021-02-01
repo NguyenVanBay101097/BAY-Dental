@@ -102,7 +102,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Khách hàng
         /// </summary>
         public Guid PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
+        public PartnerDisplay Partner { get; set; }
 
         public decimal? AmountTax { get; set; }
 

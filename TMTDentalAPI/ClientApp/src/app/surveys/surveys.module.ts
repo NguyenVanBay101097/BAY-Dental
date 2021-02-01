@@ -14,6 +14,8 @@ import { SurveyManageAssignEmployeeComponent } from './survey-manage-assign-empl
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
 import { SharedModule } from '../shared/shared.module';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from './survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
+import { SurveyAssignmentListComponent } from './survey-assignment-list/survey-assignment-list.component';
+import { SurveyAssignmentFormComponent } from './survey-assignment-form/survey-assignment-form.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { SurveyManageAssignEmployeeCreateDialogComponent } from './survey-manage
     SurveyManageAssignComponent,
     SurveyManageAssignEmployeeComponent,
     SurveyManageEmployeeComponent,
-    SurveyManageAssignEmployeeCreateDialogComponent
+    SurveyManageAssignEmployeeCreateDialogComponent,
+    SurveyAssignmentListComponent,
+    SurveyAssignmentFormComponent
   ],
   imports: [
     CommonModule,

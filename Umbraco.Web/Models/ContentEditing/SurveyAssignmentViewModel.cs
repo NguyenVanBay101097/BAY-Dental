@@ -85,7 +85,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid SaleOrderId { get; set; }
         public SaleOrderDisplayVm SaleOrder { get; set; }
 
-        public Guid SurveyUserInputId { get; set; }
+        public Guid? SurveyUserInputId { get; set; }
         public SurveyUserInputDisplay SurveyUserInput { get; set; }
 
         public IEnumerable<SurveyCallContentDisplay> CallContents { get; set; } = new List<SurveyCallContentDisplay>();
@@ -150,6 +150,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public Guid? EmployeeId { get; set; }
     }
 
 }
