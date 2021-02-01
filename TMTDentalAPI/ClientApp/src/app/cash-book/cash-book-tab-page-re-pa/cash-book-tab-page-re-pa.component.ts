@@ -74,8 +74,10 @@ export class CashBookTabPageRePaComponent implements OnInit {
   getState(state) {
     if (state == "posted") {
       return "Đã xác nhận";
+    } else if (state == "draft") {
+      return "Nháp";
     } else {
-      return "Nháp"
+      return "Hủy";
     }
   }
 

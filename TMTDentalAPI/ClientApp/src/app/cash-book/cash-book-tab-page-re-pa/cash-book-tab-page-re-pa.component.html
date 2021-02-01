@@ -46,10 +46,14 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="far fa-edit"></span></button>
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                        <span class="far fa-trash-alt"></span></button>
+                    <div *ngIf="dataItem.state != 'cancel'" class="d-flex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span>
+                        </button>
+                    </div>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
