@@ -19,7 +19,7 @@ namespace Infrastructure.Services
 
         Task ActionDone(AssignmentActionDone val);
 
-        Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList();
+        Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val);
         Task<int> GetSummary(SurveyAssignmentPaged val);
     }
 }
