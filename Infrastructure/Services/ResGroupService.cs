@@ -635,16 +635,16 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
 
             var moduleCate = await modelDataObj.GetRef<IrModuleCategory>(val.ModuleName);
-
-            var res = await SearchQuery(x => x.CategoryId == moduleCate.Id).ToListAsync();
-
+            
             int max = 1;
-            if (max > 0 && res.Count == 0 && val.ModuleName == "survey.survey_assignment")
+            if (moduleCate == null && max > 0 && val.ModuleName == "survey.survey_assignment")
             {
                 max = max - 1;
                 await AddMissingIrDataForSurvey();
                 return await GetByModelDataModuleName(val);
             }
+
+            var res = await SearchQuery(x => x.CategoryId == moduleCate.Id).ToListAsync();
             return _mapper.Map<IEnumerable<ResGroupBasic>>(res);
         }
 
