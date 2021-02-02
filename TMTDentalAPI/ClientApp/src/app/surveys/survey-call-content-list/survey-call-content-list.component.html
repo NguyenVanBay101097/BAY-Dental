@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridData" [loading]="loading" (edit)="editHandler($event)" [selectable]="true" [navigable]="true"
+<kendo-grid [data]="gridData" [loading]="loading" (edit)="editHandler($event)"  [navigable]="true"
     (cancel)="cancelHandler($event)" (save)="saveHandler($event)" (add)="addHandler($event)">
     <kendo-grid-column title="Cuộc gọi" width="80">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

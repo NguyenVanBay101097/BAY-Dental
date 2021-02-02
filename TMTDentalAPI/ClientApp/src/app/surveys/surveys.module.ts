@@ -17,6 +17,7 @@ import { SurveyManageAssignEmployeeCreateDialogComponent } from './survey-manage
 import { SurveyAssignmentListComponent } from './survey-assignment-list/survey-assignment-list.component';
 import { SurveyAssignmentFormComponent } from './survey-assignment-form/survey-assignment-form.component';
 import { SurveyCallContentListComponent } from './survey-call-content-list/survey-call-content-list.component';
+import { SurveyUserinputDialogComponent } from './survey-userinput-dialog/survey-userinput-dialog.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { SurveyCallContentListComponent } from './survey-call-content-list/surve
     SurveyManageAssignEmployeeCreateDialogComponent,
     SurveyAssignmentListComponent,
     SurveyAssignmentFormComponent,
-    SurveyCallContentListComponent
+    SurveyCallContentListComponent,
+    SurveyUserinputDialogComponent
   ],
   imports: [
     CommonModule,
