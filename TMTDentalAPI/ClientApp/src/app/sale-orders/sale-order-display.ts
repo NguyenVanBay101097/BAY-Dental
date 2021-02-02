@@ -44,8 +44,8 @@ export class SaleOrderDisplayVm {
     userId: string;
     state: string;
     residual: number;
-    orderLines: SaleOrderLineDisplay[];
-    dotKhams: any;
+    orderLines: any[];
+    dotKhams: any[];
     name: string;
     paid: number;
     pricelist: ProductPriceListBasic;

@@ -1,3 +1,4 @@
+import { EmployeeSimple } from '../employees/employee';
 import { ProductSimple } from '../products/product-simple';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
@@ -9,6 +10,8 @@ export class SaleOrderLineDisplay {
     productId: string;
     teeth: ToothDisplay[];
     toothCategory: ToothCategoryBasic;
+    employee: EmployeeSimple;
+    employeeId: string;
     state: string;
     qtyInvoiced: number;
     orderId: string;

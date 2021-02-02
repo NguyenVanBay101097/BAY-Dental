@@ -33,9 +33,15 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.OrderByDescending(x => x.DateCreated);
+            query = query.OrderBy(x => x.DateCreated);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            if(val.Limit != 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<SurveyCallContentBasic>(totalItems, val.Offset, val.Limit)
             {

@@ -1,0 +1,41 @@
+<kendo-grid [data]="gridData" [loading]="loading" (edit)="editHandler($event)" [selectable]="true" [navigable]="true"
+    (cancel)="cancelHandler($event)" (save)="saveHandler($event)" (add)="addHandler($event)">
+    <kendo-grid-column title="Cuộc gọi" width="80">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            lần {{rowIndex + 1}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Nội dung" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.name}}
+        </ng-template>
+        <ng-template kendoGridEditTemplate let-dataItem="dataItem" let-column="column" let-formGroup="formGroup">
+            <input class="form-control" [formControl]="formGroup.get(column.field)" />
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column title="Thao tác" width="100">
+        <ng-template kendoGridCellTemplate let-isNew="isNew">
+            <button kendoGridEditCommand [primary]="true" class="btn btn-success btn-sm mr-2">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button kendoGridSaveCommand class="btn btn-primary btn-sm mr-2" [disabled]="formGroup?.invalid"><i
+                    class="fas fa-save"></i>
+            </button>
+            <button class="btn btn-secondary btn-sm" kendoGridCancelCommand>
+                <i class="fas fa-window-close"></i>
+            </button>
+        </ng-template>
+    </kendo-grid-column>
+
+     <ng-template kendoGridToolbarTemplate>
+        <button kendoGridAddCommand>
+            <a type="button" title="Thêm cuộc gọi" class="p-1">
+            <i class="fas fa-plus"></i>
+        </a>
+
+        </button>
+    </ng-template>
+
+
+</kendo-grid>
