@@ -2,8 +2,7 @@
     (cancel)="cancelHandler($event)" (save)="saveHandler($event)" (add)="addHandler($event)">
     <kendo-grid-column title="Cuộc gọi" width="80">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            lần {{rowIndex + 1}}
-        </ng-template>
+            lần {{rowIndex < 0 ? 1 : rowIndex + 1}} </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Nội dung" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
@@ -28,11 +27,11 @@
         </ng-template>
     </kendo-grid-column>
 
-     <ng-template kendoGridToolbarTemplate>
+    <ng-template kendoGridToolbarTemplate>
         <button kendoGridAddCommand>
             <a type="button" title="Thêm cuộc gọi" class="p-1">
-            <i class="fas fa-plus"></i>
-        </a>
+                <i class="fas fa-plus"></i>
+            </a>
 
         </button>
     </ng-template>

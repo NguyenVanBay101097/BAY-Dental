@@ -1,4 +1,4 @@
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -18,13 +18,13 @@ import { PartnerService } from 'src/app/partners/partner.service';
 export class SurveyCallContentListComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  formGroup : FormGroup;
+  formGroup: FormGroup;
   search: string;
   limit = 0;
   offset = 0;
   loading = false;
   @Input() id: string;
-  @Input() surveyStatus:string;
+  @Input() surveyStatus: string;
   editedRowIndex: number;
   constructor(private callcontentService: SurveyCallcontentService,
     private intlService: IntlService,
@@ -33,7 +33,7 @@ export class SurveyCallContentListComponent implements OnInit {
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
     private fb: FormBuilder
-    ) {
+  ) {
 
   }
 
@@ -46,13 +46,13 @@ export class SurveyCallContentListComponent implements OnInit {
     var paged = new SurveyCallContentPaged();
     paged.limit = this.limit;
     paged.offset = this.offset;
-    paged.assignmentId = this.id ? this.id : '';  
+    paged.assignmentId = this.id ? this.id : '';
     this.callcontentService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
-    ).subscribe(res => {  
+    ).subscribe(res => {
       this.gridData = res;
       console.log(this.gridData);
       this.loading = false;
@@ -86,13 +86,13 @@ export class SurveyCallContentListComponent implements OnInit {
     this.closeEditor(sender, rowIndex);
   }
 
-  public saveHandler({ sender, rowIndex, formGroup, isNew }): void {    
+  public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
     var survey = formGroup.value;
     survey.name = survey.name;
-    survey.assignmentId = this.id ? this.id : null;    
-    if(survey.id){ 
+    survey.assignmentId = this.id ? this.id : null;
+    if (survey.id) {
       this.callcontentService.update(survey.id, survey).subscribe(
-        () => {        
+        () => {
           this.notificationService.show({
             content: 'Cập nhật thành công',
             hideAfter: 3000,
@@ -104,7 +104,7 @@ export class SurveyCallContentListComponent implements OnInit {
           this.loadDataFromApi();
         }
       )
-    }else{
+    } else {
       survey.date = this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss');
       this.callcontentService.create(survey).subscribe(
         () => {
@@ -120,21 +120,21 @@ export class SurveyCallContentListComponent implements OnInit {
         }
       )
     }
-   
-   
+
+
 
     sender.closeRow(rowIndex);
   }
 
-  public addHandler({sender }) {
+  public addHandler({ sender }) {
     this.closeEditor(sender);
 
     this.formGroup = this.fb.group({
-        name : "",
-        date : null,      
+      name: "",
+      date: null,
     });
 
     sender.addRow(this.formGroup);
-}
+  }
 
 }
