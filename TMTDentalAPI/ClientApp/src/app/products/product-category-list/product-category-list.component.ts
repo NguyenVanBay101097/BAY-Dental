@@ -37,7 +37,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
   }
 
   onSearchChange(val: string) {
-    this.sourceCategories = this.categories.filter(x => x.name.toLowerCase().includes(val));
+    this.sourceCategories = this.categories.filter(x => x.name.toLowerCase().includes(val.toLowerCase()));
   }
 
   loadCategories() {
@@ -91,7 +91,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
 
   deleteCate(item, index) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' +  + this.getTitle();
+    modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {
         this.sourceCategories.splice(index, 1);
