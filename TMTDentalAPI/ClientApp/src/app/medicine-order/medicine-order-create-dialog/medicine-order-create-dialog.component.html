@@ -149,7 +149,7 @@
                                         {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfTimes : ''}} lần
                                     </td>
                                     <td class="text-center">
-                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.amountOfTimes : ''}} {{line.get('productUoM').value.name}}
+                                        {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.amountOfTimes : ''}} {{line.get('productUoM').value && line.get('productUoM').value?.name }}
                                     </td>
                                     <td class="text-center">
                                         {{line.get('toaThuocLine') && line.get('toaThuocLine').value ? line.get('toaThuocLine').value.numberOfDays : ''}}</td>

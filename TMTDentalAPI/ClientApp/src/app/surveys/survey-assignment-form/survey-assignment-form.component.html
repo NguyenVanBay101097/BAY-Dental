@@ -7,31 +7,9 @@
                 </a>
             </li>
             <li class="active">
-                <span *ngIf="id">{{surveyAssignment.saleOrder.partner.name}}</span>
+                <span>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.name}}</span>
             </li>
         </ol>
-        <div class="o_cp_left">
-            <!-- <div class="o_cp_buttons">
-                <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" >
-                        Liên hệ</button>
-                    <button type="button" class="btn btn-secondary btn-sm"  
-                        *ngIf="id">
-                      Khảo sát</button>
-                </div>
-            </div> -->
-        </div>
-        <div class="o_cp_right">
-            <!-- <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
-                    Thao tác
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a *ngIf="id" class="dropdown-item" (click)="printpurchaseOrder()">In phiếu</a>
-                </div>
-            </div> -->
-        </div>
     </div>
 </div>
 
@@ -46,10 +24,6 @@
                     <button type="button" class="btn btn-primary btn-sm">
                         Khảo sát
                     </button>
-                    <!-- <button *ngIf="['purchase'].indexOf(purchaseOrder.state) !== -1" type="button"
-                        class="btn btn-danger btn-sm" (click)="buttonCancel()">
-                        Hủy đơn
-                    </button> -->
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
@@ -78,20 +52,22 @@
                 </div>
                 <div class="media mb-3">
                     <app-image-file-upload [supportWebcam]="true" class="t_avatar"
-                        [imageId]="surveyAssignment.saleOrder.partner?.avatar" [width]="100" [height]="100">
+                        [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar"
+                        [width]="100" [height]="100">
                     </app-image-file-upload>
                     <div class="media-body">
-                        <h4>{{surveyAssignment.saleOrder.partner? surveyAssignment.saleOrder.partner.name: ''}}</h4>
+                        <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
+                            surveyAssignment.saleOrder.partner.name: ''}}</h4>
                         <div class="t_sub_title">
-                            Mã khách hàng: {{surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref
-                            : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder.partner ?
+                            Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref
+                            : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
                             (surveyAssignment.saleOrder.partner.date | date:'shortDate') : '' }}
                         </div>
                     </div>
                 </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
+                        <tbody *ngIf="surveyAssignment.saleOrder">
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -135,7 +111,7 @@
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
+                        <tbody *ngIf="surveyAssignment.saleOrder">
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -186,7 +162,7 @@
                 </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
+                        <tbody *ngIf="surveyAssignment.saleOrder">
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -211,7 +187,7 @@
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
+                        <tbody *ngIf="surveyAssignment.saleOrder">
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -253,7 +229,7 @@
                                         <th scope="col" style="width: 120px">Thông tin bổ sung</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody *ngIf="surveyAssignment.saleOrder">
                                     <ng-container
                                         *ngFor="let line of surveyAssignment.saleOrder.orderLines; let i=index">
                                         <tr>
@@ -301,38 +277,38 @@
                                         <th scope="col" style="width: 100px">Răng,Chi tiết điều trị</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody *ngIf="surveyAssignment.saleOrder">
                                     <ng-container
                                         *ngFor="let dotkham of surveyAssignment.saleOrder.dotKhams; let i=index">
-                                            <tr *ngFor="let dkline of dotkham.lines; let x=index">
+                                        <tr *ngFor="let dkline of dotkham.lines; let x=index">
 
-                                                <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                    [attr.rowspan]="dotkham.lines.length">
-                                                    Đợt khám {{i+1}}</td>
-                                                <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                    [attr.rowspan]="dotkham.lines.length">
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
+                                                [attr.rowspan]="dotkham.lines.length">
+                                                Đợt khám {{i+1}}</td>
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
+                                                [attr.rowspan]="dotkham.lines.length">
 
-                                                    {{dotkham.date | date:'shortDate'}}
-                                                </td>
-                                                <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                    [attr.rowspan]="dotkham.lines.length">
-                                                    <span>{{dotkham.doctor.name}}</span>
-                                                </td>
+                                                {{dotkham.date | date:'shortDate'}}
+                                            </td>
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
+                                                [attr.rowspan]="dotkham.lines.length">
+                                                <span>{{dotkham.doctor.name}}</span>
+                                            </td>
 
-                                                <td>
+                                            <td>
 
-                                                    {{dkline.product.name}}
-                                                </td>
-                                                <td>
-                                                    {{dkline.nameStep}}
-                                                </td>
-                                                <td>
-                                                    {{showTeethDkLine(dkline)}} <br /> {{dkline.note}}
-                                                </td>
+                                                {{dkline.product.name}}
+                                            </td>
+                                            <td>
+                                                {{dkline.nameStep}}
+                                            </td>
+                                            <td>
+                                                {{showTeethDkLine(dkline)}} <br /> {{dkline.note}}
+                                            </td>
 
 
 
-                                            </tr>
+                                        </tr>
                                     </ng-container>
 
                                 </tbody>
@@ -348,7 +324,8 @@
                     </h5>
                 </div>
                 <div class="o_group">
-                    <app-survey-call-content-list [id]="surveyAssignment.id" [surveyStatus]="surveyAssignment.status"></app-survey-call-content-list>
+                    <app-survey-call-content-list [id]="surveyAssignment.id" [surveyStatus]="surveyAssignment.status">
+                    </app-survey-call-content-list>
                 </div>
             </div>
         </div>
