@@ -8,6 +8,7 @@ import {
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { PartnerService } from 'src/app/partners/partner.service';
+import { NotificationService } from "@progress/kendo-angular-notification";
 
 @Component({
   selector: "app-partner-supplier-cu-dialog",
@@ -60,6 +61,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
+    private notificationService: NotificationService,
     private showErrorService: AppSharedShowErrorService
   ) { }
 
@@ -206,6 +208,13 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       var val = this.formGroup.value;
       this.partnerService.update(this.id, val).subscribe(
         () => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.activeModal.close(true);
         },
       );
@@ -213,6 +222,13 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       var val = this.formGroup.value;
       this.partnerService.create(val).subscribe(
         (result) => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.activeModal.close(result);
         },
       );
