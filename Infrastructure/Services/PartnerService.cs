@@ -1905,7 +1905,17 @@ namespace Infrastructure.Services
             var partner = await SearchQuery(x=> x.Id == id).Include(x=>x.PartnerHistoryRels).Include(x=>x.PartnerPartnerCategoryRels).FirstOrDefaultAsync();
 
             var partnerDisplay = _mapper.Map<PartnerDisplay>(partner);
+            partnerDisplay.Histories = partner.PartnerHistoryRels.Select(s => new HistorySimple
+            {
+                Id = s.HistoryId,
+                Name = s.History.Name
+            });
 
+            //partnerDisplay.Categories = partner.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
+            //{
+            //    Id = s.,
+            //    Name = s.History.Name
+            //});
             return partnerDisplay;
         }
 
