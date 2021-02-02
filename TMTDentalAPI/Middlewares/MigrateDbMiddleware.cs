@@ -39,7 +39,7 @@ namespace TMTDentalAPI.Middlewares
             //đến khi version update xong thì request sau vào thì không chạy vào đoạn code update database
 
             var tenantContext = context.GetTenantContext<AppTenant>();
-            var tenant = tenantContext.Tenant;
+            var tenant = tenantContext == null ? null : tenantContext.Tenant;
             if (tenant != null && _appSettings.Version == tenant.Version)
             {
                 await _next.Invoke(context);
