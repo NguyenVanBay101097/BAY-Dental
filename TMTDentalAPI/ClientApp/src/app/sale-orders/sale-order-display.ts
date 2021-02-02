@@ -34,7 +34,7 @@ export class SaleOrderDisplay {
 
 export class SaleOrderDisplayVm {
     id: string;
-    partner: PartnerDisplay;
+    partner: any;
     partnerId: string;
     dateOrder: string;
     user: UserSimple;
