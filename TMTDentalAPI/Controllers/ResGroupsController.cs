@@ -207,7 +207,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetByModelDataModuleName(ResGroupByModulePar val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var res = await _resGroupService.GetByModelDataModuleName(val);
+            _unitOfWork.Commit();
             return Ok(res);
         }
     }

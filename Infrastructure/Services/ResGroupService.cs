@@ -63,7 +63,7 @@ namespace Infrastructure.Services
             var modelObj = GetService<IIRModelService>();
             var models = await modelObj.SearchQuery(x => !x.Transient, orderBy: x => x.OrderBy(s => s.Name)).ToListAsync();
             var list = new List<IRModelAccessDisplay>();
-            foreach(var model in models)
+            foreach (var model in models)
             {
                 list.Add(new IRModelAccessDisplay
                 {
@@ -84,7 +84,7 @@ namespace Infrastructure.Services
         //function to add all implied groups (to all users of each group)
         public async Task AddAllImpliedGroupsToAllUser(IEnumerable<ResGroup> self)
         {
-            foreach(var group in self)
+            foreach (var group in self)
             {
                 await ExcuteSqlCommandAsync(" WITH group_imply(gid, hid) AS ( " +
                         "SELECT GId as gid, HId as hid " +
@@ -167,8 +167,9 @@ namespace Infrastructure.Services
 
                     await modelDataObj.CreateAsync(categModelData);
                 }
-              
-                group = new ResGroup {
+
+                group = new ResGroup
+                {
                     Name = "Internal User",
                     CategoryId = category.Id
                 };
@@ -224,7 +225,7 @@ namespace Infrastructure.Services
         public async Task UpdateAllGroupImpliedGroupUser(ResGroup groupUser)
         {
             var groups = await SearchQuery(x => x.Id != groupUser.Id && (x.Category == null || x.Category.Visible == false)).Include(x => x.ImpliedRels).ToListAsync();
-            foreach(var group in groups)
+            foreach (var group in groups)
             {
                 if (!group.ImpliedRels.Any(x => x.HId == groupUser.Id))
                     group.ImpliedRels.Add(new ResGroupImpliedRel { HId = groupUser.Id });
@@ -270,7 +271,7 @@ namespace Infrastructure.Services
                 await CreateAsync(group);
 
                 var referenceSplit = reference.Split(".");
-               
+
                 var modelData = new IRModelData()
                 {
                     Model = "res.groups",
@@ -370,7 +371,7 @@ namespace Infrastructure.Services
             var ruleDict = new Dictionary<string, IRRule>();
             var accessDict = new Dictionary<string, IRModelAccess>();
 
-           
+
             modelDataList.AddRange(GetModelData(moduleCategDict, "ir.module.category"));
 
             void GetGroupRuleDict(string fileName, string module = "base")
@@ -415,7 +416,7 @@ namespace Infrastructure.Services
                                     throw new Exception($"Không tìm thấy users với id: {string.Join(", ", vals)}");
 
                                 var usrs = vals.Select(x => base_user_dict[x]).ToList();
-                                foreach(var usr in usrs)
+                                foreach (var usr in usrs)
                                     mdl.ResGroupsUsersRels.Add(new ResGroupsUsersRel { UserId = usr.Id });
                             }
                             else if (field_name == "category_id")
@@ -508,7 +509,7 @@ namespace Infrastructure.Services
         private IEnumerable<IRModelData> GetModelData<T>(IDictionary<string, T> dict, string model)
         {
             var list = new List<IRModelData>();
-            foreach(var item in dict)
+            foreach (var item in dict)
             {
                 var key = item.Key;
                 var arr = key.Split(".");
@@ -635,7 +636,7 @@ namespace Infrastructure.Services
             var modelDataObj = GetService<IIRModelDataService>();
 
             var moduleCate = await modelDataObj.GetRef<IrModuleCategory>(val.ModuleName);
-            
+
             int max = 1;
             if (moduleCate == null && max > 0 && val.ModuleName == "survey.survey_assignment")
             {
@@ -661,15 +662,18 @@ namespace Infrastructure.Services
             });
             //tao resgroup include
             var groupObj = GetService<IResGroupService>();
+            var empGroup = new ResGroup()
+            {
+                CategoryId = cate.Id,
+                Name = "Nhân viên",
+            };
             var groups = await groupObj.CreateAsync(new List<ResGroup>() {
              new ResGroup() {
-             CategoryId = cate.Id,
-             Name = "Nhân viên",
+
+              CategoryId = cate.Id,
+                Name = "Quản lý",
              },
-             new ResGroup() {
-             CategoryId = cate.Id,
-             Name = "Quản lý",
-             }
+            empGroup
              });
             //tao model data
             var modelDataObj = GetService<IIRModelDataService>();
@@ -704,7 +708,7 @@ namespace Infrastructure.Services
 
             foreach (var group in groups)
             {
-                if (group.Name == "SurveyAssignmentByEmployee")
+                if (group.Id == empGroup.Id)
                     rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
             }
             await ruleObj.CreateAsync(rule);
