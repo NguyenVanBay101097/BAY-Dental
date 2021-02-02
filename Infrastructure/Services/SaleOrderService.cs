@@ -2358,7 +2358,7 @@ namespace Infrastructure.Services
                 }).ToListAsync();
 
             //chỉ lấy những dịch vụ có danh sách công đoạn 
-            lines = lines.Where(x => x.Steps.Any()).ToList();
+            //lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
         }
