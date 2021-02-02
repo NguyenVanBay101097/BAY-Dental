@@ -97,7 +97,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
-            var query = GetQueryPaged(val);
+            var query = GetQueryPaged(val).Include(x=>x.Company).AsQueryable();
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.User).OrderByDescending(x => x.DateCreated);
