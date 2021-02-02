@@ -240,11 +240,20 @@ namespace Infrastructure.Services
 
         public async Task UpdateResgroupForSurvey(Employee empl)
         {
+            //update valid employee attribute
             if (empl.IsAllowSurvey == false)
                 empl.GroupId = null;
+            if (empl.IsAllowSurvey == true && empl.GroupId == null)
+                throw new Exception("Phải chọn nhóm nhân viên khảo sát");
+            if (empl.UserId == null) return;
 
             var groupObj = GetService<IResGroupService>();
             var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
+            if (groups.Count() == 0)
+            {    
+                await groupObj.AddMissingIrDataForSurvey();
+                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" });
+            }
 
             var user = await _userManager.Users.Where(x => x.Id == empl.UserId).Include(x=> x.ResGroupsUsersRels).FirstOrDefaultAsync();
 
