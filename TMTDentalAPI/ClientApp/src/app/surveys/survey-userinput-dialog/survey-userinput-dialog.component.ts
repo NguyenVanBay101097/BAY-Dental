@@ -47,4 +47,22 @@ export class SurveyUserinputDialogComponent implements OnInit {
     });
   }
 
+  // loadData() {
+  //   this.user.get(this.id).subscribe(result => {
+  //     this.laboOrder = result;
+  //     this.patchValue(result);
+  //   });
+  // }
+
+  // loadDefault() {
+  //   var df = new LaboOrderDefaultGet();
+  //   df.saleOrderLineId = this.saleOrderLineId;
+  //   this.laboOrderService.defaultGet(df).subscribe(result => {
+  //     this.laboOrder = result;
+  //     result.quantity = 1;
+  //     this.patchValue(result);
+  //   (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
+  //   });
+  // }
+
 }
