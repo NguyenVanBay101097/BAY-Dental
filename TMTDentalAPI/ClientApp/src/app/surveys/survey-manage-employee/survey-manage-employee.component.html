@@ -1,1 +1,17 @@
-<p>survey-manage-employee works!</p>
+<div class="o_content">
+    <kendo-grid [data]="gridData" [loading]="loading">
+        <kendo-grid-column field="ref" title="Mã nhân viên" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên nhân viên" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column field="phoneNumber" title="Số điện thoại" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column field="company" title="Chi nhánh" width="250">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.company?.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="email" title="Email" width="250">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

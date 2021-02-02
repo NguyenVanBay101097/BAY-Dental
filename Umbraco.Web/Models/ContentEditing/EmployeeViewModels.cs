@@ -66,6 +66,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
 
         public string UserName { get; set; }
+
+        public Guid CompanyId { get; set; }
+        public CompanyBasic Company { get; set; }
     }
 
     public class EmployeeDisplay
