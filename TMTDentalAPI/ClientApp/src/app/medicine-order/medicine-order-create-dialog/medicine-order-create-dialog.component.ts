@@ -94,6 +94,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
 
   loadData(precscriptPayment: PrecscriptPaymentDisplay) {
     if (precscriptPayment.medicineOrderLines) {
+      debugger
       var control = this.formGroup.get('medicineOrderLines') as FormArray;
       control.clear();
       var lines = this.precscriptPayment.medicineOrderLines;
