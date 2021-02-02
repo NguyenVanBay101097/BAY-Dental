@@ -175,6 +175,10 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
     const survey = formGroup.value;
+    if (!survey.employee) {
+      this.closeEditor(sender, rowIndex);
+      return;
+    }
     var surveyOld = this.gridData.data.find(x => x.id === survey.id)
     surveyOld.employee = survey.employee;
     surveyOld.employeeId = survey.employee.id;
