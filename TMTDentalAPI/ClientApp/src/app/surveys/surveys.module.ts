@@ -26,7 +26,7 @@ import { SurveyAssignmentFormComponent } from './survey-assignment-form/survey-a
     SurveyManageEmployeeComponent,
     SurveyManageAssignEmployeeCreateDialogComponent,
     SurveyAssignmentListComponent,
-    SurveyAssignmentFormComponent
+    SurveyAssignmentFormComponent,
   ],
   imports: [
     CommonModule,

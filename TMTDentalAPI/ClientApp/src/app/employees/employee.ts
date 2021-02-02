@@ -8,6 +8,7 @@ export class EmployeePaged {
     search: string;
     position: string;
     isDoctor: boolean;
+    isAllowSurvey: boolean;
     isAssistant: boolean;
     ids: string[];
     active: any = true;

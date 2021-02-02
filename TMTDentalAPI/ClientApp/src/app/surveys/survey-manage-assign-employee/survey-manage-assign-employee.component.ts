@@ -8,7 +8,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
@@ -44,7 +44,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   statuses = [
     { value: "draft", name: "Chưa gọi" },
     { value: "done", name: "Hoàn thành" },
-    { value: "contact", name: "Đang liên hệ" }
+    { value: "contact", name: "Đang liên hệ" },
+    { value: "", name: "Tổng khảo sát" }
   ]
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -122,9 +123,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   searchEmployees(search?: string) {
-    var val = new PartnerFilter();
+    var val = new EmployeePaged();
     val.search = search;
-    val.employee = true;
+    val.isAllowSurvey = true;
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -192,7 +193,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   onChaneEmp(emp) {
-    this.employeeId = emp.id;
+    this.employeeId = emp ? emp.id : null;
     this.loadDataFromApi();
     this.loadStatusCount();
 
