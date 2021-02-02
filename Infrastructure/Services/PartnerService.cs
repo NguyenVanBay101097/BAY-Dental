@@ -1902,9 +1902,21 @@ namespace Infrastructure.Services
 
         public async Task<PartnerDisplay> GetInfoPartner(Guid id)
         {
-            var partner = await SearchQuery(x=> x.Id == id).Include(x=>x.PartnerHistoryRels).Include(x=>x.PartnerPartnerCategoryRels).FirstOrDefaultAsync();
+            var partner = await SearchQuery(x => x.Id == id).Include(x => x.PartnerHistoryRels).Include(x => x.PartnerPartnerCategoryRels).Include("PartnerHistoryRels.History").Include("PartnerPartnerCategoryRels.Category").FirstOrDefaultAsync();
 
             var partnerDisplay = _mapper.Map<PartnerDisplay>(partner);
+            partnerDisplay.Histories = partner.PartnerHistoryRels.Select(s => new HistorySimple
+            {
+                Id = s.HistoryId,
+                Name = s.History.Name
+            }).ToList();
+
+            partnerDisplay.Categories = partner.PartnerPartnerCategoryRels.Select(s => new PartnerCategoryBasic
+            {
+                Id = s.CategoryId,
+                Name = s.Category.Name,
+                Color = s.Category.Color
+            }).ToList();
 
             return partnerDisplay;
         }

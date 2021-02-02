@@ -31,7 +31,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
   ngOnInit() {
 
     this.route.queryParamMap.subscribe(params => {
-      this.id = params.get('id'); 
+      this.id = params.get('id');
     });
 
     // this.id = this.route.snapshot.paramMap.get('id');
@@ -61,6 +61,39 @@ export class SurveyAssignmentFormComponent implements OnInit {
           control.push(g);
         });
       });
+    }
+  }
+
+  showTeethDiagnostic(line) {
+    var list = [];
+    if (line.teeth.length) {
+      list.push(line.teeth.map(x => x.name).join(','));
+    }
+
+    if (line.diagnostic) {
+      list.push(line.diagnostic);
+    }
+
+    return list.join('; ');
+  }
+
+  showTeethDkLine(line) {
+    var list = [];
+    if (line.teeth.length) {
+      list.push(line.teeth.map(x => x.name).join(','));
+    }  
+    return list.join('; ');
+  }
+
+
+  GetStateSaleOrder(state) {
+    switch (state) {
+      case 'draft':
+        return 'Nháp';
+      case 'confirm':
+        return 'Xác nhận';
+      case 'done':
+        return 'Hoàn thành '
     }
   }
 

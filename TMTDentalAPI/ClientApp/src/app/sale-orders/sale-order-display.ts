@@ -34,7 +34,7 @@ export class SaleOrderDisplay {
 
 export class SaleOrderDisplayVm {
     id: string;
-    partner: PartnerDisplay;
+    partner: any;
     partnerId: string;
     dateOrder: string;
     user: UserSimple;
@@ -44,8 +44,8 @@ export class SaleOrderDisplayVm {
     userId: string;
     state: string;
     residual: number;
-    orderLines: SaleOrderLineDisplay[];
-    dotKhams: any;
+    orderLines: any[];
+    dotKhams: any[];
     name: string;
     paid: number;
     pricelist: ProductPriceListBasic;

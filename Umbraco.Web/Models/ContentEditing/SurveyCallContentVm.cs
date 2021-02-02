@@ -33,7 +33,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyCallContentSave
     {
-        public Guid Id { get; set; }
         public Guid? AssignmentId { get; set; }
         public DateTime Date { get; set; }
         public string Name { get; set; }
