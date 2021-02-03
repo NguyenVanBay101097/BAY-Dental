@@ -48,7 +48,7 @@
 
 <div class="o_content">
     <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)" 
         (cellClick)="clickItem($event)" [navigable]="true">
         <!-- <kendo-grid-column field="employeeName" title="Nhân viên" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
