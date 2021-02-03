@@ -22,6 +22,7 @@ export class SurveyCallContentListComponent implements OnInit {
   search: string;
   limit = 0;
   offset = 0;
+  edit = false;
   loading = false;
   @Input() id: string;
   @Input() surveyStatus: string;
@@ -66,14 +67,29 @@ export class SurveyCallContentListComponent implements OnInit {
   editHandler({ sender, rowIndex, dataItem }) {
     this.closeEditor(sender);
     this.formGroup = this.fb.group({
-      id: dataItem.id,
-      name: dataItem.name,
-      assignmentId: dataItem.assignmentId
+      id: dataItem ? dataItem.id : null,
+      name: dataItem ? dataItem.name : '',
+      assignmentId: dataItem ? dataItem.assignmentId : null
     });
-
     this.editedRowIndex = rowIndex;
-
     sender.editRow(rowIndex, this.formGroup);
+  }
+
+  public addHandler({ sender }) {
+    if (!this.edit) {
+      this.formGroup = this.fb.group({
+        name: "",
+        date: new Date(),
+      });
+      this.gridData.data.push(this.formGroup.value);
+      this.gridData.total += 1;
+
+      this.editedRowIndex = this.gridData.total - 1;
+      setTimeout(() => {
+        document.getElementById('editundefined').click();
+      }, 50);
+      this.edit = true;
+    }
   }
 
   private closeEditor(grid, rowIndex = this.editedRowIndex) {
@@ -84,6 +100,8 @@ export class SurveyCallContentListComponent implements OnInit {
 
   public cancelHandler({ sender, rowIndex }) {
     this.closeEditor(sender, rowIndex);
+    this.edit = false;
+    this.loadDataFromApi();
   }
 
   public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
@@ -120,21 +138,10 @@ export class SurveyCallContentListComponent implements OnInit {
         }
       )
     }
-
-
-
+    this.edit = false;
     sender.closeRow(rowIndex);
   }
 
-  public addHandler({ sender }) {
-    this.closeEditor(sender);
 
-    this.formGroup = this.fb.group({
-      name: "",
-      date: null,
-    });
-
-    sender.addRow(this.formGroup);
-  }
 
 }
