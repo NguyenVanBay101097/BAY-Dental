@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyCallcontentService } from '../survey-callcontent.service';
@@ -26,6 +27,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
     private modalService: NgbModal,
     private surveyService: SurveyService,
     private route: ActivatedRoute,
+    private notificationService: NotificationService,
     private callContentService: SurveyCallcontentService,
     private fb: FormBuilder
   ) { }
@@ -101,6 +103,13 @@ export class SurveyAssignmentFormComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn hủy kết quả khảo sát đánh giá ?';
     modalRef.result.then(() => {
       this.surveyService.actionCancel([this.surveyAssignment.id]).subscribe(() => {
+        this.notificationService.show({
+          content: 'Hủy thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadDataFromApi();
       });
     }); 
@@ -130,6 +139,13 @@ export class SurveyAssignmentFormComponent implements OnInit {
       val.id = this.surveyAssignment.id;
       val.surveyUserInput = rs;
       this.surveyService.actionDone(val).subscribe(() => {
+        this.notificationService.show({
+          content: 'Hoàn thành khảo sát đánh giá',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadDataFromApi();
       });
     }, () => {

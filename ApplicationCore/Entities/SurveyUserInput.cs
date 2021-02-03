@@ -21,6 +21,11 @@ namespace ApplicationCore.Entities
         public decimal? MaxScore { get; set; }
 
         /// <summary>
+        /// nội dung khảo sát
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
         /// danh sách kết quả câu hỏi kèm câu trả lời của khách hàng
         /// </summary>
         public ICollection<SurveyUserInputLine> Lines { get; set; } = new List<SurveyUserInputLine>();

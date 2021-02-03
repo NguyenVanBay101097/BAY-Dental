@@ -21,14 +21,43 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        
+
 
         public async Task<SurveyUserInputDisplay> GetDisplay(Guid id)
         {
             var res = await _mapper.ProjectTo<SurveyUserInputDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Khảo sát không tồn tại");
-        
+            res.Lines = res.Lines.Select(x => new SurveyUserInputLineDisplay
+            {
+                QuestionId = x.QuestionId,
+                Question = new SurveyQuestionDisplay
+                {
+                    Id = x.Question.Id,
+                    Name = x.Question.Name,
+                    Sequence = x.Question.Sequence,
+                    Type = x.Question.Type,
+                    Answers = x.Question.Answers.Select(s => new SurveyAnswerDisplay
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        QuestionId = s.QuestionId,
+                        Score = s.Score,
+                        Sequence = s.Sequence
+                    }).OrderByDescending(s => s.Sequence).ToList()
+                },
+                AnswerId = x.AnswerId.HasValue ? x.AnswerId : null,
+                Answer = x.Answer != null ? new SurveyAnswerDisplay
+                {
+                    Id = x.Answer.Id,
+                    Name = x.Answer.Name,
+                    Score = x.Answer.Score,
+                    Sequence = x.Answer.Sequence
+                } : null,
+                Score = x.Score,
+                ValueText = x.ValueText
+            }).ToList();
+
             return res;
         }
 
@@ -109,14 +138,14 @@ namespace Infrastructure.Services
 
             SaveLines(val, userInput);
 
-            
+
 
             return await CreateAsync(userInput);
         }
 
         public override async Task<SurveyUserInput> CreateAsync(SurveyUserInput entity)
         {
-           
+
             await base.CreateAsync(entity);
             await ComputeUserInputAsync(entity);
             return entity;
@@ -172,7 +201,7 @@ namespace Infrastructure.Services
 
 
             userinput.MaxScore = maxNumber;
-            userinput.Score = Math.Floor((totalNumber * maxNumber) / totalMax);
+            userinput.Score = Math.Round(((totalNumber * maxNumber) / totalMax), 1);
         }
 
         public async Task UpdateUserInput(Guid id, SurveyUserInputSave val)

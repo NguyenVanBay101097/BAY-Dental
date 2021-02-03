@@ -40,6 +40,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       score: null,
       maxScore: null,
+      note: null,
       lines: this.fb.array([])
     });
     

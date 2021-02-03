@@ -44,6 +44,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? MaxScore { get; set; }
 
+        /// <summary>
+        /// nội dung khảo sát
+        /// </summary>
+        public string Note { get; set; }
+
         public IEnumerable<SurveyUserInputLineDisplay> Lines { get; set; } = new List<SurveyUserInputLineDisplay>();
     }
 
@@ -59,6 +64,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Số điểm tối đa, compute
         /// </summary>
         public decimal? MaxScore { get; set; }
+
+        /// <summary>
+        /// nội dung khảo sát
+        /// </summary>
+        public string Note { get; set; }
 
         public IEnumerable<SurveyUserInputLineSave> Lines { get; set; } = new List<SurveyUserInputLineSave>();
     }

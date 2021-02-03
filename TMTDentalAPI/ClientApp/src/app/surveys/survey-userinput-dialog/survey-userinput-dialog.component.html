@@ -20,7 +20,7 @@
                                 <h6>{{line.get('question').value.sequence}}/ {{line.get('question').value.name}}</h6>
                                 <ng-container *ngIf="line.get('question').value.type === 'radio';else text">
                                     <div class="radio pl-2" *ngFor="let item of line.get('question').value.answers">
-                                        <input formControlName="score"  [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)" >
+                                        <input formControlName="score" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"   [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)" >
                                         <label class="ml-1" [for]="item.id">
                                             {{item.name}}
                                         </label>
@@ -28,7 +28,7 @@
                                 </ng-container>
                                 <ng-template #text>
                                     <ng-container>
-                                        <textarea class="form-control pl-2"  rows="4" cols="3" formControlName="valueText"></textarea>
+                                        <textarea class="form-control pl-2" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"  rows="4"  formControlName="valueText"></textarea>
                                     </ng-container>
                                 </ng-template>
                               
@@ -37,6 +37,14 @@
                     </div>
 
 
+                </div>
+                <div class="oe_title">
+                    <h5>
+                        <span>Nội dung khảo sát</span>
+                    </h5>
+                </div>
+                <div class="o_group">
+                    <textarea class="form-control pl-2" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"  rows="4"  formControlName="note"></textarea>
                 </div>
             </div>
         </div>

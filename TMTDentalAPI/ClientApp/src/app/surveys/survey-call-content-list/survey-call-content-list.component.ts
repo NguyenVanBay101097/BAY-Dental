@@ -30,8 +30,6 @@ export class SurveyCallContentListComponent implements OnInit {
   constructor(private callcontentService: SurveyCallcontentService,
     private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
-    private employeeService: EmployeeService,
     private notificationService: NotificationService,
     private fb: FormBuilder
   ) {
