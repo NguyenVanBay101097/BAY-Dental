@@ -196,30 +196,6 @@ namespace Infrastructure.Services
             await settlementObj.CreateAsync(settlements);
         }
 
-        private async Task _InsertAccountPaymentSalaryEmployeeSequence()
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            await seqObj.CreateAsync(new IRSequence
-            {
-                Name = "Phiếu chi lương, tạm ứng",
-                Code = "account.payment.employee.outbound",
-                Prefix = "EMP.OUT/{yyyy}/",
-                Padding = 5
-            });
-        }
-
-        private async Task _InsertAccountPaymentSalarySequence()
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            await seqObj.CreateAsync(new IRSequence
-            {
-                Name = "Phiếu chi lương",
-                Code = "account.payment.salary",
-                Prefix = "PW/{yyyy}/",
-                Padding = 4
-            });
-        }
-
         private async Task _AutoReconcile(AccountPayment self, IEnumerable<AccountMove> invoices = null)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -304,7 +280,7 @@ namespace Infrastructure.Services
                 }
                 else if (payment.PartnerType == "employee")
                 {
-                    rec_pay_line_name = payment.Name + " Chi lương, tạm ứng";
+                    rec_pay_line_name = payment.Name + " Chi lương/tạm ứng";
                 }
 
                 if (payment.AccountMovePaymentRels.Any())
