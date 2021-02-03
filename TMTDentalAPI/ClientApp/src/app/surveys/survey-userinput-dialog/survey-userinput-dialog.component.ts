@@ -30,11 +30,11 @@ export class SurveyUserinputDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.id) {
-      this.loadData();
-    } else {
-      this.loadDefault();
-    }
+    // if (this.id) {
+    //   this.loadData();
+    // } else {
+    //   this.loadDefault();
+    // }
   }
 
   notify(style, content) {
