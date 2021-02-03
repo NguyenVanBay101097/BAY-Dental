@@ -28,9 +28,11 @@ export class AccountPaymentPaged {
     offset: number;
     limit: number;
     search: string;
+    phieuThuChi: boolean;
     partnerType: string;
     state: string;
     paymentDateFrom: string;
+    resultSelection: string;
     paymentDateTo: string;
     saleOrderId: string;
     partnerId: string;
@@ -74,7 +76,7 @@ export class AccountPaymentService {
     }
 
     createMultipleAndConfirmUI(vals: any): Observable<AccountPaymentBasic[]> {
-        return this.http.post<AccountPaymentBasic[]>(this.baseApi + this.apiUrl+'/CreateMultipleAndConfirmUI', vals);
+        return this.http.post<AccountPaymentBasic[]>(this.baseApi + this.apiUrl + '/CreateMultipleAndConfirmUI', vals);
     }
 
     update(id, val) {

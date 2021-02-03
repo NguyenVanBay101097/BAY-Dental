@@ -8,6 +8,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public AccountPaymentPaged()
         {
+            PhieuThuChi = false;
             Limit = 20;
         }
         public int Offset { get; set; }
@@ -33,14 +34,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderId { get; set; }
         public Guid? PartnerId { get; set; }
 
-        public bool? PhieuThuChi { get; set; }
-        public string? PaymentType { get; set; }
+        public bool PhieuThuChi { get; set; }
+        public string PaymentType { get; set; }
         /// <summary>
         /// cash: tiền mặt
         /// bank: ngân hàng
         /// cash_bank: tổng sổ quỹ
         /// </summary>
-        public string? ResultSelection { get; set; }
+        public string ResultSelection { get; set; }
 
     }
 }

@@ -74,7 +74,7 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('amount')}}</span>
+                                    <span *ngIf="seeForm">{{getValueForm('amount') | number}}</span>
                                     <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
                                         formControlName="amount">
                                     </kendo-numerictextbox>

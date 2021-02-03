@@ -1054,10 +1054,13 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
             }
 
-            if (val.PhieuThuChi.HasValue && val.PhieuThuChi.Value == true)
+            if (val.PhieuThuChi == true)
             {
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.LoaiThuChiId.HasValue));
             }
+
+            if (val.PhieuThuChi == false)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => !x.LoaiThuChiId.HasValue));
 
             if (!string.IsNullOrEmpty(val.PaymentType))
             {
