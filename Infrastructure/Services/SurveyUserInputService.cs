@@ -21,19 +21,25 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        
+
         public async Task<SurveyUserInputDisplay> GetDisplay(Guid id)
         {
             var res = await _mapper.ProjectTo<SurveyUserInputDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
             if (res == null)
                 throw new NullReferenceException("Khảo sát không tồn tại");
-
+        
             return res;
         }
 
-        public async Task<SurveyUserInputDisplay> DefaultGet()
+        public async Task<SurveyUserInputDisplay> DefaultGet(SurveyUserInputDefaultGet val)
         {
+
+            if (!val.SurveyAssignmentId.HasValue)
+                throw new Exception("");
+
             var questionObj = GetService<ISurveyQuestionService>();
-            var questions = await questionObj.SearchQuery().Include(x => x.Answers).OrderByDescending(x => x.Sequence).ToListAsync();
+            var questions = await questionObj.SearchQuery().Include(x => x.Answers).OrderBy(x => x.Sequence).ToListAsync();
             var userInputline = new List<SurveyUserInputLineDisplay>();
             var line = new SurveyUserInputLineDisplay();
             var res = new SurveyUserInputDisplay();
@@ -42,15 +48,24 @@ namespace Infrastructure.Services
             {
                 if (question.Type == "radio")
                 {
-                    var maxAnswer = question.Answers.Where(x => x.Score == question.Answers.Max(s=>s.Score)).FirstOrDefault();
+                    var maxAnswer = question.Answers.Where(x => x.Score == question.Answers.Max(s => s.Score)).FirstOrDefault();
                     line = new SurveyUserInputLineDisplay
                     {
                         QuestionId = question.Id,
-                        Question = new SurveyQuestionDisplay { 
-                        Id = question.Id,
-                        Name = question.Name,
-                        Sequence = question.Sequence,
-                        Type = question.Type,
+                        Question = new SurveyQuestionDisplay
+                        {
+                            Id = question.Id,
+                            Name = question.Name,
+                            Sequence = question.Sequence,
+                            Type = question.Type,
+                            Answers = question.Answers.Select(x => new SurveyAnswerDisplay
+                            {
+                                Id = x.Id,
+                                Name = x.Name,
+                                QuestionId = x.QuestionId,
+                                Score = x.Score,
+                                Sequence = x.Sequence
+                            }).OrderByDescending(x => x.Sequence).ToList()
                         },
                         AnswerId = maxAnswer.Id,
                         Answer = new SurveyAnswerDisplay
@@ -74,7 +89,7 @@ namespace Infrastructure.Services
                             Name = question.Name,
                             Sequence = question.Sequence,
                             Type = question.Type,
-                        },                     
+                        },
                     };
                 }
 
@@ -94,9 +109,17 @@ namespace Infrastructure.Services
 
             SaveLines(val, userInput);
 
-            await ComputeUserInputAsync(userInput);
+            
 
             return await CreateAsync(userInput);
+        }
+
+        public override async Task<SurveyUserInput> CreateAsync(SurveyUserInput entity)
+        {
+           
+            await base.CreateAsync(entity);
+            await ComputeUserInputAsync(entity);
+            return entity;
         }
 
         private void SaveLines(SurveyUserInputSave val, SurveyUserInput userinput)
@@ -136,20 +159,20 @@ namespace Infrastructure.Services
         private async Task ComputeUserInputAsync(SurveyUserInput userinput)
         {
             var questionObj = GetService<ISurveyQuestionService>();
+            var rs = await SearchQuery(x => x.Id == userinput.Id).Include(x => x.Lines).Include("Lines.Answer").Include("Lines.Question").FirstOrDefaultAsync();
             var lineRaidos = userinput.Lines.Where(x => x.Question.Type == "radio").ToList();
-            var questions = await questionObj.SearchQuery(x => lineRaidos.Select(s => s.Id).ToList().Contains(x.Id)).Include(x => x.Answers).ToListAsync();
-            var maxNumber = lineRaidos.Max(x => x.Answer.Score);
-            var totalNumber = lineRaidos.Sum(x => x.Answer.Score);
+            var questionIds = lineRaidos.Select(x => x.QuestionId).ToList();
+            var questions = await questionObj.SearchQuery(x => questionIds.Contains(x.Id)).Include(x => x.Answers).ToListAsync();
+            var maxNumber = lineRaidos.Max(x => x.Answer.Score.Value);
+            var totalNumber = lineRaidos.Sum(x => x.Answer.Score.Value);
             var totalMax = 0M;
             foreach (var question in questions)
-            {
-
                 totalMax += question.Answers.Max(x => x.Score.Value);
 
-            }
+
 
             userinput.MaxScore = maxNumber;
-            userinput.Score = totalNumber * maxNumber / totalMax;
+            userinput.Score = Math.Floor((totalNumber * maxNumber) / totalMax);
         }
 
         public async Task UpdateUserInput(Guid id, SurveyUserInputSave val)
@@ -167,7 +190,7 @@ namespace Infrastructure.Services
 
         public async Task Unlink(Guid id)
         {
-            var userInput = SearchQuery(x => x.Id == id).Include(x=>x.Lines).FirstOrDefault();
+            var userInput = SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefault();
             if (userInput == null)
                 throw new Exception("Khảo sát không tồn tại");
 

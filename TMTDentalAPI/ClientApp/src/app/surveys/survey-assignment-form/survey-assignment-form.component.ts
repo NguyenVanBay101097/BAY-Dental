@@ -4,8 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyCallcontentService } from '../survey-callcontent.service';
-import { SurveyAssignmentDisplay, SurveyService } from '../survey.service';
+import { SurveyUserinputDialogComponent } from '../survey-userinput-dialog/survey-userinput-dialog.component';
+import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-assignment-form',
@@ -81,9 +83,60 @@ export class SurveyAssignmentFormComponent implements OnInit {
     var list = [];
     if (line.teeth.length) {
       list.push(line.teeth.map(x => x.name).join(','));
-    }  
+    }
     return list.join('; ');
   }
+
+  actionContact() {
+    if (this.surveyAssignment.id) {
+      this.surveyService.actionContact([this.surveyAssignment.id]).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    }
+  }
+
+  actionCancel() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Hủy khảo sát đánh giá';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn hủy kết quả khảo sát đánh giá ?';
+    modalRef.result.then(() => {
+      this.surveyService.actionCancel([this.surveyAssignment.id]).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    }); 
+  }
+
+  getViewSurvey(){
+    let modalRef = this.modalService.open(SurveyUserinputDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
+    modalRef.componentInstance.id = this.surveyAssignment.userInputId;
+    modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
+    modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
+    modalRef.result.then(() => {
+        this.loadDataFromApi();
+    }, () => {
+    });
+  }
+
+
+  actionDone() {
+    let modalRef = this.modalService.open(SurveyUserinputDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
+    modalRef.componentInstance.id = this.surveyAssignment.userInputId;
+    modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
+    modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
+    modalRef.result.then(rs => {
+      var val = new AssignmentActionDone();
+      val.id = this.surveyAssignment.id;
+      val.surveyUserInput = rs;
+      this.surveyService.actionDone(val).subscribe(() => {
+        this.loadDataFromApi();
+      });
+    }, () => {
+    });
+  }
+
+
 
 
   GetStateSaleOrder(state) {

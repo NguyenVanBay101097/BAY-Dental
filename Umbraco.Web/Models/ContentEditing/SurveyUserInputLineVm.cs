@@ -60,6 +60,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cho 1 câu hỏi
         /// </summary>
         public Guid? QuestionId { get; set; }
+
     }
 
     public class SurveyUserInputLineDisplay

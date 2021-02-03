@@ -34,6 +34,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGet(SurveyUserInputDefaultGet val)
+        {
+            var res = await _surveyUserInputService.DefaultGet(val);
+            return Ok(res);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(SurveyUserInputSave val)
         {

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebService } from 'src/app/core/services/web.service';
-import { SurveyQuestionService } from '../survey-question.service';
-import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userinput.service';
+import { SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
+import { SurveyUserInputDisplay, SurveyUserInputPaged, SurveyUserinputService } from '../survey-userinput.service';
 
 @Component({
   selector: 'app-survey-userinput-dialog',
@@ -15,8 +15,14 @@ import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userin
 export class SurveyUserinputDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;// có thể là input
+  title: string;
+  surveyAssignmentStatus:string;
+  surveyAssignmentId : string;
   userinput: SurveyUserInputDisplay = new SurveyUserInputDisplay();
-
+  question: any[] = [];
+  limit: number = 20;
+  offset: number = 0;
+  search: string;
 
 
   constructor(private fb: FormBuilder,
@@ -30,6 +36,13 @@ export class SurveyUserinputDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    this.formGroup = this.fb.group({
+      score: null,
+      maxScore: null,
+      lines: this.fb.array([])
+    });
+    
     if (this.id) {
       this.loadData();
     } else {
@@ -47,22 +60,61 @@ export class SurveyUserinputDialogComponent implements OnInit {
     });
   }
 
-  // loadData() {
-  //   this.user.get(this.id).subscribe(result => {
-  //     this.laboOrder = result;
-  //     this.patchValue(result);
-  //   });
+  get lines() {
+    return this.formGroup.get('lines') as FormArray;
+  }
+
+
+  loadData() {
+    this.userInputService.get(this.id).subscribe(result => {
+      this.userinput = result;
+      this.patchValue(result);
+    });
+  }
+
+  loadDefault() {
+    this.userInputService.getDefault(this.surveyAssignmentId).subscribe(result => {
+      this.userinput = result;
+      this.patchValue(result);
+    });
+  }
+
+
+
+  patchValue(res) {
+    this.formGroup.patchValue(res);
+    // patch attach
+    if (res.lines) {
+      var control = this.formGroup.get('lines') as FormArray;
+      control.clear();
+      var lines = this.userinput.lines;
+      lines.forEach(line => {
+        control.push(this.fb.group(line));
+      });
+    }
+
+
+  }
+
+  onChange(line: FormGroup, item){
+    var res = this.lines.controls.find(x => x.value.questionId === line.value.question.id);
+    if (res) {
+      line.get('answerId').setValue(item.id);
+      res.patchValue(line.value);
+    }
+  }
+
+  onSave(){
+    var val = this.formGroup.value;
+    this.activeModal.close(val);
+  }
+
+  // handleChange(line : FormGroup){
+    
   // }
 
-  // loadDefault() {
-  //   var df = new LaboOrderDefaultGet();
-  //   df.saleOrderLineId = this.saleOrderLineId;
-  //   this.laboOrderService.defaultGet(df).subscribe(result => {
-  //     this.laboOrder = result;
-  //     result.quantity = 1;
-  //     this.patchValue(result);
-  //   (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
-  //   });
-  // }
+  onCancel() {
+    this.activeModal.dismiss();
+  }
 
 }

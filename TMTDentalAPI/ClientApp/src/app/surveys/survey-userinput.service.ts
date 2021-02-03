@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SurveyAnswerDisplay, SurveyQuestionDisplay } from './survey-question.service';
 
-export class SurveyUserInputPaged{
+export class SurveyUserInputPaged {
   limit: number;
   offset: number;
   search: string;
@@ -17,21 +17,19 @@ export class SurveyUserInputPagging {
 }
 
 export class SurveyUserInputBasic {
-  id : string; 
-  score: number; 
+  id: string;
+  score: number;
   maxScore: number;
 }
 
-export class SurveyUserInputDisplay
-{
-    id: string;
-    score: number;
-    maxScore: number;
-    lines: SurveyUserInputLineDisplay[];
+export class SurveyUserInputDisplay {
+  id: string;
+  score: number;
+  maxScore: number;
+  lines: SurveyUserInputLineDisplay[];
 }
 
-export class SurveyUserInputLineDisplay 
-{
+export class SurveyUserInputLineDisplay {
   id: string;
   score: number;
   valueText: string;
@@ -41,8 +39,7 @@ export class SurveyUserInputLineDisplay
   Question: SurveyQuestionDisplay;
 }
 
-export class SurveyUserInputLineSave 
-{
+export class SurveyUserInputLineSave {
   id: string;
   score: number;
   valueText: string;
@@ -60,7 +57,7 @@ export class SurveyUserinputService {
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/SurveyUserInputs";
 
-  get(id: string): Observable<SurveyUserInputDisplay> {
+  get(id): Observable<SurveyUserInputDisplay> {
     return this.http.get<SurveyUserInputDisplay>(this.base_api + this.apiUrl + '/' + id);
   }
 
@@ -68,8 +65,12 @@ export class SurveyUserinputService {
     return this.http.post(this.base_api + this.apiUrl, val);
   }
 
+  getDefault(assignmentId: string) {
+    return this.http.post<SurveyUserInputDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { surveyAssignmentId: assignmentId })
+  }
+
   update(id: string, val: any) {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
-  
+
 }

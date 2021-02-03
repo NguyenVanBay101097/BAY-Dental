@@ -46,7 +46,8 @@ import { SurveyUserinputDialogComponent } from './survey-userinput-dialog/survey
   providers: [SurveyService],
   entryComponents: [
     SurveyConfigurationEvaluationDialogComponent,
-    SurveyManageAssignEmployeeCreateDialogComponent
+    SurveyManageAssignEmployeeCreateDialogComponent,
+    SurveyUserinputDialogComponent
   ]
 })
 export class SurveysModule { }

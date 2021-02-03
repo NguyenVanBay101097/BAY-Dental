@@ -64,16 +64,21 @@ export class SurveyAssignmentDisplay {
   id: string;
   saleOrderId: string;
   saleOrder: SaleOrderDisplayVm;
-  surveyUserInputId: string;
-  surveyUserInput: SurveyUserInputDisplay;
+  userInputId: string;
+  userInput: SurveyUserInputDisplay;
   callContents: SurveyCallContentDisplay[];
   status: string;
+}
+
+export class AssignmentActionDone {
+  id: string;
+  surveyUserInput: any;
 }
 
 export class SurveyAssignmentGetCountVM {
   status: string;
   dateFrom: string;
-  employeeId: string; 
+  employeeId: string;
   dateTo: string;
 }
 

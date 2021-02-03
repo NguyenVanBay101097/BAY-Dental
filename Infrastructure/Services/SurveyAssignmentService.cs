@@ -189,9 +189,12 @@ namespace Infrastructure.Services
                     throw new Exception("Phiếu khảo sát chưa hoàn thành");
 
                 //xóa userinput
-                await userInputObj.Unlink(assign.Id);
+                if (!assign.UserInputId.HasValue)
+                    throw new Exception("Không tìm thấy phiếu khảo sát ");
 
-                assign.Status = "draft";
+                await userInputObj.Unlink(assign.UserInputId.Value);
+
+                assign.Status = "contact";
                 assign.CompleteDate = null;
             }
 

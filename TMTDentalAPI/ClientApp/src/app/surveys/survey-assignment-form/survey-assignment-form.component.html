@@ -18,11 +18,17 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm">
+                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary btn-sm" (click)="actionContact()">
                         Liên hệ
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm">
+                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary btn-sm" (click)="actionDone()">
                         Khảo sát
+                    </button>
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                       Hủy khảo sát
+                    </button>
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary btn-sm" (click)="actionDone()">
+                        Xem đánh giá
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -36,7 +42,7 @@
                         type="button">
                         Đang liên hệ
                     </button>
-                    <button *ngIf="surveyAssignment.status === 'draft'" [disabled]="surveyAssignment.status !== 'draft'"
+                    <button  [disabled]="surveyAssignment.status !== 'draft'"
                         class="btn o_arrow_button disabled"
                         [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
                         type="button">
@@ -50,21 +56,33 @@
                         <span>THÔNG TIN KHÁCH HÀNG</span>
                     </h5>
                 </div>
-                <div class="media mb-3">
-                    <app-image-file-upload [supportWebcam]="true" class="t_avatar"
-                        [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar"
-                        [width]="100" [height]="100">
-                    </app-image-file-upload>
-                    <div class="media-body">
-                        <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
-                            surveyAssignment.saleOrder.partner.name: ''}}</h4>
-                        <div class="t_sub_title">
-                            Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref
-                            : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
-                            (surveyAssignment.saleOrder.partner.date | date:'shortDate') : '' }}
+                <div class=" d-flex justify-content-between">
+                    <div class="media mb-3">
+                        <app-image-file-upload [supportWebcam]="true" class="t_avatar"
+                            [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar"
+                            [width]="100" [height]="100">
+                        </app-image-file-upload>
+                        <div class="media-body">
+                            <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
+                                surveyAssignment.saleOrder.partner.name: ''}}</h4>
+                            <div class="t_sub_title">
+                                Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref
+                                : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
+                                (surveyAssignment.saleOrder.partner.date | date:'shortDate') : '' }}
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div *ngIf="surveyAssignment.status === 'done'" class="report-prescription-payment">
+                        <div class="revenue" >
+                            <div class="title">
+                                <h6>Điểm đánh giá</h6>
+                            </div>
+                            <h4 class="text-primary">
+                                {{surveyAssignment?.userInput?.score}}/{{surveyAssignment.userInput?.maxScore}}
+                            </h4>
+                        </div>
+                    </div>
+                </div>              
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody *ngIf="surveyAssignment.saleOrder">
@@ -306,8 +324,6 @@
                                                 {{showTeethDkLine(dkline)}} <br /> {{dkline.note}}
                                             </td>
 
-
-
                                         </tr>
                                     </ng-container>
 
@@ -318,15 +334,17 @@
                         <div class="clearfix"></div>
                     </div>
                 </div>
-                <div class="oe_title">
-                    <h5>
-                        <span>NHẬT KÝ CUỘC GỌI</span>
-                    </h5>
-                </div>
-                <div class="o_group">
-                    <app-survey-call-content-list [id]="surveyAssignment.id" [surveyStatus]="surveyAssignment.status">
-                    </app-survey-call-content-list>
-                </div>
+                <div *ngIf="surveyAssignment.status== 'contact'">
+                    <div class="oe_title">
+                        <h5>
+                            <span>NHẬT KÝ CUỘC GỌI</span>
+                        </h5>
+                    </div>
+                    <div class="o_group">
+                        <app-survey-call-content-list [id]="surveyAssignment.id" [surveyStatus]="surveyAssignment.status">
+                        </app-survey-call-content-list>
+                    </div>
+                </div>              
             </div>
         </div>
     </form>
