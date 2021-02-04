@@ -33,21 +33,22 @@ namespace Infrastructure.Services
         {
             var saleOrderObj = GetService<ISaleOrderService>();
 
-            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x=> x.Partner)
-                .Select(x =>new SurveyAssignmentDefaultGet() { 
-                DateOrder = x.DateOrder,
-                PartnerName = x.Partner.Name,
-                PartnerPhone = x.Partner.Phone,
-                PartnerRef = x.Partner.Ref,
-                SaleOrderId = x.Id,
-                SaleOrderName = x.Name,
-                PartnerId = x.PartnerId
+            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x => x.Partner)
+                .Select(x => new SurveyAssignmentDefaultGet()
+                {
+                    DateOrder = x.DateOrder,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                    PartnerRef = x.Partner.Ref,
+                    SaleOrderId = x.Id,
+                    SaleOrderName = x.Name,
+                    PartnerId = x.PartnerId
                 }).ToListAsync();
 
             if (val.IsRandomAssign.HasValue && val.IsRandomAssign == true && res.Count > 0)
             {
                 var employeeObj = GetService<IEmployeeService>();
-                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x=> new EmployeeSimple {Id = x.Id, Name = x.Name}).ToListAsync();
+                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x => new EmployeeSimple { Id = x.Id, Name = x.Name }).ToListAsync();
                 if (employees.Count > 0)
                 {
                     var random = new Random();
@@ -267,23 +268,43 @@ namespace Infrastructure.Services
                 CategoryId = cate.Id,
                 Name = "Nhân viên khảo sát",
             };
-            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
-             new ResGroup() {
+            var manageGroup = new ResGroup()
+            {
 
-              CategoryId = cate.Id,
+                CategoryId = cate.Id,
                 Name = "Quản lý khảo sát",
-             },
+            };
+            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
+            manageGroup,
             empGroup
              });
-            //tao model data
+            //tao model data quản lý 2 group
             var modelDataObj = GetService<IIRModelDataService>();
-            var modelData = await modelDataObj.CreateAsync(new IRModelData()
+            var modelData = await modelDataObj.CreateAsync(new List<IRModelData>() {
+            new IRModelData() // for show combobox
             {
                 Name = "survey_assignment",
                 Module = "survey",
                 ResId = cate.Id.ToString(),
                 Model = "ir.module.category"
+            },
+            //for ẩn hiện menu
+             new IRModelData()
+            {
+                Name = "survey_assignment_Quanly",
+                Module = "survey_Quanly",
+                ResId = manageGroup.Id.ToString(),
+                Model = "res.groups"
+            },
+              new IRModelData()
+            {
+                Name = "survey_assignment_Nhanvien",
+                Module = "survey_Nhanvien",
+                ResId = empGroup.Id.ToString(),
+                Model = "res.groups"
+            }
             });
+
             // tao rule cho việc get assignment by employee
             var ruleObj = GetService<IIRRuleService>();
             var modelObj = GetService<IIRModelService>();
