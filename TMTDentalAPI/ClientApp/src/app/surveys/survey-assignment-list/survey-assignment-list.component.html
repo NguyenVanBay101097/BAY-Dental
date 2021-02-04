@@ -18,8 +18,9 @@
                         <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'"
                             [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
-                        <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm"
-                            [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                        <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx
+                            [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)"
+                            [valueField]="'id'">
                         </kendo-combobox>
                     </div>
 
@@ -65,7 +66,7 @@
 </div>
 <div class="o_content">
     <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="clickItem($event)" [navigable]="true">     
+        [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="clickItem($event)" [navigable]="true">
         <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">

@@ -22,14 +22,15 @@ export class SurveyCallContentListComponent implements OnInit {
   search: string;
   limit = 0;
   offset = 0;
+  @Input() view = false;
   edit = false;
   loading = false;
   @Input() id: string;
   @Input() surveyStatus: string;
   editedRowIndex: number;
-  constructor(private callcontentService: SurveyCallcontentService,
+  constructor(
+    private callcontentService: SurveyCallcontentService,
     private intlService: IntlService,
-    private modalService: NgbModal,
     private notificationService: NotificationService,
     private fb: FormBuilder
   ) {

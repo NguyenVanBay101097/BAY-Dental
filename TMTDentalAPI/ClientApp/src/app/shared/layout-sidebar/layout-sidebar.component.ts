@@ -38,14 +38,24 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
       ],
     },
+    // {
+    //   name: 'Khảo sát đánh giá',
+    //   icon: 'fas fa-poll',
+    //   children: [
+    //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Quản lý phần việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //   ],
+    //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
+    // },
     {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
         { name: 'Danh sách khảo sát', link: '/surveys' },
         { name: 'Quản lý phần việc', link: '/surveys/manage' },
-        { name: 'Cấu hình đánh giá', link: '/surveys/config' },
-      ],
+        { name: 'Cấu hình đánh giá', link: '/surveys/config'  },
+      ]
     },
     {
       name: 'Mua hàng',

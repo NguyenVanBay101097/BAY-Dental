@@ -11,11 +11,12 @@ import { SurveyUserinputDialogComponent } from '../survey-userinput-dialog/surve
 import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyService } from '../survey.service';
 
 @Component({
-  selector: 'app-survey-assignment-form',
-  templateUrl: './survey-assignment-form.component.html',
-  styleUrls: ['./survey-assignment-form.component.css']
+  selector: 'app-survey-manage-detail-customer',
+  templateUrl: './survey-manage-detail-customer.component.html',
+  styleUrls: ['./survey-manage-detail-customer.component.css']
 })
-export class SurveyAssignmentFormComponent implements OnInit {
+export class SurveyManageDetailCustomerComponent implements OnInit {
+
   formGroup: FormGroup;
   id: string;
   searchUpdate = new Subject<string>();
@@ -26,19 +27,14 @@ export class SurveyAssignmentFormComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private surveyService: SurveyService,
-    private route: ActivatedRoute,
+    private activateRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private callContentService: SurveyCallcontentService,
     private fb: FormBuilder
   ) { }
 
   ngOnInit() {
-
-    this.route.queryParamMap.subscribe(params => {
-      this.id = params.get('id');
-    });
-
-    // this.id = this.route.snapshot.paramMap.get('id');
+    this.id = this.activateRoute.parent.snapshot.paramMap.get('id');
     this.formGroup = this.fb.group({
       saleOrderId: null,
       saleOrder: null,
@@ -111,17 +107,17 @@ export class SurveyAssignmentFormComponent implements OnInit {
         });
         this.loadDataFromApi();
       });
-    }); 
+    });
   }
 
-  getViewSurvey(){
+  getViewSurvey() {
     let modalRef = this.modalService.open(SurveyUserinputDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
     modalRef.componentInstance.id = this.surveyAssignment.userInputId;
     modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
     modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
     modalRef.result.then(() => {
-        this.loadDataFromApi();
+      this.loadDataFromApi();
     }, () => {
     });
   }
@@ -147,14 +143,10 @@ export class SurveyAssignmentFormComponent implements OnInit {
         });
         this.loadDataFromApi();
       });
-      
-      
+
+
     }, () => {
     });
-  }
-
-  get getAmountTotal() {
-    return this.formGroup.get('saleOrder').value.amountTotal;
   }
 
 

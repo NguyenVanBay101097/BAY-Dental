@@ -20,6 +20,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { MustMatch } from 'src/app/shared/must-match-validator';
 import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionService } from 'src/app/shared/permission.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -36,7 +38,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private modalService: NgbModal, private notificationService: NotificationService,
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
     private companyService: CompanyService,
-    private resGroupService: ResGroupService) { }
+    private resGroupService: ResGroupService,
+    private authService: AuthService,
+    private permissionService: PermissionService
+    ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
@@ -278,6 +283,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         } else {
           this.activeModal.close(rs);
         }
+        //nếu có đổi group survey thì reload groups
+        // this.authService.getGroups().subscribe((result: any) => {
+        //   this.permissionService.define(result);
+        // });
       },
       er => {
         console.log(er);
