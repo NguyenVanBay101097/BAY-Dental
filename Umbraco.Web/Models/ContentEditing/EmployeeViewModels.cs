@@ -132,7 +132,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<CompanyBasic> UserCompanies { get; set; } = new List<CompanyBasic>();
 
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
         public string Avatar { set; get; }
     }
 
