@@ -44,7 +44,7 @@ namespace Infrastructure.Services
                         QuestionId = s.QuestionId,
                         Score = s.Score,
                         Sequence = s.Sequence
-                    }).OrderBy(s => s.Sequence).ToList()
+                    }).OrderByDescending(s => s.Sequence).ToList()
                 },
                 AnswerId = x.AnswerId.HasValue ? x.AnswerId : null,
                 Answer = x.Answer != null ? new SurveyAnswerDisplay
@@ -94,7 +94,7 @@ namespace Infrastructure.Services
                                 QuestionId = x.QuestionId,
                                 Score = x.Score,
                                 Sequence = x.Sequence
-                            }).OrderBy(x => x.Sequence).ToList()
+                            }).OrderByDescending(x => x.Sequence).ToList()
                         },
                         AnswerId = maxAnswer.Id,
                         Answer = new SurveyAnswerDisplay
