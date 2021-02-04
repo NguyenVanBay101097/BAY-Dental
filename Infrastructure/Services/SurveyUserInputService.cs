@@ -200,8 +200,8 @@ namespace Infrastructure.Services
 
 
 
-            userinput.MaxScore = maxNumber;
-            userinput.Score = Math.Round(((totalNumber * maxNumber) / totalMax), 1);
+            userinput.MaxScore = 5;
+            userinput.Score = Math.Round(((totalNumber * 5) / totalMax), 1);
         }
 
         public async Task UpdateUserInput(Guid id, SurveyUserInputSave val)
