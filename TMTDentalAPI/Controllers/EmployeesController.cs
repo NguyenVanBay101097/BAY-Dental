@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
                         userPartner.Name = employee.Name;
                         userPartner.Email = employee.Email;
                         userPartner.Phone = employee.Phone;
-                        userPartner.Avatar = val.UserAvatar;
+                        userPartner.Avatar = employee.Avatar;
                         await _partnerService.UpdateAsync(userPartner);
                     }
 
@@ -144,6 +144,9 @@ namespace TMTDentalAPI.Controllers
                     var existUser = await _userManager.Users.Where(x => x.UserName == val.UserName && x.CompanyId == employee.CompanyId).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
                     if (existUser != null)
                     {
+                        //check user đã đk map chưa
+                        var isMapped = await _employeeService.SearchQuery(x => x.UserId == existUser.Id).AnyAsync();
+                        if (isMapped == true) throw new Exception("Tài khoản đã được sử dụng");
                         user = existUser;
                         employee.UserId = existUser.Id;
                     }
@@ -161,7 +164,7 @@ namespace TMTDentalAPI.Controllers
                             CompanyId = employee.CompanyId,
                             Phone = employee.Phone,
                             Customer = false,
-                            Avatar = val.UserAvatar
+                            Avatar = employee.Avatar
                         };
 
                         await _partnerService.CreateAsync(userPartner);
@@ -205,8 +208,8 @@ namespace TMTDentalAPI.Controllers
 
                 if (val.CreateChangePassword)
                 {
-                    if (string.IsNullOrEmpty(val.UserPassword))
-                        throw new Exception("Mật khẩu không được trống");
+                    if (string.IsNullOrEmpty(val.UserPassword) || val.UserPassword.Trim().Length < 6)
+                        throw new Exception("Mật khẩu không được trống và từ 6 kí tự trở lên");
 
                     if (await _userManager.HasPasswordAsync(user))
                     {

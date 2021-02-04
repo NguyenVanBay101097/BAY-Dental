@@ -19,6 +19,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { MustMatch } from 'src/app/shared/must-match-validator';
+import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -85,9 +86,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userCompany: null,
       userCompanies: [[]],
       userName: null,
-      userPassword: null,
-      createChangePassword: false,
-      userAvatar: null
+      userPassword: [null, Validators.required],
+      createChangePassword: true,
+      avatar: null
     });
 
     setTimeout(() => {
@@ -120,6 +121,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get nameFC() {return this.formCreate.get('name');}
+  get userIdFC() {return this.formCreate.get('userId');}
+
   get isUser() {
     return this.formCreate.get('isUser').value;
   }
@@ -128,8 +132,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.formCreate.get('createChangePassword').value;
   }
 
-  get userAvatar() {
-    return this.formCreate.get('userAvatar').value;
+  get avatar() {
+    return this.formCreate.get('avatar').value;
   }
 
   getValueForm(key) {
@@ -228,6 +232,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         rs => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
+          this.formCreate.get('createChangePassword').setValue(false);
+          this.onChangeCreateChangePassword(null);
           this.formCreate.patchValue(rs);
 
           this.updateValidation();
@@ -241,7 +247,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onAvatarUploaded(data) {
     var fileUrl = data ? data.fileUrl : null;
-    this.formCreate.get('userAvatar').setValue(fileUrl);
+    this.formCreate.get('avatar').setValue(fileUrl);
   }
 
   //Tạo hoặc cập nhật NV
