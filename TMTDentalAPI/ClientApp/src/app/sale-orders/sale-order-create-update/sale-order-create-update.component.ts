@@ -855,8 +855,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Hủy phiếu điều trị';
       modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
       modalRef.result.then(() => {
-        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
-          this.loadRecord();
+        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => { 
+          this.loadRecord();        
         });
       }, () => {
       });

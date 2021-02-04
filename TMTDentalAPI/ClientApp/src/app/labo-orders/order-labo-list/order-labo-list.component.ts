@@ -72,7 +72,6 @@ export class OrderLaboListComponent implements OnInit {
   }
 
   getState(val) {
-    debugger
     var today = new Date();
     var now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     var datePlanned = new Date(val.datePlanned);
