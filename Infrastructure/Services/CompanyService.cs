@@ -142,8 +142,8 @@ namespace Infrastructure.Services
 
         public async Task AddIrDataForSurvey()
         {
-            var groupObj = GetService<IResGroupService>();
-            await groupObj.AddMissingIrDataForSurvey();
+            var surAssObj = GetService<ISurveyAssignmentService>();
+            await surAssObj.AddIrDataForSurvey();
         }
 
         public async Task InsertIrModelFieldData()
