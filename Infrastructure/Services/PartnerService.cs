@@ -498,7 +498,7 @@ namespace Infrastructure.Services
             }
 
 
-            query = query.OrderBy(s => s.DisplayName);
+            query = query.Where(x=> !(x.Customer == false && x.Supplier == false)).OrderBy(s => s.DisplayName);
             return query;
         }
 
