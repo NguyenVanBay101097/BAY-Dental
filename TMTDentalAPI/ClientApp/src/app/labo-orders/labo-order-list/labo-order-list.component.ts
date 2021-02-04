@@ -20,7 +20,7 @@ import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } fr
 })
 export class LaboOrderListComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   skip = 0;
   loading = false;
   opened = false;
