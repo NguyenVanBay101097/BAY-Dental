@@ -673,7 +673,7 @@ namespace TMTDentalAPI.Controllers
 
         //lấy danh sách hóa đơn còn nợ của 1 partner
         [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery]string search = "")
+        public async Task<IActionResult> GetUnreconcileInvoices(Guid id, [FromQuery] string search = "")
         {
             var moves = await _partnerService.GetUnreconcileInvoices(id, search);
             return Ok(_mapper.Map<IEnumerable<AccountMoveBasic>>(moves));

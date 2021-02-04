@@ -165,6 +165,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CategName { get; set; }
         public decimal ListPrice { get; set; }
         public Guid? UomId { get; set; }
+        public string DefaultCode { get; set; }
     }
 
     public class ProductProductImportExcelRow

@@ -246,4 +246,17 @@ export class ProductService {
   getUOMs(id: string) {
     return this.http.get(this.baseApi + this.apiUrl + "/" + id + "/GetUOMs");
   }
+
+  updateServiceFromExcel(val: ProductImportExcelBaseViewModel){
+    return this.http.post(this.baseApi + this.apiUrl + "/UpdateServiceFromExcel", val);
+  }
+
+  updateProductFromExcel(val: ProductImportExcelBaseViewModel){
+    return this.http.post(this.baseApi + this.apiUrl + "/UpdateProductFromExcel", val);
+  }
+
+  updateMedicineFromExcel(val: ProductImportExcelBaseViewModel){
+    return this.http.post(this.baseApi + this.apiUrl + "/UpdateMedicineFromExcel", val);
+  }
+  
 }
