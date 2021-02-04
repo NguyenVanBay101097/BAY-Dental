@@ -21,6 +21,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
   surveyAssignmentId: string;
   userinput: SurveyUserInputDisplay = new SurveyUserInputDisplay();
   question: any[] = [];
+  view = true;
   limit: number = 20;
   offset: number = 0;
   search: string;
@@ -66,6 +67,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
       result => {
         if (result && result.userInputId) {
           this.id = result.userInputId;
+          this.surveyAssignmentStatus = result.status;
           this.loadData();
         }
       }

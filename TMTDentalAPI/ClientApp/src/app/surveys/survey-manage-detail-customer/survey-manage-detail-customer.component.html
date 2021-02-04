@@ -1,5 +1,24 @@
 <form class="o_form_view" [formGroup]="formGroup">
     <div class="o_form_sheet_bg">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
+                    type="button">
+                    Hoàn thành
+                </button>
+                <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
+                    type="button">
+                    Đang liên hệ
+                </button>
+                <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
+                    [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
+                    type="button">
+                    Chưa gọi
+                </button>
+            </div>
+        </div>
         <div class="o_form_sheet">
             <div class="oe_title">
                 <h5>
@@ -290,7 +309,8 @@
                     </h5>
                 </div>
                 <div class="o_group">
-                    <app-survey-call-content-list [id]="surveyAssignment.id" [surveyStatus]="surveyAssignment.status">
+                    <app-survey-call-content-list [id]="surveyAssignment.id" [view]="true"
+                        [surveyStatus]="surveyAssignment.status">
                     </app-survey-call-content-list>
                 </div>
             </div>
