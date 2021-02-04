@@ -23,5 +23,8 @@ namespace Infrastructure.Services
         Task<int> GetSummary(SurveyAssignmentPaged val);
 
         Task<long> GetCount(SurveyAssignmentGetCountVM val);
+
+        Task AddIrDataForSurvey();
+        Task AddRoleForSurvey();
     }
 }

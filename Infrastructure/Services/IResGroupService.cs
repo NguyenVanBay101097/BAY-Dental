@@ -26,7 +26,5 @@ namespace Infrastructure.Services
         Task UpdateModels();
 
         Task<IEnumerable<ResGroupBasic>> GetByModelDataModuleName(ResGroupByModulePar val);
-
-        Task AddMissingIrDataForSurvey();
     }
 }

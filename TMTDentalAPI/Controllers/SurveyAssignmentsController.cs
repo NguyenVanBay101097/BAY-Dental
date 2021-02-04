@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -34,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions="Survey.Assignment.Read")]
         public async Task<IActionResult> Get([FromQuery] SurveyAssignmentPaged val)
         {
             var result = await _SurveyAssignmentService.GetPagedResultAsync(val);
@@ -41,6 +43,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Survey.Assignment.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _SurveyAssignmentService.GetDisplay(id);
@@ -48,6 +51,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Survey.Assignment.Create")]
         public async Task<IActionResult> Create(SurveyAssignmentSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -63,6 +67,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.Create")]
         public async Task<IActionResult> CreateList(IEnumerable<SurveyAssignmentSave> vals)
         {
             if (vals.Count() == 0 || !ModelState.IsValid)
@@ -78,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Survey.Assignment.QuanlyUpdate")]
         public async Task<IActionResult> Update(Guid id, SurveyAssignmentSave val)
         {
             if (!ModelState.IsValid)
@@ -96,7 +102,8 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]      
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
         public async Task<IActionResult> ActionContact(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -109,6 +116,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -121,6 +129,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
         public async Task<IActionResult> ActionDone(AssignmentActionDone val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -130,6 +139,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPatch("{id}")]
+        [CheckAccess(Actions = "Survey.Assignment.QuanlyUpdate")]
         public async Task<IActionResult> JsonPatchWithModelState(Guid id, [FromBody]JsonPatchDocument<SurveyAssignmentPatch> patchDoc)
         {
             var entity = await _SurveyAssignmentService.GetByIdAsync(id);
@@ -147,6 +157,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Survey.Assignment.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -161,6 +172,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.Read")]
         public async Task<IActionResult> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
             var result = await _SurveyAssignmentService.DefaultGetList(val);
@@ -169,6 +181,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.Read")]
         public async Task<IActionResult> GetSummary(SurveyAssignmentGetCountVM val)
         {
             var result = await _SurveyAssignmentService.GetCount(val);

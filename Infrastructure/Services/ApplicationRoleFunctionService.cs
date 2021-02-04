@@ -92,6 +92,7 @@ namespace Infrastructure.Services
                         errors.Add(msg);
                     }
                 }
+                if (errors.Count == 0) errors.Add("Bạn không có quyền thao tác!");
             }
 
             return new ApplicationRoleFunctionHasAccessResult() { Access = access, Error = string.Join(", ", errors) };
