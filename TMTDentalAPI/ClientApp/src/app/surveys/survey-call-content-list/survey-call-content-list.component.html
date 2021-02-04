@@ -4,7 +4,7 @@
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             lần {{rowIndex < 0 ? 1 : rowIndex + 1}} </ng-template>
                 <ng-template kendoGridFooterTemplate let-dataItem>
-                    <button *ngIf="dataItem.status != 'done'" kendoGridAddCommand title="Thêm cuộc gọi"
+                    <button *ngIf="surveyStatus != 'done'" kendoGridAddCommand title="Thêm cuộc gọi"
                         class="btn btn-secondary btn-sm mr-2">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -19,9 +19,9 @@
         </ng-template>
     </kendo-grid-column>
 
-    <kendo-grid-column title="Thao tác" width="100">
+    <kendo-grid-column title="Thao tác" width="100" *ngIf="surveyStatus != 'done'">
         <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem let-rowIndex="rowIndex">
-            <div *ngIf="dataItem.status != 'done'">
+            <div >
                 <button kendoGridEditCommand [primary]="true" [id]="'edit'+dataItem.id"
                     class="btn btn-success btn-sm mr-2">
                     <i class="fas fa-edit"></i>

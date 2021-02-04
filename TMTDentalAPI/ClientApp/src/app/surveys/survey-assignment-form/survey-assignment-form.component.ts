@@ -148,6 +148,8 @@ export class SurveyAssignmentFormComponent implements OnInit {
         });
         this.loadDataFromApi();
       });
+      
+      
     }, () => {
     });
   }
