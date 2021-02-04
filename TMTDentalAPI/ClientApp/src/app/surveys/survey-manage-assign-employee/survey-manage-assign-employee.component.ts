@@ -1,6 +1,8 @@
+import { Route } from '@angular/compiler/src/core';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -21,11 +23,12 @@ import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from
   styleUrls: ['./survey-manage-assign-employee.component.css']
 })
 export class SurveyManageAssignEmployeeComponent implements OnInit {
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   filteredEmployees: EmployeeSimple[];
+  employees: EmployeeSimple[] = [];
   search: string;
   limit = 10;
   offset = 0;
@@ -46,7 +49,13 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     { value: "done", name: "Hoàn thành" },
     { value: "contact", name: "Đang liên hệ" },
     { value: "", name: "Tổng khảo sát" }
-  ]
+  ];
+
+  filteredStatus = [
+    { value: "done", name: "Hoàn thành" },
+    { value: "contact", name: "Đang liên hệ" },
+    { value: "draft", name: "Chưa gọi" },
+  ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -54,6 +63,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
+    private router: Router,
     private partnerService: PartnerService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
@@ -62,6 +72,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.searchUpdate.pipe(
@@ -71,6 +83,16 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.search = value || '';
         this.loadDataFromApi();
       });
+
+    this.empCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.empCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result;
+      this.empCbx.loading = false;
+    });
+
     this.loadDataFromApi();
     this.loadStatusCount();
     this.loadEmployees();
@@ -119,7 +141,10 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   loadEmployees() {
-    return this.searchEmployees().subscribe(result => this.filteredEmployees = result);
+    return this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = result
+      this.employees = result;
+    });
   }
 
   searchEmployees(search?: string) {
@@ -196,6 +221,11 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     sender.closeRow(rowIndex);
   }
 
+  clickItem(event) {
+    if (event.dataItem)
+      this.router.navigateByUrl('/surveys/form-manage/' + event.dataItem.id);
+  }
+
   onChaneEmp(emp) {
     this.employeeId = emp ? emp.id : null;
     this.loadDataFromApi();
@@ -204,7 +234,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   employee(id) {
-    var emp = this.filteredEmployees.find(x => x.id == id);
+    var emp = this.employees.find(x => x.id == id);
     return emp;
   }
 

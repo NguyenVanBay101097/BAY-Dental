@@ -5,6 +5,9 @@ import { SurveyAssignmentListComponent } from './survey-assignment-list/survey-a
 import { SurveyConfigurationEvaluationComponent } from './survey-configuration-evaluation/survey-configuration-evaluation.component';
 import { SurveyManageAssignEmployeeComponent } from './survey-manage-assign-employee/survey-manage-assign-employee.component';
 import { SurveyManageAssignComponent } from './survey-manage-assign/survey-manage-assign.component';
+import { SurveyManageDetailCustomerComponent } from './survey-manage-detail-customer/survey-manage-detail-customer.component';
+import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-detail-survey-imformation/survey-manage-detail-survey-imformation.component';
+import { SurveyManageDetailComponent } from './survey-manage-detail/survey-manage-detail.component';
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
 
 const routes: Routes = [
@@ -17,7 +20,15 @@ const routes: Routes = [
       { path: 'employees', component: SurveyManageEmployeeComponent },
     ]
   },
-  {path: '' , component: SurveyAssignmentListComponent },
+  {
+    path: 'form-manage/:id', component: SurveyManageDetailComponent,
+    children: [
+      { path: '', redirectTo: 'infor-care', pathMatch: 'full' },
+      { path: 'infor-survey-evaluation', component: SurveyManageDetailSurveyImformationComponent },
+      { path: 'infor-care', component: SurveyManageDetailCustomerComponent }
+    ]
+  },
+  { path: '', component: SurveyAssignmentListComponent },
   {
     path: 'form',
     component: SurveyAssignmentFormComponent

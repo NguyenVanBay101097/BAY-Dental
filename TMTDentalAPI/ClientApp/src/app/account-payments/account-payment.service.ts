@@ -13,6 +13,17 @@ export class AccountPaymentBasic {
     amount: number;
 }
 
+export class AccountPaymentSave {
+    paymentDate: string;
+    communication: string;
+    journalId: string;
+    partnerType: string;
+    amount: number;
+    paymentType: string;
+    partnerId: string;
+    hrPayslipId: string;
+}
+
 export class AccountPaymentPaged {
     offset: number;
     limit: number;
@@ -20,6 +31,7 @@ export class AccountPaymentPaged {
     partnerType: string;
     state: string;
     paymentDateFrom: string;
+    resultSelection: string;
     paymentDateTo: string;
     saleOrderId: string;
     partnerId: string;
@@ -45,7 +57,7 @@ export class AccountPaymentSupplierDefaultGetRequest {
     invoiceIds: string[];
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AccountPaymentService {
     apiUrl = 'api/AccountPayments';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -58,8 +70,16 @@ export class AccountPaymentService {
         return this.http.get<AccountPaymentDisplay>(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    create(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl, val);
+    create(val: any): Observable<AccountPaymentBasic> {
+        return this.http.post<AccountPaymentBasic>(this.baseApi + this.apiUrl, val);
+    }
+
+    createMultipleAndConfirmUI(vals: any): Observable<AccountPaymentBasic[]> {
+        return this.http.post<AccountPaymentBasic[]>(this.baseApi + this.apiUrl + '/CreateMultipleAndConfirmUI', vals);
+    }
+
+    update(id, val) {
+        return this.http.put(this.baseApi + this.apiUrl + '/' + id, val);
     }
 
     actionCancel(ids: any) {
@@ -90,7 +110,7 @@ export class AccountPaymentService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
     }
 
-    supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest){
+    supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {
         return this.http.post(this.baseApi + this.apiUrl + '/SupplierDefaultGet', val);
     }
 }
