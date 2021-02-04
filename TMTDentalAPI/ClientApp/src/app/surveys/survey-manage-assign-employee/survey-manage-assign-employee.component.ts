@@ -1,6 +1,8 @@
+import { Route } from '@angular/compiler/src/core';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -54,6 +56,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
+    private router: Router,
     private partnerService: PartnerService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
@@ -194,6 +197,11 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       }
     )
     sender.closeRow(rowIndex);
+  }
+
+  clickItem(event) {
+    if (event.dataItem)
+      this.router.navigateByUrl('/surveys/form-manage/' + event.dataItem.id);
   }
 
   onChaneEmp(emp) {
