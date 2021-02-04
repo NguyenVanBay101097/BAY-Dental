@@ -223,7 +223,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.pricelist}}
+                                   <strong>{{getAmountTotal | number}}</strong> 
                                 </td>
                             </tr>
 
@@ -243,8 +243,8 @@
                                     <tr>
                                         <th scope="col" style="width: 120px">Dịch vụ</th>
                                         <th scope="col" style="width: 80px">Bác sĩ</th>
-                                        <th scope="col" style="width: 80px" class="text-right">SL</th>
-                                        <th scope="col" style="width: 120px">Thông tin bổ sung</th>
+                                        <th scope="col" style="width: 50px">SL</th>
+                                        <th scope="col" style="width: 150px">Thông tin bổ sung</th>
                                     </tr>
                                 </thead>
                                 <tbody *ngIf="surveyAssignment.saleOrder">

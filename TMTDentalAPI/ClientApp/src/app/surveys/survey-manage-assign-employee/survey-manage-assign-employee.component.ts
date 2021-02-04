@@ -46,7 +46,13 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     { value: "done", name: "Hoàn thành" },
     { value: "contact", name: "Đang liên hệ" },
     { value: "", name: "Tổng khảo sát" }
-  ]
+  ];
+
+  filteredStatus = [
+    { value: "done", name: "Hoàn thành" },
+    { value: "contact", name: "Đang liên hệ" },
+    { value: "draft", name: "Chưa gọi" },
+  ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
