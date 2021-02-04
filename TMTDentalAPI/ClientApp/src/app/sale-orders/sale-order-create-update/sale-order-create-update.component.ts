@@ -694,10 +694,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     val.CardId = val.card ? val.card.id : null;
     val.OrderLines.forEach(line => {
       if (line.Employee) {
-        line.EmployeeId = line.Employee.Id;       
+        line.EmployeeId = line.Employee.Id;
       }
 
-      if(line.Assinstant){
+      if (line.Assinstant) {
         line.AssistantId = line.Assistant.Id;
       }
 
@@ -831,7 +831,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         if (result.Employee) {
           this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
         }
-        
+
         if (result.Partner) {
           this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
         }
@@ -855,8 +855,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Hủy phiếu điều trị';
       modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
       modalRef.result.then(() => {
-        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => { 
-          this.loadRecord();        
+        this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
+          this.loadRecord();
+          document.getElementById('home-tab').click()
         });
       }, () => {
       });
