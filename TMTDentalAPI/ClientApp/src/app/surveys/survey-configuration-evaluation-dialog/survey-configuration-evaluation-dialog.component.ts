@@ -59,12 +59,14 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
 
   loadDefaultAnswer() {
     var answers = this.formGroup.get('answers') as FormArray;
+    var score = 5;
     for (let index = 1; index <= 5; index++) {
       var ans = new SurveyAnswerDisplay();
       ans.name = '';
-      ans.score = index;
+      ans.score = score;
       ans.sequence = index;
       answers.push(this.fb.group(ans));
+      score--;
     }
   }
 
