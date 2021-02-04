@@ -38,7 +38,6 @@ export class SurveyManageEmployeeComponent implements OnInit {
       this.gridData = res;
       this.loading = false;
     }, err => {
-      console.log(err);
       this.loading = false;
     })
   }

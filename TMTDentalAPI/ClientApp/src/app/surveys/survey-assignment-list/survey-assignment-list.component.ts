@@ -107,11 +107,8 @@ export class SurveyAssignmentListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(res);
-
       this.loading = false;
     }, err => {
-      console.log(err);
       this.loading = false;
     })
   }
