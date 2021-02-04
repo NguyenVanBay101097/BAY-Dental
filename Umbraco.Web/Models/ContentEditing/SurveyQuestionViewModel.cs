@@ -37,8 +37,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public int? Sequence { get; set; }
-        public ICollection<SurveyAnswerDisplay> Answers { get; set; } = new List<SurveyAnswerDisplay>();
+        public ICollection<SurveyAnswerSave> Answers { get; set; } = new List<SurveyAnswerSave>();
     }
 
     public class SurveyQuestionUpdateListPar
@@ -47,6 +46,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string Type { get; set; }
         public int? Sequence { get; set; }
+    }
+
+    public class SurveyQuestionResequenceVM
+    {
+        public int Offset { get; set; }
+
+        public IEnumerable<Guid> Ids { get; set; } = new List<Guid>();
     }
 
     public class SwapPar

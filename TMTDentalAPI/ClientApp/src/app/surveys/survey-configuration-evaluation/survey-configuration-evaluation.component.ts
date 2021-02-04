@@ -19,7 +19,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   gridData: GridDataResult;
   loading = false;
   questions: SurveyQuestionBasic[] = [];
-  limit: number = 20;
+  limit: number = 0;
   offset: number = 0;
   title: string = "Cấu hình đánh giá"
   searchUpdate = new Subject<string>();
@@ -71,7 +71,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   }
 
   doubleQuestion(item) {
-    this.surveyQuestionService.doublicateQuestion(item.id).subscribe(
+    this.surveyQuestionService.duplicate(item.id).subscribe(
       () => {
         this.loadDataFromApi();
         this.notificationService.show({
@@ -105,11 +105,15 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   }
 
   onDrop(event: CdkDragDrop<any[]>) {
+    if (event.previousIndex == event.currentIndex) {
+      return false;
+    }
+
     moveItemInArray(this.questions, event.previousIndex, event.currentIndex);
-    this.questions.forEach((item, idx) => {
-      item.sequence = idx + 1;
-    });
-    this.surveyQuestionService.updateListSequence(this.questions).subscribe(
+    var offset = Math.min(event.previousIndex, event.currentIndex);
+    var ids = this.questions.slice(offset, Math.max(event.previousIndex, event.currentIndex) + 1).map(x => x.id);
+ 
+    this.surveyQuestionService.resequence({ offset: offset, ids: ids }).subscribe(
       () => {
         this.notificationService.show({
           content: 'Sắp xếp thành công',

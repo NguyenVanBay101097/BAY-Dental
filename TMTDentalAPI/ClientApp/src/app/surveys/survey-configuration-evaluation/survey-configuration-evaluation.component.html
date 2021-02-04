@@ -27,12 +27,12 @@
                 <th scope="col">Thao tác</th>
             </thead>
             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)">
-                <tr *ngFor="let item of questions" cdkDrag cdkDragLockAxis="y">
+                <tr *ngFor="let item of questions;index as i" cdkDrag cdkDragLockAxis="y">
                     <th class="col-xs">
                         <div class="drag-handle text-center">
                             <ng-container [ngTemplateOutlet]="dragHandleTmpl">
                             </ng-container>
-                            {{item.sequence}}
+                            {{i + 1}}
                         </div>
                     </th>
                     <td class="col-md">{{item.name}}</td>

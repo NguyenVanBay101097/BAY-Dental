@@ -23,30 +23,25 @@
                             </tr>
                             <tr>
                                 <td colspan="2" class="o_td_label ">
-                                    <label class="o_form_label">Chọn hình câu thức trả lời</label>
+                                    <label class="o_form_label">Chọn hình thức câu trả lời</label>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" style="width: 50%;">
-                                    <input value="radio" class="mr-2" formControlName="type" type="radio" name="type"
-                                        id="radioType">
-                                    <label class="form-check-label" for="radioType">
-                                        Đánh giá theo điểm hài lòng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 50%;">
-                                    <input value="text" class="mr-2" formControlName="type" type="radio" name="type"
-                                        id="radioType1">
-                                    <label class="form-check-label" for="radioType1">
-                                        Đánh giá theo nội dung
-                                    </label>
+                                <td colspan="2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="radioType" value="radio">
+                                        <label class="form-check-label" for="radioType">Đánh giá theo điểm hài lòng</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" formControlName="type" id="radioType1" value="text">
+                                        <label class="form-check-label" for="radioType1">Đánh giá theo nội dung</label>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="table-responsive user-list">
-                        <table class="table"
-                            *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
+                        <table class="table table-sm" *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
                             <thead>
                                 <th class="text-center" scope="col">STT</th>
                                 <th scope="col">Câu trả lời</th>
@@ -55,19 +50,18 @@
                             <tbody cdkDropList (cdkDropListDropped)="onDrop($event)" formArrayName="answers">
                                 <tr *ngFor="let answer of answers.controls; let i=index" cdkDrag cdkDragLockAxis="y">
                                     <ng-container [formGroupName]="i">
-                                        <th class="col-xs">
+                                        <td class="col-xs vertical-align-middle" style="vertical-align: middle;">
                                             <div class="drag-handle text-center" cdkDragHandle>
                                                 <ng-container [ngTemplateOutlet]="dragHandleTmpl">
                                                 </ng-container>
-                                                {{answer.get('sequence') ? answer.get('sequence').value : 1}}
+                                                {{i + 1}}
                                             </div>
-                                        </th>
-                                        <td class="col-md">
-                                            <input type="text"
-                                                style="width: 100%;border: 1px solid whitesmoke ; border-radius: 5px;"
+                                        </td>
+                                        <td class="col-md" style="vertical-align: middle;">
+                                            <input type="text" class="form-control"
                                                 formControlName="name" required>
                                         </td>
-                                        <td class="col-xs">
+                                        <td class="col-xs" style="vertical-align: middle;">
                                             <span>
                                                 {{answer.get('score') ? answer.get('score').value : 1}}
                                             </span>

@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class SurveyQuestion : BaseEntity
     {
+        public SurveyQuestion()
+        {
+            Sequence = 10;
+        }
+
         /// <summary>
         /// Tên câu hỏi
         /// </summary>

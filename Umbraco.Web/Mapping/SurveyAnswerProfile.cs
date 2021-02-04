@@ -7,14 +7,16 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Umbraco.Web.Mapping
 {
-    public class SurveyAnswerProfile: Profile
+    public class SurveyAnswerProfile : Profile
     {
         public SurveyAnswerProfile()
         {
             CreateMap<SurveyAnswer, SurveyAnswerBasic>();
             CreateMap<SurveyAnswer, SurveyAnswerDisplay>();
             CreateMap<SurveyAnswerDisplay, SurveyAnswer>()
-                .ForMember(x=> x.Id, x=> x.Ignore());
+                .ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<SurveyAnswerSave, SurveyAnswer>()
+                .ForMember(x => x.Id, x => x.Ignore());
         }
     }
 }

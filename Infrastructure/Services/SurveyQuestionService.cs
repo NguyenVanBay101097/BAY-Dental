@@ -13,7 +13,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class SurveyQuestionService: BaseService<SurveyQuestion>, ISurveyQuestionService
+    public class SurveyQuestionService : BaseService<SurveyQuestion>, ISurveyQuestionService
     {
         readonly public IMapper _mapper;
         public SurveyQuestionService(IAsyncRepository<SurveyQuestion> repository, IHttpContextAccessor httpContextAccessor,
@@ -32,14 +32,15 @@ namespace Infrastructure.Services
             }
             if (!string.IsNullOrEmpty(val.Type))
             {
-                query = query.Where(x=> x.Type == val.Type);
+                query = query.Where(x => x.Type == val.Type);
             }
 
             var count = await query.CountAsync();
             query = query.Skip(val.Offset);
             if (val.Limit > 0)
                 query = query.Take(val.Limit);
-            var items = await query.OrderBy(x=> x.Sequence).ToListAsync();
+
+            var items = await query.OrderBy(x => x.Sequence).ThenByDescending(x => x.DateCreated).ToListAsync();
 
             return new PagedResult2<SurveyQuestionBasic>(count, val.Offset, val.Limit)
             {

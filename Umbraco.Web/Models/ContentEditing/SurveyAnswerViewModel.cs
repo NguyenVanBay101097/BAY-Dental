@@ -19,4 +19,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? Sequence { get; set; }
     }
 
+    public class SurveyAnswerSave
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public decimal? Score { get; set; }
+    }
 }

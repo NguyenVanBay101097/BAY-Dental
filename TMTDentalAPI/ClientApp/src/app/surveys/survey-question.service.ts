@@ -60,12 +60,12 @@ export class SurveyQuestionService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  doublicateQuestion(id: string) {
+  duplicate(id: string) {
     return this.http.post(this.base_api + this.apiUrl + '/' + id + '/Duplicate', null);
   }
 
-  updateListSequence(vals: any) {
-    return this.http.post(this.base_api + this.apiUrl + '/UpdateListSequence', vals)
+  resequence(vals: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/Resequence', vals)
   }
 
   delete(id: string) {
