@@ -958,21 +958,19 @@ namespace Infrastructure.Services
 
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             if (string.IsNullOrWhiteSpace(name))
-                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
-
-                            var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            if (!string.IsNullOrWhiteSpace(reference))
-                            {
-                                if (partner_code_list.Contains(reference))
-                                    errs.Add($"Đã tồn tại mã {title_dict[val.Type]} {reference}");
-                                else
-                                    partner_code_list.Add(reference);
-                            }
-
-
+                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");                    
 
                             if (val.Type == "customer")
                             {
+                                var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
+                                if (!string.IsNullOrWhiteSpace(reference))
+                                {
+                                    if (partner_code_list.Contains(reference))
+                                        errs.Add($"Đã tồn tại mã {title_dict[val.Type]} {reference}");
+                                    else
+                                        partner_code_list.Add(reference);
+                                }
+
                                 var medicalHistory = Convert.ToString(worksheet.Cells[row, 13].Value);
                                 if (!string.IsNullOrWhiteSpace(medicalHistory))
                                 {
@@ -1024,21 +1022,19 @@ namespace Infrastructure.Services
                             }
                             else if (val.Type == "supplier")
                             {
-
                                 try
                                 {
                                     data.Add(new PartnerImportRowExcel
                                     {
                                         Name = name,
-                                        Ref = reference,
-                                        Phone = Convert.ToString(worksheet.Cells[row, 3].Value),
-                                        Fax = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                        Street = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                        WardName = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                        DistrictName = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                        CityName = Convert.ToString(worksheet.Cells[row, 8].Value),
-                                        Email = Convert.ToString(worksheet.Cells[row, 9].Value),
-                                        Note = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                        Phone = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                        Fax = Convert.ToString(worksheet.Cells[row, 3].Value),
+                                        Street = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                        WardName = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                        DistrictName = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                        CityName = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                        Email = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                        Note = Convert.ToString(worksheet.Cells[row, 9].Value),
                                     });
                                 }
                                 catch (Exception e)
