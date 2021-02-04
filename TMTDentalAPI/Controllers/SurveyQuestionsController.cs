@@ -45,7 +45,7 @@ namespace TMTDentalAPI.Controllers
             var question = await _surveyQuestionService.SearchQuery(x=> x.Id == id).Include(x=> x.Answers).FirstOrDefaultAsync();
             if (question == null)
                 return NotFound();
-            question.Answers.OrderByDescending(x=> x.Sequence);
+            question.Answers.OrderBy(x=> x.Sequence);
             return Ok(_mapper.Map<SurveyQuestionDisplay>(question));
         }
 
