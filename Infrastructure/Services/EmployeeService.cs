@@ -23,8 +23,11 @@ namespace Infrastructure.Services
         private readonly IEmployeeCategoryService _employeeCategoryService;
         private readonly IMyCache _cache;
         private readonly AppTenant _tenant;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         public EmployeeService(IAsyncRepository<Employee> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper, IEmployeeCategoryService employeeCategoryService, UserManager<ApplicationUser> userManager, IMyCache cache, ITenant<AppTenant> tenant)
+            IMapper mapper, IEmployeeCategoryService employeeCategoryService, UserManager<ApplicationUser> userManager, IMyCache cache, ITenant<AppTenant> tenant,
+            RoleManager<ApplicationRole> roleManager
+            )
         : base(repository, httpContextAccessor)
         {
             _employeeCategoryService = employeeCategoryService;
@@ -32,6 +35,7 @@ namespace Infrastructure.Services
             _userManager = userManager;
             _cache = cache;
             _tenant = tenant?.Value;
+            _roleManager = roleManager;
         }
 
         private IQueryable<Employee> GetQueryPaged(EmployeePaged val)
@@ -250,8 +254,9 @@ namespace Infrastructure.Services
             var groupObj = GetService<IResGroupService>();
             var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
             if (groups.Count() == 0)
-            {    
-                await groupObj.AddMissingIrDataForSurvey();
+            {
+                var surAssObj = GetService<ISurveyAssignmentService>();
+                await surAssObj.AddIrDataForSurvey();
                 groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" });
             }
 
@@ -271,8 +276,47 @@ namespace Infrastructure.Services
                 user.ResGroupsUsersRels.Add(new ResGroupsUsersRel() { GroupId = empl.GroupId.Value });
             await _userManager.UpdateAsync(user);
 
+            //update role
+            await UpdateRoleToUserForSurvey(empl, groups);
+
             //clear cache survey domainruleget
             _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}-SurveyAssignment");
+        }
+
+        public async Task UpdateRoleToUserForSurvey(Employee empl, IEnumerable<ResGroupBasic> groups = null)
+        {
+            if (empl.UserId == null) return;
+            if (groups == null || groups.Count() == 0)
+            {
+                var groupObj = GetService<IResGroupService>();
+                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" });
+            }
+
+            if (groups.Count() == 0) return;
+
+            var roles = await _roleManager.Roles.Where(x => groups.Select(x => x.Name).Contains(x.Name)).ToListAsync();
+            if(roles.Count == 0)
+            {
+                var surAss = GetService<ISurveyAssignmentService>();
+                await surAss.AddRoleForSurvey();
+                roles = await _roleManager.Roles.Where(x => groups.Select(x => x.Name).Contains(x.Name)).ToListAsync();
+            }
+            // xóa all role survey from user
+            foreach (var role in roles)
+            {
+                var result2 = await _userManager.RemoveFromRoleAsync(empl.User, role.Name);
+            }
+
+            // add only a role for user
+            if (empl.IsAllowSurvey == true && empl.GroupId.HasValue)
+            {
+                var group = groups.FirstOrDefault(x => x.Id == empl.GroupId);
+                var role = await _roleManager.FindByNameAsync(group.Name);
+                await _userManager.AddToRoleAsync(empl.User, role.Name);
+            }
+
+            // xóa cache role
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{empl.UserId}");
         }
     }
 }

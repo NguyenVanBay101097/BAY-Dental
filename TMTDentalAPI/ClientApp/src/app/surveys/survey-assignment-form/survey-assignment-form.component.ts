@@ -154,6 +154,10 @@ export class SurveyAssignmentFormComponent implements OnInit {
     });
   }
 
+  get getAmountTotal() {
+    return this.formGroup.get('saleOrder').value.amountTotal;
+  }
+
 
 
 

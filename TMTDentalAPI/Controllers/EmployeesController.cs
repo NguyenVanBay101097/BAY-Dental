@@ -196,6 +196,7 @@ namespace TMTDentalAPI.Controllers
                         }
 
                         employee.UserId = user.Id;
+                        employee.User = user;
                     }
                 }
 

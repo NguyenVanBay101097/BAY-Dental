@@ -12,17 +12,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Services
 {
     public class SurveyAssignmentService : BaseService<SurveyAssignment>, ISurveyAssignmentService
     {
         readonly public IMapper _mapper;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         public SurveyAssignmentService(IAsyncRepository<SurveyAssignment> repository, IHttpContextAccessor httpContextAccessor,
+            RoleManager<ApplicationRole> roleManager,
              IMapper mapper
             ) : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _roleManager = roleManager;
         }
 
         public async Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val)
@@ -244,6 +248,106 @@ namespace Infrastructure.Services
                     return null;
             }
         }
-        
+
+        public async Task AddIrDataForSurvey()
+        {
+            //tao cate
+            var cateObj = GetService<IIrModuleCategoryService>();
+            var cateSequenceMax = await cateObj.SearchQuery().MaxAsync(x => x.Sequence);
+            var cate = await cateObj.CreateAsync(new IrModuleCategory()
+            {
+                Name = "Survey",
+                Sequence = cateSequenceMax == null ? 1 : cateSequenceMax + 1,
+                Visible = false
+            });
+            //tao resgroup include
+            var groupObj = GetService<IResGroupService>();
+            var empGroup = new ResGroup()
+            {
+                CategoryId = cate.Id,
+                Name = "Nhân viên khảo sát",
+            };
+            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
+             new ResGroup() {
+
+              CategoryId = cate.Id,
+                Name = "Quản lý khảo sát",
+             },
+            empGroup
+             });
+            //tao model data
+            var modelDataObj = GetService<IIRModelDataService>();
+            var modelData = await modelDataObj.CreateAsync(new IRModelData()
+            {
+                Name = "survey_assignment",
+                Module = "survey",
+                ResId = cate.Id.ToString(),
+                Model = "ir.module.category"
+            });
+            // tao rule cho việc get assignment by employee
+            var ruleObj = GetService<IIRRuleService>();
+            var modelObj = GetService<IIRModelService>();
+            var model = await modelObj.CreateAsync(new IRModel()
+            {
+                Name = "Survey Assignment",
+                Model = "SurveyAssignment",
+                Transient = true,
+            });
+            var rule = new IRRule()
+            {
+                Name = "survey assignment by employee",
+                Global = true,
+                Active = true,
+                PermUnlink = true,
+                PermWrite = true,
+                PermRead = true,
+                PermCreate = true,
+                ModelId = model.Id,
+                Code = "survey.assignment_employee",
+            };
+
+            foreach (var group in groups)
+            {
+                if (group.Id == empGroup.Id)
+                    rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
+            }
+            await ruleObj.CreateAsync(rule);
+
+            // tạo roles cố định cho 2 group trên
+            await AddRoleForSurvey();
+        }
+
+        public async Task AddRoleForSurvey()
+        {
+
+            //tạo role with function for above resgruop
+            var roles = new List<ApplicationRole>() {
+            new ApplicationRole()
+            {
+                Name = "Quản lý khảo sát",
+                NormalizedName = "quanlykhaosat",
+                Functions = new List<ApplicationRoleFunction>()
+                {
+                    new ApplicationRoleFunction(){Func = "Survey"}
+                }
+            },
+             new ApplicationRole()
+            {
+                Name = "Nhân viên khảo sát",
+                NormalizedName = "nhanvienkhaosat",
+                Functions = new List<ApplicationRoleFunction>()
+                {
+                    new ApplicationRoleFunction(){Func = "Survey.Assignment.Read"},
+                    new ApplicationRoleFunction(){Func = "Survey.Assignment.NhanvienUpdate"}
+                }
+            }
+            };
+
+            foreach (var role in roles)
+            {
+                await _roleManager.CreateAsync(role);
+            }
+        }
+
     }
 }

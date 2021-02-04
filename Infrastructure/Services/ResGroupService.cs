@@ -23,14 +23,16 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMyCache _cache;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public ResGroupService(IAsyncRepository<ResGroup> repository, IHttpContextAccessor httpContextAccessor,
+        public ResGroupService(IAsyncRepository<ResGroup> repository, IHttpContextAccessor httpContextAccessor, RoleManager<ApplicationRole> roleManager,
             IMapper mapper, IHostingEnvironment hostingEnvironment, IMyCache cache)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _hostingEnvironment = hostingEnvironment;
             _cache = cache;
+            _roleManager = roleManager;
         }
 
         private IQueryable<ResGroup> GetQueryPaged(ResGroupPaged val)
@@ -641,77 +643,13 @@ namespace Infrastructure.Services
             if (moduleCate == null && max > 0 && val.ModuleName == "survey.survey_assignment")
             {
                 max = max - 1;
-                await AddMissingIrDataForSurvey();
+                var surAssObj = GetService<ISurveyAssignmentService>();
+                await surAssObj.AddIrDataForSurvey();
                 return await GetByModelDataModuleName(val);
             }
 
             var res = await SearchQuery(x => x.CategoryId == moduleCate.Id).ToListAsync();
             return _mapper.Map<IEnumerable<ResGroupBasic>>(res);
-        }
-
-        public async Task AddMissingIrDataForSurvey()
-        {
-            //tao cate
-            var cateObj = GetService<IIrModuleCategoryService>();
-            var cateSequenceMax = await cateObj.SearchQuery().MaxAsync(x => x.Sequence);
-            var cate = await cateObj.CreateAsync(new IrModuleCategory()
-            {
-                Name = "Survey",
-                Sequence = cateSequenceMax == null ? 1 : cateSequenceMax + 1,
-                Visible = false
-            });
-            //tao resgroup include
-            var groupObj = GetService<IResGroupService>();
-            var empGroup = new ResGroup()
-            {
-                CategoryId = cate.Id,
-                Name = "Nhân viên",
-            };
-            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
-             new ResGroup() {
-
-              CategoryId = cate.Id,
-                Name = "Quản lý",
-             },
-            empGroup
-             });
-            //tao model data
-            var modelDataObj = GetService<IIRModelDataService>();
-            var modelData = await modelDataObj.CreateAsync(new IRModelData()
-            {
-                Name = "survey_assignment",
-                Module = "survey",
-                ResId = cate.Id.ToString(),
-                Model = "ir.module.category"
-            });
-            // tao rule cho việc get assignment by employee
-            var ruleObj = GetService<IIRRuleService>();
-            var modelObj = GetService<IIRModelService>();
-            var model = await modelObj.CreateAsync(new IRModel()
-            {
-                Name = "Survey Assignment",
-                Model = "SurveyAssignment",
-                Transient = true,
-            });
-            var rule = new IRRule()
-            {
-                Name = "survey assignment by employee",
-                Global = true,
-                Active = true,
-                PermUnlink = true,
-                PermWrite = true,
-                PermRead = true,
-                PermCreate = true,
-                ModelId = model.Id,
-                Code = "survey.assignment_employee",
-            };
-
-            foreach (var group in groups)
-            {
-                if (group.Id == empGroup.Id)
-                    rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
-            }
-            await ruleObj.CreateAsync(rule);
         }
     }
 }
