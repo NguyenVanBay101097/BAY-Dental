@@ -275,9 +275,9 @@ namespace TMTDentalAPI.Controllers
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
 
                             if (string.IsNullOrEmpty(name))
-                                errs.Add("Tên sản phẩm là bắt buộc");
+                                errs.Add("Tên dịch vụ là bắt buộc");
                             if (string.IsNullOrEmpty(categName))
-                                errs.Add("Nhóm sản phẩm là bắt buộc");
+                                errs.Add("Nhóm dịch vụ là bắt buộc");
 
                             if (errs.Any())
                             {

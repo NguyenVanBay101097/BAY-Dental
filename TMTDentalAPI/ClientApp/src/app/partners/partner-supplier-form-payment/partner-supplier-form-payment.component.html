@@ -4,11 +4,6 @@
             {{dataItem.paymentDate | date : 'shortDate' }}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="paymentType" title="Loại" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{showPaymentType(dataItem.paymentType)}}
-        </ng-template>
-    </kendo-grid-column>
     <kendo-grid-column title="Phương thức" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.journalName}}
