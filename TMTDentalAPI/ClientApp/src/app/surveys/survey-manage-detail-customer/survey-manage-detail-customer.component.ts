@@ -49,7 +49,6 @@ export class SurveyManageDetailCustomerComponent implements OnInit {
     if (this.id) {
       this.surveyService.get(this.id).subscribe(result => {
         this.surveyAssignment = result;
-        console.log(this.surveyAssignment);
         this.formGroup.patchValue(this.surveyAssignment);
         // let dateOrder = new Date(result.dateOrder);
         // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
