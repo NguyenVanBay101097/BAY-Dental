@@ -27,7 +27,6 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Category, x => x.Ignore());
             CreateMap<Employee, EmployeeDisplay>()
-                .ForMember(x => x.UserAvatar, x => x.MapFrom(x => x.User.Partner.Avatar))
                 .ForMember(x => x.UserName, x => x.MapFrom(x => x.User.UserName))
                 .ForMember(x => x.IsUser, x => x.MapFrom(x => x.User != null && x.User.Active))
                 .ForMember(x => x.UserCompany, x => x.MapFrom(x => x.User.Company))
