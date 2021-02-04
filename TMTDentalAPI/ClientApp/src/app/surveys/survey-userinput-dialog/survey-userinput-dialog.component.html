@@ -22,7 +22,7 @@
                                     <div class="radio pl-2" *ngFor="let item of line.get('question').value.answers">
                                         <input formControlName="score" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"   [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)" >
                                         <label class="ml-1" [for]="item.id">
-                                            {{item.name}}
+                                            {{item.score}} điểm: {{item.name}}
                                         </label>
                                     </div>
                                 </ng-container>

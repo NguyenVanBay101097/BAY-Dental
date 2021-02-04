@@ -44,7 +44,7 @@ namespace Infrastructure.Services
                         QuestionId = s.QuestionId,
                         Score = s.Score,
                         Sequence = s.Sequence
-                    }).OrderByDescending(s => s.Sequence).ToList()
+                    }).OrderByDescending(s => s.Score).ToList()
                 },
                 AnswerId = x.AnswerId.HasValue ? x.AnswerId : null,
                 Answer = x.Answer != null ? new SurveyAnswerDisplay
@@ -94,7 +94,7 @@ namespace Infrastructure.Services
                                 QuestionId = x.QuestionId,
                                 Score = x.Score,
                                 Sequence = x.Sequence
-                            }).OrderByDescending(x => x.Sequence).ToList()
+                            }).OrderByDescending(x => x.Score).ToList()
                         },
                         AnswerId = maxAnswer.Id,
                         Answer = new SurveyAnswerDisplay
@@ -200,8 +200,8 @@ namespace Infrastructure.Services
 
 
 
-            userinput.MaxScore = maxNumber;
-            userinput.Score = Math.Round(((totalNumber * maxNumber) / totalMax), 1);
+            userinput.MaxScore = 5;
+            userinput.Score = Math.Round(((totalNumber * 5) / totalMax), 1);
         }
 
         public async Task UpdateUserInput(Guid id, SurveyUserInputSave val)

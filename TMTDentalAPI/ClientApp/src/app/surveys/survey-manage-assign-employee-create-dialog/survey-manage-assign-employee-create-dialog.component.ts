@@ -85,16 +85,18 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
     if (this.formGroup.invalid) { return false }
     var vals = this.formGroup.value ? this.formGroup.value.arrs : null;
     if (vals) {
+      vals = vals.filter(x => x.employee != null);
       vals.forEach(item => {
         item.employeeId = item.employee ? item.employee.id : null;
       });
     }
     else { return; }
-    this.surveyService.createListAssign(vals).subscribe(
-      result => {
-        this.activeModal.close();
-      }
-    )
+    if (vals && vals.length > 0) {
+      this.surveyService.createListAssign(vals).subscribe(
+        () => { }
+      )
+    }
+    this.activeModal.close();
   }
 
 }
