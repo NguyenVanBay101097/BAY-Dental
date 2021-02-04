@@ -54,8 +54,8 @@ export class LayoutSidebarComponent implements OnInit {
       children: [
         { name: 'Danh sách khảo sát', link: '/surveys' },
         { name: 'Quản lý phần việc', link: '/surveys/manage' },
-        { name: 'Cấu hình đánh giá', link: '/surveys/config' },
-      ],
+        { name: 'Cấu hình đánh giá', link: '/surveys/config'  },
+      ]
     },
     {
       name: 'Mua hàng',
