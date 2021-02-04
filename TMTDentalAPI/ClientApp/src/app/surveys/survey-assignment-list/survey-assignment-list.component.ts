@@ -6,7 +6,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
@@ -19,11 +19,12 @@ import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from
   styleUrls: ['./survey-assignment-list.component.css']
 })
 export class SurveyAssignmentListComponent implements OnInit {
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
-  
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
+
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   filteredEmployees: EmployeeSimple[];
+  employees: EmployeeSimple[] = [];
   search: string;
   limit = 20;
   offset = 0;
@@ -41,7 +42,7 @@ export class SurveyAssignmentListComponent implements OnInit {
   statuses = [
     { value: "done", name: "Hoàn thành" },
     { value: "contact", name: "Đang liên hệ" },
-    { value: "draft", name: "Chưa gọi" }, 
+    { value: "draft", name: "Chưa gọi" },
     { value: "", name: "Tổng khảo sát" }
   ];
 
@@ -75,6 +76,14 @@ export class SurveyAssignmentListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
+    this.empCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.empCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result;
+      this.empCbx.loading = false;
+    });
 
     this.loadDataFromApi();
     this.loadStatusCount();
@@ -108,7 +117,10 @@ export class SurveyAssignmentListComponent implements OnInit {
   }
 
   loadEmployees() {
-    return this.searchEmployees().subscribe(result => this.filteredEmployees = result);
+    return this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = result;
+      this.employees = result;
+    });
   }
 
   searchEmployees(search?: string) {
@@ -126,13 +138,13 @@ export class SurveyAssignmentListComponent implements OnInit {
   }
 
   employee(id) {
-    var emp = this.filteredEmployees.find(x => x.id == id);
+    var emp = this.employees.find(x => x.id == id);
     return emp;
   }
 
   clickItem(item) {
     var id = item.dataItem.id;
-    this.router.navigate(['/surveys/form'], { queryParams: { id: id} });
+    this.router.navigate(['/surveys/form'], { queryParams: { id: id } });
   }
 
   public pageChange(event: PageChangeEvent): void {

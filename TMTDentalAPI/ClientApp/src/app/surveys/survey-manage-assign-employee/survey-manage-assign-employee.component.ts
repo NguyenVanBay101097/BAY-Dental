@@ -23,11 +23,12 @@ import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from
   styleUrls: ['./survey-manage-assign-employee.component.css']
 })
 export class SurveyManageAssignEmployeeComponent implements OnInit {
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   filteredEmployees: EmployeeSimple[];
+  employees: EmployeeSimple[] = [];
   search: string;
   limit = 10;
   offset = 0;
@@ -71,6 +72,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.searchUpdate.pipe(
@@ -80,6 +83,16 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.search = value || '';
         this.loadDataFromApi();
       });
+
+    this.empCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.empCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result;
+      this.empCbx.loading = false;
+    });
+
     this.loadDataFromApi();
     this.loadStatusCount();
     this.loadEmployees();
@@ -128,7 +141,10 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   loadEmployees() {
-    return this.searchEmployees().subscribe(result => this.filteredEmployees = result);
+    return this.searchEmployees().subscribe(result => {
+      this.filteredEmployees = result
+      this.employees = result;
+    });
   }
 
   searchEmployees(search?: string) {
@@ -218,7 +234,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   }
 
   employee(id) {
-    var emp = this.filteredEmployees.find(x => x.id == id);
+    var emp = this.employees.find(x => x.id == id);
     return emp;
   }
 
