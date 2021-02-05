@@ -550,6 +550,49 @@ namespace Infrastructure.Services
         }
 
 
+        public async Task InsertIMedicineOrderRuleIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var iruleObj = GetService<IIRRuleService>();        
+            var model = await modelDataObj.GetRef<IRModel>("medicineOrder.medicine_order_comp_rule");
+            if (model == null)
+            {
+                var irModel = await modelObj.SearchQuery(x => x.Model == "MedicineOrders").FirstOrDefaultAsync();
+                if(irModel == null)
+                {
+                    irModel = new IRModel
+                    {
+                        Name = "Hóa đơn thuốc",
+                        Model = "MedicineOrders",
+                    };
+
+                    modelObj.Sudo = true;
+                    await modelObj.CreateAsync(model);
+                }
+              
+                var irule = new IRRule
+                {
+                    Name = "MedicineOrder multi-company",
+                    ModelId = irModel.Id,
+                    Code = "medicineOrder.medicine_order_comp_rule"
+                };
+
+                iruleObj.Sudo = true;
+                await iruleObj.CreateAsync(irule);
+
+                var reference = irule.Code.Split('.');
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Module = reference[0],
+                    Name = reference[1],                  
+                    Model = "ir.rule",
+                    ResId = irule.Id.ToString()
+                });
+            }
+        }
+
 
 
 
