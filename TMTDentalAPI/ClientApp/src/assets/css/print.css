@@ -1,4 +1,4 @@
-@page { margin: 0 }
+@page { margin: 0; margin-bottom:3mm; margin-top: 3mm; }
 body { margin: 0 }
 .sheet {
   margin: 0;

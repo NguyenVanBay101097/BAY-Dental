@@ -8,34 +8,27 @@
     <div class="d-flex mb-1">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-        <img class="me-3" style="width: 100px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            <img class="me-3" style="width: 100px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
         <div class="media-body">
             @if (!string.IsNullOrEmpty(Model.Company.Name))
-        {
-            <h5 class="mb-0">@Model.Company.Name</h5>
-        }
+            {
+                <h5 class="mb-0">@Model.Company.Name</h5>
+            }
             @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
-        {
-            <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
-        }
+            {
+                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+            }
+
             @if (!string.IsNullOrEmpty(Model.Company.Phone))
-        {
-            <div>
-                <span>ĐT: @Model.Company.Phone</span>
-                @if (!string.IsNullOrEmpty(Model.Company.Email))
-                {
-                <span> - Email: @Model.Company.Email</span>
-                }
-            </div>
-        }
-        else
-        {
+            {
+                <div>Điện thoại: @Model.Company.Phone</div>
+            }
             @if (!string.IsNullOrEmpty(Model.Company.Email))
             {
-            <span>Email: @Model.Company.Email</span>
+                <div>Email: @Model.Company.Email</div>
             }
-        }
+
         </div>
     </div>
     <div class="text-center mb-1">
@@ -102,23 +95,23 @@
                 @{ var index = 1; }
                 @foreach (var line in Model.Lines)
                 {
-                <tr>
-                    <td width="30"><span class="font-weight-600">@(index++).</span></td>
-                    <td>
-                        <div class="d-flex justify-content-between">
-                            <div class="font-weight-600">@line.Product.Name</div>
-                            <div>
-                                <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
-                                @line.Product.UOM.Name
+                    <tr>
+                        <td width="30"><span class="font-weight-600">@(index++).</span></td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <div class="font-weight-600">@line.Product.Name</div>
+                                <div>
+                                    <span class="font-weight-600">@line.Quantity.ToString("n0", culture)</span>
+                                    @line.Product.UOM.Name
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
-                            mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
-                            uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày (<span class="font-weight-600">@line.GetUseAtDisplay()</span>)
-                        </div>
-                    </td>
-                </tr>
+                            <div>
+                                Ngày uống <span class="font-weight-600">@line.NumberOfTimes.ToString("n0")</span> lần,
+                                mỗi lần <span class="font-weight-600">@line.AmountOfTimes.ToString("n0")</span> @line.Product.UOM.Name,
+                                uống trong <span class="font-weight-600">@line.NumberOfDays.ToString("n0")</span> ngày (<span class="font-weight-600">@line.GetUseAtDisplay()</span>)
+                            </div>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
