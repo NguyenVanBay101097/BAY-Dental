@@ -33,7 +33,13 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var partnerImgobj = GetService<IPartnerImageService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.DotKhamImages).ToListAsync();
+            foreach (var item in self)
+            {
+                var dotKhamImages = item.DotKhamImages;
+                await partnerImgobj.DeleteAsync(dotKhamImages);
+            }
             //foreach (var dk in self)
             //{
             //    if (dk.Steps.Any(x => x.IsDone))

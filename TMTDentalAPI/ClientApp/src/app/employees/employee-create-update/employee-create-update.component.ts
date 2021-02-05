@@ -86,7 +86,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userCompany: null,
       userCompanies: [[]],
       userName: null,
-      userPassword: [null, Validators.required],
+      userPassword: [null],
       createChangePassword: true,
       avatar: null
     });
@@ -184,6 +184,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
 
+      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+
       this.formCreate.get('userCompany').setValidators([Validators.required]);
       this.formCreate.get('userCompany').updateValueAndValidity();
 
@@ -201,6 +204,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     } else {
       this.formCreate.get('userName').setValidators([]);
       this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userPassword').setValidators([]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
 
       this.formCreate.get('userCompany').setValidators([]);
       this.formCreate.get('userCompany').updateValueAndValidity();
