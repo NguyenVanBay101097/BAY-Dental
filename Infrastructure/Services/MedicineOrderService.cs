@@ -58,6 +58,7 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<MedicineOrderBasic>>(items)
             };
+
             return paged;
         }
 
@@ -555,7 +556,7 @@ namespace Infrastructure.Services
             var modelObj = GetService<IIRModelService>();
             var modelDataObj = GetService<IIRModelDataService>();
             var iruleObj = GetService<IIRRuleService>();        
-            var model = await modelDataObj.GetRef<IRModel>("medicineOrder.medicine_order_comp_rule");
+            var model = await modelDataObj.GetRef<IRRule>("medicineOrder.medicine_order_comp_rule");
             if (model == null)
             {
                 var irModel = await modelObj.SearchQuery(x => x.Model == "MedicineOrders").FirstOrDefaultAsync();
@@ -564,11 +565,11 @@ namespace Infrastructure.Services
                     irModel = new IRModel
                     {
                         Name = "Hóa đơn thuốc",
-                        Model = "MedicineOrders",
+                        Model = "MedicineOrder",
                     };
 
                     modelObj.Sudo = true;
-                    await modelObj.CreateAsync(model);
+                    await modelObj.CreateAsync(irModel);
                 }
               
                 var irule = new IRRule
@@ -598,12 +599,11 @@ namespace Infrastructure.Services
 
         public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "base.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
+                case "medicineOrder.medicine_order_comp_rule":
+                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId == companyId );
                 default:
                     return null;
             }
