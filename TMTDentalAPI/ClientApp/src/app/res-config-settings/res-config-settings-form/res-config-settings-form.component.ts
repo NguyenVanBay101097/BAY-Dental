@@ -34,6 +34,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       groupTCare: false,
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
+      groupSurvey: false,
     });
 
     this.configSettingsService.defaultGet().subscribe((result: any) => {
