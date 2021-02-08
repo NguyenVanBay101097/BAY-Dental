@@ -497,7 +497,7 @@ namespace TMTDentalAPI.Controllers
             if (errors.Any())
                 return Ok(new { success = false, errors });
 
-            var vals = new List<Product>();
+            var toCreates = new List<Product>();
             //var uom = await _uomService.DefaultUOM();
             foreach (var item in data)
             {
@@ -515,10 +515,10 @@ namespace TMTDentalAPI.Controllers
                 pd.CategId = categDict[item.CategName].Id;
                 pd.ListPrice = 0;
                 pd.PurchasePrice = 0;
-                vals.Add(pd);
+                toCreates.Add(pd);
             }
 
-            await _productService.CreateAsync(vals);
+            await _productService.CreateAsync(toCreates);
 
             _unitOfWork.Commit();
 

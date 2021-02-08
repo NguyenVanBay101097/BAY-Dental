@@ -109,8 +109,8 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id &&
-            (x.ToInvoiceQuantity == null || (x.ToInvoiceQuantity != null && x.ToInvoiceQuantity > 0))
+            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id 
+            //(x.ToInvoiceQuantity == null || (x.ToInvoiceQuantity != null && x.ToInvoiceQuantity > 0))
             )
                 .Include(x => x.Product.UOM)
                 .Include(x => x.ProductUoM).ToListAsync();
@@ -119,7 +119,7 @@ namespace Infrastructure.Services
                 var uom = line.ProductUoM != null ? line.ProductUoM : line.Product.UOM;
                 medicineOrderLines.Add(new MedicineOrderLineDisplay
                 {
-                    Quantity = line.ToInvoiceQuantity.HasValue? line.ToInvoiceQuantity.Value : line.Quantity,
+                    Quantity = line.Quantity,
                     Price = line.Product.ListPrice,
                     AmountTotal = line.Quantity * line.Product.ListPrice,
                     ToaThuocLine = _mapper.Map<ToaThuocLineDisplay>(line),
