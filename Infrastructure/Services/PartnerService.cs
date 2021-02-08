@@ -958,7 +958,7 @@ namespace Infrastructure.Services
 
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             if (string.IsNullOrWhiteSpace(name))
-                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
+                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");                    
 
                             if (val.Type == "customer")
                             {
@@ -1022,7 +1022,6 @@ namespace Infrastructure.Services
                             }
                             else if (val.Type == "supplier")
                             {
-
                                 try
                                 {
                                     data.Add(new PartnerImportRowExcel

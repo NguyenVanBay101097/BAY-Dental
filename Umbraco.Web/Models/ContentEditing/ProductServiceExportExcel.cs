@@ -48,5 +48,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CategName { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+
+        public decimal? ListPrice { get; set; }
+
+        public string UomName { get; set; }
     }
 }
