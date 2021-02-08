@@ -58,6 +58,7 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<MedicineOrderBasic>>(items)
             };
+
             return paged;
         }
 
@@ -550,17 +551,59 @@ namespace Infrastructure.Services
         }
 
 
+        public async Task InsertIMedicineOrderRuleIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var iruleObj = GetService<IIRRuleService>();        
+            var model = await modelDataObj.GetRef<IRRule>("medicineOrder.medicine_order_comp_rule");
+            if (model == null)
+            {
+                var irModel = await modelObj.SearchQuery(x => x.Model == "MedicineOrders").FirstOrDefaultAsync();
+                if(irModel == null)
+                {
+                    irModel = new IRModel
+                    {
+                        Name = "Hóa đơn thuốc",
+                        Model = "MedicineOrder",
+                    };
+
+                    modelObj.Sudo = true;
+                    await modelObj.CreateAsync(irModel);
+                }
+              
+                var irule = new IRRule
+                {
+                    Name = "MedicineOrder multi-company",
+                    ModelId = irModel.Id,
+                    Code = "medicineOrder.medicine_order_comp_rule"
+                };
+
+                iruleObj.Sudo = true;
+                await iruleObj.CreateAsync(irule);
+
+                var reference = irule.Code.Split('.');
+
+                await modelDataObj.CreateAsync(new IRModelData
+                {
+                    Module = reference[0],
+                    Name = reference[1],                  
+                    Model = "ir.rule",
+                    ResId = irule.Id.ToString()
+                });
+            }
+        }
+
 
 
 
         public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "base.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId != Guid.Empty || companyIds.Contains(x.CompanyId));
+                case "medicineOrder.medicine_order_comp_rule":
+                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId == companyId );
                 default:
                     return null;
             }

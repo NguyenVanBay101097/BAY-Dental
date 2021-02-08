@@ -50,7 +50,6 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
 
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
-      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }

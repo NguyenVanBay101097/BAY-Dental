@@ -35,13 +35,13 @@ export class StockXuatNhapTonComponent implements OnInit {
   filteredCategs: ProductCategoryBasic[];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor(private reportService: StockReportService, private intlService: IntlService) { }
 
   ngOnInit() {
-    this.dateFrom = new Date(this.monthStart);
-    this.dateTo = new Date(this.monthEnd);
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -53,6 +53,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   onSearchChange(data) {
+    debugger
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();

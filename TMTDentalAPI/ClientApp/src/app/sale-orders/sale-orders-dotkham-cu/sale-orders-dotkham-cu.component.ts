@@ -119,6 +119,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       Doctor: [null, Validators.required],
       Lines: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
+      sequence: this.sequence
     });
 
     this.loadRecord();
