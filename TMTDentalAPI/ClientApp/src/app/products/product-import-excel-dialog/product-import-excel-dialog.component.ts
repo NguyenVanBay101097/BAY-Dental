@@ -64,8 +64,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
       return this.productService.importLabo(val);
     } if(this.type == 'labo_attach') {
       return this.productService.importLaboAttach(val);
-    }
-     else {
+    } else {
 
     }
   }
