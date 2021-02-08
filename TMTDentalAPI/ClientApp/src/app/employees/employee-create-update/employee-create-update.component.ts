@@ -186,6 +186,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
       this.formCreate.get('userPassword').setValidators([Validators.required]);
       this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(true);
 
       this.formCreate.get('userCompany').setValidators([Validators.required]);
       this.formCreate.get('userCompany').updateValueAndValidity();
@@ -207,6 +208,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
       this.formCreate.get('userPassword').setValidators([]);
       this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(false);
 
       this.formCreate.get('userCompany').setValidators([]);
       this.formCreate.get('userCompany').updateValueAndValidity();
