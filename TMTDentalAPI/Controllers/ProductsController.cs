@@ -290,10 +290,9 @@ namespace TMTDentalAPI.Controllers
                                 Name = name,
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
                                 CategName = categName,
-                                DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
                             };
                             data.Add(item);
                         }
@@ -574,8 +573,7 @@ namespace TMTDentalAPI.Controllers
                                 Name = name,
                                 Type = type,
                                 CategName = categName,
-                                DefaultCode = Convert.ToString(worksheet.Cells[row, 4].Value),
-                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                             };
                             data.Add(item);
                         }
