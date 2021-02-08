@@ -30,5 +30,10 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<SurveyUserInputLine> Lines { get; set; } = new List<SurveyUserInputLine>();
 
+        /// <summary>
+        /// danh sách nhãn khảo sát
+        /// </summary>
+        public ICollection<SurveyUserInputSurveyTagRel> SurveyUserInputSurveyTagRels { get; set; } = new List<SurveyUserInputSurveyTagRel>();
+
     }
 }

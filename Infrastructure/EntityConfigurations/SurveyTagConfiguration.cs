@@ -7,14 +7,15 @@ using System.Text;
 
 namespace Infrastructure.EntityConfigurations
 {
-    public class SurveyUserInputConfiguration : IEntityTypeConfiguration<SurveyUserInput>
+    public class SurveyTagConfiguration : IEntityTypeConfiguration<SurveyTag>
     {
-        public void Configure(EntityTypeBuilder<SurveyUserInput> builder)
+        public void Configure(EntityTypeBuilder<SurveyTag> builder)
         {
+            builder.Property(x => x.Name).IsRequired();
 
             builder.HasOne(x => x.CreatedBy)
-           .WithMany()
-           .HasForeignKey(x => x.CreatedById);
+               .WithMany()
+               .HasForeignKey(x => x.CreatedById);
 
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
