@@ -756,7 +756,7 @@ namespace TMTDentalAPI.Controllers
                 var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name) && x.UOMType == "reference").ToListAsync();
                 foreach (var uomName in uomNames)
                 {
-                    if (categDict.ContainsKey(uomName))
+                    if (uomDict.ContainsKey(uomName))
                         continue;
 
                     var uom = uoms.FirstOrDefault(x => x.Name == uomName);
@@ -764,8 +764,9 @@ namespace TMTDentalAPI.Controllers
                     {
                         var uomCateg = await _uomCategService.SearchQuery(x => x.MeasureType == "unit").FirstOrDefaultAsync();
                         uom = await _uomService.CreateAsync(new UoM { Name = uomName, CategoryId = uomCateg.Id });
-                        uomDict.Add(uomName, uom);
                     }
+
+                    uomDict.Add(uomName, uom);
                 }
             }
 

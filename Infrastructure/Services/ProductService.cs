@@ -233,6 +233,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 IsLabo = x.IsLabo,
                 ListPrice = x.ListPrice,
+                LaboPrice = x.LaboPrice,
                 PurchasePrice = x.PurchasePrice,
                 StepList = x.Steps.Select(s => new ProductStepSimple
                 {
