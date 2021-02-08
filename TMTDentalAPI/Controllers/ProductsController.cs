@@ -897,7 +897,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.DefaultCode;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
                     worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x=>x.Name).ToList());
-                    worksheet.Cells[row, 7].Value = item.PurchasePrice ?? 0;
+                    worksheet.Cells[row, 7].Value = item.LaboPrice ?? 0;
                 }
 
                 worksheet.Cells.AutoFitColumns();

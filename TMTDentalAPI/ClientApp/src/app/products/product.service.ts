@@ -217,10 +217,7 @@ export class ProductService {
   }
 
   excelServiceExport(paged) {
-    return this.http.get(
-      this.baseApi + this.apiUrl + "/ExportServiceExcelFile",
-      { responseType: "blob", params: paged }
-    );
+    return this.http.get(this.baseApi + this.apiUrl + "/ExportServiceExcelFile", { responseType: "blob", params: paged });
   }
 
   excelProductExport(data) {
