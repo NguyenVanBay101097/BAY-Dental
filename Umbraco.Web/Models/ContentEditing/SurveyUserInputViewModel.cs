@@ -71,6 +71,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public IEnumerable<SurveyUserInputLineSave> Lines { get; set; } = new List<SurveyUserInputLineSave>();
+        public IEnumerable<SurveyTagSave> SurveyTags { get; set; } = new List<SurveyTagSave>();
     }
 
     public class SurveyUserInputDefaultGet

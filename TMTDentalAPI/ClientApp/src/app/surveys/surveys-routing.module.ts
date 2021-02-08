@@ -9,6 +9,7 @@ import { SurveyManageDetailCustomerComponent } from './survey-manage-detail-cust
 import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-detail-survey-imformation/survey-manage-detail-survey-imformation.component';
 import { SurveyManageDetailComponent } from './survey-manage-detail/survey-manage-detail.component';
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
+import { SurveyTagListComponent } from './survey-tag-list/survey-tag-list.component';
 
 const routes: Routes = [
   { path: 'config', component: SurveyConfigurationEvaluationComponent },
@@ -27,6 +28,9 @@ const routes: Routes = [
       { path: 'infor-survey-evaluation', component: SurveyManageDetailSurveyImformationComponent },
       { path: 'infor-care', component: SurveyManageDetailCustomerComponent }
     ]
+  },
+  {
+    path: 'survey-tag', component: SurveyTagListComponent
   },
   { path: '', component: SurveyAssignmentListComponent },
   {

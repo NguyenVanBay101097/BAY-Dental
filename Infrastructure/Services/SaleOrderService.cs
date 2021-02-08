@@ -352,6 +352,7 @@ namespace Infrastructure.Services
                 }
 
                 sale.State = "done";
+                sale.DateDone = DateTime.Now;
 
                 var card = await cardObj.GetValidCard(sale.PartnerId);
                 if (card == null)
@@ -372,7 +373,12 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
             foreach (var sale in self)
+            {
                 sale.State = "sale";
+                sale.DateDone = null;
+            }
+                
+            
 
             await UpdateAsync(self);
         }
@@ -2164,6 +2170,7 @@ namespace Infrastructure.Services
             await UpdateAsync(order);
             //confirm sale order       
             order.State = "done";
+            order.DateDone = DateTime.Now;
             foreach (var line in order.OrderLines)
             {
                 if (line.State == "cancel")

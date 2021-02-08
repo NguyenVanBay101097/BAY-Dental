@@ -145,7 +145,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management' },
-        // { name: 'Nhãn khách hàng', link: '/partner-categories' },
+        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey'},
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products' },

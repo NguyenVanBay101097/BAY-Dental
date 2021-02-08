@@ -5,6 +5,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebService } from 'src/app/core/services/web.service';
 import { SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
+import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 import { SurveyUserInputDisplay, SurveyUserInputPaged, SurveyUserinputService } from '../survey-userinput.service';
 
 @Component({
@@ -16,10 +17,11 @@ export class SurveyUserinputDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;// có thể là input
   title: string;
-  surveyAssignmentStatus:string;
-  surveyAssignmentId : string;
+  surveyAssignmentStatus: string;
+  surveyAssignmentId: string;
   userinput: SurveyUserInputDisplay = new SurveyUserInputDisplay();
   question: any[] = [];
+  surveyTags: SurveyTagBasic[];
   limit: number = 20;
   offset: number = 0;
   search: string;
@@ -28,6 +30,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
+    private surveyTagService: SurveyTagService,
     private notificationService: NotificationService,
     private userInputService: SurveyUserinputService,
     private intlService: IntlService,
@@ -36,19 +39,20 @@ export class SurveyUserinputDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.formGroup = this.fb.group({
       score: null,
       maxScore: null,
       note: null,
+      tags: null,
       lines: this.fb.array([])
     });
-    
+
     if (this.id) {
       this.loadData();
     } else {
       this.loadDefault();
     }
+    this.loadSurveyTagList();
   }
 
   notify(style, content) {
@@ -80,6 +84,17 @@ export class SurveyUserinputDialogComponent implements OnInit {
     });
   }
 
+  loadSurveyTagList() {
+    this.searchSurveyTags().subscribe((result) => {
+      this.surveyTags = result.items;
+    });
+  }
+
+  searchSurveyTags(q?: string) {
+    var val = new SurveyTagPaged();
+    val.search = q || '';
+    return this.surveyTagService.getPaged(val);
+  }
 
 
   patchValue(res) {
@@ -97,7 +112,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
 
   }
 
-  onChange(line: FormGroup, item){
+  onChange(line: FormGroup, item) {
     var res = this.lines.controls.find(x => x.value.questionId === line.value.question.id);
     if (res) {
       line.get('answerId').setValue(item.id);
@@ -105,13 +120,13 @@ export class SurveyUserinputDialogComponent implements OnInit {
     }
   }
 
-  onSave(){
+  onSave() {
     var val = this.formGroup.value;
     this.activeModal.close(val);
   }
 
   // handleChange(line : FormGroup){
-    
+
   // }
 
   onCancel() {

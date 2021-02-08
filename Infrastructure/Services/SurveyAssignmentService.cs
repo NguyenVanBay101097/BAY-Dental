@@ -33,7 +33,7 @@ namespace Infrastructure.Services
         {
             var saleOrderObj = GetService<ISaleOrderService>();
 
-            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any()).Include(x => x.Partner)
+            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any() && x.DateDone.HasValue).Include(x => x.Partner)
                 .Select(x => new SurveyAssignmentDefaultGet()
                 {
                     DateOrder = x.DateOrder,
@@ -116,6 +116,8 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId.Value);
             }
+
+            query = query.OrderByDescending(x => x.SaleOrder.DateDone ?? x.SaleOrder.DateDone.Value);
 
             return query;
         }

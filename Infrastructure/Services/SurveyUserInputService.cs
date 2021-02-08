@@ -138,9 +138,33 @@ namespace Infrastructure.Services
 
             SaveLines(val, userInput);
 
+            SaveSurveyTags(val, userInput);
 
 
             return await CreateAsync(userInput);
+        }
+
+        private void SaveSurveyTags(SurveyUserInputSave val, SurveyUserInput userinput)
+        {
+            var toRemove = userinput.SurveyUserInputSurveyTagRels.Where(x => !val.SurveyTags.Any(s => s.Id == x.SurveyTagId)).ToList();
+            foreach (var hist in toRemove)
+            {
+                userinput.SurveyUserInputSurveyTagRels.Remove(hist);
+            }
+            if (val.SurveyTags != null)
+            {
+                foreach (var hist in val.SurveyTags)
+                {
+                    if (userinput.SurveyUserInputSurveyTagRels.Any(x => x.SurveyTagId == hist.Id))
+                        continue;
+
+                    userinput.SurveyUserInputSurveyTagRels.Add(new SurveyUserInputSurveyTagRel { 
+                        SurveyTagId = hist.Id                   
+                    });
+
+                }
+            }
+
         }
 
         public override async Task<SurveyUserInput> CreateAsync(SurveyUserInput entity)

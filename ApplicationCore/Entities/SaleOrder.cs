@@ -44,6 +44,11 @@ namespace ApplicationCore.Entities
         public DateTime DateOrder { get; set; }
 
         /// <summary>
+        /// ngày hoàn thành
+        /// </summary>
+        public DateTime? DateDone { get; set; }
+
+        /// <summary>
         /// Khách hàng
         /// </summary>
         public Guid PartnerId { get; set; }

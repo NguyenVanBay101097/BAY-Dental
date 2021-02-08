@@ -21,6 +21,8 @@ import { SurveyUserinputDialogComponent } from './survey-userinput-dialog/survey
 import { SurveyManageDetailComponent } from './survey-manage-detail/survey-manage-detail.component';
 import { SurveyManageDetailCustomerComponent } from './survey-manage-detail-customer/survey-manage-detail-customer.component';
 import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-detail-survey-imformation/survey-manage-detail-survey-imformation.component';
+import { SurveyTagListComponent } from './survey-tag-list/survey-tag-list.component';
+import { SurveyTagDialogComponent } from './survey-tag-dialog/survey-tag-dialog.component';
 
 
 @NgModule({
@@ -38,6 +40,8 @@ import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-de
     SurveyManageDetailComponent,
     SurveyManageDetailCustomerComponent,
     SurveyManageDetailSurveyImformationComponent,
+    SurveyTagListComponent,
+    SurveyTagDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -53,7 +57,8 @@ import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-de
   entryComponents: [
     SurveyConfigurationEvaluationDialogComponent,
     SurveyManageAssignEmployeeCreateDialogComponent,
-    SurveyUserinputDialogComponent
+    SurveyUserinputDialogComponent,
+    SurveyTagDialogComponent
   ]
 })
 export class SurveysModule { }
