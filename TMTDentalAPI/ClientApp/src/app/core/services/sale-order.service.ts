@@ -21,6 +21,7 @@ export class SaleOrderPaged {
     dateOrderTo: string;
     state: string;
     isQuotation: boolean;
+    companyId: string;
 }
 
 export class AccountPaymentFilter {

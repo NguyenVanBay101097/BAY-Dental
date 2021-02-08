@@ -216,6 +216,10 @@ namespace Infrastructure.Services
                 var states = val.State.Split(",");
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
             }
+            if (val.CompanyId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.CompanyId == val.CompanyId));
+            }
 
             if (val.IsQuotation.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
