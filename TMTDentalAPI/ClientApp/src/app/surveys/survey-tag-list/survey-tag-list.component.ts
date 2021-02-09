@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -25,6 +26,7 @@ export class SurveyTagListComponent implements OnInit {
   type: string;
 
   constructor(private surveyTagService: SurveyTagService,
+    private notificationService: NotificationService,
     private modalService: NgbModal,
     private route: ActivatedRoute) {
   }
@@ -69,6 +71,13 @@ export class SurveyTagListComponent implements OnInit {
     let modalRef = this.modalService.open(SurveyTagDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Nhãn khảo sát ';
     modalRef.result.then(result => {
+      this.notificationService.show({
+        content: 'Thêm thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, () => {
     });
@@ -79,6 +88,13 @@ export class SurveyTagListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa: Nhãn khảo sát';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Lưu thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, () => {
     });
@@ -89,6 +105,13 @@ export class SurveyTagListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa: Nhãn khảo sát ';
     modalRef.result.then(() => {
       this.surveyTagService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadDataFromApi();
       }, err => {
         console.log(err);

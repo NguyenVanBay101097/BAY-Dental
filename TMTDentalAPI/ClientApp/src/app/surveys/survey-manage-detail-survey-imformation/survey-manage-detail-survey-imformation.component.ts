@@ -3,8 +3,10 @@ import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
 import { WebService } from 'src/app/core/services/web.service';
 import { SurveyQuestionService } from '../survey-question.service';
+import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userinput.service';
 import { SurveyService } from '../survey.service';
 
@@ -22,6 +24,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
   userinput: SurveyUserInputDisplay = new SurveyUserInputDisplay();
   question: any[] = [];
   view = true;
+  surveyTags: SurveyTagBasic[];
   limit: number = 20;
   offset: number = 0;
   search: string;
@@ -31,6 +34,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
     private activateRoute: ActivatedRoute,
     private surveyService: SurveyService,
     private notificationService: NotificationService,
+    private surveyTagService: SurveyTagService,
     private userInputService: SurveyUserinputService,
   ) { }
 
@@ -40,6 +44,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
       score: null,
       maxScore: null,
       note: null,
+      surveyTags: null,
       lines: this.fb.array([])
     });
 
@@ -81,6 +86,19 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
     });
   }
 
+  loadSurveyTagList() {
+    this.searchSurveyTags().subscribe((result) => {
+      this.surveyTags = _.unionBy(this.surveyTags, result.items, 'id');;
+    });
+  }
+
+  searchSurveyTags(q?: string) {
+    var val = new SurveyTagPaged();
+    val.search = q || '';
+    return this.surveyTagService.getPaged(val);
+  }
+
+
   patchValue(res) {
     this.formGroup.patchValue(res);
     // patch attach
@@ -91,6 +109,12 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
       lines.forEach(line => {
         control.push(this.fb.group(line));
       });
+
+    }
+
+    if (res.surveyTags.length > 0) {
+      this.formGroup.get('surveyTags').setValue(res.surveyTags);
+      this.surveyTags = _.unionBy(res.surveyTags as SurveyTagBasic[], res.surveyTags, 'id');
     }
 
 

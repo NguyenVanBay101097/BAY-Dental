@@ -1,3 +1,4 @@
+import { SurveyTagBasic } from './survey-tag.service';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -27,6 +28,7 @@ export class SurveyUserInputDisplay {
   score: number;
   maxScore: number;
   lines: SurveyUserInputLineDisplay[];
+  surveyTags: SurveyTagBasic[];
 }
 
 export class SurveyUserInputLineDisplay {

@@ -35,6 +35,21 @@
             </div>
             <div class="oe_title">
                 <h5>
+                    <span>GÁN TAG KHẢO SÁT</span>
+                </h5>
+            </div>
+            <div class="o_group">
+
+                <div class="d-flex">
+                    <h6 *ngFor="let tag of surveyTags">
+                        <span class="badge badge-secondary p-2 mr-1" [ngClass]="'o_tag_color_' + tag.color">
+                            {{tag.name}}
+                        </span>
+                    </h6>
+                </div>
+            </div>
+            <div class="oe_title">
+                <h5>
                     <span>Nội dung khảo sát</span>
                 </h5>
             </div>

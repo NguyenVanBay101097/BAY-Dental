@@ -3,8 +3,10 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
 import { WebService } from 'src/app/core/services/web.service';
 import { SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
+import { SurveyTagDialogComponent } from '../survey-tag-dialog/survey-tag-dialog.component';
 import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 import { SurveyUserInputDisplay, SurveyUserInputPaged, SurveyUserinputService } from '../survey-userinput.service';
 
@@ -43,16 +45,17 @@ export class SurveyUserinputDialogComponent implements OnInit {
       score: null,
       maxScore: null,
       note: null,
-      tags: null,
+      surveyTags: null,
       lines: this.fb.array([])
     });
-
+    
+    this.loadSurveyTagList();
     if (this.id) {
       this.loadData();
     } else {
       this.loadDefault();
     }
-    this.loadSurveyTagList();
+   
   }
 
   notify(style, content) {
@@ -86,7 +89,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
 
   loadSurveyTagList() {
     this.searchSurveyTags().subscribe((result) => {
-      this.surveyTags = result.items;
+      this.surveyTags = _.unionBy(this.surveyTags, result.items, 'id');;
     });
   }
 
@@ -97,19 +100,35 @@ export class SurveyUserinputDialogComponent implements OnInit {
   }
 
 
-  patchValue(res) {
+  patchValue(res ) {
     this.formGroup.patchValue(res);
     // patch attach
     if (res.lines) {
       var control = this.formGroup.get('lines') as FormArray;
-      control.clear();
+      control.clear();      
       var lines = this.userinput.lines;
       lines.forEach(line => {
         control.push(this.fb.group(line));
       });
+    }  
+
+    if(res.surveyTags.length > 0){      
+        this.formGroup.get('surveyTags').setValue(res.surveyTags);
+        this.surveyTags = _.unionBy(res.surveyTags as SurveyTagBasic[], res.surveyTags, 'id');
     }
 
+  }
 
+  quickCreateSurveyTagModal() {
+    const modalRef = this.modalService.open(SurveyTagDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: Nhãn khảo sát';
+
+    modalRef.result.then(result => {
+      if (result && result.id) {      
+        this.surveyTags.push(result);
+        this.formGroup.get('surveyTags').setValue([result as SurveyTagBasic]);
+      }
+    })
   }
 
   onChange(line: FormGroup, item) {
@@ -125,9 +144,6 @@ export class SurveyUserinputDialogComponent implements OnInit {
     this.activeModal.close(val);
   }
 
-  // handleChange(line : FormGroup){
-
-  // }
 
   onCancel() {
     this.activeModal.dismiss();
