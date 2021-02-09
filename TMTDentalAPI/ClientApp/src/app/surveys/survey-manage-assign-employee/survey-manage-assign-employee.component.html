@@ -85,7 +85,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Ngày hoàn thành điều trị" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrder.lastUpdated | date:'shortDate'}}
+                {{dataItem.saleOrder?.dateDone | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Ngày hoàn thành khảo sát" width="120">

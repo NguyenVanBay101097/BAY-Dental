@@ -37,6 +37,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public DateTime DateOrder { get; set; }
         public DateTime LastUpdated { get; set; }
+        public DateTime? DateDone { get; set; }
     }
 
     public class ActionDonePar

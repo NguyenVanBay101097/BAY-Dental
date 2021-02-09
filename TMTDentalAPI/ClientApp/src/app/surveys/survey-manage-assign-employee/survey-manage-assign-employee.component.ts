@@ -115,6 +115,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
       this.loading = false;
     }, err => {
       this.loading = false;
