@@ -132,10 +132,15 @@ namespace Infrastructure.Services
                         ProductName = item.ProductName,
                         ProductCode = item.ProductCode,
                         ProductUomName = item.productUomName,
+                        Begin = 0,
                         DateFrom = date_from,
                         DateTo = date_to
                     });
                 }
+            }
+
+            foreach (var item in list)
+            {
 
                 dict[item.ProductId].Import = item.Import;
                 dict[item.ProductId].Export = item.Export;
