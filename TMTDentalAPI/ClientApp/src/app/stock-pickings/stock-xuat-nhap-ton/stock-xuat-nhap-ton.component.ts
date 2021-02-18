@@ -100,7 +100,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     val.search = this.search ? this.search : null;
     this.reportService.exportExcel(val).subscribe(
       rs => {
-        let filename = 'file_xuat_nhap_ton';
+        let filename = 'NhapXuatTon';
         let newBlob = new Blob([rs], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         console.log(rs);
 
