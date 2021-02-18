@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-stock-picking-outgoing-list',
@@ -29,7 +30,9 @@ export class StockPickingOutgoingListComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
     private pickingTypeService: StockPickingTypeService, private router: Router,
-    private modalService: NgbModal, private intlService: IntlService) { }
+    private modalService: NgbModal, private intlService: IntlService, 
+    private notificationService: NotificationService 
+  ) { }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -99,11 +102,18 @@ export class StockPickingOutgoingListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu xuất';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu xuất kho';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa phiếu xuất kho?';
     modalRef.result.then(() => {
       this.stockPickingService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.loadDataFromApi();
       });
     });
