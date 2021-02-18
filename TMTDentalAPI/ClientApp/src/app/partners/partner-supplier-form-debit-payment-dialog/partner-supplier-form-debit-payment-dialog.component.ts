@@ -139,4 +139,9 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
     return this.paymentService.create(val);
   }
 
+  onChangeMoney() {
+    if (this.formGroup.get('amount') && !this.formGroup.get('amount').value)
+      this.formGroup.get('amount').setValue(0);
+  }
+
 }

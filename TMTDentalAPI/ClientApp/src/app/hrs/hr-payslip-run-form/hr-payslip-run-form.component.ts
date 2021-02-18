@@ -276,7 +276,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         if (result && result['html']) {
           this.printService.printHtml(result['html']);
         } else {
-          alert('Có lỗi xảy ra, thử lại sau');
+          alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
         }
       }
     )

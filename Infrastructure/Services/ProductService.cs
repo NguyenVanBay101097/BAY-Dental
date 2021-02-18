@@ -215,7 +215,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
             if (val.CategId.HasValue)
                 query = query.Where(x => x.CategId == val.CategId);
-            var products = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Include(x => x.ProductCompanyRels)
+            var products = await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit)
+                .Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.Steps)
                 .ToListAsync();
@@ -232,6 +233,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 IsLabo = x.IsLabo,
                 ListPrice = x.ListPrice,
+                LaboPrice = x.LaboPrice,
                 PurchasePrice = x.PurchasePrice,
                 StepList = x.Steps.Select(s => new ProductStepSimple
                 {

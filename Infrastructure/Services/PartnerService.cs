@@ -41,10 +41,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<Partner> RuleDomainGet(IRRule rule)
         {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "base.res_partner_rule":
-                    return new InitialSpecification<Partner>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
+                    return new InitialSpecification<Partner>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }
@@ -498,7 +500,7 @@ namespace Infrastructure.Services
             }
 
 
-            query = query.OrderBy(s => s.DisplayName);
+            query = query.Where(x=> !(x.Customer == false && x.Supplier == false)).OrderBy(s => s.DisplayName);
             return query;
         }
 

@@ -12,24 +12,24 @@
             <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
 
-    <div class="media-body">
-        @if (!string.IsNullOrEmpty(Model.Company.Name))
-        {
-            <h5> @Model.Company.Name</h5>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
-        {
-            <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Phone))
-        {
-            <div>Điện thoại: @Model.Company.Phone</div>
-        }
-        @if (!string.IsNullOrEmpty(Model.Company.Email))
-        {
-            <div>Email: @Model.Company.Email</div>
-        }
-    </div>
+        <div class="media-body">
+            @if (!string.IsNullOrEmpty(Model.Company.Name))
+            {
+                <h5> @Model.Company.Name</h5>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+            {
+                <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>Điện thoại: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
     </div>
     <div class="text-center mb-3">
         <h3 class="mb-0">HÓA ĐƠN THUỐC</h3>
@@ -124,7 +124,7 @@
                 <th>Tên thuốc</th>
                 <th class="text-center">Ngày uống</th>
                 <th class="text-center">Mỗi lần</th>
-                <th class="text-center">Số ngày</th>
+                @*<th class="text-center">Số ngày</th>*@
                 <th>Sử dụng</th>
                 <th class="text-center">Số lượng</th>
                 <th class="text-center">Đơn giá</th>
@@ -137,7 +137,7 @@
                         <td>@line.Product.Name</td>
                         <td class="text-center">@line.ToaThuocLine.NumberOfTimes.ToString("n0") lần</td>
                         <td class="text-center">@line.ToaThuocLine.AmountOfTimes.ToString("n0") @line.Product.UOM.Name</td>
-                        <td class="text-center">@line.ToaThuocLine.NumberOfDays.ToString("n0")</td>
+                        @*<td class="text-center">@line.ToaThuocLine.NumberOfDays.ToString("n0")</td>*@
                         <td>@line.ToaThuocLine.GetUseAtDisplay()</td>
                         <td class="text-center">@line.Quantity.ToString("n0", culture)</td>
                         <td class="text-center">@(line.Price.ToString("n0", culture))</td>

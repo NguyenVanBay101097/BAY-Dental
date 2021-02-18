@@ -31,12 +31,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IProductStepService _productStepService;
         private readonly IUoMService _uomService;
+        private readonly IUoMCategoryService _uomCategService;
 
         public ProductsController(IProductService productService, IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
             IProductCategoryService productCategoryService,
             IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService,
-            IProductStepService productStepService, IUoMService uomService)
+            IProductStepService productStepService, IUoMService uomService,
+            IUoMCategoryService uomCategService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -46,6 +48,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _productStepService = productStepService;
             _uomService = uomService;
+            _uomCategService = uomCategService;
         }
 
         [HttpGet]
@@ -284,9 +287,9 @@ namespace TMTDentalAPI.Controllers
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
 
                             if (string.IsNullOrEmpty(name))
-                                errs.Add("Tên sản phẩm là bắt buộc");
+                                errs.Add("Tên dịch vụ là bắt buộc");
                             if (string.IsNullOrEmpty(categName))
-                                errs.Add("Nhóm sản phẩm là bắt buộc");
+                                errs.Add("Nhóm dịch vụ là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -410,7 +413,7 @@ namespace TMTDentalAPI.Controllers
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var serviceCode = Convert.ToString(worksheet.Cells[row, 4].Value);
-                           
+
                             if (string.IsNullOrEmpty(serviceCode))
                                 errs.Add("Mã dịch vụ là bắt buộc");
 
@@ -534,6 +537,7 @@ namespace TMTDentalAPI.Controllers
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductMedicineImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
+            var uomDict = new Dictionary<string, UoM>();
             var errors = new List<string>();
 
             try
@@ -558,13 +562,9 @@ namespace TMTDentalAPI.Controllers
                             if (string.IsNullOrEmpty(price))
                                 errs.Add("Giá thuốc là bắt buộc");
 
-                            //tìm exist đơn vị tính và gán Id uom cho thuốc
                             var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
-                                errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
-                            var uom = _uomService.SearchQuery(x => x.Name.Trim().ToLower().Contains(uomName.ToLower())).FirstOrDefault();
-                            if (uom == null)
-                                errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+                                errs.Add("Đơn vị mặc định là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -572,21 +572,12 @@ namespace TMTDentalAPI.Controllers
                                 continue;
                             }
 
-                            if (!categDict.ContainsKey(categName))
-                            {
-                                var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == "medicine").FirstOrDefaultAsync();
-                                if (categ == null)
-                                    categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "medicine" });
-                                categDict.Add(categName, categ);
-                            }
-
                             var item = new ProductMedicineImportExcelRow
                             {
                                 Name = name,
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
-                                UomId = uom.Id,
-                               // DefaultCode = defaultCode
+                                UoM = uomName
                             };
                             data.Add(item);
                         }
@@ -617,14 +608,32 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var productsCreate = new List<Product>();
-         
+            var uomNames = data.Select(x => x.UoM).Distinct().ToList();
+            if (uomNames.Any())
+            {
+                var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name) && x.UOMType == "reference").ToListAsync();
+                foreach (var uomName in uomNames)
+                {
+                    if (categDict.ContainsKey(uomName))
+                        continue;
+
+                    var uom = uoms.FirstOrDefault(x => x.Name == uomName);
+                    if (uom == null)
+                    {
+                        var uomCateg = await _uomCategService.SearchQuery(x => x.MeasureType == "unit").FirstOrDefaultAsync();
+                        uom = await _uomService.CreateAsync(new UoM { Name = uomName, CategoryId = uomCateg.Id });
+                        uomDict.Add(uomName, uom);
+                    }
+                }
+            }
+
+            var vals = new List<Product>();
             foreach (var item in data)
             {
                 var pd = new Product();
                 pd.CompanyId = CompanyId;
-                pd.UOMId = item.UomId.Value;
-                pd.UOMPOId = item.UomId.Value;
+                pd.UOMId = uomDict[item.UoM].Id;
+                pd.UOMPOId = uomDict[item.UoM].Id;
                 pd.Name = item.Name;
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
@@ -634,15 +643,15 @@ namespace TMTDentalAPI.Controllers
                 pd.CategId = categDict[item.CategName].Id;
                 pd.ListPrice = item.ListPrice;
                 pd.PurchasePrice = 0;
-                productsCreate.Add(pd);
+                vals.Add(pd);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                await _productService.CreateAsync(productsCreate);
-               
+                await _productService.CreateAsync(vals);
+
 
                 _unitOfWork.Commit();
             }
@@ -664,8 +673,9 @@ namespace TMTDentalAPI.Controllers
             }
 
             var fileData = Convert.FromBase64String(val.FileBase64);
-            var data = new List<ProductMedicineImportExcelRow>();
+            var data = new List<ProductMedicineUpdateExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
+            var uomDict = new Dictionary<string, UoM>();
             var errors = new List<string>();
 
             try
@@ -695,10 +705,7 @@ namespace TMTDentalAPI.Controllers
                             //tìm exist đơn vị tính và gán Id uom cho thuốc
                             var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
-                                errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
-                            var uom = _uomService.SearchQuery(x => x.Name.Trim().ToLower().Contains(uomName.ToLower())).FirstOrDefault();
-                            if (uom == null)
-                                errs.Add("Đơn vị mặc định là bắt buộc và phải tồn tại trong hệ thống");
+                                errs.Add("Đơn vị mặc định là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -706,20 +713,12 @@ namespace TMTDentalAPI.Controllers
                                 continue;
                             }
 
-                            if (!categDict.ContainsKey(categName))
-                            {
-                                var categ = await _productCategoryService.SearchQuery(x => x.Name == categName && x.Type == "medicine").FirstOrDefaultAsync();
-                                if (categ == null)
-                                    categ = await _productCategoryService.CreateAsync(new ProductCategory { Name = categName, Type = "medicine" });
-                                categDict.Add(categName, categ);
-                            }
-
-                            var item = new ProductMedicineImportExcelRow
+                            var item = new ProductMedicineUpdateExcelRow
                             {
                                 Name = name,
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
-                                UomId = uom.Id,
+                                UoM = uomName,
                                 DefaultCode = defaultCode
                             };
                             data.Add(item);
@@ -751,6 +750,26 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            var uomNames = data.Select(x => x.UoM).Distinct().ToList();
+            if (uomNames.Any())
+            {
+                var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name) && x.UOMType == "reference").ToListAsync();
+                foreach (var uomName in uomNames)
+                {
+                    if (uomDict.ContainsKey(uomName))
+                        continue;
+
+                    var uom = uoms.FirstOrDefault(x => x.Name == uomName);
+                    if (uom == null)
+                    {
+                        var uomCateg = await _uomCategService.SearchQuery(x => x.MeasureType == "unit").FirstOrDefaultAsync();
+                        uom = await _uomService.CreateAsync(new UoM { Name = uomName, CategoryId = uomCateg.Id });
+                    }
+
+                    uomDict.Add(uomName, uom);
+                }
+            }
+
             var productsUpdate = new List<Product>();
             var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
             var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode)).ToListAsync();
@@ -763,8 +782,8 @@ namespace TMTDentalAPI.Controllers
                 var product = productDict[item.DefaultCode];
                 product.Name = item.Name;
                 product.CategId = categDict[item.CategName].Id;
-                product.UOMId = item.UomId.Value;
-                product.UOMPOId = item.UomId.Value;
+                product.UOMId = uomDict[item.UoM].Id;
+                product.UOMPOId = uomDict[item.UoM].Id;
                 product.ListPrice = item.ListPrice;
                 productsUpdate.Add(product);
             }
@@ -925,7 +944,7 @@ namespace TMTDentalAPI.Controllers
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var type = Convert.ToString(worksheet.Cells[row, 2].Value);
                             var productCode = Convert.ToString(worksheet.Cells[row, 4].Value);
-                          
+
                             if (string.IsNullOrEmpty(productCode))
                                 errs.Add("Mã vật tư là bắt buộc"); ;
                             if (string.IsNullOrEmpty(name))
@@ -987,7 +1006,7 @@ namespace TMTDentalAPI.Controllers
                 .ToListAsync();
             var productDict = productsToUpdate.ToDictionary(x => x.DefaultCode, x => x);
             foreach (var item in data)
-            {        
+            {
                 if (!productDict.ContainsKey(item.DefaultCode))
                     continue;
 
@@ -1240,7 +1259,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.DefaultCode;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
                     worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
-                    worksheet.Cells[row, 7].Value = item.PurchasePrice ?? 0;
+                    worksheet.Cells[row, 7].Value = item.LaboPrice ?? 0;
                 }
 
                 worksheet.Cells.AutoFitColumns();

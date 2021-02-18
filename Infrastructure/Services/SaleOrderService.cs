@@ -22,12 +22,14 @@ namespace Infrastructure.Services
     public class SaleOrderService : BaseService<SaleOrder>, ISaleOrderService
     {
         private readonly IMapper _mapper;
+        private UserManager<ApplicationUser> _userManager;
 
-        public SaleOrderService(IAsyncRepository<SaleOrder> repository, IHttpContextAccessor httpContextAccessor,
+        public SaleOrderService(IAsyncRepository<SaleOrder> repository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager,
             IMapper mapper)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         // Tao moi 1 phieu dieu tri
@@ -213,6 +215,10 @@ namespace Infrastructure.Services
             {
                 var states = val.State.Split(",");
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => states.Contains(x.State)));
+            }
+            if (val.CompanyId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<SaleOrder>(x => x.CompanyId == val.CompanyId));
             }
 
             if (val.IsQuotation.HasValue)
@@ -1675,6 +1681,8 @@ namespace Infrastructure.Services
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
             order.HistoryPayments = await _GetPaymentInfoPrint(order.Id);
+            //get currentuser
+            order.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
             return order;
         }
 
@@ -2358,7 +2366,7 @@ namespace Infrastructure.Services
                 }).ToListAsync();
 
             //chỉ lấy những dịch vụ có danh sách công đoạn 
-            lines = lines.Where(x => x.Steps.Any()).ToList();
+            //lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
         }

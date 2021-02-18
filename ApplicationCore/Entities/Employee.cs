@@ -119,5 +119,6 @@ namespace ApplicationCore.Entities
         /// trợ cấp
         /// </summary>
         public decimal? Allowance { get; set; }
+        public string Avatar { get; set; }
     }
 }

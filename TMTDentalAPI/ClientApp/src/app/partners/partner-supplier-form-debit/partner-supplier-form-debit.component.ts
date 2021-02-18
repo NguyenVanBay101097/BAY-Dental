@@ -58,7 +58,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
 
   exportExcelFile() {
     this.partnerService.exportUnreconcileInvoices(this.id).subscribe((res) => {
-      let filename = "CongNoNCC";
+      let filename = "CongNoNhaCungCap";
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

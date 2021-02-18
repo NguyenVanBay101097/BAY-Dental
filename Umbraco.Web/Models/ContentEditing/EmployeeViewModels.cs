@@ -132,7 +132,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<CompanyBasic> UserCompanies { get; set; } = new List<CompanyBasic>();
 
-        public string UserAvatar { get; set; }
+        public Guid? UserId { get; set; }
+        public string Avatar { set; get; }
     }
 
     public class EmployeePaged
@@ -221,7 +222,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool CreateChangePassword { get; set; }
 
-        public string UserAvatar { get; set; }
+        public string Avatar { get; set; }
     }
 
     public class EmployeeActive
