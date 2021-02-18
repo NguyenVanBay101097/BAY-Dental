@@ -134,6 +134,7 @@ namespace TMTDentalAPI.Controllers
                 if (line.Id == Guid.Empty)
                 {
                     var ml = _mapper.Map<StockMove>(line);
+                    ml.Date = picking.Date ?? DateTime.Now;
                     ml.CompanyId = picking.CompanyId;
                     ml.LocationId = picking.LocationId;
                     ml.LocationDestId = picking.LocationDestId;

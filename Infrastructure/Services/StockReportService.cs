@@ -137,10 +137,6 @@ namespace Infrastructure.Services
                         DateTo = date_to
                     });
                 }
-            }
-
-            foreach (var item in list)
-            {
 
                 dict[item.ProductId].Import = item.Import;
                 dict[item.ProductId].Export = item.Export;

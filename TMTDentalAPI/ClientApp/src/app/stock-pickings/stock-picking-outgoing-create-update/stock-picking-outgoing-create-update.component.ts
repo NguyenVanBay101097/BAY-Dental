@@ -145,6 +145,8 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     this.stockPickingService.get(this.id).subscribe(result => {
       this.picking = result;
       this.pickingForm.patchValue(result);
+      let date = this.intlService.parseDate(result.date);
+      this.pickingForm.get('dateObj').patchValue(date);
       this.moveLines.clear();
       result.moveLines.forEach(line => {
         this.moveLines.push(this.fb.group(line));
