@@ -137,6 +137,11 @@ namespace Infrastructure.Services
                         Import = item.Import,
                         Export = item.Export
                     });
+                } 
+                else
+                {
+                    dict[item.ProductId].Import = item.Import;
+                    dict[item.ProductId].Export = item.Export;
                 }
             }
 
