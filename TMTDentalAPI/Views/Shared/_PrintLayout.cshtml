@@ -7,9 +7,33 @@
 
     <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <style>
+        @@page {
+            size: A4 !important;
+        }
+
+        body {
+            line-height: 1.2;
+        }
+
+        .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+            width: 0%;
+            padding: 0px 2px 2px 0;
+            min-width: 100px;
+        }
+
+        .o_form_view .o_group.o_inner_group > tbody > tr > td {
+            padding: 0 15px 0 0;
+        }
+
+        .o_form_view .o_group {
+            display: flex;
+            margin: 2px 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container body-content">
+    <div class="A4">
         @RenderBody()
     </div>
 </body>
