@@ -255,6 +255,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       });
     } else {
       this.stockPickingService.create(val).subscribe(result => {
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
         this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
       });
     }
@@ -280,12 +287,26 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
         this.stockPickingService.update(this.id, val).subscribe(() => {
           this.stockPickingService.actionDone([this.id]).subscribe(() => {
+            this.notificationService.show({
+              content: 'Xác nhận thành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
             this.loadRecord();
           });
         });
       } else {
         //only need done
         this.stockPickingService.actionDone([this.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Xác nhận thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.loadRecord();
         });
       }
@@ -307,6 +328,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
       this.stockPickingService.create(val).subscribe(result => {
         this.stockPickingService.actionDone([result.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Xác nhận thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
           this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
         }, () => {
           this.router.navigate(['stock/outgoing-pickings/edit/', result.id]);
