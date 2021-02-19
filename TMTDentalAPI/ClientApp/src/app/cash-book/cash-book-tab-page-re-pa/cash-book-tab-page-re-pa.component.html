@@ -46,7 +46,7 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <div *ngIf="dataItem.state != 'cancel'" class="d-flex">
+                    <div class="d-flex">
                         <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
                             <span class="far fa-edit"></span>
                         </button>

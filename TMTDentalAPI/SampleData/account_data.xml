@@ -85,18 +85,28 @@
       <field name="padding">4</field>
     </record>
 
-    <record id="sequence_payment_empoyee_out" model="ir.sequence">
-      <field name="name">Phiếu chi lương, tạm ứng</field>
+    <record id="sequence_payment_employee_out" model="ir.sequence">
+      <field name="name">Payments employee outbound sequence</field>
       <field name="code">account.payment.employee.outbound</field>
       <field name="prefix">EMP.OUT/{yyyy}/</field>
       <field eval="1" name="number_next"/>
       <field eval="1" name="number_increment"/>
       <field eval="False" name="company_id"/>
-      <field name="padding">5</field>
+      <field name="padding">4</field>
+    </record>
+
+    <record id="sequence_payment_employee_inbound" model="ir.sequence">
+      <field name="name">Payments employee inbound sequence</field>
+      <field name="code">account.payment.employee.inbound</field>
+      <field name="prefix">EMP.IN/{yyyy}/</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">4</field>
     </record>
 
     <record id="sequence_payment_thu" model="ir.sequence">
-      <field name="name">phiếu thu</field>
+      <field name="name">Phiếu thu</field>
       <field name="code">phieu.thu</field>
       <field name="prefix">THU/{yyyy}/</field>
       <field eval="1" name="number_next"/>
@@ -106,7 +116,7 @@
     </record>
 
     <record id="sequence_payment_chi" model="ir.sequence">
-      <field name="name">phiếu chi</field>
+      <field name="name">Phiếu chi</field>
       <field name="code">phieu.chi</field>
       <field name="prefix">CHI/{yyyy}/</field>
       <field eval="1" name="number_next"/>

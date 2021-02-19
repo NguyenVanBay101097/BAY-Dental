@@ -74,7 +74,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Phiếu chi tạm ứng';
+    modalRef.componentInstance.title = 'Thêm: Phiếu tạm ứng/chi lương';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -83,7 +83,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Phiếu chi tạm ứng";
+    modalRef.componentInstance.title = "Sửa: Phiếu tạm ứng/chi lương";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       () => {
@@ -95,7 +95,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: " + (item.partnerType == "employee.advance" ? "phiếu chi tạm ứng" : "phiếu chi lương");
+    modalRef.componentInstance.title = "Xóa: Phiếu tạm ứng, chi lương";
     modalRef.result.then(
       () => {
         this.accountPaymentService.unlink([item.id]).subscribe(

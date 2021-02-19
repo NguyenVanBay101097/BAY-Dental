@@ -63,12 +63,10 @@ namespace Infrastructure.Services
                         if (rec.PaymentType == "inbound")
                             sequence_code = "phieu.thu";
                     }
-
                     else if (rec.PaymentType == "transfer")
                     {
                         sequence_code = "account.payment.transfer";
                     }
-
                     else
                     {
                         if (rec.PartnerType == "customer")
@@ -89,10 +87,17 @@ namespace Infrastructure.Services
                         {
                             if (rec.PaymentType == "outbound")
                                 sequence_code = "account.payment.employee.outbound";
+                            if (rec.PaymentType == "inbound")
+                                sequence_code = "account.payment.employee.inbound";
                         }
                     }
 
                     rec.Name = await seqObj.NextByCode(sequence_code);
+                    if (string.IsNullOrEmpty(rec.Name))
+                    {
+                        await _CreatePaymentSequence(sequence_code);
+                        rec.Name = await seqObj.NextByCode(sequence_code);
+                    }
 
                     if (string.IsNullOrEmpty(rec.Name) && rec.PaymentType != "transfer")
                         throw new Exception($"You have to define a sequence for {sequence_code} in your company.");
@@ -163,6 +168,51 @@ namespace Infrastructure.Services
                         await _AutoReconcile(rec);
                     }
                 }
+            }
+        }
+
+        private async Task _CreatePaymentSequence(string sequence_code)
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            if (sequence_code == "phieu.thu")
+            {
+                await seqObj.CreateAsync(new IRSequence
+                {
+                    Code = sequence_code,
+                    Name = "Phiếu thu",
+                    Prefix = "THU/{yyyy}/",
+                    Padding = 4
+                });
+            } 
+            else if (sequence_code == "phieu.chi")
+            {
+                await seqObj.CreateAsync(new IRSequence
+                {
+                    Code = sequence_code,
+                    Name = "Phiếu chi",
+                    Prefix = "CHI/{yyyy}/",
+                    Padding = 4
+                });
+            }
+            else if (sequence_code == "account.payment.employee.outbound")
+            {
+                await seqObj.CreateAsync(new IRSequence
+                {
+                    Code = sequence_code,
+                    Name = "Payments employee outbound sequence",
+                    Prefix = "EMP.OUT/{yyyy}/",
+                    Padding = 4
+                });
+            }
+            else if (sequence_code == "account.payment.employee.inbound")
+            {
+                await seqObj.CreateAsync(new IRSequence
+                {
+                    Code = sequence_code,
+                    Name = "Payments employee inbound sequence",
+                    Prefix = "EMP.IN/{yyyy}/",
+                    Padding = 4
+                });
             }
         }
 
@@ -1050,22 +1100,16 @@ namespace Infrastructure.Services
             }
 
             if (val.PartnerId.HasValue)
-            {
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
-            }
 
-            if (val.PhieuThuChi == true)
-            {
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.LoaiThuChiId.HasValue));
-            }
-
-            if (val.PhieuThuChi == false)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => !x.LoaiThuChiId.HasValue));
+            if (val.PhieuThuChi.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.LoaiThuChiId.HasValue == val.PhieuThuChi.Value));
 
             if (!string.IsNullOrEmpty(val.PaymentType))
-            {
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentType == val.PaymentType));
-            }
+
+            if (!string.IsNullOrEmpty(val.JournalType))
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.Journal.Type == val.JournalType));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 

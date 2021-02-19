@@ -36,6 +36,8 @@ export class AccountPaymentPaged {
     paymentDateTo: string;
     saleOrderId: string;
     partnerId: string;
+    companyId: string;
+    journalType: string;
 }
 
 export class AccountPaymentDisplay {

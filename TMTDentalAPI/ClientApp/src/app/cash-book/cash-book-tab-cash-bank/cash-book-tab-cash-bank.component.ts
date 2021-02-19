@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
@@ -22,6 +23,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   constructor(
     private cashBookService: CashBookService,
+    private accountPaymentService: AccountPaymentService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -106,5 +108,4 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
     this.loadDataGetSumary();
     this.loadDataGetMoney();
   }
-
 }

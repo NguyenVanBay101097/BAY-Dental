@@ -62,9 +62,9 @@
             <ng-template kendoGridCellTemplate let-dataItem>
                 <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)"><i
                         class="fas fa-edit"></i></button>
-                <button *ngIf="dataItem.state == 'draft'" type="button" class="btn btn-sm btn-danger"
+                <button type="button" class="btn btn-sm btn-danger"
                     (click)="deleteItem(dataItem)">
-                    <span class="k-icon k-i-delete"></span>
+                    <i class="far fa-trash-alt"></i>
                 </button>
             </ng-template>
         </kendo-grid-column>

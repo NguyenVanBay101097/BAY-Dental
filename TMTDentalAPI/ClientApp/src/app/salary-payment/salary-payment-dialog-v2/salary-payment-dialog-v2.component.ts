@@ -10,7 +10,7 @@ import { AccountJournalFilter, AccountJournalService } from 'src/app/account-jou
 import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerBasic, PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -26,7 +26,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
   id: string;
   salaryPayment: any;
   filteredJournals: any = [];
-  filteredPartners: PartnerSimple[] = [];
+  filteredPartners: PartnerBasic[] = [];
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
@@ -64,7 +64,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
         switchMap((val) => this.searchEmployees(val.toString().toLowerCase()))
       )
       .subscribe((result) => {
-        this.filteredPartners = result;
+        this.filteredPartners = result.items;
         this.partnerCbx.loading = false;
       });
 
@@ -76,6 +76,10 @@ export class SalaryPaymentDialogV2Component implements OnInit {
     } else {
       this.defaultGet();
     }
+  }
+
+  get name() {
+    return this.formGroup.get('name').value;
   }
 
   defaultGet() {
@@ -114,16 +118,16 @@ export class SalaryPaymentDialogV2Component implements OnInit {
 
   loadEmployees() {
     this.searchEmployees().subscribe((result) => {
-      this.filteredPartners = _.unionBy(this.filteredPartners, result, "id");
+      this.filteredPartners = _.unionBy(this.filteredPartners, result.items, "id");
     });
   }
 
   searchEmployees(filter?: string) {
-    var val = new PartnerFilter();
+    var val = new PartnerPaged();
     val.employee = true;
     val.active = true;
     val.search = filter || "";
-    return this.partnerService.autocomplete2(val);
+    return this.partnerService.getPaged(val);
   }
 
   getValueForm() {

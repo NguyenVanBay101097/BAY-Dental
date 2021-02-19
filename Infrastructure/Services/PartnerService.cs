@@ -494,13 +494,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Active == val.Active);
             if (!string.IsNullOrEmpty(val.Search))
             {
-
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
             }
 
-
-            query = query.Where(x=> !(x.Customer == false && x.Supplier == false)).OrderBy(s => s.DisplayName);
+            query = query.OrderBy(s => s.DisplayName);
             return query;
         }
 

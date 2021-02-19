@@ -34,9 +34,10 @@ export class CashBookCuDialogComponent implements OnInit {
   filteredJournals: any = [];
   partnerTypes: any = [];
   filteredPartnerTypes: any = [];
-  seeForm: boolean = false;
   partnerPaged: PartnerFilter;
   filteredPartners: PartnerSimple[] = [];
+
+  reload = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -70,8 +71,8 @@ export class CashBookCuDialogComponent implements OnInit {
       loaiThuChi: [null, Validators.required],
       name: null,
       state: null,
-      partnerTypeObj: [null, Validators.required],
-      partner: [null, Validators.required],
+      partnerType: ['customer', Validators.required],
+      partner: [null],
     });
 
     this.partnerPaged = new PartnerFilter();
@@ -104,6 +105,12 @@ export class CashBookCuDialogComponent implements OnInit {
     }
   }
 
+  get seeForm() {
+    var state = this.formGroup.get('state').value;
+    var val = state == 'posted' || state == 'cancel';
+    return val;
+  }
+
   getValueForm(key) {
     return this.formGroup.get(key).value;
   }
@@ -118,29 +125,20 @@ export class CashBookCuDialogComponent implements OnInit {
       loaiThuChi: null,
       name: null,
       state: "draft",
-      partnerTypeObj: this.filteredPartnerTypes[0],
-      partner: [null, Validators.required],
+      partnerType: 'customer',
+      partner: [null],
     });
-    this.change_partnerType(this.getValueForm("partnerTypeObj"));
+    this.change_partnerType(this.formGroup.get('partnerType').value);
     this.filterChangeCombobox();
   }
 
   loadRecord() {
     this.accountPaymentService.get(this.itemId).subscribe((result: any) => {
-      this.formGroup.patchValue(result); 
+      this.formGroup.patchValue(result);
       var paymentDate = new Date(result.paymentDate);
       this.formGroup.get("paymentDateObj").patchValue(paymentDate);
-      this.formGroup.get("partnerTypeObj").patchValue(this.partnerTypes.find(x => x.value === result.partnerType));
-      this.change_partnerType(this.getValueForm("partnerTypeObj"));
+      this.change_partnerType(this.getValueForm("partnerType"));
       this.filterChangeCombobox();
-      this.formGroup.get("partner").patchValue({
-        displayName: result.partner.displayName,
-        id: result.partner.id,
-        name: result.partner.name,
-      });
-      if (this.formGroup.get("state").value == "posted") {
-        this.seeForm = true;
-      }
     });
   }
 
@@ -188,8 +186,22 @@ export class CashBookCuDialogComponent implements OnInit {
     this.filteredPartnerTypes = this.partnerTypes.slice();
   }
 
+  displayPartnerType() {
+    var partnerType = this.formGroup.get('partnerType').value;
+    switch (partnerType) {
+      case 'customer':
+        return 'Khách hàng';
+      case 'supplier':
+        return 'Nhà cung cấp';
+      case 'employee':
+        return 'Nhân viên';
+      default:
+        return '';
+    }
+  }
+
   change_partnerType(item) {
-    switch (item.value) {
+    switch (item) {
       case "customer":
         this.partnerPaged.customer = true;
         this.partnerPaged.supplier = false;
@@ -227,23 +239,22 @@ export class CashBookCuDialogComponent implements OnInit {
   loadPartners() {
     this.searchPartners().subscribe((result) => {
       this.filteredPartners = result;
-      console.log(result);
     });
   }
 
   filterChangeCombobox() {
     if (this.partnerCbx) {
       this.partnerCbx.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.partnerCbx.loading = true)),
-        switchMap((val) => this.searchPartners(val.toString().toLowerCase()))
-      )
-      .subscribe((result) => {
-        this.filteredPartners = result;
-        this.partnerCbx.loading = false;
-      });
+        .asObservable()
+        .pipe(
+          debounceTime(300),
+          tap(() => (this.partnerCbx.loading = true)),
+          switchMap((val) => this.searchPartners(val.toString().toLowerCase()))
+        )
+        .subscribe((result) => {
+          this.filteredPartners = result;
+          this.partnerCbx.loading = false;
+        });
     }
 
   }
@@ -280,8 +291,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.loaiThuChiId = val.loaiThuChi.id;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
-    val.partnerType = val.partnerTypeObj.value;
-    val.partnerId = val.partner.id;
+    val.partnerId = val.partner ? val.partner.id : null;
     val.paymentType = this.paymentType;
 
     if (!this.itemId) {
@@ -296,6 +306,7 @@ export class CashBookCuDialogComponent implements OnInit {
           });
           this.itemId = result.id;
           this.setTitle();
+          this.reload = true;
         },
         (error) => {
           console.log(error);
@@ -329,8 +340,7 @@ export class CashBookCuDialogComponent implements OnInit {
     val.loaiThuChiId = val.loaiThuChi.id;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
-    val.partnerType = val.partnerTypeObj.value;
-    val.partnerId = val.partner.id;
+    val.partnerId = val.partner ? val.partner.id : null;
     val.paymentType = this.paymentType;
 
     if (!this.itemId) {
@@ -338,6 +348,7 @@ export class CashBookCuDialogComponent implements OnInit {
         (result: any) => {
           this.itemId = result.id;
           this.setTitle();
+          this.reload = true;
           this.accountPaymentService.post([this.itemId]).subscribe(
             (result) => {
               this.notificationService.show({
@@ -348,7 +359,6 @@ export class CashBookCuDialogComponent implements OnInit {
                 type: { style: "success", icon: true },
               });
               this.formGroup.get("state").setValue("posted");
-              this.seeForm = true;
               if (print) {
                 this.printPhieu(this.itemId);
               }
@@ -373,10 +383,11 @@ export class CashBookCuDialogComponent implements OnInit {
             type: { style: "success", icon: true },
           });
           this.formGroup.get("state").setValue("posted");
-          this.seeForm = true;
           if (print) {
             this.printPhieu(this.itemId);
           }
+
+          this.reload = true;
         },
         (error) => {
           console.log(error);
@@ -392,7 +403,6 @@ export class CashBookCuDialogComponent implements OnInit {
   onCreate() {
     this.loadDefault();
     this.itemId = null;
-    this.seeForm = false;
     this.setTitle();
   }
 
@@ -415,8 +425,8 @@ export class CashBookCuDialogComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
-        this.formGroup.get("state").setValue("draft");
-        this.seeForm = false;
+        this.formGroup.get("state").setValue("cancel");
+        this.reload = true;
       }, (error) => {
       });
     }, (error) => {

@@ -27,5 +27,23 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Communication { get; set; }
 
         public string LoaiThuChiName { get; set; }
+
+        public string DestinationAccountName { get; set; }
+
+        public string DisplayPaymentType
+        {
+            get
+            {
+                switch (PaymentType)
+                {
+                    case "inbound":
+                        return "Phiếu thu";
+                    case "outbound":
+                        return "Phiếu chi";
+                    default:
+                        return "";
+                }
+            }
+        }
     }
 }

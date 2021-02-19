@@ -1,13 +1,18 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-        (click)="itemId != null ? activeModal.close() : activeModal.dismiss()" tabindex="-1">×</button>
+        (click)="reload ? activeModal.close() : activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="getValueForm('state') == 'cancel'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="getValueForm('state') == 'cancel'"
+                        [class.btn-secondary]="getValueForm('state') == 'cancel'" type="button">
+                        Đã hủy
+                    </button>
                     <button [disabled]="getValueForm('state') == 'posted'" class="btn o_arrow_button disabled"
                         [class.btn-primary]="getValueForm('state') == 'posted'"
                         [class.btn-secondary]="getValueForm('state') == 'posted'" type="button">
@@ -112,22 +117,17 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">
-                                        {{getValueForm('partnerTypeObj') ? getValueForm('partnerTypeObj').text : ''}}
+                                        {{displayPartnerType()}}
                                     </span>
                                     <div *ngIf="!seeForm">
-                                        <kendo-combobox [data]="filteredPartnerTypes" 
-                                            [textField]="'text'" [valueField]="'value'"
-                                            [filterable]="true" #partnerTypeCbx formControlName="partnerTypeObj"
-                                            (valueChange)="change_partnerType($event)"
-                                            [filterable]="true"
-                                            (filterChange)="filter_partnerType($event)">
-                                        </kendo-combobox>
-                                        <div *ngIf="f.partnerTypeObj.errors && (f.partnerTypeObj.touched || f.partnerTypeObj.dirty || submitted)"
-                                            class="text-danger">
-                                            <div *ngIf="f.partnerTypeObj.errors.required">
-                                                Vui lòng chọn đối tượng {{ getType() == 'thu' ? 'nộp' : 'nhận' }}
-                                            </div>
-                                        </div>
+                                        <kendo-dropdownlist
+                                            [data]="filteredPartnerTypes"
+                                            textField="text"
+                                            valueField="value"
+                                            [valuePrimitive]="true"
+                                            formControlName="partnerType"
+                                            (valueChange)="change_partnerType($event)">
+                                        </kendo-dropdownlist>
                                     </div>
                                 </td>
                             </tr>
@@ -138,14 +138,14 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [class.d-none]="seeForm" [data]="filteredPartners" 
-                                        [textField]="'name'" [valueField]="'id'" [filterable]="true"
+                                        [textField]="'displayName'" [valueField]="'id'" [filterable]="true"
                                         #partnerCbx formControlName="partner">
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Vui lòng chọn người {{ getType() == 'thu' ? 'nộp' : 'nhận' }} tiền</div>
                                     </div>
-                                    <span *ngIf="seeForm">{{getValueForm('partner').name}}</span>
+                                    <span *ngIf="seeForm">{{getValueForm('partner')?.displayName}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -171,6 +171,6 @@
 </div>
 <div *ngIf="seeForm" class="modal-footer">
     <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
-    <button type="button" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
+    <button type="button" *ngIf="getValueForm('state') == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
 </div>

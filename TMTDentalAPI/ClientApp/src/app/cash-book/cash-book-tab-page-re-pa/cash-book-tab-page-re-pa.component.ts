@@ -76,8 +76,10 @@ export class CashBookTabPageRePaComponent implements OnInit {
       return "Đã xác nhận";
     } else if (state == "draft") {
       return "Nháp";
+    } else if (state == "cancel") {
+      return "Đã hủy";
     } else {
-      return "Hủy";
+      return 'Nháp';
     }
   }
 
@@ -117,7 +119,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.paymentType = this.paymentType;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
@@ -125,7 +127,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   editItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.paymentType = this.paymentType;
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then((res) => {
