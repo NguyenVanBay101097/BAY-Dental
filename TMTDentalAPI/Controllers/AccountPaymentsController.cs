@@ -40,7 +40,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.AccountPayment.Read")]
-        public async Task<IActionResult> Get([FromQuery]AccountPaymentPaged val)
+        public async Task<IActionResult> Get([FromQuery] AccountPaymentPaged val)
         {
             var result = await _paymentService.GetPagedResultAsync(val);
             return Ok(result);
@@ -50,7 +50,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var payment = await _paymentService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.Journal)
+            var payment = await _paymentService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.Journal)
+                .Include(x => x.LoaiThuChi)
                 .FirstOrDefaultAsync();
             if (payment == null)
             {
@@ -68,6 +71,28 @@ namespace TMTDentalAPI.Controllers
             var payment = await _paymentService.CreateUI(val);
             var basic = _mapper.Map<AccountPaymentBasic>(payment);
             return Ok(basic);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.AccountPayment.Create")]
+        public async Task<IActionResult> CreateMultipleAndConfirmUI(List<AccountPaymentSave> vals)
+        {
+            var payment = await _paymentService.CreateMultipleAndConfirmUI(vals);
+            var basic = _mapper.Map<IEnumerable<AccountPaymentBasic>>(payment);
+            return Ok(basic);
+        }
+
+        [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.AccountPayment.update")]
+        public async Task<IActionResult> Update(Guid id, AccountPaymentSave val)
+        {
+            var payment = await _paymentService.GetByIdAsync(id);
+            if (payment == null)
+                return NotFound();
+            payment = _mapper.Map(val, payment);
+            await _paymentService.UpdateAsync(payment);
+
+            return NoContent();
         }
 
         [HttpPost("[action]")]
@@ -92,15 +117,16 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.AccountPayment.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
+            //Chỉ xóa account payment ở trạng thái nháp hoặc cancel
+            //Muốn xóa thì phải hủy trước
             if (ids == null || !ids.Any())
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _paymentService.ActionDraftUnlink(ids);
+            await _paymentService.UnlinkAsync(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -127,7 +153,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("GetPaymentBasicList")]
-        public async Task<IActionResult> GetPaymentBasicList([FromQuery]AccountPaymentFilter val)
+        public async Task<IActionResult> GetPaymentBasicList([FromQuery] AccountPaymentFilter val)
         {
             var res = await _paymentService.GetPaymentBasicList(val);
             return Ok(res);
@@ -156,7 +182,6 @@ namespace TMTDentalAPI.Controllers
                 var creditDebitGet = _partnerService.CreditDebitGet(new List<Guid>() { val.PartnerId });
                 amountTotal = -creditDebitGet[val.PartnerId].Debit;
             }
-
 
             var result = new AccountRegisterPaymentDisplay
             {

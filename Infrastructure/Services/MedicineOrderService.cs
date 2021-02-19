@@ -445,7 +445,7 @@ namespace Infrastructure.Services
             }
 
             if (payment_ids.Any())
-                await accountPaymentObj.ActionDraftUnlink(payment_ids);
+                await accountPaymentObj.CancelAsync(payment_ids);
 
             await UpdateAsync(medicineOrders);
         }

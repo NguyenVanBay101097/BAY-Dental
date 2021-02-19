@@ -12,6 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime PaymentDate { get; set; }
 
+        public string PartnerType { get; set; }
+
         public string PaymentType { get; set; }
 
         public string JournalName { get; set; }
@@ -23,5 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
 
         public string Communication { get; set; }
+
+        public string LoaiThuChiName { get; set; }
     }
 }

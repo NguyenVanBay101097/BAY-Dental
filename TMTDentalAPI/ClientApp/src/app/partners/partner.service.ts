@@ -22,6 +22,9 @@ export class PartnerFilter {
     customer: boolean;
     supplier: boolean;
     employee: boolean;
+    limit: number;
+    offset: number;
+    active: boolean;
 }
 
 export class SaleOrderLineBasic {

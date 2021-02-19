@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AccountPayment: BaseEntity
+    public class AccountPayment : BaseEntity
     {
         public AccountPayment()
         {
@@ -29,6 +29,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// customer
         /// supplier
+        /// employee
         /// </summary>
         public string PartnerType { get; set; }
 
@@ -90,7 +91,11 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
 
-        [NotMapped]
+        public Guid? DestinationAccountId { get; set; }
         public AccountAccount DestinationAccount { get; set; }
+
+        public Guid? LoaiThuChiId { get; set; }
+        public LoaiThuChi LoaiThuChi { get; set; }
+
     }
 }

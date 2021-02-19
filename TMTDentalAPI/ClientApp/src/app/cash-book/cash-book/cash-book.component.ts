@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class CashBookComponent implements OnInit {
   href: string;
-  type: string;
+  paymentType: string;
 
   constructor(
     private router: Router, 
@@ -21,7 +21,7 @@ export class CashBookComponent implements OnInit {
 
   ngOnInit() {
     this.href = this.router.url.split("?")[0].split("/")[2];
-    this.type = this.route.parent.snapshot.queryParams['type'];
+    this.paymentType = this.route.parent.snapshot.queryParams['payment-type'];
   }
 
   

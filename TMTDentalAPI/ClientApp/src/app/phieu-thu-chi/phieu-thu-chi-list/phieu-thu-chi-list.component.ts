@@ -50,7 +50,7 @@ export class PhieuThuChiListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.type = this.type;
+    val.paymentType = this.type;
     this.phieuThuChiService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,

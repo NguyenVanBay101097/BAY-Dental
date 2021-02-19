@@ -18,6 +18,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Observable } from 'rxjs';
+import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
+import { PartnerSimple } from 'src/app/partners/partner-simple';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -30,12 +33,12 @@ export class SalaryPaymentFormComponent implements OnInit {
   id: string;
   salaryPayment: any;
   filteredJournals: any = [];
-  filteredEmployees: EmployeeSimple[] = [];
+  filteredPartners: PartnerSimple[] = [];
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
-  @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
   submitted = false;
 
   constructor(
@@ -45,6 +48,8 @@ export class SalaryPaymentFormComponent implements OnInit {
     private notificationService: NotificationService,
     private salaryPaymentService: SalaryPaymentService,
     private authService: AuthService,
+    private partnerService: PartnerService,
+    private accountPaymentService: AccountPaymentService,
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
@@ -56,11 +61,9 @@ export class SalaryPaymentFormComponent implements OnInit {
       Name: null,
       DateObj: [null, Validators.required],
       Journal: [null, Validators.required],
-      Employee: [null, Validators.required],
+      Partner: [null, Validators.required],
       Amount: [0, Validators.required],
       Reason: null,
-      Type: 'advance',
-      CompanyId: null
     });
 
 
@@ -88,7 +91,7 @@ export class SalaryPaymentFormComponent implements OnInit {
         if (result.Employee) {
           result.Employee.id = result.Employee.Id;
           result.Employee.name = result.Employee.Name;
-          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], "id");
+          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Employee], "id");
         }
 
         if (result.Journal) {
@@ -107,10 +110,6 @@ export class SalaryPaymentFormComponent implements OnInit {
   defaultGet() {
     this.formGroup.get('DateObj').patchValue(new Date());
   }
-
-
-
-
 
   loadFilteredJournals() {
     var val = new AccountJournalFilter();
@@ -135,27 +134,29 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   loadEmployees() {
     this.searchEmployees().subscribe((result) => {
-      this.filteredEmployees = _.unionBy(this.filteredEmployees, result, "id");
+      this.filteredPartners = _.unionBy(this.filteredPartners, result, "id");
     });
   }
 
   searchEmployees(filter?: string) {
-    var val = new EmployeePaged();
+    var val = new PartnerFilter();
+    val.employee = true;
+    val.active = true;
     val.search = filter || "";
-    return this.employeeService.getEmployeeSimpleList(val);
+    return this.partnerService.autocomplete2(val);
   }
 
   filterChangeCombobox() {
-    this.employeeCbx.filterChange
+    this.partnerCbx.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
-        tap(() => (this.employeeCbx.loading = true)),
+        tap(() => (this.partnerCbx.loading = true)),
         switchMap((val) => this.searchEmployees(val.toString().toLowerCase()))
       )
       .subscribe((result) => {
-        this.filteredEmployees = result;
-        this.employeeCbx.loading = false;
+        this.filteredPartners = result;
+        this.partnerCbx.loading = false;
       });
   }
 
@@ -192,6 +193,49 @@ export class SalaryPaymentFormComponent implements OnInit {
       this.activeModal.close()
       this.printSalaryPayment(this.id);
     });
+  }
+
+  onSaveV2() {
+    var value = this.formGroup.value;
+    var val = new AccountPaymentSave();
+    val.amount = value.Amount;
+    val.communication = value.Reason;
+    val.journalId = value.Journal.id;
+    val.partnerId = value.Partner.id;
+    val.partnerType = "employee.advance";
+    val.paymentDate = this.intlService.formatDate(value.DateObj, "yyyy-MM-ddTHH:mm");
+    val.paymentType = "outbound";
+    if (this.id) {
+      this.accountPaymentService.update(this.id, val).subscribe(
+        result => {
+          this.loadData();
+          this.activeModal.close()
+          this.printSalaryPayment(this.id);
+        }
+      )
+    } else {
+      this.accountPaymentService.create(val).subscribe(
+        result => {
+          this.loadData();
+          this.activeModal.close()
+          this.printSalaryPayment(this.id);
+        }
+      )
+    }
+  }
+
+  actionConfirmV2() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
+    modalRef.componentInstance.title = "Xác nhận tạm ứng lương";
+    modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
+    modalRef.result.then(
+      () => {
+        this.accountPaymentService.post(['e7b74910-12b4-43cc-c74e-08d8c1d8ca78']).subscribe(
+          result=>{
+            this.notify('success','Xác nhận tạm ứng lương thành công')
+          }
+        )
+      })
   }
 
   actionConfirm() {

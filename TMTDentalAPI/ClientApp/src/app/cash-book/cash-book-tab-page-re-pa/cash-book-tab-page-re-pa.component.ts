@@ -6,11 +6,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PhieuThuChiService, PhieuThuChiPaged } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
-import { CashBookPaged } from '../cash-book.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -23,7 +23,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  type: string;
+  paymentType: string;
   quickOptionDate: string;
   paged: PhieuThuChiPaged;
   changeDateFirst: boolean = true;
@@ -33,14 +33,17 @@ export class CashBookTabPageRePaComponent implements OnInit {
     private modalService: NgbModal, 
     private phieuThuChiService: PhieuThuChiService, 
     private intlService: IntlService, 
-    private authService: AuthService) { }
+    private authService: AuthService, 
+    private accountPaymentService: AccountPaymentService,
+    private notificationService: NotificationService,
+  ) { }
 
   ngOnInit() {
     this.paged = new PhieuThuChiPaged();
     this.paged.companyId = this.authService.userInfo.companyId;
     this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.route.queryParamMap.subscribe(params => {
-      this.type = params.get('type');
+      this.paymentType = params.get('payment-type');
       this.loadDataFromApi();
     });
 
@@ -52,16 +55,16 @@ export class CashBookTabPageRePaComponent implements OnInit {
       });
   }
 
-  getType(type) {
-    if (type == "inbound") {
+  getType(paymentType) {
+    if (paymentType == "inbound") {
       return "Phiếu thu";
     } else {
       return "Phiếu chi";
     }
   }
 
-  convertType(type) {
-    if (type == "inbound") {
+  convertType(paymentType) {
+    if (paymentType == "inbound") {
       return "thu";
     } else {
       return "chi";
@@ -71,8 +74,10 @@ export class CashBookTabPageRePaComponent implements OnInit {
   getState(state) {
     if (state == "posted") {
       return "Đã xác nhận";
+    } else if (state == "draft") {
+      return "Nháp";
     } else {
-      return "Nháp"
+      return "Hủy";
     }
   }
 
@@ -89,14 +94,15 @@ export class CashBookTabPageRePaComponent implements OnInit {
     this.loading = true;
     this.paged.limit = this.limit;
     this.paged.offset = this.skip;
-    this.paged.type = this.convertType(this.type);
-    this.phieuThuChiService.getPaged(this.paged).pipe(
+    this.paged.paymentType = this.paymentType;
+    this.accountPaymentService.getPaged(this.paged).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
     ).subscribe((res) => {
       this.gridData = res;
+      console.log(res);
       this.loading = false;
     }, (err) => {
       console.log(err);
@@ -105,14 +111,14 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   searchChangeDate(value) {
-    this.paged.dateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : '';
-    this.paged.dateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : '';
+    this.paged.paymentDateFrom = value.dateFrom ? this.intlService.formatDate(value.dateFrom, "yyyy-MM-dd") : '';
+    this.paged.paymentDateTo = value.dateTo ? this.intlService.formatDate(value.dateTo, "yyyy-MM-ddT23:59") : '';
     this.loadDataFromApi();
   }
 
   createItem() {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = this.type;
+    modalRef.componentInstance.paymentType = this.paymentType;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
     }, (err) => { });
@@ -120,7 +126,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.type = this.type;
+    modalRef.componentInstance.paymentType = this.paymentType;
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
@@ -129,10 +135,17 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
+    modalRef.componentInstance.title = `Xóa ${this.getType(this.paymentType).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.paymentType).toLowerCase()}?`;
     modalRef.result.then((res) => {
-      this.phieuThuChiService.delete(item.id).subscribe(() => {
+      this.accountPaymentService.unlink([item.id]).subscribe(() => {
+        this.notificationService.show({
+          content: "Xóa phiếu thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
         this.loadDataFromApi();
       }, (res) => {
       });
@@ -143,7 +156,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   exportExcelFile() {
     this.phieuThuChiService.exportExcelFile(this.paged).subscribe((res) => {
       let filename = "PhieuThu";
-      if (this.type == "outbound") {
+      if (this.paymentType == "outbound") {
         filename = "PhieuChi";
       }
 

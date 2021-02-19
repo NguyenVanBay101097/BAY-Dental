@@ -2,11 +2,11 @@
 <div class="p-3">
     <div class="mb-2 d-flex justify-content-between">
         <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
-                [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.paymentDateFrom"
+                [dateTo]="paged.paymentDateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
-                <i class="fas fa-plus mr-2"></i>Phiếu {{convertType(type)}}
+                <i class="fas fa-plus mr-2"></i>Phiếu {{convertType(paymentType)}}
             </button>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
@@ -21,9 +21,9 @@
     <div>
         <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
             (pageChange)="pageChange($event)">
-            <kendo-grid-column field="date" title="Ngày" width="100">
+            <kendo-grid-column field="paymentDate" title="Ngày" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.date | date: 'shortDate'}}
+                    {{dataItem.paymentDate | date: 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="name" title="Số phiếu" width="100"></kendo-grid-column>
@@ -46,10 +46,14 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="far fa-edit"></span></button>
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
-                        <span class="far fa-trash-alt"></span></button>
+                    <div *ngIf="dataItem.state != 'cancel'" class="d-flex">
+                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span>
+                        </button>
+                    </div>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>

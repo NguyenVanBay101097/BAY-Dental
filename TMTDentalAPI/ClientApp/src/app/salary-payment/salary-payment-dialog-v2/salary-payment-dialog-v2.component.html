@@ -29,10 +29,10 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
-                                        formControlName="DateObj" [rangeValidation]="true"
-                                        (valueChange)="onChangeDate($event)" [disableControl]="checkIsDisable(id)">
+                                        formControlName="paymentDate" [rangeValidation]="true"
+                                        [disableControl]="checkIsDisable(id)">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.DateObj.errors" class="text-danger">
+                                    <div *ngIf="f.paymentDate.errors" class="text-danger">
                                         <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
                                             date:'dd/MM/yyyy'}}</div>
                                     </div>
@@ -46,7 +46,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
-                                        [disableControl]="checkIsDisable(id)" #journalCbx formControlName="Journal"
+                                        [disableControl]="checkIsDisable(id)" #journalCbx formControlName="journal"
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                 </td>
@@ -59,12 +59,12 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                        [disableControl]="checkIsDisable(id)" #partnerCbx formControlName="Partner"
+                                        [disableControl]="checkIsDisable(id)" #partnerCbx formControlName="partner"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.Partner.errors && (f.Partner.touched || f.Partner.dirty || submitted)"
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.Partner.errors.required">Vui lòng chọn người nhận</div>
+                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người nhận</div>
                                     </div>
                                 </td>
                             </tr>
@@ -75,12 +75,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="Amount"
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount"
                                         [disableControl]="checkIsDisable(id)">
                                     </kendo-numerictextbox>
-                                    <div *ngIf="f.Amount.errors && (f.Amount.touched || f.Amount.dirty || submitted)"
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.Amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                        <div *ngIf="f.amount.errors.required">Vui lòng nhập số tiền ứng</div>
                                     </div>
                                 </td>
                             </tr>
@@ -92,7 +92,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <textarea class="form-control" [disableControl]="checkIsDisable(id)"
-                                        formControlName="Reason"></textarea>
+                                        formControlName="communication"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -104,7 +104,7 @@
 </div>
 
 <footer class="modal-footer">
-    <div *ngIf="salaryPayment ? salaryPayment.State === 'waiting' : '';else other_content">
+    <div *ngIf="salaryPayment ? salaryPayment.state === 'draft' : '';else other_content">
         <button type="button" class="btn btn-primary" (click)="onSaveV2()" accesskey="s">Lưu và In</button>
         <button type="button" *ngIf="id" class="btn btn-primary ml-1" (click)="actionConfirmV2()">Xác nhận</button>
     </div>
