@@ -14,7 +14,8 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input [(value)]="fileBase64" (valueChange)="onFileChange($event)">
+                        <app-binary-file-input [accept]="'.xlsx, .xls, .xlsm'" [(value)]="fileBase64" (valueChange)="onFileChange($event)"
+                            (error)="notifyError($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>
