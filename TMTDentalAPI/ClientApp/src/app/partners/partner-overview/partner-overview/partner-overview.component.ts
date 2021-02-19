@@ -77,7 +77,7 @@ export class PartnerOverviewComponent implements OnInit {
     var val = new SaleOrderPaged();
     val.limit = 10000;
     val.companyId = this.authService.userInfo.companyId;
-
+    val.partnerId = this.partnerId;
     this.saleOrderService.getPaged(val).subscribe(
       result => {
         this.saleOrders = result.items;
