@@ -186,10 +186,26 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.MoveLines)
+                .Include(x => x.PickingType)
+                .ToListAsync();
             var moveObj = GetService<IStockMoveService>();
             if (self.Any(x => x.State == "done"))
-                throw new Exception("Không thể xóa phiếu đã hoàn thành");
+            {
+                if (self.Any(x => x.PickingType.Code == "incoming"))
+                {
+                    throw new Exception("Không thể xóa phiếu nhập kho đã hoàn thành");
+                } 
+                else if (self.Any(x => x.PickingType.Code == "outgoing"))
+                {
+                    throw new Exception("Không thể xóa phiếu xuất kho đã hoàn thành");
+                }
+                else
+                {
+                    throw new Exception("Không thể xóa phiếu đã hoàn thành");
+                }
+            }
             await moveObj.DeleteAsync(self.SelectMany(x => x.MoveLines));
             await DeleteAsync(self);
         }
