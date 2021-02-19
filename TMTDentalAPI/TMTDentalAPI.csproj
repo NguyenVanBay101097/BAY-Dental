@@ -47,12 +47,8 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="Views\SaleOrder\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="Views\SaleOrder\**" />
-    <EmbeddedResource Remove="Views\SaleOrder\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="Views\SaleOrder\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
