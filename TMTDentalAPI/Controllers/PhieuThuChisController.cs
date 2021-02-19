@@ -145,7 +145,7 @@ namespace TMTDentalAPI.Controllers
 
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
 
-            var html = _viewRenderService.Render("PhieuThuChiPrint", phieu);
+            var html = _viewRenderService.Render("PhieuThuChi/Print", phieu);
 
             return Ok(new PrintData() { html = html });
         }

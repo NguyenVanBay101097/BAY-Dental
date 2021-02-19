@@ -218,6 +218,7 @@ namespace TMTDentalAPI.Controllers
             if (picking == null) return NotFound();
             picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
             var html = _viewRenderService.Render("StockPicking/Print", picking);
+
             return Ok(new PrintData() { html = html });
         }
     }

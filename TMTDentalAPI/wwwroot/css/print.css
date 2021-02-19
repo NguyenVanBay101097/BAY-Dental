@@ -126,6 +126,15 @@ body.legal.landscape .sheet {
         body.legal.landscape {
             width: 357mm
         }
+
+    .page-break {
+        display: block;
+        page-break-before: always;
+    }
+
+        .page-break:first-child {
+            page-break-before: avoid;
+        }
 }
 
 body {
@@ -395,27 +404,27 @@ label, strong {
     font-size: 20px;
 }
 
-    .o_form_view .o_group.o_inner_group {
-        display: inline-table;
-    }
+.o_form_view .o_group.o_inner_group {
+    display: inline-table;
+}
 
-    .o_form_view .o_group .o_group_col_6 {
-        display: inline-block;
-        width: 50%;
-        vertical-align: top;
-    }
+.o_form_view .o_group .o_group_col_6 {
+    display: inline-block;
+    width: 50%;
+    vertical-align: top;
+}
 
-    .o_form_view .o_group .o_group_col_8 {
-        display: inline-block;
-        width: 66.666667%;
-        vertical-align: top;
-    }
+.o_form_view .o_group .o_group_col_8 {
+    display: inline-block;
+    width: 66.666667%;
+    vertical-align: top;
+}
 
-    .o_form_view .o_group .o_group_col_4 {
-        display: inline-block;
-        width: 33.333333%;
-        vertical-align: top;
-    }
+.o_form_view .o_group .o_group_col_4 {
+    display: inline-block;
+    width: 33.333333%;
+    vertical-align: top;
+}
 
 .o_form_view .o_notebook > .tab-content > .tab-pane > :first-child {
     margin-top: 0;
@@ -426,11 +435,17 @@ label, strong {
     padding: 0 15px 0px 0;
 }
 
-    .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
-        width: 0%;
-        padding: 0px 5px 5px 0;
-        min-width: 100px;
-    }
+body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+    width: 0%;
+    padding: 0px 5px 5px 0;
+    min-width: 130px;
+}
+
+body.A4 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
+    width: 0%;
+    padding: 0px 5px 5px 0;
+    min-width: 100px;
+}
 
 .o_form_view .o_form_label {
     margin: 0 5px 0 0;
@@ -492,7 +507,7 @@ label, strong {
     width: 100%;
 }
 
-.o_form_view.o_print .o_group.o_inner_group > tbody > tr > td.o_td_label {
+.o_form_view .o_print .o_group.o_inner_group > tbody > tr > td.o_td_label {
     width: 0%;
     padding: 0px 5px 5px 0;
     min-width: 150px;
@@ -583,6 +598,11 @@ table {
 .col-4 {
     flex: 0 0 auto;
     width: 33.3333333333%;
+}
+
+.col-6 {
+    flex: 0 0 auto;
+    width: 50%;
 }
 
 .justify-content-center {

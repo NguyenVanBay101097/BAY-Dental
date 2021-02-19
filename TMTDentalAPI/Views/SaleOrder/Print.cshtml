@@ -79,7 +79,7 @@
 
     <div>
         <div class="text-lg font-semibold mb-1">BẢNG KÊ DỊCH VỤ</div>
-        <table class="table table-sm table-bordered mb-0">
+        <table class="table table-sm table-bordered mb-1">
             <thead>
                 <tr>
                     <th>Dịch vụ</th>
@@ -233,7 +233,7 @@
     }
 
     <div class="d-flex mt-2">
-        <div class="w-1/2">
+        <div class="col">
             <div class="text-center">
                 <span class="font-semibold">Người lập phiếu</span> <br />
                 <i>(Ký, họ tên)</i> <br />
@@ -243,7 +243,7 @@
                 <span class="font-semibold">@(Model.User != null && !string.IsNullOrEmpty(Model.User.Name)? Model.User.Name.ToUpper() : "")</span>
             </div>
         </div>
-        <div class="w-1/2">
+        <div class="col">
             <div class="text-center">
                 <span class="font-semibold"> Khách Hàng</span> <br />
                 <i>(Ký, họ tên)</i> <br />
