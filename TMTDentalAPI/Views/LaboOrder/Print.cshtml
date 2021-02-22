@@ -5,21 +5,21 @@
     var now = DateTime.Now;
 }
 
-<div class="o_form_view">
-    <div class="media mb-2">
+<div>
+    <div class="d-flex mb-2">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
-        <div class="media-body">
-            <h5 class="mb-0">@Model.Company.Name</h5>
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
             @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
             {
                 <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
             }
             @if (!string.IsNullOrEmpty(Model.Company.Phone))
             {
-                <div>Điện thoại: @Model.Company.Phone</div>
+                <div>ĐT: @Model.Company.Phone</div>
             }
             @if (!string.IsNullOrEmpty(Model.Company.Email))
             {
@@ -27,14 +27,14 @@
             }
         </div>
     </div>
-    <div class="text-center mb-3">
-        <h3 class="mb-0">ĐẶT HÀNG LABO</h3>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">ĐẶT HÀNG LABO</div>
         <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
-        <div class="font-weight-600">Số: @Model.Name</div>
+        <div class="font-semibold">Số: @Model.Name</div>
     </div>
-    <div>
-        <h5 class="mb-0">THÔNG TIN CHUNG</h5>
-        <div class="row">
+    <div class="o_form_view  mb-2">
+        <div class="text-lg font-semibold mb-1">THÔNG TIN CHUNG</div>
+        <div class="d-flex">
             <table class="o_group o_inner_group col-6">
                 <tbody>
                     <tr>
@@ -93,129 +93,131 @@
             </table>
         </div>
     </div>
-    <div class="row">
-        <div class="col-6">
-            <h5 class="mb-0">CHI TIẾT PHIẾU</h5>
-            <table class="o_group o_inner_group">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Loại phục hình
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Name)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Hãng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Product.Firm)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Răng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(string.Join(",", Model.LaboOrderToothRel.Select(x => x.Tooth.Name)))</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Màu sắc chi tiết
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Color)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Số lượng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Quantity.ToString("n0"))</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Chỉ định
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Indicated)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ghi chú
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Note)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-6">
-            <h5>THÔNG SỐ LABO</h5>
-            <table class="o_group o_inner_group">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Vật liệu
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Product != null ? Model.Product.Name : "")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Đường hoàn tất
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.LaboFinishLine != null ? Model.LaboFinishLine.Name : "")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Khớp cắn
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.LaboBiteJoint != null ? Model.LaboBiteJoint.Name : "")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Kiểu nhịp
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.LaboBridge != null ? Model.LaboBridge.Name : "")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Gửi kèm
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(string.Join(", ", Model.LaboOrderProductRel.Select(x => x.Product.Name)))</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ghi chú kĩ thuật
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.TechnicalNote)</td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="o_form_view  mb-2">
+        <div class="d-flex">
+            <div class="col-6">
+                <div class="text-lg font-semibold mb-1">CHI TIẾT PHIẾU</div>
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Loại phục hình
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Name)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Hãng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Product.Firm)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Răng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Join(",", Model.LaboOrderToothRel.Select(x => x.Tooth.Name)))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Màu sắc chi tiết
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Color)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Số lượng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Quantity.ToString("n0"))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Chỉ định
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Indicated)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Note)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <div class="text-lg font-semibold mb-1">THÔNG SỐ LABO</div>
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Vật liệu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Product != null ? Model.Product.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Đường hoàn tất
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboFinishLine != null ? Model.LaboFinishLine.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Khớp cắn
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboBiteJoint != null ? Model.LaboBiteJoint.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Kiểu nhịp
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboBridge != null ? Model.LaboBridge.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Gửi kèm
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Join(", ", Model.LaboOrderProductRel.Select(x => x.Product.Name)))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ghi chú kĩ thuật
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.TechnicalNote)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div>
-        <h5 class="mb-0">THÔNG TIN BẢO HÀNH</h5>
-        <div class="row">
+    <div class="o_form_view mb-2">
+        <div class="text-lg font-semibold mb-1">THÔNG TIN BẢO HÀNH</div>
+        <div class="d-flex">
             <table class="o_group o_inner_group col-6">
                 <tbody>
                     <tr>
@@ -242,17 +244,17 @@
             </table>
         </div>
     </div>
-    <div class="row">
-        <div class="col col-sm">
+    <div class="d-flex">
+        <div class="col ">
         </div>
-        <div class="col col-sm">
+        <div class="col ">
             <div class="text-center">
-                <span class="font-weight-600">Người đặt hàng</span> <br />
-                <i>(Ký, họ tên)</i> <br/>
+                <span class="font-semibold">Người đặt hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name.ToUpper() : "")</span>
+                <span class="font-semibold">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name.ToUpper() : "")</span>
             </div>
         </div>
     </div>

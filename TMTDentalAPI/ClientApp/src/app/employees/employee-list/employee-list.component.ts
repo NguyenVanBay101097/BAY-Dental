@@ -85,6 +85,7 @@ export class EmployeeListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.getEmployeesList();
       });
   }
@@ -106,7 +107,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.isDoctor = true;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    }, () => {});
+    }, () => { });
   }
 
   createAssistant() {
@@ -123,7 +124,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm nhân viên';
     modalRef.result.then(() => {
       this.getEmployeesList();
-    }, () => {});
+    }, () => { });
   }
 
   editEmployee(item: EmployeeBasic) {
@@ -132,7 +133,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.empId = item.id;
     modalRef.result.then(() => {
       this.getEmployeesList();
-    }, () => {});
+    }, () => { });
   }
 
   openModal(id, isDoctor, isAssistant) {
@@ -179,21 +180,21 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
-  actionActive(emp:any, active: boolean) {
+  actionActive(emp: any, active: boolean) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = (active ? 'Hiện nhân viên ': 'Ẩn nhân viên ') + emp.name;
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ( (active ? 'hiện nhân viên ': 'ẩn nhân viên ') + emp.name);
+    modalRef.componentInstance.title = (active ? 'Hiện nhân viên ' : 'Ẩn nhân viên ') + emp.name;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((active ? 'hiện nhân viên ' : 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
-      this.service.actionActive(emp.id,active).subscribe(()=> {
+      this.service.actionActive(emp.id, active).subscribe(() => {
         this.getEmployeesList();
       });
     }, () => {
     });
-   
+
   }
 
   onStateSelectChange(e) {
-    this.active = e? e.value : null;
+    this.active = e ? e.value : null;
     this.getEmployeesList();
   }
 

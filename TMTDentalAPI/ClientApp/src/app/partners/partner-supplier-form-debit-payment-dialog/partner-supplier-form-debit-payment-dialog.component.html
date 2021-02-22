@@ -33,8 +33,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox [min]="0" [disabled]="rowsSelected && rowsSelected.length > 0"
-                                        [max]="defaultVal.amount" (blur)="onChangeMoney()" [step]="1000" [format]="'n0'" [autoCorrect]="true"
-                                        formControlName="amount">
+                                        [max]="defaultVal.amount" (blur)="onChangeMoney()" [step]="1000" [format]="'n0'"
+                                        [autoCorrect]="true" formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
@@ -90,10 +90,10 @@
                                     {{item.amountTotal | number}}
                                 </td>
                                 <td class="text-right">
-                                    {{item.amountResidual | number}}
+                                    {{(item.amountTotal - item.amountResidual) | number}}
                                 </td>
                                 <td class="text-right">
-                                    {{(item.amountTotal - item.amountResidual) | number}}
+                                    {{item.amountResidual | number}}
                                 </td>
                             </tr>
                         </tbody>

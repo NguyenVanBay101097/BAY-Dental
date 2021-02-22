@@ -5,21 +5,21 @@
     var now = DateTime.Now;
 }
 
-<div class="o_form_view">
-    <div class="media mb-2">
+<div>
+    <div class="d-flex mb-2">
         @if (!string.IsNullOrEmpty(Model.Company.Logo))
         {
-            <img class="mr-3 company_logo" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
         }
-        <div class="media-body">
-            <h5 class="mb-0">@Model.Company.Name</h5>
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
             @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
             {
                 <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
             }
             @if (!string.IsNullOrEmpty(Model.Company.Phone))
             {
-                <div>Điện thoại: @Model.Company.Phone</div>
+                <div>ĐT: @Model.Company.Phone</div>
             }
             @if (!string.IsNullOrEmpty(Model.Company.Email))
             {
@@ -27,13 +27,13 @@
             }
         </div>
     </div>
-    <div class="text-center mb-3">
-        <h3 class="mb-0">@(Model.PickingType.Code == "outgoing" ? "PHIẾU XUẤT KHO":"PHIẾU NHẬP KHO")</h3>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">@(Model.PickingType.Code == "outgoing" ? "PHIẾU XUẤT KHO":"PHIẾU NHẬP KHO")</div>
         <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
-        <div class="font-weight-600">Số: @Model.Name</div>
+        <div class="font-semibold">Số: @Model.Name</div>
     </div>
-    <div>
-        <div class="row">
+    <div class="o_form_view mb-2">
+        <div class="d-flex">
             <table class="o_group o_inner_group col-6">
                 <tbody>
                     <tr>
@@ -80,7 +80,7 @@
         </thead>
         <tbody>
             @{
-                foreach (var item in Model.MoveLines.Select((value,i) => (value,i)))
+                foreach (var item in Model.MoveLines.Select((value, i) => (value, i)))
                 {
                     <tr>
                         <td class="text-center">@(item.i + 1)</td>
@@ -92,17 +92,17 @@
             }
         </tbody>
     </table>
-    <div class="row">
+    <div class="d-flex">
         <div class="col col-sm">
         </div>
         <div class="col col-sm">
             <div class="text-center">
-                <span class="font-weight-600">Người lập phiếu</span> <br />
+                <span class="font-semibold">Người lập phiếu</span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-weight-600">@(Model.CreatedBy.Name)</span>
+                <span class="font-semibold">@(Model.CreatedBy.Name)</span>
             </div>
         </div>
     </div>

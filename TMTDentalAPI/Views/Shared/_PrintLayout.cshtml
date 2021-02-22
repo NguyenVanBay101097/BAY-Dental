@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TDental.vn</title>
 
-    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <!-- Load paper.css for happy printing -->
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">*@
+
+    @*<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css" />*@
+    <link rel="stylesheet" type="text/css" href="/css/print.css" />
+    <style>
+        @@page {
+            size: A4 !important;
+        }
+    </style>
 </head>
-<body>
-    <div class="container body-content">
+<body class="A4">
+    <div class="sheet">
         @RenderBody()
     </div>
 </body>

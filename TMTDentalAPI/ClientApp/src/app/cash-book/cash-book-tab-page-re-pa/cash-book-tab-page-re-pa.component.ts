@@ -111,7 +111,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   createItem() {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = this.type;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
@@ -119,7 +119,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   editItem(item) {
-    const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(CashBookCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.type = this.type;
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then((res) => {

@@ -46,9 +46,9 @@ namespace TMTDentalAPI.OdataControllers
             var res = await _accountPaymentService.GetPrint(key);
             string html;
             if (res.PartnerType == "customer")
-                html = _view.Render("AccountPaymentPrint", res);
+                html = _view.Render("AccountPayments/Print", res);
             else
-                html = _view.Render("PaymentSupplierPrint", res);
+                html = _view.Render("PaymentSupplier/Print", res);
             return Ok(new PrintData() { html = html });
         }
     }

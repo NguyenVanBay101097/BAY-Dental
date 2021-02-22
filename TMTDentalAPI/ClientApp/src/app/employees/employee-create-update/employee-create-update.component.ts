@@ -108,6 +108,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       // });
 
     });
+    document.getElementById('name').focus();
   }
 
   ngAfterViewInit(): void {
@@ -121,8 +122,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
-  get nameFC() {return this.formCreate.get('name');}
-  get userIdFC() {return this.formCreate.get('userId');}
+  get nameFC() { return this.formCreate.get('name'); }
+  get userIdFC() { return this.formCreate.get('userId'); }
 
   get isUser() {
     return this.formCreate.get('isUser').value;
@@ -271,7 +272,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
     }
-    
+
     value.commissionId = value.commission ? value.commission.id : null;
 
     this.isChange = true;
@@ -407,7 +408,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     )
   }
 
-  toggleVisibility(e){
-    this.isShowSalary= e.target.checked;
+  toggleVisibility(e) {
+    this.isShowSalary = e.target.checked;
   }
 }

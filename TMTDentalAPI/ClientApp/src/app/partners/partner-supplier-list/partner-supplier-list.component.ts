@@ -80,6 +80,13 @@ export class PartnerSupplierListComponent implements OnInit {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'supplier';
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Import thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, () => {
     });
@@ -94,13 +101,6 @@ export class PartnerSupplierListComponent implements OnInit {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.title;
     modalRef.result.then(() => {
-      this.notificationService.show({
-        content: 'Import thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
       this.loadDataFromApi();
     }, () => {
     });
@@ -110,7 +110,6 @@ export class PartnerSupplierListComponent implements OnInit {
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.title;
     modalRef.componentInstance.id = item.id;
-
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
