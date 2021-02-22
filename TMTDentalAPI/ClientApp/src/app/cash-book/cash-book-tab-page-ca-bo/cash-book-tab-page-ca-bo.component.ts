@@ -99,6 +99,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
+    gridPaged.state = "posted";
 
     this.accountPaymentService.getPaged(gridPaged)
       .pipe(

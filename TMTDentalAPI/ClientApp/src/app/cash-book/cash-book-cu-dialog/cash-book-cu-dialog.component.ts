@@ -283,6 +283,8 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
@@ -307,9 +309,11 @@ export class CashBookCuDialogComponent implements OnInit {
           this.itemId = result.id;
           this.setTitle();
           this.reload = true;
+          this.submitted = false;
         },
         (error) => {
           console.log(error);
+          this.submitted = false;
         }
       );
     } else {
@@ -322,16 +326,20 @@ export class CashBookCuDialogComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
+          this.submitted = false;
           this.activeModal.close();
         },
         (error) => {
           console.log(error);
+          this.submitted = false;
         }
       );
     }
   }
 
   onConfirmPrint(print) {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
@@ -349,6 +357,7 @@ export class CashBookCuDialogComponent implements OnInit {
           this.itemId = result.id;
           this.setTitle();
           this.reload = true;
+          this.submitted = false;
           this.accountPaymentService.post([this.itemId]).subscribe(
             (result) => {
               this.notificationService.show({
@@ -362,14 +371,17 @@ export class CashBookCuDialogComponent implements OnInit {
               if (print) {
                 this.printPhieu(this.itemId);
               }
+              this.submitted = false;
             },
             (error) => {
               console.log(error);
+              this.submitted = false;
             }
           );
         },
         (error) => {
           console.log(error);
+          this.submitted = false;
         }
       );
     } else {
@@ -388,9 +400,11 @@ export class CashBookCuDialogComponent implements OnInit {
           }
 
           this.reload = true;
+          this.submitted = false;
         },
         (error) => {
           console.log(error);
+          this.submitted = false;
         }
       );
     }
