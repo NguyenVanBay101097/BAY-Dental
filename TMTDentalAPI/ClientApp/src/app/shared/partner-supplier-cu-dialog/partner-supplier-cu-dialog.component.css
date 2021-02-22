@@ -1,0 +1,7 @@
+.modal-body {
+    min-height: 410px;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet {
+    border: none !important;
+}

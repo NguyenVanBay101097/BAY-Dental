@@ -14,8 +14,8 @@
             <input class="form-control" formControlName="name">
           </h1>
         </div>
-        <div *ngIf="f.name.errors && (f.name.dirty || submitted)" class="text-danger">
-          <div *ngIf="f.name.errors.required && f.name.touched">Vui lòng điền tên nhà cung cấp</div>
+        <div *ngIf="f.name.errors && ( f.name.touched || f.name.dirty || submitted)" class="text-danger">
+          <div *ngIf="f.name.errors.required">Vui lòng điền tên nhà cung cấp</div>
         </div>
         <div class="o_group">
           <table class="o_group o_inner_group o_group_col_6">
@@ -95,6 +95,6 @@
 <div class="modal-footer">
   <div>
     <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
   </div>
 </div>
