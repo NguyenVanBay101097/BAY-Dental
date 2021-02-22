@@ -32,20 +32,13 @@
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
-                        type="button">
+                    <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}" type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
-                        type="button">
+                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}" type="button">
                         Đang liên hệ
                     </button>
-                    <button  [disabled]="surveyAssignment.status !== 'draft'"
-                        class="btn o_arrow_button disabled"
-                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
-                        type="button">
+                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}" type="button">
                         Chưa gọi
                     </button>
                 </div>
@@ -58,22 +51,18 @@
                 </div>
                 <div class=" d-flex justify-content-between">
                     <div class="media mb-3">
-                        <app-image-file-upload [supportWebcam]="true" class="t_avatar"
-                            [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar"
-                            [width]="100" [height]="100">
+                        <app-image-file-upload [supportWebcam]="true" class="t_avatar" [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar" [width]="100" [height]="100">
                         </app-image-file-upload>
                         <div class="media-body">
-                            <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
-                                surveyAssignment.saleOrder.partner.name: ''}}</h4>
+                            <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.name: ''}}</h4>
                             <div class="t_sub_title">
-                                Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref
-                                : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ?
-                                (surveyAssignment.saleOrder.partner.date | date:'shortDate') : '' }}
+                                Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? (surveyAssignment.saleOrder.partner.date
+                                | date:'shortDate') : '' }}
                             </div>
                         </div>
                     </div>
                     <div *ngIf="surveyAssignment.status === 'done'" class="report-prescription-payment">
-                        <div class="revenue" >
+                        <div class="revenue">
                             <div class="title">
                                 <h6>Điểm đánh giá</h6>
                             </div>
@@ -82,7 +71,7 @@
                             </h4>
                         </div>
                     </div>
-                </div>              
+                </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody *ngIf="surveyAssignment.saleOrder">
@@ -223,7 +212,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                   <strong>{{getAmountTotal | number}}</strong> 
+                                    <strong>{{getAmountTotal | number}}</strong>
                                 </td>
                             </tr>
 
@@ -248,8 +237,7 @@
                                     </tr>
                                 </thead>
                                 <tbody *ngIf="surveyAssignment.saleOrder">
-                                    <ng-container
-                                        *ngFor="let line of surveyAssignment.saleOrder.orderLines; let i=index">
+                                    <ng-container *ngFor="let line of surveyAssignment.saleOrder.orderLines; let i=index">
                                         <tr>
                                             <td>{{line.product?.name }}</td>
                                             <td>
@@ -296,20 +284,16 @@
                                     </tr>
                                 </thead>
                                 <tbody *ngIf="surveyAssignment.saleOrder">
-                                    <ng-container
-                                        *ngFor="let dotkham of surveyAssignment.saleOrder.dotKhams; let i=index">
+                                    <ng-container *ngFor="let dotkham of surveyAssignment.saleOrder.dotKhams; let i=index">
                                         <tr *ngFor="let dkline of dotkham.lines; let x=index">
 
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                [attr.rowspan]="dotkham.lines.length">
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
                                                 Đợt khám {{i+1}}</td>
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                [attr.rowspan]="dotkham.lines.length">
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
 
                                                 {{dotkham.date | date:'shortDate'}}
                                             </td>
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center"
-                                                [attr.rowspan]="dotkham.lines.length">
+                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
                                                 <span>{{dotkham.doctor.name}}</span>
                                             </td>
 
@@ -341,10 +325,10 @@
                         </h5>
                     </div>
                     <div class="o_group">
-                        <app-survey-call-content-list [id]="surveyAssignment.id" [view]="false" [surveyStatus]="surveyAssignment.status">
+                        <app-survey-call-content-list *ngIf="surveyAssignment.id" [id]="surveyAssignment.id" [view]="false" [surveyStatus]="surveyAssignment.status">
                         </app-survey-call-content-list>
                     </div>
-                </div>              
+                </div>
             </div>
         </div>
     </form>

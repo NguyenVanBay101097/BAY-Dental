@@ -32,6 +32,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
+            saleOrderObj.Sudo = true;
 
             var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any() && x.DateDone.HasValue).Include(x => x.Partner)
                 .Select(x => new SurveyAssignmentDefaultGet()
@@ -48,6 +49,8 @@ namespace Infrastructure.Services
             if (val.IsRandomAssign.HasValue && val.IsRandomAssign == true && res.Count > 0)
             {
                 var employeeObj = GetService<IEmployeeService>();
+                employeeObj.Sudo = true;
+
                 var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x => new EmployeeSimple { Id = x.Id, Name = x.Name }).ToListAsync();
                 if (employees.Count > 0)
                 {
@@ -125,16 +128,18 @@ namespace Infrastructure.Services
         public async Task<SurveyAssignmentDisplay> GetDisplay(Guid id)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
+            saleOrderObj.Sudo = true;
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            saleOrderLineObj.Sudo = true;
             var partnerObj = GetService<IPartnerService>();
-            var surveyCallContentObj = GetService<ISurveyCallContentService>();
-            var assign = await SearchQuery(x => x.Id == id).Include(x => x.CallContents).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
+            partnerObj.Sudo = true;
+
+            var assign = await SearchQuery(x => x.Id == id).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
             assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplayVm>(await saleOrderObj.SearchQuery(x => x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
             assignDisplay.SaleOrder.Partner = await partnerObj.GetInfoPartner(assignDisplay.SaleOrder.PartnerId);
             assignDisplay.SaleOrder.OrderLines = await saleOrderLineObj.GetDisplayBySaleOrder(assignDisplay.SaleOrderId);
             assignDisplay.SaleOrder.DotKhams = await saleOrderObj._GetListDotkhamInfo(assignDisplay.SaleOrderId);
-            //assignDisplay.CallContents = _mapper.Map<IEnumerable<SurveyCallContentDisplay>>(await surveyCallContentObj.SearchQuery(x => x.AssignmentId == assignDisplay.Id).OrderByDescending(x => x.Date).ToListAsync());
             return assignDisplay;
         }
 
