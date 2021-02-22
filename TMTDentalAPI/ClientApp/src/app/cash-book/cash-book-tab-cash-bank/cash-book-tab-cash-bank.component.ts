@@ -21,7 +21,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   @Input() changeToLoadData: boolean;
 
   constructor(
-    private cashBookService: CashBookService,
+    private cashBookService: CashBookService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,8 +103,8 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   }
 
   loadDataFromApi() {
+    this.skip = 0;
     this.loadDataGetSumary();
     this.loadDataGetMoney();
   }
-
 }
