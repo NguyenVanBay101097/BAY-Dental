@@ -6,13 +6,10 @@
 }
 
 <style>
-    .page-break {
-        page-break-before: always;
+    body.A4 .sheet {
+        width: 210mm;
+        height: auto;
     }
-
-        .page-break:first-child {
-            page-break-before: avoid;
-        }
 </style>
 
 @if (Model != null && Model.Count() > 0)
