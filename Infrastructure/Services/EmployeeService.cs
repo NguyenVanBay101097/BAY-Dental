@@ -220,7 +220,10 @@ namespace Infrastructure.Services
             var entity = SearchQuery(x => x.Id == id).Include(x=>x.User).FirstOrDefault();
             if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
             entity.Active = val.Active;
+
+            if(entity.User != null)
             entity.User.Active = val.Active;
+
             await UpdateAsync(entity);
             return true;
         }
