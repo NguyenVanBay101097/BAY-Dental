@@ -24,6 +24,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// posted: xác nhận
         /// draft: nháp
+        /// cancel: cancel
         /// </summary>
         public string State { get; set; }
 
