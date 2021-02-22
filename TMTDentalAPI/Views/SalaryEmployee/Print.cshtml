@@ -7,6 +7,18 @@
 
 <style>
 
+    /*  .sheet {
+        margin: 0;
+        overflow: unset;
+        position: relative;
+        box-sizing: border-box;
+    }*/
+
+    body.A4 .sheet {
+        width: 210mm;
+        height: auto;
+    }
+
     .active {
         background-color: #adb5bd;
     }
@@ -36,10 +48,10 @@
 
     foreach (var slip in Model.Slips)
     {
-        <div class="page-break" >
-            <div class="px-3">
+        <div class="page-break overflow-auto">
+            <div class="mb-2">
                 <div class="d-flex border border-secondary">
-                    <div class="col-4 border-right">
+                    <div class="col-4 border-right border-secondary">
                         <div class="logo">
                             <img class="logo-image" src="@Model.Company.Logo" alt="">
                         </div>
@@ -143,7 +155,7 @@
                             <tr>
                                 <td class="text-center">1</td>
                                 <td class="text-left">Lương cơ bản</td>
-                                <td class="text-right">@(slip.TotalBasicSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.TotalBasicSalary.Value) : "0")</td>
+                                <td class="text-right">@(slip.TotalBasicSalary.HasValue && slip.TotalBasicSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.TotalBasicSalary.Value) : "0")</td>
                             </tr>
                             <tr>
                                 <td class="text-center">2</td>
@@ -188,7 +200,7 @@
                             <tr class="bg-info font-semibold">
                                 <td></td>
                                 <td class="text-left">Tổng lương</td>
-                                <td class="text-right">@(slip.TotalSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
+                                <td class="text-right">@(slip.TotalSalary.HasValue && slip.TotalSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.TotalSalary.Value) : "0")</td>
                             </tr>
                             <tr>
                                 <td class="text-center">10</td>
@@ -198,7 +210,7 @@
                             <tr class="bg-info font-semibold">
                                 <td></td>
                                 <td class="text-left">Thực lĩnh</td>
-                                <td class="text-right">@(slip.NetSalary.HasValue ? string.Format(culture, "{0:0,0}", slip.NetSalary.Value) : "0")</td>
+                                <td class="text-right">@(slip.NetSalary.HasValue && slip.NetSalary.Value != 0 ? string.Format(culture, "{0:0,0}", slip.NetSalary.Value) : "0")</td>
                             </tr>
                         </tbody>
                     </table>
