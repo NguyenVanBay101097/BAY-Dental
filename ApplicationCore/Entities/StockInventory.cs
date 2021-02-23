@@ -18,9 +18,20 @@ namespace ApplicationCore.Entities
             Moves = new List<StockMove>();
         }
 
+        /// <summary>
+        /// Mã phiếu tự động
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Ngày kiểm kho
+        /// </summary>
         public DateTime Date { get; set; }
+
+        /// <summary>
+        /// Ghi Chú
+        /// </summary>
+        public string Note { get; set; }
 
         /// <summary>
         /// Dòng điều chỉnh
@@ -34,6 +45,9 @@ namespace ApplicationCore.Entities
 
         public string State { get; set; }
 
+        /// <summary>
+        /// Địa điểm kiểm kho
+        /// </summary>
         public Guid LocationId { get; set; }
         public StockLocation Location { get; set; }
 
