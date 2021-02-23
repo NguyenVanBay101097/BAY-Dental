@@ -133,25 +133,67 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   }
 
   clickTab(value) {
-    this.resultSelection = value; 
+    this.resultSelection = value;
     this.loadGridData();
     this.loadDataFromApi();
   }
 
-  exportExcelFile() {
-    // this.cashBookService.exportExcelFile(this.paged).subscribe((res) => {
-    //   let filename = "TongSoQuy";
-    //   if (this.paged.resultSelection == "cash") {
-    //     filename = "SoQuyTienMat";
-    //   } else if (this.paged.resultSelection == "bank") {
-    //     filename = "SoQuyNganHang";
-    //   }
+  getPartnerType(partnerType) {
+    if (partnerType == "employee") {
+      return "Nhân viên";
+    }
+    else if (partnerType == "customer") {
+      return "Khách hàng";
+    }
+    else if (partnerType == "supplier") {
+      return "Nhà cung cấp";
+    }
+  }
 
-    //   let newBlob = new Blob([res], {
+  exportExcelFile() {
+    var page = new AccountPaymentPaged();
+    page.companyId = this.authService.userInfo.companyId;
+    page.journalType = this.resultSelection == "cash_bank" ? '' : this.resultSelection;
+    page.paymentDateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    page.paymentDateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    page.offset = this.skip;
+    page.limit = this.limit;
+    page.search = this.search || '';
+    page.state = "posted";
+    this.accountPaymentService.exportExcelFile(page).subscribe((res: any) => {
+      let filename = "TongSoQuy";
+      if (this.resultSelection == "cash") {
+        filename = "SoQuyTienMat";
+      } else if (this.resultSelection == "bank") {
+        filename = "SoQuyNganHang";
+      }
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+
+    // var paged = new ProductPaged();
+
+    // paged.search = this.searchService || "";
+    // paged.categId = this.cateId || "";
+    // this.productService.excelServiceExport(paged).subscribe((rs) => {
+    //   let filename = "danh_sach_dich_vu";
+    //   let newBlob = new Blob([rs], {
     //     type:
     //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     //   });
-    //   console.log(res);
+    //   console.log(rs);
 
     //   let data = window.URL.createObjectURL(newBlob);
     //   let link = document.createElement("a");

@@ -116,4 +116,8 @@ export class AccountPaymentService {
     supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {
         return this.http.post(this.baseApi + this.apiUrl + '/SupplierDefaultGet', val);
     }
+
+    exportExcelFile(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, { responseType: "blob" });
+    }
 }

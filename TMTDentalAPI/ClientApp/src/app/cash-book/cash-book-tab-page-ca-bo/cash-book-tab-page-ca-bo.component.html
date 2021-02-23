@@ -97,15 +97,22 @@
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column field="name" title="Số phiếu" width="100"></kendo-grid-column>
-                        <kendo-grid-column field="displayPaymentType" title="Loại phiếu" width="100">
+                        <kendo-grid-column *ngIf="resultSelection == 'cash_bank'" field="name" title="Phương thức thanh toán" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.journalName}}
+                            </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column field="destinationAccountName" title="Loại thu chi" width="100"></kendo-grid-column>
-                        <kendo-grid-column field="journalName"
-                            title="Phương thức" width="120">
-                        </kendo-grid-column>
-                        <kendo-grid-column field="amount" title="Số tiền" width="150" class="text-right">
+                        <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                {{dataItem.amount | number}}
+                                <div [ngClass]="(dataItem.paymentType == 'outbound')?'text-danger':'text-primary'">
+                                    {{dataItem.paymentType == "outbound" ? "-" : "+"}}{{dataItem.amount | number}}
+                                </div>
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="partnerType" title="Nhóm người nhận/nộp tiền" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{getPartnerType(dataItem.partnerType)}}
                             </ng-template>
                         </kendo-grid-column>
                         <kendo-grid-column field="partnerName" title="Người nhận/nộp tiền" width="100">
