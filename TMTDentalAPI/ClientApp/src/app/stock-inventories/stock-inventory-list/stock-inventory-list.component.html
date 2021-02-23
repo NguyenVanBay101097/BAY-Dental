@@ -1,0 +1,56 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="o_cp_t_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <div class="d-flex">
+                        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        </app-tai-date-range-filter-dropdown>
+                        <kendo-combobox (selectionChange)="onStateChange($event)" placeholder="Trạng thái" class="kendo-combobox-sm" style="width: auto;" [data]="filterInventoryState" [textField]="'name'" [valueField]="'value'">
+                        </kendo-combobox>
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+                <div class="d-flex">
+                    <button class="btn btn-primary btn-sm mr-2 ml-3" title="Tạo phiếu kiểm kho" (click)="editItem(dataItem)">Tạo phiếu kiểm kho</button>
+                    <button class="btn btn-primary btn-sm mr-2" title="Xuất file">Xuất file</button>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_t_right">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Số phiếu" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="date" title="Ngày kiểm kho" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date:'Shortdate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getState(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-center" field="id" width="100">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <span class="far fa-trash-alt"></span></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

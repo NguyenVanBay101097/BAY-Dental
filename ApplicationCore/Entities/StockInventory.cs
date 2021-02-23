@@ -43,6 +43,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<StockMove> Moves { get; set; }
 
+        /// <summary>
+        /// draft : nháp
+        /// confirmed : đang xử lý
+        /// done : hoàn thành
+        /// </summary>
         public string State { get; set; }
 
         /// <summary>
@@ -61,6 +66,10 @@ namespace ApplicationCore.Entities
         /// If you do an entire inventory, you can choose 'All Products' and it will prefill the inventory with the current stock.  If you only do some products
         /// (e.g. Cycle Counting) you can choose 'Manual Selection of Products' and the system won't propose anything.  You can also let the
         /// system propose for a single product / lot /... 
+        /// 
+        /// none : tất cả sản phẩm
+        /// category : nhóm sản phẩm
+        /// partial : chọn sản phẩm thủ công
         /// </summary>
         public string Filter { get; set; }
 

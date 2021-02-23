@@ -304,6 +304,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddScoped<ITCareMessageService, TCareMessageService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<IStockInventoryService, StockInventoryService>();
             //services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddScoped<IPartnerOldNewReportService, PartnerOldNewReportService>();
             services.AddScoped<ICashBookService, CashBookService>();
@@ -439,6 +440,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MedicineOrderLineProfile());
                 mc.AddProfile(new VFundBookProfile());
                 mc.AddProfile(new PartnerOldNewReportProfile());
+                mc.AddProfile(new StockInventoryProfile());
+                mc.AddProfile(new StockInventoryLineProfile());
+                mc.AddProfile(new StockLocationProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

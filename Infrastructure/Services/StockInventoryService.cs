@@ -1,20 +1,94 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Utilities;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class StockInventoryService : BaseService<StockInventory>
+    public class StockInventoryService : BaseService<StockInventory>, IStockInventoryService
     {
-        public StockInventoryService(IAsyncRepository<StockInventory> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public StockInventoryService(IAsyncRepository<StockInventory> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
+        }
+
+        public async Task<PagedResult2<StockInventoryBasic>> GetPagedResultAsync(StockInventoryPaged val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.Date <= dateOrderTo);
+            }
+
+
+            var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<StockInventoryBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<StockInventoryBasic>>(items)
+            };
+
+            return paged;
+        }
+
+        public async Task<StockInventoryDisplay> GetDisplay(Guid id)
+        {
+            var res = SearchQuery(x => x.Id == id)
+                .Include(x => x.Lines)
+                .Include(x => x.Location)
+                .Include(x => x.Moves)
+                .Include(x => x.Product)
+                .Include(x => x.Company)
+                .Include(x => x.Category)
+                .Include(x => x.Location)
+                .AsQueryable();
+
+            var display = await _mapper.ProjectTo<StockInventoryDisplay>(res).FirstOrDefaultAsync();
+
+            return display;
+        }
+
+        public async Task<StockInventoryDisplay> DefaultGet(StockInventoryDefaultGet val)
+        {
+            ///lấy vị trí kho
+            var location = await DefaultStockLocation(val.CompanyId.Value);
+
+            var display = new StockInventoryDisplay();
+            display.CompanyId = val.CompanyId.Value;
+            display.LocationId = location.Id;
+            display.Location = _mapper.Map<StockLocationSimple>(location);
+            display.Filter = "none";
+            display.Date = DateTime.Now;
+            display.Exhausted = false;
+
+            return display;
         }
 
         public async Task PrepareInventory(IEnumerable<StockInventory> self)
@@ -136,10 +210,10 @@ namespace Infrastructure.Services
             return vals;
         }
 
-        public StockLocation DefaultStockLocation(string uid)
+        public async Task< StockLocation> DefaultStockLocation(Guid companyId)
         {
             var whObj = GetService<StockWarehouseService>();
-            var wh = whObj.SearchQuery().FirstOrDefault();
+            var wh = await whObj.SearchQuery(x => x.CompanyId == companyId).FirstOrDefaultAsync();
             if (wh != null)
                 return wh.Location;
             return null;

@@ -18,6 +18,7 @@ import { StockPickingManagementComponent } from './stock-picking-management/stoc
 import { StockReportService } from '../stock-reports/stock-report.service';
 import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
 import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-detail/stock-picking-incoming-detail.component';
+import { StockInventoriesModule } from '../stock-inventories/stock-inventories.module';
 
 @NgModule({
   declarations: [StockPickingListComponent, StockPickingCreateUpdateComponent, StockPickingMlDialogComponent, StockPickingOutgoingListComponent, StockPickingOutgoingCreateUpdateComponent, StockPickingIncomingListComponent, StockPickingIncomingCreateUpdateComponent, StockPickingManagementComponent, StockXuatNhapTonComponent, StockPickingIncomingDetailComponent],
@@ -26,6 +27,7 @@ import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-de
     StockPickingsRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
+    StockInventoriesModule,
     FormsModule,
     SharedModule
   ],

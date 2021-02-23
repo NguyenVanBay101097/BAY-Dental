@@ -9,6 +9,7 @@ import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incom
 import { StockPickingManagementComponent } from './stock-picking-management/stock-picking-management.component';
 import { StockReportXuatNhapTonComponent } from '../stock-reports/stock-report-xuat-nhap-ton/stock-report-xuat-nhap-ton.component';
 import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
+import { StockInventoryListComponent } from '../stock-inventories/stock-inventory-list/stock-inventory-list.component';
 
 const routes: Routes = [
   // {
@@ -42,7 +43,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'stock-report-xuat-nhap-ton', pathMatch: 'full' },
       { path: 'stock-report-xuat-nhap-ton', component: StockXuatNhapTonComponent },
       { path: 'incoming-pickings', component: StockPickingIncomingListComponent },
-      { path: 'outgoing-pickings', component: StockPickingOutgoingListComponent }
+      { path: 'outgoing-pickings', component: StockPickingOutgoingListComponent },
+      { path: 'stock-inventories', component: StockInventoryListComponent }
     ]
   }
 ];
