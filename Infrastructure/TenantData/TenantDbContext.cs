@@ -19,6 +19,7 @@ namespace Infrastructure.TenantData
         }
 
         public DbSet<AppTenant> Tenants { get; set; }
+        public DbSet<TenantExtendHistory> TenantExtendHistories { get; set; }
         public DbSet<TenantFacebookPage> TenantFacebookPages { get; set; }
 
         public IDbContextTransaction BeginTransaction()
@@ -45,6 +46,7 @@ namespace Infrastructure.TenantData
         {
             builder.ApplyConfiguration(new AppTenantConfiguration());
             builder.ApplyConfiguration(new TenantFacebookPageConfiguration());
+            builder.ApplyConfiguration(new TenantExtendHistoryConfiguration());
 
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.

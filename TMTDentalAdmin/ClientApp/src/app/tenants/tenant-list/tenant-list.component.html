@@ -66,5 +66,8 @@
     </kendo-grid-column>
     <kendo-grid-column field="supporterName" class="text-right" title="Người triển khai" width="120">
     </kendo-grid-column>
+    <div *kendoGridDetailTemplate="let dataItem">
+      <app-tenant-extend-history [tenant]="dataItem"></app-tenant-extend-history>
+    </div>
   </kendo-grid>
 </div>

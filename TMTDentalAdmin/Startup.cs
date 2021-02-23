@@ -94,10 +94,12 @@ namespace TMTDentalAdmin
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
+            services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new AppTenantProfile());
+                mc.AddProfile(new TenantExtendHistoryProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

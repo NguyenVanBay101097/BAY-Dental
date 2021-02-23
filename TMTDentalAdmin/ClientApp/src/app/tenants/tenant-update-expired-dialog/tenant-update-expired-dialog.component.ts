@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { TenantService } from '../tenant.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TenantExtendHistoryService } from '../tenant-extend-history.service';
 
 @Component({
   selector: 'app-tenant-update-expired-dialog',
@@ -13,24 +14,96 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   title = 'Gia hạn';
   formGroup: FormGroup;
   id: string;
-  dateExpired: any;
+  expirationDate: Date;
+  endDate: Date;
+  startDate: Date;
+  limit: number;
+  limitOption: any;
   tenant: any;
+  today: Date = new Date();
 
-  constructor(private fb: FormBuilder, private intlService: IntlService, private tenantService: TenantService,
+  constructor(private fb: FormBuilder, private intlService: IntlService,
+    private tenantExtendHistoryService: TenantExtendHistoryService,
+    private tenantService: TenantService,
     public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
+    if (this.today <= this.expirationDate)
+      this.startDate = new Date(this.expirationDate.getFullYear(), this.expirationDate.getMonth(), this.expirationDate.getDate() + 1);
+    else {
+      this.startDate = this.today;
+    }
     this.formGroup = this.fb.group({
-      dateExpired: this.dateExpired,
-      activeCompaniesNbr: this.tenant.activeCompaniesNbr
+      limit: [6],
+      checkOption: "time",
+      limitOption: ['month'],
+      activeCompaniesNbr: [this.tenant.activeCompaniesNbr]
     });
+    this.limit = this.formGroup.get('limit') ? this.formGroup.get('limit').value : 0;
+    this.limitOption = this.formGroup.get('limitOption') ? this.formGroup.get('limitOption').value : null;
+    this.computeEndDate();
+  }
+
+  getFormGroup() {
+    if (this.formGroup.invalid)
+      return;
+    var value = this.formGroup.value;
+    return value;
+  }
+
+  changeRadio() {
+    var checkOption = this.formGroup.get('checkOption') ? this.formGroup.get('checkOption').value : null;
+    if (checkOption) {
+      switch (checkOption) {
+        case "company":
+          this.startDate = this.today;
+          this.endDate = this.expirationDate;
+          break;
+        case "time":
+          if (this.today <= this.expirationDate)
+            this.startDate = new Date(this.expirationDate.getFullYear(), this.expirationDate.getMonth(), this.expirationDate.getDate() + 1);
+          else {
+            this.startDate = this.today;
+          }
+          this.computeEndDate();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  get checkOption() {
+    return this.formGroup.get('checkOption') ? this.formGroup.get('checkOption').value : null;
+  }
+
+  computeEndDate() {
+    this.limit = this.formGroup.get('limit') ? this.formGroup.get('limit').value : 0;
+    this.limitOption = this.formGroup.get('limitOption') ? this.formGroup.get('limitOption').value : null;
+    if (this.limit && this.limitOption) {
+      switch (this.limitOption) {
+        case "day":
+          this.endDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), this.startDate.getDate() + this.limit);
+          break;
+        case "month":
+          this.endDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + this.limit, this.startDate.getDate());
+          break;
+        case "year":
+          this.endDate = new Date(this.startDate.getFullYear() + this.limit, this.expirationDate.getMonth(), this.startDate.getDate());
+          break;
+
+        default:
+          break;
+      }
+    }
   }
 
   onSave() {
-    var val = this.formGroup.value;
-    val.dateExpired = this.intlService.formatDate(val.dateExpired, 'yyyy-MM-ddTHH:mm:ss');
-    val.id = this.id;
-    this.tenantService.updateDateExpired(val).subscribe(() => {
+    var val = this.getFormGroup();
+    val.startDate = this.intlService.formatDate(this.startDate, "yyyy-MM-dd");
+    val.expirationDate = this.intlService.formatDate(this.endDate, "yyyy-MM-dd");
+    val.tenantId = this.id;
+    this.tenantExtendHistoryService.create(val).subscribe(() => {
       this.activeModal.close(true);
     }, (err) => {
       if (err.message) {

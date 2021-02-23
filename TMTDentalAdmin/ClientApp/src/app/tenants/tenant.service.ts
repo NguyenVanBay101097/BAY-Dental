@@ -26,7 +26,6 @@ export class TenantPaged {
     offset: number;
 }
 
-
 export class TenantPaging {
     offset: number;
     limit: number;

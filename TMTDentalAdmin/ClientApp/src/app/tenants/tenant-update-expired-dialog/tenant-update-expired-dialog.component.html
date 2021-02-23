@@ -1,48 +1,106 @@
 <header class="modal-header">
-    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+  <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+    tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="o_group">
-                    <table class="o_group o_inner_group">
-                      <tbody>
-                        <tr>
-                          <td colspan="1" class="o_td_label">
-                            <label class="o_form_label">
-                              Ngày hết hạn
-                            </label>
-                          </td>
-                          <td colspan="1" style="width: 100%;">
-                            <kendo-datepicker formControlName="dateExpired">
-                            </kendo-datepicker>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="1" class="o_td_label">
-                            <label class="o_form_label">
-                              Số chi nhánh
-                            </label>
-                          </td>
-                          <td colspan="1" style="width: 100%;">
-                            <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="activeCompaniesNbr">
-                            </kendo-numerictextbox>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                </div>
-            </div>
+  <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+      <div class="o_form_sheet">
+        <div class="o_group">
+          <table class="o_group o_inner_group">
+            <tbody>
+              <tr>
+                <td colspan="2" style="width: 100%;">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" (change)="changeRadio()" formControlName="checkOption"
+                      value="company" id="company">
+                    <label class="form-check-label" for="company">
+                      Thêm chi nhánh
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" (change)="changeRadio()" formControlName="checkOption"
+                      value="time" id="time">
+                    <label class="form-check-label" for="time">
+                      Gia hạn thời gian
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">
+                    Ngày bắt đầu
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <label *ngIf="startDate">{{startDate | date:'shortDate'}}</label>
+                  <label *ngIf="!startDate">dd/mm/yyyy</label>
+                </td>
+              </tr>
+              <tr *ngIf="checkOption == 'time'">
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">
+                    Hạn mức
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <div class="d-flex">
+                    <kendo-numerictextbox (valueChange)="computeEndDate()" class="mr-2" [min]="1" [format]="'n0'"
+                      [spinners]="false" formControlName="limit">
+                    </kendo-numerictextbox>
+                    <select (change)="computeEndDate()" class="form-select form-control" formControlName="limitOption"
+                      aria-label="Chọn loại hạn mức">
+                      <option value="day">Ngày</option>
+                      <option value="month">Tháng</option>
+                      <option value="year">Năm</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">
+                    Số chi nhánh
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="activeCompaniesNbr">
+                  </kendo-numerictextbox>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+              <tr>
+                <td colspan="1" class="o_td_label">
+                  <label class="o_form_label">
+                    Ngày kết thúc
+                  </label>
+                </td>
+                <td colspan="1" style="width: 100%;">
+                  <label *ngIf="endDate">{{endDate | date:'shortDate'}}</label>
+                  <label *ngIf="!endDate">dd/mm/yyyy</label>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác nhận</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+  <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Xác nhận</button>
+  <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+    accesskey="q">Đóng</button>
 </footer>
