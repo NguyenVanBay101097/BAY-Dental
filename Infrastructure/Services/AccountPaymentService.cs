@@ -1082,6 +1082,9 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
             }
 
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.CompanyId.Equals(val.CompanyId)));
+
             if (val.SaleOrderId.HasValue)
             {
                 var orderObj = GetService<ISaleOrderService>();
