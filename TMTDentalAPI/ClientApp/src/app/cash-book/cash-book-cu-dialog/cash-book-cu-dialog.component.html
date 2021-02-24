@@ -8,7 +8,7 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="getValueForm('state') == 'cancel'" class="btn o_arrow_button disabled"
+                    <button *ngIf="getValueForm('state') == 'cancel'" class="btn o_arrow_button disabled"
                         [class.btn-primary]="getValueForm('state') == 'cancel'"
                         [class.btn-secondary]="getValueForm('state') == 'cancel'" type="button">
                         Đã hủy
