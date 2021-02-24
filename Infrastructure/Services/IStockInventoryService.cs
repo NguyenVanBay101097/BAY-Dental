@@ -13,5 +13,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<StockInventoryBasic>> GetPagedResultAsync(StockInventoryPaged val);
         Task<StockInventoryDisplay> GetDisplay(Guid id);
         Task<StockInventoryDisplay> DefaultGet(StockInventoryDefaultGet val);
+        Task<StockInventory> CreateStockInventory(StockInventorySave val);
+        Task UpdateStockInventory(Guid id, StockInventorySave val);
+        Task PrepareInventory(IEnumerable<Guid> ids);
     }
 }

@@ -116,4 +116,20 @@ export class StockInventoryService {
   getDefault(id): Observable<StockInventoryDisplay> {
     return this.http.post<StockInventoryDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { companyId: id })
   }
+
+  create(val): Observable<StockInventoryDisplay> {
+    return this.http.post<StockInventoryDisplay>(this.base_api + this.apiUrl, val);
+  }
+
+  update(id, val) {
+    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  }
+
+  prepareInventory(ids) {
+    return this.http.post(this.base_api + this.apiUrl + '/PrepareInventory', ids)
+  }
+
+  delete(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + "/" + id);
+  }
 }

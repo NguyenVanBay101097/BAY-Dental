@@ -7,9 +7,10 @@ import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StockInventoryListComponent } from './stock-inventory-list/stock-inventory-list.component';
 import { StockInventoryService } from './stock-inventory.service';
+import { StockInventoryFormComponent } from './stock-inventory-form/stock-inventory-form.component';
 
 @NgModule({
-  declarations: [StockInventoryListComponent],
+  declarations: [StockInventoryListComponent, StockInventoryFormComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -22,5 +23,8 @@ import { StockInventoryService } from './stock-inventory.service';
   providers: [
     StockInventoryService
   ],
+  entryComponents: [
+    StockInventoryFormComponent
+  ]
 })
 export class StockInventoriesModule { }

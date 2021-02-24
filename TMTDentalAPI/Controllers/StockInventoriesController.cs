@@ -47,30 +47,56 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create(StockInventorySave val)
-        //{
-        //    await _unitOfWork.BeginTransactionAsync();
+        [HttpPost]
+        public async Task<IActionResult> Create(StockInventorySave val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        //    var inventory = await _stockInventoryService.CreateStockInventory(val);
+            var inventory = await _stockInventoryService.CreateStockInventory(val);
 
-        //    _unitOfWork.Commit();
+            _unitOfWork.Commit();
 
-        //    var basic = _mapper.Map<StockInventoryBasic>(inventory);
-        //    return Ok(basic);
-        //}
+            var basic = _mapper.Map<StockInventoryBasic>(inventory);
+            return Ok(basic);
+        }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(Guid id, StockInventorySave val)
-        //{
-        //    await _unitOfWork.BeginTransactionAsync();
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id, StockInventorySave val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        //    await _stockInventoryService.UpdateStockInventory(id, val);
+            await _stockInventoryService.UpdateStockInventory(id, val);
 
-        //    _unitOfWork.Commit();
+            _unitOfWork.Commit();
 
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PrepareInventory(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _stockInventoryService.PrepareInventory(ids);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var inventory = await _stockInventoryService.GetByIdAsync(id);
+            if (inventory.State != "draft")
+                throw new Exception("Không thể xóa phiếu kiểm kho đang xử lý hoặc hoàn thành");
+
+            if (inventory == null)
+                return NotFound();
+
+            await _stockInventoryService.DeleteAsync(inventory);
+            return NoContent();
+        }
 
 
     }

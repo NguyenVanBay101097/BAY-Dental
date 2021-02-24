@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrecscriptionPaymentPaged, StockInventoryService } from '../stock-inventory.service';
 
 @Component({
@@ -32,7 +35,9 @@ export class StockInventoryListComponent implements OnInit {
 
   constructor(
     private stockInventorySevice: StockInventoryService,
+    private notificationService: NotificationService,
     private intlService: IntlService,
+    private router: Router,
     private modalService: NgbModal
   ) { }
 
@@ -77,6 +82,10 @@ export class StockInventoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  createItem() {
+    this.router.navigate(['stock-inventories/form']);
+  }
+
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
@@ -92,6 +101,30 @@ export class StockInventoryListComponent implements OnInit {
     }
 
     this.loadDataFromApi();
+  }
+
+  editItem(item) {
+    var id = item.id;
+    this.router.navigate(['/stock-inventories/form'], { queryParams: { id: id } });
+    // this.router.navigate(['stock-inventories/form', item.id]);
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa phiếu kiểm kho';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu kiểm kho ?';
+    modalRef.result.then(() => {
+      this.stockInventorySevice.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadDataFromApi();
+      });
+    });
   }
 
   getState(state) {

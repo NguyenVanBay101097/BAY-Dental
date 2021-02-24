@@ -24,6 +24,8 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+
+
         public async Task<PagedResult2<StockInventoryBasic>> GetPagedResultAsync(StockInventoryPaged val)
         {
             var query = SearchQuery();
@@ -87,28 +89,74 @@ namespace Infrastructure.Services
             display.Filter = "none";
             display.Date = DateTime.Now;
             display.Exhausted = false;
+            display.State = "draft";
 
             return display;
         }
 
-        public async Task PrepareInventory(IEnumerable<StockInventory> self)
+        public async Task<StockInventory> CreateStockInventory(StockInventorySave val)
+        {
+            var inventory = _mapper.Map<StockInventory>(val);
+            await CreateAsync(inventory);
+
+            return inventory;
+        }
+
+
+
+        public async Task UpdateStockInventory(Guid id, StockInventorySave val)
+        {
+            var inventory = await SearchQuery(x => x.Id == id).Include(x => x.Product).Include(x => x.Category).FirstOrDefaultAsync();
+
+            inventory = _mapper.Map(val, inventory);
+
+            await UpdateAsync(inventory);
+
+        }
+
+        public async Task PrepareInventory(IEnumerable<Guid> ids)
         {
             var inventoryLineObj = GetService<IStockInventoryLineService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Location)
+                .Include(x => x.Product)
+                .Include(x => x.Category)
+                .Include(x => x.Lines)
+                .ToListAsync();
+
             foreach (var inventory in self)
             {
                 var lineIds = inventory.Lines.Select(x => x.Id).ToList();
                 if (!inventory.Lines.Any() && inventory.Filter != "partial")
                 {
-                    var vals = GetInventoryLines(inventory);
+                    var vals = await GetInventoryLines(inventory);
                     await inventoryLineObj.CreateAsync(vals);
                 }
 
                 inventory.State = "confirmed";
-                Update(inventory);
+
+                await UpdateAsync(inventory);
             }
         }
 
-        private IEnumerable<StockInventoryLine> GetInventoryLines(StockInventory self)
+        //public async Task PrepareInventory(IEnumerable<StockInventory> self)
+        //{
+        //    var inventoryLineObj = GetService<IStockInventoryLineService>();
+        //    foreach (var inventory in self)
+        //    {
+        //        var lineIds = inventory.Lines.Select(x => x.Id).ToList();
+        //        if (!inventory.Lines.Any() && inventory.Filter != "partial")
+        //        {
+        //            var vals = GetInventoryLines(inventory);
+        //            await inventoryLineObj.CreateAsync(vals);
+        //        }
+
+        //        inventory.State = "confirmed";
+        //        Update(inventory);
+        //    }
+        //}
+
+        public async Task<IEnumerable<StockInventoryLine>> GetInventoryLines(StockInventory self)
         {
             var res = new List<StockInventoryLine>();
             var locationObj = GetService<IStockLocationService>();
@@ -130,7 +178,7 @@ namespace Infrastructure.Services
                 products_to_filter = products_to_filter.Union(categ_products);
             }
 
-            var group = stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
+            var group = await stockQuantObj.SearchQuery(x => x.LocationId == self.LocationId &&
                 x.CompanyId == self.CompanyId &&
                 (!self.ProductId.HasValue || x.ProductId == self.ProductId.Value) &&
                  (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value))
@@ -140,7 +188,7 @@ namespace Infrastructure.Services
                     ProductId = x.Key.ProductId,
                     LocationId = x.Key.LocationId,
                     ProductQty = x.Any() ? x.Sum(s => s.Qty) : 0,
-                });
+                }).ToListAsync();
 
             foreach (var item in group)
             {
@@ -210,13 +258,40 @@ namespace Infrastructure.Services
             return vals;
         }
 
-        public async Task< StockLocation> DefaultStockLocation(Guid companyId)
+        public async Task<StockLocation> DefaultStockLocation(Guid companyId)
         {
-            var whObj = GetService<StockWarehouseService>();
-            var wh = await whObj.SearchQuery(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+            var whObj = GetService<IStockWarehouseService>();
+            var wh = await whObj.SearchQuery(x => x.CompanyId == companyId).Include(x => x.Location).FirstOrDefaultAsync();
             if (wh != null)
                 return wh.Location;
             return null;
+        }
+
+        public override async Task<StockInventory> CreateAsync(StockInventory entity)
+        {
+            var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            entity.Name = await sequenceService.NextByCode("stock.inventory");
+            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            {
+                await _InsertStockInventorySequence();
+                entity.Name = await sequenceService.NextByCode("stock.inventory");
+            }
+
+            await base.CreateAsync(entity);
+
+            return entity;
+        }
+
+        private async Task _InsertStockInventorySequence()
+        {
+            var seqObj = GetService<IIRSequenceService>();
+            await seqObj.CreateAsync(new IRSequence
+            {
+                Name = "Phiếu kiểm kho",
+                Code = "stock.inventory",
+                Prefix = "KK",
+                Padding = 5
+            });
         }
 
         //public void ActionDone(IEnumerable<long> ids)

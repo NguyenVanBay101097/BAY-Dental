@@ -50,12 +50,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Dòng điều chỉnh
         /// </summary>
-        //public ICollection<StockInventoryLine> Lines { get; set; }
+        public IEnumerable<StockInventoryLineSave> Lines { get; set; } = new List<StockInventoryLineSave>();
 
         /// <summary>
         /// Dịch chuyển kho được tạo ra
         /// </summary>
-        //public ICollection<StockMove> Moves { get; set; }
+        //public IEnumerable<StockMoveSave> Moves { get; set; }
 
         /// <summary>
         /// draft : nháp

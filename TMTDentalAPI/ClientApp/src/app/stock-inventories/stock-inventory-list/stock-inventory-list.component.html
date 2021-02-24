@@ -14,7 +14,7 @@
             </div>
             <div class="o_cp_sidebar">
                 <div class="d-flex">
-                    <button class="btn btn-primary btn-sm mr-2 ml-3" title="Tạo phiếu kiểm kho" (click)="editItem(dataItem)">Tạo phiếu kiểm kho</button>
+                    <button class="btn btn-primary btn-sm mr-2 ml-3" title="Tạo phiếu kiểm kho" (click)="createItem()">Tạo phiếu kiểm kho</button>
                     <button class="btn btn-primary btn-sm mr-2" title="Xuất file">Xuất file</button>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="date" title="Ngày kiểm kho" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.date | date:'Shortdate'}}
+                {{dataItem.date | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="100">
