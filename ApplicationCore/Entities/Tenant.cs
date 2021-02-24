@@ -41,7 +41,8 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Người triển khai
         /// </summary>
-        public string SupporterName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public EmployeeAdmin EmployeeAdmin { get; set; }
 
         public string Address { get; set; }
     }

@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Infrastructure.AdminEntityConfigurations
 {
-    public class AppTenantConfiguration : IEntityTypeConfiguration<AppTenant>
+    public class EmployeeAdminConfiguration : IEntityTypeConfiguration<EmployeeAdmin>
     {
-        public void Configure(EntityTypeBuilder<AppTenant> builder)
+        public void Configure(EntityTypeBuilder<EmployeeAdmin> builder)
         {
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
@@ -19,9 +19,6 @@ namespace Infrastructure.AdminEntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
 
-            builder.HasOne(x => x.EmployeeAdmin)
-                .WithMany()
-                .HasForeignKey(x => x.EmployeeId);
         }
     }
 }
