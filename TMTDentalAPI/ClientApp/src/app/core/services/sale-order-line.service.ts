@@ -29,7 +29,7 @@ export class SaleOrderLinesLaboPaged {
     offset: number;
     limit: number;
     search: string;
-    hasAnyLabo: boolean;
+    hasAnyLabo: any;
     laboState: string;
 }
 

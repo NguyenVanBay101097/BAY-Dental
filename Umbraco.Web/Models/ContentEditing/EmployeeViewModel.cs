@@ -43,5 +43,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? OvertimeRate { get; set; }
         public decimal? RestDayRate { get; set; }
         public decimal? Allowance { get; set; }
+        public string Avatar { get; set; }
     }
 }

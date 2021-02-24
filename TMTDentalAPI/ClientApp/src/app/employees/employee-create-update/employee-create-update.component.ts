@@ -19,6 +19,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { MustMatch } from 'src/app/shared/must-match-validator';
+import { validator } from 'fast-json-patch';
 import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
@@ -93,8 +94,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userCompany: null,
       userCompanies: [[]],
       userName: null,
-      userPassword: null,
-      createChangePassword: false,
+      userPassword: [null],
+      createChangePassword: true,
+      avatar: null
       userAvatar: null,
       groupId: null,
       isAllowSurvey: false
@@ -117,6 +119,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       // });
       this.loadGroupSurvey();
     });
+    document.getElementById('name').focus();
   }
 
   ngAfterViewInit(): void {
@@ -130,6 +133,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
+  get nameFC() { return this.formCreate.get('name'); }
+  get userIdFC() { return this.formCreate.get('userId'); }
+
   get groupIdFC(){return this.formCreate.get('groupId');}
   get isAllowSurveyFC(){return this.formCreate.get('isAllowSurvey');}
 
@@ -141,8 +147,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.formCreate.get('createChangePassword').value;
   }
 
-  get userAvatar() {
-    return this.formCreate.get('userAvatar').value;
+  get avatar() {
+    return this.formCreate.get('avatar').value;
   }
 
   getValueForm(key) {
@@ -193,6 +199,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
 
+      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(true);
+
       this.formCreate.get('userCompany').setValidators([Validators.required]);
       this.formCreate.get('userCompany').updateValueAndValidity();
 
@@ -210,6 +220,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     } else {
       this.formCreate.get('userName').setValidators([]);
       this.formCreate.get('userName').updateValueAndValidity();
+
+      this.formCreate.get('userPassword').setValidators([]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
+      this.formCreate.get('createChangePassword').setValue(false);
 
       this.formCreate.get('userCompany').setValidators([]);
       this.formCreate.get('userCompany').updateValueAndValidity();
@@ -241,6 +255,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         rs => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
+          this.formCreate.get('createChangePassword').setValue(false);
+          this.onChangeCreateChangePassword(null);
           this.formCreate.patchValue(rs);
 
           this.updateValidation();
@@ -254,7 +270,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onAvatarUploaded(data) {
     var fileUrl = data ? data.fileUrl : null;
-    this.formCreate.get('userAvatar').setValue(fileUrl);
+    this.formCreate.get('avatar').setValue(fileUrl);
   }
 
   //Tạo hoặc cập nhật NV
@@ -270,7 +286,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
     }
-    
+
     value.commissionId = value.commission ? value.commission.id : null;
 
     this.isChange = true;
@@ -410,8 +426,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     )
   }
 
-  toggleVisibility(e){
-    this.isShowSalary= e.target.checked;
+  toggleVisibility(e) {
+    this.isShowSalary = e.target.checked;
   }
 
   loadGroupSurvey() {

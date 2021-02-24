@@ -50,7 +50,6 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
 
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
-      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }
@@ -61,7 +60,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = item.partnerId;
     modalRef.result.then((result) => {
-      this.notify('success','thành công');
+      this.notify('success','Lưu thành công');
       this.loadData();
       if (result.print) {
         this.printToaThuoc(item);
@@ -84,7 +83,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa đơn thuốc này?';
     modalRef.result.then(() => {
       this.toaThuocService.delete(item.id).subscribe(() => {
-      this.notify('success','thành công');
+      this.notify('success','Xóa thành công');
         this.loadData();
       }, err => {
         console.log(err);

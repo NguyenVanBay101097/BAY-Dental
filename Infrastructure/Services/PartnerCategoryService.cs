@@ -148,30 +148,37 @@ namespace Infrastructure.Services
             var errors = new List<string>();
             using (var stream = new MemoryStream(fileData))
             {
-                using (var package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
-
-                    for (int row = 2; row <= rowCount; row++)
+                    using (var package = new ExcelPackage(stream))
                     {
-                        var errs = new List<string>();
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
 
-                        var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                        if (string.IsNullOrWhiteSpace(name))
-                            errs.Add("Tên nhóm khách hàng là bắt buộc");
-
-                        if (errs.Any())
+                        for (int row = 2; row <= rowCount; row++)
                         {
-                            errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
-                            continue;
+                            var errs = new List<string>();
+
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            if (string.IsNullOrWhiteSpace(name))
+                                errs.Add("Tên Nhãn khách hàng là bắt buộc");
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+
+                            data.Add(new PartnerCategoryRowExcel
+                            {
+                                Name = name
+                            });
                         }
-
-                        data.Add(new PartnerCategoryRowExcel
-                        {
-                            Name = name
-                        });
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("File đang chọn không đúng định dạng");
                 }
             }
 

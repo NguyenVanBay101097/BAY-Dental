@@ -135,6 +135,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<CompanyBasic> UserCompanies { get; set; } = new List<CompanyBasic>();
 
+        public Guid? UserId { get; set; }
+        public string Avatar { set; get; }
         public string UserAvatar { get; set; }
         public bool IsAllowSurvey { get; set; }
         public Guid? GroupId { get; set; }
@@ -230,6 +232,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool CreateChangePassword { get; set; }
 
+        public string Avatar { get; set; }
         public string UserAvatar { get; set; }
         public bool IsAllowSurvey { get; set; }
         public Guid? GroupId { get; set; }

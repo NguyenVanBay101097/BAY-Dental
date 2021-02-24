@@ -119,6 +119,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       Doctor: [null, Validators.required],
       Lines: this.fb.array([]),
       DotKhamImages: this.fb.array([]),
+      sequence: this.sequence
     });
 
     this.loadRecord();
@@ -259,6 +260,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       backdrop: "static",
     });
     modalRef.componentInstance.title = "Xóa đợt khám " + this.sequence;
+    modalRef.componentInstance.body = "Bạn có chắc chắn xóa đợt khám?";
 
     modalRef.result.then(() => {
       this.dotKhamService.delete(this.dotkham.Id).subscribe(() => {

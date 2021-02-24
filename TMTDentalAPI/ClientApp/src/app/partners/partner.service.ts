@@ -237,6 +237,10 @@ export class PartnerService {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionImport', val);
     }
 
+    actionUpdateFromExcel(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionUpdateFromExcel', val);
+    }
+
     deleteCustomer(id) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }

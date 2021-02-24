@@ -27,7 +27,8 @@
                                 "glob": "**/*",
                                 "input": "node_modules/mxgraph/javascript/src",
                                 "output": "./mxgraph"
-                            }
+                            },
+                            "src/manifest.webmanifest"
                         ],
                         "styles": [
                             "node_modules/@progress/kendo-theme-bootstrap/dist/all.css",
@@ -87,7 +88,9 @@
                             "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
-                            "buildOptimizer": true
+                            "buildOptimizer": true,
+                            "serviceWorker": true,
+                            "ngswConfigPath": "ngsw-config.json"
                         }
                     }
                 },
@@ -123,7 +126,8 @@
                         "karmaConfig": "karma.conf.js",
                         "assets": [
                             "src/favicon.ico",
-                            "src/assets"
+                            "src/assets",
+                            "src/manifest.webmanifest"
                         ],
                         "styles": [
                             "src/styles.css"

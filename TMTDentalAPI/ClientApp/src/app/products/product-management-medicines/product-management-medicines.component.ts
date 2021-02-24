@@ -76,6 +76,7 @@ loadMedicines() {
       (res) => {
         this.gridData = res;
         this.loading = false;
+        console.log(res);
       },
       (err) => {
         console.log(err);
@@ -188,6 +189,7 @@ importFromExcel() {
     windowClass: "o_technical_modal",
     keyboard: false,
     backdrop: "static",
+    scrollable: true
   });
   modalRef.componentInstance.title = "Import excel";
   modalRef.componentInstance.type = "medicine";
@@ -222,6 +224,26 @@ exportExcelFile() {
       window.URL.revokeObjectURL(data);
     }, 100);
   });
+}
+
+updateMedicineFromExcel(){
+  let modalRef = this.modalService.open(ProductImportExcelDialogComponent, {
+    size: "lg",
+    windowClass: "o_technical_modal",
+    keyboard: false,
+    backdrop: "static",
+    scrollable: true
+  });
+  modalRef.componentInstance.title = "Cập nhật Excel";
+  modalRef.componentInstance.type = "medicine";
+  modalRef.componentInstance.isUpdate = true;
+  
+  modalRef.result.then(
+    () => {
+      this.loadMedicines();
+    },
+    () => { }
+  );
 }
 
 }

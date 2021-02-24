@@ -3,8 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layout/content-layout/content-layout.component';
-import { TrialRegistrationSuccessComponent } from './trial-registration-success/trial-registration-success.component';
-import { TrialRegistrationComponent } from './trial-registration/trial-registration.component';
 
 const routes: Routes = [
   {
@@ -25,14 +23,6 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'register',
-    component: TrialRegistrationComponent
-  },
-  {
-    path: 'register-success',
-    component: TrialRegistrationSuccessComponent
-  },
-  {
     path: 'auth',
     component: AuthLayoutComponent,
     loadChildren: () =>
@@ -43,7 +33,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
   providers: []
 })

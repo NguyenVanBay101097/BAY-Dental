@@ -74,18 +74,14 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   getSaleOrders() {
-    var val = {
-      id: this.partnerId,
-      func: "GetSaleOrders",
-      options: {
-        params: new HttpParams().set('$count', 'true').set('$orderby', 'dateOrder desc')
-      }
-    }
-
-    this.PartnerOdataService.getSaleOrderByPartner(val).subscribe(
+    var val = new SaleOrderPaged();
+    val.limit = 10000;
+    val.companyId = this.authService.userInfo.companyId;
+    val.partnerId = this.partnerId;
+    this.saleOrderService.getPaged(val).subscribe(
       result => {
-        this.saleOrders = result['value'];
-        this.saleCount = result['@odata.count'];
+        this.saleOrders = result.items;
+        this.saleCount = result.totalItems;
       }
     )
   }

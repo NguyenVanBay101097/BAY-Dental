@@ -197,6 +197,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       });
 
       componentRef.instance.btnDeleteEvent.subscribe((dk) => {
+        this.notify('success', 'Xóa thành công');
         var index = this.dotkhams.indexOf(dk);
         this.dotkhams.splice(index, 1);
         this.renderDotKhamList();

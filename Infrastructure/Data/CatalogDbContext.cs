@@ -26,13 +26,12 @@ namespace Infrastructure.Data
     public class CatalogDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, IDbContext
     {
         private readonly AppTenant _tenant;
-        private readonly ConnectionStrings _connectionStrings;
-        public CatalogDbContext(DbContextOptions<CatalogDbContext> options, ITenant<AppTenant> tenant,
-            IOptions<ConnectionStrings> connectionStrings)
-          : base(options)
+        private readonly IConfiguration _configuration;
+        public CatalogDbContext(DbContextOptions<CatalogDbContext> options, AppTenant tenant, IConfiguration configuration)
+            :base(options)
         {
-            _tenant = tenant?.Value;
-            _connectionStrings = connectionStrings?.Value;
+            _tenant = tenant;
+            _configuration = configuration;
         }
 
         public DbSet<ProductCategory> ProductCategories { get; set; }
@@ -474,7 +473,7 @@ namespace Infrastructure.Data
             {
                 if (_tenant != null)
                 {
-                    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.CatalogConnection);
+                    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_configuration.GetConnectionString("CatalogConnection"));
 
                     if (_tenant.Hostname != "localhost")
                         builder["Database"] = $"TMTDentalCatalogDb__{_tenant.Hostname}";
@@ -483,7 +482,7 @@ namespace Infrastructure.Data
                 }
                 else
                 {
-                    var defaultConnectionString = _connectionStrings.CatalogConnection;
+                    var defaultConnectionString = _configuration.GetConnectionString("CatalogConnection");
                     optionsBuilder.UseSqlServer(defaultConnectionString);
                 }
             }

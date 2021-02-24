@@ -134,6 +134,7 @@ namespace TMTDentalAPI.Controllers
                 if (line.Id == Guid.Empty)
                 {
                     var ml = _mapper.Map<StockMove>(line);
+                    ml.Date = picking.Date ?? DateTime.Now;
                     ml.CompanyId = picking.CompanyId;
                     ml.LocationId = picking.LocationId;
                     ml.LocationDestId = picking.LocationDestId;
@@ -217,6 +218,7 @@ namespace TMTDentalAPI.Controllers
             if (picking == null) return NotFound();
             picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
             var html = _viewRenderService.Render("StockPicking/Print", picking);
+
             return Ok(new PrintData() { html = html });
         }
     }

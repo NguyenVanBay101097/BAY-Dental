@@ -25,11 +25,20 @@ namespace Infrastructure.TenantData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("ActiveCompaniesNbr")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerSource")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
@@ -50,6 +59,9 @@ namespace Infrastructure.TenantData.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupporterName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Version")

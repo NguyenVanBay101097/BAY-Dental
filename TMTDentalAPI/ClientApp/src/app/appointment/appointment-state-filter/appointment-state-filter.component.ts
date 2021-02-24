@@ -17,7 +17,7 @@ export class AppointmentStateFilterComponent implements OnInit {
     { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
     { text: 'Đang khám', value: 'examination', class: 'text-info' },
     { text: 'Hoàn thành', value: 'done', class: 'text-success' },
-    { text: 'Đã hủy', value: 'cancel', class: 'text-dark' },
+    { text: 'Hủy hẹn', value: 'cancel', class: 'text-dark' },
   ];
 
   @Output() searchChange = new EventEmitter<any>();

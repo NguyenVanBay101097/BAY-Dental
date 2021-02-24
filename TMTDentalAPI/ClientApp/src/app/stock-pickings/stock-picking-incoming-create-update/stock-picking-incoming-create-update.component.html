@@ -23,15 +23,18 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="state != 'done'" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
+                    <button type="button" *ngIf="state != 'done'" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">
+                        Lưu
+                    </button>
                     <button type="button" accesskey="1" class="btn btn-primary btn-sm" *ngIf="['draft'].indexOf(picking.state) !== -1" (click)="actionDone()">
                         Hoàn thành
                     </button>
                     <button *ngIf="id" type="button" accesskey="1" class="btn btn-primary btn-sm" (click)="onPrint()">
                         In Phiếu
                       </button>
-                    <a [routerLink]="['/stock/incoming-pickings/create']" accesskey="c" *ngIf="id" class="btn btn-secondary btn-sm">Thêm
-                        mới</a>
+                    <a [routerLink]="['/stock/incoming-pickings/create']" accesskey="c" *ngIf="id" class="btn btn-secondary btn-sm">
+                        Thêm mới
+                    </a>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="picking.state !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': picking.state === 'done', 'btn-secondary': picking.state !== 'done'}" type="button">

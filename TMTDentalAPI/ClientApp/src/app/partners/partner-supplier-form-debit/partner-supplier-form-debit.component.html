@@ -9,7 +9,7 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text"
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo số hóa đơn, số phiếu Labo" type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
@@ -19,16 +19,12 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="selectableSettings" (pageChange)="pageChange($event)" kendoGridSelectBy="id" (selectedKeysChange)="chooseRows($event)">
         <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="invoiceDate" title="Ngày">
+        <!-- <kendo-grid-column field="invoiceDate" title="Ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.invoiceDate | date:'shortDate'}}
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column> -->
         <kendo-grid-column field="invoiceOrigin" title="Nguồn">
-        </kendo-grid-column>
-        <kendo-grid-column field="type" title="Loại">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{showType(dataItem.type)}}</ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="amountTotal" class="text-right" title="Tổng tiền">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

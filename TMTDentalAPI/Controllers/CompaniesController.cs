@@ -121,6 +121,7 @@ namespace TMTDentalAPI.Controllers
 
             var company = _mapper.Map<Company>(val);
             company.PartnerId = partner.Id;
+            company.Active = true;
          
             await _companyService.CreateAsync(company);
             //await SaveLogo(company, val);

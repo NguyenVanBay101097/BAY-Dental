@@ -138,7 +138,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _paymentService.GetPrint(id);
-            return Ok(res);
+            var html = _viewRenderService.Render("AccountPayments/Print", res);
+            return Ok(new PrintData() { html = html });
         }
 
         //get default thanh toán cho nhà cung cấp

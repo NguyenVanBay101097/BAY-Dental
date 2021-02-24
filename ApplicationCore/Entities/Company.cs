@@ -9,6 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class Company: BaseEntity
     {
+        public Company()
+        {
+            Active = true;
+        }
+
         public string Name { get; set; }
 
         public Guid PartnerId { get; set; }

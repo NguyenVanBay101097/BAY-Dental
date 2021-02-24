@@ -5,10 +5,12 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using CsvHelper;
 using Infrastructure.Data;
+using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,14 +27,18 @@ namespace Infrastructure.Services
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AppTenant _tenant;
+        private readonly TenantDbContext _tenantDbContext;
         public CompanyService(IAsyncRepository<Company> repository, IHttpContextAccessor httpContextAccessor,
-            IHostingEnvironment hostingEnvironment, IMapper mapper,
-            UserManager<ApplicationUser> userManager)
+            IHostingEnvironment hostingEnvironment, IMapper mapper, ITenant<AppTenant> tenant,
+            UserManager<ApplicationUser> userManager, TenantDbContext tenantDbContext)
         : base(repository, httpContextAccessor)
         {
             _hostingEnvironment = hostingEnvironment;
             _mapper = mapper;
             _userManager = userManager;
+            _tenant = tenant?.Value;
+            _tenantDbContext = tenantDbContext;
         }
 
         public async Task SetupCompany(string companyName, string userName, string email, string password, string name = "")
@@ -137,6 +143,9 @@ namespace Infrastructure.Services
 
             //insert những irmodelfield
             await InsertIrModelFieldData();
+
+            //insert rules new
+            await InsertIRulesIfNotExists();
             await AddIrDataForSurvey();
         }
 
@@ -374,6 +383,59 @@ namespace Infrastructure.Services
             await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal });
 
             #endregion
+        }
+
+        public async Task InsertIRulesIfNotExists()
+        {
+            var modelObj = GetService<IIRModelService>();
+            var modelDataObj = GetService<IIRModelDataService>();
+            var iruleObj = GetService<IIRRuleService>();
+
+            var rule_dict = new Dictionary<string, IRRuleNew>()
+            {
+                {"medicineOrder.medicine_order_comp_rule", new  IRRuleNew{ NameRule = "medicine_order_comp_rule", ModelIRModel = "MedicineOrder" ,NameIRModel = "Hóa đơn thuốc"}},           
+            };
+
+            foreach (var rule in rule_dict)
+            {
+                var model = await modelDataObj.GetRef<IRRule>(rule.Key);
+                if (model == null)
+                {
+                    var irModel = await modelObj.SearchQuery(x => x.Model == rule.Value.ModelIRModel).FirstOrDefaultAsync();
+                    if (irModel == null)
+                    {
+                        irModel = new IRModel
+                        {
+                            Name = rule.Value.NameIRModel,
+                            Model = rule.Value.ModelIRModel,
+                        };
+
+                        modelObj.Sudo = true;
+                        await modelObj.CreateAsync(irModel);
+                    }
+
+                    var irule = new IRRule
+                    {
+                        Name = rule.Value.ModelIRModel + " multi-company",
+                        ModelId = irModel.Id,
+                        Code = rule.Key
+                    };
+
+                    iruleObj.Sudo = true;
+                    await iruleObj.CreateAsync(irule);
+
+                    var reference = rule.Key.Split('.');
+
+                    await modelDataObj.CreateAsync(new IRModelData
+                    {
+                        Module = reference[0],
+                        Name = reference[1],
+                        Model = "ir.rule",
+                        ResId = irule.Id.ToString()
+                    });
+                }
+            }
+         
         }
 
         public async Task InsertModuleAccountData(Company main_company)
@@ -1186,6 +1248,32 @@ namespace Infrastructure.Services
 
         }
 
+        private async Task CheckAtLeastOneCompanyActive()
+        {
+            if (await SearchQuery(x => x.Active).CountAsync() <= 0)
+                throw new Exception("Phải có tối thiểu 1 chi nhánh đang hoạt động");
+        }
+
+        private async Task CheckNotArchiveUserRootCompany()
+        {
+            //kiểm tra ràng buộc không được đóng chi nhánh đang làm việc của tài khoản root
+            var userRoot = await _userManager.Users.Where(x => x.IsUserRoot).FirstOrDefaultAsync();
+            var company = await SearchQuery(x => x.Id == userRoot.CompanyId).FirstOrDefaultAsync();
+            if (!company.Active)
+                throw new Exception("Không được phép đóng chi nhánh của tài khoản admin");
+        }
+
+        //Kiểm tra số chi nhánh được phép hoạt động
+        private async Task CheckNbrCompanyActives()
+        {
+            if (_tenant != null && _tenant.ActiveCompaniesNbr > 0)
+            {
+                var count = await SearchQuery(x => x.Active).CountAsync();
+                if (_tenant.ActiveCompaniesNbr < count)
+                    throw new Exception($"Số chi nhánh được phép hoạt động là {_tenant.ActiveCompaniesNbr}, vui lòng liên hệ người quản trị phần mềm để được trợ giúp.");
+            }
+        }
+
 
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
@@ -1196,7 +1284,12 @@ namespace Infrastructure.Services
                     throw new Exception("Không thể đóng chi nhánh đang làm việc");
                 company.Active = false;
             }
+
             await UpdateAsync(companies);
+
+            await CheckAtLeastOneCompanyActive();
+
+            await CheckNotArchiveUserRootCompany();
         }
 
         public async Task ActionUnArchive(IEnumerable<Guid> ids)
@@ -1206,6 +1299,19 @@ namespace Infrastructure.Services
                 company.Active = true;
 
             await UpdateAsync(companies);
+        }
+
+        public override async Task<IEnumerable<Company>> CreateAsync(IEnumerable<Company> entities)
+        {
+            await base.CreateAsync(entities);
+            await CheckNbrCompanyActives();
+            return entities;
+        }
+
+        public override async Task UpdateAsync(IEnumerable<Company> entities)
+        {
+            await base.UpdateAsync(entities);
+            await CheckNbrCompanyActives();
         }
     }
 

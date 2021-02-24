@@ -45,8 +45,7 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button *ngIf="dataItem.invoiceStatus != 'invoiced'" class="btn btn-primary btn-sm"
-                    title="Tạo thanh toán toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
+                <button class="btn btn-primary btn-sm" title="Tạo thanh toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
                     <img src="./assets/images/add-payment.png" alt="">Tạo hóa đơn
                 </button>
             </ng-template>

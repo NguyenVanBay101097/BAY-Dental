@@ -24,7 +24,7 @@ namespace TMTDentalAPI.OdataControllers
 
         [EnableQuery]
         [HttpGet]
-        [CheckAccess(Actions = "Catalog.Product.Read")]
+        [CheckAccess(Actions = "Catalog.Products.Read")]
         public IActionResult Get(ODataQueryOptions<Product> options)
         {
             var result = _productService.SearchQuery();

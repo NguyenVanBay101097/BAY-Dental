@@ -1177,7 +1177,7 @@ namespace Infrastructure.Services
                 PaymentDate = x.PaymentDate,
                 PaymentName = x.Name,
                 PaymentType = x.PaymentType == "outbound" && x.PartnerType == "supplier" ? "Thanh toán NCC" : "",
-                UserName = user.Name,
+                UserName = user == null ? null : user.Name,
                 SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
                 {
                     AmountTotal = s.SaleOrder.AmountTotal,

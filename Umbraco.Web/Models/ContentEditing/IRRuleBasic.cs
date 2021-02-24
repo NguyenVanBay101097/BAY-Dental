@@ -12,4 +12,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Code { get; set; }
     }
+
+    public class IRRuleNew
+    {
+        public string NameRule { get; set; }
+        public string ModelIRModel { get; set; }
+        public string NameIRModel { get; set; }
+    }
 }

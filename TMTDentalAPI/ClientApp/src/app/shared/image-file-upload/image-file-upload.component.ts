@@ -6,6 +6,7 @@ import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerWebcamComponent } from '../partner-webcam/partner-webcam.component';
 import { IrAttachmentBasic } from '../shared';
 import { PartnerImageBasic } from 'src/app/partners/partner.service';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-image-file-upload',
@@ -23,7 +24,7 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   @Input() crop: boolean;
   @Input() supportWebcam: boolean;
 
-  constructor(private webService: WebService, private modalService: NgbModal) { }
+  constructor(private webService: WebService, private modalService: NgbModal, private notificationService: NotificationService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
@@ -31,9 +32,26 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
   ngOnInit() {
   }
 
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
+  }
+
   onFileChange(e) {
+ 
     var file_node = e.target;
     var file = file_node.files[0];
+
+    var pattern = 'image-*';
+    if (!file.type.match(pattern)) {
+      this.notify('error','Chỉ cho phép chọn file hình ảnh');
+      return;
+    }
 
     var formData = new FormData();
     formData.append('file', file);

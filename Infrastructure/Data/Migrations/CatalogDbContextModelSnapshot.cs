@@ -2004,6 +2004,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("Allowance")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
 

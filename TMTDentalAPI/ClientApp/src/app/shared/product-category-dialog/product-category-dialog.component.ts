@@ -67,6 +67,19 @@ export class ProductCategoryDialogComponent implements OnInit {
     });
   }
 
+  getType() {
+    switch (this.type) {
+      case "service":
+        return "dịch vụ";
+      case "product":
+        return "vật tư";
+      case "medicine":
+        return "thuốc";
+      default:
+        return "";
+    }
+  }
+
   searchCategories(q?: string): Observable<ProductCategoryBasic[]> {
     var val = new ProductCategoryPaged();
     val.search = q;

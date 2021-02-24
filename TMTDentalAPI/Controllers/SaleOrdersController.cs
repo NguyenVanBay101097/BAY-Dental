@@ -420,7 +420,7 @@ namespace TMTDentalAPI.Controllers
             if (phieu == null)
                 return NotFound();
 
-            var html = _viewRenderService.Render("SaleOrderPrint", phieu);
+            var html = _viewRenderService.Render("SaleOrder/Print", phieu);
 
             return Ok(new PrintData() { html = html });
         }
