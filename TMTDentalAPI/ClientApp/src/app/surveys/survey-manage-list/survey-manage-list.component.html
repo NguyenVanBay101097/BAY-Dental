@@ -1,0 +1,107 @@
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+                    </app-tai-date-range-filter-dropdown>
+                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="report-prescription-payment">
+    <div class="revenue" *ngFor="let status of statuses">
+        <div class="title">
+            <h6>{{status.name}}</h6>
+        </div>
+        <h4 class="text-primary">
+            {{statusCount[status.value] || 0}}
+        </h4>
+    </div>
+</div>
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <div class="d-flex">
+                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)" [valueField]="'value'">
+                    </kendo-combobox>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+</div>
+<div class="o_content">
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" (edit)="editHandler($event)" [resizable]="true" [navigable]="true" (save)="saveHandler($event)" (cancel)="cancelHandler($event)"
+        (cellClick)="clickItem($event)">
+        <kendo-grid-column field="employee" title="Nhân viên" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{employee(dataItem.employeeId)?.name}}
+            </ng-template>
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem" let-column="column" let-formGroup="formGroup">
+                <kendo-combobox [data]="filteredEmployees" ngbAutofocus [textField]="'name'" [filterable]="true" #employeeCbx [formControl]="formGroup.get(column.field)" [valueField]="'id'">
+                </kendo-combobox>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="180">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerPhone" title="Điện thoại" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerGenderDisplay" title="Giới tính" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" field="partnerCategoriesDisplay" title="Nhãn khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column title="Phiếu điều trị" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày tạo phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder.dateOrder | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày hoàn thành điều trị" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrder?.dateDone | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày hoàn thành khảo sát" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.completeDate | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span *ngIf="dataItem.status == 'done'">Hoàn thành</span>
+                <span *ngIf="dataItem.status == 'draft'">Chưa gọi</span>
+                <span *ngIf="dataItem.status == 'contact'">Đang liên hệ</span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Thao tác" width="100">
+            <ng-template kendoGridCellTemplate let-isNew="isNew">
+                <button kendoGridEditCommand [primary]="true" class="btn btn-success btn-sm mr-2">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button kendoGridSaveCommand class="btn btn-primary btn-sm mr-2" [disabled]="formGroup?.invalid"><i
+                        class="fas fa-save"></i>
+                </button>
+                <button class="btn btn-secondary btn-sm" kendoGridCancelCommand>
+                    <i class="fas fa-window-close"></i>
+                </button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

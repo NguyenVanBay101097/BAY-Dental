@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PagedResult2 } from '../employee-categories/emp-category';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { SaleOrderDisplay, SaleOrderDisplayVm } from '../sale-orders/sale-order-display';
@@ -84,9 +85,14 @@ export class SurveyAssignmentGetCountVM {
 
 export class SurveyAssignmentDefaultGetPar {
   constructor() {
-    this.IsRandomAssign = false;
+    this.isRandomAssign = false;
   }
-  IsRandomAssign: boolean
+  isRandomAssign: boolean
+  limit: number;
+  offset: number;
+  search: string;
+  dateFrom: string;
+  dateTo: string;
 }
 
 @Injectable({
@@ -105,8 +111,8 @@ export class SurveyService {
     return this.http.get<SurveyAssignmentDisplay>(this.base_api + this.apiUrl + '/' + id);
   }
 
-  defaultGetList(val): Observable<SurveyAssignmentDefaultGet[]> {
-    return this.http.post<SurveyAssignmentDefaultGet[]>(this.base_api + this.apiUrl + '/DefaultGetList', val);
+  defaultGetList(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/DefaultGetList', val);
   }
 
   createListAssign(vals) {

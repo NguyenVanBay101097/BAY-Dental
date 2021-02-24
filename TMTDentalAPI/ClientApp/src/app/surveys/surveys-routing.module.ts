@@ -9,6 +9,7 @@ import { SurveyManageDetailCustomerComponent } from './survey-manage-detail-cust
 import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-detail-survey-imformation/survey-manage-detail-survey-imformation.component';
 import { SurveyManageDetailComponent } from './survey-manage-detail/survey-manage-detail.component';
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
+import { SurveyManageListComponent } from './survey-manage-list/survey-manage-list.component';
 import { SurveyTagListComponent } from './survey-tag-list/survey-tag-list.component';
 
 const routes: Routes = [
@@ -16,7 +17,8 @@ const routes: Routes = [
   {
     path: 'manage', component: SurveyManageAssignComponent,
     children: [
-      { path: '', redirectTo: 'employee-assign', pathMatch: 'full' },
+      { path: '', redirectTo: 'list', pathMatch: 'full' },
+      { path: 'list', component: SurveyManageListComponent },
       { path: 'employee-assign', component: SurveyManageAssignEmployeeComponent },
       { path: 'employees', component: SurveyManageEmployeeComponent },
     ]

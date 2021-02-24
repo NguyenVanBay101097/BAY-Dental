@@ -123,19 +123,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SaleOrderName { get; set; }
         public DateTime DateOrder { get; set; }
         public EmployeeSimple Employee { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public string Status { get; set; }
+        public DateTime? SaleOrderDateCreated { get; set; }
+        public DateTime? SaleOrderDateDone { get; set; }
+
     }
 
     public class SurveyAssignmentDefaultGetPar
     {
+        public int Offset { get; set; }
+        public int Limit { get; set; }
+        public string Search { get; set; }
+        public DateTime? dateFrom { get; set; }
+        public DateTime? dateTo { get; set; }
         public bool? IsRandomAssign { get; set; } // có phân việc ngẫu nhiên hay ko ?
     }
 
     public class AssignmentActionDone
     {
         public Guid Id { get; set; }
-        public SurveyUserInputSave  SurveyUserInput {get;set;}
+        public SurveyUserInputSave SurveyUserInput { get; set; }
     }
 
     public class SurveyAssignmentPatch
@@ -152,6 +160,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public Guid? EmployeeId { get; set; }
+    }
+
+    public class EmployeeCountSurvey
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int Count { get; set; }
     }
 
 }

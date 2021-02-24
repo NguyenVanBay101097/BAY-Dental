@@ -1129,5 +1129,89 @@
       }
     ],
     "Groups": "tcare.group_tcare"
+  },
+  {
+    "Name": "Khảo sát đánh giá",
+    "Permission": "Survey",
+    "Children": [
+      {
+        "Name": "Danh sách công việc",
+        "Permission": "Survey.Assignment",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Assignment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Assignment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Assignment.Update"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Assignment.Create"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Assignment.Delete"
+          },
+          {
+            "Name": "Phân việc",
+            "Permission": "Survey.Assignment.UpdateEmployee"
+          },
+          {
+            "Name": "Hoàn thành",
+            "Permission": "Survey.Assignment.Done"
+          }
+        ]
+      },
+      {
+        "Name": "Nhật ký cuộc gọi",
+        "Permission": "Survey.CallContent",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.CallContent.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.CallContent.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.CallContent.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.CallContent.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Cấu hình",
+        "Permission": "Survey.Question",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Question.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Question.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Question.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Question.Delete"
+          }
+        ]
+      }
+    ]
   }
 ]

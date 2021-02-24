@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -26,6 +27,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Survey.CallContent.Read")]
         public async Task<IActionResult> Get([FromQuery] SurveyCallContentPaged val)
         {
             var result = await _surveyCallContentService.GetPagedResultAsync(val);
@@ -33,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Survey.CallContent.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _surveyCallContentService.GetDisplay(id);
@@ -40,6 +43,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Survey.CallContent.Create")]
         public async Task<IActionResult> Create(SurveyCallContentSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -53,6 +57,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Survey.CallContent.Update")]
         public async Task<IActionResult> Update(Guid id, SurveyCallContentSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -65,6 +70,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Survey.CallContent.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var callcontent = await _surveyCallContentService.GetByIdAsync(id);

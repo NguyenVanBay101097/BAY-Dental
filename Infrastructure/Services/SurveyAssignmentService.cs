@@ -29,41 +29,73 @@ namespace Infrastructure.Services
             _roleManager = roleManager;
         }
 
-        public async Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val)
+        public async Task<PagedResult2<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
             saleOrderObj.Sudo = true;
 
-            var res = await saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any() && x.DateDone.HasValue).Include(x => x.Partner)
-                .Select(x => new SurveyAssignmentDefaultGet()
-                {
-                    DateOrder = x.DateOrder,
-                    PartnerName = x.Partner.Name,
-                    PartnerPhone = x.Partner.Phone,
-                    PartnerRef = x.Partner.Ref,
-                    SaleOrderId = x.Id,
-                    SaleOrderName = x.Name,
-                    PartnerId = x.PartnerId
-                }).ToListAsync();
+            var query = saleOrderObj.SearchQuery(x => x.State == "done" && !x.Assignments.Any() && x.DateDone.HasValue);
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search));
+            }
+
+            if (val.dateFrom.HasValue)
+            {
+                query = query.Where(x => x.DateDone >= val.dateFrom || x.DateDone == null);
+            }
+
+            if (val.dateTo.HasValue)
+            {
+                query = query.Where(x => x.DateDone <= val.dateTo || x.DateDone == null);
+            }
+
+            var totalItem = await query.CountAsync();
+
+            var res = await query.Include(x => x.Partner).Skip(val.Offset).Take(val.Limit).Select(x => new SurveyAssignmentDefaultGet()
+            {
+                DateOrder = x.DateOrder,
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+                PartnerRef = x.Partner.Ref,
+                SaleOrderId = x.Id,
+                SaleOrderName = x.Name,
+                PartnerId = x.PartnerId,
+                SaleOrderDateCreated = x.DateCreated,
+                SaleOrderDateDone = x.DateDone
+            }).ToListAsync();
 
             if (val.IsRandomAssign.HasValue && val.IsRandomAssign == true && res.Count > 0)
             {
                 var employeeObj = GetService<IEmployeeService>();
                 employeeObj.Sudo = true;
 
-                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x => new EmployeeSimple { Id = x.Id, Name = x.Name }).ToListAsync();
+                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x => new EmployeeCountSurvey { Id = x.Id, Name = x.Name, Count = 0 }).ToListAsync();
+                var CountDicts = await SearchQuery().GroupBy(x => x.EmployeeId).Select(x => new { EmployeeId = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.EmployeeId, i => i.Count);
+
+                foreach (var item in employees)
+                {
+                    item.Count = CountDicts.ContainsKey(item.Id) ? CountDicts[item.Id] : 0;
+                }
+
                 if (employees.Count > 0)
                 {
-                    var random = new Random();
                     foreach (var item in res)
                     {
-                        item.Employee = employees[random.Next(employees.Count)];
+                        var empExpect = employees.FirstOrDefault(x => x.Count == employees.Min(i => i.Count));
+
+                        item.Employee = new EmployeeSimple() { Id = empExpect.Id, Name = empExpect.Name };
                         item.EmployeeId = item.Employee.Id;
+
+                        empExpect.Count++;
                     }
                 }
             }
 
-            return res;
+            return new PagedResult2<SurveyAssignmentDefaultGet>(totalItem, val.Offset, val.Limit)
+            {
+                Items = res
+            };
         }
 
         public async Task<PagedResult2<SurveyAssignmentBasic>> GetPagedResultAsync(SurveyAssignmentPaged val)
@@ -135,6 +167,8 @@ namespace Infrastructure.Services
             partnerObj.Sudo = true;
 
             var assign = await SearchQuery(x => x.Id == id).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
+            if (assign == null) throw new Exception("Không tìm thấy khảo sát!");
+
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
             assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplayVm>(await saleOrderObj.SearchQuery(x => x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
             assignDisplay.SaleOrder.Partner = await partnerObj.GetInfoPartner(assignDisplay.SaleOrder.PartnerId);
@@ -174,6 +208,8 @@ namespace Infrastructure.Services
         {
             var userInputObj = GetService<ISurveyUserInputService>();
             var assign = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+
+            if (assign == null) throw new Exception("Không tìm thấy Khảo sát!");
             var now = DateTime.Now;
             //xu ly tao userinput
             var userInput = await userInputObj.CreateUserInput(val.SurveyUserInput);
@@ -251,7 +287,10 @@ namespace Infrastructure.Services
             switch (rule.Code)
             {
                 case "survey.assignment_employee": // group cho việc : nếu là nhân viên thuộc group nhân viên viên thì get theo nhân viên
-                    return new InitialSpecification<SurveyAssignment>(x => x.Employee.UserId == UserId);
+                    var employeeObj = GetService<IEmployeeService>();
+                    var employeeId = employeeObj.SearchQuery(x => x.UserId == UserId).Select(x => x.Id).FirstOrDefault();
+                    if (employeeId == null) return null;
+                    return new InitialSpecification<SurveyAssignment>(x => x.EmployeeId == employeeId);
                 default:
                     return null;
             }
@@ -340,42 +379,8 @@ namespace Infrastructure.Services
                     rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
             }
             await ruleObj.CreateAsync(rule);
-
-            // tạo roles cố định cho 2 group trên
-            await AddRoleForSurvey();
         }
 
-        public async Task AddRoleForSurvey()
-        {
-
-            //tạo role with function for above resgruop
-            var roles = new List<ApplicationRole>() {
-            new ApplicationRole()
-            {
-                Name = "Quản lý khảo sát",
-                NormalizedName = "quanlykhaosat",
-                Functions = new List<ApplicationRoleFunction>()
-                {
-                    new ApplicationRoleFunction(){Func = "Survey"}
-                }
-            },
-             new ApplicationRole()
-            {
-                Name = "Nhân viên khảo sát",
-                NormalizedName = "nhanvienkhaosat",
-                Functions = new List<ApplicationRoleFunction>()
-                {
-                    new ApplicationRoleFunction(){Func = "Survey.Assignment.Read"},
-                    new ApplicationRoleFunction(){Func = "Survey.Assignment.NhanvienUpdate"}
-                }
-            }
-            };
-
-            foreach (var role in roles)
-            {
-                await _roleManager.CreateAsync(role);
-            }
-        }
-
+        
     }
 }

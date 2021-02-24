@@ -3,9 +3,22 @@ import { HttpParams, HttpClient } from '@angular/common/http';
 import { EmployeePaged, PagedResult2, EmployeeBasic, EmployeeDisplay, EmployeeSimple } from './employee';
 import { Observable } from 'rxjs';
 
+export class EmployeeSurveyDisplay{
+  id : string;
+  ref : string;
+  name : string;
+  phone : string;
+  companyName : string;
+  email : string;
+  totalAssignment : number;
+  doneAssignment: number;
+  followAssignment : number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class EmployeeService {
 
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -44,6 +57,14 @@ export class EmployeeService {
 
   actionActive(id: string, active: boolean) {
     return this.http.post<any>(this.baseApi + "api/Employees" + "/ActionActive/"+ id, {active:active});
+  }
+
+  getEmployeeSudoSimpleList(val): Observable<EmployeeSimple[]> {
+    return this.http.post<EmployeeSimple[]>(this.baseApi + "api/Employees/AutocompleteSudo", val);
+  }
+    
+  GetEmployeeSurveyCount(val): Observable<PagedResult2<EmployeeSurveyDisplay>>{
+    return this.http.get<PagedResult2<EmployeeSurveyDisplay>>(this.baseApi + 'api/Employees' + '/GetEmployeeSurveyCount' , {params: new HttpParams({fromObject: val})});
   }
 
 }

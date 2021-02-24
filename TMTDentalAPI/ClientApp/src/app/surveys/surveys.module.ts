@@ -23,6 +23,7 @@ import { SurveyManageDetailCustomerComponent } from './survey-manage-detail-cust
 import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-detail-survey-imformation/survey-manage-detail-survey-imformation.component';
 import { SurveyTagListComponent } from './survey-tag-list/survey-tag-list.component';
 import { SurveyTagDialogComponent } from './survey-tag-dialog/survey-tag-dialog.component';
+import { SurveyManageListComponent } from './survey-manage-list/survey-manage-list.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { SurveyTagDialogComponent } from './survey-tag-dialog/survey-tag-dialog.
     SurveyManageDetailSurveyImformationComponent,
     SurveyTagListComponent,
     SurveyTagDialogComponent,
+    SurveyManageListComponent,
   ],
   imports: [
     CommonModule,

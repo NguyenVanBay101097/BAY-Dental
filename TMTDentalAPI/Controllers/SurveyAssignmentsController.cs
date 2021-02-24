@@ -83,7 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Survey.Assignment.QuanlyUpdate")]
+        [CheckAccess(Actions = "Survey.Assignment.UpdateEmployee")]
         public async Task<IActionResult> Update(Guid id, SurveyAssignmentSave val)
         {
             if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
+        [CheckAccess(Actions = "Survey.Assignment.Update")]
         public async Task<IActionResult> ActionContact(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -116,7 +116,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
+        [CheckAccess(Actions = "Survey.Assignment.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -129,7 +129,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Survey.Assignment.NhanvienUpdate")]
+        [CheckAccess(Actions = "Survey.Assignment.Done")]
         public async Task<IActionResult> ActionDone(AssignmentActionDone val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -139,7 +139,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPatch("{id}")]
-        [CheckAccess(Actions = "Survey.Assignment.QuanlyUpdate")]
+        [CheckAccess(Actions = "Survey.Assignment.Update")]
         public async Task<IActionResult> JsonPatchWithModelState(Guid id, [FromBody]JsonPatchDocument<SurveyAssignmentPatch> patchDoc)
         {
             var entity = await _SurveyAssignmentService.GetByIdAsync(id);

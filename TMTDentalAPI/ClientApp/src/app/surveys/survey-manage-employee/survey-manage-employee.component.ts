@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
-import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { SurveyService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-employee',
@@ -10,25 +12,33 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 })
 export class SurveyManageEmployeeComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 0;
+  limit = 10;
   skip = 0;
   loading = false;
+  search = '';
+  searchSB = new Subject<string>();
 
   constructor(
     private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
+
+    this.searchSB.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe((val) => { this.search = val || ''; this.loadDataFromApi(); });
+
     this.loadDataFromApi()
   }
   loadDataFromApi() {
     this.loading = true;
     var val = {
       limit: this.limit,
-      IsAllowSurvey: true,
-      offset: this.skip
+      offset: this.skip,
+      search: this.search
     }
-    this.employeeService.getEmployeePaged(val).pipe(
+    this.employeeService.GetEmployeeSurveyCount(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
         data: response.items,
@@ -40,6 +50,11 @@ export class SurveyManageEmployeeComponent implements OnInit {
     }, err => {
       this.loading = false;
     })
+  }
+
+  pageChange(e) {
+    this.skip = e.skip;
+    this.loadDataFromApi();    
   }
 
 }

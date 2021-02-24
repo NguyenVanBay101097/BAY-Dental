@@ -19,6 +19,7 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
   filteredEmployees: EmployeeSimple[];
   surveyAssignments: SurveyAssignmentDefaultGet[];
   formGroup: FormGroup;
+  title = "";
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
@@ -38,16 +39,16 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new SurveyAssignmentDefaultGetPar();
-    val.IsRandomAssign = false;
-    this.surveyService.defaultGetList(val).subscribe(
-      result => {
-        this.surveyAssignments = result;
-        this.surveyAssignments.forEach(item => {
-          item.employee = null;
-          this.arrs.push(this.fb.group(item));
-        })
-      }
-    )
+    val.isRandomAssign = false;
+    // this.surveyService.defaultGetList(val).subscribe(
+    //   result => {
+    //     this.surveyAssignments = result;
+    //     this.surveyAssignments.forEach(item => {
+    //       item.employee = null;
+    //       this.arrs.push(this.fb.group(item));
+    //     })
+    //   }
+    // )
   }
 
   get arrs() {
@@ -70,15 +71,15 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
     this.surveyAssignments = [];
     this.arrs.clear();
     var val = new SurveyAssignmentDefaultGetPar();
-    val.IsRandomAssign = true;
-    this.surveyService.defaultGetList(val).subscribe(
-      result => {
-        this.surveyAssignments = result;
-        this.surveyAssignments.forEach(item => {
-          this.arrs.push(this.fb.group(item));
-        })
-      }
-    )
+    val.isRandomAssign = true;
+    // this.surveyService.defaultGetList(val).subscribe(
+    //   result => {
+    //     this.surveyAssignments = result;
+    //     this.surveyAssignments.forEach(item => {
+    //       this.arrs.push(this.fb.group(item));
+    //     })
+    //   }
+    // )
   }
 
   onSave() {

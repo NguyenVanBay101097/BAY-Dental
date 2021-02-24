@@ -237,4 +237,18 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public bool Active { get; set; }
     }
+
+
+    public class EmployeeSurveyDisplay
+    {
+        public Guid Id { get; set; }
+        public string Ref { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string CompanyName { get; set; }
+        public string Email { get; set; }
+        public int TotalAssignment { get; set; }
+        public int DoneAssignment { get; set; }
+        public int FollowAssignment { get { return this.TotalAssignment - this.DoneAssignment; } set { } }
+    }
 }

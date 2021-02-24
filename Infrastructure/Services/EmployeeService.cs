@@ -67,7 +67,7 @@ namespace Infrastructure.Services
 
             if (val.IsAllowSurvey.HasValue)
             {
-                query = query.Where(x=> x.IsAllowSurvey == val.IsAllowSurvey.Value);
+                query = query.Where(x => x.IsAllowSurvey == val.IsAllowSurvey.Value);
             }
 
             query = query.OrderBy(s => s.Name);
@@ -99,9 +99,50 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<PagedResult2<EmployeeSurveyDisplay>> GetEmployeeSurveyCount(EmployeePaged val)
+        {
+            var assignObj = GetService<ISurveyAssignmentService>();
+
+            var query = SearchQuery(x => x.IsAllowSurvey == true && x.Active == true);
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search));
+            }
+
+            var totalItem = await query.CountAsync();
+            var employees = await query.Skip(val.Offset).Take(val.Limit).Select(x => new EmployeeSurveyDisplay()
+            {
+                CompanyName = x.Company.Name,
+                Email = x.Email,
+                Id = x.Id,
+                Phone = x.Phone,
+                Name = x.Name,
+                Ref = x.Ref
+            }).ToListAsync();
+            var employeeIds = employees.Select(z => z.Id).ToList();
+
+            var countDicts = await assignObj.SearchQuery(x => employeeIds.Contains(x.EmployeeId)).GroupBy(x => x.EmployeeId).Select(x => new
+            {
+                EmployeeId = x.Key,
+                Total = x.Sum(o => 1),
+                Done = x.Sum(o => o.Status == "done" ? 1 : 0)
+            }).ToDictionaryAsync(x=> x.EmployeeId, x=> new { x.Done, x.Total});
+
+            foreach (var item in employees)
+            {
+                item.TotalAssignment = countDicts.ContainsKey(item.Id) ? countDicts[item.Id].Total : 0;
+                item.DoneAssignment = countDicts.ContainsKey(item.Id) ? countDicts[item.Id].Done : 0;
+            }
+
+            return new PagedResult2<EmployeeSurveyDisplay>(totalItem, val.Offset, val.Limit)
+            {
+                Items = employees
+            };
+        }
+
         public async Task<PagedResult2<EmployeeBasic>> GetPagedResultAsync(EmployeePaged val)
         {
-            var query = GetQueryPaged(val).Include(x=>x.Company).AsQueryable();
+            var query = GetQueryPaged(val).Include(x => x.Company).AsQueryable();
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.User).OrderByDescending(x => x.DateCreated);
@@ -120,6 +161,24 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<EmployeeSimple>> GetAutocompleteAsync(EmployeePaged val)
         {
+            var query = GetQueryPaged(val);
+            if (val.Position == "doctor")
+            {
+                query = query.Where(x => x.IsDoctor == true && x.IsAssistant == false);
+            }
+            else if (val.Position == "assistant")
+            {
+                query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
+            }
+            var items = await query.Where(x => x.Active == true).Skip(val.Offset).Take(val.Limit)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
+        }
+
+        public async Task<IEnumerable<EmployeeSimple>> GetAutocompleteSudoAsync(EmployeePaged val)
+        {
+            Sudo = true;
             var query = GetQueryPaged(val);
             if (val.Position == "doctor")
             {
@@ -234,7 +293,7 @@ namespace Infrastructure.Services
 
         public async Task<bool> ActionActive(Guid id, EmployeeActive val)
         {
-            var entity = SearchQuery(x => x.Id == id).Include(x=>x.User).FirstOrDefault();
+            var entity = SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefault();
             if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
             entity.Active = val.Active;
             entity.User.Active = val.Active;
@@ -252,15 +311,15 @@ namespace Infrastructure.Services
             if (empl.UserId == null) return;
 
             var groupObj = GetService<IResGroupService>();
-            var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
+            var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
             if (groups.Count() == 0)
             {
                 var surAssObj = GetService<ISurveyAssignmentService>();
                 await surAssObj.AddIrDataForSurvey();
-                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() {ModuleName = "survey.survey_assignment" });
+                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" });
             }
 
-            var user = await _userManager.Users.Where(x => x.Id == empl.UserId).Include(x=> x.ResGroupsUsersRels).FirstOrDefaultAsync();
+            var user = await _userManager.Users.Where(x => x.Id == empl.UserId).Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
 
             foreach (var group in groups)
             {
@@ -276,47 +335,10 @@ namespace Infrastructure.Services
                 user.ResGroupsUsersRels.Add(new ResGroupsUsersRel() { GroupId = empl.GroupId.Value });
             await _userManager.UpdateAsync(user);
 
-            //update role
-            await UpdateRoleToUserForSurvey(empl, groups);
-
             //clear cache survey domainruleget
             _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}-SurveyAssignment");
         }
 
-        public async Task UpdateRoleToUserForSurvey(Employee empl, IEnumerable<ResGroupBasic> groups = null)
-        {
-            if (empl.UserId == null) return;
-            if (groups == null || groups.Count() == 0)
-            {
-                var groupObj = GetService<IResGroupService>();
-                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" });
-            }
 
-            if (groups.Count() == 0) return;
-
-            var roles = await _roleManager.Roles.Where(x => groups.Select(x => x.Name).Contains(x.Name)).ToListAsync();
-            if(roles.Count == 0)
-            {
-                var surAss = GetService<ISurveyAssignmentService>();
-                await surAss.AddRoleForSurvey();
-                roles = await _roleManager.Roles.Where(x => groups.Select(x => x.Name).Contains(x.Name)).ToListAsync();
-            }
-            // xóa all role survey from user
-            foreach (var role in roles)
-            {
-                var result2 = await _userManager.RemoveFromRoleAsync(empl.User, role.Name);
-            }
-
-            // add only a role for user
-            if (empl.IsAllowSurvey == true && empl.GroupId.HasValue)
-            {
-                var group = groups.FirstOrDefault(x => x.Id == empl.GroupId);
-                var role = await _roleManager.FindByNameAsync(group.Name);
-                await _userManager.AddToRoleAsync(empl.User, role.Name);
-            }
-
-            // xóa cache role
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{empl.UserId}");
-        }
     }
 }

@@ -355,6 +355,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("AutocompleteSudo")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
+        public async Task<IActionResult> AutocompleteSudo(EmployeePaged val)
+        {
+            var result = await _employeeService.GetAutocompleteSudoAsync(val);
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> SearchRead(EmployeePaged val)
@@ -368,6 +376,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionActive(Guid id, [FromBody] EmployeeActive val)
         {
             var result = await _employeeService.ActionActive(id, val);
+            return Ok(result);
+        }
+
+
+        [HttpGet("GetEmployeeSurveyCount")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
+        public async Task<IActionResult> GetEmployeeSurveyCount([FromQuery] EmployeePaged val)
+        {
+            var result = await _employeeService.GetEmployeeSurveyCount(val);
             return Ok(result);
         }
     }

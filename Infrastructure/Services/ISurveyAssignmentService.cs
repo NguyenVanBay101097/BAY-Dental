@@ -19,12 +19,12 @@ namespace Infrastructure.Services
 
         Task ActionDone(AssignmentActionDone val);
 
-        Task<IEnumerable<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val);
+        Task<PagedResult2<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val);
         Task<int> GetSummary(SurveyAssignmentPaged val);
 
         Task<long> GetCount(SurveyAssignmentGetCountVM val);
 
         Task AddIrDataForSurvey();
-        Task AddRoleForSurvey();
+
     }
 }
