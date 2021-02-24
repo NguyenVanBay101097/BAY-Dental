@@ -147,7 +147,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     }
     else if (partnerType == "supplier") {
       return "Nhà cung cấp";
-    }
+    } 
+    return "";
   }
 
   exportExcelFile() {

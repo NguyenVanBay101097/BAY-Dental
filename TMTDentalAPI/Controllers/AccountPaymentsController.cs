@@ -221,50 +221,56 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
                 var row = 2;
-                if (val.JournalType == "cash_bank")
+                var col_base = 0;
+                worksheet.Cells[1, col_base + 1].Value = "Ngày";
+                worksheet.Cells[1, col_base + 2].Value = "Số phiếu";
+                if (val.JournalType == "cash_bank" || val.PhieuThuChi == true)
                 {
-                    worksheet.Cells[1, 1].Value = "Ngày";
-                    worksheet.Cells[1, 2].Value = "Số phiếu";
-                    worksheet.Cells[1, 3].Value = "Phương thức thanh toán";
-                    worksheet.Cells[1, 4].Value = "Loại thu chi";
-                    worksheet.Cells[1, 5].Value = "Số tiền";
-                    worksheet.Cells[1, 6].Value = "Nhóm người nhận/nộp tiền";
-                    worksheet.Cells[1, 7].Value = "Người nhận/nộp tiền";
-
-                    foreach (var item in data.Items)
-                    {
-                        worksheet.Cells[row, 1].Value = item.PaymentDate;
-                        worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-                        worksheet.Cells[row, 2].Value = item.Name;
-                        worksheet.Cells[row, 3].Value = item.JournalName;
-                        worksheet.Cells[row, 4].Value = item.DestinationAccountName;
-                        worksheet.Cells[row, 5].Value = (item.PaymentType == "outbound") ? -1*item.Amount : item.Amount;
-                        worksheet.Cells[row, 6].Value = GetPartnerType(item.PartnerType);
-                        worksheet.Cells[row, 7].Value = item.PartnerName;
-                        row++;
-
-                    }
+                    worksheet.Cells[1, col_base + 3].Value = "Phương thức thanh toán";
+                    col_base++;
                 }
-                else
+                worksheet.Cells[1, col_base + 3].Value = "Loại thu chi";
+                worksheet.Cells[1, col_base + 4].Value = "Số tiền";
+                worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận/nộp tiền";
+                worksheet.Cells[1, col_base + 6].Value = "Người nhận/nộp tiền";
+                if (val.PhieuThuChi == true)
                 {
-                    worksheet.Cells[1, 1].Value = "Ngày";
-                    worksheet.Cells[1, 2].Value = "Số phiếu";
-                    worksheet.Cells[1, 3].Value = "Loại thu chi";
-                    worksheet.Cells[1, 4].Value = "Số tiền";
-                    worksheet.Cells[1, 5].Value = "Nhóm người nhận/nộp tiền";
-                    worksheet.Cells[1, 6].Value = "Người nhận/nộp tiền";
-
-                    foreach (var item in data.Items)
+                    if (val.PaymentType == "inbound")
                     {
-                        worksheet.Cells[row, 1].Value = item.PaymentDate;
-                        worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-                        worksheet.Cells[row, 2].Value = item.Name;
-                        worksheet.Cells[row, 3].Value = item.DestinationAccountName;
-                        worksheet.Cells[row, 4].Value = (item.PaymentType == "outbound") ? -1 * item.Amount : item.Amount;
-                        worksheet.Cells[row, 5].Value = GetPartnerType(item.PartnerType);
-                        worksheet.Cells[row, 6].Value = item.PartnerName;
-                        row++;
+                        worksheet.Cells[1, col_base + 3].Value = "Loại thu";
+                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nộp tiền";
+                        worksheet.Cells[1, col_base + 6].Value = "Người nộp tiền";
                     }
+                    else
+                    {
+                        worksheet.Cells[1, col_base + 3].Value = "Loại chi";
+                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận tiền";
+                        worksheet.Cells[1, col_base + 6].Value = "Người nhận tiền";
+                    }
+                    worksheet.Cells[1, col_base + 7].Value = "Nội dung";
+                    worksheet.Cells[1, col_base + 8].Value = "Trạng thái";
+                }
+                foreach (var item in data.Items)
+                {
+                    col_base = 0;
+                    worksheet.Cells[row, col_base + 1].Value = item.PaymentDate;
+                    worksheet.Cells[row, col_base + 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, col_base + 2].Value = item.Name;
+                    if (val.JournalType == "cash_bank" || val.PhieuThuChi == true)
+                    {
+                        worksheet.Cells[row, col_base + 3].Value = item.JournalName;
+                        col_base++;
+                    }
+                    worksheet.Cells[row, col_base + 3].Value = item.DestinationAccountName;
+                    worksheet.Cells[row, col_base + 4].Value = (item.PaymentType == "inbound") ? item.Amount : -1 * item.Amount;
+                    worksheet.Cells[row, col_base + 5].Value = GetPartnerType(item.PartnerType);
+                    worksheet.Cells[row, col_base + 6].Value = item.PartnerName;
+                    if (val.PhieuThuChi == true)
+                    {
+                        worksheet.Cells[row, col_base + 7].Value = item.Communication;
+                        worksheet.Cells[row, col_base + 8].Value = GetState(item.State);
+                    }
+                    row++;
                 }
 
                 worksheet.Cells.AutoFitColumns();
@@ -293,6 +299,23 @@ namespace TMTDentalAPI.Controllers
             else if (partnerType == "supplier")
             {
                 return "Nhà cung cấp";
+            }
+            return "";
+        }
+
+        private string GetState(string state)
+        {
+            if (state == "posted")
+            {
+                return "Đã xác nhận";
+            }
+            else if (state == "draft")
+            {
+                return "Nháp";
+            }
+            else if (state == "cancel")
+            {
+                return "Đã hủy";
             }
             return "";
 

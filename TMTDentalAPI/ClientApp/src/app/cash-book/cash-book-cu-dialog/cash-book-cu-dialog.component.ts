@@ -139,6 +139,7 @@ export class CashBookCuDialogComponent implements OnInit {
       this.formGroup.get("paymentDateObj").patchValue(paymentDate);
       this.change_partnerType(this.getValueForm("partnerType"));
       this.filterChangeCombobox();
+      this.formGroup.get("partner").patchValue(result.partner);
     });
   }
 

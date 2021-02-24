@@ -37,6 +37,7 @@ export class AccountPaymentPaged {
     saleOrderId: string;
     partnerId: string;
     companyId: string;
+    paymentType: string;
     journalType: string;
 }
 

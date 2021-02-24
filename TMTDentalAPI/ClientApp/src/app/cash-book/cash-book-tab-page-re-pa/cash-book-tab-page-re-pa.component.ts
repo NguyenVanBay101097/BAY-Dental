@@ -5,11 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PhieuThuChiService, PhieuThuChiPaged } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
@@ -25,13 +24,12 @@ export class CashBookTabPageRePaComponent implements OnInit {
   skip = 0;
   paymentType: string;
   quickOptionDate: string;
-  paged: PhieuThuChiPaged;
+  paged: AccountPaymentPaged;
   changeDateFirst: boolean = true;
   searchUpdate = new Subject<string>();
 
   constructor(private route: ActivatedRoute, 
     private modalService: NgbModal, 
-    private phieuThuChiService: PhieuThuChiService, 
     private intlService: IntlService, 
     private authService: AuthService, 
     private accountPaymentService: AccountPaymentService,
@@ -39,8 +37,9 @@ export class CashBookTabPageRePaComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.paged = new PhieuThuChiPaged();
+    this.paged = new AccountPaymentPaged();
     this.paged.companyId = this.authService.userInfo.companyId;
+    this.paged.phieuThuChi = true;
     this.quickOptionDate = "Tháng này"; // Auto Call this.searchChangeDate()
     this.route.queryParamMap.subscribe(params => {
       this.paymentType = params.get('payment-type');
@@ -79,7 +78,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
     } else if (state == "cancel") {
       return "Đã hủy";
     } else {
-      return 'Nháp';
+      return "";
     }
   }
 
@@ -156,7 +155,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   exportExcelFile() {
-    this.phieuThuChiService.exportExcelFile(this.paged).subscribe((res) => {
+    this.accountPaymentService.exportExcelFile(this.paged).subscribe((res) => {
       let filename = "PhieuThu";
       if (this.paymentType == "outbound") {
         filename = "PhieuChi";
