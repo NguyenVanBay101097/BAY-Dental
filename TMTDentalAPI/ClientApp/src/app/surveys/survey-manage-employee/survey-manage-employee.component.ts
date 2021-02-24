@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -18,11 +19,20 @@ export class SurveyManageEmployeeComponent implements OnInit {
   search = '';
   searchSB = new Subject<string>();
 
+  dateFrom: Date;
+  dateTo: Date;
+  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
+  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+
+
   constructor(
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
 
     this.searchSB.pipe(
       debounceTime(400),
@@ -31,12 +41,21 @@ export class SurveyManageEmployeeComponent implements OnInit {
 
     this.loadDataFromApi()
   }
+
+  onSearchDateChange(event) {
+    this.dateTo = event.dateTo;
+    this.dateFrom = event.dateFrom;
+    this.loadDataFromApi()
+  }
+
   loadDataFromApi() {
     this.loading = true;
     var val = {
       limit: this.limit,
       offset: this.skip,
-      search: this.search
+      search: this.search,
+      dateFrom: this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd"),
+      dateTo: this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50")
     }
     this.employeeService.GetEmployeeSurveyCount(val).pipe(
       map((response: any) =>
@@ -54,7 +73,7 @@ export class SurveyManageEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
-    this.loadDataFromApi();    
+    this.loadDataFromApi();
   }
 
 }

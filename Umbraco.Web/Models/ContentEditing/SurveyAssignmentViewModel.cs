@@ -73,6 +73,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? PartnerBirthYear { get; set; }
 
         public string PartnerCategoriesDisplay { get; set; }
+        public DateTime? AssignDate { get; set; }
     }
 
     public class SurveyAssignmentDisplay

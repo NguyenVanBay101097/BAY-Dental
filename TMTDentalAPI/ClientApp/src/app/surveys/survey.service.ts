@@ -38,6 +38,7 @@ export class SurveyAssignmentBasic {
   age: string;
   partnerBirthYear: string;
   partnerCategoriesDisplay: string;
+  assignDate: any;
 }
 
 export class SurveyAssignmentPagging {

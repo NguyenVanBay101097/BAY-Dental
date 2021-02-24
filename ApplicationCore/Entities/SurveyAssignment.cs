@@ -50,5 +50,9 @@ namespace ApplicationCore.Entities
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
+        /// <summary>
+        /// ngày phân việc cho nhân viên
+        /// </summary>
+        public DateTime? AssignDate { get; set; }
     }
 }

@@ -121,7 +121,18 @@ namespace Infrastructure.Services
             }).ToListAsync();
             var employeeIds = employees.Select(z => z.Id).ToList();
 
-            var countDicts = await assignObj.SearchQuery(x => employeeIds.Contains(x.EmployeeId)).GroupBy(x => x.EmployeeId).Select(x => new
+            var countQuery = assignObj.SearchQuery(x => employeeIds.Contains(x.EmployeeId));
+            if (val.DateFrom.HasValue)
+            {
+                countQuery = countQuery.Where(x => x.AssignDate.Value >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                countQuery = countQuery.Where(x => x.AssignDate.Value <= val.DateTo);
+            }
+
+            var countDicts = await countQuery.GroupBy(x => x.EmployeeId).Select(x => new
             {
                 EmployeeId = x.Key,
                 Total = x.Sum(o => 1),

@@ -1,5 +1,7 @@
 <div>
     <div class="row d-flex m-3">
+        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+        </app-tai-date-range-filter-dropdown>
         <input class="form-control form-control-sm ml-auto w-50" placeholder="Tìm kiếm theo tên nhân viên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchSB.next($event)">
     </div>
 

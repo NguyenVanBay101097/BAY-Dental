@@ -161,6 +161,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? Active { get; set; }
         public bool? IsAllowSurvey { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
     }
 
     public class EmployeeSave

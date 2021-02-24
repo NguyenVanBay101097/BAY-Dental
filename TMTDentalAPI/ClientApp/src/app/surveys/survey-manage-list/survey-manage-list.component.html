@@ -68,14 +68,14 @@
                 {{dataItem.saleOrder.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Ngày tạo phiếu" width="120">
+        <kendo-grid-column title="Ngày lập phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.saleOrder.dateOrder | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Ngày hoàn thành điều trị" width="120">
+        <kendo-grid-column title="Ngày phân việc" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrder?.dateDone | date:'shortDate'}}
+                {{dataItem.assignDate | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Ngày hoàn thành khảo sát" width="120">

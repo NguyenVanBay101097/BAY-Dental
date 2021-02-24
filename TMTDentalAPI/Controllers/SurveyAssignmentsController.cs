@@ -60,6 +60,7 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
 
             var assignment = _mapper.Map<SurveyAssignment>(val);
+            assignment.AssignDate = DateTime.Now;
             await _SurveyAssignmentService.CreateAsync(assignment);
 
             _unitOfWork.Commit();
@@ -76,6 +77,10 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
 
             var assignments = _mapper.Map<IEnumerable<SurveyAssignment>>(vals);
+            foreach (var item in assignments)
+            {
+                item.AssignDate = DateTime.Now;
+            }
             await _SurveyAssignmentService.CreateAsync(assignments);
 
             _unitOfWork.Commit();
@@ -91,11 +96,15 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
 
-            var question = await _SurveyAssignmentService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (question == null)
+            var assign = await _SurveyAssignmentService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (assign == null)
                 return NotFound();
-            question = _mapper.Map(val, question);
-            await _SurveyAssignmentService.UpdateAsync(question);
+
+            if (val.EmployeeId != assign.EmployeeId) assign.AssignDate = DateTime.Now;
+
+            assign = _mapper.Map(val, assign);
+
+            await _SurveyAssignmentService.UpdateAsync(assign);
 
             _unitOfWork.Commit();
 
@@ -161,12 +170,12 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var question = await _SurveyAssignmentService.GetByIdAsync(id);
+            var assign = await _SurveyAssignmentService.GetByIdAsync(id);
 
-            if (question == null)
+            if (assign == null)
                 return NotFound();
 
-            await _SurveyAssignmentService.DeleteAsync(question);
+            await _SurveyAssignmentService.DeleteAsync(assign);
             _unitOfWork.Commit();
             return NoContent();
         }
