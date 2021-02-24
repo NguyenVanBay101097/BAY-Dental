@@ -45,5 +45,14 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
             }
         }
+
+        public decimal AmountSigned
+        {
+            get
+            {
+                var sign = PaymentType == "outbound" ? -1 : 1;
+                return Amount * sign;
+            }
+        }
     }
 }

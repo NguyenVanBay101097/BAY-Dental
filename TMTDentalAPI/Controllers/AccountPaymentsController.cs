@@ -228,7 +228,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[1, 3].Value = "Phương thức thanh toán";
                     worksheet.Cells[1, 4].Value = "Loại thu chi";
                     worksheet.Cells[1, 5].Value = "Số tiền";
-                    worksheet.Cells[1, 6].Value = "Nhóm người nhận/nộp tiền";
+                    worksheet.Cells[1, 6].Value = "Nhóm người nhận/nộp";
                     worksheet.Cells[1, 7].Value = "Người nhận/nộp tiền";
 
                     foreach (var item in data.Items)
@@ -238,7 +238,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 2].Value = item.Name;
                         worksheet.Cells[row, 3].Value = item.JournalName;
                         worksheet.Cells[row, 4].Value = item.DestinationAccountName;
-                        worksheet.Cells[row, 5].Value = (item.PaymentType == "outbound") ? -1*item.Amount : item.Amount;
+                        worksheet.Cells[row, 5].Value = (item.PaymentType == "outbound") ? -item.Amount : item.Amount;
                         worksheet.Cells[row, 6].Value = GetPartnerType(item.PartnerType);
                         worksheet.Cells[row, 7].Value = item.PartnerName;
                         row++;
@@ -251,7 +251,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[1, 2].Value = "Số phiếu";
                     worksheet.Cells[1, 3].Value = "Loại thu chi";
                     worksheet.Cells[1, 4].Value = "Số tiền";
-                    worksheet.Cells[1, 5].Value = "Nhóm người nhận/nộp tiền";
+                    worksheet.Cells[1, 5].Value = "Nhóm người nhận/nộp";
                     worksheet.Cells[1, 6].Value = "Người nhận/nộp tiền";
 
                     foreach (var item in data.Items)
@@ -260,7 +260,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
                         worksheet.Cells[row, 2].Value = item.Name;
                         worksheet.Cells[row, 3].Value = item.DestinationAccountName;
-                        worksheet.Cells[row, 4].Value = (item.PaymentType == "outbound") ? -1 * item.Amount : item.Amount;
+                        worksheet.Cells[row, 4].Value = (item.PaymentType == "outbound") ? -item.Amount : item.Amount;
                         worksheet.Cells[row, 5].Value = GetPartnerType(item.PartnerType);
                         worksheet.Cells[row, 6].Value = item.PartnerName;
                         row++;

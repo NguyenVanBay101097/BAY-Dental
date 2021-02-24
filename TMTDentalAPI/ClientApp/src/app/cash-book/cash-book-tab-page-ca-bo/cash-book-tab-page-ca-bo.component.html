@@ -105,12 +105,10 @@
                         <kendo-grid-column field="destinationAccountName" title="Loại thu chi" width="100"></kendo-grid-column>
                         <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                <div [ngClass]="(dataItem.paymentType == 'outbound')?'text-danger':'text-primary'">
-                                    {{dataItem.paymentType == "outbound" ? "-" : "+"}}{{dataItem.amount | number}}
-                                </div>
+                                {{dataItem.amountSigned | number}}
                             </ng-template>
                         </kendo-grid-column>
-                        <kendo-grid-column field="partnerType" title="Nhóm người nhận/nộp tiền" width="100">
+                        <kendo-grid-column field="partnerType" title="Nhóm người nhận/nộp" width="100">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                 {{getPartnerType(dataItem.partnerType)}}
                             </ng-template>
