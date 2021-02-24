@@ -231,20 +231,20 @@ namespace TMTDentalAPI.Controllers
                 }
                 worksheet.Cells[1, col_base + 3].Value = "Loại thu chi";
                 worksheet.Cells[1, col_base + 4].Value = "Số tiền";
-                worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận/nộp tiền";
+                worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận/nộp";
                 worksheet.Cells[1, col_base + 6].Value = "Người nhận/nộp tiền";
                 if (val.PhieuThuChi == true)
                 {
                     if (val.PaymentType == "inbound")
                     {
                         worksheet.Cells[1, col_base + 3].Value = "Loại thu";
-                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nộp tiền";
+                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nộp";
                         worksheet.Cells[1, col_base + 6].Value = "Người nộp tiền";
                     }
                     else
                     {
                         worksheet.Cells[1, col_base + 3].Value = "Loại chi";
-                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận tiền";
+                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận";
                         worksheet.Cells[1, col_base + 6].Value = "Người nhận tiền";
                     }
                     worksheet.Cells[1, col_base + 7].Value = "Nội dung";
@@ -262,7 +262,7 @@ namespace TMTDentalAPI.Controllers
                         col_base++;
                     }
                     worksheet.Cells[row, col_base + 3].Value = item.DestinationAccountName;
-                    worksheet.Cells[row, col_base + 4].Value = (item.PaymentType == "inbound") ? item.Amount : -1 * item.Amount;
+                    worksheet.Cells[row, col_base + 4].Value = (item.PaymentType == "inbound") ? item.Amount : -item.Amount;
                     worksheet.Cells[row, col_base + 5].Value = GetPartnerType(item.PartnerType);
                     worksheet.Cells[row, col_base + 6].Value = item.PartnerName;
                     if (val.PhieuThuChi == true)
