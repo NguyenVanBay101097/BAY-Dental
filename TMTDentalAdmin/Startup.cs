@@ -92,6 +92,7 @@ namespace TMTDentalAdmin
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IAdminBaseService<>), typeof(AdminBaseService<>));
             services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<IEmployeeAdminService, EmployeeAdminService>();
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
@@ -100,6 +101,7 @@ namespace TMTDentalAdmin
             {
                 mc.AddProfile(new AppTenantProfile());
                 mc.AddProfile(new TenantExtendHistoryProfile());
+                mc.AddProfile(new EmployeeAdminProfile());
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
