@@ -46,8 +46,21 @@ export class PermissionDirective implements OnInit {
     let hasPermission = false;
 
     if (this.allPermissions) {
-      for (const checkPermission of this.permissions) {
-        const permissionFound = this.allPermissions.find(x => x.toUpperCase() === checkPermission.toUpperCase());
+      for (let checkPermission of this.permissions) {
+        checkPermission = checkPermission.toUpperCase(); 
+        // tách check permission thành mảng
+        let checkPermissionArr = [];
+        let index = 0;
+        while(index >= 0) {
+          index = checkPermission.indexOf('.', index + 1);
+          if(index <= 0) {
+            checkPermissionArr.push(checkPermission);
+            break;
+          }
+          checkPermissionArr.push(checkPermission.substring(0, index));
+        }
+        // check 
+        const permissionFound = this.allPermissions.find(x => checkPermissionArr.indexOf(x.toUpperCase()) != -1);
         if (!permissionFound) {
           hasPermission = false;
           break;
