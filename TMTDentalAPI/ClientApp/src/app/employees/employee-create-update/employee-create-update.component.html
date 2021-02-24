@@ -1,15 +1,13 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="float-right">
-                    <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="avatar" [width]="200"
-                        [height]="200"></app-image-file-upload>
+                    <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="avatar" [width]="200" [height]="200"></app-image-file-upload>
                 </div>
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên nhân viên</label>
@@ -26,8 +24,7 @@
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isUser" id="isUser"
-                                (change)="onChangeIsUser($event)">
+                            <input class="form-check-input" type="checkbox" formControlName="isUser" id="isUser" (change)="onChangeIsUser($event)">
                             <label class="form-check-label" for="isUser">
                                 Là người dùng hệ thống
                             </label>
@@ -52,8 +49,7 @@
                                         <label class="o_form_label">Mã nhân viên</label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="ref"
-                                            placeholder="Để trống tự động phát sinh" />
+                                        <input class="form-control" formControlName="ref" placeholder="Để trống tự động phát sinh" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -61,8 +57,7 @@
                                         <label class="o_form_label">Số điện thoại</label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="11"
-                                            formControlName="phone" />
+                                        <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="11" formControlName="phone" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -153,8 +148,7 @@
                                         <label class="o_form_label">Mật khẩu</label>
                                     </td>
                                     <td colspan="1" style="width: 50%;">
-                                        <input type="password" class="form-control"
-                                            [disableControl]="!createChangePassword" formControlName="userPassword" />
+                                        <input type="password" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -169,9 +163,7 @@
                                     </td>
                                     <td colspan="1" style="width: 50%;">
                                         <div *ngIf="userIdFC.value" class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                formControlName="createChangePassword" id="createChangePassword"
-                                                (change)="onChangeCreateChangePassword($event)">
+                                            <input class="form-check-input" type="checkbox" formControlName="createChangePassword" id="createChangePassword" (change)="onChangeCreateChangePassword($event)">
                                             <label class="form-check-label" for="createChangePassword">
                                                 Đổi mật khẩu
                                             </label>
@@ -185,8 +177,7 @@
                                         </label>
                                     </td>
                                     <td colspan="3" style="width: 100%;">
-                                        <kendo-multiselect [data]="listCompanies" [textField]="'name'"
-                                            [valueField]="'id'" formControlName="userCompanies">
+                                        <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'" formControlName="userCompanies">
                                         </kendo-multiselect>
                                     </td>
                                 </tr>
@@ -197,8 +188,7 @@
                                         </label>
                                     </td>
                                     <td colspan="3" style="width: 100%;">
-                                        <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
-                                            formControlName="userCompany" [valueField]="'id'">
+                                        <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="userCompany" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -219,9 +209,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="wage"
-                                                [spinners]="false" placeholder="Nhập lương của nhân viên"
-                                                class="form-control" aria-describedby="wage" [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" formControlName="wage" [spinners]="false" placeholder="Nhập lương của nhân viên" class="form-control" aria-describedby="wage" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <!-- <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="wage">VNĐ</span>
@@ -239,9 +227,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="allowance"
-                                                [spinners]="false" class="form-control" aria-describedby="allowance"
-                                                [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" formControlName="allowance" [spinners]="false" class="form-control" aria-describedby="allowance" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <!-- <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="allowance">VNĐ</span>
@@ -260,9 +246,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false"
-                                                class="form-control" formControlName="restDayRate"
-                                                aria-describedby="restDayRate" [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false" class="form-control" formControlName="restDayRate" aria-describedby="restDayRate" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="restDayRate">%</span>
@@ -277,9 +261,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [filterable]="true" [data]="listCommissions"
-                                            [textField]="'name'" #commissionCbx formControlName="commission"
-                                            [valueField]="'id'">
+                                        <kendo-combobox [filterable]="true" [data]="listCommissions" [textField]="'name'" #commissionCbx formControlName="commission" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -297,9 +279,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false"
-                                                class="form-control" aria-describedby="leavePerMonth"
-                                                formControlName="leavePerMonth" [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false" class="form-control" aria-describedby="leavePerMonth" formControlName="leavePerMonth" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="leavePerMonth">Ngày</span>
@@ -318,8 +298,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="regularHour"
-                                                class="form-control" [spinners]="false" [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" formControlName="regularHour" class="form-control" [spinners]="false" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="leavePerMonth">Giờ</span>
@@ -337,8 +316,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="overtimeRate"
-                                                class="form-control" [spinners]="false" [autoCorrect]="true">
+                                            <kendo-numerictextbox [format]="'n0'" formControlName="overtimeRate" class="form-control" [spinners]="false" [autoCorrect]="true">
                                             </kendo-numerictextbox>
                                             <div class="input-group-append position-absolute" style="right: 0;">
                                                 <span class="input-group-text" id="leavePerMonth">%</span>
@@ -355,7 +333,6 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="!formCreate.valid"
-        (click)="createUpdateEmployee()">Lưu</button>
+    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="!formCreate.valid" (click)="createUpdateEmployee()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

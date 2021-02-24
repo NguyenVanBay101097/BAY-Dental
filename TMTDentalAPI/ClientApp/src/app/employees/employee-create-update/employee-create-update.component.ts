@@ -96,7 +96,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userName: null,
       userPassword: [null],
       createChangePassword: true,
-      avatar: null
+      avatar: null,
       userAvatar: null,
       groupId: null,
       isAllowSurvey: false
