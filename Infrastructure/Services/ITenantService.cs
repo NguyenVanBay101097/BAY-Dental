@@ -8,8 +8,9 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ITenantService: IAdminBaseService<AppTenant>
+    public interface ITenantService : IAdminBaseService<AppTenant>
     {
         Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val);
+        Task CheckUpdateDateExpired(TenantUpdateDateExpiredViewModel val);
     }
 }

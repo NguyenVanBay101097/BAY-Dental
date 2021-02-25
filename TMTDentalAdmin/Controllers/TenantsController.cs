@@ -37,7 +37,8 @@ namespace TMTDentalAdmin.Controllers
         private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            UserManager<ApplicationAdminUser> userManager, IConfiguration configuration,
+            UserManager<ApplicationAdminUser> userManager,
+            IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings,
             ITenantExtendHistoryService tenantExtendHistoryService
             )

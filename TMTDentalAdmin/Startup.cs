@@ -9,6 +9,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace TMTDentalAdmin
         }
 
         public IConfiguration Configuration { get; }
-
+        public IHttpContextAccessor HttpContextAccessor { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -95,6 +96,14 @@ namespace TMTDentalAdmin
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
             services.AddSingleton<IMailSender, SendGridSender>();
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
+            services.AddSingleton<UpdateExpiredDateTenantService>();
+            services.AddCronJob<ScheduleJobService>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Local;
+                c.CronExpression = @"39 16 * * *"; //chay moi ngay voi so gio dc set san
+                c.ConnectionStrings = Configuration.GetConnectionString("TenantConnection");
+                c.appSettings = appSettings;
+            });
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -148,7 +157,6 @@ namespace TMTDentalAdmin
             }
 
             app.UseRouting();
-
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));

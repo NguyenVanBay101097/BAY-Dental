@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { TenantService } from '../tenant.service';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TenantExtendHistoryService } from '../tenant-extend-history.service';
+import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tenant-update-expired-dialog',
@@ -25,7 +26,8 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   constructor(private fb: FormBuilder, private intlService: IntlService,
     private tenantExtendHistoryService: TenantExtendHistoryService,
     private tenantService: TenantService,
-    public activeModal: NgbActiveModal) { }
+    private modalService: NgbModal,
+    private activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     if (this.today <= this.expirationDate)
@@ -58,6 +60,21 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
         case "company":
           this.startDate = this.today;
           this.endDate = this.expirationDate;
+          if (this.startDate > this.expirationDate) {
+            let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+            modalRef.componentInstance.body = "Tên miền này đã hết hạn, Vui lòng gia hạn thời gian trước khi thêm chi nhánh!";
+            modalRef.componentInstance.title = `Lưu ý`;
+            modalRef.componentInstance.isClose = false;
+            modalRef.result.then(() => {
+              this.formGroup.get('checkOption').setValue("time");
+              if (this.today <= this.expirationDate)
+                this.startDate = new Date(this.expirationDate.getFullYear(), this.expirationDate.getMonth(), this.expirationDate.getDate() + 1);
+              else {
+                this.startDate = this.today;
+              }
+              this.computeEndDate();
+            })
+          }
           break;
         case "time":
           if (this.today <= this.expirationDate)
@@ -101,7 +118,7 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   onSave() {
     var val = this.getFormGroup();
     val.startDate = this.intlService.formatDate(this.startDate, "yyyy-MM-dd");
-    val.expirationDate = this.intlService.formatDate(this.endDate, "yyyy-MM-dd");
+    val.expirationDate = this.intlService.formatDate(this.endDate, "yyyy-MM-ddT23:59");
     val.tenantId = this.id;
     this.tenantExtendHistoryService.create(val).subscribe(() => {
       this.activeModal.close(true);

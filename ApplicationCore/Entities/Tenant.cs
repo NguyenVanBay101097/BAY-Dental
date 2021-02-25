@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class AppTenant: AdminBaseEntity
+    public class AppTenant : AdminBaseEntity
     {
         public AppTenant()
         {
@@ -45,5 +45,7 @@ namespace ApplicationCore.Entities
         public EmployeeAdmin EmployeeAdmin { get; set; }
 
         public string Address { get; set; }
+
+        //public ICollection<TenantExtendHistory> TenantExtendHistories { get; set; } = new List<TenantExtendHistory>();
     }
 }

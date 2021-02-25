@@ -20,7 +20,7 @@ namespace Infrastructure.AdminEntityConfigurations
                 .HasForeignKey(x => x.WriteById);
 
             builder.HasOne(x => x.AppTenant)
-               .WithMany()
+               .WithMany( )
                .HasForeignKey(x => x.TenantId);
 
         }

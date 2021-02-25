@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -10,6 +11,8 @@ using AutoMapper;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -17,11 +20,47 @@ namespace Infrastructure.Services
     public class TenantService : AdminBaseService<AppTenant>, ITenantService
     {
         private readonly IMapper _mapper;
+        private readonly AdminAppSettings _appSettings;
         public TenantService(IAsyncRepository<AppTenant> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper,
+            IOptions<AdminAppSettings> appSettings
+            )
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _appSettings = appSettings?.Value;
+        }
+
+        public async Task CheckUpdateDateExpired(TenantUpdateDateExpiredViewModel val)
+        {
+            var tenant = await GetByIdAsync(val.Id);
+            var oldDateExpired = tenant.DateExpired;
+            var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
+            tenant.DateExpired = val.DateExpired;
+            tenant.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
+            await UpdateAsync(tenant);
+
+            try
+            {
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                HttpResponseMessage response = null;
+                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                {
+                    response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
+                }
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Có lỗi xảy ra");
+            }
+            catch (Exception e)
+            {
+                tenant.DateExpired = oldDateExpired;
+                tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
+                await UpdateAsync(tenant);
+                throw e;
+            }
         }
 
         public async Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val)
