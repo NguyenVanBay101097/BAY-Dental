@@ -29,6 +29,13 @@
   <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
       (pageChange)="pageChange($event)">
+      <kendo-grid-column field="name" title="Nhân viên" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+          {{dataItem.dateCreated | date : 'short'}}
+        </ng-template>
+      </kendo-grid-column>
       <kendo-grid-column field="id" width="140">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
           Thao tác
@@ -37,8 +44,8 @@
           <button [routerLink]="['/employee-admins/update/' + dataItem.id]"class="btn btn-success btn-sm mr-2">
             <i title="Sửa" class="far fa-edit"></i>
           </button>
-          <button routerLink="register" class="btn btn-danger btn-sm mr-2">
-            <i title="Xóa" class="far fa-trash-alt">
+          <button class="btn btn-danger btn-sm mr-2">
+            <i title="Xóa" (click)="deleteItem(dataItem.id)" class="far fa-trash-alt">
             </i>
           </button>
             <!-- <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger btn-sm mr-2"><i title="Ẩn nhân viên"
@@ -47,13 +54,6 @@
             <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success btn-sm mr-2"><i title="Hiện nhân viên"
                         class="fas fa-eye"></i>
             </button> -->
-        </ng-template>
-      </kendo-grid-column>
-      <kendo-grid-column field="name" title="Nhân viên" width="150">
-      </kendo-grid-column>
-      <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-          {{dataItem.dateCreated | date : 'short'}}
         </ng-template>
       </kendo-grid-column>
     </kendo-grid>

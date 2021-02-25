@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ConfirmDialogComponent } from '@shared/confirm-dialog/confirm-dialog.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { EmployeeAdminRegisterComponent } from '../employee-admin-register/employee-admin-register.component';
@@ -79,6 +80,40 @@ export class EmployeeAdminListComponent implements OnInit {
         type: { style: 'success', icon: true }
       });
       this.loadDataFromApi();
+    });
+  }
+
+  deleteItem(id){
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa nhân viên';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      // this.notificationService.show({
+      //   content: 'Xóa thành công',
+      //   hideAfter: 3000,
+      //   position: { horizontal: 'center', vertical: 'top' },
+      //   animation: { type: 'fade', duration: 400 },
+      //   type: { style: 'success', icon: true }
+      // });
+      this.employeeAdminService.delete(id).subscribe(() => {
+        this.notificationService.show({
+        content: 'Xóa thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+        });
+        this.loadDataFromApi();
+      },error => {
+        this.notificationService.show({
+          content: 'Xóa không thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+          });
+      });
+      
     });
   }
 

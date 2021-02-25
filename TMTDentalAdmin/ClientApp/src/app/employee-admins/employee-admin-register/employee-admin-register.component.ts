@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeeAdminService } from '../employee-admin.service';
 
 @Component({
@@ -14,7 +15,10 @@ export class EmployeeAdminRegisterComponent implements OnInit {
   loading = false;
   id : string;
   title : string;
-  constructor(public employeeAdminService: EmployeeAdminService, public router: Router, private fb: FormBuilder) { }
+  constructor(public employeeAdminService: EmployeeAdminService, 
+  public router: Router,
+  private notificationService: NotificationService,
+  private fb: FormBuilder) { }
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -29,11 +33,27 @@ export class EmployeeAdminRegisterComponent implements OnInit {
     this.loading = true;
     this.employeeAdminService.create(this.registerForm.value).subscribe(() => {
       this.loading = false;
+      this.notificationService.show({
+        content: 'Thêm thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+        });
       this.router.navigate(['/employee-admins']);
     }, error => {
       this.loading = false;
+      this.notificationService.show({
+        content: 'Thêm không thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+        });
       console.log('error', error);
     });
   }
+
+  get name() { return this.registerForm.get('name'); }
 
 }

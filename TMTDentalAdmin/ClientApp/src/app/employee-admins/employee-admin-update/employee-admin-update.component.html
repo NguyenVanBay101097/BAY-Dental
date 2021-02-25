@@ -25,7 +25,10 @@
                     </label>
                   </td>
                   <td style="width: 100%;">
-                    <input type="text" class="form-control" formControlName="name" />
+                    <input type="text" class="form-control" formControlName="name" required />
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger">
+                      Vui lòng điền họ tên 
+                    </div>
                   </td>
                 </tr>
                 <tr>

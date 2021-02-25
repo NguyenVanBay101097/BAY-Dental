@@ -51,4 +51,8 @@ export class EmployeeAdminService {
     update(id: string, val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/Update', val);
     }
+
+    delete(id: string){
+        return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+    }
 }
