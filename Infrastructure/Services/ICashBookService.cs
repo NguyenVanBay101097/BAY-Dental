@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     public interface ICashBookService
     {
         Task<CashBookReport> GetSumary(CashBookSearch val);
+        Task ChangeData();
     }
 }

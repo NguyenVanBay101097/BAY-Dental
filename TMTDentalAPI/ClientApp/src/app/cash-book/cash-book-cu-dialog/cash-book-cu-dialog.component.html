@@ -1,7 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-        (click)="reload ? activeModal.close() : activeModal.dismiss()" tabindex="-1">×</button>
+        (click)="onClose()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="formGroup">
@@ -156,21 +156,13 @@
     </div>
 </div>
 <div *ngIf="!seeForm" class="modal-footer">
-    <div *ngIf="getValueForm('state') == 'draft'">
-        <button type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
-        <button type="button" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
-    </div>
-    <div *ngIf="getValueForm('state') == 'draft' && itemId == null">
-        <button type="button" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-        <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Đóng</button>
-    </div>
-    <div *ngIf="itemId != null">
-        <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
-        <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
-    </div>
+    <button type="button" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
+    <button type="button" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>
 <div *ngIf="seeForm" class="modal-footer">
-    <button type="button" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" *ngIf="getValueForm('state') == 'posted'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
     <button type="button" *ngIf="getValueForm('state') == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
-    <button type="button" class="btn btn-light" (click)="onCreate()">Thêm mới</button>
+    <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>

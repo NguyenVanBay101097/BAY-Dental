@@ -88,4 +88,8 @@ export class CashBookService {
       params: val,
     });
   }
+
+  changeData(){
+    return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
+  }
 }

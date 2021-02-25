@@ -207,4 +207,16 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     //   }, 100);
     // });
   }
+
+  changeData() {
+    this.cashBookService.changeData()
+      .subscribe(
+        (res) => {
+
+        },
+        (err) => {
+
+        }
+      );
+  }
 }

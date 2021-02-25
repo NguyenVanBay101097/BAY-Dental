@@ -283,7 +283,7 @@ export class CashBookCuDialogComponent implements OnInit {
     );
   }
 
-  onSave() {
+  onSavePrint(print) {
     this.submitted = true;
 
     if (!this.formGroup.valid) {
@@ -310,6 +310,9 @@ export class CashBookCuDialogComponent implements OnInit {
           this.itemId = result.id;
           this.setTitle();
           this.reload = true;
+          if (print) {
+            this.printPhieu(this.itemId);
+          }
           this.submitted = false;
         },
         (error) => {
@@ -327,6 +330,9 @@ export class CashBookCuDialogComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
+          if (print) {
+            this.printPhieu(this.itemId);
+          }
           this.submitted = false;
           this.activeModal.close();
         },
@@ -419,6 +425,14 @@ export class CashBookCuDialogComponent implements OnInit {
     this.loadDefault();
     this.itemId = null;
     this.setTitle();
+  }
+
+  onClose() {
+    if (this.reload) {
+      this.activeModal.close();
+    } else {
+      this.activeModal.dismiss();
+    }
   }
 
   printPhieu(id: string) {

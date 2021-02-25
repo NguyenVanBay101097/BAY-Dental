@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
+using Dapper;
 
 namespace Infrastructure.Services
 {
@@ -79,6 +80,33 @@ namespace Infrastructure.Services
 
             cashBookReport.TotalAmount = cashBookReport.Begin + cashBookReport.TotalThu - cashBookReport.TotalChi;
             return cashBookReport;
+        }
+
+        private bool checkExistsTable(string tableName)
+        {
+            var sqlQ = $"SELECT COUNT(*) as Count FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tableName}'";
+            var conn = _context.Database.GetDbConnection();
+            {
+                if (conn != null)
+                {
+                    // Query - method extension provided by Dapper library
+                    bool exists = conn.Query<int>(sqlQ).FirstOrDefault() > 0;
+                    return exists;
+                }
+            }
+            return false;
+        }
+
+        public async Task ChangeData()
+        {
+            if (checkExistsTable("SalaryPayments"))
+            {
+
+            }
+            if (checkExistsTable("PhieuThuChis"))
+            {
+
+            }
         }
     }
 }

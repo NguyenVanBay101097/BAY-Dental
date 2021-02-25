@@ -135,23 +135,33 @@ export class CashBookTabPageRePaComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Xóa ${this.getType(this.paymentType).toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.paymentType).toLowerCase()}?`;
-    modalRef.result.then((res) => {
-      this.accountPaymentService.unlink([item.id]).subscribe(() => {
-        this.notificationService.show({
-          content: "Xóa phiếu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
-        this.loadDataFromApi();
-      }, (res) => {
+    if (item.state == "cancel") {
+      this.notificationService.show({
+        content: "Bạn không thể xóa phiếu khi đã hủy",
+        hideAfter: 3000,
+        position: { horizontal: "center", vertical: "top" },
+        animation: { type: "fade", duration: 400 },
+        type: { style: "error", icon: true },
       });
-    }, (err) => {
-    });
+    } else {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = `Xóa ${this.getType(this.paymentType).toLowerCase()}`;
+      modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.paymentType).toLowerCase()}?`;
+      modalRef.result.then((res) => {
+        this.accountPaymentService.unlink([item.id]).subscribe(() => {
+          this.notificationService.show({
+            content: "Xóa phiếu thành công",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+          this.loadDataFromApi();
+        }, (res) => {
+        });
+      }, (err) => {
+      });
+    }
   }
 
   exportExcelFile() {
