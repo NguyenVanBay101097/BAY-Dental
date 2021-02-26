@@ -14,6 +14,13 @@ export class CashBookPaged {
   begin: boolean;
 }
 
+export class CashBookSummarySearch {
+  companyId: string;
+  resultSelection: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
 export class AccountMoveLineCashBookVM {
   date: string;
   name: string;
@@ -80,5 +87,9 @@ export class CashBookService {
       responseType: "blob",
       params: val,
     });
+  }
+
+  changeData(){
+    return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
 }

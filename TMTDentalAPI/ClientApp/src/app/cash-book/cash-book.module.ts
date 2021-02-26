@@ -5,7 +5,6 @@ import { CashBookRoutingModule } from './cash-book-routing.module';
 import { CashBookComponent } from './cash-book/cash-book.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { CashBookService } from './cash-book.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
@@ -14,7 +13,7 @@ import { CashBookTabPageCaBoComponent } from './cash-book-tab-page-ca-bo/cash-bo
 import { CashBookTabPageRePaComponent } from './cash-book-tab-page-re-pa/cash-book-tab-page-re-pa.component';
 
 @NgModule({
-  declarations: [CashBookComponent, CashBookCuDialogComponent, CashBookTabCashBankComponent, CashBookTabPageCaBoComponent, CashBookTabPageRePaComponent],
+  declarations: [CashBookComponent, CashBookTabCashBankComponent, CashBookTabPageCaBoComponent, CashBookTabPageRePaComponent],
   imports: [
     CommonModule,
     CashBookRoutingModule, 
@@ -28,7 +27,6 @@ import { CashBookTabPageRePaComponent } from './cash-book-tab-page-re-pa/cash-bo
     CashBookService
   ], 
   entryComponents: [
-    CashBookCuDialogComponent, 
     CashBookTabCashBankComponent
   ]
 })

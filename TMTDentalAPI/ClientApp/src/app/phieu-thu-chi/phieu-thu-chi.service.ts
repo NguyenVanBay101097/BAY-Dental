@@ -1,16 +1,20 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PagedResult2 } from '../core/paged-result-2';
 
 export class PhieuThuChiPaged {
+  constructor() {
+    this.phieuThuChi = true;
+  }
   limit: number;
   offset: number;
   search: string;
-  type: string;
-  dateFrom: string;
-  dateTo: string;
+  state: string;
+  paymentType: string;
+  paymentDateFrom: string;
+  paymentDateTo: string;
   companyId: string;
+  phieuThuChi: boolean;
 }
 
 export class PhieuThuChiSearch {

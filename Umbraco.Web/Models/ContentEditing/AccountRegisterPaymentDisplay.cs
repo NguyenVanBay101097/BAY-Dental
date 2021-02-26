@@ -9,7 +9,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public AccountRegisterPaymentDisplay()
         {
-            PaymentDate = DateTime.Now;
+            PaymentDate = DateTime.Today;
         }
 
         public Guid Id { get; set; }

@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210127071445_AddAccountPaymentColumnInHrPaySlipTable")]
+    partial class AddAccountPaymentColumnInHrPaySlipTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2013,9 +2015,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<decimal?>("Allowance")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
@@ -8541,9 +8540,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("InvoiceStatus")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -8631,9 +8627,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<int?>("Sequence")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("ToInvoiceQuantity")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ToaThuocId")
                         .HasColumnType("uniqueidentifier");
@@ -10976,7 +10969,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductUoMId");
 
                     b.HasOne("ApplicationCore.Entities.ToaThuocLine", "ToaThuocLine")
-                        .WithMany("MedicineOrderLines")
+                        .WithMany()
                         .HasForeignKey("ToaThuocLineId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
