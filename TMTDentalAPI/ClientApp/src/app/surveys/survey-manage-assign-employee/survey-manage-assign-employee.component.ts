@@ -30,7 +30,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   offset = 0;
   filteredEmployees: EmployeeSimple[];
 
-  
+
   private _filterValues: Subject<string> = new Subject<string>()
 
   constructor(
@@ -38,7 +38,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     private intlService: IntlService,
     private surveyService: SurveyService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.dateFrom = this.monthStart;
@@ -56,7 +56,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       debounceTime(400),
       switchMap(value => this.searchEmployees(value))
     )
-    .subscribe(res =>this.filteredEmployees = res);
+      .subscribe(res => this.filteredEmployees = res);
 
     this.loadDataFromApi();
     this.loadEmployees();
@@ -77,13 +77,13 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   loadDataFromApi(paged = null) {
     this.loading = true;
-    if(!paged) {
-    paged =  new SurveyAssignmentDefaultGetPar();
-    paged.limit = this.limit;
-    paged.offset = this.offset;
-    paged.search = this.search ? this.search : '';
-    paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
+    if (!paged) {
+      paged = new SurveyAssignmentDefaultGetPar();
+      paged.limit = this.limit;
+      paged.offset = this.offset;
+      paged.search = this.search ? this.search : '';
+      paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+      paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
     }
 
     this.surveyService.defaultGetList(paged).pipe(
@@ -101,59 +101,70 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
-    this.loadDataFromApi();    
+    this.loadDataFromApi();
   }
 
   onSearchDateChange(event) {
     this.dateTo = event.dateTo;
     this.dateFrom = event.dateFrom;
     this.offset = 0;
-    this.loadDataFromApi()
+    this.loadDataFromApi();
   }
 
   onAutoAssign() {
-if(this.gridData.data.length == 0) {
-  this.notify('error','Không có khảo sát để phân việc!');
-  return;
-}
+    if (this.gridData.data.length == 0) {
+      this.notify('error', 'Không có khảo sát để phân việc!');
+      return;
+    }
 
-var val = {
-  limit: 0,
-  offset: 0,
-}
+    if (this.filteredEmployees.length == 0) {
+      this.notify('error', 'Không có nhân viên nào để phân việc');
+      return;
+    }
 
-this.employeeService.GetEmployeeSurveyCount(val).subscribe((res) => {
-let emps = res.items;
-this.gridData.data.forEach(ass => {
-  let minEmp = emps.reduce((pre, cur) => {
-    return pre.totalAssignment < cur.totalAssignment? pre: cur;
-  });
+    this.gridData.data.forEach((ass, index) => {
+      var emp = this.filteredEmployees[index % this.filteredEmployees.length];
+      ass.employee = emp;
+      ass.employeeId = emp.id;
+    });
 
-  ass.employee = {id: minEmp.id, name: minEmp.name};
-  ass.employeeId = minEmp.id;
+    // var val = {
+    //   limit: 0,
+    //   offset: 0,
+    // }
 
-  minEmp.totalAssignment ++;
-});
-});
+    // this.employeeService.GetEmployeeSurveyCount(val).subscribe((res) => {
+    //   let emps = res.items;
+    //   this.gridData.data.forEach(ass => {
+    //     let minEmp = emps.reduce((pre, cur) => {
+    //       return pre.totalAssignment < cur.totalAssignment ? pre : cur;
+    //     });
 
-  //  var paged =  new SurveyAssignmentDefaultGetPar();
-  //  paged.limit = this.limit;
-  //  paged.offset = this.offset;
-  //  paged.search = this.search ? this.search : '';
-  //  paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-  //  paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
-  //  paged.isRandomAssign = true;
-  //  this.loadDataFromApi(paged);
+    //     ass.employee = { id: minEmp.id, name: minEmp.name };
+    //     ass.employeeId = minEmp.id;
+
+    //     minEmp.totalAssignment++;
+    //   });
+    // });
+
+    //  var paged =  new SurveyAssignmentDefaultGetPar();
+    //  paged.limit = this.limit;
+    //  paged.offset = this.offset;
+    //  paged.search = this.search ? this.search : '';
+    //  paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    //  paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
+    //  paged.isRandomAssign = true;
+    //  this.loadDataFromApi(paged);
   }
 
   onEmployeeChange(val, index) {
-  if(val) {
-    this.gridData.data[index].employee = val;
-    this.gridData.data[index].employeeId = val.id;
-  } else {
-    this.gridData.data[index].employee = null;
-    this.gridData.data[index].employeeId = null;
-  }
+    if (val) {
+      this.gridData.data[index].employee = val;
+      this.gridData.data[index].employeeId = val.id;
+    } else {
+      this.gridData.data[index].employee = null;
+      this.gridData.data[index].employeeId = null;
+    }
   }
 
   notify(style, content) {
@@ -168,8 +179,8 @@ this.gridData.data.forEach(ass => {
 
 
   onSave() {
-    var data = this.gridData.data.filter(x=> x.employeeId != null).map(x=>{ return {employeeId:x.employeeId,partnerId: x.partnerId,saleOrderId: x.saleOrderId}});
-    if(data.length == 0) {
+    var data = this.gridData.data.filter(x => x.employeeId != null).map(x => { return { employeeId: x.employeeId, partnerId: x.partnerId, saleOrderId: x.saleOrderId } });
+    if (data.length == 0) {
       this.notify('error', 'Không có phân việc đã được phân cho nhân viên để lưu!');
       return;
     }
@@ -177,7 +188,7 @@ this.gridData.data.forEach(ass => {
       () => {
         this.notify('success', 'thành công');
         this.loadDataFromApi();
-       }
+      }
     )
   }
 

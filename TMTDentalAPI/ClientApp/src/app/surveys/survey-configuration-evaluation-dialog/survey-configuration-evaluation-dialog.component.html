@@ -17,7 +17,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name" />
-                                    <span class="text-danger" *ngIf="formGroup.get('name').errors">Vui lòng điền câu
+                                    <span class="text-danger" *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)">Vui lòng điền tên câu
                                         hỏi</span>
                                 </td>
                             </tr>

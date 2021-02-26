@@ -11,10 +11,12 @@ import { SurveyAnswerDisplay, SurveyQuestionDisplay, SurveyQuestionService } fro
   styleUrls: ['./survey-configuration-evaluation-dialog.component.css']
 })
 export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
-  question: SurveyQuestionDisplay
+  question: SurveyQuestionDisplay;
   formGroup: FormGroup;
   activeNote: string;
   id: string;
+  title: string;
+  submitted = false;
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
@@ -27,9 +29,9 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
       name: ['', Validators.required],
       type: ['radio', Validators.required],
       sequence: 0,
-      answers: this.fb.array([
-      ])
+      answers: this.fb.array([])
     });
+
     if (this.id) {
       this.loadDataFromApi();
     } else {
@@ -78,6 +80,11 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
+    }
+    
     var val = this.getValueFromFormGroup();
     if (this.id) {
       this.surveyQuestionService.update(this.id, val).subscribe(
@@ -118,5 +125,9 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
       item.score = idx + 1;
       this.answers.push(this.fb.group(item));
     });
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 }

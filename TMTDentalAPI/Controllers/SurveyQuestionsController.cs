@@ -64,8 +64,6 @@ namespace TMTDentalAPI.Controllers
             var question = _mapper.Map<SurveyQuestion>(val);
             SaveAnswers(val, question);
 
-            question.Sequence = (_surveyQuestionService.SearchQuery().Max(x=> x.Sequence) ?? 0) + 1;
-
             await _surveyQuestionService.CreateAsync(question);
 
             _unitOfWork.Commit();
