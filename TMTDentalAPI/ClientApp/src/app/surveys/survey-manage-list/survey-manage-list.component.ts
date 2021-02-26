@@ -1,5 +1,5 @@
 import { Route } from '@angular/compiler/src/core';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,20 +9,22 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
 import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from '../survey.service';
+declare var $: any;
+
 
 @Component({
   selector: 'app-survey-manage-list',
   templateUrl: './survey-manage-list.component.html',
   styleUrls: ['./survey-manage-list.component.css']
 })
-export class SurveyManageListComponent implements OnInit {
+export class SurveyManageListComponent implements OnInit, AfterViewInit  {
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   gridData: GridDataResult;
@@ -60,6 +62,8 @@ export class SurveyManageListComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
+  private _filterValues: Subject<string> = new Subject<string>()
+
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
@@ -71,8 +75,19 @@ export class SurveyManageListComponent implements OnInit {
     private fb: FormBuilder
   ) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    this.empCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.empCbx.loading = true)),
+      switchMap(value => this.searchEmployees(value))
+    ).subscribe(result => {
+      this.filteredEmployees = result;
+      this.empCbx.loading = false;
+    });
+   
+  }
 
+  ngOnInit() {
 
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
@@ -84,14 +99,11 @@ export class SurveyManageListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this.empCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.empCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value))
-    ).subscribe(result => {
-      this.filteredEmployees = result;
-      this.empCbx.loading = false;
-    });
+      this._filterValues.asObservable().pipe(
+        debounceTime(400),
+        switchMap(value => this.searchEmployees(value))
+      )
+      .subscribe(res =>this.filteredEmployees = res);
 
     this.loadDataFromApi();
     this.loadStatusCount();
@@ -155,7 +167,7 @@ export class SurveyManageListComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = search;
     val.isAllowSurvey = true;
-    return this.employeeService.getEmployeeSimpleList(val);
+    return this.employeeService.getEmployeeSudoSimpleList(val);
   }
 
   onSearchDateChange(event) {
@@ -209,6 +221,7 @@ export class SurveyManageListComponent implements OnInit {
       return;
     }
     var surveyOld = this.gridData.data.find(x => x.id === survey.id)
+    var oldEmp = surveyOld.employee;
     surveyOld.employee = survey.employee;
     surveyOld.employeeId = survey.employee.id;
     this.surveyService.updateAssignment(survey.id, surveyOld).subscribe(
@@ -220,6 +233,10 @@ export class SurveyManageListComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+      },
+      () => {
+        surveyOld.employee = oldEmp;
+        surveyOld.employeeId = oldEmp.id;
       }
     )
     sender.closeRow(rowIndex);
@@ -249,5 +266,16 @@ export class SurveyManageListComponent implements OnInit {
     });
   }
 
+  filterChangeEmployee(val) {
+    this._filterValues.next(val);
+    // return this.searchEmployees(val).subscribe(result => {
+    //   this.filteredEmployees = result
+    //   this.employees = result;
+    // });
+  }
+
+  onEmployeeKeyDown(e) {
+    e.stopPropagation();
+  }
 
 }

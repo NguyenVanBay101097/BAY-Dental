@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? dateTo { get; set; }
         public bool? IsGetScore { get; set; }
         public Guid? EmployeeId { get; set; }
+        public Guid? UserId { get; set; }
 
     }
 
@@ -138,7 +139,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
         public DateTime? dateFrom { get; set; }
         public DateTime? dateTo { get; set; }
-        public bool? IsRandomAssign { get; set; } // có phân việc ngẫu nhiên hay ko ?
     }
 
     public class AssignmentActionDone
@@ -161,6 +161,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public Guid? EmployeeId { get; set; }
+
+        public Guid? UserId { get; set; }
     }
 
     public class EmployeeCountSurvey

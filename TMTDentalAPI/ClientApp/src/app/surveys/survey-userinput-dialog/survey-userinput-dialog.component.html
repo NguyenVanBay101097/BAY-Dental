@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="onCancel()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="onCancel()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -17,13 +16,10 @@
                     <div formArrayName="lines">
                         <ng-container *ngFor="let line of lines.controls;let i=index">
                             <div class="section mb-1" [formGroupName]="i">
-                                <h6>{{line.get('question').value.sequence}}/ {{line.get('question').value.name}}</h6>
+                                <h6>{{i + 1}}/ {{line.get('question').value.name}}</h6>
                                 <ng-container *ngIf="line.get('question').value.type === 'radio';else text">
                                     <div class="radio pl-2" *ngFor="let item of line.get('question').value.answers">
-                                        <input formControlName="score"
-                                            [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"
-                                            [value]="item.score" type="radio" [id]="item.id"
-                                            (change)="onChange(line,item)">
+                                        <input formControlName="score" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null" [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)">
                                         <label class="ml-1" [for]="item.id">
                                             {{item.score}} điểm: {{item.name}}
                                         </label>
@@ -31,9 +27,7 @@
                                 </ng-container>
                                 <ng-template #text>
                                     <ng-container>
-                                        <textarea class="form-control pl-2"
-                                            [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null" rows="4"
-                                            formControlName="valueText"></textarea>
+                                        <textarea class="form-control pl-2" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null" rows="2" formControlName="valueText"></textarea>
                                     </ng-container>
                                 </ng-template>
 
@@ -50,11 +44,9 @@
                 </div>
                 <div class="o_group">
                     <div class="d-flex" *ngIf="surveyAssignmentStatus !== 'done';else other_content">
-                        <kendo-multiselect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'"
-                            formControlName="surveyTags">
+                        <kendo-multiselect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'" formControlName="surveyTags">
                         </kendo-multiselect>
-                        <button  title="Thêm nhãn khảo sát" class="btn btn-secondary"
-                            (click)="quickCreateSurveyTagModal()">
+                        <button title="Thêm nhãn khảo sát" class="btn btn-secondary" (click)="quickCreateSurveyTagModal()">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -63,10 +55,10 @@
                             <h6 *ngFor="let tag of surveyTags">
                                 <span class="badge badge-secondary p-2 mr-1" [ngClass]="'o_tag_color_' + tag.color">
                                     {{tag.name}}
-                                </span>   
+                                </span>
                             </h6>
                         </div>
-                        
+
                     </ng-template>
                 </div>
 
@@ -76,8 +68,7 @@
                     </h5>
                 </div>
                 <div class="o_group">
-                    <textarea class="form-control pl-2" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null"
-                        rows="4" formControlName="note"></textarea>
+                    <textarea class="form-control pl-2" [attr.disabled]="surveyAssignmentStatus == 'done' ? true: null" rows="4" formControlName="note"></textarea>
                 </div>
             </div>
         </div>
@@ -85,8 +76,6 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" *ngIf="surveyAssignmentStatus !== 'done'" (click)="onSave()"
-        accesskey="s">Hoàn thành</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-primary" *ngIf="surveyAssignmentStatus !== 'done'" (click)="onSave()" accesskey="s">Hoàn thành</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
 </footer>

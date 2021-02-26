@@ -7,6 +7,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
@@ -62,7 +63,8 @@ export class SurveyAssignmentListComponent implements OnInit {
     private router: Router,
     private employeeService: EmployeeService,
     private surveyService: SurveyService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -76,18 +78,18 @@ export class SurveyAssignmentListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this.empCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.empCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value))
-    ).subscribe(result => {
-      this.filteredEmployees = result;
-      this.empCbx.loading = false;
-    });
+    // this.empCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.empCbx.loading = true)),
+    //   switchMap(value => this.searchEmployees(value))
+    // ).subscribe(result => {
+    //   this.filteredEmployees = result;
+    //   this.empCbx.loading = false;
+    // });
 
     this.loadDataFromApi();
     this.loadStatusCount();
-    this.loadEmployees();
+    // this.loadEmployees();
   }
 
   loadDataFromApi() {
@@ -100,6 +102,8 @@ export class SurveyAssignmentListComponent implements OnInit {
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
     paged.status = this.status;
+    paged.IsGetScore = true;
+    paged.userId = this.authService.userInfo.id;
     this.surveyService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -155,6 +159,7 @@ export class SurveyAssignmentListComponent implements OnInit {
       val.status = x.value;
       val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
       val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+      val.userId = this.authService.userInfo.id;
       return this.surveyService.getSumary(val).pipe(
         switchMap(count => of({ status: x.value, count: count }))
       );

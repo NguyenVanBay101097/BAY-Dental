@@ -2,12 +2,12 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/surveys/manage']">
-                    <span>Danh sách khảo sát</span>
+                <a [routerLink]="['/surveys/manage/list']">
+                    <span>Danh sách phân việc</span>
                 </a>
             </li>
             <li class="active">
-                <span>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.name}}</span>
+                <span>{{surveyAssignment?.saleOrder?.partner?.name}}</span>
             </li>
         </ol>
         <div>
@@ -18,8 +18,7 @@
                             sóc</a>
                     </li>
                     <li class="nav-item">
-                        <a routerLink="infor-survey-evaluation" class="nav-link px-3 py-1"
-                            routerLinkActive="active">Thông tin khảo sát đánh giá</a>
+                        <a routerLink="infor-survey-evaluation" class="nav-link px-3 py-1" routerLinkActive="active">Thông tin khảo sát đánh giá</a>
                     </li>
 
                 </ul>

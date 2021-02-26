@@ -110,7 +110,13 @@ namespace Infrastructure.Services
             }
 
             var totalItem = await query.CountAsync();
-            var employees = await query.Skip(val.Offset).Take(val.Limit).Select(x => new EmployeeSurveyDisplay()
+
+            if (val.Limit > 0 )
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
+            var employees = await query.Select(x => new EmployeeSurveyDisplay()
             {
                 CompanyName = x.Company.Name,
                 Email = x.Email,

@@ -43,7 +43,7 @@ export class LayoutSidebarComponent implements OnInit {
     //   icon: 'fas fa-poll',
     //   children: [
     //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
-    //     { name: 'Quản lý phần việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
     //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
     //   ],
     //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
@@ -53,8 +53,8 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-poll',
       children: [
         { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_survey' },
-        { name: 'Quản lý phần việc', link: '/surveys/manage', groups: 'survey.group_survey' },
-        { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey.group_survey'  },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_survey' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_survey'  },
       ],
       groups: 'survey.group_survey' 
     },

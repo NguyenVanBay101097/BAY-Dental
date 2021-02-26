@@ -65,33 +65,6 @@ namespace Infrastructure.Services
                 SaleOrderDateDone = x.DateDone
             }).ToListAsync();
 
-            if (val.IsRandomAssign.HasValue && val.IsRandomAssign == true && res.Count > 0)
-            {
-                var employeeObj = GetService<IEmployeeService>();
-                employeeObj.Sudo = true;
-
-                var employees = await employeeObj.SearchQuery(x => x.Active == true && x.IsAllowSurvey == true).Select(x => new EmployeeCountSurvey { Id = x.Id, Name = x.Name, Count = 0 }).ToListAsync();
-                var CountDicts = await SearchQuery().GroupBy(x => x.EmployeeId).Select(x => new { EmployeeId = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.EmployeeId, i => i.Count);
-
-                foreach (var item in employees)
-                {
-                    item.Count = CountDicts.ContainsKey(item.Id) ? CountDicts[item.Id] : 0;
-                }
-
-                if (employees.Count > 0)
-                {
-                    foreach (var item in res)
-                    {
-                        var empExpect = employees.FirstOrDefault(x => x.Count == employees.Min(i => i.Count));
-
-                        item.Employee = new EmployeeSimple() { Id = empExpect.Id, Name = empExpect.Name };
-                        item.EmployeeId = item.Employee.Id;
-
-                        empExpect.Count++;
-                    }
-                }
-            }
-
             return new PagedResult2<SurveyAssignmentDefaultGet>(totalItem, val.Offset, val.Limit)
             {
                 Items = res
@@ -103,12 +76,12 @@ namespace Infrastructure.Services
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var query = getAllQuery(val);
-            var count = await query.CountAsync();
             if (val.IsGetScore.HasValue && val.IsGetScore == true)
             {
                 query = query.Include(x => x.UserInput);
             }
             query = query.Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            var count = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
@@ -150,6 +123,11 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId.Value);
+            }
+
+            if (val.UserId.HasValue)
+            {
+                query = query.Where(x => x.Employee.UserId == val.UserId.ToString());
             }
 
             query = query.OrderByDescending(x => x.SaleOrder.DateDone ?? x.SaleOrder.DateDone.Value);
@@ -277,6 +255,11 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
             {
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
+            }
+
+            if (val.UserId.HasValue)
+            {
+                query = query.Where(x => x.Employee.UserId == val.UserId.ToString());
             }
 
             return await query.LongCountAsync();

@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./survey-manage-assign.component.css']
 })
 export class SurveyManageAssignComponent implements OnInit {
-  title: string = "Quản lý phần việc";
+  title: string = "Quản lý phân việc";
   constructor() { }
 
   ngOnInit() {

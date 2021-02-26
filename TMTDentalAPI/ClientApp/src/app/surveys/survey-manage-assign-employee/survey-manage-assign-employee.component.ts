@@ -30,6 +30,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   offset = 0;
   filteredEmployees: EmployeeSimple[];
 
+  
+  private _filterValues: Subject<string> = new Subject<string>()
+
   constructor(
     private employeeService: EmployeeService,
     private intlService: IntlService,
@@ -49,14 +52,11 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    // this.empCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => (this.empCbx.loading = true)),
-    //   switchMap(value => this.searchEmployees(value))
-    // ).subscribe((result: any) => {
-    //   this.filteredEmployees = result;
-    //   this.empCbx.loading = false;
-    // });
+    this._filterValues.asObservable().pipe(
+      debounceTime(400),
+      switchMap(value => this.searchEmployees(value))
+    )
+    .subscribe(res =>this.filteredEmployees = res);
 
     this.loadDataFromApi();
     this.loadEmployees();
@@ -117,14 +117,33 @@ if(this.gridData.data.length == 0) {
   return;
 }
 
-   var paged =  new SurveyAssignmentDefaultGetPar();
-   paged.limit = this.limit;
-   paged.offset = this.offset;
-   paged.search = this.search ? this.search : '';
-   paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-   paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
-   paged.isRandomAssign = true;
-   this.loadDataFromApi(paged);
+var val = {
+  limit: 0,
+  offset: 0,
+}
+
+this.employeeService.GetEmployeeSurveyCount(val).subscribe((res) => {
+let emps = res.items;
+this.gridData.data.forEach(ass => {
+  let minEmp = emps.reduce((pre, cur) => {
+    return pre.totalAssignment < cur.totalAssignment? pre: cur;
+  });
+
+  ass.employee = {id: minEmp.id, name: minEmp.name};
+  ass.employeeId = minEmp.id;
+
+  minEmp.totalAssignment ++;
+});
+});
+
+  //  var paged =  new SurveyAssignmentDefaultGetPar();
+  //  paged.limit = this.limit;
+  //  paged.offset = this.offset;
+  //  paged.search = this.search ? this.search : '';
+  //  paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+  //  paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
+  //  paged.isRandomAssign = true;
+  //  this.loadDataFromApi(paged);
   }
 
   onEmployeeChange(val, index) {
@@ -160,5 +179,9 @@ if(this.gridData.data.length == 0) {
         this.loadDataFromApi();
        }
     )
+  }
+
+  filterChangeEmployee(val) {
+    this._filterValues.next(val);
   }
 }

@@ -18,7 +18,7 @@ namespace Infrastructure.EntityConfigurations
 
             builder.HasOne(x => x.Answer)
            .WithMany()
-           .HasForeignKey(x => x.AnswerId).OnDelete(DeleteBehavior.Cascade);
+           .HasForeignKey(x => x.AnswerId);
 
             builder.HasOne(x => x.UserInput)
           .WithMany(x => x.Lines)

@@ -21,7 +21,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   questions: SurveyQuestionBasic[] = [];
   limit: number = 0;
   offset: number = 0;
-  title: string = "Cấu hình đánh giá"
+  title: string = "Câu hỏi khảo sát"
   searchUpdate = new Subject<string>();
   search: string;
 

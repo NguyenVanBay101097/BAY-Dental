@@ -17,6 +17,7 @@ export class SurveyAssignmentPaged {
   dateTo: string;
   employeeId: string;
   IsGetScore: boolean;
+  userId: string;
 }
 
 export class SurveyAssignmentBasic {
@@ -82,6 +83,7 @@ export class SurveyAssignmentGetCountVM {
   dateFrom: string;
   employeeId: string;
   dateTo: string;
+  userId: string;
 }
 
 export class SurveyAssignmentDefaultGetPar {

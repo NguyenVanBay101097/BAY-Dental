@@ -28,6 +28,7 @@ export class SurveyCallContentListComponent implements OnInit {
   @Input() id: string;
   @Input() surveyStatus: string;
   editedRowIndex: number;
+  
   constructor(
     private callcontentService: SurveyCallcontentService,
     private intlService: IntlService,
@@ -63,18 +64,19 @@ export class SurveyCallContentListComponent implements OnInit {
   }
 
   // click in cell to edit
-  editHandler({ sender, rowIndex, dataItem }) {
-    this.closeEditor(sender);
+  editHandler(rowIndex, dataItem) {
+    // this.closeEditor(rowIndex);
     this.formGroup = this.fb.group({
       id: dataItem ? dataItem.id : null,
       name: dataItem ? dataItem.name : '',
       assignmentId: dataItem ? dataItem.assignmentId : null
     });
     this.editedRowIndex = rowIndex;
-    sender.editRow(rowIndex, this.formGroup);
+    // sender.editRow(rowIndex, this.formGroup);
+    this.edit = true;
   }
 
-  public addHandler({ sender }) {
+  public addHandler() {
     if (!this.edit) {
       this.formGroup = this.fb.group({
         name: "",
@@ -84,27 +86,35 @@ export class SurveyCallContentListComponent implements OnInit {
       this.gridData.total += 1;
 
       this.editedRowIndex = this.gridData.total - 1;
-      setTimeout(() => {
-        document.getElementById('editundefined').click();
-      }, 50);
+      // setTimeout(() => {
+      //   document.getElementById('editundefined').click();
+      // }, 50);
       this.edit = true;
+      this.editedRowIndex = this.gridData.data.length - 1;
     }
   }
 
-  private closeEditor(grid, rowIndex = this.editedRowIndex) {
-    grid.closeRow(rowIndex);
+  private closeEditor(rowIndex) {
+    // grid.closeRow(rowIndex);
     this.editedRowIndex = undefined;
     this.formGroup = undefined;
   }
 
-  public cancelHandler({ sender, rowIndex }) {
-    this.closeEditor(sender, rowIndex);
-    this.edit = false;
-    this.loadDataFromApi();
+  public cancelHandler(i) {
+    if(this.edit == true && i == this.editedRowIndex)
+     {
+      if(!this.formGroup.value.hasOwnProperty('id')) this.gridData.data.pop();
+
+      this.closeEditor(i);
+      this.edit = false;
+    }
+      else {
+      return;
+    }
   }
 
-  public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
-    var survey = formGroup.value;
+  public saveHandler(): void {
+    var survey = this.formGroup.value;
     survey.name = survey.name;
     survey.assignmentId = this.id ? this.id : null;
     if (survey.id) {
@@ -138,7 +148,7 @@ export class SurveyCallContentListComponent implements OnInit {
       )
     }
     this.edit = false;
-    sender.closeRow(rowIndex);
+    // sender.closeRow(rowIndex);
   }
 
 

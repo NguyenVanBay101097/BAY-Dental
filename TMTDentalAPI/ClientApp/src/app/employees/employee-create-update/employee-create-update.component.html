@@ -43,14 +43,14 @@
                             <div class="o_group mb-0">
                                 <table class="o_group o_inner_group o_group_col_6 mb-0">
                                     <tbody>
-                                        <tr>
+                                        <!-- <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Mã nhân viên</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="ref" placeholder="Để trống tự động phát sinh" />
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Số điện thoại</label>
@@ -65,6 +65,17 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <kendo-datepicker formControlName="birthDay">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                            Ngày bắt đầu làm việc
+                                        </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="startWorkDate">
                                                 </kendo-datepicker>
                                             </td>
                                         </tr>
@@ -104,31 +115,22 @@
                                         </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">Địa chỉ</label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input class="form-control" formControlName="address" />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">Email</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="email" />
                                             </td>
                                         </tr>
+
                                         <tr>
                                             <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                            Ngày bắt đầu làm việc
-                                        </label>
+                                                <label class="o_form_label">Địa chỉ</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-datepicker formControlName="startWorkDate">
-                                                </kendo-datepicker>
+                                                <input class="form-control" formControlName="address" />
                                             </td>
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -141,10 +143,10 @@
 
             <div class="tab-pane fade" id="pills-user" role="tabpanel" aria-labelledby="pills-profile-tab">
                 <div class="o_form_sheet_bg">
-                    <div class="o_form_sheet">
-                        <div class="custom-control custom-switch">
-                            <input class="custom-control-input" type="checkbox" formControlName="isUser" id="isUser" (change)="onChangeIsUser($event)">
-                            <label class="custom-control-label" for="isUser"> Là người dùng hệ thống </label>
+                    <div class="o_form_sheet" style="min-height: auto;">
+                        <div class="custom-control custom-switch pl-0">
+                            <input class="custom-control-input switch" type="checkbox" formControlName="isUser" id="isUser" (change)="onChangeIsUser($event)">
+                            <label class="custom-control-label" for="isUser"> Người dùng hệ thống? </label>
                         </div>
 
                         <div class="o_group mb-0" [class.d-none]="!isUser">
@@ -164,7 +166,7 @@
                                             <input type="password" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr *ngIf="userIdFC.value">
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">&nbsp;</label>
                                         </td>
@@ -197,25 +199,31 @@
                                     <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">
-                                Chi nhánh hiện tại
-                            </label>
+                                                Chi nhánh hiện tại
+                                            </label>
                                         </td>
                                         <td colspan="3" style="width: 100%;">
                                             <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="userCompany" [valueField]="'id'">
                                             </kendo-combobox>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <div hasGroups [groups]="'survey.group_survey'" class="form-check d-flex align-items-center">
+                                                <input class="form-check-input" type="checkbox" formControlName="isAllowSurvey" id="isAllowSurvey" (change)="onChangeIsAllowSurvey($event)">
+                                                <label class="form-check-label" for="isAllowSurvey"> Là nhân viên khảo sát thuộc nhóm </label>
+                                                <select *ngIf="isAllowSurveyFC.value" class="form-control ml-2 w-auto" formControlName="groupId">
+                                                  <option *ngFor="let g of groupSurvey" [value]="g.id">{{g.name}}</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div *ngIf="isUser" hasGroups [groups]="'survey.group_survey'" class="form-check d-flex align-items-center">
-                            <input class="form-check-input" type="checkbox" formControlName="isAllowSurvey" id="isAllowSurvey" (change)="onChangeIsAllowSurvey($event)">
-                            <label class="form-check-label" for="isAllowSurvey"> Là nhân viên khảo sát thuộc nhóm </label>
-                            <select *ngIf="isAllowSurveyFC.value" style="width: 200px;" class="form-control mx-2" formControlName="groupId">
-                <option *ngFor="let g of groupSurvey" [value]="g.id">{{g.name}}</option>
-            </select>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -10,11 +10,10 @@
                 <div formArrayName="lines">
                     <ng-container *ngFor="let line of lines.controls;let i=index">
                         <div class="section mb-1" [formGroupName]="i">
-                            <h6>{{line.get('question').value.sequence}}/ {{line.get('question').value.name}}</h6>
+                            <h6>{{i+1}}/ {{line.get('question').value.name}}</h6>
                             <ng-container *ngIf="line.get('question').value.type === 'radio';else text">
                                 <div class="radio pl-2" *ngFor="let item of line.get('question').value.answers">
-                                    <input formControlName="score" [attr.disabled]="view ? true : false"
-                                        [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)">
+                                    <input formControlName="score" [attr.disabled]="view ? true : false" [value]="item.score" type="radio" [id]="item.id" (change)="onChange(line,item)">
                                     <label class="ml-1" [for]="item.id">
                                         {{item.name}}
                                     </label>
@@ -22,8 +21,7 @@
                             </ng-container>
                             <ng-template #text>
                                 <ng-container>
-                                    <textarea class="form-control pl-2" [attr.disabled]="view ? true : false" rows="4"
-                                        formControlName="valueText"></textarea>
+                                    <textarea class="form-control pl-2" [attr.disabled]="view ? true : false" rows="4" formControlName="valueText"></textarea>
                                 </ng-container>
                             </ng-template>
 
@@ -54,8 +52,7 @@
                 </h5>
             </div>
             <div class="o_group">
-                <textarea class="form-control pl-2" [attr.disabled]="view ? true : false" rows="4"
-                    formControlName="note"></textarea>
+                <textarea class="form-control pl-2" [attr.disabled]="view ? true : false" rows="4" formControlName="note"></textarea>
             </div>
         </div>
     </div>

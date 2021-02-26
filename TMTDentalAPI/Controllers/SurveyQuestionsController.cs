@@ -63,6 +63,9 @@ namespace TMTDentalAPI.Controllers
 
             var question = _mapper.Map<SurveyQuestion>(val);
             SaveAnswers(val, question);
+
+            question.Sequence = (_surveyQuestionService.SearchQuery().Max(x=> x.Sequence) ?? 0) + 1;
+
             await _surveyQuestionService.CreateAsync(question);
 
             _unitOfWork.Commit();
@@ -112,6 +115,7 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             question = _mapper.Map(val, question);
             SaveAnswers(val, question);
+
             await _surveyQuestionService.UpdateAsync(question);
 
             _unitOfWork.Commit();
@@ -146,12 +150,11 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Survey.Question.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            await _unitOfWork.BeginTransactionAsync();
             var question = await _surveyQuestionService.GetByIdAsync(id);
 
             if (question == null)
                 return NotFound();
-
+            await _unitOfWork.BeginTransactionAsync();
             await _surveyQuestionService.DeleteAsync(question);
             _unitOfWork.Commit();
             return NoContent();
