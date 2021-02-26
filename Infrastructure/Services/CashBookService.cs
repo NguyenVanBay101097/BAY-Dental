@@ -99,13 +99,23 @@ namespace Infrastructure.Services
 
         public async Task ChangeData()
         {
-            if (checkExistsTable("SalaryPayments"))
+            var conn = _context.Database.GetDbConnection();
+            if (conn != null)
             {
+                var sqlQ = "";
+                if (checkExistsTable("SalaryPayments"))
+                {
+                    sqlQ = $"SELECT TOP 1 * FROM SalaryPayments";
+                    var listSalaryPayment = conn.Query<SalaryPayment>(sqlQ).ToList();
+                    sqlQ = $"INSERT INTO AccountPayments " +
+                        $"SELECT * " +
+                        $"FROM SalaryPayments";
 
-            }
-            if (checkExistsTable("PhieuThuChis"))
-            {
+                }
+                if (checkExistsTable("PhieuThuChis"))
+                {
 
+                }
             }
         }
     }

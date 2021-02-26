@@ -37,12 +37,12 @@
                 [dateTo]="dateTo" [quickOption]="quickOptionDate"
                 (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
-            <button type="button" class="btn btn-primary btn-sm" (click)="changeData()">
+            <!-- <button type="button" class="btn btn-primary btn-sm mr-2" (click)="changeData()">
                 <i class="fas fa-download mr-2"></i>Change Data
-            </button>
+            </button> -->
         </div>
         <div class="t-search t-search-left">
             <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu"
