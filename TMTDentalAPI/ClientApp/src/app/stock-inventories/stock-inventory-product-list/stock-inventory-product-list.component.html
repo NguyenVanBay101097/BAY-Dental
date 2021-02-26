@@ -1,0 +1,20 @@
+<div class="d-flex flex-column h-100">
+    <!-- Component Form Service List -->
+    <div class="flex--1-1-100 overflow-auto">
+        <table class="table sticky-table table-sm">
+            <thead>
+                <tr>
+                    <th class="sticky-th">
+                       Tên sản phẩm
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr (click)="addProductInventory(item)" *ngFor="let item of listFilter;let i = index">
+                    <td [title]="item.product.name" class="sticky-td">{{item.product?.name}}</td>
+                    <!-- <td class="sticky-td text-right">{{item.listPrice | number}}</td> -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

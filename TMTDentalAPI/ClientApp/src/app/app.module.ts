@@ -26,6 +26,7 @@ import { NoCacheInterceptor } from './http-interceptors/no-cache.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
+
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }

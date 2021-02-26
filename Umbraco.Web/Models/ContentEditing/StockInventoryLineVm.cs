@@ -72,7 +72,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid ProductId { get; set; }
 
-        public ProductSimple Product { get; set; }
+        public ProductDisplay Product { get; set; }
 
         public Guid ProductUOMId { get; set; }
         public UoMBasic ProductUOM { get; set; }

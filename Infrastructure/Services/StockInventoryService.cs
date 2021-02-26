@@ -62,17 +62,19 @@ namespace Infrastructure.Services
 
         public async Task<StockInventoryDisplay> GetDisplay(Guid id)
         {
-            var res = SearchQuery(x => x.Id == id)
-                .Include(x => x.Lines)
+            var res = await SearchQuery(x => x.Id == id)
+               .Include(x => x.Lines).ThenInclude(s => s.Location)
+               .Include(s => s.Lines).ThenInclude(s => s.Product)
+               .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
+               .Include(x => x.Moves)
                 .Include(x => x.Location)
-                .Include(x => x.Moves)
                 .Include(x => x.Product)
                 .Include(x => x.Company)
                 .Include(x => x.Category)
                 .Include(x => x.Location)
-                .AsQueryable();
+                .FirstOrDefaultAsync();
 
-            var display = await _mapper.ProjectTo<StockInventoryDisplay>(res).FirstOrDefaultAsync();
+            var display = _mapper.Map<StockInventoryDisplay>(res);
 
             return display;
         }
@@ -106,10 +108,15 @@ namespace Infrastructure.Services
 
         public async Task UpdateStockInventory(Guid id, StockInventorySave val)
         {
-            var inventory = await SearchQuery(x => x.Id == id).Include(x => x.Product).Include(x => x.Category).FirstOrDefaultAsync();
+            var inventory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Product)
+                .Include(x => x.Category)
+                .Include(x => x.Lines)
+                .Include(x => x.Moves)
+                .FirstOrDefaultAsync();
 
             inventory = _mapper.Map(val, inventory);
-
+            SaveInventoryLines(val, inventory);
             await UpdateAsync(inventory);
 
         }
@@ -162,7 +169,7 @@ namespace Infrastructure.Services
             var locationObj = GetService<IStockLocationService>();
             var productObj = GetService<IProductService>();
             var stockQuantObj = GetService<IStockQuantService>();
-            IList<Guid> locationIds = null; //lấy tất cả các location 
+            var locationIds = await locationObj.SearchQuery(x => x.CompanyId == self.CompanyId).Select(x => x.Id).ToListAsync(); //lấy tất cả các location 
 
             //Xác định những sản phẩm sẽ filter, ví dụ lọc theo nhóm sản phẩm thì chỉ lấy những sản phẩm thuộc nhóm sản phẩm
             var products_to_filter = new List<Product>().AsEnumerable();
@@ -178,7 +185,7 @@ namespace Infrastructure.Services
                 products_to_filter = products_to_filter.Union(categ_products);
             }
 
-            var group = await stockQuantObj.SearchQuery(x => x.LocationId == self.LocationId &&
+            var group = await stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
                 x.CompanyId == self.CompanyId &&
                 (!self.ProductId.HasValue || x.ProductId == self.ProductId.Value) &&
                  (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value))
@@ -187,7 +194,7 @@ namespace Infrastructure.Services
                 {
                     ProductId = x.Key.ProductId,
                     LocationId = x.Key.LocationId,
-                    ProductQty = x.Any() ? x.Sum(s => s.Qty) : 0,
+                    ProductQty = x.Count() > 0 ? x.Sum(s => s.Qty) : 0,
                 }).ToListAsync();
 
             foreach (var item in group)
@@ -198,7 +205,6 @@ namespace Infrastructure.Services
                 {
                     CompanyId = self.CompanyId,
                     InventoryId = self.Id,
-                    Inventory = self,
                     LocationId = item.LocationId,
                     ProductId = item.ProductId,
                     ProductUOMId = product.UOMId,
@@ -222,20 +228,20 @@ namespace Infrastructure.Services
             //Trả về những chi tiết cho sản phẩm hết hàng
             var productObj = GetService<IProductService>();
             var types = new List<string>() { "service", "consu" };
-            Expression<Func<Product, bool>> exhausted_domain = x => !types.Contains(x.Type);
+            var query = productObj.SearchQuery(x=> !types.Contains(x.Type));
             if (products.Any())
             {
                 var exhausted_products = products.Except(quant_products);
                 var exhausted_product_ids = exhausted_products.Select(x => x.Id);
-                //exhausted_domain = exhausted_domain.And(x => exhausted_product_ids.Contains(x.Id));
+                query = query.Where(x => exhausted_product_ids.Contains(x.Id));
             }
             else
             {
                 var quant_product_ids = quant_products.Select(x => x.Id);
-                //exhausted_domain = exhausted_domain.And(x => !quant_product_ids.Contains(x.Id));
+                query = query.Where(x => !quant_product_ids.Contains(x.Id));
             }
 
-            var exhausted_products2 = productObj.SearchQuery(exhausted_domain).Select(x => new
+            var exhausted_products2 = query.Select(x => new
             {
                 Id = x.Id,
                 UOMId = x.UOMId,
@@ -244,6 +250,7 @@ namespace Infrastructure.Services
             var vals = new List<StockInventoryLine>();
             foreach (var product in exhausted_products2)
             {
+
                 vals.Add(new StockInventoryLine
                 {
                     CompanyId = self.CompanyId,
@@ -294,6 +301,142 @@ namespace Infrastructure.Services
             });
         }
 
+        public async Task ActionDone(IEnumerable<Guid> ids)
+        {
+            var inventorylineObj = GetService<IStockInventoryLineService>();
+            var inventories = await SearchQuery(x => ids.Contains(x.Id))
+               .Include(x => x.Product)
+               .Include(x => x.Category)
+               .Include(x => x.Moves)
+               .Include(x => x.Lines).ThenInclude(s => s.Location)
+               .Include(s => s.Lines).ThenInclude(s => s.Product)
+               .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
+               .ToListAsync();
+
+            /// create stockmove to stockinventoryline
+            foreach (var inventory in inventories)
+            {
+                foreach (var line in inventory.Lines)
+                    await inventorylineObj.ResolveInventoryLine(line);
+
+                inventory.State = "done";
+
+            }
+
+            await UpdateAsync(inventories);
+
+
+            await PostInventory(inventories);
+
+        }
+
+        private void SaveInventoryLines(StockInventorySave val, StockInventory inventory)
+        {
+            var lineToRemoves = new List<StockInventoryLine>();
+
+            foreach (var existLine in inventory.Lines)
+            {
+                if (!val.Lines.Any(x => x.Id == existLine.Id))
+                    lineToRemoves.Add(existLine);
+            }
+
+            foreach (var line in lineToRemoves)
+            {
+                inventory.Lines.Remove(line);
+            }
+
+            foreach (var line in val.Lines)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<StockInventoryLine>(line);
+                    inventory.Lines.Add(item);
+                }
+                else
+                {
+                    var l = inventory.Lines.SingleOrDefault(c => c.Id == line.Id);
+                    _mapper.Map(line, l);
+                }
+
+            }
+        }
+
+
+        public async Task<IEnumerable<ProductStockInventory>> GetListProductInventory(Guid id)
+        {
+            var locationObj = GetService<IStockLocationService>();
+            var productObj = GetService<IProductService>();
+            var stockQuantObj = GetService<IStockQuantService>();
+            var self = await SearchQuery(x => x.Id == id)
+               .Include(x => x.Lines).ThenInclude(s => s.Location)
+               .Include(s => s.Lines).ThenInclude(s => s.Product)
+               .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
+                .Include(x => x.Location)
+                .Include(x => x.Product)
+                .Include(x => x.Company)
+                .Include(x => x.Category)
+                .Include(x => x.Location)
+                .FirstOrDefaultAsync();
+
+            var locationIds = await locationObj.SearchQuery(x => x.CompanyId == self.CompanyId).Select(x => x.Id).ToListAsync(); //lấy tất cả các location 
+            var res = new List<ProductStockInventory>();
+            var res1 = new Dictionary<Guid, ProductStockInventory>();
+            var res2 = new Dictionary<Guid, ProductStockInventory>();
+            var group = stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
+                x.CompanyId == self.CompanyId &&
+                (!self.ProductId.HasValue || x.ProductId == self.ProductId.Value) &&
+                 (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value))
+                .GroupBy(x => new { x.ProductId, x.LocationId })
+                .Select(x => new
+                {
+                    ProductId = x.Key.ProductId,
+                    LocationId = x.Key.LocationId,
+                    ProductQty = x.Count() > 0 ? x.Sum(s => s.Qty) : 0,
+                }).ToDictionary(t => t.ProductId, t => t);
+
+            var groupkeys = group.Select(x => x.Key).ToList();
+            var products1 = await productObj.SearchQuery(x => groupkeys.Contains(x.Id)).Select(x => new ProductStockInventory
+            {
+                ProductId = x.Id,
+                Product = _mapper.Map<ProductDisplay>(x),
+                LocationId = group[x.Id].LocationId,
+                ProductUOMId = x.UOMId,
+                ProductUOM = _mapper.Map<UoMBasic>(x.UOM),
+                ProductQty = group[x.Id].ProductQty,
+                TheoreticalQty = group[x.Id].ProductQty,
+            }).ToListAsync();
+
+            res.AddRange(products1);
+
+            res1 = res.ToDictionary(x => x.ProductId, x => x);
+            if (self.Exhausted == true)
+            {
+                //Trả về những chi tiết cho sản phẩm hết hàng
+                var types = new List<string>() { "service", "consu" };
+                Expression<Func<Product, bool>> exhausted_domain = x => !types.Contains(x.Type);
+                res2 = productObj.SearchQuery(exhausted_domain).Select(x => new ProductStockInventory
+                {
+                    ProductId = x.Id,
+                    Product = _mapper.Map<ProductDisplay>(x),
+                    LocationId = self.LocationId,
+                    ProductUOMId = x.UOMId,
+                    ProductUOM = _mapper.Map<UoMBasic>(x.UOM),
+                    ProductQty = 0,
+                    TheoreticalQty = 0
+                }).ToDictionary(x => x.ProductId, x => x);
+
+            }
+
+            foreach (var product in res2)
+            {
+                if (res1.ContainsKey(product.Key))
+                    continue;
+                res.Add(product.Value);
+            }
+
+            return res;
+        }
+
         //public void ActionDone(IEnumerable<long> ids)
         //{
         //    var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).Include(x => x.Moves).ToList();
@@ -327,10 +470,10 @@ namespace Infrastructure.Services
         //    ActionCancelDraft(uid, ids);
         //}
 
-        private void PostInventory(IEnumerable<StockInventory> self)
+        public async Task PostInventory(IEnumerable<StockInventory> self)
         {
             var moveObj = GetService<IStockMoveService>();
-            moveObj.ActionDone(self.SelectMany(x => x.Moves).Where(x => x.State != "done").ToList());
+            await moveObj.ActionDone(self.SelectMany(x => x.Moves).Where(x => x.State != "done"));
         }
 
         //private void ActionCheck(IEnumerable<StockInventory> self)

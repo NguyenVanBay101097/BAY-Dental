@@ -131,7 +131,7 @@ export class StockInventoryListComponent implements OnInit {
     switch (state) {
       case 'draft':
         return 'Nháp';
-      case 'comfirmed':
+      case 'confirmed':
         return 'Đang xử lý';
       case 'done':
         return 'Hoàn thành';

@@ -18,10 +18,10 @@ namespace Umbraco.Web.Mapping
             CreateMap<StockInventory, StockInventoryDisplay>();
 
             CreateMap<StockInventorySave, StockInventory>()
-                .ForMember(x=>x.Id, x => x.Ignore())
+                .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Lines, x => x.Ignore())
-                .ForMember(x=>x.Moves, x => x.Ignore());
-      
+                .ForMember(x => x.Moves, x => x.Ignore());
+
             CreateMap<StockInventoryDisplay, StockInventory>()
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Lines, x => x.Ignore())

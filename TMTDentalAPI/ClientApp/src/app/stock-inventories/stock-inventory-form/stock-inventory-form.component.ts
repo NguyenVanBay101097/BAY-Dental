@@ -22,6 +22,8 @@ export class StockInventoryFormComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   id: string;
+  state: string;
+  valueSearch: string;
   // stockInventory: any;
   filterdCategories: ProductCategoryBasic[] = [];
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -34,7 +36,7 @@ export class StockInventoryFormComponent implements OnInit {
   filterInventories = [
     { name: 'Tất cả sản phẩm', value: 'none' },
     { name: 'Một nhóm sản phẩm', value: 'category' },
-    { name: 'Chọn sản phẩm thủ công', value: 'patial' },
+    { name: 'Chọn sản phẩm thủ công', value: 'partial' },
   ];
 
   constructor(
@@ -63,11 +65,12 @@ export class StockInventoryFormComponent implements OnInit {
       category: null,
       filter: null,
       note: null,
-      exhausted: null,
+      exhausted: false,
       state: 'draft',
       companyId: null,
       lines: this.fb.array([])
     });
+
 
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
@@ -85,10 +88,10 @@ export class StockInventoryFormComponent implements OnInit {
         this.categCbx.loading = false;
       });
 
-      this.loadCategories();    
+      this.loadCategories();
     });
-   
-    
+
+
 
   }
 
@@ -104,6 +107,10 @@ export class StockInventoryFormComponent implements OnInit {
     return this.formGroup.get('filter').value;
   }
 
+  get lines() {
+    return this.formGroup.get('lines') as FormArray;
+  }
+
   loadDataFromApi() {
     if (this.id) {
       this.stockInventorySevice.get(this.id).subscribe(result => {
@@ -111,7 +118,7 @@ export class StockInventoryFormComponent implements OnInit {
         let date = new Date(result.date);
         this.formGroup.get('dateObj').patchValue(date);
 
-        if(result.category){
+        if (result.category) {
           this.filterdCategories = _.unionBy(this.filterdCategories, [result.category], "id");
         }
 
@@ -121,6 +128,7 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
+        console.log(control);
       });
     } else {
       var companyId = this.authService.userInfo.companyId;
@@ -161,6 +169,7 @@ export class StockInventoryFormComponent implements OnInit {
   searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
     val.search = q || '';
+    val.type = 'product';
     return this.productCategoryService.autocomplete(val);
   }
 
@@ -173,16 +182,17 @@ export class StockInventoryFormComponent implements OnInit {
     return val;
   }
 
+
   onSave() {
     if (this.formGroup.invalid) {
       return false;
     }
-     
+
     var val = this.formGroup.value;
-    val = this.computeForm(val)
+    val = this.computeForm(val);
 
     if (this.id) {
-      this.stockInventorySevice.update(this.id , val).subscribe(
+      this.stockInventorySevice.update(this.id, val).subscribe(
         () => {
           this.notificationService.show({
             content: 'Cập nhật thành công',
@@ -211,11 +221,66 @@ export class StockInventoryFormComponent implements OnInit {
 
   }
 
+  addLine(val) {
+    var res = this.fb.group(val);
+
+    // line.teeth = this.fb.array(line.teeth);
+    if (!this.lines.controls.some(x => x.value.productId === res.value.productId)) {
+      this.lines.push(res);
+    } else {
+      var line = this.lines.controls.find(x => x.value.productId === res.value.productId);
+      if (line) {
+        line.value.theoreticalQty += 1;
+        line.patchValue(line.value);
+      }
+    }
+  }
+
+  onChangeSearch(value) {
+    this.valueSearch = value;
+  }
+
   prepareInventory() {
     if (this.id) {
-      this.stockInventorySevice.prepareInventory([this.id]).subscribe(rs => {
-        this.loadDataFromApi();
+      var val = this.formGroup.value;
+      val = this.computeForm(val);
+      this.stockInventorySevice.update(this.id, val).subscribe(
+        () => {
+          this.stockInventorySevice.prepareInventory([this.id]).subscribe(rs => {
+            this.loadDataFromApi();
+          })
+        }
+      );
+    }
+  }
+
+  actionDone() {
+    if (this.id) {
+      var val = this.formGroup.value;
+      val = this.computeForm(val);
+      this.stockInventorySevice.update(this.id, val).subscribe(() => {
+        this.stockInventorySevice.actionDone([this.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Xác nhận thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadDataFromApi();
+        })
       })
+    }
+  }
+
+  getFilter(filter) {
+    switch (filter) {
+      case 'none':
+        return 'Tất cả sản phẩm';
+      case 'category':
+        return 'Nhóm sản phẩm';
+      case 'partial':
+        return 'Chọn sản phẩm thủ công';
     }
   }
 

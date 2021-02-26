@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,7 +98,7 @@ namespace Infrastructure.Services
             return dict_quants;
         }
 
-        public IList<StockMove> ResolveInventoryLine(StockInventoryLine line)
+        public async Task<IEnumerable<StockMove>> ResolveInventoryLine(StockInventoryLine line)
         {
             var stockMoveObj = GetService<IStockMoveService>();
             var locationObj = GetService<IStockLocationService>();
@@ -114,11 +115,10 @@ namespace Infrastructure.Services
                 InventoryId = line.InventoryId,
                 State = "confirmed",
                 CompanyId = line.Inventory.CompanyId,
-                Company = line.Inventory.Company,
                 Sequence = line.Sequence ?? 0,
             };
 
-            var inventoryLocation = locationObj.SearchQuery(domain: x => x.Usage == "inventory" && x.ScrapLocation == false).FirstOrDefault();
+            var inventoryLocation = await locationObj.SearchQuery(domain: x => x.Usage == "inventory" && x.ScrapLocation == false).FirstOrDefaultAsync();
             if (inventoryLocation == null)
                 throw new Exception("Không có địa điểm mất mát tồn kho");
             if (diff < 0)
@@ -129,7 +129,7 @@ namespace Infrastructure.Services
                 move.LocationDest = line.Location;
                 move.ProductUOMQty = -diff;
 
-                stockMoveObj.CreateAsync(move);
+                await stockMoveObj.CreateAsync(move);
                 res.Add(move);
             }
             else
@@ -139,7 +139,7 @@ namespace Infrastructure.Services
                 move.LocationDest = inventoryLocation;
                 move.LocationDestId = inventoryLocation.Id;
                 move.ProductUOMQty = diff;
-                stockMoveObj.CreateAsync(move);
+                await stockMoveObj.CreateAsync(move);
             }
 
 

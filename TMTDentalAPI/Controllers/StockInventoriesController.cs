@@ -84,6 +84,30 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetlistProductInventory(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var res = await _stockInventoryService.GetListProductInventory(id);
+
+            _unitOfWork.Commit();
+
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _stockInventoryService.ActionDone(ids);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

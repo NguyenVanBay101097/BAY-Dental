@@ -305,6 +305,7 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareMessageService, TCareMessageService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
             services.AddScoped<IStockInventoryService, StockInventoryService>();
+            services.AddScoped<IStockInventoryLineService, StockInventoryLineService>();
             //services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddScoped<IPartnerOldNewReportService, PartnerOldNewReportService>();
             services.AddScoped<ICashBookService, CashBookService>();

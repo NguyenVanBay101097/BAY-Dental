@@ -58,7 +58,7 @@ namespace Infrastructure.EntityConfigurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Inventory)
-             .WithMany()
+             .WithMany(x => x.Moves)
              .HasForeignKey(x => x.InventoryId);
 
             builder.HasOne(x => x.CreatedBy)

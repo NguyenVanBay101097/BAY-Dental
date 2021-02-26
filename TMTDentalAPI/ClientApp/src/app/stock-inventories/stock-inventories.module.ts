@@ -8,9 +8,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StockInventoryListComponent } from './stock-inventory-list/stock-inventory-list.component';
 import { StockInventoryService } from './stock-inventory.service';
 import { StockInventoryFormComponent } from './stock-inventory-form/stock-inventory-form.component';
+import { StockInventoryProductListComponent } from './stock-inventory-product-list/stock-inventory-product-list.component';
 
 @NgModule({
-  declarations: [StockInventoryListComponent, StockInventoryFormComponent],
+  declarations: [StockInventoryListComponent, StockInventoryFormComponent, StockInventoryProductListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -22,6 +23,9 @@ import { StockInventoryFormComponent } from './stock-inventory-form/stock-invent
   ],
   providers: [
     StockInventoryService
+  ],
+  exports: [
+    StockInventoryProductListComponent
   ],
   entryComponents: [
     StockInventoryFormComponent

@@ -153,5 +153,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class ProductStockInventory
+    {
+        public Guid Id { get; set; }
+        public Guid LocationId { get; set; }
+
+        public Guid ProductId { get; set; }
+
+        public ProductDisplay Product { get; set; }
+
+        public Guid ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
+        public decimal? ProductQty { get; set; }
+        public decimal? TheoreticalQty { get; set; }
+    }
+
 
 }

@@ -125,8 +125,16 @@ export class StockInventoryService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
+  getlistProductInventory(id) {
+    return this.http.get(this.base_api + this.apiUrl  + '/' + id + '/GetlistProductInventory');
+  }
+
   prepareInventory(ids) {
     return this.http.post(this.base_api + this.apiUrl + '/PrepareInventory', ids)
+  }
+
+  actionDone(ids) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionDone', ids)
   }
 
   delete(id: string) {
