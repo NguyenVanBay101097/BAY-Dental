@@ -54,6 +54,8 @@ export class TenantListComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
+      console.log(res);
+      
       this.gridData = res;
       this.loading = false;
     }, err => {
@@ -68,7 +70,7 @@ export class TenantListComponent implements OnInit {
   }
 
   updateExpired(dataItem) {
-    let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(TenantUpdateExpiredDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.id = dataItem.id;
     modalRef.componentInstance.title = `Gia hạn: ${dataItem.hostname}`;
     modalRef.componentInstance.expirationDate = dataItem.dateExpired ? new Date(dataItem.dateExpired) : null;
@@ -89,7 +91,7 @@ export class TenantListComponent implements OnInit {
   }
 
   editItem(dataItem) {
-    let modalRef = this.modalService.open(TenantUpdateInfoDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(TenantUpdateInfoDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.id = dataItem.id;
     modalRef.componentInstance.title = `Cập nhật thông tin: ${dataItem.hostname}`;
 

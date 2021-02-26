@@ -11,6 +11,7 @@ namespace Infrastructure.Services
     public interface ITenantService : IAdminBaseService<AppTenant>
     {
         Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val);
+        Task<TenantDisplay> GetDisplay(Guid Id);
         Task CheckUpdateDateExpired(TenantUpdateDateExpiredViewModel val);
     }
 }

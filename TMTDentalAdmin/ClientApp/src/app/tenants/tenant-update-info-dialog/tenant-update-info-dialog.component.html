@@ -26,7 +26,8 @@
                                 <td style="width: 100%">
                                     <input type="email" class="form-control" placeholder="Dùng để reset mật khẩu"
                                         formControlName="email" required />
-                                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+                                    <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                                        class="alert alert-danger">
                                         <div *ngIf="email.errors.required">
                                             Email is required.
                                         </div>
@@ -42,7 +43,8 @@
                                 </td>
                                 <td style="width: 100%">
                                     <input type="tel" class="form-control" formControlName="phone" required />
-                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="alert alert-danger">
+                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)"
+                                        class="alert alert-danger">
                                         <div *ngIf="phone.errors.required">
                                             Phone is required.
                                         </div>
@@ -81,7 +83,10 @@
                                     <label class="o_form_label">Người triển khai</label>
                                 </td>
                                 <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="supporterName" />
+                                    <!-- <input type="text" class="form-control" formControlName="supporterName" /> -->
+                                    <kendo-combobox class="form-control" [data]="filterdEmployees" [textField]="'name'"
+                                        [filterable]="true" #empCbx formControlName="employeeAdmin" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                         </tbody>

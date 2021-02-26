@@ -68,13 +68,5 @@ namespace TMTDentalAdmin.Controllers
 
             return NoContent();
         }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Search(EmployeeAdminPaged val)
-        {
-            var result = await _employeeAdminService.GetPagedResultAsync(val);
-            return Ok(result);
-        }
-
     }
 }

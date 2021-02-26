@@ -31,7 +31,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người triển khai
         /// </summary>
-        public string SupporterName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public EmployeeAdminDisplay EmployeeAdmin { get; set; }
     }
 
     public class TenantDisplay
@@ -54,8 +55,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người triển khai
         /// </summary>
-        public string SupporterName { get; set; }
-
+        public Guid? EmployeeId { get; set; }
+        public EmployeeAdminDisplay EmployeeAdmin { get; set; }
         public string Address { get; set; }
     }
 
@@ -97,8 +98,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người triển khai
         /// </summary>
-        public string SupporterName { get; set; }
-
+        public Guid? EmployeeId { get; set; }
         public string Address { get; set; }
     }
 
@@ -126,7 +126,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Người triển khai
         /// </summary>
-        public string SupporterName { get; set; }
+        public Guid? EmployeeId { get; set; }
 
         public string Address { get; set; }
     }

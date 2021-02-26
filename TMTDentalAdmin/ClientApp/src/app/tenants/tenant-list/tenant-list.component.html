@@ -52,7 +52,10 @@
     </kendo-grid-column>
     <kendo-grid-column field="customerSource" class="text-right" title="Nguồn KH" width="120">
     </kendo-grid-column>
-    <kendo-grid-column field="supporterName" class="text-right" title="Người triển khai" width="120">
+    <kendo-grid-column field="employeeAdmin" title="Người triển khai" width="120">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.employeeAdmin ? dataItem.employeeAdmin.name:''}}
+      </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="id" width="140">
       <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

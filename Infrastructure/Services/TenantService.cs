@@ -63,9 +63,15 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<TenantDisplay> GetDisplay(Guid Id)
+        {
+            var tenant = await SearchQuery(x => x.Id == Id).Include(x => x.EmployeeAdmin).FirstOrDefaultAsync();
+            return _mapper.Map<TenantDisplay>(tenant);
+        }
+
         public async Task<PagedResult2<TenantBasic>> GetPagedResultAsync(TenantPaged val)
         {
-            var query = GetQueryPaged(val);
+            var query = GetQueryPaged(val).Include(x => x.EmployeeAdmin);
             var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
 

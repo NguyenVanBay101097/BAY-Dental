@@ -62,9 +62,8 @@ namespace TMTDentalAdmin.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var result = await _tenantService.GetByIdAsync(id);
-            var display = _mapper.Map<TenantDisplay>(result);
-            return Ok(display);
+            var res = await _tenantService.GetDisplay(id);
+            return Ok(res);
         }
 
         [HttpPost("[action]")]
@@ -109,6 +108,7 @@ namespace TMTDentalAdmin.Controllers
                         Email = val.Email
                     });
                 }
+
 
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");

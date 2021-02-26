@@ -23,25 +23,18 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<EmployeeAdmin>> GetPagedResultAsync(EmployeeAdminPaged val)
         {
-            var query = GetQueryPaged(val);
-            var items = await query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)
-                .ToListAsync();
+            var query = SearchQuery(x => true);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
 
+            var items = await query.Skip(val.Offset).Take(val.Limit)
+                .ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<EmployeeAdmin>(totalItems, val.Offset, val.Limit)
             {
                 Items = _mapper.Map<IEnumerable<EmployeeAdmin>>(items)
             };
-        }
-
-        private IQueryable<EmployeeAdmin> GetQueryPaged(EmployeeAdminPaged val)
-        {
-            var query = SearchQuery();
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
-
-            return query;
         }
     }
 }

@@ -2,22 +2,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-export class EmployeeAdminViewModel {
+
+export class EmployeeAdminBasic {
+    id: string;
     name: string;
-    email: string;
-    phone: string;
-    companyName: string;
-    hostName: string;
-    username: string;
-    password: string;
 }
 
 export class EmployeeAdminSave {
     name: string;
 }
-export class EmployeeAdminDisplay {
-    name: string;
-}
+
 export class EmployeeAdminPaged {
     search: string;
     limit: number;
@@ -28,7 +22,7 @@ export class EmployeeAdminPaging {
     offset: number;
     limit: number;
     totalItems: number;
-    items: EmployeeAdminDisplay[];
+    items: EmployeeAdminBasic[];
 }
 
 @Injectable()
@@ -45,14 +39,14 @@ export class EmployeeAdminService {
     }
 
     create(val: EmployeeAdminSave) {
-        return this.http.post(this.baseApi + this.apiUrl , val);
+        return this.http.post(this.baseApi + this.apiUrl, val);
     }
 
     update(id: string, val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/Update', val);
     }
 
-    delete(id: string){
+    delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
     }
 }
