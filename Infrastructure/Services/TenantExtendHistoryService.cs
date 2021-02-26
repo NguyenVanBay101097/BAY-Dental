@@ -31,27 +31,27 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var model = await base.CreateAsync(entity);
             var tenant = await _tenantService.GetByIdAsync(model.TenantId);
-            //if (model.StartDate == today)
-            //{
-            //    tenant.ActiveCompaniesNbr = model.ActiveCompaniesNbr;
-            //    tenant.DateExpired = model.ExpirationDate;
-            //    var tenants = new List<AppTenant>();
-            //    tenants.Add(tenant);
-            //    SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
-            //    using (var conn = new SqlConnection(builder.ConnectionString))
-            //    {
-            //        try
-            //        {
-            //            conn.Open();
-            //            await _updateExpiredDateTenantService.ComputeTenant(tenants, conn);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            Console.WriteLine(e);
-            //        }
-            //    }
+            if (model.StartDate == today)
+            {
+                tenant.ActiveCompaniesNbr = model.ActiveCompaniesNbr;
+                tenant.DateExpired = model.ExpirationDate;
+                var tenants = new List<AppTenant>();
+                tenants.Add(tenant);
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
+                using (var conn = new SqlConnection(builder.ConnectionString))
+                {
+                    try
+                    {
+                        conn.Open();
+                        await _updateExpiredDateTenantService.ComputeTenant(tenants, conn);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
 
-            //}
+            }
             return model;
         }
 

@@ -101,7 +101,7 @@ namespace TMTDentalAdmin
             services.AddCronJob<ScheduleJobService>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"39 16 * * *"; //chay moi ngay voi so gio dc set san
+                c.CronExpression = @"36 11 * * *"; //chay moi ngay voi so gio dc set san
                 c.ConnectionStrings = Configuration.GetConnectionString("TenantConnection");
                 c.appSettings = appSettings;
             });

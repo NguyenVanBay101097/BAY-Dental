@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   // apiDomain: 'http://tenant3.myproject.com:50396/',
-  apiDomain: 'https://localhost:44377/',
-  // apiDomain: '/',
+  // apiDomain: 'https://localhost:44377/',
+  apiDomain: '/',
   uploadDomain: 'https://statics.tdental.vn/',
   //apiDomain: 'http://localhost:50396/'
 };
