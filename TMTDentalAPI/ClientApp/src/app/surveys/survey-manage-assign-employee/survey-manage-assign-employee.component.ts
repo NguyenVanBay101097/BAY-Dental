@@ -170,7 +170,7 @@ this.gridData.data.forEach(ass => {
   onSave() {
     var data = this.gridData.data.filter(x=> x.employeeId != null).map(x=>{ return {employeeId:x.employeeId,partnerId: x.partnerId,saleOrderId: x.saleOrderId}});
     if(data.length == 0) {
-      this.notify('error', 'Không có phân việc để lưu!');
+      this.notify('error', 'Không có phân việc đã được phân cho nhân viên để lưu!');
       return;
     }
     this.surveyService.createListAssign(data).subscribe(
