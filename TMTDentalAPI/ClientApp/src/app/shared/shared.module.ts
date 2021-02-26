@@ -77,6 +77,7 @@ import { FundBookService } from './fund-book.service';
 import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
 import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { ProductsModule } from '../products/products.module';
+import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 
 @NgModule({
   declarations: [
@@ -147,7 +148,8 @@ import { ProductsModule } from '../products/products.module';
     SaleOrderLineDiscountOdataPopoverComponent,
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
-    LaboFinnishLineImportComponent
+    LaboFinnishLineImportComponent,
+    CashBookCuDialogComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -209,6 +211,7 @@ import { ProductsModule } from '../products/products.module';
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
+    CashBookCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -249,7 +252,8 @@ import { ProductsModule } from '../products/products.module';
     ProductServiceCuDialogComponent, 
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
-    LaboFinnishLineImportComponent
+    LaboFinnishLineImportComponent,
+    CashBookCuDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

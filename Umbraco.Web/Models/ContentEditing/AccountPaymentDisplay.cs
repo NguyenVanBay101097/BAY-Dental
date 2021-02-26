@@ -6,6 +6,12 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class AccountPaymentDisplay
     {
+        public AccountPaymentDisplay()
+        {
+            PaymentDate = DateTime.Today;
+            State = "draft";
+        }
+
         public Guid Id { get; set; }
 
         public Guid? PartnerId { get; set; }

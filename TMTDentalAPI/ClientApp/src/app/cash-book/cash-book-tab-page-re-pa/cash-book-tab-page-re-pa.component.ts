@@ -5,11 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { CashBookCuDialogComponent } from '../cash-book-cu-dialog/cash-book-cu-dialog.component';
+import { CashBookCuDialogComponent } from '../../shared/cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -34,6 +35,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
     private authService: AuthService, 
     private accountPaymentService: AccountPaymentService,
     private notificationService: NotificationService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -103,7 +105,6 @@ export class CashBookTabPageRePaComponent implements OnInit {
       }))
     ).subscribe((res) => {
       this.gridData = res;
-      console.log(res);
       this.loading = false;
     }, (err) => {
       console.log(err);
@@ -120,9 +121,18 @@ export class CashBookTabPageRePaComponent implements OnInit {
   createItem() {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.paymentType = this.paymentType;
-    modalRef.result.then((res) => {
+    modalRef.result.then((res: any) => {
       this.loadDataFromApi();
+      if (res && res.print) {
+        this.printPhieu(res.id);
+      }
     }, (err) => { });
+  }
+
+  printPhieu(id: string) {
+    this.accountPaymentService.getPrint(id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
+    });
   }
 
   editItem(item) {
@@ -131,20 +141,14 @@ export class CashBookTabPageRePaComponent implements OnInit {
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
+      if (res && res.print) {
+        this.printPhieu(item.id);
+      }
     }, (err) => { });
   }
 
   deleteItem(item) {
-    if (item.state == "cancel") {
-      this.notificationService.show({
-        content: "Bạn không thể xóa phiếu khi đã hủy",
-        hideAfter: 3000,
-        position: { horizontal: "center", vertical: "top" },
-        animation: { type: "fade", duration: 400 },
-        type: { style: "error", icon: true },
-      });
-    } else {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = `Xóa ${this.getType(this.paymentType).toLowerCase()}`;
       modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.paymentType).toLowerCase()}?`;
       modalRef.result.then((res) => {
@@ -161,7 +165,6 @@ export class CashBookTabPageRePaComponent implements OnInit {
         });
       }, (err) => {
       });
-    }
   }
 
   exportExcelFile() {
@@ -175,7 +178,6 @@ export class CashBookTabPageRePaComponent implements OnInit {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      console.log(res);
 
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement("a");

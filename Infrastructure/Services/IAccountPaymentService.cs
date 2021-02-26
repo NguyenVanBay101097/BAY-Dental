@@ -24,5 +24,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<AccountPayment>> CreateMultipleAndConfirmUI(IEnumerable<AccountPaymentSave> vals);
         Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds);
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val);
+        Task<AccountPaymentDisplay> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val);
+        Task<AccountPaymentDisplay> SalaryPaymentDefaultGet();
     }
 }

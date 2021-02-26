@@ -54,5 +54,21 @@ namespace Umbraco.Web.Models.ContentEditing
                 return Amount * sign;
             }
         }
+
+        public string DisplayState
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "posted":
+                        return "Đã xác nhận";
+                    case "cancel":
+                        return "Đã hủy";
+                    default:
+                        return "Nháp";
+                }
+            }
+        }
     }
 }

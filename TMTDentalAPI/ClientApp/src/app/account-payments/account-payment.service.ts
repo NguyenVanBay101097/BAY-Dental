@@ -98,6 +98,14 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
     }
 
+    thuChiDefaultGet(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ThuChiDefaultGet', val);
+    }
+
+    salaryPaymentDefaultGet() {
+        return this.http.get(this.baseApi + this.apiUrl + '/SalaryPaymentDefaultGet');
+    }
+
     purchaseDefaultGet(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/PurchaseDefaultGet', ids);
     }

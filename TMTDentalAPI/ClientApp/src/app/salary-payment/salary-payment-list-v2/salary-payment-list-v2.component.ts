@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { load } from '@progress/kendo-angular-intl';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentPaged, AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { SalaryPaymentDialogV2Component } from '../salary-payment-dialog-v2/salary-payment-dialog-v2.component';
 import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
 
@@ -24,7 +26,7 @@ export class SalaryPaymentListV2Component implements OnInit {
   loading = false;
   constructor(
     private accountPaymentService: AccountPaymentService,
-    private modalService: NgbModal
+    private modalService: NgbModal, private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -44,7 +46,7 @@ export class SalaryPaymentListV2Component implements OnInit {
       case "draft":
         return "Nháp";
       case "cancel":
-        return "Hủy";
+        return "Đã hủy";
       default:
         break;
     }
@@ -75,9 +77,18 @@ export class SalaryPaymentListV2Component implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Phiếu tạm ứng/chi lương';
-    modalRef.result.then(() => {
+    modalRef.result.then((result) => {
       this.loadDataFromApi();
+      if (result && result.print) {
+        this.printItem(result.id);
+      }
     }, () => {
+    });
+  }
+
+  printItem(id) {
+    this.accountPaymentService.getPrint(id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -86,8 +97,11 @@ export class SalaryPaymentListV2Component implements OnInit {
     modalRef.componentInstance.title = "Sửa: Phiếu tạm ứng/chi lương";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
-      () => {
+      (result) => {
         this.loadDataFromApi();
+        if (result && result.print) {
+          this.printItem(item.id);
+        }
       },
       () => { }
     );
@@ -96,6 +110,7 @@ export class SalaryPaymentListV2Component implements OnInit {
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = "Xóa: Phiếu tạm ứng, chi lương";
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn xóa phiếu ${item.name}?`;
     modalRef.result.then(
       () => {
         this.accountPaymentService.unlink([item.id]).subscribe(

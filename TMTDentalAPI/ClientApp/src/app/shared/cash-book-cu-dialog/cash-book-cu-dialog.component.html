@@ -1,6 +1,6 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+    <h5 class="modal-title">{{getTitle()}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close"
         (click)="onClose()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
@@ -8,26 +8,26 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button *ngIf="getValueForm('state') == 'cancel'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') == 'cancel'"
-                        [class.btn-secondary]="getValueForm('state') == 'cancel'" type="button">
+                    <button *ngIf="paymentDisplay.state == 'cancel'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paymentDisplay.state == 'cancel'"
+                        [class.btn-secondary]="paymentDisplay.state == 'cancel'" type="button">
                         Đã hủy
                     </button>
-                    <button [disabled]="getValueForm('state') == 'posted'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') == 'posted'"
-                        [class.btn-secondary]="getValueForm('state') == 'posted'" type="button">
+                    <button [disabled]="paymentDisplay.state == 'posted'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paymentDisplay.state == 'posted'"
+                        [class.btn-secondary]="paymentDisplay.state == 'posted'" type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="getValueForm('state') == 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="getValueForm('state') == 'draft'"
-                        [class.btn-secondary]="getValueForm('state') == 'draft'" type="button">
+                    <button [disabled]="paymentDisplay.state == 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="paymentDisplay.state == 'draft'"
+                        [class.btn-secondary]="paymentDisplay.state == 'draft'" type="button">
                         Nháp
                     </button>
                 </div>
             </div>
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <h3 *ngIf="getValueForm('name')" class="font-weight-bold">{{getValueForm('name')}}</h3>
+                    <h3 *ngIf="paymentDisplay.name" class="font-weight-bold">{{paymentDisplay.name}}</h3>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -35,9 +35,8 @@
                                     <label class="o_form_label">Loại {{getType()}}</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('loaiThuChi') ?
-                                        getValueForm('loaiThuChi').name : ''}}</span>
-                                    <div *ngIf="!seeForm">
+                                    <span *ngIf="seeForm">{{paymentDisplay.loaiThuChi?.name}}</span>
+                                    <div [class.d-none]="seeForm">
                                         <div class="d-flex">
                                             <kendo-combobox [data]="loaiThuChiList" [textField]="'name'"
                                                 [filterable]="true" #loaiThuChiCbx formControlName="loaiThuChi"
@@ -59,8 +58,7 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('journal') ?
-                                        getValueForm('journal').name : ''}}</span>
+                                    <span *ngIf="seeForm">{{paymentDisplay.journal.name}}</span>
                                     <div *ngIf="!seeForm">
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                             [filterable]="true" #journalCbx formControlName="journal"
@@ -79,7 +77,7 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('amount') | number}}</span>
+                                    <span *ngIf="seeForm">{{paymentDisplay.amount | number}}</span>
                                     <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
                                         formControlName="amount">
                                     </kendo-numerictextbox>
@@ -90,7 +88,7 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{getValueForm('communication')}}</span>
+                                    <span *ngIf="seeForm">{{paymentDisplay.communication}}</span>
                                     <textarea *ngIf="!seeForm" type="text" class="form-control"
                                         formControlName="communication"></textarea>
                                 </td>
@@ -105,7 +103,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">
-                                        {{getValueForm('paymentDateObj') | date: 'dd/MM/yyyy'}}
+                                        {{paymentDisplay.paymentDate | date: 'shortDate'}}
                                     </span>
                                     <kendo-datepicker *ngIf="!seeForm" formControlName="paymentDateObj">
                                     </kendo-datepicker>
@@ -117,7 +115,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">
-                                        {{displayPartnerType()}}
+                                        {{displayPartnerType(paymentDisplay.partnerType)}}
                                     </span>
                                     <div *ngIf="!seeForm">
                                         <kendo-dropdownlist
@@ -145,7 +143,7 @@
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Vui lòng chọn người {{ getType() == 'thu' ? 'nộp' : 'nhận' }} tiền</div>
                                     </div>
-                                    <span *ngIf="seeForm">{{getValueForm('partner')?.displayName}}</span>
+                                    <span *ngIf="seeForm">{{paymentDisplay.partner?.displayName}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -155,14 +153,10 @@
         </div>
     </div>
 </div>
-<div *ngIf="!seeForm" class="modal-footer">
-    <button type="button" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
-    <button type="button" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
-    <button type="button" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
-</div>
-<div *ngIf="seeForm" class="modal-footer">
-    <button type="button" *ngIf="getValueForm('state') == 'posted'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
-    <button type="button" *ngIf="getValueForm('state') == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
+<div class="modal-footer">
+    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
+    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" *ngIf="paymentDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>

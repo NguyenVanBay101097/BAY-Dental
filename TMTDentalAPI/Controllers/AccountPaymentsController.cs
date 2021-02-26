@@ -123,8 +123,6 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.AccountPayment.Delete")]
         public async Task<IActionResult> Unlink(IEnumerable<Guid> ids)
         {
-            //Chỉ xóa account payment ở trạng thái nháp hoặc cancel
-            //Muốn xóa thì phải hủy trước
             if (ids == null || !ids.Any())
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
@@ -137,6 +135,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> SaleDefaultGet(IEnumerable<Guid> ids)
         {
             var res = await _paymentService.SaleDefaultGet(ids);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val)
+        {
+            var res = await _paymentService.ThuChiDefaultGet(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SalaryPaymentDefaultGet()
+        {
+            var res = await _paymentService.SalaryPaymentDefaultGet();
             return Ok(res);
         }
 
@@ -199,21 +211,13 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> ExportExcelFile( AccountPaymentPaged val)
+        public async Task<IActionResult> ExportExcelFile(AccountPaymentPaged val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
             var data = await _paymentService.GetPagedResultAsync(val);
-            var sheetName = "Tổng sổ quỹ";
-            if (val.JournalType == "cash")
-            {
-                sheetName = "Sổ quỹ tiền mặt";
-            }
-            else if (val.JournalType == "bank")
-            {
-                sheetName = "Sổ quỹ ngân hàng";
-            }
+            var sheetName = "Phiếu thu chi";
 
             byte[] fileContent;
 
@@ -221,55 +225,27 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
                 var row = 2;
-                var col_base = 0;
-                worksheet.Cells[1, col_base + 1].Value = "Ngày";
-                worksheet.Cells[1, col_base + 2].Value = "Số phiếu";
-                if (val.JournalType == "cash_bank" || val.PhieuThuChi == true)
-                {
-                    worksheet.Cells[1, col_base + 3].Value = "Phương thức thanh toán";
-                    col_base++;
-                }
-                worksheet.Cells[1, col_base + 3].Value = "Loại thu chi";
-                worksheet.Cells[1, col_base + 4].Value = "Số tiền";
-                worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận/nộp";
-                worksheet.Cells[1, col_base + 6].Value = "Người nhận/nộp tiền";
-                if (val.PhieuThuChi == true)
-                {
-                    if (val.PaymentType == "inbound")
-                    {
-                        worksheet.Cells[1, col_base + 3].Value = "Loại thu";
-                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nộp";
-                        worksheet.Cells[1, col_base + 6].Value = "Người nộp tiền";
-                    }
-                    else
-                    {
-                        worksheet.Cells[1, col_base + 3].Value = "Loại chi";
-                        worksheet.Cells[1, col_base + 5].Value = "Nhóm người nhận";
-                        worksheet.Cells[1, col_base + 6].Value = "Người nhận tiền";
-                    }
-                    worksheet.Cells[1, col_base + 7].Value = "Nội dung";
-                    worksheet.Cells[1, col_base + 8].Value = "Trạng thái";
-                }
+                worksheet.Cells[1, 1].Value = "Ngày";
+                worksheet.Cells[1, 2].Value = "Số phiếu";
+                worksheet.Cells[1, 3].Value = "Phương thức";
+                worksheet.Cells[1, 3].Value = "Loại thu chi";
+                worksheet.Cells[1, 4].Value = "Số tiền";
+                worksheet.Cells[1, 5].Value = "Nhóm người nhận/nộp";
+                worksheet.Cells[1, 6].Value = "Người nhận/nộp tiền";
+                worksheet.Cells[1, 7].Value = "Nội dung";
+                worksheet.Cells[1, 8].Value = "Trạng thái";
                 foreach (var item in data.Items)
                 {
-                    col_base = 0;
-                    worksheet.Cells[row, col_base + 1].Value = item.PaymentDate;
-                    worksheet.Cells[row, col_base + 1].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, col_base + 2].Value = item.Name;
-                    if (val.JournalType == "cash_bank" || val.PhieuThuChi == true)
-                    {
-                        worksheet.Cells[row, col_base + 3].Value = item.JournalName;
-                        col_base++;
-                    }
-                    worksheet.Cells[row, col_base + 3].Value = item.DestinationAccountName;
-                    worksheet.Cells[row, col_base + 4].Value = (item.PaymentType == "inbound") ? item.Amount : -item.Amount;
-                    worksheet.Cells[row, col_base + 5].Value = GetPartnerType(item.PartnerType);
-                    worksheet.Cells[row, col_base + 6].Value = item.PartnerName;
-                    if (val.PhieuThuChi == true)
-                    {
-                        worksheet.Cells[row, col_base + 7].Value = item.Communication;
-                        worksheet.Cells[row, col_base + 8].Value = GetState(item.State);
-                    }
+                    worksheet.Cells[row, 1].Value = item.PaymentDate;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.JournalName;
+                    worksheet.Cells[row, 3].Value = item.DestinationAccountName;
+                    worksheet.Cells[row, 4].Value = (item.PaymentType == "inbound") ? item.Amount : -item.Amount;
+                    worksheet.Cells[row, 5].Value = item.DisplayPaymentType;
+                    worksheet.Cells[row, 6].Value = item.PartnerName;
+                    worksheet.Cells[row, 7].Value = item.Communication;
+                    worksheet.Cells[row, 8].Value = item.DisplayState;
                     row++;
                 }
 
@@ -284,41 +260,6 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
-        }
-
-        private string GetPartnerType(string partnerType)
-        {
-            if (partnerType == "employee")
-            {
-                return "Nhân viên";
-            }
-            else if (partnerType == "customer")
-            {
-                return "Khách hàng";
-            }
-            else if (partnerType == "supplier")
-            {
-                return "Nhà cung cấp";
-            }
-            return "";
-        }
-
-        private string GetState(string state)
-        {
-            if (state == "posted")
-            {
-                return "Đã xác nhận";
-            }
-            else if (state == "draft")
-            {
-                return "Nháp";
-            }
-            else if (state == "cancel")
-            {
-                return "Đã hủy";
-            }
-            return "";
-
         }
     }
 }

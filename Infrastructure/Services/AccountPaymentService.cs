@@ -651,6 +651,34 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountPaymentDisplay> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var rec = new AccountPaymentDisplay
+            {
+                Journal = _mapper.Map<AccountJournalBasic>(cashJournal),
+                PaymentType = val.PaymentType,
+                PartnerType = "customer",
+            };
+
+            return rec;
+        }
+
+        public async Task<AccountPaymentDisplay> SalaryPaymentDefaultGet()
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var rec = new AccountPaymentDisplay
+            {
+                Journal = _mapper.Map<AccountJournalBasic>(cashJournal),
+                PaymentType = "outbound",
+                PartnerType = "employee",
+            };
+
+            return rec;
+        }
+
         public async Task<AccountRegisterPaymentDisplay> PurchaseDefaultGet(IEnumerable<Guid> purchaseOrderIds)
         {
             var orderObj = GetService<IPurchaseOrderService>();
@@ -1154,11 +1182,14 @@ namespace Infrastructure.Services
 
         public async Task UnlinkAsync(IEnumerable<Guid> ids)
         {
+            //Chỉ có thể xóa phiếu thu chi ở trạng thái nháp
             var settlementObj = GetService<ICommissionSettlementService>();
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines).ToListAsync();
 
             foreach (var rec in self)
             {
+                if (rec.State != "draft")
+                    throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp");
                 if (rec.MoveLines.Any())
                 {
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
