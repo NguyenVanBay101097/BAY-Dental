@@ -18,6 +18,10 @@ namespace Infrastructure.AdminEntityConfigurations
             builder.HasOne(x => x.WriteBy)
                 .WithMany()
                 .HasForeignKey(x => x.WriteById);
+
+            builder.HasOne(x => x.EmployeeAdmin)
+                .WithMany()
+                .HasForeignKey(x => x.EmployeeId);
         }
     }
 }

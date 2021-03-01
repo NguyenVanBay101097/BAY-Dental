@@ -29,19 +29,7 @@
 <div class="o_content">
   <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column field="id" width="140">
-      <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-        Thao tác
-      </ng-template>
-      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        <button class="btn btn-success btn-sm mr-2" (click)="updateExpired(dataItem)">
-          Gia hạn
-        </button>
-        <button class="btn btn-success btn-sm" (click)="editItem(dataItem)">
-          Sửa
-        </button>
-      </ng-template>
-    </kendo-grid-column>
+
     <kendo-grid-column field="name" title="Khách hàng" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="phone" title="Điện thoại" width="120">
@@ -64,7 +52,26 @@
     </kendo-grid-column>
     <kendo-grid-column field="customerSource" class="text-right" title="Nguồn KH" width="120">
     </kendo-grid-column>
-    <kendo-grid-column field="supporterName" class="text-right" title="Người triển khai" width="120">
+    <kendo-grid-column field="employeeAdmin" title="Người triển khai" width="120">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.employeeAdmin ? dataItem.employeeAdmin.name:''}}
+      </ng-template>
     </kendo-grid-column>
+    <kendo-grid-column field="id" width="140">
+      <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+        Thao tác
+      </ng-template>
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        <button class="btn btn-success btn-sm mr-2" (click)="updateExpired(dataItem)">
+          Gia hạn
+        </button>
+        <button class="btn btn-success btn-sm" (click)="editItem(dataItem)">
+          Sửa
+        </button>
+      </ng-template>
+    </kendo-grid-column>
+    <div *kendoGridDetailTemplate="let dataItem">
+      <app-tenant-extend-history [tenant]="dataItem"></app-tenant-extend-history>
+    </div>
   </kendo-grid>
 </div>

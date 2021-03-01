@@ -34,12 +34,17 @@ namespace TMTDentalAdmin.Controllers
         private readonly UserManager<ApplicationAdminUser> _userManager;
         private readonly AdminAppSettings _appSettings;
         private readonly IConfiguration _configuration;
+        private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            UserManager<ApplicationAdminUser> userManager, IConfiguration configuration,
-            IOptions<AdminAppSettings> appSettings)
+            UserManager<ApplicationAdminUser> userManager,
+            IConfiguration configuration,
+            IOptions<AdminAppSettings> appSettings,
+            ITenantExtendHistoryService tenantExtendHistoryService
+            )
         {
             _tenantService = tenantService;
+            _tenantExtendHistoryService = tenantExtendHistoryService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -48,7 +53,7 @@ namespace TMTDentalAdmin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]TenantPaged val)
+        public async Task<IActionResult> Get([FromQuery] TenantPaged val)
         {
             var result = await _tenantService.GetPagedResultAsync(val);
             return Ok(result);
@@ -57,9 +62,8 @@ namespace TMTDentalAdmin.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var result = await _tenantService.GetByIdAsync(id);
-            var display = _mapper.Map<TenantDisplay>(result);
-            return Ok(display);
+            var res = await _tenantService.GetDisplay(id);
+            return Ok(res);
         }
 
         [HttpPost("[action]")]
@@ -75,6 +79,13 @@ namespace TMTDentalAdmin.Controllers
             tenant = _mapper.Map<AppTenant>(val);
             tenant.DateExpired = DateTime.Today.AddDays(15);
             await _tenantService.CreateAsync(tenant);
+
+            var tenantExtendHistory = new TenantExtendHistory();
+            tenantExtendHistory.TenantId = tenant.Id;
+            tenantExtendHistory.StartDate = DateTime.Today;
+            tenantExtendHistory.ExpirationDate = tenant.DateExpired.Value;
+            tenantExtendHistory.ActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
+            await _tenantExtendHistoryService.CreateAsync(tenantExtendHistory);
 
             try
             {
@@ -97,6 +108,7 @@ namespace TMTDentalAdmin.Controllers
                         Email = val.Email
                     });
                 }
+
 
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
