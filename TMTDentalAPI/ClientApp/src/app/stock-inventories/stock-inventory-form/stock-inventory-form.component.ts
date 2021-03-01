@@ -68,7 +68,8 @@ export class StockInventoryFormComponent implements OnInit {
       exhausted: false,
       state: 'draft',
       companyId: null,
-      lines: this.fb.array([])
+      lines: this.fb.array([]),
+      moves: this.fb.array([])
     });
 
 
@@ -111,6 +112,10 @@ export class StockInventoryFormComponent implements OnInit {
     return this.formGroup.get('lines') as FormArray;
   }
 
+  get moves() {
+    return this.formGroup.get('moves') as FormArray;
+  }
+
   loadDataFromApi() {
     if (this.id) {
       this.stockInventorySevice.get(this.id).subscribe(result => {
@@ -128,7 +133,15 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
-        console.log(control);
+
+        let moveControl = this.formGroup.get('moves') as FormArray;
+        moveControl.clear();
+        result.lines.forEach(line => {
+          var g = this.fb.group(line);
+          moveControl.push(g);
+        });
+        console.log(moveControl);
+
       });
     } else {
       var companyId = this.authService.userInfo.companyId;
@@ -161,7 +174,13 @@ export class StockInventoryFormComponent implements OnInit {
     var res = this.formGroup.value;
     if (res.filter !== 'category') {
       res.category = null;
+      this.formGroup.get('category').clearValidators();
+      this.formGroup.get('category').updateValueAndValidity();
+    }else{
+      this.formGroup.get("category").setValidators([Validators.minLength(0), Validators.required]);
+      this.formGroup.get("category").updateValueAndValidity();
     }
+    
     this.formGroup.patchValue(res);
 
   }
@@ -169,7 +188,7 @@ export class StockInventoryFormComponent implements OnInit {
   searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
     val.search = q || '';
-    val.type = 'product';
+    val.type = 'product,medicine';
     return this.productCategoryService.autocomplete(val);
   }
 

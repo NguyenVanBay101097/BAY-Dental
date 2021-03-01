@@ -118,12 +118,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1">
-                                    <kendo-combobox [data]="filterdCategories" [textField]="'name'" [filterable]="true"
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories" [textField]="'name'" [filterable]="true"
                                         #categCbx formControlName="category" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <!-- <div *ngIf="f.category.errors && (f.Employee.touched || f.Employee.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.Employee.errors.required">Vui lòng chọn người nhận</div>
-                                    </div> -->
+                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.category.errors.required">Vui lòng chọn nhóm sản phẩm</div>
+                                    </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.category?.name}}</span>
                                 </td>
                             </tr>
@@ -183,7 +183,7 @@
                     </li>
                 </ul>
 
-                <div class="tab-content flex-1-1-100 overflow-hidden" *ngIf=" id && stateControl != 'draft'">
+                <div class="tab-content flex-1-1-100 mt-2 overflow-hidden" *ngIf=" id && stateControl != 'draft'">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="o_form_section" >
                             <div class="o_form_section_left"
@@ -277,7 +277,44 @@
 
                     <div class="tab-pane h-100" *ngIf="stateControl != 'draft'" id="move" role="tabpanel"
                         aria-labelledby="move-tab">
+                        <table class="table table-sm table-bordered" id="table_details">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 100px;">STT</th>
+                                    <!-- <th scope="col" style="width: 120px;">Mã sản phẩm</th> -->
+                                    <th scope="col" style="width: 200px;">Sản phẩm</th>
+                                    <th scope="col" style="width: 120px;" hasGroups
+                                        [groups]="'product.group_uom'">ĐVT</th>
+                                    <th scope="col" style="width: 10%;">Số lượng</th>
+                                    <!-- <th scope="col" style="width: 10%;">Thực tế</th> -->
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="moves" *ngIf="moves">
+                                <ng-container *ngFor="let move of moves.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="align-middle">{{ i + 1 }}</td>
+                                        <!-- <td class="align-middle">{{ move.get('product').value.defaultCode}}</td> -->
+                                        <td class="align-middle">{{ move.get('product').value?.name}}</td>
+                                        <td class="align-middle" hasGroups [groups]="'product.group_uom'">
+                                            <span>{{move.get('productUOM').value?.name}}</span>
+                                        </td>
+                                        <td class="text-right align-middle">
+                                            <span>{{move.get('theoreticalQty')?.value | number}}</span>
+                                        </td>
+                                        <!-- <td class="text-right" w>
+                                            <kendo-numerictextbox [format]="'n0'"
+                                                *ngIf="stateControl == 'confirmed'"
+                                                formControlName="theoreticalQty" style="width: 120px;">
+                                            </kendo-numerictextbox>
+                                            <span
+                                                *ngIf="stateControl != 'confirmed'">{{line.get('theoreticalQty').value
+                                                | number}}</span>
+                                        </td> -->
 
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
