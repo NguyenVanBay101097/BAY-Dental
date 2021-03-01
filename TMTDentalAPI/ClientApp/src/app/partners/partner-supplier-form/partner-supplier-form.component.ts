@@ -17,10 +17,16 @@ export class PartnerSupplierFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.activeRoute.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.LoadData();
-    }
+    // this.id = this.activeRoute.snapshot.paramMap.get('id');
+    // if (this.id) {
+    //   this.LoadData();
+    // }
+    this.activeRoute.params.subscribe(params => {
+      this.id = params.id
+      if (this.id) {
+        this.LoadData();
+      }
+    });
   }
 
   LoadData() {

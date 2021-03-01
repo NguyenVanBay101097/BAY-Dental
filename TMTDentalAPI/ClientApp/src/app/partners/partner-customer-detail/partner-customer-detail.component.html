@@ -4,16 +4,16 @@
             <li>
                 <a routerLink="/partners/customers">Khách hàng</a>
             </li>
-            <li class="active">
-                <a *ngIf="partner">{{partner.displayName}}</a>
+            <li *ngIf="partner" class="active">
+                <a>{{partner.displayName}}</a>
             </li>
         </ol>
         <div>
             <div class="o_cp_buttons">
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <a routerLink="overview" class="nav-link px-3 py-1"
-                            routerLinkActive="active">Hồ sơ - Điều trị</a>
+                        <a routerLink="overview" class="nav-link px-3 py-1" routerLinkActive="active">Hồ sơ - Điều
+                            trị</a>
                     </li>
                     <li class="nav-item">
                         <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Tư vấn</a>

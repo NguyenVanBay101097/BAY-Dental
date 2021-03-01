@@ -3,24 +3,14 @@
 }
 
 .fa-searchengin {
-    font-size: 24px;
+    font-size: 18px;
 }
 
-@media(min-width:1366px) {
-    .input-custom {
-        min-width: 280px;
-    }
-    .search-result {
-        min-width: 472px;
-    }
-    .filter-search {
-
-    }
-}
 
 .tag{
-    padding: 5px;
+    padding: 3px;
     border-radius: 10px;
+    margin-right: 5px;
 }
 
 .filter-search {
@@ -30,6 +20,7 @@
 
 .input-group {
     position: relative;
+    padding-top: 4px;
 }
 
 .search-result {
@@ -44,7 +35,8 @@
 
 .search-content {
     overflow: auto;
-    max-height: 345px;
+    max-height: 465px;
+    min-width: 356px;
 }
 
 .result-select {
@@ -54,4 +46,10 @@
 
 .result-select:hover {
     background-color: whitesmoke;
+}
+
+.form-control {
+    height: 32px;
+    padding: 2px 5px;
+    line-height: 1.2;
 }

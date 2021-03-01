@@ -7,8 +7,10 @@ export class SearchAllViewModel {
   name: string;
   address: string;
   phone: string;
+  type: string;
+  saleOrderName: string;
   state: string;
-  tags: string[];
+  tags: any[];
 }
 
 @Injectable({

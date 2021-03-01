@@ -31,7 +31,7 @@
                     <div [formGroup]="formSelect" class="input-group-prepend">
                         <select class="form-control" formControlName="type" (change)="fetchAll($event.target.value)"
                             aria-label="Chọn kiểu tìm kiếm">
-                            <!-- <option value="all">Tất cả</option> -->
+                            <option value="all">Tất cả</option>
                             <option selected value="customer">Khánh hàng</option>
                             <option value="supplier">Nhà cung cấp</option>
                             <option value="sale-order">Phiếu điều trị</option>
@@ -48,12 +48,25 @@
                     <div class="search-result" *ngIf="isSearch">
                         <div class="search-content">
                             <div class="result-select" *ngFor="let item of searchResults" (click)="clickItem(item)">
-                                <div>Tên: {{item.name}}</div>
+                                <div *ngIf="item.type=='sale-order'">
+
+                                    <b>PĐT: {{item.saleOrderName}}</b>
+                                </div>
+                                <div>
+                                    <span *ngIf="item.type=='customer' || item.type=='sale-order'"><b>KH: </b></span>
+                                    <span *ngIf="item.type=='supplier'"><b>NCC: </b></span>
+                                    <b>{{item.name}}</b>
+                                </div>
                                 <div>Địa chỉ: {{item.address}}</div>
                                 <div>SĐT: {{item.phone}}</div>
-                                <div *ngIf="item.state">Trạng thái: {{item.state}}</div>
-                                <div *ngIf="item.tags && item.tags.length > 0">
-                                    <span class="tag" *ngFor="let item of item.tags">{{item}}</span>
+                                <div *ngIf="item.state">Trạng thái:
+                                    <span *ngIf="item.state == 'sale'">Đang điều trị</span>
+                                    <span *ngIf="item.state == 'done'">Hoàn thành</span>
+                                    <span *ngIf="item.state == 'cancel'">Hủy</span>
+                                </div>
+                                <div style="padding-top: 5px;" *ngIf="item.tags && item.tags.length > 0">
+                                    <span class="tag" [ngClass]="'o_tag_color_' + tag.color"
+                                        *ngFor="let tag of item.tags">{{tag.name}}</span>
                                 </div>
                             </div>
                         </div>

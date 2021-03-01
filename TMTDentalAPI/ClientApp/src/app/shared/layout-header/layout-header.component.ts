@@ -23,19 +23,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./layout-header.component.css']
 })
 export class LayoutHeaderComponent implements OnInit {
-  dataFromApi: any[] = [
-    { name: 'Thắng', gender: 'nam' },
-    { name: 'Hoàng', gender: 'nam' },
-    { name: 'Khánh', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Quang', gender: 'nam' },
-    { name: 'Két', gender: 'nam' }
-  ];
   searchResults: any[] = [];
   isSearch = false;
   searchInput: string = '';
@@ -58,7 +45,7 @@ export class LayoutHeaderComponent implements OnInit {
 
   ngOnInit() {
     this.formSelect = this.fb.group({
-      type: 'customer'
+      type: 'all'
     })
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
@@ -188,7 +175,7 @@ export class LayoutHeaderComponent implements OnInit {
       this.searchAllService.getAll(value).subscribe(
         result => {
           console.log(result);
-          
+
           this.searchResults = result ? result : [];
         }
       )
@@ -205,5 +192,18 @@ export class LayoutHeaderComponent implements OnInit {
 
   clickItem(item) {
     this.isSearch = false;
+    switch (item.type) {
+      case "customer":
+        this.router.navigateByUrl(`/partners/customer/${item.id}/overview`)
+        break;
+      case "supplier":
+        this.router.navigateByUrl(`/partners/supplier/${item.id}/info`)
+        break;
+      case "sale-order":
+        this.router.navigateByUrl(`/sale-orders/form?id=${item.id}`)
+        break;
+      default:
+        break;
+    }
   }
 }
