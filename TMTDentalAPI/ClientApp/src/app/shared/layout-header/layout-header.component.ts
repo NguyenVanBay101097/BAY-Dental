@@ -12,6 +12,10 @@ import { WebService } from 'src/app/core/services/web.service';
 import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { SearchAllService } from '../search-all.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-layout-header',
@@ -19,7 +23,25 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrls: ['./layout-header.component.css']
 })
 export class LayoutHeaderComponent implements OnInit {
-
+  dataFromApi: any[] = [
+    { name: 'Thắng', gender: 'nam' },
+    { name: 'Hoàng', gender: 'nam' },
+    { name: 'Khánh', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Quang', gender: 'nam' },
+    { name: 'Két', gender: 'nam' }
+  ];
+  searchResults: any[] = [];
+  isSearch = false;
+  searchInput: string = '';
+  formSelect: FormGroup;
+  resultSelection: string;
+  searchUpdate = new Subject<string>();
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
   expire = '';
   constructor(
@@ -29,10 +51,15 @@ export class LayoutHeaderComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private webService: WebService,
+    private fb: FormBuilder,
+    private searchAllService: SearchAllService,
     private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
+    this.formSelect = this.fb.group({
+      type: 'customer'
+    })
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
@@ -42,6 +69,13 @@ export class LayoutHeaderComponent implements OnInit {
         this.loadExpire();
       }
     });
+
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.fetchAll();
+      });
   }
 
   loadExpire() {
@@ -67,7 +101,7 @@ export class LayoutHeaderComponent implements OnInit {
           var userInfo = JSON.parse(localStorage.getItem("user_info"));
           localStorage.removeItem('user_info');
           userInfo.companyId = result.currentCompany.id;
-          localStorage.setItem('user_info',JSON.stringify(userInfo));
+          localStorage.setItem('user_info', JSON.stringify(userInfo));
           window.location.reload();
         });
       });
@@ -137,5 +171,39 @@ export class LayoutHeaderComponent implements OnInit {
       )
     }, () => {
     });
+  }
+
+  fetchAll() {
+    this.resultSelection = this.formSelect.get('type').value;
+    this.isSearch = true;
+    var value = {
+      limit: 20,
+      search: this.searchInput ? this.searchInput : '',
+      resultSelection: this.resultSelection ? this.resultSelection : ''
+    }
+
+    if (!value || !value.search || value.search === '') {
+      this.searchResults = [];
+    } else {
+      this.searchAllService.getAll(value).subscribe(
+        result => {
+          console.log(result);
+          
+          this.searchResults = result ? result : [];
+        }
+      )
+      // this.searchResults = this.dataFromApi.filter(function (series) {
+      //   return series.name.toLowerCase().startsWith(value.search.toLowerCase())
+      // })
+    }
+
+  }
+
+  clickOut() {
+    this.isSearch = false;
+  }
+
+  clickItem(item) {
+    this.isSearch = false;
   }
 }
