@@ -88,7 +88,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   removeQuestion(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa câu hỏi';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa câu hỏi ?';
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn xóa câu hỏi "${item.name}"?`;
 
     modalRef.result.then(() => {
       this.surveyQuestionService.delete(item.id).subscribe(() => {

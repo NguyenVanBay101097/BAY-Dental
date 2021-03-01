@@ -97,18 +97,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyAssignmentSave
     {
-        public SurveyAssignmentSave()
-        {
-            Status = "draft";
-        }
-
         public Guid EmployeeId { get; set; }
         public Guid SaleOrderId { get; set; }
-
-        public IEnumerable<SurveyCallContentSave> CallContents { get; set; } = new List<SurveyCallContentSave>();
-
-        public string Status { get; set; }
-        public Guid PartnerId { get; set; }
     }
 
     public class SurveyAssignmentDefaultGet

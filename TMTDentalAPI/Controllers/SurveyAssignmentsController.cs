@@ -77,10 +77,6 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
 
             var assignments = _mapper.Map<IEnumerable<SurveyAssignment>>(vals);
-            foreach (var item in assignments)
-            {
-                item.AssignDate = DateTime.Now;
-            }
             await _SurveyAssignmentService.CreateAsync(assignments);
 
             _unitOfWork.Commit();
