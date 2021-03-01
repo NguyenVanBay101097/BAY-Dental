@@ -193,22 +193,16 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
-        public async Task<IEnumerable<EmployeeSimple>> GetAutocompleteSudoAsync(EmployeePaged val)
+        public async Task<IEnumerable<EmployeeSimple>> GetAllowSurveyList()
         {
             Sudo = true;
-            var query = GetQueryPaged(val);
-            if (val.Position == "doctor")
+            var items = await SearchQuery(x => x.Active && x.IsAllowSurvey).Select(x => new EmployeeSimple
             {
-                query = query.Where(x => x.IsDoctor == true && x.IsAssistant == false);
-            }
-            else if (val.Position == "assistant")
-            {
-                query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
-            }
-            var items = await query.Where(x => x.Active == true).Skip(val.Offset).Take(val.Limit)
-                .ToListAsync();
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
 
-            return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
+            return items;
         }
 
         public override async Task<Employee> CreateAsync(Employee entity)

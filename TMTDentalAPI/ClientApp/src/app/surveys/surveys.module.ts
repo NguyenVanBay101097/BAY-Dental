@@ -5,7 +5,7 @@ import { SurveysRoutingModule } from './surveys-routing.module';
 import { SurveyConfigurationEvaluationComponent } from './survey-configuration-evaluation/survey-configuration-evaluation.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SurveyService } from './survey.service';
+import { SurveyAssignmentService } from './survey.service';
 import { SurveyConfigurationEvaluationDialogComponent } from './survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -55,7 +55,7 @@ import { SurveyManageListComponent } from './survey-manage-list/survey-manage-li
     ReactiveFormsModule,
     DragDropModule
   ],
-  providers: [SurveyService],
+  providers: [SurveyAssignmentService],
   entryComponents: [
     SurveyConfigurationEvaluationDialogComponent,
     SurveyManageAssignEmployeeCreateDialogComponent,

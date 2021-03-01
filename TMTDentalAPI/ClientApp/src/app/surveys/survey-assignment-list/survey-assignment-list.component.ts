@@ -12,7 +12,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
-import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from '../survey.service';
+import { SurveyAssignmentGetSummaryFilter, SurveyAssignmentPaged, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-assignment-list',
@@ -53,6 +53,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     { value: "draft", name: "Chưa gọi" },
   ];
 
+  summaryResult: any;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -62,7 +63,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private employeeService: EmployeeService,
-    private surveyService: SurveyService,
+    private surveyAssignmentService: SurveyAssignmentService,
     private fb: FormBuilder,
     private authService: AuthService
   ) { }
@@ -88,7 +89,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     // });
 
     this.loadDataFromApi();
-    this.loadStatusCount();
+    this.loadSummary();
     // this.loadEmployees();
   }
 
@@ -100,11 +101,10 @@ export class SurveyAssignmentListComponent implements OnInit {
     paged.employeeId = this.employeeId ? this.employeeId : '';
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
+    paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     paged.status = this.status;
-    paged.IsGetScore = true;
     paged.userId = this.authService.userInfo.id;
-    this.surveyService.getPaged(paged).pipe(
+    this.surveyAssignmentService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -134,8 +134,7 @@ export class SurveyAssignmentListComponent implements OnInit {
   onChaneEmp(emp) {
     this.employeeId = emp ? emp.id : null;
     this.loadDataFromApi();
-    this.loadStatusCount();
-
+    this.loadSummary();
   }
 
   employee(id) {
@@ -153,20 +152,12 @@ export class SurveyAssignmentListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadStatusCount() {
-    forkJoin(this.statuses.map(x => {
-      var val = new SurveyAssignmentGetCountVM();
-      val.status = x.value;
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-      val.userId = this.authService.userInfo.id;
-      return this.surveyService.getSumary(val).pipe(
-        switchMap(count => of({ status: x.value, count: count }))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        this.statusCount[item.status] = item.count;
-      });
+  loadSummary() {
+    var val = new SurveyAssignmentGetSummaryFilter();
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): null;
+    this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
+      this.summaryResult = result;
     });
   }
 
@@ -174,7 +165,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();
-    this.loadStatusCount();
+    this.loadSummary();
   }
 
   statusChange(item) {

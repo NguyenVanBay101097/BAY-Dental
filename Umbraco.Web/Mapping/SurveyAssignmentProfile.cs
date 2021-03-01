@@ -11,7 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public SurveyAssignmentProfile()
         {
-            CreateMap<SurveyAssignment, SurveyAssignmentBasic>();
+            CreateMap<SurveyAssignment, SurveyAssignmentGridItem>();
             CreateMap<SurveyAssignment, SurveyAssignmentDefaultGet>();
             CreateMap<SurveyAssignment, SurveyAssignmentSave>();
 

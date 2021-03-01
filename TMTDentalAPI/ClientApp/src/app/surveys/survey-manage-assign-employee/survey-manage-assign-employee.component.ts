@@ -5,9 +5,10 @@ import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from "rxjs/operators";
+import { SaleOrderService, SaleOrderToSurveyFilter } from "src/app/core/services/sale-order.service";
 import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
-import { SurveyAssignmentDefaultGetPar, SurveyAssignmentPaged, SurveyService } from "../survey.service";
+import { SurveyAssignmentDefaultGetPar, SurveyAssignmentPaged, SurveyAssignmentService } from "../survey.service";
 @Component({
   selector: 'app-survey-manage-assign-employee',
   templateUrl: './survey-manage-assign-employee.component.html',
@@ -30,14 +31,12 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   offset = 0;
   filteredEmployees: EmployeeSimple[];
 
-
-  private _filterValues: Subject<string> = new Subject<string>()
-
   constructor(
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private surveyService: SurveyService,
-    private notificationService: NotificationService
+    private surveyAssignmentService: SurveyAssignmentService,
+    private notificationService: NotificationService,
+    private saleOrderService: SaleOrderService
   ) { }
 
   ngOnInit(): void {
@@ -52,41 +51,26 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this._filterValues.asObservable().pipe(
-      debounceTime(400),
-      switchMap(value => this.searchEmployees(value))
-    )
-      .subscribe(res => this.filteredEmployees = res);
-
     this.loadDataFromApi();
     this.loadEmployees();
   }
 
   loadEmployees() {
-    return this.searchEmployees().subscribe(result => {
-      this.filteredEmployees = result
+    return this.employeeService.getAllowSurveyList().subscribe((result: any) => {
+      this.filteredEmployees = result;
     });
-  }
-
-  searchEmployees(search?: string) {
-    var val = new EmployeePaged();
-    val.search = search;
-    val.isAllowSurvey = true;
-    return this.employeeService.getEmployeeSudoSimpleList(val);
   }
 
   loadDataFromApi(paged = null) {
     this.loading = true;
-    if (!paged) {
-      paged = new SurveyAssignmentDefaultGetPar();
-      paged.limit = this.limit;
-      paged.offset = this.offset;
-      paged.search = this.search ? this.search : '';
-      paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
-      paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
-    }
+    var filter = new SaleOrderToSurveyFilter();
+    filter.limit = this.limit;
+    filter.offset = this.offset;
+    filter.search = this.search ? this.search : '';
+    filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
 
-    this.surveyService.defaultGetList(paged).pipe(
+    this.saleOrderService.getToSurveyPaged(filter).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -125,7 +109,6 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     this.gridData.data.forEach((ass, index) => {
       var emp = this.filteredEmployees[index % this.filteredEmployees.length];
       ass.employee = emp;
-      ass.employeeId = emp.id;
     });
 
     // var val = {
@@ -179,20 +162,21 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
 
   onSave() {
-    var data = this.gridData.data.filter(x => x.employeeId != null).map(x => { return { employeeId: x.employeeId, partnerId: x.partnerId, saleOrderId: x.saleOrderId } });
+    var data = this.gridData.data.filter(x => x.employee != null)
+      .map(x => { 
+        return { employeeId: x.employee.id, saleOrderId: x.id };
+       });
+
     if (data.length == 0) {
       this.notify('error', 'Không có phân việc đã được phân cho nhân viên để lưu!');
       return;
     }
-    this.surveyService.createListAssign(data).subscribe(
+
+    this.surveyAssignmentService.createListAssign(data).subscribe(
       () => {
-        this.notify('success', 'thành công');
+        this.notify('success', 'Lưu thành công');
         this.loadDataFromApi();
       }
     )
-  }
-
-  filterChangeEmployee(val) {
-    this._filterValues.next(val);
   }
 }

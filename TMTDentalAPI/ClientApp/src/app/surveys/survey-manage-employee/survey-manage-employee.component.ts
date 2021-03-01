@@ -4,7 +4,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { SurveyService } from '../survey.service';
+import { SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-employee',

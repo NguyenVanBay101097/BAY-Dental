@@ -15,7 +15,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
-import { SurveyAssignmentGetCountVM, SurveyAssignmentPaged, SurveyService } from '../survey.service';
+import { SurveyAssignmentGetSummaryFilter, SurveyAssignmentPaged, SurveyAssignmentService, SurveyAssignmentUpdateEmployee } from '../survey.service';
 declare var $: any;
 
 
@@ -24,7 +24,7 @@ declare var $: any;
   templateUrl: './survey-manage-list.component.html',
   styleUrls: ['./survey-manage-list.component.css']
 })
-export class SurveyManageListComponent implements OnInit, AfterViewInit  {
+export class SurveyManageListComponent implements OnInit {
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
 
   gridData: GridDataResult;
@@ -50,7 +50,7 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
     { value: "draft", name: "Chưa gọi" },
     { value: "done", name: "Hoàn thành" },
     { value: "contact", name: "Đang liên hệ" },
-    { value: "", name: "Tổng khảo sát" }
+    { value: "total", name: "Tổng khảo sát" }
   ];
 
   filteredStatus = [
@@ -62,8 +62,6 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  private _filterValues: Subject<string> = new Subject<string>()
-
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
@@ -71,24 +69,11 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
     private partnerService: PartnerService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
-    private surveyService: SurveyService,
+    private surveyAssignmentService: SurveyAssignmentService,
     private fb: FormBuilder
   ) { }
 
-  ngAfterViewInit() {
-    this.empCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.empCbx.loading = true)),
-      switchMap(value => this.searchEmployees(value))
-    ).subscribe(result => {
-      this.filteredEmployees = result;
-      this.empCbx.loading = false;
-    });
-   
-  }
-
   ngOnInit() {
-
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.searchUpdate.pipe(
@@ -99,14 +84,8 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
         this.loadDataFromApi();
       });
 
-      this._filterValues.asObservable().pipe(
-        debounceTime(400),
-        switchMap(value => this.searchEmployees(value))
-      )
-      .subscribe(res =>this.filteredEmployees = res);
-
     this.loadDataFromApi();
-    this.loadStatusCount();
+    this.loadSummary();
     this.loadEmployees();
   }
 
@@ -120,7 +99,7 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
     paged.status = this.status;
-    this.surveyService.getPaged(paged).pipe(
+    this.surveyAssignmentService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
@@ -136,45 +115,34 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
 
   pageChange(e) {
     this.offset = e.skip;
-    this.loadDataFromApi();    
+    this.loadDataFromApi();
   }
 
-  loadStatusCount() {
-    forkJoin(this.statuses.map(x => {
-      var val = new SurveyAssignmentGetCountVM();
-      val.status = x.value;
-      val.employeeId = this.employeeId ? this.employeeId : null;
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-      return this.surveyService.getSumary(val).pipe(
-        switchMap(count => of({ status: x.value, count: count }))
-      );
-    })).subscribe((result) => {
+  loadSummary() {
+    var val = new SurveyAssignmentGetSummaryFilter();
+    val.employeeId = this.employeeId ? this.employeeId : null;
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
       result.forEach(item => {
         this.statusCount[item.status] = item.count;
+        this.statusCount['total'] = (this.statusCount['total'] || 0) + item.count;
       });
     });
   }
 
   loadEmployees() {
-    return this.searchEmployees().subscribe(result => {
+    return this.employeeService.getAllowSurveyList().subscribe((result: any) => {
       this.filteredEmployees = result
       this.employees = result;
     });
-  }
-
-  searchEmployees(search?: string) {
-    var val = new EmployeePaged();
-    val.search = search;
-    val.isAllowSurvey = true;
-    return this.employeeService.getEmployeeSudoSimpleList(val);
   }
 
   onSearchDateChange(event) {
     this.dateTo = event.dateTo;
     this.dateFrom = event.dateFrom;
     this.loadDataFromApi();
-    this.loadStatusCount();
+    this.loadSummary();
   }
 
   createEmpAssign() {
@@ -195,7 +163,6 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
   editHandler({ sender, rowIndex, dataItem }) {
     this.closeEditor(sender);
     this.formGroup = this.fb.group({
-      id: dataItem.id,
       employee: dataItem.employee
     });
 
@@ -215,16 +182,19 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
   }
 
   public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
-    const survey = formGroup.value;
-    if (!survey.employee) {
+    const formValue = formGroup.value;
+    if (!formValue.employee) {
       this.closeEditor(sender, rowIndex);
       return;
     }
-    var surveyOld = this.gridData.data.find(x => x.id === survey.id)
-    var oldEmp = surveyOld.employee;
-    surveyOld.employee = survey.employee;
-    surveyOld.employeeId = survey.employee.id;
-    this.surveyService.updateAssignment(survey.id, surveyOld).subscribe(
+
+    var dataItem = this.gridData.data[rowIndex];
+
+    var val = new SurveyAssignmentUpdateEmployee();
+    val.id = dataItem.id;
+    val.employeeId = formValue.employee.id;
+    
+    this.surveyAssignmentService.updateAssignment(val).subscribe(
       () => {
         this.notificationService.show({
           content: 'Cập nhật thành công',
@@ -233,13 +203,13 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
+
+        dataItem.employee = formValue.employee;
+        sender.closeRow(rowIndex);
       },
       () => {
-        surveyOld.employee = oldEmp;
-        surveyOld.employeeId = oldEmp.id;
       }
     )
-    sender.closeRow(rowIndex);
   }
 
   clickItem(event) {
@@ -250,7 +220,7 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
   onChaneEmp(emp) {
     this.employeeId = emp ? emp.id : null;
     this.loadDataFromApi();
-    this.loadStatusCount();
+    this.loadSummary();
 
   }
 
@@ -266,16 +236,18 @@ export class SurveyManageListComponent implements OnInit, AfterViewInit  {
     });
   }
 
-  filterChangeEmployee(val) {
-    this._filterValues.next(val);
-    // return this.searchEmployees(val).subscribe(result => {
-    //   this.filteredEmployees = result
-    //   this.employees = result;
-    // });
-  }
-
   onEmployeeKeyDown(e) {
     e.stopPropagation();
   }
 
+  displayStatus(status) {
+    switch (status) {
+      case 'contact':
+        return 'Đang liên hệ';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Chưa gọi';
+    }
+  }
 }

@@ -29,6 +29,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Status { get; set; }
 
+        /// <summary>
+        /// related SaleOrder.CompanyId
+        /// </summary>
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
@@ -49,7 +52,7 @@ namespace ApplicationCore.Entities
         public ICollection<SurveyCallContent> CallContents { get; set; } = new List<SurveyCallContent>();
 
         /// <summary>
-        /// gán khách hàng cho 1 phân quyền
+        /// related SaleOrder.PartnerId
         /// </summary>
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }

@@ -19,26 +19,28 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class SurveyAssignmentsController : BaseApiController
     {
-        private readonly ISurveyAssignmentService _SurveyAssignmentService;
+        private readonly ISurveyAssignmentService _surveyAssignmentService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly ISaleOrderService _saleOrderService;
 
         public SurveyAssignmentsController(
-            ISurveyAssignmentService SurveyAssignmentService,
+            ISurveyAssignmentService surveyAssignmentService,
             IMapper mapper,
-            IUnitOfWorkAsync unitOfWork
+            IUnitOfWorkAsync unitOfWork, ISaleOrderService saleOrderService
             )
         {
-            _SurveyAssignmentService = SurveyAssignmentService;
+            _surveyAssignmentService = surveyAssignmentService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _saleOrderService = saleOrderService;
         }
 
         [HttpGet]
         [CheckAccess(Actions="Survey.Assignment.Read")]
         public async Task<IActionResult> Get([FromQuery] SurveyAssignmentPaged val)
         {
-            var result = await _SurveyAssignmentService.GetPagedResultAsync(val);
+            var result = await _surveyAssignmentService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
@@ -46,7 +48,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Survey.Assignment.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _SurveyAssignmentService.GetDisplay(id);
+            var res = await _surveyAssignmentService.GetDisplay(id);
             return Ok(res);
         }
 
@@ -60,11 +62,13 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
 
             var assignment = _mapper.Map<SurveyAssignment>(val);
-            assignment.AssignDate = DateTime.Now;
-            await _SurveyAssignmentService.CreateAsync(assignment);
+            var saleOrder = await _saleOrderService.GetByIdAsync(val.SaleOrderId);
+            assignment.CompanyId = saleOrder.CompanyId;
+            assignment.PartnerId = saleOrder.PartnerId;
+            await _surveyAssignmentService.CreateAsync(assignment);
 
             _unitOfWork.Commit();
-            return Ok(assignment);
+            return Ok(_mapper.Map<SurveyAssignmentGridItem>(assignment));
         }
 
         [HttpPost("[action]")]
@@ -77,10 +81,17 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
 
             var assignments = _mapper.Map<IEnumerable<SurveyAssignment>>(vals);
-            await _SurveyAssignmentService.CreateAsync(assignments);
+            foreach(var assignment in assignments)
+            {
+                var saleOrder = await _saleOrderService.GetByIdAsync(assignment.SaleOrderId);
+                assignment.CompanyId = saleOrder.CompanyId;
+                assignment.PartnerId = saleOrder.PartnerId;
+            }
+
+            await _surveyAssignmentService.CreateAsync(assignments);
 
             _unitOfWork.Commit();
-            return Ok(assignments);
+            return Ok(vals);
         }
 
         [HttpPut("{id}")]
@@ -92,7 +103,7 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
 
-            var assign = await _SurveyAssignmentService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var assign = await _surveyAssignmentService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (assign == null)
                 return NotFound();
 
@@ -100,7 +111,7 @@ namespace TMTDentalAPI.Controllers
 
             assign = _mapper.Map(val, assign);
 
-            await _SurveyAssignmentService.UpdateAsync(assign);
+            await _surveyAssignmentService.UpdateAsync(assign);
 
             _unitOfWork.Commit();
 
@@ -115,7 +126,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
            
             await _unitOfWork.BeginTransactionAsync();
-            await _SurveyAssignmentService.ActionContact(ids);
+            await _surveyAssignmentService.ActionContact(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -128,7 +139,7 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _SurveyAssignmentService.ActionCancel(ids);
+            await _surveyAssignmentService.ActionCancel(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -138,7 +149,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionDone(AssignmentActionDone val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _SurveyAssignmentService.ActionDone(val);
+            await _surveyAssignmentService.ActionDone(val);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -147,7 +158,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Survey.Assignment.Update")]
         public async Task<IActionResult> JsonPatchWithModelState(Guid id, [FromBody]JsonPatchDocument<SurveyAssignmentPatch> patchDoc)
         {
-            var entity = await _SurveyAssignmentService.GetByIdAsync(id);
+            var entity = await _surveyAssignmentService.GetByIdAsync(id);
             if (entity == null)
             {
                 return NotFound();
@@ -156,7 +167,7 @@ namespace TMTDentalAPI.Controllers
             patchDoc.ApplyTo(entityMap, ModelState);
             _mapper.Map(entityMap, entity);
             await _unitOfWork.BeginTransactionAsync();
-            await _SurveyAssignmentService.UpdateAsync(entity);
+            await _surveyAssignmentService.UpdateAsync(entity);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -166,12 +177,12 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var assign = await _SurveyAssignmentService.GetByIdAsync(id);
+            var assign = await _surveyAssignmentService.GetByIdAsync(id);
 
             if (assign == null)
                 return NotFound();
 
-            await _SurveyAssignmentService.DeleteAsync(assign);
+            await _surveyAssignmentService.DeleteAsync(assign);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -180,18 +191,28 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Survey.Assignment.Read")]
         public async Task<IActionResult> DefaultGetList(SurveyAssignmentDefaultGetPar val)
         {
-            var result = await _SurveyAssignmentService.DefaultGetList(val);
+            var result = await _surveyAssignmentService.DefaultGetList(val);
             return Ok(result);
         }
-
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Survey.Assignment.Read")]
-        public async Task<IActionResult> GetSummary(SurveyAssignmentGetCountVM val)
+        public async Task<IActionResult> GetSummary(SurveyAssignmentGetSummaryFilter val)
         {
-            var result = await _SurveyAssignmentService.GetCount(val);
+            var result = await _surveyAssignmentService.GetSummary(val);
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.Update")]
+        public async Task<IActionResult> UpdateEmployee(SurveyAssignmentUpdateEmployee val)
+        {
+            var assignment = await _surveyAssignmentService.GetByIdAsync(val.Id);
+            if (assignment == null)
+                return NotFound();
+            assignment.EmployeeId = val.EmployeeId;
+            await _surveyAssignmentService.UpdateAsync(assignment);
+            return NoContent();
+        }
     }
 }

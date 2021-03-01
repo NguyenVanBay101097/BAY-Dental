@@ -8,7 +8,7 @@ import { WebService } from 'src/app/core/services/web.service';
 import { SurveyQuestionService } from '../survey-question.service';
 import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userinput.service';
-import { SurveyService } from '../survey.service';
+import { SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-detail-survey-imformation',
@@ -32,7 +32,7 @@ export class SurveyManageDetailSurveyImformationComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private surveyService: SurveyService,
+    private surveyService: SurveyAssignmentService,
     private notificationService: NotificationService,
     private surveyTagService: SurveyTagService,
     private userInputService: SurveyUserinputService,

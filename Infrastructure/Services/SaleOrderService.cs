@@ -856,7 +856,6 @@ namespace Infrastructure.Services
             return discount_amount;
         }
 
-
         private decimal _GetRewardValuesDiscountFixedAmount(SaleOrder self, SaleCouponProgram program)
         {
             var total_amount = _GetPaidOrderLines(self).Sum(x => x.PriceTotal);
@@ -1965,8 +1964,6 @@ namespace Infrastructure.Services
             }
         }
 
-
-
         public void _ComputeResidual(IEnumerable<AccountInvoice> invoices)
         {
             var invoiceObj = GetService<IAccountInvoiceService>();
@@ -2276,8 +2273,6 @@ namespace Infrastructure.Services
 
         }
 
-
-
         //kiểm tra product chiết khấu tổng có tồn tại chưa
         private async Task<Product> CheckProductDiscount(ApplyDiscountSaleOrderViewModel val)
         {
@@ -2377,8 +2372,40 @@ namespace Infrastructure.Services
 
             return lines;
         }
+
+        public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)
+        {
+            Sudo = true;
+            var query = SearchQuery(x => x.State == "done" && !x.Assignments.Any());
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateDone >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateDone <= dateTo);
+            }
+
+            var totalItem = await query.CountAsync();
+            var items = await query.OrderBy(x => x.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderToSurvey()
+            {
+                DateOrder = x.DateOrder,
+                PartnerName = x.Partner.Name,
+                PartnerPhone = x.Partner.Phone,
+                PartnerRef = x.Partner.Ref,
+                Id = x.Id,
+                Name = x.Name,
+                DateDone = x.DateDone
+            }).ToListAsync();
+
+            return new PagedResult2<SaleOrderToSurvey>(totalItem, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
     }
-
-
-
 }

@@ -358,11 +358,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("AutocompleteSudo")]
+        //Lấy danh sách nhân viên có thể thực hiện khảo sát
+        [HttpGet("[action]")]
         [CheckAccess(Actions = "Catalog.Employee.Read")]
-        public async Task<IActionResult> AutocompleteSudo(EmployeePaged val)
+        public async Task<IActionResult> AllowSurveyList()
         {
-            var result = await _employeeService.GetAutocompleteSudoAsync(val);
+            var result = await _employeeService.GetAllowSurveyList();
             return Ok(result);
         }
 

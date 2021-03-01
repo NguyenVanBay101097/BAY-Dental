@@ -6,7 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { SurveyCallcontentService } from '../survey-callcontent.service';
-import { SurveyAssignmentDisplay, SurveyService } from '../survey.service';
+import { SurveyAssignmentDisplay, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-detail',
@@ -17,7 +17,7 @@ export class SurveyManageDetailComponent implements OnInit {
   id: string;
   surveyAssignment: any;
   constructor(
-    private surveyService: SurveyService,
+    private surveyService: SurveyAssignmentService,
     private activateRoute: ActivatedRoute
   ) { }
 

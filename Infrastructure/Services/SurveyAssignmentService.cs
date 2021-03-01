@@ -42,17 +42,18 @@ namespace Infrastructure.Services
 
             if (val.dateFrom.HasValue)
             {
-                query = query.Where(x => x.DateDone >= val.dateFrom || x.DateDone == null);
+                query = query.Where(x => x.DateDone >= val.dateFrom);
             }
 
             if (val.dateTo.HasValue)
             {
-                query = query.Where(x => x.DateDone <= val.dateTo || x.DateDone == null);
+                var dateTo = val.dateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateDone <= dateTo);
             }
 
             var totalItem = await query.CountAsync();
 
-            var res = await query.Include(x => x.Partner).Skip(val.Offset).Take(val.Limit).Select(x => new SurveyAssignmentDefaultGet()
+            var res = await query.Skip(val.Offset).Take(val.Limit).Select(x => new SurveyAssignmentDefaultGet()
             {
                 DateOrder = x.DateOrder,
                 PartnerName = x.Partner.Name,
@@ -71,11 +72,11 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<SurveyAssignmentBasic>> GetPagedResultAsync(SurveyAssignmentPaged val)
+        public async Task<PagedResult2<SurveyAssignmentGridItem>> GetPagedResultAsync(SurveyAssignmentPaged val)
         {
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
-            var query = getAllQuery(val);
+            var query = GetAllQuery(val);
             if (val.IsGetScore.HasValue && val.IsGetScore == true)
             {
                 query = query.Include(x => x.UserInput);
@@ -87,19 +88,19 @@ namespace Infrastructure.Services
             var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
                 .Select(x => new { ParnerId = x.PartnerId, CategoryName = x.Category.Name }).ToListAsync();
 
-            var resItems = _mapper.Map<IEnumerable<SurveyAssignmentBasic>>(items);
+            var resItems = _mapper.Map<IEnumerable<SurveyAssignmentGridItem>>(items);
             foreach (var item in resItems)
             {
                 item.PartnerCategoriesDisplay = string.Join(", ", pnCategories.Where(x => x.ParnerId == item.PartnerId).Select(x => x.CategoryName));
             }
 
-            return new PagedResult2<SurveyAssignmentBasic>(count, val.Offset, val.Limit)
+            return new PagedResult2<SurveyAssignmentGridItem>(count, val.Offset, val.Limit)
             {
                 Items = resItems
             };
         }
 
-        private IQueryable<SurveyAssignment> getAllQuery(SurveyAssignmentPaged val)
+        private IQueryable<SurveyAssignment> GetAllQuery(SurveyAssignmentPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
@@ -112,13 +113,13 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.Status == val.Status);
             }
-            if (val.dateFrom.HasValue)
+            if (val.DateFrom.HasValue)
             {
-                query = query.Where(x => x.SaleOrder.LastUpdated >= val.dateFrom.Value);
+                query = query.Where(x => x.SaleOrder.LastUpdated >= val.DateFrom.Value);
             }
-            if (val.dateTo.HasValue)
+            if (val.DateTo.HasValue)
             {
-                query = query.Where(x => x.SaleOrder.LastUpdated <= val.dateTo.Value);
+                query = query.Where(x => x.SaleOrder.LastUpdated <= val.DateTo.Value);
             }
             if (val.EmployeeId.HasValue)
             {
@@ -130,7 +131,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Employee.UserId == val.UserId.ToString());
             }
 
-            query = query.OrderByDescending(x => x.SaleOrder.DateDone ?? x.SaleOrder.DateDone.Value);
+            query = query.OrderByDescending(x => x.DateCreated);
 
             return query;
         }
@@ -227,13 +228,35 @@ namespace Infrastructure.Services
             await UpdateAsync(assigns);
         }
 
-        public async Task<int> GetSummary(SurveyAssignmentPaged val)
+        public async Task<IEnumerable<SurveyAssignmentGetSummary>> GetSummary(SurveyAssignmentGetSummaryFilter val)
         {
-            var query = getAllQuery(val);
-            return await query.CountAsync();
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+            {
+                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.AssignDate >= val.DateFrom);
+            }
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.AssignDate <= dateTo);
+            }
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            var res = await query.GroupBy(x => x.Status).Select(x => new SurveyAssignmentGetSummary
+            {
+                Status = x.Key,
+                Count = x.Count()
+            }).ToListAsync();
+
+            return res;
         }
 
-        public async Task<long> GetCount(SurveyAssignmentGetCountVM val)
+        public async Task<long> GetCount(SurveyAssignmentGetSummaryFilter val)
         {
             var query = SearchQuery();
 

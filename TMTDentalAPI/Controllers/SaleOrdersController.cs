@@ -425,5 +425,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(new PrintData() { html = html });
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ToSurvey([FromBody]SaleOrderToSurveyFilter val)
+        {
+            var paged = await _saleOrderService.GetToSurveyPagedAsync(val);
+            return Ok(paged);
+        }
     }
 }

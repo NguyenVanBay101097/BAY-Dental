@@ -7,7 +7,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { SurveyAssignmentDefaultGet, SurveyAssignmentDefaultGetPar, SurveyService } from '../survey.service';
+import { SurveyAssignmentDefaultGet, SurveyAssignmentDefaultGetPar, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-assign-employee-create-dialog',
@@ -24,7 +24,7 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
     private notificationService: NotificationService,
-    private surveyService: SurveyService,
+    private surveyService: SurveyAssignmentService,
     private employeeService: EmployeeService
   ) { }
 

@@ -11,19 +11,19 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             Limit = 20;
         }
+
         public int Offset { get; set; }
         public int Limit { get; set; }
         public string Search { get; set; }
         public string Status { get; set; }
-        public DateTime? dateFrom { get; set; }
-        public DateTime? dateTo { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
         public bool? IsGetScore { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? UserId { get; set; }
-
     }
 
-    public class SurveyAssignmentBasic
+    public class SurveyAssignmentGridItem
     {
         public Guid Id { get; set; }
         public string EmployeeName { get; set; }
@@ -142,7 +142,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid EmployeeId { get; set; }
     }
 
-    public class SurveyAssignmentGetCountVM
+    public class SurveyAssignmentGetSummaryFilter
     {
         public string Status { get; set; }
 
@@ -153,6 +153,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
 
         public Guid? UserId { get; set; }
+    }
+
+    public class SurveyAssignmentGetSummary
+    {
+        public string Status { get; set; }
+
+        public int Count { get; set; }
+    }
+
+    public class SurveyAssignmentUpdateEmployee
+    {
+        public Guid Id { get; set; }
+
+        public Guid EmployeeId { get; set; }
     }
 
     public class EmployeeCountSurvey

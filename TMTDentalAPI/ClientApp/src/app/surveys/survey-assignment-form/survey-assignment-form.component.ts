@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyCallcontentService } from '../survey-callcontent.service';
 import { SurveyUserinputDialogComponent } from '../survey-userinput-dialog/survey-userinput-dialog.component';
-import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyService } from '../survey.service';
+import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-assignment-form',
@@ -25,7 +25,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
-    private surveyService: SurveyService,
+    private surveyService: SurveyAssignmentService,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
     private callContentService: SurveyCallcontentService,

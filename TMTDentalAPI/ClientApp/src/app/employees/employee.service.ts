@@ -59,8 +59,8 @@ export class EmployeeService {
     return this.http.post<any>(this.baseApi + "api/Employees" + "/ActionActive/"+ id, {active:active});
   }
 
-  getEmployeeSudoSimpleList(val): Observable<EmployeeSimple[]> {
-    return this.http.post<EmployeeSimple[]>(this.baseApi + "api/Employees/AutocompleteSudo", val);
+  getAllowSurveyList() {
+    return this.http.get(this.baseApi + "api/Employees/AllowSurveyList");
   }
     
   GetEmployeeSurveyCount(val): Observable<PagedResult2<EmployeeSurveyDisplay>>{

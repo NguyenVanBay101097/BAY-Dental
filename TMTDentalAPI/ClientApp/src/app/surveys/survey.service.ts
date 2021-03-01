@@ -78,12 +78,10 @@ export class AssignmentActionDone {
   surveyUserInput: any;
 }
 
-export class SurveyAssignmentGetCountVM {
-  status: string;
+export class SurveyAssignmentGetSummaryFilter {
   dateFrom: string;
   employeeId: string;
   dateTo: string;
-  userId: string;
 }
 
 export class SurveyAssignmentDefaultGetPar {
@@ -98,10 +96,15 @@ export class SurveyAssignmentDefaultGetPar {
   dateTo: string;
 }
 
+export class SurveyAssignmentUpdateEmployee {
+  id: string;
+  employeeId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class SurveyService {
+export class SurveyAssignmentService {
 
   constructor(private http: HttpClient, @Inject("BASE_API") private base_api: string) { }
   apiUrl = "api/SurveyAssignments"
@@ -122,8 +125,8 @@ export class SurveyService {
     return this.http.post(this.base_api + this.apiUrl + '/CreateList', vals);
   }
 
-  getSumary(val): Observable<number> {
-    return this.http.post<number>(this.base_api + this.apiUrl + '/GetSummary', val);
+  getSumary(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/GetSummary', val);
   }
 
   actionContact(ids: string[]) {
@@ -138,8 +141,8 @@ export class SurveyService {
     return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids);
   }
 
-  updateAssignment(id: string, val: any) {
-    return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
+  updateAssignment(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/UpdateEmployee', val);
   }
 
 }
