@@ -33,6 +33,7 @@ import { TreatmentProcessServiceDialogComponent } from './treatment-process-serv
 import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 import { SaleOrderDotkhamTeethPopoverComponent } from './sale-order-dotkham-teeth-popover/sale-order-dotkham-teeth-popover.component';
 import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
+import { SaleOrderProductRequestListComponent } from './sale-order-product-request-list/sale-order-product-request-list.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
     TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
     SaleOrderDotkhamTeethPopoverComponent,
+    SaleOrderProductRequestListComponent,
   ],
   imports: [
     CommonModule,
