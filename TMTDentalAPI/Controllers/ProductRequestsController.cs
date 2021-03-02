@@ -73,7 +73,38 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _productRequestervice.ActionConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _productRequestervice.ActionCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        {
+            if (ids == null || ids.Count() == 0)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _productRequestervice.ActionDone(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)

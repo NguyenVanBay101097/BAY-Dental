@@ -18,6 +18,11 @@ namespace Infrastructure.Services
 
         Task UpdateRequest(Guid id, ProductRequestSave val);
 
+        Task ActionConfirm(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
+
+        Task ActionDone(IEnumerable<Guid> ids);
+
         Task<ProductRequestLineDisplay> Getline(GetLinePar val);
     }
 }
