@@ -17,5 +17,7 @@ namespace Infrastructure.Services
         Task<ProductRequest> CreateRequest(ProductRequestSave val);
 
         Task UpdateRequest(Guid id, ProductRequestSave val);
+
+        Task<ProductRequestLineDisplay> Getline(GetLinePar val);
     }
 }

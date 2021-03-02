@@ -88,5 +88,13 @@ namespace TMTDentalAPI.Controllers
             await _productRequestervice.DeleteAsync(request);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetLine(GetLinePar val)
+        {
+            var res = await _productRequestervice.Getline(val);
+            return Ok(res);
+        }
+
     }
 }

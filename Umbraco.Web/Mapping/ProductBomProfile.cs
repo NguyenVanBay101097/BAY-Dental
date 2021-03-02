@@ -20,6 +20,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore());
             CreateMap<ProductBomDisplay, ProductBom>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<ProductBom, ProductBomForSaleOrderLine>();
         }
     }   
 }

@@ -176,5 +176,32 @@ namespace Infrastructure.Services
 
             }
         }
+
+        public async Task<ProductRequestLineDisplay> Getline(GetLinePar val)
+        {
+            var lineObj = GetService<IProductRequestLineService>();
+            var bomObj = GetService<IProductBomService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+
+            //validate số lượng
+            var bom = await bomObj.SearchQuery(x => x.Id == val.ProductBomId).Include(x=> x.ProducUOM).Include(x=> x.MaterialProduct).FirstOrDefaultAsync();
+            if (bom == null)
+                throw new Exception("Không tồn tại vật tư");
+
+            var sum = await lineObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId).SumAsync(x => x.ProductQty);
+            if (sum >= bom.Quantity)
+                throw new Exception("Số lượng yêu sử dụng vật tư đã đủ");
+            //return line.
+            var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
+            return new ProductRequestLineDisplay() {
+                ProductId = bom.MaterialProductId,
+                Product = _mapper.Map<ProductSimple>(bom.MaterialProduct),
+                ProductQty = 0,
+                ProductUOMId = bom.ProductUOMId,
+                ProducUOM = _mapper.Map<UoMBasic>(bom.ProducUOM),
+                SaleOrderLineId = val.SaleOrderLineId,
+                SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine)
+            };
+        }
     }
 }

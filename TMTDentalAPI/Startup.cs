@@ -301,6 +301,7 @@ namespace TMTDentalAPI
             services.AddScoped<IMedicineOrderLineService, MedicineOrderLineService>();
             services.AddScoped<IProductRequestService, ProductRequestService>();
             services.AddScoped<IProductRequestLineService, ProductRequestLineService>();
+            services.AddScoped<IProductBomService, ProductBomService>();
 
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();

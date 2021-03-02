@@ -61,4 +61,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int Sequence { get; set; }
     }
+
+    public class ProductBomForSaleOrderLine
+    {
+        public Guid Id { get; set; }
+        public string MaterialProductName { get; set; }
+        public string ProducUOMName { get; set; }
+        public decimal Quantity { get; set; }
+        public int Sequence { get; set; }
+    }
 }

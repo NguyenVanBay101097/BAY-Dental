@@ -149,4 +149,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
     }
+
+    public class GetLinePar
+    {
+        public Guid SaleOrderLineId { get; set; }
+        public Guid ProductBomId { get; set; }
+    }
 }

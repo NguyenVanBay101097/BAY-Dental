@@ -17,7 +17,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? MaterialProductId { get; set; }
         public Product MaterialProduct { get; set; }
-
+        /// <summary>
+        /// uom của material
+        /// </summary>
         public Guid ProductUOMId { get; set; }
         public UoM ProducUOM { get; set; }
 

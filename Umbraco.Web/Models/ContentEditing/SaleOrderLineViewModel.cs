@@ -44,4 +44,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string State { get; set; }
     }
+
+    public class SaleOrderLineForProductRequest
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public List<ProductBomForSaleOrderLine> Boms { get; set; } = new List<ProductBomForSaleOrderLine>();
+    }
 }
