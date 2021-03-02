@@ -1,1 +1,35 @@
-<p>sale-order-product-request-list works!</p>
+<div>
+    <button class="btn btn-primary btn-sm" title="Yêu cầu vật tư" (click)="createItem()">
+        Yêu cầu vật tư
+    </button>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Ngày yêu cầu</th>
+                <th>Mã yêu cầu</th>
+                <th>Người yêu cầu</th>
+                <th>Bác sĩ</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of productRequests">
+                <!-- <td>{{ item.date | date : 'shortDate'}}</td> -->
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(item)">
+                        <span class="far fa-edit"></span>
+                    </button>
+                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(item)">
+                        <span class="far fa-trash-alt"></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
