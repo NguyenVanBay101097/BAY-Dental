@@ -18,4 +18,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CategoryId { get; set; }
     }
+
+    public class UoMSimple
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+    }
 }
