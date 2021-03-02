@@ -69,7 +69,7 @@ namespace Infrastructure.Services
             request.User = _mapper.Map<ApplicationUserSimple>(user);
             request.SaleOrderId = val.SaleOrderId;
             request.Date = DateTime.Now;
-
+            request.State = "draft";
             return request;
         }
 
