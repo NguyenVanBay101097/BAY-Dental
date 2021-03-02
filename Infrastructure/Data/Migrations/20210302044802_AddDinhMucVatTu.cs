@@ -20,8 +20,7 @@ namespace Infrastructure.Data.Migrations
                     MaterialProductId = table.Column<Guid>(nullable: true),
                     ProductUOMId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<decimal>(nullable: false),
-                    Sequence = table.Column<int>(nullable: false),
-                    ProductId1 = table.Column<Guid>(nullable: true)
+                    Sequence = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,12 +43,6 @@ namespace Infrastructure.Data.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductBoms_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ProductBoms_UoMs_ProductUOMId",
                         column: x => x.ProductUOMId,
@@ -202,11 +195,6 @@ namespace Infrastructure.Data.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductBoms_ProductId1",
-                table: "ProductBoms",
-                column: "ProductId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductBoms_ProductUOMId",
                 table: "ProductBoms",
                 column: "ProductUOMId");
@@ -284,6 +272,18 @@ namespace Infrastructure.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_AccountPayments_AccountAccounts_DestinationAccountId",
+                table: "AccountPayments");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_AccountPayments_LoaiThuChis_LoaiThuChiId",
+                table: "AccountPayments");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_HrPayslips_AccountPayments_AccountPaymentId",
+                table: "HrPayslips");
+
             migrationBuilder.DropTable(
                 name: "ProductBoms");
 
