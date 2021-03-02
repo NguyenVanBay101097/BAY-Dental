@@ -17,5 +17,10 @@ namespace Infrastructure.Services
         Task<ProductRequest> CreateRequest(ProductRequestSave val);
 
         Task UpdateRequest(Guid id, ProductRequestSave val);
+
+        Task ActionConfirm(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);
+
+        Task ActionDone(IEnumerable<Guid> ids);
     }
 }
