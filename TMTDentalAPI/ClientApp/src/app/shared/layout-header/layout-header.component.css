@@ -6,8 +6,7 @@
     font-size: 18px;
 }
 
-
-.tag{
+.tag {
     padding: 3px;
     border-radius: 10px;
     margin-right: 5px;
@@ -41,6 +40,7 @@
 
 .result-select {
     padding: 10px;
+    cursor: pointer;
     border-bottom: 1px solid #dae0e5;
 }
 
@@ -52,4 +52,8 @@
     height: 32px;
     padding: 2px 5px;
     line-height: 1.2;
+}
+
+.input-group-append>.search-cancel:hover {
+    background-color: #b5c4d1;
 }

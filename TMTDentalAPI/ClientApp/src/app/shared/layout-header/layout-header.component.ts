@@ -45,7 +45,8 @@ export class LayoutHeaderComponent implements OnInit {
 
   ngOnInit() {
     this.formSelect = this.fb.group({
-      type: 'all'
+      type: 'all',
+      searchValue: ''
     })
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
@@ -188,6 +189,10 @@ export class LayoutHeaderComponent implements OnInit {
 
   clickOut() {
     this.isSearch = false;
+  }
+
+  cancelSearch() {
+    this.formSelect.get('searchValue').setValue('');
   }
 
   clickItem(item) {
