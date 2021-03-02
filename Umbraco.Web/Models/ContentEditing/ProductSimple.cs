@@ -21,4 +21,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? LaboPrice { get; set; }
     }
+
+    public class ProductSimpleAutoComplete
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+    }
 }

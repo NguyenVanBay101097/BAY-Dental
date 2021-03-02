@@ -15,6 +15,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<UoMSave, UoM>();
             CreateMap<UoM, UoMDisplay>();
             CreateMap<UoMDisplay, UoM>();
+            CreateMap<UoM, UoMSimple>();
         }
     }
 }

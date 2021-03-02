@@ -50,5 +50,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
         
         public string Firm { get; set; }
+        /// <summary>
+        /// danh sách định mức vật tư
+        /// </summary>
+        public ICollection<ProductBomSave> Boms { get; set; } = new List<ProductBomSave>();
     }
 }

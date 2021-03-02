@@ -31,7 +31,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Tham chiếu Product.type Service
         /// </summary>
         public Guid? ProductId { get; set; }
-        public Product Product { get; set; }
+        public ProductDisplay Product { get; set; }
         
         /// <summary>
         /// Mặc định 
