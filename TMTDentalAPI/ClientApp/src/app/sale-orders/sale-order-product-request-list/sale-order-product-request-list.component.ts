@@ -46,7 +46,12 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   }
 
   createItem() {
-    
+    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Yêu cầu vật tư';
+    modalRef.result.then((result) => {
+      this.loadData();
+    }, () => {
+    });
   }
 
   editItem(item) {

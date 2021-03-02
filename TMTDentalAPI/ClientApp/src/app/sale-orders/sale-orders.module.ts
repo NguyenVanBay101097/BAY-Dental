@@ -92,7 +92,8 @@ import { SaleOrderProductRequestDialogComponent } from './sale-order-product-req
     LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
     TreatmentProcessServiceDialogComponent,
-    SaleOrdersDotkhamCuComponent
+    SaleOrdersDotkhamCuComponent,
+    SaleOrderProductRequestDialogComponent
   ]
 })
 export class SaleOrdersModule { }
