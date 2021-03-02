@@ -69,6 +69,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class ProductRequestDefaultGet
+    {
+        public Guid? SaleOrderId { get; set; }
+    }
+
+
     public class ProductRequestDisplay
     {
         public Guid Id { get; set; }
@@ -90,13 +96,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? EmployeeId { get; set; }
         public EmployeeSimple Employee { get; set; }
 
+        public Guid? SaleOrderId { get; set; }
+        public SaleOrderDisplay SaleOrder { get; set; }
+
         /// <summary>
         /// phiếu xuất
         /// </summary>
         public Guid? PickingId { get; set; }
         public StockPickingSimple Picking { get; set; }
 
-        public IEnumerable<ProductRequestLineDisplay> lines { get; set; } = new List<ProductRequestLineDisplay>();
+        public IEnumerable<ProductRequestLineDisplay> Lines { get; set; } = new List<ProductRequestLineDisplay>();
 
         /// <summary>
         /// draft : nháp
@@ -129,7 +138,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? PickingId { get; set; }
 
-        public IEnumerable<ProductRequestLineSave> lines { get; set; } = new List<ProductRequestLineSave>();
+        public IEnumerable<ProductRequestLineSave> Lines { get; set; } = new List<ProductRequestLineSave>();
 
         /// <summary>
         /// draft : nháp
