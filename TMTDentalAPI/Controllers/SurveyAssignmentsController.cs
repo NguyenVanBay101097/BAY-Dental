@@ -23,17 +23,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly IEmployeeService _employeeService;
 
         public SurveyAssignmentsController(
             ISurveyAssignmentService surveyAssignmentService,
             IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, ISaleOrderService saleOrderService
+            IUnitOfWorkAsync unitOfWork, ISaleOrderService saleOrderService,
+            IEmployeeService employeeService
             )
         {
             _surveyAssignmentService = surveyAssignmentService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _saleOrderService = saleOrderService;
+            _employeeService = employeeService;
         }
 
         [HttpGet]
@@ -65,6 +68,9 @@ namespace TMTDentalAPI.Controllers
             var saleOrder = await _saleOrderService.GetByIdAsync(val.SaleOrderId);
             assignment.CompanyId = saleOrder.CompanyId;
             assignment.PartnerId = saleOrder.PartnerId;
+
+            var employee = await _employeeService.GetByIdAsync(val.EmployeeId);
+            assignment.UserId = employee.UserId;
             await _surveyAssignmentService.CreateAsync(assignment);
 
             _unitOfWork.Commit();
@@ -86,6 +92,9 @@ namespace TMTDentalAPI.Controllers
                 var saleOrder = await _saleOrderService.GetByIdAsync(assignment.SaleOrderId);
                 assignment.CompanyId = saleOrder.CompanyId;
                 assignment.PartnerId = saleOrder.PartnerId;
+
+                var employee = await _employeeService.GetByIdAsync(assignment.EmployeeId);
+                assignment.UserId = employee.UserId;
             }
 
             await _surveyAssignmentService.CreateAsync(assignments);
@@ -211,6 +220,9 @@ namespace TMTDentalAPI.Controllers
             if (assignment == null)
                 return NotFound();
             assignment.EmployeeId = val.EmployeeId;
+            var employee = await _employeeService.GetByIdAsync(assignment.EmployeeId);
+            assignment.UserId = employee.UserId;
+
             await _surveyAssignmentService.UpdateAsync(assignment);
             return NoContent();
         }

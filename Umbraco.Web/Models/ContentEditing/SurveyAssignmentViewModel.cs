@@ -18,7 +18,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Status { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public bool? IsGetScore { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? UserId { get; set; }
     }
@@ -81,18 +80,201 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        /// <summary>
-        /// detail
-        /// </summary>
-        public Guid SaleOrderId { get; set; }
-        public SaleOrderDisplayVm SaleOrder { get; set; }
+        public SurveyAssignmentDisplayPartner Partner { get; set; }
+
+        public SurveyAssignmentDisplaySaleOrder SaleOrder { get; set; }
+
+        public IEnumerable<SurveyAssignmentDisplaySaleOrderLine> SaleLines { get; set; }
+
+        public IEnumerable<SurveyAssignmentDisplayDotKham> DotKhams { get; set; }
 
         public Guid? UserInputId { get; set; }
         public SurveyUserInputDisplay UserInput { get; set; }
 
-        public IEnumerable<SurveyCallContentDisplay> CallContents { get; set; } = new List<SurveyCallContentDisplay>();
-
         public string Status { get; set; }
+    }
+
+    public class SurveyAssignmentDisplayPartner
+    {
+        public string Name { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Ref { get; set; }
+
+        public string Gender { get; set; }
+        public string GenderDisplay
+        {
+            get
+            {
+                switch (Gender)
+                {
+                    case "female": return "Nữ";
+                    case "male": return "Nam";
+                    default: return "khác";
+                }
+            }
+            set { }
+        }
+
+        public string DateOfBirth
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue)
+                    return string.Empty;
+
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+            set { }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public IEnumerable<string> Histories { get; set; }
+
+        public int? BirthYear { get; set; }
+
+        /// <summary>
+        /// Nghề nghiệp
+        /// </summary>
+        public string JobTitle { get; set; }
+
+        /// <summary>
+        /// Tháng sinh
+        /// </summary>
+        public int? BirthMonth { get; set; }
+
+        /// <summary>
+        /// Ngày sinh
+        /// </summary>
+        public int? BirthDay { get; set; }
+
+        /// <summary>
+        /// Email
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Ảnh chân dung
+        /// </summary>
+        public string Avatar { get; set; }
+
+        public IEnumerable<string> Categories { get; set; }
+
+        public DateTime? Date { get; set; }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+    }
+
+    public class SurveyAssignmentDisplaySaleOrder
+    {
+        public string Name { get; set; }
+
+        public DateTime DateOrder { get; set; }
+
+        public string State { get; set; }
+
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "done":
+                        return "Hoàn thành";
+                    case "sale":
+                        return "Đang điều trị";
+                    default:
+                        return "Nháp";
+                }
+            }
+            set { }
+        }
+
+        public decimal? AmountTotal { get; set; }
+    }
+
+    public class SurveyAssignmentDisplaySaleOrderLine
+    {
+        public string ProductName { get; set; }
+
+        public string EmployeeName { get; set; }
+
+        public decimal ProductUOMQty { get; set; }
+
+        public IEnumerable<string> Teeth { get; set; }
+
+        public string Diagnostic { get; set; }
+    }
+
+    public class SurveyAssignmentDisplayDotKham
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Ngày khám
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        /// <summary>
+        /// Mô tả
+        /// </summary>
+        public string Reason { get; set; }
+
+        public string DoctorName { get; set; }
+
+        public IEnumerable<SurveyAssignmentDisplayDotKhamLine> Lines { get; set; } = new List<SurveyAssignmentDisplayDotKhamLine>();
+    }
+
+    public class SurveyAssignmentDisplayDotKhamLine
+    {
+        public string NameStep { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string Note { get; set; }
+
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
     }
 
     public class SurveyAssignmentSave
@@ -152,7 +334,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? EmployeeId { get; set; }
 
-        public Guid? UserId { get; set; }
+        public string UserId { get; set; }
     }
 
     public class SurveyAssignmentGetSummary

@@ -65,12 +65,60 @@ export class SurveyAssignmentDefaultGet {
 
 export class SurveyAssignmentDisplay {
   id: string;
-  saleOrderId: string;
-  saleOrder: SaleOrderDisplayVm;
+  partner: SurveyAssignmentDisplayPartner;
+  saleOrder: SurveyAssignmentDisplaySaleOrder;
+  saleLines: SurveyAssignmentDisplaySaleOrderLine[];
+  dotKhams: SurveyAssignmentDisplayDotKham[];
   userInputId: string;
   userInput: SurveyUserInputDisplay;
-  callContents: SurveyCallContentDisplay[];
   status: string;
+}
+
+export class SurveyAssignmentDisplayPartner {
+  avatar: string;
+  name: string;
+  ref: string;
+  date: string;
+  gender: string;
+  genderDisplay: string;
+  dateOfBirth: string;
+  jobTitle: string;
+  histories: string[];
+  phone: string;
+  email: string;
+  address: string;
+  categories: string[];
+}
+
+export class SurveyAssignmentDisplaySaleOrder {
+  name: string;
+  dateOrder: string;
+  state: string;
+  stateDisplay: string;
+  amountTotal: number;
+}
+
+export class SurveyAssignmentDisplaySaleOrderLine {
+  productName: string;
+  employeeName: string;
+  productUOMQty: number;
+  teeth: string[];
+  diagnostic: string;
+}
+
+export class SurveyAssignmentDisplayDotKham {
+  id: string;
+  date: string;
+  reason: number;
+  doctorName: string[];
+  lines: SurveyAssignmentDisplayDotKhamLine[];
+}
+
+export class SurveyAssignmentDisplayDotKhamLine {
+  nameStep: string;
+  productName: string;
+  note: number;
+  teeth: string[];
 }
 
 export class AssignmentActionDone {
@@ -82,6 +130,7 @@ export class SurveyAssignmentGetSummaryFilter {
   dateFrom: string;
   employeeId: string;
   dateTo: string;
+  userId: string;
 }
 
 export class SurveyAssignmentDefaultGetPar {

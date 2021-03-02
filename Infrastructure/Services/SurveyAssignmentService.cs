@@ -77,11 +77,7 @@ namespace Infrastructure.Services
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var query = GetAllQuery(val);
-            if (val.IsGetScore.HasValue && val.IsGetScore == true)
-            {
-                query = query.Include(x => x.UserInput);
-            }
-            query = query.Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            query = query.Include(x => x.UserInput).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var count = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
@@ -144,15 +140,80 @@ namespace Infrastructure.Services
             saleOrderLineObj.Sudo = true;
             var partnerObj = GetService<IPartnerService>();
             partnerObj.Sudo = true;
+            var dotkhamObj = GetService<IDotKhamService>();
+            dotkhamObj.Sudo = true;
+            var dotKhamLineObj = GetService<IDotKhamLineService>();
+            dotKhamLineObj.Sudo = true;
 
-            var assign = await SearchQuery(x => x.Id == id).Include(x => x.UserInput).ThenInclude(s => s.Lines).Include(x => x.SaleOrder).FirstOrDefaultAsync();
-            if (assign == null) throw new Exception("Không tìm thấy khảo sát!");
+            var assign = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            if (assign == null) 
+                throw new Exception("Không tìm thấy khảo sát!");
 
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
-            assignDisplay.SaleOrder = _mapper.Map<SaleOrderDisplayVm>(await saleOrderObj.SearchQuery(x => x.Id == assignDisplay.SaleOrderId).FirstOrDefaultAsync());
-            assignDisplay.SaleOrder.Partner = await partnerObj.GetInfoPartner(assignDisplay.SaleOrder.PartnerId);
-            assignDisplay.SaleOrder.OrderLines = await saleOrderLineObj.GetDisplayBySaleOrder(assignDisplay.SaleOrderId);
-            assignDisplay.SaleOrder.DotKhams = await saleOrderObj._GetListDotkhamInfo(assignDisplay.SaleOrderId);
+
+            assignDisplay.Partner = await partnerObj.SearchQuery(x => x.Id == assign.PartnerId)
+                .Select(x => new SurveyAssignmentDisplayPartner
+                {
+                    Avatar = x.Avatar,
+                    BirthDay = x.BirthDay,
+                    BirthMonth = x.BirthMonth,
+                    BirthYear = x.BirthYear,
+                    Categories = x.PartnerPartnerCategoryRels.Select(s => s.Category.Name),
+                    Gender = x.Gender,
+                    Name = x.Name,
+                    Ref = x.Ref,
+                    Date = x.Date,
+                    Phone = x.Phone,
+                    Email = x.Email,
+                    Histories = x.PartnerHistoryRels.Select(s => s.History.Name),
+                    JobTitle = x.JobTitle,
+                    Street = x.Street,
+                    WardName = x.WardName,
+                    DistrictName = x.DistrictName,
+                    CityName = x.CityName
+                }).FirstOrDefaultAsync();
+          
+            assignDisplay.SaleOrder = await saleOrderObj.SearchQuery(x => x.Id == assign.SaleOrderId)
+                .Select(x => new SurveyAssignmentDisplaySaleOrder { 
+                DateOrder = x.DateOrder,
+                Name = x.Name,
+                State = x.State,
+                AmountTotal = x.AmountTotal
+            }).FirstOrDefaultAsync();
+
+            assignDisplay.SaleLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == assign.SaleOrderId)
+                .OrderBy(x => x.Sequence)
+                .Select(x => new SurveyAssignmentDisplaySaleOrderLine
+                {
+                    ProductName = x.Product.Name,
+                    Diagnostic = x.Diagnostic,
+                    EmployeeName = x.Employee.Name,
+                    ProductUOMQty = x.ProductUOMQty,
+                    Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name)
+                }).ToListAsync();
+
+            assignDisplay.DotKhams = await dotkhamObj.SearchQuery(x => x.SaleOrderId == assign.SaleOrderId)
+                .OrderBy(x => x.DateCreated)
+                .Select(x => new SurveyAssignmentDisplayDotKham { 
+                    Id = x.Id,
+                    Date = x.Date,
+                    DoctorName = x.Doctor.Name,
+                    Reason = x.Reason,
+                })
+              .ToListAsync();
+
+            foreach(var dotKham in assignDisplay.DotKhams)
+            {
+                dotKham.Lines = await dotKhamLineObj.SearchQuery(x => x.DotKhamId == dotKham.Id)
+                    .OrderBy(x => x.Sequence).Select(x => new SurveyAssignmentDisplayDotKhamLine
+                    {
+                        Teeth = x.ToothRels.Select(s => s.Tooth.Name),
+                        NameStep = x.NameStep,
+                        Note = x.Note,
+                        ProductName = x.Product.Name
+                }).ToListAsync();
+            }
+
             return assignDisplay;
         }
 
@@ -247,6 +308,9 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
+            if (!string.IsNullOrEmpty(val.UserId))
+                query = query.Where(x => x.UserId == val.UserId);
+
             var res = await query.GroupBy(x => x.Status).Select(x => new SurveyAssignmentGetSummary
             {
                 Status = x.Key,
@@ -254,38 +318,6 @@ namespace Infrastructure.Services
             }).ToListAsync();
 
             return res;
-        }
-
-        public async Task<long> GetCount(SurveyAssignmentGetSummaryFilter val)
-        {
-            var query = SearchQuery();
-
-            if (!string.IsNullOrEmpty(val.Status))
-                query = query.Where(x => x.Status == val.Status);
-
-            if (val.DateFrom.HasValue)
-            {
-                var dateFrom = val.DateFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.SaleOrder.LastUpdated >= val.DateFrom);
-            }
-
-            if (val.DateTo.HasValue)
-            {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.SaleOrder.LastUpdated <= dateTo);
-            }
-
-            if (val.EmployeeId.HasValue)
-            {
-                query = query.Where(x => x.EmployeeId == val.EmployeeId);
-            }
-
-            if (val.UserId.HasValue)
-            {
-                query = query.Where(x => x.Employee.UserId == val.UserId.ToString());
-            }
-
-            return await query.LongCountAsync();
         }
 
         public override ISpecification<SurveyAssignment> RuleDomainGet(IRRule rule)

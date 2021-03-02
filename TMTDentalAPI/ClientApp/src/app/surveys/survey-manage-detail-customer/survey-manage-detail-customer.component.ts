@@ -55,10 +55,10 @@ export class SurveyManageDetailCustomerComponent implements OnInit {
 
         let control = this.formGroup.get('callContents') as FormArray;
         control.clear();
-        result.callContents.forEach(line => {
-          var g = this.fb.group(line);
-          control.push(g);
-        });
+        // result.callContents.forEach(line => {
+        //   var g = this.fb.group(line);
+        //   control.push(g);
+        // });
       });
     }
   }

@@ -61,5 +61,11 @@ namespace ApplicationCore.Entities
         /// ngày phân việc cho nhân viên
         /// </summary>
         public DateTime? AssignDate { get; set; }
+
+        /// <summary>
+        /// related: Employee.UserId
+        /// </summary>
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

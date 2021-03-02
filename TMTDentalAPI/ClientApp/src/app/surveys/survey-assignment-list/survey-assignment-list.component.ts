@@ -44,7 +44,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     { value: "done", name: "Hoàn thành" },
     { value: "contact", name: "Đang liên hệ" },
     { value: "draft", name: "Chưa gọi" },
-    { value: "", name: "Tổng khảo sát" }
+    { value: "total", name: "Tổng khảo sát" }
   ];
 
   filteredStatus = [
@@ -52,8 +52,6 @@ export class SurveyAssignmentListComponent implements OnInit {
     { value: "contact", name: "Đang liên hệ" },
     { value: "draft", name: "Chưa gọi" },
   ];
-
-  summaryResult: any;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -154,10 +152,14 @@ export class SurveyAssignmentListComponent implements OnInit {
 
   loadSummary() {
     var val = new SurveyAssignmentGetSummaryFilter();
+    val.userId = this.authService.userInfo.id;
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): null;
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      this.summaryResult = result;
+      result.forEach(item => {
+        this.statusCount[item.status] = item.count;
+        this.statusCount['total'] = (this.statusCount['total'] || 0) + item.count;
+      });
     });
   }
 

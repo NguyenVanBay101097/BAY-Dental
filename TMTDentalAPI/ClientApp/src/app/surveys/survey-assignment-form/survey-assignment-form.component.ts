@@ -25,7 +25,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private modalService: NgbModal,
-    private surveyService: SurveyAssignmentService,
+    private surveyAssignmentService: SurveyAssignmentService,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
     private callContentService: SurveyCallcontentService,
@@ -33,9 +33,9 @@ export class SurveyAssignmentFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get('id');
+      this.loadDataFromApi();
     });
 
     // this.id = this.route.snapshot.paramMap.get('id');
@@ -46,23 +46,23 @@ export class SurveyAssignmentFormComponent implements OnInit {
       callContents: this.fb.array([]),
       status: null
     });
-    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
     if (this.id) {
-      this.surveyService.get(this.id).subscribe(result => {
+      this.surveyAssignmentService.get(this.id).subscribe(result => {
         this.surveyAssignment = result;
+        console.log(result);
         this.formGroup.patchValue(this.surveyAssignment);
-        // let dateOrder = new Date(result.dateOrder);
-        // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+        // // let dateOrder = new Date(result.dateOrder);
+        // // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        let control = this.formGroup.get('callContents') as FormArray;
-        control.clear();
-        result.callContents.forEach(line => {
-          var g = this.fb.group(line);
-          control.push(g);
-        });
+        // let control = this.formGroup.get('callContents') as FormArray;
+        // control.clear();
+        // result.callContents.forEach(line => {
+        //   var g = this.fb.group(line);
+        //   control.push(g);
+        // });
       });
     }
   }
@@ -90,7 +90,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
 
   actionContact() {
     if (this.surveyAssignment.id) {
-      this.surveyService.actionContact([this.surveyAssignment.id]).subscribe(() => {
+      this.surveyAssignmentService.actionContact([this.surveyAssignment.id]).subscribe(() => {
         this.loadDataFromApi();
       });
     }
@@ -101,7 +101,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
     modalRef.componentInstance.title = 'Hủy khảo sát đánh giá';
     modalRef.componentInstance.body = 'Bạn có chắc chắn hủy kết quả khảo sát đánh giá ?';
     modalRef.result.then(() => {
-      this.surveyService.actionCancel([this.surveyAssignment.id]).subscribe(() => {
+      this.surveyAssignmentService.actionCancel([this.surveyAssignment.id]).subscribe(() => {
         this.notificationService.show({
           content: 'Hủy thành công',
           hideAfter: 3000,
@@ -137,7 +137,7 @@ export class SurveyAssignmentFormComponent implements OnInit {
       var val = new AssignmentActionDone();
       val.id = this.surveyAssignment.id;
       val.surveyUserInput = rs;
-      this.surveyService.actionDone(val).subscribe(() => {
+      this.surveyAssignmentService.actionDone(val).subscribe(() => {
         this.notificationService.show({
           content: 'Hoàn thành khảo sát đánh giá',
           hideAfter: 3000,

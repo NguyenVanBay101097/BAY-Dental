@@ -7,7 +7,7 @@
                 </a>
             </li>
             <li class="active">
-                <span>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.name}}</span>
+                <span>{{surveyAssignment.partner?.name}}</span>
             </li>
         </ol>
     </div>
@@ -49,15 +49,14 @@
                         <span>THÔNG TIN KHÁCH HÀNG</span>
                     </h5>
                 </div>
-                <div class=" d-flex justify-content-between">
-                    <div class="media mb-3">
-                        <app-image-file-upload [supportWebcam]="true" class="t_avatar" [imageId]="surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner?.avatar" [width]="100" [height]="100">
-                        </app-image-file-upload>
+                <div class="d-flex justify-content-between">
+                    <div class="media">
+                        <img class="img-fluid mr-3" *ngIf="surveyAssignment.partner?.avatar" [src]="surveyAssignment.partner?.avatar + '?width=100&height=100'"/>
                         <div class="media-body">
-                            <h4>{{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.name: ''}}</h4>
+                            <h4>{{surveyAssignment.partner?.name}}</h4>
                             <div class="t_sub_title">
-                                Mã khách hàng: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? surveyAssignment.saleOrder.partner.ref : ''}} <br /> Ngày tạo: {{surveyAssignment.saleOrder && surveyAssignment.saleOrder.partner ? (surveyAssignment.saleOrder.partner.date
-                                | date:'shortDate') : '' }}
+                                Mã khách hàng: {{surveyAssignment.partner?.ref}} <br />
+                                Ngày tạo: {{surveyAssignment.partner?.date | date : 'shortDate' }}
                             </div>
                         </div>
                     </div>
@@ -74,7 +73,7 @@
                 </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody *ngIf="surveyAssignment.saleOrder">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -82,7 +81,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.genderConvertcom}}
+                                    {{surveyAssignment.partner?.genderDisplay}}
                                 </td>
                             </tr>
                             <tr>
@@ -92,7 +91,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.dateOfBirth}}
+                                    {{surveyAssignment.partner?.dateOfBirth}}
                                 </td>
                             </tr>
                             <tr>
@@ -102,7 +101,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.jobTitle}}
+                                    {{surveyAssignment.partner?.jobTitle}}
                                 </td>
                             </tr>
                             <tr>
@@ -112,13 +111,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.historiesString}}
+                                    {{surveyAssignment.partner?.histories.join(', ')}}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody *ngIf="surveyAssignment.saleOrder">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -126,7 +125,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.phone}}
+                                    {{surveyAssignment.partner?.phone}}
                                 </td>
                             </tr>
                             <tr>
@@ -136,7 +135,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.email}}
+                                    {{surveyAssignment.partner?.email}}
                                 </td>
                             </tr>
                             <tr>
@@ -146,7 +145,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.address}}
+                                    {{surveyAssignment.partner?.address}}
                                 </td>
                             </tr>
                             <tr>
@@ -156,20 +155,20 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.partner.tags}}
+                                    {{surveyAssignment.partner?.categories.join(', ')}}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="oe_title">
-                    <h5>
+                    <h5 class="mb-0">
                         <span>THÔNG TIN PHIẾU ĐIỀU TRỊ</span>
                     </h5>
                 </div>
-                <div class="o_group">
+                <div class="o_group mt-0 mb-0">
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody *ngIf="surveyAssignment.saleOrder">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -177,7 +176,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.name}}
+                                    {{surveyAssignment.saleOrder?.name}}
                                 </td>
                             </tr>
                             <tr>
@@ -187,14 +186,14 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.saleOrder.dateOrder | date:'shortDate'}}
+                                    {{surveyAssignment.saleOrder?.dateOrder | date:'shortDate'}}
                                 </td>
                             </tr>
 
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
-                        <tbody *ngIf="surveyAssignment.saleOrder">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -202,7 +201,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{GetStateSaleOrder(surveyAssignment.saleOrder.state)}}
+                                    {{surveyAssignment.saleOrder?.stateDisplay}}
                                 </td>
                             </tr>
                             <tr>
@@ -212,7 +211,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <strong>{{getAmountTotal | number}}</strong>
+                                    <strong>{{surveyAssignment.saleOrder?.amountTotal | number}}</strong>
                                 </td>
                             </tr>
 
@@ -220,7 +219,7 @@
                     </table>
                 </div>
                 <div class="oe_title">
-                    <h5>
+                    <h5 class="mb-0">
                         <span>THÔNG TIN DỊCH VỤ</span>
                     </h5>
                 </div>
@@ -236,27 +235,21 @@
                                         <th scope="col" style="width: 150px">Thông tin bổ sung</th>
                                     </tr>
                                 </thead>
-                                <tbody *ngIf="surveyAssignment.saleOrder">
-                                    <ng-container *ngFor="let line of surveyAssignment.saleOrder.orderLines; let i=index">
+                                <tbody>
+                                    <ng-container *ngFor="let line of surveyAssignment.saleLines; let i=index">
                                         <tr>
-                                            <td>{{line.product?.name }}</td>
+                                            <td>{{line.productName }}</td>
                                             <td>
-                                                <div>
-                                                    {{line.employee?.name}}
-                                                </div>
+                                                {{line.employeeName}}
                                             </td>
-
                                             <td class="text-right">
                                                 <span>{{line.productUOMQty | number }}</span>
                                             </td>
                                             <td>
-                                                <span>{{showTeethDiagnostic(line) }}</span>
-
+                                                <span>{{line.teeth.join(',')}} {{line.diagnostic}}</span>
                                             </td>
-
                                         </tr>
                                     </ng-container>
-
                                 </tbody>
                             </table>
                         </div>
@@ -265,7 +258,7 @@
                     </div>
                 </div>
                 <div class="oe_title">
-                    <h5>
+                    <h5 class="mb-0">
                         <span>THÔNG TIN ĐỢT KHÁM</span>
                     </h5>
                 </div>
@@ -283,31 +276,29 @@
                                         <th scope="col" style="width: 100px">Răng,Chi tiết điều trị</th>
                                     </tr>
                                 </thead>
-                                <tbody *ngIf="surveyAssignment.saleOrder">
-                                    <ng-container *ngFor="let dotkham of surveyAssignment.saleOrder.dotKhams; let i=index">
+                                <tbody>
+                                    <ng-container *ngFor="let dotkham of surveyAssignment.dotKhams; let i=index">
                                         <tr *ngFor="let dkline of dotkham.lines; let x=index">
 
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
-                                                Đợt khám {{i+1}}</td>
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
-
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
+                                                Đợt khám {{i+1}}
+                                            </td>
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
                                                 {{dotkham.date | date:'shortDate'}}
                                             </td>
-                                            <td *ngIf="x==0 && i==0" class="align-middle text-center" [attr.rowspan]="dotkham.lines.length">
-                                                <span>{{dotkham.doctor.name}}</span>
+                                            <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
+                                                <span>{{dotkham.doctorName}}</span>
                                             </td>
-
-                                            <td>
-
-                                                {{dkline.product.name}}
+                                            <td >
+                                                {{dkline.productName}}
                                             </td>
                                             <td>
                                                 {{dkline.nameStep}}
                                             </td>
                                             <td>
-                                                {{showTeethDkLine(dkline)}} <br /> {{dkline.note}}
+                                                {{dkline.teeth.join(', ')}} <br />
+                                                {{dkline.note}}
                                             </td>
-
                                         </tr>
                                     </ng-container>
 
