@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { NavSidebarService } from '../nav-sidebar.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
@@ -26,6 +26,7 @@ export class LayoutHeaderComponent implements OnInit {
   searchResults: any[] = [];
   isSearch = false;
   searchInput: string = '';
+  arrowkeyLocation = 0;
   formSelect: FormGroup;
   resultSelection: string;
   searchUpdate = new Subject<string>();
@@ -189,9 +190,11 @@ export class LayoutHeaderComponent implements OnInit {
 
   clickOut() {
     this.isSearch = false;
+    this.arrowkeyLocation = 0;
   }
 
   clickItem(item) {
+    this.arrowkeyLocation = 0;
     this.isSearch = false;
     switch (item.type) {
       case "customer":
@@ -204,6 +207,33 @@ export class LayoutHeaderComponent implements OnInit {
         this.router.navigateByUrl(`/sale-orders/form?id=${item.id}`)
         break;
       default:
+        break;
+    }
+  }
+
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    switch (event.keyCode) {
+      case 38: // this is the ascii of arrow up
+        if (this.isSearch && this.arrowkeyLocation > 0) {
+          this.arrowkeyLocation--;
+        } else if (this.isSearch && this.searchResults) {
+          this.arrowkeyLocation = this.searchResults.length - 1;
+        }
+        break;
+      case 40: // this is the ascii of arrow down
+        if (this.isSearch && this.searchResults && ((this.searchResults.length - 1) > this.arrowkeyLocation)) {
+          this.arrowkeyLocation++;
+        } else if (this.isSearch && this.searchResults) {
+          this.arrowkeyLocation = 0;
+        }
+        break;
+      case 13: // this is the ascii of arrow up
+        if (this.isSearch && this.searchResults && this.searchResults.length > 0) {
+          var item = this.searchResults[this.arrowkeyLocation];
+          if (item) {
+            this.clickItem(item);
+          }
+        }
         break;
     }
   }

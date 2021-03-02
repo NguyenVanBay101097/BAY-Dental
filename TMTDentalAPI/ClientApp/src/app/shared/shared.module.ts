@@ -128,7 +128,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent,    
+    LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     ReceptionDashboardComponent,
@@ -149,7 +149,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
-    CashBookCuDialogComponent
+    CashBookCuDialogComponent,
   ],
   exports: [
     ConfirmDialogComponent,
@@ -207,11 +207,11 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
-    SaleOrderLineDiscountOdataPopoverComponent, 
+    SaleOrderLineDiscountOdataPopoverComponent,
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
-    CashBookCuDialogComponent
+    CashBookCuDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -249,7 +249,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,

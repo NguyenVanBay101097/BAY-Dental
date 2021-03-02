@@ -55,6 +55,10 @@
     background-color: whitesmoke;
 }
 
+.active{
+    background-color: whitesmoke;
+}
+
 .input-search {
     border-top-right-radius: 25px !important;
     border-bottom-right-radius: 25px !important;
@@ -62,7 +66,7 @@
     padding: 2px 5px;
     border-color: transparent;
     border-width: 0;
-    padding-right: 15px;
+    padding-right: 35px;
     min-width: 300px;
     padding-left: 15px;
     color: #58666e;
@@ -85,6 +89,10 @@
     border-color: #cfdadd;
     border-top-left-radius: 25px !important;
     border-bottom-left-radius: 25px !important;
+}
+
+.input-group-prepend {
+    margin-right: 0.5px;
 }
 
 .input-group-append>.search-cancel:hover {
