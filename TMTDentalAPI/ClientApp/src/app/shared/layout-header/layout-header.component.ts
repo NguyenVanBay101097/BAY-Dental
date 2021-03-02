@@ -191,10 +191,6 @@ export class LayoutHeaderComponent implements OnInit {
     this.isSearch = false;
   }
 
-  cancelSearch() {
-    this.formSelect.get('searchValue').setValue('');
-  }
-
   clickItem(item) {
     this.isSearch = false;
     switch (item.type) {
