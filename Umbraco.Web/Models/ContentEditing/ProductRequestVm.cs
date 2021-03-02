@@ -133,6 +133,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? EmployeeId { get; set; }
 
+        public Guid? SaleOrderId { get; set; }
+
         /// <summary>
         /// phiếu xuất
         /// </summary>

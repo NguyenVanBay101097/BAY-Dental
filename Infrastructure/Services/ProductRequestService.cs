@@ -100,6 +100,8 @@ namespace Infrastructure.Services
         public async override Task<ProductRequest> CreateAsync(ProductRequest entity)
         {
             var sequenceService = GetService<IIRSequenceService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var order = await saleOrderObj.SearchQuery(x => x.Id == entity.SaleOrderId).FirstOrDefaultAsync();
             entity.Name = await sequenceService.NextByCode("product.request");
             if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
             {
@@ -107,6 +109,7 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("product.request");
             }
 
+            entity.CompanyId = order.CompanyId;
             await base.CreateAsync(entity);
 
             return entity;

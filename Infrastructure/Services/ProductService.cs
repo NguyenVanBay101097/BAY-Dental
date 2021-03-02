@@ -595,25 +595,25 @@ namespace Infrastructure.Services
             foreach (var bom in ToRemoves)
                 product.Boms.Remove(bom);
 
-            
-            foreach (var bom in val)
+            int sequence = 0;
+            foreach (var line in val)
             {
-                if (bom.Id == Guid.Empty)
+                if (line.Id == Guid.Empty)
                 {
-                    product.Boms.Add(_mapper.Map<ProductBom>(bom));
+                    var item = _mapper.Map<ProductBom>(line);
+                    item.Sequence = sequence++;
+                    product.Boms.Add(item);
                 }
                 else
                 {
-                    var ẹntityBom = product.Boms.SingleOrDefault(c => c.Id == bom.Id);
-                    _mapper.Map(bom, ẹntityBom);
+                    var item = product.Boms.SingleOrDefault(c => c.Id == line.Id);
+                    if (item != null)
+                    {
+                        _mapper.Map(line, item);
+                        item.Sequence = sequence++;
+                    }
                 }
-            }
 
-            int sequence = 1;
-            foreach (var item in product.Boms)
-            {
-                item.Sequence = sequence;
-                sequence++;
             }
         }
 
