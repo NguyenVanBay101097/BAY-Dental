@@ -308,19 +308,20 @@ namespace Infrastructure.Services
             if (bom == null)
                 throw new Exception("Không tồn tại vật tư");
 
-            var sum = await lineObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId).SumAsync(x => x.ProductQty);
+            var sum = await lineObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId && x.Request.State != "draft").SumAsync(x => x.ProductQty);// da su dung
             if (sum >= bom.Quantity)
-                throw new Exception("Số lượng yêu sử dụng vật tư đã đủ");
+                throw new Exception("Không còn định mức vật tư cho dịch vụ");
             //return line.
             var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
             return new ProductRequestLineDisplay() {
                 ProductId = bom.MaterialProductId,
                 Product = _mapper.Map<ProductSimple>(bom.MaterialProduct),
                 ProductQty = 0,
+                ProductQtyMax = bom.Quantity - sum,
                 ProductUOMId = bom.ProductUOMId,
-                ProducUOM = _mapper.Map<UoMBasic>(bom.ProducUOM),
+                ProducUOM = _mapper.Map<UoMSimple>(bom.ProducUOM),
                 SaleOrderLineId = val.SaleOrderLineId,
-                SaleOrderLine = _mapper.Map<SaleOrderLineBasic>(orderLine)
+                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine)
             };
         }
     }

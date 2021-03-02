@@ -31,13 +31,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimple Product { get; set; }
 
         public Guid? ProductUOMId { get; set; }
-        public UoMBasic ProducUOM { get; set; }
+        public UoMSimple ProducUOM { get; set; }
 
 
         public Guid? SaleOrderLineId { get; set; }
-        public SaleOrderLineBasic SaleOrderLine { get; set; }
+        public SaleOrderLineSimple SaleOrderLine { get; set; }
 
         public decimal ProductQty { get; set; }
+        public decimal ProductQtyMax { get; set; }
 
         public int Sequence { get; set; }
     }

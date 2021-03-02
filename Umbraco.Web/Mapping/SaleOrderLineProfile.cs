@@ -60,6 +60,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Steps, x => x.MapFrom(s => s.DotKhamSteps));
 
             CreateMap<SaleOrderLine, SaleOrderLineForProductRequest>();
+            CreateMap<SaleOrderLine, SaleOrderLineSimple>();
+            CreateMap<SaleOrderLineSimple, SaleOrderLine>();
         }
     }
 }

@@ -18,6 +18,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<DotKhamStepBasic> Steps { get; set; } = new List<DotKhamStepBasic>();
     }
 
+    public class SaleOrderLineSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
     public class SaleOrderLineSaleTodayVM
     {
         public Guid Id { get; set; }
