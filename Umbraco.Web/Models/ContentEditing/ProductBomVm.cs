@@ -8,16 +8,16 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
-        public ProductSimple Product { get; set; }
+        public ProductSimpleAutoComplete Product { get; set; }
 
         /// <summary>
         /// Product vat tu
         /// </summary>
         public Guid? MaterialProductId { get; set; }
-        public ProductSimple MaterialProduct { get; set; }
+        public ProductSimpleAutoComplete MaterialProduct { get; set; }
 
         public Guid ProductUOMId { get; set; }
-        public UoMBasic ProducUOM { get; set; }
+        public UoMSimple ProducUOM { get; set; }
 
         public decimal Quantity { get; set; }
 
@@ -46,6 +46,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ProductBomSave
     {
+        public Guid Id { get; set; }
         public Guid ProductId { get; set; }
 
         /// <summary>
@@ -58,6 +59,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Quantity { get; set; }
 
+        public int Sequence { get; set; }
+    }
+
+    public class ProductBomForSaleOrderLine
+    {
+        public Guid Id { get; set; }
+        public string MaterialProductName { get; set; }
+        public string ProducUOMName { get; set; }
+        public decimal Quantity { get; set; }
         public int Sequence { get; set; }
     }
 }

@@ -33,8 +33,12 @@ namespace Umbraco.Web.Mapping
             CreateMap<ProductLaboSave, Product>();
 
             //Thắng
-            CreateMap<ProductSave, Product>();
-  
+            CreateMap<ProductSave, Product>()
+                .ForMember(x=> x.Boms, x=> x.Ignore());
+
+            CreateMap<Product, ProductSimpleAutoComplete>();
+
+
         }
     }
 }

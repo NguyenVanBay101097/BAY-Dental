@@ -34,5 +34,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductCategoryBasic Categ { get; set; }
 
         public string Firm { get; set; }
+        /// <summary>
+        /// list định mức vật tư
+        /// </summary>
+        public ICollection<ProductBomBasic> Boms { get; set; } = new List<ProductBomBasic>();
     }
 }

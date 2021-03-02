@@ -6,10 +6,13 @@ namespace ApplicationCore.Entities
 {
     public class ProductRequestLine : BaseEntity
     {
+        /// <summary>
+        /// meterial product
+        /// </summary>
         public Guid? ProductId { get; set; }
         public Product Product { get; set; }
 
-        public Guid? ProductUOMId { get; set; }
+        public Guid? ProductUOMId { get; set; } 
         public UoM ProducUOM { get; set; }
 
         public Guid RequestId { get; set; }

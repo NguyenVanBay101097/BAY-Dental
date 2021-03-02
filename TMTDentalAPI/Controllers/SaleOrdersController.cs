@@ -424,6 +424,12 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(new PrintData() { html = html });
         }
-
+        
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> GetLineForProductRequest(Guid id)
+        {
+            var res = await _saleOrderService.GetLineForProductRequest(id);
+            return Ok(res);
+        }
     }
 }

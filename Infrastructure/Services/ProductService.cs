@@ -491,6 +491,8 @@ namespace Infrastructure.Services
 
             _SaveProductSteps(product, val.StepList);
 
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
             return await CreateAsync(product);
@@ -498,13 +500,16 @@ namespace Infrastructure.Services
 
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x=> x.Boms)
                 .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
+
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
             //_SetStandardPrice(product, val.StandardPrice);
@@ -579,6 +584,39 @@ namespace Infrastructure.Services
             }
         }
 
+        private void _SaveProductBoms(Product product, IEnumerable<ProductBomSave> val)
+        {
+            var existBoms = product.Boms.ToList();
+            var ToRemoves = new List<ProductBom>();
+
+            var valIds = val.Select(x => x.Id).ToList();
+            ToRemoves = existBoms.Where(x => !valIds.Contains(x.Id)).ToList();
+
+            foreach (var bom in ToRemoves)
+                product.Boms.Remove(bom);
+
+            int sequence = 0;
+            foreach (var line in val)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<ProductBom>(line);
+                    item.Sequence = sequence++;
+                    product.Boms.Add(item);
+                }
+                else
+                {
+                    var item = product.Boms.SingleOrDefault(c => c.Id == line.Id);
+                    if (item != null)
+                    {
+                        _mapper.Map(line, item);
+                        item.Sequence = sequence++;
+                    }
+                }
+
+            }
+        }
+
         public async Task UpdateProduct(Guid id, ProductLaboSave val)
         {
             var product = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -593,10 +631,15 @@ namespace Infrastructure.Services
             var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
-                .Include(x => x.UOMPO).FirstOrDefaultAsync();
+                .Include(x => x.UOMPO).Include(x => x.Boms).ThenInclude(x=> x.MaterialProduct).FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
             //res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
+
+            if(res.Boms.Any())
+            {
+                res.Boms = res.Boms.OrderBy(x => x.Sequence).ToList();
+            }
             return res;
         }
 

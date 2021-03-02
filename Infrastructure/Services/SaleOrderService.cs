@@ -2370,6 +2370,29 @@ namespace Infrastructure.Services
 
             return lines;
         }
+
+        public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var query = lineObj.SearchQuery(x=> x.OrderId == id);
+           
+            var res = await query.Include(x => x.Product.Boms)
+                .Select(x => new SaleOrderLineForProductRequest()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Boms = x.Product.Boms.Select(z => new ProductBomForSaleOrderLine()
+                    {
+                        MaterialProductName = z.MaterialProduct.Name,
+                        Id = z.Id,
+                        ProducUOMName = z.ProducUOM.Name,
+                        Quantity = z.Quantity,
+                        Sequence = z.Sequence
+                    }).OrderBy(x => x.Sequence).ToList()
+                })
+                .ToListAsync();
+            return res;
+        }
     }
 
 
