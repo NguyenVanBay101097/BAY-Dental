@@ -1,5 +1,5 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { SurveyAssignmentDisplayCallContent } from '../survey.service';
 
 @Component({
   selector: 'app-survey-call-content-list',
@@ -23,11 +24,18 @@ export class SurveyCallContentListComponent implements OnInit {
   limit = 0;
   offset = 0;
   @Input() view = false;
-  edit = false;
+  isEditing = false;
   loading = false;
   @Input() id: string;
   @Input() surveyStatus: string;
   editedRowIndex: number;
+  @Output() addBtnEvent = new EventEmitter<any>();
+  @Output() cancelBtnEvent = new EventEmitter<any>();
+  @Output() saveBtnEvent = new EventEmitter<any>();
+  @Output() removeBtnEvent = new EventEmitter<any>();
+
+  @Input() data: SurveyAssignmentDisplayCallContent[] = [];
+  @ViewChildren('nameInput') nameInputs: QueryList<ElementRef>;
   
   constructor(
     private callcontentService: SurveyCallcontentService,
@@ -39,118 +47,72 @@ export class SurveyCallContentListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadDataFromApi();
-  }
-
-  loadDataFromApi() {
-    this.loading = true;
-    var paged = new SurveyCallContentPaged();
-    paged.limit = this.limit;
-    paged.offset = this.offset;
-    paged.assignmentId = this.id ? this.id : '';
-    this.callcontentService.getPaged(paged).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.gridData = res;
-      console.log(this.gridData);
-      this.loading = false;
-    }, err => {
-      console.log(err);
-      this.loading = false;
-    })
   }
 
   // click in cell to edit
   editHandler(rowIndex, dataItem) {
-    // this.closeEditor(rowIndex);
+    if (this.isEditing) {
+      return false;
+    }
+
     this.formGroup = this.fb.group({
-      id: dataItem ? dataItem.id : null,
-      name: dataItem ? dataItem.name : '',
-      assignmentId: dataItem ? dataItem.assignmentId : null
+      name: dataItem.name,
     });
+
+    this.focusEditingInput();
+
     this.editedRowIndex = rowIndex;
-    // sender.editRow(rowIndex, this.formGroup);
-    this.edit = true;
+    this.isEditing = true;
+  }
+
+  focusEditingInput() {
+    setTimeout(() => {
+      this.nameInputs.first.nativeElement.focus();
+    }, 200);
   }
 
   public addHandler() {
-    if (!this.edit) {
+    if (!this.isEditing) {
+      this.isEditing = true;
+      this.editedRowIndex = this.data.length;
       this.formGroup = this.fb.group({
-        name: "",
-        date: new Date(),
+        name: [null, Validators.required]
       });
-      this.gridData.data.push(this.formGroup.value);
-      this.gridData.total += 1;
 
-      this.editedRowIndex = this.gridData.total - 1;
-      // setTimeout(() => {
-      //   document.getElementById('editundefined').click();
-      // }, 50);
-      this.edit = true;
-      this.editedRowIndex = this.gridData.data.length - 1;
+      this.addBtnEvent.emit(null);
+      this.focusEditingInput();
     }
   }
 
-  private closeEditor(rowIndex) {
-    // grid.closeRow(rowIndex);
+  private closeEditor() {
+    this.isEditing = false;
     this.editedRowIndex = undefined;
     this.formGroup = undefined;
   }
 
-  public cancelHandler(i) {
-    if(this.edit == true && i == this.editedRowIndex)
-     {
-      if(!this.formGroup.value.hasOwnProperty('id')) this.gridData.data.pop();
-
-      this.closeEditor(i);
-      this.edit = false;
-    }
-      else {
-      return;
-    }
-  }
-
-  public saveHandler(): void {
-    var survey = this.formGroup.value;
-    survey.name = survey.name;
-    survey.assignmentId = this.id ? this.id : null;
-    if (survey.id) {
-      this.callcontentService.update(survey.id, survey).subscribe(
-        () => {
-          this.notificationService.show({
-            content: 'Cập nhật thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-
-          this.loadDataFromApi();
-        }
-      )
+  public cancelHandler(item, index) {
+    if (item.id) {
+      this.closeEditor();
     } else {
-      survey.date = this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss');
-      this.callcontentService.create(survey).subscribe(
-        () => {
-          this.notificationService.show({
-            content: 'Lưu thành công',
-            hideAfter: 3000,
-            position: { horizontal: 'center', vertical: 'top' },
-            animation: { type: 'fade', duration: 400 },
-            type: { style: 'success', icon: true }
-          });
-
-          this.loadDataFromApi();
-        }
-      )
+      this.cancelBtnEvent.emit({index: index});
+      this.closeEditor();
     }
-    this.edit = false;
-    // sender.closeRow(rowIndex);
   }
 
+  removeHandler(index, item) {
+    this.removeBtnEvent.emit(index);
+  }
 
+  public saveHandler(index) {
+    if (!this.formGroup.valid) {
+      return false;
+    }
 
+    var value = this.formGroup.value;
+    this.closeEditor();
+    this.saveBtnEvent.emit({
+      data: value,
+      index: index
+    });
+  }
 }

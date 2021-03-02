@@ -1,0 +1,43 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h5>
+                        <span>CÂU HỎI KHẢO SÁT ĐÁNH GIÁ</span>
+                    </h5>
+                </div>
+                <div class="o_group" formArrayName="questions">
+                    <div *ngFor="let question of questions;index as i" [formGroupName]="i">
+                        <div>
+                            <h4>
+                                <span>{{question.name}}</span>
+                            </h4>
+                        </div>
+                        <div *ngIf="question.type == 'text'">
+                            <textarea formControlName="answerValue" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div *ngIf="question.type == 'radio'">
+                            <div *ngFor="let answer of question.answers">
+                                <label>
+                                    <input type="radio" formControlName="answerValue" [value]="answer.id" />
+                                    <span>{{answer.name}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" *ngIf="surveyAssignmentStatus !== 'done'" (click)="onSave()" accesskey="s">Hoàn thành</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
+</footer>

@@ -71,4 +71,8 @@ export class SurveyQuestionService {
   delete(id: string) {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
+
+  getListForSurvey() {
+    return this.http.get(this.base_api + this.apiUrl + '/GetListForSurvey');
+  }
 }

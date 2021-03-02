@@ -63,11 +63,11 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
     var answers = this.formGroup.get('answers') as FormArray;
     var score = 5;
     for (let index = 1; index <= 5; index++) {
-      var ans = new SurveyAnswerDisplay();
-      ans.name = '';
-      ans.score = score;
-      ans.sequence = index;
-      answers.push(this.fb.group(ans));
+      answers.push(this.fb.group({
+        name: ['', Validators.required],
+        score: score,
+        sequence: index
+      }));
       score--;
     }
   }
@@ -129,5 +129,14 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  onChangeQuestionType() {
+    var questionType = this.formGroup.get('type').value;
+    if (questionType != 'radio') {
+      this.answers.clear();
+    } else {
+      this.loadDefaultAnswer();
+    }
   }
 }

@@ -64,18 +64,17 @@ namespace Infrastructure.Services
         public async Task<SurveyCallContent> CreateSurveyCallContent(SurveyCallContentSave val)
         {
             var callcontent = _mapper.Map<SurveyCallContent>(val);
-          
 
             return await CreateAsync(callcontent);
         }
 
         public async Task UpdateSurveyCallContent(Guid id, SurveyCallContentSave val)
         {
-            var callcontent = await SearchQuery(x => x.Id == id).Include(x => x.Assignment).FirstOrDefaultAsync();
+            var callcontent = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (callcontent == null)
                 throw new Exception("Nội dung cuộc gọi không tồn tại");
 
-            callcontent = _mapper.Map(val, callcontent);
+            callcontent.Name = val.Name;
 
             await UpdateAsync(callcontent);
         }

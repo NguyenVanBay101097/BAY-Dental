@@ -25,8 +25,6 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-   
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

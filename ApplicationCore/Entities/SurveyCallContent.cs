@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class SurveyCallContent: BaseEntity
     {
+        public SurveyCallContent()
+        {
+            Date = DateTime.Now;
+        }
+
         /// <summary>
         /// nội dung cuộc gọi
         /// </summary>

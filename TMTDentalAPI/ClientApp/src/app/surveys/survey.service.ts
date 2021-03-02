@@ -72,6 +72,7 @@ export class SurveyAssignmentDisplay {
   userInputId: string;
   userInput: SurveyUserInputDisplay;
   status: string;
+  callContents: SurveyAssignmentDisplayCallContent[];
 }
 
 export class SurveyAssignmentDisplayPartner {
@@ -119,6 +120,11 @@ export class SurveyAssignmentDisplayDotKhamLine {
   productName: string;
   note: number;
   teeth: string[];
+}
+
+export class SurveyAssignmentDisplayCallContent {
+  id: string;
+  name: string;
 }
 
 export class AssignmentActionDone {

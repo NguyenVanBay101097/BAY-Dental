@@ -214,5 +214,18 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Survey.Question.Read")]
+        public async Task<IActionResult> GetListForSurvey(Guid id)
+        {
+            var questions = await _surveyQuestionService.SearchQuery()
+                .OrderBy(x => x.Sequence)
+                .Include(x => x.Answers).ToListAsync();
+
+            foreach(var question in questions)
+                question.Answers.OrderBy(x => x.Sequence);
+
+            return Ok(_mapper.Map<IEnumerable<SurveyQuestionDisplay>>(questions));
+        }
     }
 }

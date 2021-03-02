@@ -52,4 +52,7 @@ export class SurveyCallcontentService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
+  remove(id: string) {
+    return this.http.delete(this.base_api + this.apiUrl + '/' + id);
+  }
 }

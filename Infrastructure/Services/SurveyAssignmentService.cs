@@ -144,6 +144,7 @@ namespace Infrastructure.Services
             dotkhamObj.Sudo = true;
             var dotKhamLineObj = GetService<IDotKhamLineService>();
             dotKhamLineObj.Sudo = true;
+            var callContentObj = GetService<ISurveyCallContentService>();
 
             var assign = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (assign == null) 
@@ -213,6 +214,14 @@ namespace Infrastructure.Services
                         ProductName = x.Product.Name
                 }).ToListAsync();
             }
+
+            assignDisplay.CallContents = await callContentObj.SearchQuery(x => x.AssignmentId == assign.Id)
+                .OrderBy(x => x.DateCreated)
+                .Select(x => new SurveyAssignmentDisplayCallContent
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToListAsync();
 
             return assignDisplay;
         }

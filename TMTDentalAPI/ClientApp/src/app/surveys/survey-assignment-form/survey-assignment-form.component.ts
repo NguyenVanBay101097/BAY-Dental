@@ -7,8 +7,9 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyCallcontentService } from '../survey-callcontent.service';
+import { SurveyUserinputCreateDialogComponent } from '../survey-userinput-create-dialog/survey-userinput-create-dialog.component';
 import { SurveyUserinputDialogComponent } from '../survey-userinput-dialog/survey-userinput-dialog.component';
-import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyAssignmentService } from '../survey.service';
+import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyAssignmentDisplayCallContent, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-assignment-form',
@@ -52,7 +53,6 @@ export class SurveyAssignmentFormComponent implements OnInit {
     if (this.id) {
       this.surveyAssignmentService.get(this.id).subscribe(result => {
         this.surveyAssignment = result;
-        console.log(result);
         this.formGroup.patchValue(this.surveyAssignment);
         // // let dateOrder = new Date(result.dateOrder);
         // // this.formGroup.get('dateOrderObj').patchValue(dateOrder);
@@ -89,11 +89,9 @@ export class SurveyAssignmentFormComponent implements OnInit {
   }
 
   actionContact() {
-    if (this.surveyAssignment.id) {
-      this.surveyAssignmentService.actionContact([this.surveyAssignment.id]).subscribe(() => {
-        this.loadDataFromApi();
-      });
-    }
+    this.surveyAssignmentService.actionContact([this.surveyAssignment.id]).subscribe(() => {
+      this.surveyAssignment.status = "contact";
+    });
   }
 
   actionCancel() {
@@ -126,9 +124,48 @@ export class SurveyAssignmentFormComponent implements OnInit {
     });
   }
 
+  onAddCallContent() {
+    this.surveyAssignment.callContents.push(new SurveyAssignmentDisplayCallContent());
+  }
+
+  onCancelCallContent(data) {
+    this.surveyAssignment.callContents.splice(data.index, 1);
+  }
+
+  onRemoveCallContent(index) {
+    var item = this.surveyAssignment.callContents[index];
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa cuộc gọi';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa cuộc gọi này?';
+    modalRef.result.then(() => {
+      this.callContentService.remove(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.surveyAssignment.callContents.splice(index, 1);
+      });
+    }); 
+  }
+
+  onSaveCallContent({data, index}) {
+    var item = this.surveyAssignment.callContents[index];
+    if (item.id) {
+      this.callContentService.update(item.id, data).subscribe(() => {
+        item = Object.assign(item, data);
+      });
+    } else {
+      this.callContentService.create({assignmentId: this.id, name: data.name}).subscribe((result) => {
+        item = Object.assign(item, result);
+      });
+    }
+  }
 
   actionDone() {
-    let modalRef = this.modalService.open(SurveyUserinputDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SurveyUserinputCreateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
     modalRef.componentInstance.id = this.surveyAssignment.userInputId;
     modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;

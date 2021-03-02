@@ -316,7 +316,8 @@
                         </h5>
                     </div>
                     <div class="o_group">
-                        <app-survey-call-content-list *ngIf="surveyAssignment.id" [id]="surveyAssignment.id" [view]="false" [surveyStatus]="surveyAssignment.status">
+                        <app-survey-call-content-list (addBtnEvent)="onAddCallContent()" (cancelBtnEvent)="onCancelCallContent($event)"
+                            (removeBtnEvent)="onRemoveCallContent($event)" (saveBtnEvent)="onSaveCallContent($event)" [data]="surveyAssignment.callContents" [id]="surveyAssignment.id" [view]="false" [surveyStatus]="surveyAssignment.status">
                         </app-survey-call-content-list>
                     </div>
                 </div>

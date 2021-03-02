@@ -88,6 +88,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SurveyAssignmentDisplayDotKham> DotKhams { get; set; }
 
+        public IEnumerable<SurveyAssignmentDisplayCallContent> CallContents { get; set; }
+
         public Guid? UserInputId { get; set; }
         public SurveyUserInputDisplay UserInput { get; set; }
 
@@ -275,6 +277,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
         public IEnumerable<string> Teeth { get; set; } = new List<string>();
+    }
+
+    public class SurveyAssignmentDisplayCallContent
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class SurveyAssignmentSave

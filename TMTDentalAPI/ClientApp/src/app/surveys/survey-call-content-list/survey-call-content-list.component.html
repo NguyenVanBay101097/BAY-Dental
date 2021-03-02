@@ -38,17 +38,17 @@
 
 <table class="table-sm table table-bordered table-hover">
     <thead>
-        <th>Cuộc gọi</th>
-        <th>Nội dung</th>
-        <th>Thao tác</th>
+        <th width="100">Cuộc gọi</th>
+        <th width="400">Nội dung</th>
+        <th width="150">Thao tác</th>
     </thead>
     <tbody>
-        <tr *ngFor="let item of gridData?.data; let i = index">
-            <td>{{i + 1}}</td>
+        <tr *ngFor="let item of data; let i = index">
+            <td>Lần {{i + 1}}</td>
             <td>
-                <ng-container *ngIf="i == editedRowIndex && this.edit == true; else editTemplate">
+                <ng-container *ngIf="i == editedRowIndex && this.isEditing; else editTemplate">
                     <div [formGroup]="formGroup">
-                        <input class="form-control" formControlName='name' required />
+                        <input #nameInput class="form-control" (keydown.enter)="saveHandler(i)" formControlName='name' required />
                     </div>
                 </ng-container>
                 <ng-template #editTemplate>
@@ -57,13 +57,16 @@
             </td>
             <td>
                 <div>
-                    <button (click)="editHandler(i, item)" [id]="'edit'+item.id" class="btn btn-success btn-sm mr-2">
+                    <button *ngIf="!isEditing || i !== editedRowIndex" (click)="editHandler(i, item)" [id]="'edit'+item.id" class="btn btn-success btn-sm mr-2">
                     <i class="fas fa-edit"></i>
                 </button>
-                    <button (click)="saveHandler()" class="btn btn-primary btn-sm mr-2"><i
+                <button *ngIf="!isEditing || i !== editedRowIndex" title="Xóa" (click)="removeHandler(i, item)" class="btn btn-danger btn-sm mr-2">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+                    <button *ngIf="isEditing && i == editedRowIndex" title="Lưu" (click)="saveHandler(i)" class="btn btn-primary btn-sm mr-2"><i
                         class="fas fa-save"></i>
                 </button>
-                    <button (click)="cancelHandler(i)" class="btn btn-secondary btn-sm">
+                    <button *ngIf="isEditing && i == editedRowIndex" title="Hủy bỏ" (click)="cancelHandler(item, i)" class="btn btn-secondary btn-sm">
                     <i class="fas fa-window-close"></i>
                 </button>
                 </div>

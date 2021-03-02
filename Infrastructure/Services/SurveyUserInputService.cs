@@ -63,7 +63,6 @@ namespace Infrastructure.Services
 
         public async Task<SurveyUserInputDisplay> DefaultGet(SurveyUserInputDefaultGet val)
         {
-
             if (!val.SurveyAssignmentId.HasValue)
                 throw new Exception("");
 
