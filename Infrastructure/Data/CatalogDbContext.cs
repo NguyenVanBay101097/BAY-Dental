@@ -225,6 +225,10 @@ namespace Infrastructure.Data
         public DbSet<MedicineOrder> MedicineOrders { get; set; }
         public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
 
+        public DbSet<ProductBom> ProductBoms { get; set; }
+        public DbSet<ProductRequest> ProductRequests { get; set; }
+        public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -404,6 +408,9 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
             builder.ApplyConfiguration(new MedicineOrderConfiguration());
             builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
+            builder.ApplyConfiguration(new ProductBomConfiguration());
+            builder.ApplyConfiguration(new ProductRequestConfiguration());
+            builder.ApplyConfiguration(new ProductRequestLineConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

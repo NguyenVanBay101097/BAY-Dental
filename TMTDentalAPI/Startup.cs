@@ -439,6 +439,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MedicineOrderLineProfile());
                 mc.AddProfile(new VFundBookProfile());
                 mc.AddProfile(new PartnerOldNewReportProfile());
+                mc.AddProfile(new ProductBomProfile());
+                mc.AddProfile(new ProductRequestProfile());
+                mc.AddProfile(new ProductRequestLineProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
