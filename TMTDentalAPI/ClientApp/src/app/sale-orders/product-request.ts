@@ -33,5 +33,6 @@ export class ProductRequestDisplay {
     employee: Object;
     pickingId: string;
     picking: Object;
+    state: string;
     lines: ProductRequestLineDisplay;
 }

@@ -8,26 +8,25 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button *ngIf="productRequestLineDisplay.state == 'done'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestLineDisplay.state == 'done'"
-                        [class.btn-secondary]="productRequestLineDisplay.state == 'done'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'done'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequestDisplay.state == 'done'"
+                        [class.btn-secondary]="productRequestDisplay.state == 'done'" type="button">
                         Đã xuất
                     </button>
-                    <button [disabled]="productRequestLineDisplay.state == 'confirmed'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestLineDisplay.state == 'confirmed'"
-                        [class.btn-secondary]="productRequestLineDisplay.state == 'confirmed'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'confirmed'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequestDisplay.state == 'confirmed'"
+                        [class.btn-secondary]="productRequestDisplay.state == 'confirmed'" type="button">
                         Đang yêu cầu
                     </button>
-                    <button [disabled]="productRequestLineDisplay.state == 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestLineDisplay.state == 'draft'"
-                        [class.btn-secondary]="productRequestLineDisplay.state == 'draft'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequestDisplay.state == 'draft'"
+                        [class.btn-secondary]="productRequestDisplay.state == 'draft'" type="button">
                         Nháp
                     </button>
                 </div>
             </div>
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <h3 *ngIf="productRequestLineDisplay.name" class="font-weight-bold">{{productRequestLineDisplay.name}}</h3>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
@@ -35,19 +34,31 @@
                                     <label class="o_form_label">Ngày yêu cầu</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">
-                                        {{paymentDisplay.paymentDate | date: 'shortDate'}}
+                                    <!-- <span *ngIf="seeForm">
+                                        {{productRequestDisplay.date | date: 'shortDate'}}
                                     </span>
                                     <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
-                                    </kendo-datepicker>
+                                    </kendo-datepicker> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>---:"))---</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Phương thức</label>
+                                    <label class="o_form_label">Bác sĩ chỉ định</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.journal.name}}</span>
+                                    <!-- <span *ngIf="seeForm">{{productRequestDisplay.journal.name}}</span>
                                     <div *ngIf="!seeForm">
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                             [filterable]="true" #journalCbx formControlName="journal"
@@ -58,85 +69,19 @@
                                             <div *ngIf="f.journal.errors.required">Vui lòng chọn phương thức thanh toán
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Số tiền</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.amount | number}}</span>
-                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
-                                        formControlName="amount">
-                                    </kendo-numerictextbox>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nội dung</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.communication}}</span>
-                                    <textarea *ngIf="!seeForm" type="text" class="form-control"
-                                        formControlName="communication"></textarea>
+                                    </div> -->
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Ngày</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">
-                                        {{paymentDisplay.paymentDate | date: 'shortDate'}}
-                                    </span>
-                                    <kendo-datepicker *ngIf="!seeForm" formControlName="paymentDateObj">
-                                    </kendo-datepicker>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nhóm người {{ getType() == 'thu' ? 'nộp' : 'nhận' }}</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">
-                                        {{displayPartnerType(paymentDisplay.partnerType)}}
-                                    </span>
-                                    <div *ngIf="!seeForm">
-                                        <kendo-dropdownlist
-                                            [data]="filteredPartnerTypes"
-                                            textField="text"
-                                            valueField="value"
-                                            [valuePrimitive]="true"
-                                            formControlName="partnerType"
-                                            (valueChange)="change_partnerType($event)">
-                                        </kendo-dropdownlist>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label *ngIf="getType() == 'thu'" class="o_form_label">Người nộp tiền</label>
-                                    <label *ngIf="getType() == 'chi'" class="o_form_label">Người nhận tiền</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="seeForm" [data]="filteredPartners" 
-                                        [textField]="'displayName'" [valueField]="'id'" [filterable]="true"
-                                        #partnerCbx formControlName="partner">
-                                    </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                        class="text-danger">
-                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người {{ getType() == 'thu' ? 'nộp' : 'nhận' }} tiền</div>
-                                    </div>
-                                    <span *ngIf="seeForm">{{paymentDisplay.partner?.displayName}}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                </div>
+                <div class="section">
+                    <div class="section-left">
+                        hello
+                    </div>
+                    <div class="section-right">
+                        hey
+                    </div>
                 </div>
             </div>
         </div>

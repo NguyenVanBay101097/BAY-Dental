@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductRequestLineDisplay } from '../product-request-line';
+import { ProductRequestDisplay } from '../product-request';
 
 @Component({
   selector: 'app-sale-order-product-request-dialog',
@@ -9,16 +10,37 @@ import { ProductRequestLineDisplay } from '../product-request-line';
 })
 export class SaleOrderProductRequestDialogComponent implements OnInit {
   title: string = null;
-
-  productRequestLineDisplay: ProductRequestLineDisplay = new ProductRequestLineDisplay();
-
+  formGroup: FormGroup;
+  productRequestDisplay: ProductRequestDisplay = new ProductRequestDisplay();
   reload = false;
 
+  get f() { return this.formGroup.controls; }
+
+  get seeForm() {
+    var state = this.formGroup.get('state').value;
+    var val = state == 'confirmed' || state == 'done';
+    return val;
+  }
+
   constructor(
+    private fb: FormBuilder,
     public activeModal: NgbActiveModal,
   ) { }
 
   ngOnInit() {
+    this.formGroup = this.fb.group({
+      amount: 0,
+      communication: null,
+      paymentDateObj: [null, Validators.required],
+      journal: [null, Validators.required],
+      loaiThuChi: [null, Validators.required],
+      name: null,
+      state: null,
+      partnerType: ['customer', Validators.required],
+      partner: [null],
+    });
+
+    this.productRequestDisplay.state = "draft";
   }
 
   onSave() {
