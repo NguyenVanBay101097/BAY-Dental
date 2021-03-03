@@ -32,7 +32,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
 
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+               
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
