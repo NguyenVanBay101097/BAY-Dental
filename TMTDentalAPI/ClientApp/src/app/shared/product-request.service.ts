@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { GetLinePar, ProductRequestBasic, ProductRequestDisplay, ProductRequestSave } from "src/app/sale-orders/product-request";
+import { GetLinePar, ProductRequestBasic, ProductRequestDefaultGet, ProductRequestDisplay, ProductRequestSave } from "src/app/sale-orders/product-request";
 import { ProductRequestLineDisplay } from "src/app/sale-orders/product-request-line";
 import { PagedResult2 } from "../core/paged-result-2";
 
@@ -18,8 +18,8 @@ export class ProductRequestService {
         return this.http.get<ProductRequestDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    defaultGet(val?: any): Observable<ProductRequestDisplay> {
-        return this.http.get<ProductRequestDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', { params: new HttpParams({ fromObject: val || {} }) });
+    defaultGet(val: ProductRequestDefaultGet): Observable<ProductRequestDisplay> {
+        return this.http.post<ProductRequestDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val );
     }
 
     create(val: ProductRequestSave): Observable<ProductRequestBasic> {

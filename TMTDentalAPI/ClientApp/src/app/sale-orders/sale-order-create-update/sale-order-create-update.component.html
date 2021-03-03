@@ -321,7 +321,7 @@
                     </div>
 
                     <div class="tab-pane" *ngIf="saleOrder.State != 'draft'" id="product" role="tabpanel" aria-labelledby="product-tab">
-                        <app-sale-order-product-request-list>
+                        <app-sale-order-product-request-list [saleOrderId]="saleOrderId">
                         </app-sale-order-product-request-list>
                     </div>
                 </div>

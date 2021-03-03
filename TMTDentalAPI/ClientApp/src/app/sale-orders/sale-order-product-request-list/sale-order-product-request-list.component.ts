@@ -16,7 +16,18 @@ import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-re
 export class SaleOrderProductRequestListComponent implements OnInit {
   
   @Input() saleOrderId: string;
+  gridData: GridDataResult;
+  limit = 20;
+  skip = 0;
+  loading = false;
+  search: string;
   productRequests: any = [];
+
+  states: any[] = [
+    { value: 'draft', text: 'Nháp'},
+    { value: 'confirmed', text: 'Đang yêu cầu'},
+    { value: 'done', text: 'Đã xuất'},
+  ]
 
   constructor(
     private modalService: NgbModal,
@@ -34,9 +45,14 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     }
 
     const val = new ProductRequestPaged();
-    val.limit = 0;
     val.saleOrderId = this.saleOrderId;
-
+    val.dateFrom = '';
+    val.dateTo = '';
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.state = this.states.map(x => x.value).join(',');
+    val.search = this.search || '';
+    
     this.productRequestService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -54,6 +70,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   createItem() {
     let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
+    modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then((result) => {
       this.loadData();
     }, () => {
@@ -64,6 +81,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then((result) => {
       this.notify('success','Lưu thành công');
       this.loadData();
