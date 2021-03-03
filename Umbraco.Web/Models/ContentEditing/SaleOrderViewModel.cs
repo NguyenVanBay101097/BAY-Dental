@@ -34,4 +34,5 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public IEnumerable<Guid> Ids { get; set; }
     }
+
 }

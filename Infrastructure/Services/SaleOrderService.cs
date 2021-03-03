@@ -1650,7 +1650,7 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,            
+                } : null,
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
@@ -2369,6 +2369,27 @@ namespace Infrastructure.Services
             //lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
+        }
+
+        public async Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
+
+            var res = await query.Skip(val.Offset)
+                       .Take(val.Limit)
+                       .Select(x => new SearchAllViewModel
+                       {
+                           Id = x.Id,
+                           Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
+                           SaleOrderName = x.Name,
+                           Address = x.Partner.GetAddress(),
+                           Phone = x.Partner.Phone,
+                           Type = "sale-order",
+                           State = x.State
+                       }).ToListAsync();
+            return res;
         }
     }
 

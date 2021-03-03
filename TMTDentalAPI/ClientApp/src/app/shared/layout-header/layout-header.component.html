@@ -35,30 +35,42 @@
                             <option value="sale-order">Phiếu điều trị</option>
                         </select>
                     </div>
-                    <input type="search" (ngModelChange)="this.searchUpdate.next($event)" formControlName="searchValue" [(ngModel)]="searchInput" (click)="fetchAll(resultSelection)" class="input-search" placeholder="Tìm kiếm nhanh..." aria-label="Tìm kiếm nhanh..." aria-describedby="basic-addon2">
+                    <input type="search" (ngModelChange)="this.searchUpdate.next($event)" formControlName="searchValue" [(ngModel)]="searchInput" (click)="onSearchClick()" class="input-search" placeholder="Tìm kiếm nhanh..." aria-label="Tìm kiếm nhanh..." aria-describedby="basic-addon2">
                     <i class="fab fa-searchengin text-secondary"></i>
-                    <div class="search-result" *ngIf="isSearch && searchResults.length > 0">
+                    <div class="search-result" *ngIf="isSearch">
                         <div class="search-content">
-                            <div class="result-select" *ngFor="let item of searchResults;let i = index " [class.active]="i == arrowkeyLocation" (click)="clickItem(item)">
-                                <div *ngIf="item.type=='sale-order'">
+                            <ng-container *ngIf="searchResults.length > 0; else noneResult">
+                                <div class="result-select" *ngFor="let item of searchResults;let i = index " [class.active]="i == arrowkeyLocation" (click)="clickItem(item)">
+                                    <div *ngIf="item.type=='sale-order'">
 
-                                    <b>PĐT: </b>{{item.saleOrderName}}
+                                        <b>PĐT: </b>{{item.saleOrderName}}
+                                    </div>
+                                    <div>
+                                        <span *ngIf="item.type=='customer' || item.type=='sale-order'"><b>KH: </b></span>
+                                        <span *ngIf="item.type=='supplier'"><b>NCC: </b></span> {{item.name}}
+                                    </div>
+                                    <div *ngIf="item.address"><b>Địa chỉ:</b> {{item.address}}</div>
+                                    <div><b>SĐT:</b> {{item.phone}}</div>
+                                    <div *ngIf="item.state"><b>Trạng thái: </b>
+                                        <span *ngIf="item.state == 'sale'">Đang điều trị</span>
+                                        <span *ngIf="item.state == 'done'">Hoàn thành</span>
+                                        <span *ngIf="item.state == 'draft'">Nháp</span>
+                                    </div>
+                                    <div style="padding-top: 5px;" *ngIf="item.tags && item.tags.length > 0">
+                                        <span class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color" *ngFor="let tag of item.tags">{{tag.name}}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span *ngIf="item.type=='customer' || item.type=='sale-order'"><b>KH: </b></span>
-                                    <span *ngIf="item.type=='supplier'"><b>NCC: </b></span> {{item.name}}
+                            </ng-container>
+                            <ng-template #noneResult>
+                                <div class="result-select">
+                                    <div class="d-flex flex-column">
+                                        <img class="ml-auto mr-auto" width="50%" height="50%" src="../../../assets/images/background/not-found.svg">
+                                        <h6 class="ml-auto mr-auto">Không có kết quả tìm kiếm</h6>
+                                    </div>
                                 </div>
-                                <div *ngIf="item.address"><b>Địa chỉ:</b> {{item.address}}</div>
-                                <div><b>SĐT:</b> {{item.phone}}</div>
-                                <div *ngIf="item.state"><b>Trạng thái: </b>
-                                    <span *ngIf="item.state == 'sale'">Đang điều trị</span>
-                                    <span *ngIf="item.state == 'done'">Hoàn thành</span>
-                                    <span *ngIf="item.state == 'draft'">Nháp</span>
-                                </div>
-                                <div style="padding-top: 5px;" *ngIf="item.tags && item.tags.length > 0">
-                                    <span class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color" *ngFor="let tag of item.tags">{{tag.name}}</span>
-                                </div>
-                            </div>
+                            </ng-template>
+
+
                         </div>
                     </div>
                 </div>

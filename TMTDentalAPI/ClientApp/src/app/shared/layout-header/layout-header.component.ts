@@ -25,7 +25,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class LayoutHeaderComponent implements OnInit {
   searchResults: any[] = [];
   isSearch = false;
-  searchInput: string = '';
+  searchInput: string;
   arrowkeyLocation = 0;
   formSelect: FormGroup;
   resultSelection: string;
@@ -173,6 +173,7 @@ export class LayoutHeaderComponent implements OnInit {
 
     if (!value || !value.search || value.search === '') {
       this.searchResults = [];
+      this.isSearch = false;
     } else {
       this.searchAllService.getAll(value).subscribe(
         result => {
@@ -181,9 +182,6 @@ export class LayoutHeaderComponent implements OnInit {
           this.searchResults = result ? result : [];
         }
       )
-      // this.searchResults = this.dataFromApi.filter(function (series) {
-      //   return series.name.toLowerCase().startsWith(value.search.toLowerCase())
-      // })
     }
 
   }
@@ -198,13 +196,13 @@ export class LayoutHeaderComponent implements OnInit {
     this.isSearch = false;
     switch (item.type) {
       case "customer":
-        this.router.navigateByUrl(`/partners/customer/${item.id}/overview`)
+        window.open(`/partners/customer/${item.id}/overview`, '_blank');
         break;
       case "supplier":
-        this.router.navigateByUrl(`/partners/supplier/${item.id}/info`)
+        window.open(`/partners/supplier/${item.id}/info`, '_blank');
         break;
       case "sale-order":
-        this.router.navigateByUrl(`/sale-orders/form?id=${item.id}`)
+        window.open(`/sale-orders/form?id=${item.id}`, '_blank');
         break;
       default:
         break;
@@ -227,7 +225,7 @@ export class LayoutHeaderComponent implements OnInit {
           this.arrowkeyLocation = 0;
         }
         break;
-      case 13: // this is the ascii of arrow up
+      case 13: // this is the ascii of enter
         if (this.isSearch && this.searchResults && this.searchResults.length > 0) {
           var item = this.searchResults[this.arrowkeyLocation];
           if (item) {
@@ -236,5 +234,10 @@ export class LayoutHeaderComponent implements OnInit {
         }
         break;
     }
+  }
+
+
+  onSearchClick() {
+    this.isSearch = this.searchResults.length > 0 ? true : false;
   }
 }

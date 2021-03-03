@@ -62,5 +62,7 @@ namespace Infrastructure.Services
 
         Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val);
         Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key);
+
+        Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val);
     }
 }

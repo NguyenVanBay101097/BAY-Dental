@@ -42,7 +42,7 @@
 .search-content {
     overflow: auto;
     max-height: 465px;
-    min-width: 356px;
+    min-width: 382px;
 }
 
 .result-select {
@@ -55,7 +55,7 @@
     background-color: whitesmoke;
 }
 
-.active{
+.active {
     background-color: whitesmoke;
 }
 
@@ -75,7 +75,7 @@
     line-height: 1.2;
 }
 
-.input-search:focus{
+.input-search:focus {
     outline: none;
 }
 
