@@ -5,3 +5,7 @@
 .sub-span {
     min-width: 30px;
 }
+
+.o_form_sheet {
+    min-height: 657px !important;
+}

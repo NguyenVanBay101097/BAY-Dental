@@ -124,7 +124,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   get nameFC() { return this.formCreate.get('name'); }
   get userIdFC() { return this.formCreate.get('userId'); }
-
+  get f() {
+    return this.formCreate.controls;
+  }
   get isUser() {
     return this.formCreate.get('isUser').value;
   }
