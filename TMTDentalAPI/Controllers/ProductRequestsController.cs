@@ -126,6 +126,5 @@ namespace TMTDentalAPI.Controllers
             var res = await _productRequestService.Getline(val);
             return Ok(res);
         }
-
     }
 }
