@@ -33,21 +33,22 @@ export class SaleOrderProductRequestListComponent implements OnInit {
       return;
     }
 
-    // const val = new ProductRequestPaged();
-    // val.limit = 0;
-    // val.saleOrderId = this.saleOrderId;
+    const val = new ProductRequestPaged();
+    val.limit = 0;
+    val.saleOrderId = this.saleOrderId;
 
-    // this.productRequestService.getPaged(val).pipe(
-    //   map(response => (<GridDataResult>{
-    //     data: response.items,
-    //     total: response.totalItems
-    //   }))
-    // ).subscribe(res => {
-    //   console.log(res);
-    //   this.toathuocs = res.data;
-    // }, err => {
-    //   console.log(err);
-    // })
+    this.productRequestService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      console.log(res);
+      this.productRequests = res.data;
+      console.log(this.productRequests);
+    }, err => {
+      console.log(err);
+    })
   }
 
   createItem() {
