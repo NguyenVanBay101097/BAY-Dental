@@ -324,7 +324,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AssignmentActionDone
     {
         public Guid Id { get; set; }
-        public SurveyUserInputSave SurveyUserInput { get; set; }
+        public SurveyUserInputCreate SurveyUserInput { get; set; }
     }
 
     public class SurveyAssignmentPatch

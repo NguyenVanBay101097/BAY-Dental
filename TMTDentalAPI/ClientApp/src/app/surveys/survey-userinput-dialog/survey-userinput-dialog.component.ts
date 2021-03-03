@@ -23,7 +23,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
   surveyAssignmentId: string;
   userinput: SurveyUserInputDisplay = new SurveyUserInputDisplay();
   question: any[] = [];
-  surveyTags: SurveyTagBasic[];
+  Tags: SurveyTagBasic[];
   limit: number = 20;
   offset: number = 0;
   search: string;
@@ -89,7 +89,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
 
   loadSurveyTagList() {
     this.searchSurveyTags().subscribe((result) => {
-      this.surveyTags = _.unionBy(this.surveyTags, result.items, 'id');;
+      this.Tags = _.unionBy(this.Tags, result.items, 'id');;
     });
   }
 
@@ -111,10 +111,10 @@ export class SurveyUserinputDialogComponent implements OnInit {
         control.push(this.fb.group(line));
       });
     }  
-
+    
     if(res.surveyTags.length > 0){      
         this.formGroup.get('surveyTags').setValue(res.surveyTags);
-        this.surveyTags = _.unionBy(res.surveyTags as SurveyTagBasic[], res.surveyTags, 'id');
+        this.Tags = _.unionBy(res.surveyTags as SurveyTagBasic[], res.surveyTags, 'id');
     }
 
   }
@@ -125,7 +125,7 @@ export class SurveyUserinputDialogComponent implements OnInit {
 
     modalRef.result.then(result => {
       if (result && result.id) {      
-        this.surveyTags.push(result);
+        this.Tags.push(result);
         this.formGroup.get('surveyTags').setValue([result as SurveyTagBasic]);
       }
     })

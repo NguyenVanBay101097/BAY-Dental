@@ -17,7 +17,7 @@ namespace Infrastructure.Services
 
         Task ActionCancel(IEnumerable<Guid> ids);
 
-        Task ActionDone(AssignmentActionDone val);
+        //Task ActionDone(AssignmentActionDone val);
 
         Task<PagedResult2<SurveyAssignmentDefaultGet>> DefaultGetList(SurveyAssignmentDefaultGetPar val);
         Task<IEnumerable<SurveyAssignmentGetSummary>> GetSummary(SurveyAssignmentGetSummaryFilter val);

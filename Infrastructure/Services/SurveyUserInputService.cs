@@ -131,58 +131,78 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<SurveyUserInput> CreateUserInput(SurveyUserInputCreate val)
+        public async Task CreateUserInput(SurveyUserInputCreate val)
         {
+            //tao survey user input
 
-            var questionObj = GetService<ISurveyQuestionService>();       
+            var questionObj = GetService<ISurveyQuestionService>();
             var questions = await questionObj.SearchQuery().Include(x => x.Answers).ToListAsync();
             var questionDict = questions.ToDictionary(x => x.Id, x => x);
-            var line = new survey
-            var userinput = new SurveyUserInputSave();
 
-            foreach(var line in val.Lines)
+            var userInputline = new SurveyUserInputLine();
+            var userInputlines = new List<SurveyUserInputLine>();
+            var userinput = new SurveyUserInput();
+
+            foreach (var line in val.Questions)
             {
-                if (questionDict[line.QuestionId].Type == "radio")
-                {                  
-                    line = new SurveyUserInputLineSave
+                if (!questionDict.ContainsKey(line.QuestionId))
+                    continue;
+
+                var question = questionDict[line.QuestionId];
+                if (question.Type == "radio")
+                {
+                    userInputline = new SurveyUserInputLine
                     {
                         QuestionId = question.Id,
-                       
-                        AnswerId = maxAnswer.Id,
-                        Answer = new SurveyAnswerDisplay
-                        {
-                            Id = maxAnswer.Id,
-                            Name = maxAnswer.Name,
-                            Score = maxAnswer.Score,
-                            Sequence = maxAnswer.Sequence
-                        },
-                        Score = maxAnswer.Score,
+                        AnswerId = Guid.Parse(line.AnswerValue),
+                        Score = question.Answers.Where(x => x.Id == Guid.Parse(line.AnswerValue)).FirstOrDefault().Score
                     };
                 }
-                else if questionDict[line.QuestionId].Type == "text")
+                else if (question.Type == "text")
                 {
-                    line = new SurveyUserInputLineSave
+                    userInputline = new SurveyUserInputLine
                     {
                         QuestionId = question.Id,
-                        Question = new SurveyQuestionDisplay
-                        {
-                            Id = question.Id,
-                            Name = question.Name,
-                            Sequence = question.Sequence,
-                            Type = question.Type,
-                        },
+                        ValueText = line.AnswerValue
                     };
+                }
+
+                userInputlines.Add(userInputline);
+            }
+
+            if (val.SurveyTagIds != null)
+            {
+                foreach (var hist in val.SurveyTagIds)
+                {
+                    if (userinput.SurveyUserInputSurveyTagRels.Any(x => x.SurveyTagId == hist))
+                        continue;
+
+                    userinput.SurveyUserInputSurveyTagRels.Add(new SurveyUserInputSurveyTagRel
+                    {
+                        SurveyTagId = hist
+                    });
+
                 }
             }
 
-            //var userInput = _mapper.Map<SurveyUserInput>(val);
+            userinput.Lines = userInputlines;
+            userinput.Note = val.Note;
 
-            //SaveLines(val, userInput);
+            await CreateAsync(userinput);
+            //update UserInputId cho assignment va status
+            var assignmentObj = GetService<ISurveyAssignmentService>();
+            var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).FirstOrDefaultAsync();
 
-            //SaveSurveyTags(val, userInput);
+            if (assignment == null) 
+                throw new Exception("Không tìm thấy Khảo sát!");
 
+            var now = DateTime.Now;
 
-            return await CreateAsync(userInput);
+            assignment.UserInputId = userinput.Id;
+            assignment.Status = "done";
+            assignment.CompleteDate = now;
+
+            await assignmentObj.UpdateAsync(assignment);
         }
 
         private void SaveSurveyTags(SurveyUserInputSave val, SurveyUserInput userinput)
@@ -199,8 +219,9 @@ namespace Infrastructure.Services
                     if (userinput.SurveyUserInputSurveyTagRels.Any(x => x.SurveyTagId == hist.Id))
                         continue;
 
-                    userinput.SurveyUserInputSurveyTagRels.Add(new SurveyUserInputSurveyTagRel { 
-                        SurveyTagId = hist.Id                   
+                    userinput.SurveyUserInputSurveyTagRels.Add(new SurveyUserInputSurveyTagRel
+                    {
+                        SurveyTagId = hist.Id
                     });
 
                 }

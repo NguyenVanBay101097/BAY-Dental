@@ -40,16 +40,17 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SurveyUserInputSave val)
+        public async Task<IActionResult> Create(SurveyUserInputCreate val)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var userinput = await _surveyUserInputService.CreateUserInput(val);
+            await _surveyUserInputService.CreateUserInput(val);
 
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<SurveyUserInputBasic>(userinput);
-            return Ok(basic);
+            //var basic = _mapper.Map<SurveyUserInputBasic>(userinput);
+            //return Ok(basic);
+            return NoContent();
         }
 
         [HttpPut("{id}")]

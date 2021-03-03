@@ -170,22 +170,29 @@ export class SurveyAssignmentFormComponent implements OnInit {
     modalRef.componentInstance.id = this.surveyAssignment.userInputId;
     modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
     modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
-    modalRef.result.then(rs => {
-      var val = new AssignmentActionDone();
-      val.id = this.surveyAssignment.id;
-      val.surveyUserInput = rs;
-      this.surveyAssignmentService.actionDone(val).subscribe(() => {
-        this.notificationService.show({
-          content: 'Hoàn thành khảo sát đánh giá',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.loadDataFromApi();
+    modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Hoàn thành khảo sát đánh giá',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
       });
+      this.loadDataFromApi();
+           
+    }, () => {
+    });
+  }
+
+  actionViewUserInput() {
+    let modalRef = this.modalService.open(SurveyUserinputDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
+    modalRef.componentInstance.id = this.surveyAssignment.userInputId;
+    modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
+    modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
+    modalRef.result.then(rs => {
       
-      
+      this.loadDataFromApi();
     }, () => {
     });
   }

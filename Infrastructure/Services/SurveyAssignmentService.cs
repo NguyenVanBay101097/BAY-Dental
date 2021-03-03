@@ -146,7 +146,7 @@ namespace Infrastructure.Services
             dotKhamLineObj.Sudo = true;
             var callContentObj = GetService<ISurveyCallContentService>();
 
-            var assign = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var assign = await SearchQuery(x => x.Id == id).Include(x=>x.UserInput).FirstOrDefaultAsync();
             if (assign == null) 
                 throw new Exception("Không tìm thấy khảo sát!");
 
@@ -173,7 +173,7 @@ namespace Infrastructure.Services
                     DistrictName = x.DistrictName,
                     CityName = x.CityName
                 }).FirstOrDefaultAsync();
-          
+
             assignDisplay.SaleOrder = await saleOrderObj.SearchQuery(x => x.Id == assign.SaleOrderId)
                 .Select(x => new SurveyAssignmentDisplaySaleOrder { 
                 DateOrder = x.DateOrder,
@@ -253,22 +253,22 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public async Task ActionDone(AssignmentActionDone val)
-        {
-            var userInputObj = GetService<ISurveyUserInputService>();
-            var assign = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+        //public async Task ActionDone(AssignmentActionDone val)
+        //{
+        //    var userInputObj = GetService<ISurveyUserInputService>();
+        //    var assign = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
 
-            if (assign == null) throw new Exception("Không tìm thấy Khảo sát!");
-            var now = DateTime.Now;
-            //xu ly tao userinput
-            var userInput = await userInputObj.CreateUserInput(val.SurveyUserInput);
+        //    if (assign == null) throw new Exception("Không tìm thấy Khảo sát!");
+        //    var now = DateTime.Now;
+        //    //xu ly tao userinput
+        //    var userInput = await userInputObj.CreateUserInput(val.SurveyUserInput);
 
-            assign.UserInputId = userInput.Id;
-            assign.Status = "done";
-            assign.CompleteDate = now;
+        //    assign.UserInputId = userInput.Id;
+        //    assign.Status = "done";
+        //    assign.CompleteDate = now;
 
-            await UpdateAsync(assign);
-        }
+        //    await UpdateAsync(assign);
+        //}
 
         /// <summary>
         /// xử lý nút hủy khảo sát

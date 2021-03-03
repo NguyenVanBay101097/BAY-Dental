@@ -153,15 +153,15 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Survey.Assignment.Done")]
-        public async Task<IActionResult> ActionDone(AssignmentActionDone val)
-        {
-            await _unitOfWork.BeginTransactionAsync();
-            await _surveyAssignmentService.ActionDone(val);
-            _unitOfWork.Commit();
-            return NoContent();
-        }
+        //[HttpPost("[action]")]
+        //[CheckAccess(Actions = "Survey.Assignment.Done")]
+        //public async Task<IActionResult> ActionDone(AssignmentActionDone val)
+        //{
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    await _surveyAssignmentService.ActionDone(val);
+        //    _unitOfWork.Commit();
+        //    return NoContent();
+        //}
 
         [HttpPatch("{id}")]
         [CheckAccess(Actions = "Survey.Assignment.Update")]

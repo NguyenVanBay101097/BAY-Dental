@@ -82,11 +82,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SurveyUserInputCreate
     {
-        public IEnumerable<SurveyUserInputLineCreate> Lines { get; set; } = new List<SurveyUserInputLineCreate>();
+        public IEnumerable<SurveyUserInputLineCreate> Questions { get; set; } = new List<SurveyUserInputLineCreate>();
+
+        public IEnumerable<Guid> SurveyTagIds { get; set; } = new List<Guid>();
 
         /// <summary>
         /// nội dung khảo sát
         /// </summary>
         public string Note { get; set; }
+
+        public Guid AssignmentId { get; set; }
+
     }
 }

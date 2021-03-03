@@ -23,6 +23,13 @@ export class SurveyUserInputBasic {
   maxScore: number;
 }
 
+export class SurveyUserInputCreate {
+  lines: SurveyUserInputLineCreate[];
+  surveyTagIds: string[];
+  note: string;
+  assignmentId: string;
+}
+
 export class SurveyUserInputDisplay {
   id: string;
   score: number;
@@ -41,6 +48,11 @@ export class SurveyUserInputLineDisplay {
   Question: SurveyQuestionDisplay;
 }
 
+export class SurveyUserInputLineCreate {
+  questionId: string;
+  answerValue: string;
+}
+
 export class SurveyUserInputLineSave {
   id: string;
   score: number;
@@ -48,6 +60,8 @@ export class SurveyUserInputLineSave {
   answerId: string;
   questionId: string;
 }
+
+
 
 
 

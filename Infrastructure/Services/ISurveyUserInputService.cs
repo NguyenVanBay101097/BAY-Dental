@@ -13,7 +13,8 @@ namespace Infrastructure.Services
 
         Task<SurveyUserInputDisplay> DefaultGet(SurveyUserInputDefaultGet val);
 
-        Task<SurveyUserInput> CreateUserInput(SurveyUserInputSave val);
+        //Task<SurveyUserInput> CreateUserInput(SurveyUserInputSave val);
+        Task CreateUserInput(SurveyUserInputCreate val);
 
         Task UpdateUserInput(Guid id, SurveyUserInputSave val);
 
