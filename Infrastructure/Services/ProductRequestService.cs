@@ -308,7 +308,7 @@ namespace Infrastructure.Services
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
-                case "sale.sale_order_comp_rule":
+                case "productrequest.product_request_comp_rule":
                     return new InitialSpecification<ProductRequest>(x => companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
