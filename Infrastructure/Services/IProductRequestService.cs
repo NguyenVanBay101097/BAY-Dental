@@ -23,6 +23,5 @@ namespace Infrastructure.Services
 
         Task ActionDone(IEnumerable<Guid> ids);
 
-        Task<ProductRequestLineDisplay> Getline(GetLinePar val);
     }
 }

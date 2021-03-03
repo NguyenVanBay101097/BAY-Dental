@@ -16,13 +16,13 @@ namespace TMTDentalAPI.Controllers
     public class ProductRequestsController : BaseApiController
     {
         private readonly IMapper _mapper;
-        private readonly IProductRequestService _productRequestervice;
+        private readonly IProductRequestService _productRequestService;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
         public ProductRequestsController(IMapper mapper, IProductRequestService productRequestService, IUnitOfWorkAsync unitOfWork)
         {
             _mapper = mapper;
-            _productRequestervice = productRequestService;
+            _productRequestService = productRequestService;
             _unitOfWork = unitOfWork;
         }
 
@@ -30,21 +30,21 @@ namespace TMTDentalAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ProductRequestPaged val)
         {
-            var result = await _productRequestervice.GetPagedResultAsync(val);
+            var result = await _productRequestService.GetPagedResultAsync(val);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _productRequestervice.GetDisplay(id);
+            var res = await _productRequestService.GetDisplay(id);
             return Ok(res);
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> DefaultGet(ProductRequestDefaultGet val)
         {
-            var res = await _productRequestervice.DefaultGet(val);
+            var res = await _productRequestService.DefaultGet(val);
             return Ok(res);
         }
 
@@ -53,7 +53,7 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var request = await _productRequestervice.CreateRequest(val);
+            var request = await _productRequestService.CreateRequest(val);
 
             _unitOfWork.Commit();
 
@@ -66,7 +66,7 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            await _productRequestervice.UpdateRequest(id, val);
+            await _productRequestService.UpdateRequest(id, val);
 
             _unitOfWork.Commit();
 
@@ -79,7 +79,7 @@ namespace TMTDentalAPI.Controllers
             if (ids == null || ids.Count() == 0)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _productRequestervice.ActionConfirm(ids);
+            await _productRequestService.ActionConfirm(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -90,7 +90,7 @@ namespace TMTDentalAPI.Controllers
             if (ids == null || ids.Count() == 0)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _productRequestervice.ActionCancel(ids);
+            await _productRequestService.ActionCancel(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -101,7 +101,7 @@ namespace TMTDentalAPI.Controllers
             if (ids == null || ids.Count() == 0)
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            await _productRequestervice.ActionDone(ids);
+            await _productRequestService.ActionDone(ids);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -109,23 +109,22 @@ namespace TMTDentalAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var request = await _productRequestervice.GetByIdAsync(id);
+            var request = await _productRequestService.GetByIdAsync(id);
             if (request.State != "draft")
                 throw new Exception("Không thể xóa phiếu yêu cầu vật tư đang yêu cầu hoặc đã xuất");
 
             if (request == null)
                 return NotFound();
 
-            await _productRequestervice.DeleteAsync(request);
+            await _productRequestService.DeleteAsync(request);
             return NoContent();
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> GetLine(GetLinePar val)
         {
-            var res = await _productRequestervice.Getline(val);
+            var res = await _productRequestService.Getline(val);
             return Ok(res);
         }
-
     }
 }
