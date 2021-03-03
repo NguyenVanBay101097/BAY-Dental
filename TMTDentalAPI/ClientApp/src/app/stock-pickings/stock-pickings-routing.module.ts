@@ -44,7 +44,7 @@ const routes: Routes = [
       { path: 'stock-report-xuat-nhap-ton', component: StockXuatNhapTonComponent },
       { path: 'incoming-pickings', component: StockPickingIncomingListComponent },
       { path: 'outgoing-pickings', component: StockPickingOutgoingListComponent },
-      { path: 'request-product', component: StockPickingRequestProductComponent }
+      { path: 'request-products', component: StockPickingRequestProductComponent }
     ]
   }
 ];

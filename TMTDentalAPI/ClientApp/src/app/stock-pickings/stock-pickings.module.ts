@@ -19,9 +19,22 @@ import { StockReportService } from '../stock-reports/stock-report.service';
 import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
 import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-detail/stock-picking-incoming-detail.component';
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
+import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 
 @NgModule({
-  declarations: [StockPickingListComponent, StockPickingCreateUpdateComponent, StockPickingMlDialogComponent, StockPickingOutgoingListComponent, StockPickingOutgoingCreateUpdateComponent, StockPickingIncomingListComponent, StockPickingIncomingCreateUpdateComponent, StockPickingManagementComponent, StockXuatNhapTonComponent, StockPickingIncomingDetailComponent, StockPickingRequestProductComponent],
+  declarations: [
+    StockPickingListComponent,
+    StockPickingCreateUpdateComponent,
+    StockPickingMlDialogComponent,
+    StockPickingOutgoingListComponent,
+    StockPickingOutgoingCreateUpdateComponent,
+    StockPickingIncomingListComponent,
+    StockPickingIncomingCreateUpdateComponent,
+    StockPickingManagementComponent,
+    StockXuatNhapTonComponent,
+    StockPickingIncomingDetailComponent,
+    StockPickingRequestProductComponent,
+    StockPickingRequestProductDialogComponent],
   imports: [
     CommonModule,
     StockPickingsRoutingModule,
@@ -31,10 +44,11 @@ import { StockPickingRequestProductComponent } from './stock-picking-request-pro
     SharedModule
   ],
   providers: [
-    StockPickingService,StockReportService
+    StockPickingService, StockReportService
   ],
   entryComponents: [
-    StockPickingMlDialogComponent
+    StockPickingMlDialogComponent,
+    StockPickingRequestProductDialogComponent
   ]
 })
 export class StockPickingsModule { }

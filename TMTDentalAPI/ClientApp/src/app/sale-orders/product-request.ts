@@ -20,7 +20,7 @@ export class ProductRequestPaged {
     saleOrderId: string;
     dateFrom: string;
     dateTo: string;
-    state: string;
+    states: string[];
 }
 
 export class ProductRequestDisplay {
