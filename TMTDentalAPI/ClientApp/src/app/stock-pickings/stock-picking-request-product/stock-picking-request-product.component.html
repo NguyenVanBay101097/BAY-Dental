@@ -24,7 +24,7 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+        (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
         <kendo-grid-column field="date" title="Ngày yêu cầu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date: 'short'}}
@@ -49,16 +49,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.state =="confirm" ? "Đang yêu cầu" : (dataItem.state == "done" ? "Đã xuất" : "")}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column field="id" width="100">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Thao tác
-            </ng-template>
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Cập nhật" (click)="editItem(dataItem)">
-                    <span class="far fa-edit"></span></button>
+                {{dataItem.state =="confirmed" ? "Đang yêu cầu" : (dataItem.state == "done" ? "Đã xuất" : "")}}
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

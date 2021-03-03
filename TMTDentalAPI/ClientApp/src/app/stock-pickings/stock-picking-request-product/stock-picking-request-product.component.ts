@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductRequestPaged } from 'src/app/sale-orders/product-request';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
+import { StockPickingRequestProductDialogComponent } from '../stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 
 @Component({
   selector: 'app-stock-picking-request-product',
@@ -21,6 +22,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   search: string;
   states: any[] = [{ value: 'confirmed', name: 'Đang yêu cầu' }, { value: 'done', name: 'Đã xuất' }];
   searchUpdate = new Subject<string>();
+  state: string = "confirmed,done";
   dateFrom: Date;
   dateTo: Date;
 
@@ -55,7 +57,7 @@ export class StockPickingRequestProductComponent implements OnInit {
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59");
     val.limit = this.limit;
     val.offset = this.skip;
-    val.states = this.states.map(x => x.value);
+    val.state = this.state;
     val.search = this.search || '';
 
     this.productRequestService.getPaged(val).pipe(
@@ -70,6 +72,15 @@ export class StockPickingRequestProductComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  onUpdate(item) {
+    let modalRef = this.modalService.open(StockPickingRequestProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thêm: ';
+    modalRef.result.then(() => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   pageChange(event: PageChangeEvent): void {

@@ -36,7 +36,7 @@ namespace Infrastructure.Services
                 var states = val.State.Split(",");
                 query = query.Where(x => states.Contains(x.State));
             }
-               
+
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
@@ -53,7 +53,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.Employee).Include(x => x.User).Include(x => x.Picking).OrderByDescending(x => x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 

@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class StockPickingRequestProductDialogComponent implements OnInit {
 
+  
+
   constructor() { }
 
   ngOnInit() {

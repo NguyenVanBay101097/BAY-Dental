@@ -26,7 +26,6 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] ProductRequestPaged val)
         {
