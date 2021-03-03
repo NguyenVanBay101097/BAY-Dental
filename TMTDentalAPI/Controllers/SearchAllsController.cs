@@ -36,63 +36,79 @@ namespace TMTDentalAPI.Controllers
             switch (val.ResultSelection)
             {
                 case "customer":
-                    res = await query.Include("PartnerPartnerCategoryRels").Include("PartnerPartnerCategoryRels.Category").Where(x => x.Name.Contains(val.Search) && x.Customer == true).Take(val.Limit).Select(x => new SearchAllViewModel
-                    {
-                        Id = x.Id,
-                        Name = "[" + x.Ref + "]" + " " + x.Name,
-                        Address = x.GetAddress(),
-                        Phone = x.Phone,
-                        Type = "customer",
-                        Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
-                    }).ToListAsync();
+                    res = await query.Include("PartnerPartnerCategoryRels")
+                        .Include("PartnerPartnerCategoryRels.Category")
+                        .Where(x => (x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)) && x.Customer == true)
+                        .Take(val.Limit)
+                         .Select(x => new SearchAllViewModel
+                         {
+                             Id = x.Id,
+                             Name = "[" + x.Ref + "]" + " " + x.Name,
+                             Address = x.GetAddress(),
+                             Phone = x.Phone,
+                             Type = "customer",
+                             Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
+                         }).ToListAsync();
                     break;
                 case "supplier":
-                    res = await query.Where(x => x.Name.Contains(val.Search) && x.Supplier == true).Take(val.Limit).Select(x => new SearchAllViewModel
-                    {
-                        Id = x.Id,
-                        Name = "[" + x.Ref + "]" + " " + x.Name,
-                        Address = x.GetAddress(),
-                        Phone = x.Phone,
-                        Type = "supplier",
-                        Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
-                    }).ToListAsync();
+                    res = await query.Where(x => (x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)) && x.Supplier == true)
+                        .Take(val.Limit)
+                        .Select(x => new SearchAllViewModel
+                        {
+                            Id = x.Id,
+                            Name = "[" + x.Ref + "]" + " " + x.Name,
+                            Address = x.GetAddress(),
+                            Phone = x.Phone,
+                            Type = "supplier",
+                            Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
+                        }).ToListAsync();
                     break;
                 case "sale-order":
-                    res = await query1.Include(x => x.Partner).Where(x => x.Partner.Name.Contains(val.Search)).Take(val.Limit).Select(x => new SearchAllViewModel
-                    {
-                        Id = x.Id,
-                        Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
-                        SaleOrderName = x.Name,
-                        Address = x.Partner.GetAddress(),
-                        Phone = x.Partner.Phone,
-                        Type = "sale-order",
-                        State = x.State
-                    }).ToListAsync();
+                    res = await query1.Include(x => x.Partner)
+                        .Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search))
+                        .Take(val.Limit)
+                        .Select(x => new SearchAllViewModel
+                        {
+                            Id = x.Id,
+                            Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
+                            SaleOrderName = x.Name,
+                            Address = x.Partner.GetAddress(),
+                            Phone = x.Partner.Phone,
+                            Type = "sale-order",
+                            State = x.State
+                        }).ToListAsync();
                     break;
                 case "all":
 
-                    res = await query.Include("PartnerPartnerCategoryRels").Include("PartnerPartnerCategoryRels.Category").Where(x => x.Name.Contains(val.Search) && (x.Customer == true || x.Supplier == true)).Take(val.Limit).Select(x => new SearchAllViewModel
-                    {
-                        Id = x.Id,
-                        Name = "[" + x.Ref + "]" + " " + x.Name,
-                        Address = x.GetAddress(),
-                        Phone = x.Phone,
-                        Type = x.Customer ? "customer" : "supplier",
-                        Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
-                    }).ToListAsync();
+                    res = await query.Include("PartnerPartnerCategoryRels")
+                        .Include("PartnerPartnerCategoryRels.Category")
+                        .Where(x => (x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)) && (x.Customer == true || x.Supplier == true))
+                        .Take(val.Limit)
+                        .Select(x => new SearchAllViewModel
+                        {
+                            Id = x.Id,
+                            Name = "[" + x.Ref + "]" + " " + x.Name,
+                            Address = x.GetAddress(),
+                            Phone = x.Phone,
+                            Type = x.Customer ? "customer" : "supplier",
+                            Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
+                        }).ToListAsync();
 
                     if (res.Count < 20)
                     {
-                        res1 = await query1.Include(x => x.Partner).Where(x => x.Partner.Name.Contains(val.Search)).Take(val.Limit - res.Count()).Select(x => new SearchAllViewModel
-                        {
-                            Id = x.Id,
-                            SaleOrderName = x.Name,
-                            Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
-                            Address = x.Partner.GetAddress(),
-                            Type = "sale-order",
-                            Phone = x.Partner.Phone,
-                            State = x.State
-                        }).ToListAsync();
+                        res1 = await query1.Include(x => x.Partner)
+                            .Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Phone.Contains(val.Search))
+                            .Take(val.Limit - res.Count())
+                            .Select(x => new SearchAllViewModel
+                            {
+                                Id = x.Id,
+                                SaleOrderName = x.Name,
+                                Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
+                                Address = x.Partner.GetAddress(),
+                                Type = "sale-order",
+                                Phone = x.Partner.Phone,
+                                State = x.State
+                            }).ToListAsync();
                         res.AddRange(res1);
                     }
                     break;
