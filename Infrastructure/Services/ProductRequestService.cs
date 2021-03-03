@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search));
 
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+               
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
@@ -294,6 +299,19 @@ namespace Infrastructure.Services
                 request.State = "done";
 
                 await pickingObj.ActionDone(new List<Guid>() { picking_vals.Id });
+            }
+        }
+
+        public override ISpecification<ProductRequest> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "sale.sale_order_comp_rule":
+                    return new InitialSpecification<ProductRequest>(x => companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
             }
         }
     }

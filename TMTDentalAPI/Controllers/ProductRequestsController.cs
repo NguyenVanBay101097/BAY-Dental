@@ -120,11 +120,11 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetLine(GetLinePar val)
-        {
-            var res = await _productRequestService.Getline(val);
-            return Ok(res);
-        }
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> GetLine(GetLinePar val)
+        //{
+        //    var res = await _productRequestService.Getline(val);
+        //    return Ok(res);
+        //}
     }
 }
