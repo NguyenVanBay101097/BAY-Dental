@@ -83,7 +83,7 @@ namespace TMTDentalAPI.Controllers
 
                     if (res.Count < 20)
                     {
-                        res1 = await query1.Include(x => x.Partner).Where(x => x.Partner.Name.Contains(val.Search)).Take(val.Limit).Select(x => new SearchAllViewModel
+                        res1 = await query1.Include(x => x.Partner).Where(x => x.Partner.Name.Contains(val.Search)).Take(val.Limit - res.Count()).Select(x => new SearchAllViewModel
                         {
                             Id = x.Id,
                             SaleOrderName = x.Name,
