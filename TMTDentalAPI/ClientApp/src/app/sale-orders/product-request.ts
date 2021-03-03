@@ -36,3 +36,22 @@ export class ProductRequestDisplay {
     state: string;
     lines: ProductRequestLineDisplay;
 }
+
+export class ProductRequestSave {
+    userId: string;
+    date: string;
+    employeeId: string;
+    saleOrderId: string;
+    pickingId: string;
+    state: string;
+    lines: ProductRequestLineDisplay;
+}
+
+export class GetLinePar {
+    saleOrderLineId: string;
+    productBomId: string;
+}
+
+export class ProductRequestDefaultGet {
+    saleOrderId: string;
+}
