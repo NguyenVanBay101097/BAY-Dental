@@ -74,10 +74,34 @@ export class StockPickingRequestProductComponent implements OnInit {
     })
   }
 
-  onUpdate(item) {
+  onSateChange(item) {
+    if (item) {
+      this.state = item.value;
+      this.loadDataFromApi();
+    } else {
+      this.state = "confirmed,done";
+      this.loadDataFromApi();
+    }
+  }
+
+  onDateSearchChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.loadDataFromApi();
+  }
+
+  onUpdate(event) {
     let modalRef = this.modalService.open(StockPickingRequestProductDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ';
+    modalRef.componentInstance.id = event.dataItem ? event.dataItem.id : null;
+    modalRef.componentInstance.title = "Yêu cầu vật tư"
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Xác nhận thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, () => {
     });

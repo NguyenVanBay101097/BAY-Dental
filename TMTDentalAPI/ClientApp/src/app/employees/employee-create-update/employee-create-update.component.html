@@ -16,8 +16,9 @@
                     <h1>
                         <input type="text" class="form-control" formControlName="name" id="name" />
                     </h1>
-                    <label for="" class="text-danger" *ngIf="nameFC.errors?.required">Vui lòng điền tên nhân viên
-                    </label>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors.required">Vui lòng điền tên nhân viên</div>
+                    </div>
                     <div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" formControlName="isDoctor" id="isDoctor">

@@ -5,8 +5,8 @@
                 <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Thời gian" [dateTo]="dateTo"
                     class="mt-1" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <kendo-combobox class="btn-sm min-width" [data]="states" [textField]="'name'"
-                    placeholder="Tất cả trạng thái" [valueField]="'value'">
+                <kendo-combobox (valueChange)="onSateChange($event)" class="btn-sm min-width" [data]="states"
+                    [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
                 </kendo-combobox>
             </div>
         </div>
@@ -23,7 +23,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" class="cursor-pointer" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
         <kendo-grid-column field="date" title="Ngày yêu cầu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -45,7 +45,7 @@
         <kendo-grid-column title="Bác sĩ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.employee ? dataItem.employee.name : ''}}
-            </ng-template>
+            </ng-template>1
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

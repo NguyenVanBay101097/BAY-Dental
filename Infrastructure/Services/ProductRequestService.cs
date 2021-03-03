@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ProductRequestBasic>> GetPagedResultAsync(ProductRequestPaged val)
         {
-            var query = SearchQuery(x=>true);
+            var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
@@ -85,7 +85,9 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.Picking)
                 .Include(x => x.SaleOrder)
-                .Include(x => x.Lines)
+                .Include(x => x.Lines).ThenInclude(s => s.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.SaleOrderLine)
+                .Include(x => x.Lines).ThenInclude(s => s.ProducUOM)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<ProductRequestDisplay>(res);
