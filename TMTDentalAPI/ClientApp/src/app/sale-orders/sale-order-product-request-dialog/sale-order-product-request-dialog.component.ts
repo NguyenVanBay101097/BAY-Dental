@@ -1,11 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SaleOrderLineForProductRequest } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { ProductRequestDefaultGet, ProductRequestDisplay } from '../product-request';
 
@@ -20,6 +24,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   saleOrderId: string;
   formGroup: FormGroup;
   productRequestDisplay: ProductRequestDisplay = new ProductRequestDisplay();
+  listProductBoms: SaleOrderLineForProductRequest[] = [];
   
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   filteredEmployees: EmployeeSimple[] = [];
@@ -41,6 +46,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private productRequestService: ProductRequestService,
     private employeeService: EmployeeService,
+    private modalService: NgbModal,
+    private notificationService: NotificationService,
+    private saleOrderService: SaleOrderService,
   ) { }
 
   ngOnInit() {
@@ -53,7 +61,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
     setTimeout(() => {
       this.loadEmployees();
-
+      this.loadListProductBoms();
       if (!this.id) {
         this.loadDefault();
       } else {
@@ -101,7 +109,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       var date = new Date(res.date);
       this.formGroup.get('dateObj').setValue(date);
       this.loadToFormArray(res.lines);
-
     });
   }
   
@@ -110,6 +117,13 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     control = this.fb.array([]); //reset form array
     lines.forEach(line => {
       control.push(this.fb.group(line));
+    });
+  }
+
+  loadListProductBoms() {
+    this.saleOrderService.getLineForProductRequest(this.saleOrderId).subscribe((res: any) => {
+      this.listProductBoms = res;
+      console.log(res);
     });
   }
 
@@ -122,11 +136,37 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   onConfirmed() {
-
+    this.productRequestService.actionConfirm([this.id]).subscribe((result) => {
+      this.notificationService.show({
+        content: "Gửi yêu cầu thành công đến bộ phận Kho",
+        hideAfter: 3000,
+        position: { horizontal: "center", vertical: "top" },
+        animation: { type: "fade", duration: 400 },
+        type: { style: "success", icon: true },
+      });
+      this.activeModal.close();
+    }, (error) => {
+    });
   }
 
   onCancel() {
-
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = "Hủy yêu cầu vật tư";
+    modalRef.componentInstance.body = "Bạn có chắc chắn hủy yêu cầu vật tư?";
+    modalRef.result.then((result) => {
+      this.productRequestService.actionCancel([this.id]).subscribe((result) => {
+        this.notificationService.show({
+          content: "Hủy thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
+        });
+        this.activeModal.close();
+      }, (error) => {
+      });
+    }, (error) => {
+    });
   }
 
   onClose() {
