@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
@@ -27,6 +27,8 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   reload = false;
 
   get f() { return this.formGroup.controls; }
+
+  get lines() { return this.formGroup.get('lines') as FormArray; }
 
   get seeForm() {
     var state = this.formGroup.get('state').value;
@@ -88,7 +90,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.formGroup.patchValue(res);
       var date = new Date(res.date);
       this.formGroup.get('dateObj').setValue(date);
-      console.log(res);
+      this.loadToFormArray(res.lines);
     });
   }
 
@@ -98,6 +100,16 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.formGroup.patchValue(res);
       var date = new Date(res.date);
       this.formGroup.get('dateObj').setValue(date);
+      this.loadToFormArray(res.lines);
+
+    });
+  }
+  
+  loadToFormArray(lines) {
+    let control = this.formGroup.get('lines') as FormArray;
+    control = this.fb.array([]); //reset form array
+    lines.forEach(line => {
+      control.push(this.fb.group(line));
     });
   }
 
@@ -109,7 +121,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
 
   }
 
-  onRequest() {
+  onConfirmed() {
 
   }
 

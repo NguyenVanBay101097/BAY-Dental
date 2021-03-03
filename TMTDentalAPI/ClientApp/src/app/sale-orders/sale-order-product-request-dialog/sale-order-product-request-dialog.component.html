@@ -103,16 +103,18 @@
                                     <th>#</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of lines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
                     </div>
@@ -124,7 +126,7 @@
 <div class="modal-footer">
     <!-- <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button> -->
     <button type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
-    <button type="button" class="btn btn-primary mr-2" (click)="onRequest()">Yêu cầu</button>
+    <button type="button" class="btn btn-primary mr-2" (click)="onConfirmed()">Yêu cầu</button>
     <button type="button" class="btn btn-danger mr-2" (click)="onCancel()">Hủy yêu cầu</button>
     <button type="button" class="btn btn-light mr-2" (click)="onClose()">Đóng</button>
 </div>
