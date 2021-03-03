@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductRequestPaged } from '../product-request';
 import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-request-dialog/sale-order-product-request-dialog.component';
 
 @Component({
@@ -28,21 +29,21 @@ export class SaleOrderProductRequestListComponent implements OnInit {
       return;
     }
 
-    // const val = new ToaThuocPaged();
-    // val.limit = 0;
-    // val.saleOrderId = this.saleOrderId;
+    const val = new ProductRequestPaged();
+    val.limit = 0;
+    val.saleOrderId = this.saleOrderId;
 
-    // this.toaThuocService.getPaged(val).pipe(
-    //   map(response => (<GridDataResult>{
-    //     data: response.items,
-    //     total: response.totalItems
-    //   }))
-    // ).subscribe(res => {
-    //   console.log(res);
-    //   this.toathuocs = res.data;
-    // }, err => {
-    //   console.log(err);
-    // })
+    this.pro.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      console.log(res);
+      this.toathuocs = res.data;
+    }, err => {
+      console.log(err);
+    })
   }
 
   createItem() {
