@@ -26,7 +26,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ProductRequestBasic>> GetPagedResultAsync(ProductRequestPaged val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x=>true);
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
