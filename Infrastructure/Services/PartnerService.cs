@@ -2081,7 +2081,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => (x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)));
+                query = query.Where(x => (x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.Phone.Contains(val.Search)));
             }
 
             if (val.isBoth.HasValue && val.isBoth == true)
