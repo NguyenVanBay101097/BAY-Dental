@@ -296,33 +296,5 @@ namespace Infrastructure.Services
                 await pickingObj.ActionDone(new List<Guid>() { picking_vals.Id });
             }
         }
-
-        public async Task<ProductRequestLineDisplay> Getline(GetLinePar val)
-        {
-            var lineObj = GetService<IProductRequestLineService>();
-            var bomObj = GetService<IProductBomService>();
-            var orderLineObj = GetService<ISaleOrderLineService>();
-
-            //validate số lượng
-            var bom = await bomObj.SearchQuery(x => x.Id == val.ProductBomId).Include(x=> x.ProducUOM).Include(x=> x.MaterialProduct).FirstOrDefaultAsync();
-            if (bom == null)
-                throw new Exception("Không tồn tại vật tư");
-
-            var sum = await lineObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId && x.Request.State != "draft").SumAsync(x => x.ProductQty);// da su dung
-            if (sum >= bom.Quantity)
-                throw new Exception("Không còn định mức vật tư cho dịch vụ");
-            //return line.
-            var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
-            return new ProductRequestLineDisplay() {
-                ProductId = bom.MaterialProductId,
-                Product = _mapper.Map<ProductSimple>(bom.MaterialProduct),
-                ProductQty = 0,
-                ProductQtyMax = bom.Quantity - sum,
-                ProductUOMId = bom.ProductUOMId,
-                ProducUOM = _mapper.Map<UoMSimple>(bom.ProducUOM),
-                SaleOrderLineId = val.SaleOrderLineId,
-                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine)
-            };
-        }
     }
 }
