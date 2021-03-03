@@ -18,25 +18,26 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class CashBooksController : ControllerBase
     {
-        private readonly ICashBookService _fundBookService;
-        public CashBooksController(ICashBookService fundBookService)
+        private readonly ICashBookService _cashBookService;
+        public CashBooksController(ICashBookService cashBookService)
         {
-            _fundBookService = fundBookService;
+            _cashBookService = cashBookService;
         }
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
-            var res = await _fundBookService.GetSumary(val);
+            var res = await _cashBookService.GetSumary(val);
             return Ok(res);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ChangeData()
+        [CheckAccess(Actions = "Account.Read")]
+        public async Task<IActionResult> GetDetails(CashBookDetailFilter val)
         {
-            await _fundBookService.ChangeData();
-            return Ok();
+            var res = await _cashBookService.GetDetails(val);
+            return Ok(res);
         }
 
         //[HttpGet("[action]")]

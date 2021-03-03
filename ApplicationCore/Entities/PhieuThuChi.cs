@@ -72,6 +72,9 @@ namespace ApplicationCore.Entities
         public Guid LoaiThuChiId { get; set; }
         public LoaiThuChi LoaiThuChi { get; set; }
 
+        /// <summary>
+        /// Không sử dụng nữa
+        /// </summary>
         public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
     }
 }

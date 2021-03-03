@@ -18,10 +18,6 @@ namespace Infrastructure.EntityConfigurations
                 .HasForeignKey(x => x.JournalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.LoaiThuChi)
-                .WithMany()
-                .HasForeignKey(x => x.LoaiThuChiId);
-
             builder.HasOne(x => x.DestinationAccount)
                 .WithMany()
                 .HasForeignKey(x => x.DestinationAccountId);

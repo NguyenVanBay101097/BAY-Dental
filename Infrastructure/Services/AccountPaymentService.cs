@@ -56,14 +56,7 @@ namespace Infrastructure.Services
                 string sequence_code = "";
                 if (string.IsNullOrEmpty(rec.Name))
                 {
-                    if (rec.LoaiThuChiId.HasValue)
-                    {
-                        if (rec.PaymentType == "outbound")
-                            sequence_code = "phieu.chi";
-                        if (rec.PaymentType == "inbound")
-                            sequence_code = "phieu.thu";
-                    }
-                    else if (rec.PaymentType == "transfer")
+                    if (rec.PaymentType == "transfer")
                     {
                         sequence_code = "account.payment.transfer";
                     }
@@ -83,21 +76,9 @@ namespace Infrastructure.Services
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.supplier.refund";
                         }
-                        else if (rec.PartnerType == "employee")
-                        {
-                            if (rec.PaymentType == "outbound")
-                                sequence_code = "account.payment.employee.outbound";
-                            if (rec.PaymentType == "inbound")
-                                sequence_code = "account.payment.employee.inbound";
-                        }
                     }
 
                     rec.Name = await seqObj.NextByCode(sequence_code);
-                    if (string.IsNullOrEmpty(rec.Name))
-                    {
-                        await _CreatePaymentSequence(sequence_code);
-                        rec.Name = await seqObj.NextByCode(sequence_code);
-                    }
 
                     if (string.IsNullOrEmpty(rec.Name) && rec.PaymentType != "transfer")
                         throw new Exception($"You have to define a sequence for {sequence_code} in your company.");
@@ -168,51 +149,6 @@ namespace Infrastructure.Services
                         await _AutoReconcile(rec);
                     }
                 }
-            }
-        }
-
-        private async Task _CreatePaymentSequence(string sequence_code)
-        {
-            var seqObj = GetService<IIRSequenceService>();
-            if (sequence_code == "phieu.thu")
-            {
-                await seqObj.CreateAsync(new IRSequence
-                {
-                    Code = sequence_code,
-                    Name = "Phiếu thu",
-                    Prefix = "THU/{yyyy}/",
-                    Padding = 4
-                });
-            } 
-            else if (sequence_code == "phieu.chi")
-            {
-                await seqObj.CreateAsync(new IRSequence
-                {
-                    Code = sequence_code,
-                    Name = "Phiếu chi",
-                    Prefix = "CHI/{yyyy}/",
-                    Padding = 4
-                });
-            }
-            else if (sequence_code == "account.payment.employee.outbound")
-            {
-                await seqObj.CreateAsync(new IRSequence
-                {
-                    Code = sequence_code,
-                    Name = "Payments employee outbound sequence",
-                    Prefix = "EMP.OUT/{yyyy}/",
-                    Padding = 4
-                });
-            }
-            else if (sequence_code == "account.payment.employee.inbound")
-            {
-                await seqObj.CreateAsync(new IRSequence
-                {
-                    Code = sequence_code,
-                    Name = "Payments employee inbound sequence",
-                    Prefix = "EMP.IN/{yyyy}/",
-                    Padding = 4
-                });
             }
         }
 
@@ -306,11 +242,7 @@ namespace Infrastructure.Services
                 var liquidity_amount = counterpart_amount;
 
                 var rec_pay_line_name = "";
-                if (payment.LoaiThuChiId.HasValue)
-                {
-                    rec_pay_line_name = payment.LoaiThuChi.Name;
-                }
-                else if (payment.PaymentType == "transfer")
+                if (payment.PaymentType == "transfer")
                 {
                     rec_pay_line_name = payment.Name;
                 }
@@ -327,10 +259,6 @@ namespace Infrastructure.Services
                         rec_pay_line_name += "Nhà cung cấp hoàn tiền";
                     else if (payment.PaymentType == "outbound")
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
-                }
-                else if (payment.PartnerType == "employee")
-                {
-                    rec_pay_line_name = payment.Name + " Chi lương/tạm ứng";
                 }
 
                 if (payment.AccountMovePaymentRels.Any())
@@ -1011,7 +939,7 @@ namespace Infrastructure.Services
                 }
             }
 
-            //await _ComputeDestinationAccount(new List<AccountPayment>() { rec });
+            await _ComputeDestinationAccount(new List<AccountPayment>() { rec });
             var account = rec.DestinationAccount;
             return new AccountMoveLine
             {
@@ -1040,28 +968,14 @@ namespace Infrastructure.Services
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
                         .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
-
-                else if (payment.LoaiThuChiId.HasValue)
-                {
-                    var loaiThuChi = await loaiThuChiObj.SearchQuery(x => x.Id == payment.LoaiThuChiId.Value).FirstOrDefaultAsync();
-                    payment.DestinationAccountId = loaiThuChi.AccountId;
-                }
-
                 else if (payment.PartnerType == "customer")
                 {
                     var account = await accountObj.GetAccountReceivableCurrentCompany();
                     payment.DestinationAccountId = account.Id;
                 }
-
                 else if (payment.PartnerType == "supplier")
                 {
                     var account = await accountObj.GetAccountPayableCurrentCompany();
-                    payment.DestinationAccountId = account.Id;
-                }
-
-                else if (payment.PartnerType == "employee")
-                {
-                    var account = await accountObj.GetAccount334CurrentCompany();
                     payment.DestinationAccountId = account.Id;
                 }
             }
@@ -1132,9 +1046,6 @@ namespace Infrastructure.Services
 
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PartnerId.Equals(val.PartnerId)));
-
-            if (val.PhieuThuChi.HasValue)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.LoaiThuChiId.HasValue == val.PhieuThuChi.Value));
 
             if (!string.IsNullOrEmpty(val.PaymentType))
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentType == val.PaymentType));

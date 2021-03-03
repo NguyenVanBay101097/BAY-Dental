@@ -55,7 +55,6 @@ namespace TMTDentalAPI.Controllers
             var payment = await _paymentService.SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Journal)
-                .Include(x => x.LoaiThuChi)
                 .FirstOrDefaultAsync();
             if (payment == null)
             {

@@ -3,18 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export class PhieuThuChiPaged {
-  constructor() {
-    this.phieuThuChi = true;
-  }
   limit: number;
   offset: number;
   search: string;
-  state: string;
-  paymentType: string;
-  paymentDateFrom: string;
-  paymentDateTo: string;
+  type: string;
+  dateFrom: string;
+  dateTo: string;
   companyId: string;
-  phieuThuChi: boolean;
 }
 
 export class PhieuThuChiSearch {

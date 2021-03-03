@@ -57,15 +57,15 @@ namespace ApplicationCore.Entities
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
 
-
         /// <summary>
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
 
-
+        /// <summary>
+        /// Không sử dụng nữa
+        /// </summary>
         public Guid? MoveId { get; set; }
         public AccountMove Move { get; set; }
-
     }
 }

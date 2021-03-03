@@ -50,6 +50,16 @@ export class ReportDataResult {
   totalThu: number;
 }
 
+export class CashBookDetailFilter {
+  companyId: string;
+  resultSelection: string;
+  dateFrom: string;
+  dateTo: string;
+  search: string;
+  limit: number;
+  offset: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -71,6 +81,13 @@ export class CashBookService {
   getSumary(val: any): Observable<ReportDataResult> {
     return this.http.post<ReportDataResult>(
       this.baseApi + this.apiUrl + "/GetSumary",
+      val
+    );
+  }
+
+  getDetails(val: any) {
+    return this.http.post(
+      this.baseApi + this.apiUrl + "/GetDetails",
       val
     );
   }
