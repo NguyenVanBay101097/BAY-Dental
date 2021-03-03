@@ -44,4 +44,9 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   onSave() {
     console.log(this.formGroup.value);
   }
+
+  onCancel() {
+    this.activeModal.dismiss();
+  }
+  
 }

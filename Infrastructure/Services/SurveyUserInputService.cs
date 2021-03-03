@@ -131,13 +131,55 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<SurveyUserInput> CreateUserInput(SurveyUserInputSave val)
+        public async Task<SurveyUserInput> CreateUserInput(SurveyUserInputCreate val)
         {
-            var userInput = _mapper.Map<SurveyUserInput>(val);
 
-            SaveLines(val, userInput);
+            var questionObj = GetService<ISurveyQuestionService>();       
+            var questions = await questionObj.SearchQuery().Include(x => x.Answers).ToListAsync();
+            var questionDict = questions.ToDictionary(x => x.Id, x => x);
+            var line = new survey
+            var userinput = new SurveyUserInputSave();
 
-            SaveSurveyTags(val, userInput);
+            foreach(var line in val.Lines)
+            {
+                if (questionDict[line.QuestionId].Type == "radio")
+                {                  
+                    line = new SurveyUserInputLineSave
+                    {
+                        QuestionId = question.Id,
+                       
+                        AnswerId = maxAnswer.Id,
+                        Answer = new SurveyAnswerDisplay
+                        {
+                            Id = maxAnswer.Id,
+                            Name = maxAnswer.Name,
+                            Score = maxAnswer.Score,
+                            Sequence = maxAnswer.Sequence
+                        },
+                        Score = maxAnswer.Score,
+                    };
+                }
+                else if questionDict[line.QuestionId].Type == "text")
+                {
+                    line = new SurveyUserInputLineSave
+                    {
+                        QuestionId = question.Id,
+                        Question = new SurveyQuestionDisplay
+                        {
+                            Id = question.Id,
+                            Name = question.Name,
+                            Sequence = question.Sequence,
+                            Type = question.Type,
+                        },
+                    };
+                }
+            }
+
+            //var userInput = _mapper.Map<SurveyUserInput>(val);
+
+            //SaveLines(val, userInput);
+
+            //SaveSurveyTags(val, userInput);
 
 
             return await CreateAsync(userInput);

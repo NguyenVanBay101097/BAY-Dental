@@ -79,4 +79,14 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid? SurveyAssignmentId { get; set; }
     }
+
+    public class SurveyUserInputCreate
+    {
+        public IEnumerable<SurveyUserInputLineCreate> Lines { get; set; } = new List<SurveyUserInputLineCreate>();
+
+        /// <summary>
+        /// nội dung khảo sát
+        /// </summary>
+        public string Note { get; set; }
+    }
 }

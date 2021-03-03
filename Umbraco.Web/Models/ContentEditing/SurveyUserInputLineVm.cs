@@ -89,4 +89,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? QuestionId { get; set; }
         public SurveyQuestionDisplay Question { get; set; }
     }
+
+    public class SurveyUserInputLineCreate
+    {
+        public Guid QuestionId { get; set; }
+        public string AnswerValue { get; set; }
+    }
 }
