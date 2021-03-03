@@ -11,7 +11,7 @@ import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-re
   styleUrls: ['./sale-order-product-request-list.component.css']
 })
 export class SaleOrderProductRequestListComponent implements OnInit {
-  
+
   @Input() saleOrderId: string;
   productRequests: any = [];
 
@@ -33,17 +33,17 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     val.limit = 0;
     val.saleOrderId = this.saleOrderId;
 
-    this.pro.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      console.log(res);
-      this.toathuocs = res.data;
-    }, err => {
-      console.log(err);
-    })
+    // this.pro.getPaged(val).pipe(
+    //   map(response => (<GridDataResult>{
+    //     data: response.items,
+    //     total: response.totalItems
+    //   }))
+    // ).subscribe(res => {
+    //   console.log(res);
+    //   this.toathuocs = res.data;
+    // }, err => {
+    //   console.log(err);
+    // })
   }
 
   createItem() {
@@ -60,7 +60,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then((result) => {
-      this.notify('success','Lưu thành công');
+      this.notify('success', 'Lưu thành công');
       this.loadData();
     }, () => {
     });
