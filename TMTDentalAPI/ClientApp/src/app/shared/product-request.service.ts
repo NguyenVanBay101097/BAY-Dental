@@ -3,10 +3,10 @@ import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { GetLinePar, ProductRequestBasic, ProductRequestDisplay, ProductRequestSave } from "src/app/sale-orders/product-request";
 import { ProductRequestLineDisplay } from "src/app/sale-orders/product-request-line";
-import { PagedResult2 } from "../paged-result-2";
+import { PagedResult2 } from "../core/paged-result-2";
 
 @Injectable({ providedIn: 'root' })
-export class SaleOrderService {
+export class ProductRequestService {
     apiUrl = 'api/ProductRequests';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 

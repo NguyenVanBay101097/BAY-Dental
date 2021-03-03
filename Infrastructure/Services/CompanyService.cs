@@ -387,6 +387,7 @@ namespace Infrastructure.Services
             var rule_dict = new Dictionary<string, IRRuleNew>()
             {
                 {"medicineOrder.medicine_order_comp_rule", new  IRRuleNew{ NameRule = "medicine_order_comp_rule", ModelIRModel = "MedicineOrder" ,NameIRModel = "Hóa đơn thuốc"}},           
+                {"productrequest.product_request_comp_rule", new  IRRuleNew{ NameRule = "product_request_comp_rule", ModelIRModel = "ProductRequest" ,NameIRModel = "yêu cầu vật tư"}},           
             };
 
             foreach (var rule in rule_dict)
