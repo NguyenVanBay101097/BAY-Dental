@@ -36,6 +36,9 @@ namespace Infrastructure.Services
 
             //return line.
             var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
+            if (orderLine == null)
+                throw new Exception("Không tìm thấy dịch vụ");
+
             return new ProductRequestLineDisplay()
             {
                 ProductId = bom.MaterialProductId,
@@ -45,7 +48,7 @@ namespace Infrastructure.Services
                 ProductUOMId = bom.ProductUOMId,
                 ProducUOM = _mapper.Map<UoMSimple>(bom.ProducUOM),
                 SaleOrderLineId = val.SaleOrderLineId,
-                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine)
+                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine),
             };
         }
     }
