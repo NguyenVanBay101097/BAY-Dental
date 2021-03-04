@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddDinhMucVatTu : Migration
+    public partial class bayaddyeucauvattu : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -272,18 +272,6 @@ namespace Infrastructure.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AccountPayments_AccountAccounts_DestinationAccountId",
-                table: "AccountPayments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_AccountPayments_LoaiThuChis_LoaiThuChiId",
-                table: "AccountPayments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_HrPayslips_AccountPayments_AccountPaymentId",
-                table: "HrPayslips");
-
             migrationBuilder.DropTable(
                 name: "ProductBoms");
 

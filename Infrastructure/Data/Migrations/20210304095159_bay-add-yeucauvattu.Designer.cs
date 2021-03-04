@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210302044802_AddDinhMucVatTu")]
-    partial class AddDinhMucVatTu
+    [Migration("20210304095159_bay-add-yeucauvattu")]
+    partial class bayaddyeucauvattu
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
