@@ -1,8 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { GetLinePar, ProductRequestBasic, ProductRequestDefaultGet, ProductRequestDisplay, ProductRequestSave } from "src/app/sale-orders/product-request";
-import { ProductRequestLineDisplay } from "src/app/sale-orders/product-request-line";
+import { ProductRequestBasic, ProductRequestDefaultGet, ProductRequestDisplay, ProductRequestSave } from "src/app/sale-orders/product-request";
 import { PagedResult2 } from "../core/paged-result-2";
 
 @Injectable({ providedIn: 'root' })
@@ -44,9 +43,5 @@ export class ProductRequestService {
 
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
-    }
-
-    getLine(val: GetLinePar) {
-        return this.http.post<ProductRequestLineDisplay>(this.baseApi + this.apiUrl, val);
     }
 }
