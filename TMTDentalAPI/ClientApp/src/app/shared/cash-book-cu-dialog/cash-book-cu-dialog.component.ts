@@ -15,6 +15,7 @@ import { AuthService } from "src/app/auth/auth.service";
 import { LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
 import { PartnerPaged, PartnerSimple } from "src/app/partners/partner-simple";
 import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
+import { PhieuThuChiDisplay, PhieuThuChiService } from "src/app/phieu-thu-chi/phieu-thu-chi.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { LoaiThuChiFormComponent } from "src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component";
 import { PrintService } from "src/app/shared/services/print.service";
@@ -25,27 +26,19 @@ import { PrintService } from "src/app/shared/services/print.service";
   styleUrls: ["./cash-book-cu-dialog.component.css"],
 })
 export class CashBookCuDialogComponent implements OnInit {
-  title: string = null;
-  paymentType: string = null;
-  itemId: string = null;
+  title: string;
+  type: string;
+  id: string;
   formGroup: FormGroup;
   submitted: boolean = false;
   loaiThuChiList: any = [];
   filteredJournals: any = [];
-  partnerTypes: any = [];
-  filteredPartnerTypes: any = [];
-  partnerPaged: PartnerFilter;
-  filteredPartners: PartnerSimple[] = [];
-
-  paymentDisplay: AccountPaymentDisplay = new AccountPaymentDisplay();
-
+  phieuThuChiDisplay: PhieuThuChiDisplay = new PhieuThuChiDisplay();
   reload = false;
 
   get f() { return this.formGroup.controls; }
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
-  @ViewChild("partnerTypeCbx", { static: true }) partnerTypeCbx: ComboBoxComponent;
-  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +50,7 @@ export class CashBookCuDialogComponent implements OnInit {
     private notificationService: NotificationService,
     private intlService: IntlService,
     private printService: PrintService,
-    private accountPaymentService: AccountPaymentService,
+    private phieuThuChiService: PhieuThuChiService,
     private partnerService: PartnerService,
   ) { }
 
@@ -74,13 +67,10 @@ export class CashBookCuDialogComponent implements OnInit {
       partner: [null],
     });
 
-    this.partnerPaged = new PartnerFilter();
-
     setTimeout(() => {
       this.loadLoaiThuChiList();
       this.loadFilteredJournals();
-      this.loadPartnerTypes();
-      if (!this.itemId) {
+      if (!this.id) {
         this.loadDefault();
       } else {
         this.loadRecord();
@@ -91,18 +81,18 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   getType() {
-    if (this.paymentType == "inbound") {
-      return "thu";
+    if (this.type == "inbound") {
+      return "Phiếu thu";
     } else {
-      return "chi";
+      return "Phiếu chi";
     }
   }
 
   getTitle() {
-    if (!this.itemId) {
-      return "Tạo phiếu " + this.getType();
+    if (!this.id) {
+      return "Tạo: " + this.getType();
     } else {
-      return "Chỉnh sửa phiếu " + this.getType();
+      return "Chỉnh sửa: " + this.getType();
     }
   }
 
@@ -117,8 +107,8 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   loadDefault() {
-    this.accountPaymentService.thuChiDefaultGet({paymentType: this.paymentType}).subscribe((res: any) => {
-      this.paymentDisplay = res;
+    this.phieuThuChiService.defaultGet({type: this.type}).subscribe((res: any) => {
+      this.phieuThuChiDisplay = res;
       this.formGroup.patchValue(res);
       var paymentDate = new Date(res.paymentDate);
       this.formGroup.get('paymentDateObj').setValue(paymentDate);
@@ -127,8 +117,8 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   loadRecord() {
-    this.accountPaymentService.get(this.itemId).subscribe((result: any) => {
-      this.paymentDisplay = result;
+    this.phieuThuChiService.get(this.id).subscribe((result: any) => {
+      this.phieuThuChiDisplay = result;
       this.formGroup.patchValue(result);
       var paymentDate = new Date(result.paymentDate);
       this.formGroup.get("paymentDateObj").patchValue(paymentDate);
@@ -274,10 +264,10 @@ export class CashBookCuDialogComponent implements OnInit {
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
-    val.paymentType = this.paymentType;
+    val.paymentType = this.type;
 
-    if (!this.itemId) {
-      this.accountPaymentService.create(val).subscribe(
+    if (!this.id) {
+      this.phieuThuChiService.create(val).subscribe(
         (result: any) => {
           this.notificationService.show({
             content: "Lưu thành công",
@@ -286,10 +276,10 @@ export class CashBookCuDialogComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-          this.itemId = result.id;
+          this.id = result.id;
           this.reload = true;
           if (print) {
-            this.printPhieu(this.itemId);
+            this.printPhieu(this.id);
           }
           this.submitted = false;
         },
@@ -299,7 +289,7 @@ export class CashBookCuDialogComponent implements OnInit {
         }
       );
     } else {
-      this.accountPaymentService.update(this.itemId, val).subscribe(
+      this.phieuThuChiService.update(this.id, val).subscribe(
         (result: any) => {
           this.notificationService.show({
             content: "Lưu thành công",
@@ -309,7 +299,7 @@ export class CashBookCuDialogComponent implements OnInit {
             type: { style: "success", icon: true },
           });
           if (print) {
-            this.printPhieu(this.itemId);
+            this.printPhieu(this.id);
           }
           this.submitted = false;
           this.activeModal.close();
@@ -334,12 +324,12 @@ export class CashBookCuDialogComponent implements OnInit {
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
-    val.paymentType = this.paymentType;
+    val.paymentType = this.type;
 
-    if (!this.itemId) {
-      this.accountPaymentService.create(val).subscribe(
+    if (!this.id) {
+      this.phieuThuChiService.create(val).subscribe(
         (result: any) => {
-          this.accountPaymentService.post([result.id]).subscribe(
+          this.phieuThuChiService.post([result.id]).subscribe(
             () => {
               this.notificationService.show({
                 content: "Xác nhận thành công",
@@ -366,7 +356,7 @@ export class CashBookCuDialogComponent implements OnInit {
         }
       );
     } else {
-      this.accountPaymentService.post([this.itemId]).subscribe(
+      this.phieuThuChiService.post([this.id]).subscribe(
         (result) => {
           this.notificationService.show({
             content: "Xác nhận thành công",
@@ -389,7 +379,7 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   onPrint() {
-    this.printPhieu(this.itemId);
+    this.printPhieu(this.id);
   }
 
   onClose() {
@@ -401,7 +391,7 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   printPhieu(id: string) {
-    this.accountPaymentService.getPrint(id).subscribe((data: any) => {
+    this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
       this.printService.printHtml(data.html);
     });
   }
@@ -411,7 +401,7 @@ export class CashBookCuDialogComponent implements OnInit {
     modalRef.componentInstance.title = `Hủy phiếu ${this.getType().toLowerCase()}`;
     modalRef.componentInstance.body = `Bạn chắc chắn muốn hủy phiếu ${this.getType().toLowerCase()}?`;
     modalRef.result.then((result) => {
-      this.accountPaymentService.actionCancel([this.itemId]).subscribe((result) => {
+      this.phieuThuChiService.actionCancel([this.id]).subscribe((result) => {
         this.notificationService.show({
           content: "Hủy phiếu thành công",
           hideAfter: 3000,

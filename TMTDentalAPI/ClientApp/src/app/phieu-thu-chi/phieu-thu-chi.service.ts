@@ -59,7 +59,7 @@ export class PhieuThuChiSave {
   loaiThuChi: any;
 }
 
-export class PhieuThuChi {
+export class PhieuThuChiDisplay {
   id: string;
   companyId: string;
   company: any;

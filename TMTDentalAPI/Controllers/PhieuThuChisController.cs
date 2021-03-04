@@ -25,13 +25,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IAccountJournalService _journalService;
         public PhieuThuChisController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            IViewRenderService viewRenderService)
+            IViewRenderService viewRenderService, IAccountJournalService journalService)
         {
             _phieuThuChiService = phieuThuChiService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
+            _journalService = journalService;
         }
 
         //api get phan trang loai thu , chi
@@ -126,11 +128,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult DefaultGet(PhieuThuChiDefaultGet val)
+        public async Task<IActionResult> DefaultGet(PhieuThuChiDefaultGet val)
         {
             var res = new PhieuThuChiDisplay();
             res.Type = val.Type;
             res.CompanyId = CompanyId;
+            var journal = await _journalService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
+            res.Journal = _mapper.Map<AccountJournalSimple>(journal);
             return Ok(res);
         }
 

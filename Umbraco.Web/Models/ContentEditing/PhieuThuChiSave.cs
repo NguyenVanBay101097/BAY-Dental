@@ -6,17 +6,6 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class PhieuThuChiSave
     {
-        public PhieuThuChiSave()
-        {
-            State = "draft";
-        }
-
-        /// <summary>
-        /// Chi nhánh
-        /// </summary>
-        public Guid? CompanyId { get; set; }
-        public CompanySimple Company { get; set; }
-
         /// <summary>
         /// Ngày lập phiếu
         /// </summary>
