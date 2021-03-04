@@ -80,15 +80,16 @@ namespace Infrastructure.Services
 
         public async Task<ProductRequestDisplay> GetDisplay(Guid id)
         {
+            var requestLineObj = GetService<IProductRequestLineService>();
+
             var res = await SearchQuery(x => x.Id == id)
                 .Include(x => x.User)
                 .Include(x => x.Employee)
                 .Include(x => x.Picking)
                 .Include(x => x.SaleOrder)
-                .Include(x => x.Lines).ThenInclude(s => s.Product)
-                .Include(x => x.Lines).ThenInclude(s => s.SaleOrderLine)
-                .Include(x => x.Lines).ThenInclude(s => s.ProducUOM)
                 .FirstOrDefaultAsync();
+
+            res.Lines = await requestLineObj.SearchQuery(x => x.RequestId == res.Id).Include(x => x.Product).Include(x => x.ProducUOM).Include(x => x.SaleOrderLine).ToListAsync();
 
             var display = _mapper.Map<ProductRequestDisplay>(res);
 
