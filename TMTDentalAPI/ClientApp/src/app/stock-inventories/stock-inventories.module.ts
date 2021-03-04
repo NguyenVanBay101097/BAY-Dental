@@ -9,9 +9,11 @@ import { StockInventoryListComponent } from './stock-inventory-list/stock-invent
 import { StockInventoryService } from './stock-inventory.service';
 import { StockInventoryFormComponent } from './stock-inventory-form/stock-inventory-form.component';
 import { StockInventoryProductListComponent } from './stock-inventory-product-list/stock-inventory-product-list.component';
+import { StockInventoryCriteriaListComponent } from './stock-inventory-criteria-list/stock-inventory-criteria-list.component';
+import { StockInventoryCriteriaCuDialogComponent } from './stock-inventory-criteria-cu-dialog/stock-inventory-criteria-cu-dialog.component';
 
 @NgModule({
-  declarations: [StockInventoryListComponent, StockInventoryFormComponent, StockInventoryProductListComponent],
+  declarations: [StockInventoryListComponent, StockInventoryFormComponent, StockInventoryProductListComponent, StockInventoryCriteriaListComponent, StockInventoryCriteriaCuDialogComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,7 +30,8 @@ import { StockInventoryProductListComponent } from './stock-inventory-product-li
     StockInventoryProductListComponent
   ],
   entryComponents: [
-    StockInventoryFormComponent
+    StockInventoryFormComponent,
+    StockInventoryCriteriaCuDialogComponent
   ]
 })
 export class StockInventoriesModule { }

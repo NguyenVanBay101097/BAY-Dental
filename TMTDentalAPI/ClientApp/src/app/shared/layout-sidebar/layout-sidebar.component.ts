@@ -138,6 +138,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
         { name: 'Loại thu chi', link: '/loai-thu-chi'},
+        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias'},
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },

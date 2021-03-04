@@ -224,6 +224,8 @@ namespace Infrastructure.Data
 
         public DbSet<MedicineOrder> MedicineOrders { get; set; }
         public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
+        public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
+        public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -404,6 +406,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
             builder.ApplyConfiguration(new MedicineOrderConfiguration());
             builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
+            builder.ApplyConfiguration(new StockInventoryCriteriaConfiguration());
+            builder.ApplyConfiguration(new ProductStockInventoryCriteriaRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder
