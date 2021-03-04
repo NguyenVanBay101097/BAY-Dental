@@ -20,6 +20,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Firm { get; set; }
 
         public decimal? LaboPrice { get; set; }
+
+        public Guid UOMId { get; set; }
+        public UoMBasic UOM { get; set; }
     }
 
     public class ProductSimpleAutoComplete

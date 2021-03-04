@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductService } from '../product.service';
+import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { ProductFilter, ProductService } from '../product.service';
 import { Product } from '../product';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductCategory } from 'src/app/product-categories/product-category';
@@ -15,6 +15,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
+import { ProductBomDisplay } from '../product-bom';
+import { result } from 'lodash';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -34,19 +37,23 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   stepNameEdit = true;
   categCbxLoading = false;
+  productCbxLoading = false;
+  uoM: any;
   searchCategory = new Subject<string>();
 
   stepTab: boolean;
   order: number;
   stepList: ProductStepDisplay[] = [];
+  productBomList: ProductBomDisplay[] = [];
   stepListMore: ProductStepDisplay[] = [];
   lengthStepList: number = 0; // độ dài step list
-
+  filteredProducts: any[] = [];
   @Input() productDefaultVal: Product;
 
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
@@ -82,18 +89,29 @@ export class ProductServiceCuDialogComponent implements OnInit {
       default: true,
       order: this.order,
       purchasePrice: 0,
-      firm: null
+      firm: null,
+      // Định mức vật tư
+      productBoms: this.fb.array([
+
+      ]),
+
+
     });
 
     setTimeout(() => {
       this.default();
-
       this.searchCategories('').subscribe(result => {
         this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
       });
-
+      this.searchProducts('').subscribe(result => {
+        this.filteredProducts = result;
+      });
       this.categCbxFilterChange();
+      this.productCbxFilterChange();
+      this.onCreate();
     });
+
+
   }
 
   default() {
@@ -136,11 +154,30 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
+  productCbxFilterChange() {
+    this.categCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.categCbx.loading = true)),
+      switchMap(value => this.searchProducts(value))
+    ).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbx.loading = false;
+    });
+  }
+
   categCbxFilterChange2(e: string) {
     debounceTime(300);
     this.searchCategories(e.toLowerCase()).subscribe(result => {
       this.filterdCategories = result;
       this.categCbxLoading = false;
+    });
+  }
+
+  productCbxFilterChange2(e: string) {
+    debounceTime(300);
+    this.searchProducts(e.toLowerCase()).subscribe(result => {
+      this.filteredProducts = result;
+      this.productCbxLoading = false;
     });
   }
 
@@ -176,7 +213,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-
     if (!this.productForm.valid) {
       return;
     }
@@ -207,6 +243,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
+    data.boms = this.createListProductBom();
     return data;
   }
 
@@ -264,6 +301,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
+  searchProducts(q?: string) {
+    var filter = new ProductFilter();
+    filter.search = q || '';
+    filter.type = 'product';
+    filter.type2 = 'product';
+    filter.limit = 20;
+    filter.offset = 0;
+    return this.productService.autocomplete2(filter);
+  }
 
   // moveUp(order) {
   //   var index = order - 1;
@@ -373,6 +419,88 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   get f() {
     return this.productForm.controls;
+  }
+
+  createProduct() {
+    let modalRef = this.modalService.open(ProductProductCuDialogComponent, {
+      size: "lg",
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Thêm: vật tư";
+    modalRef.result.then(
+      result => {
+        this.searchProducts('').subscribe(result => {
+          this.filteredProducts = result;
+        });
+      },
+      () => { }
+    );
+  }
+
+  get productBoms() {
+    return this.productForm.get('productBoms') as FormArray;
+  }
+
+  onCreate(productBom?: any) {
+    this.productBoms.push(
+      this.fb.group({
+        quantity: null,
+        productBom: productBom,
+        uoM: null
+      })
+    )
+  }
+
+  createListProductBom() {
+    this.productBoms.controls.forEach((element, index) => {
+      if (element.value["productBom"]) {
+        var productBom = new ProductBomDisplay();
+        productBom.materialProductId = element.value["productBom"].id;
+        productBom.productUOMId = element.value["productBom"].uomId;
+        productBom.quantity = element.value["quantity"];
+        productBom.sequence = 0;
+        this.productBomList.push(productBom);
+      }
+    });
+    return this.productBomList;
+  }
+
+  getListProductBom() {
+    this.productBomList.forEach((element, index) => {
+      if (element.materialProductId == null) {
+        this.productBomList.splice(index, 1);
+      }
+    });
+  }
+
+  addProductBom() {
+    this.onCreate();
+  }
+
+  deleteProductBom(index) {
+    this.productBoms.removeAt(index);
+  }
+
+  onValueChange(item) {
+    // if (item) {
+    //   var prBoms = this.productForm.get('productBoms') as FormArray;
+    //   prBoms.controls.forEach(group => {
+    //     if (group.value && group.value.productBom.id == item.id) {
+    //       group.get('uoM').patchValue(item.uoMBasic);
+    //     }
+    //   });
+    // }
+    if (item) {
+      var prBoms = this.productForm.get('productBoms') as FormArray;
+
+      prBoms.controls.forEach(group => {
+        if (group.value && group.value.productBom.id == item.id) {
+          group.get('uoM').patchValue(item.uom);
+        }
+      });
+    }
   }
 }
 
