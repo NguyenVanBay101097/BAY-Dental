@@ -94,12 +94,12 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa yêu cầu vật tư';
     modalRef.componentInstance.body = 'Bạn có chắc chắn xóa yêu cầu vật tư?';
     modalRef.result.then(() => {
-      // this.toaThuocService.delete(item.id).subscribe(() => {
-      // this.notify('success','Xóa thành công');
-      //   this.loadData();
-      // }, err => {
-      //   console.log(err);
-      // });
+      this.productRequestService.delete(item.id).subscribe(() => {
+      this.notify('success','Xóa thành công');
+        this.loadData();
+      }, err => {
+        console.log(err);
+      });
     }, () => {
     });
   }
@@ -112,5 +112,18 @@ export class SaleOrderProductRequestListComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: type, icon: true }
     });
+  }
+
+  getStateDisplay(state) {
+    switch (state) {
+      case 'draft':
+        return 'Nháp';
+      case 'confirmed':
+        return 'Đang yêu cầu';
+      case 'done':
+        return 'Đã xuất';
+      default:
+        return 'Nháp';
+    }
   }
 }
