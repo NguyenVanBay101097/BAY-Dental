@@ -173,7 +173,7 @@ namespace Infrastructure.Services
             }
 
             //CheckAccessRights(typeof(TEntity).Name, "Create");
-            CheckAccessRules(entities, "Create");
+            //CheckAccessRules(entities, "Create");
 
             await _repository.InsertAsync(entities);
 
@@ -200,7 +200,7 @@ namespace Infrastructure.Services
             }
 
             //CheckAccessRights(typeof(TEntity).Name, "Write");
-            CheckAccessRules(entities, "Write");
+            //CheckAccessRules(entities, "Write");
 
             await _repository.UpdateAsync(entities);
         }

@@ -208,17 +208,19 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">
-                                            <div hasGroups [groups]="'survey.group_survey'" class="form-check d-flex align-items-center">
-                                                <input class="form-check-input" type="checkbox" formControlName="isAllowSurvey" id="isAllowSurvey" (change)="onChangeIsAllowSurvey($event)">
-                                                <label class="form-check-label" for="isAllowSurvey"> Là nhân viên khảo sát thuộc nhóm </label>
-                                                <select *ngIf="isAllowSurveyFC.value" class="form-control ml-2 w-auto" formControlName="groupId">
-                                                  <option *ngFor="let g of groupSurvey" [value]="g.id">{{g.name}}</option>
-                                                </select>
-                                            </div>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                <div hasGroups [groups]="'survey.group_survey'" class="form-check d-flex align-items-center">
+                                                    <input class="form-check-input" type="checkbox" formControlName="isAllowSurvey" id="isAllowSurvey">
+                                                    <label class="form-check-label" for="isAllowSurvey"> Là nhân viên khảo sát</label>
+                                                </div>
+                                            </label>
                                         </td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="3" style="width: 100%;">
+                                            <kendo-combobox [placeholder]="'Nhóm khảo sát'" [data]="groupSurvey" *ngIf="isAllowSurveyFC.value" [valuePrimitive]="true"
+                                            [textField]="'name'" [filterable]="true" formControlName="groupId"
+                                            [valueField]="'id'" ></kendo-combobox>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

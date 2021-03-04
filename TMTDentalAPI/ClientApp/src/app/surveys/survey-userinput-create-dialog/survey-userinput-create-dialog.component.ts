@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { LinearGradient } from '@progress/kendo-drawing';
 import * as _ from 'lodash';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { SurveyQuestionDisplay, SurveyQuestionService } from '../survey-question.service';
 import { SurveyTagDialogComponent } from '../survey-tag-dialog/survey-tag-dialog.component';
 import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
@@ -18,11 +20,10 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   title: string;
   id: string;
   questions: SurveyQuestionDisplay[] = [];
-  surveyAssignmentStatus: string;
   surveyAssignmentId: string;
   surveyTags: SurveyTagBasic[];
-  selectedTagIds: any[];
   disable = false;
+  @ViewChild('tagMultiSelect', {static: true}) tagMultiSelect: MultiSelectComponent;
 
   constructor(public activeModal: NgbActiveModal, private surveyUserinputService: SurveyUserinputService, private modalService: NgbModal,
     private questionService: SurveyQuestionService, private surveyTagService: SurveyTagService, private fb: FormBuilder) { }
@@ -37,6 +38,15 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     setTimeout(() => {
       this.loadSurveyTagList();
       this.loadQuestions();
+
+      this.tagMultiSelect.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.tagMultiSelect.loading = true)),
+        switchMap(value => this.searchSurveyTags(value))
+      ).subscribe(result => {
+        this.surveyTags = result.items;
+        this.tagMultiSelect.loading = false;
+      });
     });
   }
 
@@ -91,11 +101,6 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     return this.surveyTagService.getPaged(val);
   }
 
-  public onSizeChange(value) {
-    this.selectedTagIds = value;
-
-  }
-
   quickCreateSurveyTagModal() {
     const modalRef = this.modalService.open(SurveyTagDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: Nhãn khảo sát';
@@ -103,7 +108,6 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     modalRef.result.then(result => {
       if (result && result.id) {
         this.surveyTags.push(result);
-        this.formGroup.get('surveyTags').setValue([result as SurveyTagBasic]);
       }
     })
   }
@@ -115,7 +119,7 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.assignmentId = this.surveyAssignmentId;
-    val.surveyTagIds = this.selectedTagIds.map(x => x.id);
+    val.surveyTagIds = val.surveyTags ? val.surveyTags.map(x => x.id) : [];
     this.surveyUserinputService.create(val).subscribe(() => {
       this.activeModal.close();
     });

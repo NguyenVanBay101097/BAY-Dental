@@ -39,23 +39,22 @@
                     </h5>
                 </div>
                 <div class="o_group">
-                    <div class="d-flex" *ngIf="surveyAssignmentStatus !== 'done';else other_content">
-                        <kendo-multiselect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'" (valueChange)="onSizeChange($event)" formControlName="surveyTags">
-                        </kendo-multiselect>
-                        <button title="Thêm nhãn khảo sát" class="btn btn-secondary" (click)="quickCreateSurveyTagModal()">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                    <ng-template #other_content>
+                    <div [class.d-none]="disable">
                         <div class="d-flex">
-                            <h6 *ngFor="let tag of getSurveyTagsValue">
-                                <span class="badge badge-secondary p-2 mr-1" [ngClass]="'o_tag_color_' + tag.color">
-                                    {{tag.name}}
-                                </span>
-                            </h6>
+                            <kendo-multiselect [filterable]="true" #tagMultiSelect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'" formControlName="surveyTags">
+                            </kendo-multiselect>
+                            <button title="Thêm nhãn khảo sát" class="btn btn-secondary" (click)="quickCreateSurveyTagModal()">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
-
-                    </ng-template>
+                    </div>
+                    <div class="d-flex" *ngIf="disable">
+                        <h6 *ngFor="let tag of getSurveyTagsValue">
+                            <span class="badge badge-secondary p-2 mr-1" [ngClass]="'o_tag_color_' + tag.color">
+                                {{tag.name}}
+                            </span>
+                        </h6>
+                    </div>
                 </div>
 
                 <div class="oe_title">

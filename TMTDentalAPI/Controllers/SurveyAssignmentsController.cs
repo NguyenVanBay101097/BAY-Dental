@@ -104,7 +104,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "Survey.Assignment.UpdateEmployee")]
+        [CheckAccess(Actions = "Survey.Assignment.Update")]
         public async Task<IActionResult> Update(Guid id, SurveyAssignmentSave val)
         {
             if (!ModelState.IsValid)
@@ -141,7 +141,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Survey.Assignment.Update")]
+        [CheckAccess(Actions = "Survey.Assignment.DeleteUserInput")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -219,6 +219,9 @@ namespace TMTDentalAPI.Controllers
             var assignment = await _surveyAssignmentService.GetByIdAsync(val.Id);
             if (assignment == null)
                 return NotFound();
+            if (assignment.Status == "done")
+                throw new Exception("Phân việc ở trạng thái hoàn thành không thể đổi nhân viên");
+
             assignment.EmployeeId = val.EmployeeId;
             var employee = await _employeeService.GetByIdAsync(assignment.EmployeeId);
             assignment.UserId = employee.UserId;

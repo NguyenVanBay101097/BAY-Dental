@@ -167,10 +167,12 @@ export class SurveyAssignmentFormComponent implements OnInit {
   actionDone() {
     let modalRef = this.modalService.open(SurveyUserinputCreateDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thông tin khảo sát đánh giá';
-    modalRef.componentInstance.id = this.surveyAssignment.userInputId;
     modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
-    modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
-    debugger;
+
+    if (this.surveyAssignment.userInput) {
+      modalRef.componentInstance.id = this.surveyAssignment.userInput.id;
+    }
+
     if (this.surveyAssignment.status == 'done') {
       modalRef.componentInstance.disable = true;
     }

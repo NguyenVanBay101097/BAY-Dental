@@ -322,35 +322,21 @@ namespace Infrastructure.Services
                 empl.GroupId = null;
             if (empl.IsAllowSurvey == true && empl.GroupId == null)
                 throw new Exception("Phải chọn nhóm nhân viên khảo sát");
-            if (empl.UserId == null) return;
 
-            var groupObj = GetService<IResGroupService>();
-            var groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" }); // lấy danh sách group survey
-            if (groups.Count() == 0)
-            {
-                var surAssObj = GetService<ISurveyAssignmentService>();
-                await surAssObj.AddIrDataForSurvey();
-                groups = await groupObj.GetByModelDataModuleName(new ResGroupByModulePar() { ModuleName = "survey.survey_assignment" });
-            }
+            if (empl.UserId == null || !empl.GroupId.HasValue) 
+                return;
 
-            var user = await _userManager.Users.Where(x => x.Id == empl.UserId).Include(x => x.ResGroupsUsersRels).FirstOrDefaultAsync();
+            var user = await _userManager.Users.Where(x => x.Id == empl.UserId)
+                .Include(x => x.ResGroupsUsersRels)
+                .FirstOrDefaultAsync();
 
-            foreach (var group in groups)
-            {
-                // clear all
-                var rels = user.ResGroupsUsersRels.Where(x => x.GroupId == group.Id).ToList();
-                foreach (var rel in rels)
-                {
-                    user.ResGroupsUsersRels.Remove(rel);
-                }
-            }
-            //then add only 1 group
-            if (empl.GroupId.HasValue)
-                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel() { GroupId = empl.GroupId.Value });
+            if (!user.ResGroupsUsersRels.Any(x => x.GroupId == empl.GroupId))
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = empl.GroupId.Value });
+        
             await _userManager.UpdateAsync(user);
 
-            //clear cache survey domainruleget
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}-SurveyAssignment");
+            //clear cache
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}");
         }
 
 

@@ -1151,42 +1151,26 @@
             "Permission": "Survey.Assignment.Update"
           },
           {
-            "Name": "Thêm",
-            "Permission": "Survey.Assignment.Create"
-          },
-          {
             "Name": "Xóa",
             "Permission": "Survey.Assignment.Delete"
           },
           {
-            "Name": "Phân việc",
-            "Permission": "Survey.Assignment.UpdateEmployee"
-          },
-          {
-            "Name": "Hoàn thành",
-            "Permission": "Survey.Assignment.Done"
+            "Name": "Hủy khảo sát",
+            "Permission": "Survey.Assignment.DeleteUserInput"
           }
         ]
       },
       {
-        "Name": "Nhật ký cuộc gọi",
-        "Permission": "Survey.CallContent",
+        "Name": "Khảo sát",
+        "Permission": "Survey.UserInput",
         "Children": [
           {
             "Name": "Xem",
-            "Permission": "Survey.CallContent.Read"
+            "Permission": "Survey.UserInput.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Survey.CallContent.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Survey.CallContent.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Survey.CallContent.Delete"
+            "Permission": "Survey.UserInput.Create"
           }
         ]
       },

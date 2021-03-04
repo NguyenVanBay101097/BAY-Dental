@@ -343,13 +343,11 @@ namespace Infrastructure.Services
 
         public override ISpecification<SurveyAssignment> RuleDomainGet(IRRule rule)
         {
+            var userId = UserId;
             switch (rule.Code)
             {
                 case "survey.assignment_employee": // group cho việc : nếu là nhân viên thuộc group nhân viên viên thì get theo nhân viên
-                    var employeeObj = GetService<IEmployeeService>();
-                    var employeeId = employeeObj.SearchQuery(x => x.UserId == UserId).Select(x => x.Id).FirstOrDefault();
-                    if (employeeId == null) return null;
-                    return new InitialSpecification<SurveyAssignment>(x => x.EmployeeId == employeeId);
+                    return new InitialSpecification<SurveyAssignment>(x => x.UserId == userId);
                 default:
                     return null;
             }

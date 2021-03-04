@@ -8,6 +8,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _surveyUserInputService.GetDisplay(id);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
         public async Task<IActionResult> DefaultGet(SurveyUserInputDefaultGet val)
         {
             var res = await _surveyUserInputService.DefaultGet(val);
@@ -41,6 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
         public async Task<IActionResult> Create(SurveyUserInputCreate val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -68,6 +72,7 @@ namespace TMTDentalAPI.Controllers
 
         //api lấy kết quả
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
         public async Task<IActionResult> GetAnswer(Guid id)
         {
             //return SurveyUserInputAnswerResult

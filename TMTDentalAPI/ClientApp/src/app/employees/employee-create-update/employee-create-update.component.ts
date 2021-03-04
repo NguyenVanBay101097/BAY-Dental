@@ -42,7 +42,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private resGroupService: ResGroupService,
     private authService: AuthService,
     private permissionService: PermissionService
-    ) { }
+  ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
@@ -61,7 +61,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   filteredUsers: UserSimple[] = [];
   listCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
-  groupSurvey: any[]=[];
+  groupSurvey: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -136,8 +136,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   get nameFC() { return this.formCreate.get('name'); }
   get userIdFC() { return this.formCreate.get('userId'); }
 
-  get groupIdFC(){return this.formCreate.get('groupId');}
-  get isAllowSurveyFC(){return this.formCreate.get('isAllowSurvey');}
+  get groupIdFC() { return this.formCreate.get('groupId'); }
+  get isAllowSurveyFC() { return this.formCreate.get('isAllowSurvey'); }
 
   get isUser() {
     return this.formCreate.get('isUser').value;
@@ -252,7 +252,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   getEmployeeInfo() {
     if (this.empId != null) {
       this.employeeService.getEmployee(this.empId).subscribe(
-        rs => {
+        (rs: any) => {
           rs.birthDay = rs.birthDay ? new Date(rs.birthDay) : null;
           rs.startWorkDate = rs.startWorkDate ? new Date(rs.startWorkDate) : null;
           this.formCreate.get('createChangePassword').setValue(false);
@@ -260,6 +260,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
           this.formCreate.patchValue(rs);
 
           this.updateValidation();
+          console.log(rs.groupId);
         },
         er => {
           console.log(er);
@@ -431,20 +432,22 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   }
 
   loadGroupSurvey() {
-    this.resGroupService.getByModelDataModuleName("survey.survey_assignment")
-    .subscribe(
-      (res: any) => {
-        this.groupSurvey = res;
-      }
-    );
+    this.resGroupService.getListForSurvey()
+      .subscribe(
+        (res: any) => {
+          this.groupSurvey = res;
+        }
+      );
   }
 
   onChangeIsAllowSurvey(e) {
     var value = e.target.checked;
-    if(value == false) {
+    if (value == false) {
       this.groupIdFC.setValue(null);
     } else {
-      this.groupIdFC.setValue(this.groupSurvey[0].id);
+      if (this.groupSurvey.length) {
+        this.groupIdFC.setValue(this.groupSurvey[0].id);
+      }
     }
   }
 }

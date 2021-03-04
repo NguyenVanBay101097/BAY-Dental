@@ -134,9 +134,12 @@ namespace Infrastructure.Services
         public async Task CreateUserInput(SurveyUserInputCreate val)
         {
             //tao survey user input
-
             var questionObj = GetService<ISurveyQuestionService>();
-            var questions = await questionObj.SearchQuery().Include(x => x.Answers).ToListAsync();
+            var questionIds = val.Questions.Select(x => x.QuestionId).ToList();
+            var questions = await questionObj.SearchQuery(x => questionIds.Contains(x.Id))
+                .Include(x => x.Answers)
+                .ToListAsync();
+
             var questionDict = questions.ToDictionary(x => x.Id, x => x);
 
             var userInputline = new SurveyUserInputLine();
@@ -189,6 +192,8 @@ namespace Infrastructure.Services
             userinput.Note = val.Note;
 
             await CreateAsync(userinput);
+            await ComputeUserInputAsync(userinput);
+
             //update UserInputId cho assignment va status
             var assignmentObj = GetService<ISurveyAssignmentService>();
             var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).FirstOrDefaultAsync();
@@ -229,14 +234,6 @@ namespace Infrastructure.Services
 
         }
 
-        public override async Task<SurveyUserInput> CreateAsync(SurveyUserInput entity)
-        {
-
-            await base.CreateAsync(entity);
-            await ComputeUserInputAsync(entity);
-            return entity;
-        }
-
         private void SaveLines(SurveyUserInputSave val, SurveyUserInput userinput)
         {
             //remove line
@@ -273,19 +270,18 @@ namespace Infrastructure.Services
 
         private async Task ComputeUserInputAsync(SurveyUserInput userinput)
         {
-            var questionObj = GetService<ISurveyQuestionService>();
-            var rs = await SearchQuery(x => x.Id == userinput.Id).Include(x => x.Lines).Include("Lines.Answer").Include("Lines.Question").FirstOrDefaultAsync();
-            var lineRaidos = userinput.Lines.Where(x => x.Question.Type == "radio").ToList();
-            var questionIds = lineRaidos.Select(x => x.QuestionId).ToList();
-            var questions = await questionObj.SearchQuery(x => questionIds.Contains(x.Id)).Include(x => x.Answers).ToListAsync();
-            var maxNumber = lineRaidos.Max(x => x.Answer.Score.Value);
-            var totalNumber = lineRaidos.Sum(x => x.Answer.Score.Value);
-            var totalMax = 0M;
-            foreach (var question in questions)
-                totalMax += question.Answers.Max(x => x.Score.Value);
+            userinput = await SearchQuery(x => x.Id == userinput.Id)
+                .Include(x => x.Lines).ThenInclude(x => x.Answer)
+                .Include(x => x.Lines).ThenInclude(x => x.Question).ThenInclude(x => x.Answers)
+                .FirstOrDefaultAsync();
 
-            userinput.MaxScore = 5;
-            userinput.Score = Math.Round(((totalNumber * 5) / totalMax), 1);
+            var totalScore = userinput.Lines.Where(x => x.Answer != null).Sum(x => x.Score ?? 0);
+            var maxScore = userinput.Lines.Where(x => x.Answer != null).Sum(x => x.Question.Answers.Max(s => (s.Score ?? 0)));
+            var numberScoreQuestions = userinput.Lines.Where(x => x.Answer != null).Count();
+
+            userinput.MaxScore = numberScoreQuestions != 0 ? maxScore / numberScoreQuestions : 0;
+            userinput.Score = maxScore != 0 ? Math.Round(totalScore / maxScore * (userinput.MaxScore ?? 0), 1) : 0;
+            await UpdateAsync(userinput);
         }
 
         public async Task UpdateUserInput(Guid id, SurveyUserInputSave val)

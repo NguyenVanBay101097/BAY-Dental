@@ -83,6 +83,10 @@ export class ResGroupService {
         return this.http.post(this.baseApi + this.apiUrl + '/UpdateModels', {});
     }
 
+    getListForSurvey() {
+        return this.http.get(this.baseApi + this.apiUrl + '/GetListForSurvey');
+    }
+
     getByModelDataModuleName(moduleName: string) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetByModelDataModuleName', {moduleName:moduleName});
     }

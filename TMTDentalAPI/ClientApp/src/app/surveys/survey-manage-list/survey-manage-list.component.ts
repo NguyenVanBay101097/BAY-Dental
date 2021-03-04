@@ -212,11 +212,11 @@ export class SurveyManageListComponent implements OnInit {
     )
   }
 
-  clickItem(event) {
-    if (event.dataItem)
-      this.router.navigateByUrl('/surveys/form-manage/' + event.dataItem.id);
+  clickItem(item) {
+    var id = item.dataItem.id;
+    this.router.navigate(['/surveys/form'], { queryParams: { id: id } });
   }
-
+  
   onChaneEmp(emp) {
     this.employeeId = emp ? emp.id : null;
     this.loadDataFromApi();
