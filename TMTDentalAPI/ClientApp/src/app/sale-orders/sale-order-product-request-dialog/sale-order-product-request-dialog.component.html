@@ -73,7 +73,7 @@
                 </div>
                 <div class="section">
                     <div class="section-left">
-                        <table>
+                        <table class="table table-sm">
                             <thead>
                                 <tr>
                                     <th>Dịch vụ/Vật tư</th>
@@ -82,16 +82,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                <ng-container *ngFor="let item of listProductBoms; index as i">
+                                    <tr>
+                                        <td colspan="3">
+                                            {{item.name}}
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let item_child of item.boms">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
                     </div>
                     <div class="section-right">
-                        <table>
+                        <table class="table table-sm">
                             <thead>
                                 <tr>
                                     <th>STT</th>
