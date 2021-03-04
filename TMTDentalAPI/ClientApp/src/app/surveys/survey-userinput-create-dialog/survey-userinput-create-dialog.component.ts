@@ -22,6 +22,7 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   surveyAssignmentId: string;
   surveyTags: SurveyTagBasic[];
   selectedTagIds: any[];
+  disable = false;
 
   constructor(public activeModal: NgbActiveModal, private surveyUserinputService: SurveyUserinputService, private modalService: NgbModal,
     private questionService: SurveyQuestionService, private surveyTagService: SurveyTagService, private fb: FormBuilder) { }
@@ -31,11 +32,10 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
       questions: this.fb.array([]),
       surveyTags: null,
       note: null,
-      assignmentId: null,
     });
-
-    this.loadSurveyTagList();
+ 
     setTimeout(() => {
+      this.loadSurveyTagList();
       this.loadQuestions();
     });
   }
@@ -44,6 +44,12 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     this.questionService.getListForSurvey().subscribe((result: any) => {
       this.questions = result;
       this.createFormGroup(result);
+
+      if (this.id) {
+        this.surveyUserinputService.getAnswer(this.id).subscribe((result: any) => {
+          this.formGroup.patchValue(result);
+        });
+      }
     });
   }
 
@@ -51,31 +57,25 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     return this.formGroup.get('questions') as FormArray;
   }
 
+  get getSurveyTagsValue() {
+    return this.formGroup.get('surveyTags').value || [];
+  }
+
   createFormGroup(questions: SurveyQuestionDisplay[]) {
     var array = this.formGroup.get('questions') as FormArray;
     questions.forEach(question => {
-      array.push(this.fb.group({
-        questionId: question.id,
-        answerValue: [null, Validators.required]
-      }));
+      if (question.type == 'radio') {
+        array.push(this.fb.group({
+          questionId: question.id,
+          answerValue: [null, Validators.required]
+        }));
+      } else {
+        array.push(this.fb.group({
+          questionId: question.id,
+          answerValue: ['']
+        }));
+      }
     });
-    if (this.id) {
-      this.surveyUserinputService.get(this.id).subscribe((result: any) => {
-        this.formGroup.patchValue(result);
-        var lines = result.lines;
-        lines.forEach(item => {
-          var line = this.getQuestions.controls.find(x => x.value.questionId === item.questionId);
-          if (line) {
-            line.value.answerValue = item.question.type == 'radio' ? item.answerId : item.valueText;
-            line.patchValue(line.value);
-          }
-        });
-
-        if (result.surveyTags.length > 0) {
-          this.surveyTags = _.unionBy(result.surveyTags as SurveyTagBasic[], result.surveyTags, 'id');
-        }
-      });
-    }
   }
 
 

@@ -145,8 +145,9 @@ namespace Infrastructure.Services
             var dotKhamLineObj = GetService<IDotKhamLineService>();
             dotKhamLineObj.Sudo = true;
             var callContentObj = GetService<ISurveyCallContentService>();
+            var userInputObj = GetService<ISurveyUserInputService>();
 
-            var assign = await SearchQuery(x => x.Id == id).Include(x=>x.UserInput).FirstOrDefaultAsync();
+            var assign = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             if (assign == null) 
                 throw new Exception("Không tìm thấy khảo sát!");
 
@@ -222,6 +223,17 @@ namespace Infrastructure.Services
                     Id = x.Id,
                     Name = x.Name
                 }).ToListAsync();
+
+            if (assign.UserInputId.HasValue)
+            {
+                assignDisplay.UserInput = await userInputObj.SearchQuery(x => x.Id == assign.UserInputId)
+                    .Select(x => new SurveyAssignmentDisplayUserInput
+                    {
+                        Id = x.Id,
+                        Score = x.Score,
+                        MaxScore = x.MaxScore
+                    }).FirstOrDefaultAsync();
+            }
 
             return assignDisplay;
         }

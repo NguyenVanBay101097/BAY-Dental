@@ -90,8 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SurveyAssignmentDisplayCallContent> CallContents { get; set; }
 
-        public Guid? UserInputId { get; set; }
-        public SurveyUserInputDisplay UserInput { get; set; }
+        public SurveyAssignmentDisplayUserInput UserInput { get; set; }
 
         public string Status { get; set; }
     }
@@ -283,6 +282,20 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class SurveyAssignmentDisplayUserInput
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Số điểm đạt được, compute
+        /// </summary>
+        public decimal? Score { get; set; }
+
+        /// <summary>
+        /// Số điểm tối đa, compute
+        /// </summary>
+        public decimal? MaxScore { get; set; }
     }
 
     public class SurveyAssignmentSave

@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -63,6 +64,36 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        //api lấy kết quả
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetAnswer(Guid id)
+        {
+            //return SurveyUserInputAnswerResult
+            var surveyInput = await _surveyUserInputService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Lines).ThenInclude(x => x.Question)
+                .Include(x => x.SurveyUserInputSurveyTagRels).ThenInclude(x => x.SurveyTag)
+                .FirstOrDefaultAsync();
+            if (surveyInput == null)
+                return NotFound();
+
+            var res = new SurveyUserInputAnswerResult()
+            {
+                Note = surveyInput.Note,
+                Questions = surveyInput.Lines.Select(x => new SurveyUserInputLineCreate
+                {
+                    QuestionId = x.QuestionId.Value,
+                    AnswerValue = x.Question.Type == "radio" ? x.AnswerId.ToString() : x.ValueText
+                }),
+                SurveyTags = surveyInput.SurveyUserInputSurveyTagRels.Select(x => new SurveyTagBasic { 
+                    Id = x.SurveyTagId,
+                    Color = x.SurveyTag.Color,
+                    Name = x.SurveyTag.Name
+                })
+            };
+
+            return Ok(res);
         }
     }
 }

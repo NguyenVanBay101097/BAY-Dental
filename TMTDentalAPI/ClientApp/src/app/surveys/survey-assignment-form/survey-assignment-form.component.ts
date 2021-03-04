@@ -170,6 +170,11 @@ export class SurveyAssignmentFormComponent implements OnInit {
     modalRef.componentInstance.id = this.surveyAssignment.userInputId;
     modalRef.componentInstance.surveyAssignmentId = this.surveyAssignment.id;
     modalRef.componentInstance.surveyAssignmentStatus = this.surveyAssignment.status;
+    debugger;
+    if (this.surveyAssignment.status == 'done') {
+      modalRef.componentInstance.disable = true;
+    }
+
     modalRef.result.then(() => {
       this.notificationService.show({
         content: 'Hoàn thành khảo sát đánh giá',

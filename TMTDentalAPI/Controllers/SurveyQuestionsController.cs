@@ -219,7 +219,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetListForSurvey(Guid id)
         {
             var questions = await _surveyQuestionService.SearchQuery()
-                .OrderBy(x => x.Sequence)
+                .OrderBy(x => x.Sequence).ThenByDescending(x => x.DateCreated)
                 .Include(x => x.Answers).ToListAsync();
 
             foreach(var question in questions)

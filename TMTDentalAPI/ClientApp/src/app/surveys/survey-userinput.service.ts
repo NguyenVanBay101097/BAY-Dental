@@ -89,4 +89,7 @@ export class SurveyUserinputService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
+  getAnswer(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + '/' + id + '/GetAnswer');
+  }
 }

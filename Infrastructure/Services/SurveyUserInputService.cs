@@ -284,8 +284,6 @@ namespace Infrastructure.Services
             foreach (var question in questions)
                 totalMax += question.Answers.Max(x => x.Score.Value);
 
-
-
             userinput.MaxScore = 5;
             userinput.Score = Math.Round(((totalNumber * 5) / totalMax), 1);
         }
