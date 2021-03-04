@@ -28,4 +28,5 @@ export class ProductSave {
     purchaseOK: boolean;
     keToaOK: boolean;
     isLabo: boolean;
+    
 }

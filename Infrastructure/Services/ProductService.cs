@@ -423,12 +423,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type2))
                 query = query.Where(x => x.Type2 == val.Type2);
 
-            return await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Select(x => new ProductSimple
-            {
-                Id = x.Id,
-                Name = x.Name,
-                PriceUnit = x.ListPrice
-            }).ToListAsync();
+            var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            return _mapper.Map<IEnumerable<ProductSimple>>(res);
         }
 
         public async Task<Product> CreateProduct(ProductDisplay val)
