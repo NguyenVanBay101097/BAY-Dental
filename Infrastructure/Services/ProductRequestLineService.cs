@@ -51,5 +51,34 @@ namespace Infrastructure.Services
                 SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine),
             };
         }
+
+        public async Task SaveUpdateRequestedQuantity(List<Guid> ids, List<ProductRequestLine> selfs = null, bool isCU = true)
+        {
+            selfs = selfs == null ? await SearchQuery(x => ids.Contains(x.Id)).ToListAsync() : selfs;
+
+            //luu lai quantity da yeu cau
+            //check đã tồn tại thì update quantity, else create, neu ko phai isCU thi giam quantity, neu quantity =0 thi xoa
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+            var toCreates = new List<SaleOrderLineProductRequested>();
+            var toUpdates = new List<SaleOrderLineProductRequested>();
+            var toRemoves = new List<SaleOrderLineProductRequested>();
+            foreach (var line in selfs)
+            {
+                var exist = await requestedObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId && x.ProductId == line.ProductId).FirstOrDefaultAsync();
+                if (exist == null)
+                {
+                    toCreates.Add(new SaleOrderLineProductRequested()
+                    { ProductId = line.ProductId.Value, SaleOrderLineId = line.SaleOrderLineId.Value, RequestedQuantity = line.ProductQty });
+                }
+                else
+                {
+                    exist.RequestedQuantity = isCU == true ? (exist.RequestedQuantity + line.ProductQty) : (exist.RequestedQuantity - line.ProductQty);
+                    if (exist.RequestedQuantity <= 0)
+                        toRemoves.Add(exist);
+                    else
+                        toUpdates.Add(exist);
+                }
+            }
+        }
     }
 }
