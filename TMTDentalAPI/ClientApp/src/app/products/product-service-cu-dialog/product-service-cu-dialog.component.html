@@ -183,9 +183,9 @@
 
                         <div class="tab-pane" id="bom" role="tabpanel" aria-labelledby="bom-tab">
                             <div class="flex-1-1-100 h-100 overflow-hidden">
-                                <button type="button" style="margin-bottom: 10px;" (click)="createProduct()"
+                                <button type="button" style="margin-bottom: 10px;" (click)="createMaterialProduct()"
                                     class="btn btn-sm btn-primary">Thêm vật tư mới</button>
-                                <table class="table b-table-border table-sm mb-0">
+                                <table class="table b-table-border table-sm mb-0 table-tbody-ver-align-middle border-bottom">
                                     <thead>
                                         <tr>
                                             <th class="b-sticky-left" style="min-width: 100px;">STT</th>
@@ -195,8 +195,8 @@
                                             <th style="min-width: 120px;">#</th>
                                         </tr>
                                     </thead>
-                                    <tbody formArrayName="productBoms">
-                                        <ng-container *ngFor="let item of productBoms.controls; let i=index">
+                                    <tbody formArrayName="boms">
+                                        <ng-container *ngFor="let item of boms.controls; let i=index">
                                             <tr [formGroupName]="i">
                                                 <td class="b-sticky-left">{{i+1}}</td>
                                                 <td>
@@ -205,12 +205,13 @@
                                                         (filterChange)="productCbxFilterChange2($event)"
                                                         [valueField]="'id'" [filterable]="true" style="width:70%;"
                                                         #productCbx (valueChange)="onValueChange($event)"
-                                                        formControlName="productBom">
+                                                        formControlName="materialProduct">
                                                     </kendo-combobox>
                                                 </td>
                                                 <td>
-                                                    <span>{{item.get('uoM') && item.get('uoM').value ?
-                                                        item.get('uoM').value.name : ''}}</span>
+                                                    <span>{{item.get('producUOM') && item.get('producUOM').value ?
+                                                        item.get('producUOM').value.name : ''}}</span>
+
                                                 </td>
                                                 <td>
                                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
@@ -218,7 +219,7 @@
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td>
-                                                    <button type="button" (click)="deleteProductBom(i)"
+                                                    <button type="button" (click)="deleteMaterialProduct(i)"
                                                         class="btn btn-icon btn-sm btn-light text-right">
                                                         <span class="k-icon k-i-delete"></span>
                                                     </button>
@@ -228,7 +229,7 @@
                                         </ng-container>
                                     </tbody>
                                 </table>
-                                <button type="button" style="margin-bottom: 10px;" (click)="addProductBom()"
+                                <button type="button" style="margin-bottom: 10px;" (click)="addMaterialProduct()"
                                     class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Thêm vật tư</button>
                             </div>
                         </div>

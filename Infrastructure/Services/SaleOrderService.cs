@@ -2386,7 +2386,7 @@ namespace Infrastructure.Services
                         MaterialProductName = z.MaterialProduct.Name,
                         MaterialProductId = z.MaterialProductId.Value,
                         Id = z.Id,
-                        ProducUOMName = z.ProducUOM.Name,
+                        ProductUOMName = z.ProductUOM.Name,
                         Quantity = z.Quantity,
                         Sequence = z.Sequence
                     }).OrderBy(x => x.Sequence).ToList()

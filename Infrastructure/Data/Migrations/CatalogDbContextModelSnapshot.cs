@@ -11398,7 +11398,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.UoM", "ProducUOM")
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
                         .WithMany()
                         .HasForeignKey("ProductUOMId")
                         .OnDelete(DeleteBehavior.Cascade)

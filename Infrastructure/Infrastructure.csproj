@@ -58,6 +58,10 @@
     <Compile Remove="Data\Migrations\20210201025033_F4.Designer.cs" />
     <Compile Remove="Data\Migrations\20210302023554_AddDinhMucVatTu.cs" />
     <Compile Remove="Data\Migrations\20210302023554_AddDinhMucVatTu.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210304095159_bay-add-yeucauvattu.cs" />
+    <Compile Remove="Data\Migrations\20210304095159_bay-add-yeucauvattu.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210305031155_Bay_update_nameofmaterialUOM.cs" />
+    <Compile Remove="Data\Migrations\20210305031155_Bay_update_nameofmaterialUOM.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
   </ItemGroup>

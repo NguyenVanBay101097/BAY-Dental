@@ -17,7 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimpleAutoComplete MaterialProduct { get; set; }
 
         public Guid ProductUOMId { get; set; }
-        public UoMSimple ProducUOM { get; set; }
+        public UoMSimple ProductUOM { get; set; }
 
         public decimal Quantity { get; set; }
 
@@ -37,7 +37,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductSimple MaterialProduct { get; set; }
 
         public Guid ProductUOMId { get; set; }
-        public UoMBasic ProducUOM { get; set; }
+        public UoMBasic ProductUOM { get; set; }
 
         public decimal Quantity { get; set; }
 

@@ -21,7 +21,7 @@ namespace ApplicationCore.Entities
         /// uom của material
         /// </summary>
         public Guid ProductUOMId { get; set; }
-        public UoM ProducUOM { get; set; }
+        public UoM ProductUOM { get; set; }
 
         public decimal Quantity { get; set; }
 
