@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20210304095159_bay-add-yeucauvattu")]
-    partial class bayaddyeucauvattu
+    [Migration("20210305032704_Bay_addyeucauvattu")]
+    partial class Bay_addyeucauvattu
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -11360,7 +11360,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.UoM", "ProducUOM")
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
                         .WithMany()
                         .HasForeignKey("ProductUOMId")
                         .OnDelete(DeleteBehavior.Cascade)

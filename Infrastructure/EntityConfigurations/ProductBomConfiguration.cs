@@ -20,7 +20,7 @@ namespace Infrastructure.EntityConfigurations
               .WithMany(x=>x.Boms)
               .HasForeignKey(x => x.ProductId);
 
-            builder.HasOne(x => x.ProducUOM)
+            builder.HasOne(x => x.ProductUOM)
               .WithMany()
               .HasForeignKey(x => x.ProductUOMId);
 
