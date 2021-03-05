@@ -112,6 +112,7 @@ namespace Infrastructure.Services
             var inventory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Product)
                 .Include(x => x.Category)
+                .Include(x => x.Criteria)
                 .Include(x => x.Lines)
                 .Include(x => x.Moves)
                 .FirstOrDefaultAsync();
