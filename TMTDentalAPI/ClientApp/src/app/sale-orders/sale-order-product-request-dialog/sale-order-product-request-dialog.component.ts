@@ -42,11 +42,10 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
 
   get seeForm() {
     var state = this.formGroup.get('state').value;
-    var val = state == 'confirmed' || state == 'done';
-    return val;
+    if (state == null)
+      return true;
+    return state == 'confirmed' || state == 'done';
   }
-
-  get state() {return this.formGroup.get('state');}
 
   constructor(
     private fb: FormBuilder,
@@ -308,6 +307,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
         });
         this.productRequestDisplay.state = "draft";
         this.formGroup.get('state').setValue("draft");
+        this.reload = true;
       }, (err) => {
       });
     }, (err) => {
