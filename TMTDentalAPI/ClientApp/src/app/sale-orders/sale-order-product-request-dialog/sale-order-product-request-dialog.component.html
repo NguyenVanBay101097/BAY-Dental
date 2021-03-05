@@ -72,7 +72,7 @@
                     </table>
                 </div>
                 <div class="section">
-                    <div class="section-left" *ngIf="state?.value == 'draft'">
+                    <div class="section-left" *ngIf="!seeForm">
                         <table class="table table-sm table-hover border-bottom">
                             <thead>
                                 <tr>
@@ -97,7 +97,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="section-right" [class.section-full]="state?.value == 'draft'">
+                    <div class="section-full" [class.section-right]="!seeForm">
                         <table class="table table-sm table-hover table-tbody-ver-align-middle border-bottom">
                             <thead>
                                 <tr>
