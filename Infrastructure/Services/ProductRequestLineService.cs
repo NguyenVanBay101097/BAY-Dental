@@ -79,6 +79,21 @@ namespace Infrastructure.Services
                         toUpdates.Add(exist);
                 }
             }
+
+            if (toCreates.Count > 0)
+            {
+                await requestedObj.CreateAsync(toCreates);
+            }
+
+            if (toUpdates.Count > 0)
+            {
+                await requestedObj.UpdateAsync(toUpdates);
+            }
+
+            if (toRemoves.Count > 0)
+            {
+                await requestedObj.DeleteAsync(toRemoves);
+            }
         }
     }
 }
