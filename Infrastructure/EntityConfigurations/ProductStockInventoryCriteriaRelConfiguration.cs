@@ -14,11 +14,13 @@ namespace Infrastructure.EntityConfigurations
 
             builder.HasOne(x => x.StockInventoryCriteria)
              .WithMany()
-             .HasForeignKey(x => x.StockInventoryCriteriaId).OnDelete(DeleteBehavior.Restrict);
+             .HasForeignKey(x => x.StockInventoryCriteriaId)
+             .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Product)
                 .WithMany(x=> x.ProductStockInventoryCriteriaRels)
-                .HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
