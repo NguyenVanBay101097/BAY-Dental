@@ -44,6 +44,11 @@ namespace ApplicationCore.Entities
         public DateTime DateOrder { get; set; }
 
         /// <summary>
+        /// ngày hoàn thành
+        /// </summary>
+        public DateTime? DateDone { get; set; }
+
+        /// <summary>
         /// Khách hàng
         /// </summary>
         public Guid PartnerId { get; set; }
@@ -133,6 +138,9 @@ namespace ApplicationCore.Entities
 
         public Guid? JournalId { get; set; }
         public AccountJournal Journal { get; set; }
- 
+        /// <summary>
+        /// list phân việc khảo sát
+        /// </summary>
+        public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
     }
 }

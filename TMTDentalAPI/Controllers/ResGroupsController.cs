@@ -23,14 +23,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IIRModelDataService _modelDataService;
 
         public ResGroupsController(IResGroupService resGroupService,
-            IMapper mapper, IUserService userService, IUnitOfWorkAsync unitOfWork)
+            IMapper mapper, IUserService userService, IUnitOfWorkAsync unitOfWork,
+            IIRModelDataService modelDataService)
         {
             _resGroupService = resGroupService;
             _mapper = mapper;
             _userService = userService;
             _unitOfWork = unitOfWork;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -202,6 +205,31 @@ namespace TMTDentalAPI.Controllers
                     UserId = user.Id
                 });
             }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetByModelDataModuleName(ResGroupByModulePar val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _resGroupService.GetByModelDataModuleName(val);
+            _unitOfWork.Commit();
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetListForSurvey()
+        {
+            var category = await _modelDataService.GetRef<IrModuleCategory>("survey.module_category_survey");
+            if (category == null)
+                return Ok(new List<ResGroupBasic>());
+
+            _resGroupService.Sudo = true;
+            var res = await _resGroupService.SearchQuery(x => x.CategoryId == category.Id).OrderBy(x => x.Name).Select(x => new ResGroupBasic { 
+                Id = x.Id,
+                Name = x.Name
+            }).ToListAsync();
+
+            return Ok(res);
         }
     }
 }

@@ -224,6 +224,14 @@ namespace Infrastructure.Data
 
         public DbSet<MedicineOrder> MedicineOrders { get; set; }
         public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
+        public DbSet<SurveyAssignment> SurveyAssignments { get; set; }
+        public DbSet<SurveyUserInput> SurveyUserInputs { get; set; }
+        public DbSet<SurveyUserInputLine> surveyUserInputLines { get; set; }
+        public DbSet<SurveyQuestion> SurveyQuestions { get; set; }
+        public DbSet<SurveyAnswer> SurveyAnswers { get; set; }
+        public DbSet<SurveyCallContent> SurveyCallContents { get; set; }
+        public DbSet<SurveyTag> SurveyTags { get; set; }
+        public DbSet<SurveyUserInputSurveyTagRel> SurveyUserInputSurveyTagRels { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -404,6 +412,14 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
             builder.ApplyConfiguration(new MedicineOrderConfiguration());
             builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
+            builder.ApplyConfiguration(new SurveyAssignmentConfiguration());
+            builder.ApplyConfiguration(new SurveyQuestionConfiguration());
+            builder.ApplyConfiguration(new SurveyAnswerConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputLineConfiguration());
+            builder.ApplyConfiguration(new SurveyCallContentConfiguration());
+            builder.ApplyConfiguration(new SurveyTagConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputSurveyTagRelConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

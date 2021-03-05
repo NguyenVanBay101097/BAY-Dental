@@ -32,4 +32,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ApplicationUserSimple> Users { get; set; } = new List<ApplicationUserSimple>();
     }
+
+    public class ResGroupByModulePar
+    {
+        public string ModuleName { get; set; }
+    }
 }

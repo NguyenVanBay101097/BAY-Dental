@@ -14,8 +14,8 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
-    { 
-      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' 
+    {
+      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers'
     },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
@@ -37,6 +37,26 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Đơn hàng Labo', link: '/labo-orders/order' },
         { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
       ],
+    },
+    // {
+    //   name: 'Khảo sát đánh giá',
+    //   icon: 'fas fa-poll',
+    //   children: [
+    //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //   ],
+    //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
+    // },
+    {
+      name: 'Khảo sát đánh giá',
+      icon: 'fas fa-poll',
+      children: [
+        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_survey' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_survey' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_survey'  },
+      ],
+      groups: 'survey.group_survey' 
     },
     {
       name: 'Mua hàng',
@@ -125,7 +145,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management' },
-        // { name: 'Nhãn khách hàng', link: '/partner-categories' },
+        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey'},
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products' },
@@ -137,7 +157,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
-        { name: 'Loại thu chi', link: '/loai-thu-chi'},
+        { name: 'Loại thu chi', link: '/loai-thu-chi' },
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
