@@ -22,7 +22,7 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
   title = "";
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private notificationService: NotificationService,
     private surveyService: SurveyAssignmentService,
     private employeeService: EmployeeService

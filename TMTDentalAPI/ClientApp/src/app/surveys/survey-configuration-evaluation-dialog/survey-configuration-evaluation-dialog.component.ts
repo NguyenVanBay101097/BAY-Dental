@@ -19,7 +19,7 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
   submitted = false;
   constructor(
     private fb: FormBuilder,
-    private activeModal: NgbActiveModal,
+    public activeModal: NgbActiveModal,
     private surveyQuestionService: SurveyQuestionService,
     private notificationService: NotificationService
   ) { }
