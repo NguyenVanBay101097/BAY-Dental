@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -50,5 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
         
         public string Firm { get; set; }
+
+        public IEnumerable<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new LinkedList<ProductStockInventoryCriteriaRel>();
     }
 }

@@ -14,6 +14,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
@@ -31,6 +32,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   categoryIdSave: string;
   opened = true;
   submitted = false;
+  listProductCriteria= [];
 
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
@@ -42,7 +44,8 @@ export class ProductProductCuDialogComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private uoMService: UomService
+    private uoMService: UomService,
+    private productCriteriaService : StockInventoryCriteriaService
   ) {
   }
 
@@ -64,6 +67,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       keToaOK: true,
       isLabo: false,
       purchasePrice: 0,
+      productStockInventoryCriteriaRels: []
     });
 
     setTimeout(() => {
@@ -80,6 +84,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
+      this.loadListProductCriteria();
     });
   }
 
@@ -94,7 +99,16 @@ export class ProductProductCuDialogComponent implements OnInit {
 
   default() {
     if (this.id) {
-      this.productService.get(this.id).subscribe((result: any) => {
+      this.productService.get(this.id)
+      .pipe(
+        map((res:any) => {
+           res.productStockInventoryCriteriaRels = res.productStockInventoryCriteriaRels.map(x=>  ({
+            id: x.stockInventoryCriteriaId
+          }));
+          return res;
+        })
+      )
+      .subscribe((result: any) => {
         this.productForm.patchValue(result);
 
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
@@ -253,6 +267,9 @@ export class ProductProductCuDialogComponent implements OnInit {
     data.categId = data.categ.id;
     data.uomId = data.uom.id;
     data.uompoId = data.uompo.id;
+    data.productStockInventoryCriteriaRels = data.productStockInventoryCriteriaRels.map(x=>  ({
+      stockInventoryCriteriaId: x.id
+    }));
     return data;
   }
 
@@ -263,6 +280,18 @@ export class ProductProductCuDialogComponent implements OnInit {
 
   get f() {
     return this.productForm.controls;
+  }
+
+  loadListProductCriteria() {
+    var page = {
+      limit: 0,
+      offset: 0
+    }
+    this.productCriteriaService.getPaged(page).subscribe(
+      (res:any) => {
+        this.listProductCriteria = res.items;
+      }
+    );
   }
 }
 

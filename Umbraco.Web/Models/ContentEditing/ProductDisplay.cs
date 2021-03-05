@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,5 +35,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductCategoryBasic Categ { get; set; }
 
         public string Firm { get; set; }
+        public IEnumerable<ProductStockInventoryCriteriaRelSimple> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRelSimple>();
+
+    }
+
+    public class ProductStockInventoryCriteriaRelSimple
+    {
+        public Guid ProductId { get; set; }
+        public Guid StockInventoryCriteriaId { get; set; }
     }
 }

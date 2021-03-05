@@ -34,7 +34,7 @@ namespace Umbraco.Web.Mapping
 
             //Thắng
             CreateMap<ProductSave, Product>();
-  
+
         }
     }
 }
