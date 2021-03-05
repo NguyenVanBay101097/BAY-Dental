@@ -17,10 +17,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   
   @Input() saleOrderId: string;
   gridData: GridDataResult;
-  limit = 20;
-  skip = 0;
   loading = false;
-  search: string;
   productRequests: any = [];
 
   states: any[] = [

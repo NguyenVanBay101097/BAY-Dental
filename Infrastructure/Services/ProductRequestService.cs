@@ -54,7 +54,7 @@ namespace Infrastructure.Services
 
             query = query.Include(x => x.Employee).Include(x => x.User).Include(x => x.Picking).OrderByDescending(x => x.DateCreated);
 
-            if (val.Limit <= 0)
+            if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
