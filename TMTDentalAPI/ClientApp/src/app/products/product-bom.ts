@@ -9,5 +9,5 @@ export class ProductBomDisplay {
     productId: string;
     product: Product;
     quantity: number;
-    sequence: number;
+    sequence: number = 0;
 }

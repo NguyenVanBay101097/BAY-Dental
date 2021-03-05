@@ -66,6 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string MaterialProductName { get; set; }
+        public Guid? MaterialProductId { get; set; }
         public string ProductUOMName { get; set; }
         public decimal Quantity { get; set; }
         public int Sequence { get; set; }

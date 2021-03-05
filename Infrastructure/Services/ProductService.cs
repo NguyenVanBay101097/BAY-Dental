@@ -491,12 +491,15 @@ namespace Infrastructure.Services
 
             _SaveUoMRels(product, val);
 
-            return await CreateAsync(product);
+            product = await CreateAsync(product);
+            product.UOM = await _uoMService.GetByIdAsync(product.UOMId);
+
+            return product;
         }
 
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x=> x.Boms)
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x => x.Boms)
                 .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
@@ -627,12 +630,15 @@ namespace Infrastructure.Services
             var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
-                .Include(x => x.UOMPO).Include(x => x.Boms).ThenInclude(x=> x.MaterialProduct).FirstOrDefaultAsync();
+                .Include(x => x.UOMPO)
+                .Include(x => x.Boms).ThenInclude(x => x.MaterialProduct)
+                .Include(x => x.Boms).ThenInclude(x => x.ProductUOM)
+                .FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
             //res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
 
-            if(res.Boms.Any())
+            if (res.Boms.Any())
             {
                 res.Boms = res.Boms.OrderBy(x => x.Sequence).ToList();
             }

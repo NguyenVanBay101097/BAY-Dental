@@ -36,6 +36,7 @@ export class SaleOrderLinesLaboPaged {
 export class ProductBomForSaleOrderLine {
     id: string;
     materialProductName: string;
+    materialProductId: string;
     producUOMName: string;
     quantity: number;
     sequence: number;

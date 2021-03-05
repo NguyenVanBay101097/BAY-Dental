@@ -17,8 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Search { get; set; }
 
-        public Guid? SaleOrderLineId { get; set; }
-        public Guid? ProductId { get; set; }
+        public IEnumerable<Guid> SaleOrderLineIds { get; set; }
     }
 
     public class SaleOrderLineProductRequestedBasic

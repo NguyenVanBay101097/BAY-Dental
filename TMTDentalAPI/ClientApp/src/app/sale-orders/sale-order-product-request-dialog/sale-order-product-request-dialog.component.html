@@ -78,6 +78,7 @@
                                 <tr>
                                     <th>Dịch vụ/Vật tư</th>
                                     <th>Định mức</th>
+                                    <th>Còn lại</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,9 +88,10 @@
                                             {{item.name}}
                                         </td>
                                     </tr>
-                                    <tr *ngFor="let item_child of item.boms" (click)="clickBom(item_child, item.id)">
+                                    <tr *ngFor="let item_child of item.boms; index as j" (click)="clickBom(item_child, item.id)">
                                         <td>{{item_child.materialProductName}}</td>
                                         <td>{{item_child.quantity}} {{item_child.producUOMName}}</td>
+                                        <td>{{listProductRequestedBoms[findPro_listProductRequestedBoms(item.id, item_child.materialProductId)]?.max}} {{item_child.producUOMName}}</td>
                                     </tr>
                                 </ng-container>
                             </tbody>
@@ -117,7 +119,7 @@
                                         <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
                                         <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>
                                         <td>
-                                            <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
+                                            <kendo-numerictextbox style="width: 100px" [min]="0" [max]="line.get('max').value" [format]="'n0'"
                                                 formControlName="productQty">
                                             </kendo-numerictextbox>
                                         </td>

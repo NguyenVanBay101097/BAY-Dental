@@ -30,15 +30,15 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
 
-            if (val.SaleOrderLineId.HasValue)
+            if (val.SaleOrderLineIds.Any())
             {
-                query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);
+                query = query.Where(x => val.SaleOrderLineIds.Contains(x.SaleOrderLineId));
             }
 
-            if (val.ProductId.HasValue)
-            {
-                query = query.Where(x => x.ProductId == val.ProductId);
-            }
+            //if (val.ProductId.HasValue)
+            //{
+            //    query = query.Where(x => x.ProductId == val.ProductId);
+            //}
 
             var count = await query.CountAsync();
 
