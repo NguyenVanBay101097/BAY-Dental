@@ -122,8 +122,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     lines.forEach(line => {
       var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[index].max;
-      this.lines.push(this.fb.group(line));
-      this.lines.markAsDirty();
+      var fg= this.fb.group(line);
+      fg.get('productQty').markAsTouched();
+      this.lines.push(fg);
     });
   }
 
@@ -132,13 +133,14 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     if (index < 0) {
       var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[i].max;
-      this.lines.push(this.fb.group(line));
+      var fg= this.fb.group(line);
+      fg.get('productQty').markAsTouched();
+      this.lines.push(fg);
     } else {
       if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
         this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
       }
     }
-    this.lines.markAsDirty();
   }
 
   loadListProductBoms() {
