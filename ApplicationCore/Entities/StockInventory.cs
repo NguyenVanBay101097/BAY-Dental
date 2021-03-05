@@ -63,6 +63,12 @@ namespace ApplicationCore.Entities
         public ProductCategory Category { get; set; }
 
         /// <summary>
+        /// tiêu chí kiểm kho
+        /// </summary>
+        public Guid? CriteriaId { get; set; }
+        public StockInventoryCriteria Criteria { get; set; }
+
+        /// <summary>
         /// If you do an entire inventory, you can choose 'All Products' and it will prefill the inventory with the current stock.  If you only do some products
         /// (e.g. Cycle Counting) you can choose 'Manual Selection of Products' and the system won't propose anything.  You can also let the
         /// system propose for a single product / lot /... 
