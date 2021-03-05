@@ -36,12 +36,12 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Dòng điều chỉnh
         /// </summary>
-        public ICollection<StockInventoryLine> Lines { get; set; }
+        public ICollection<StockInventoryLine> Lines { get; set; } = new List<StockInventoryLine>();
 
         /// <summary>
         /// Dịch chuyển kho được tạo ra
         /// </summary>
-        public ICollection<StockMove> Moves { get; set; }
+        public ICollection<StockMove> Moves { get; set; } = new List<StockMove>();
 
         /// <summary>
         /// draft : nháp

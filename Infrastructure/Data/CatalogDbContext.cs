@@ -406,6 +406,8 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
             builder.ApplyConfiguration(new MedicineOrderConfiguration());
             builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
+            builder.ApplyConfiguration(new StockInventoryConfiguration());
+            builder.ApplyConfiguration(new StockInventoryLineConfiguration());
             builder.ApplyConfiguration(new StockInventoryCriteriaConfiguration());
             builder.ApplyConfiguration(new ProductStockInventoryCriteriaRelConfiguration());
 
