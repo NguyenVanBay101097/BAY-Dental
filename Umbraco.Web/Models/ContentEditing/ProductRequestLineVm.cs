@@ -38,7 +38,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public SaleOrderLineSimple SaleOrderLine { get; set; }
 
         public decimal ProductQty { get; set; }
-        public decimal ProductQtyMax { get; set; }
 
         public int Sequence { get; set; }
     }

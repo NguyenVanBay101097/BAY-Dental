@@ -30,8 +30,9 @@ namespace Infrastructure.Services
             if (bom == null)
                 throw new Exception("Không tồn tại vật tư");
 
-            var sum = await SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId && x.Request.State != "draft").SumAsync(x => x.ProductQty);// da su dung
-            if (sum >= bom.Quantity)
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+            var requested = await requestedObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId).FirstOrDefaultAsync();// da su dung
+            if (requested != null && requested.RequestedQuantity >= bom.Quantity)
                 throw new Exception("Không còn định mức vật tư cho dịch vụ");
 
             //return line.
@@ -44,7 +45,6 @@ namespace Infrastructure.Services
                 ProductId = bom.MaterialProductId,
                 Product = _mapper.Map<ProductSimple>(bom.MaterialProduct),
                 ProductQty = 0,
-                ProductQtyMax = bom.Quantity - sum,
                 ProductUOMId = bom.ProductUOMId,
                 ProducUOM = _mapper.Map<UoMSimple>(bom.ProductUOM),
                 SaleOrderLineId = val.SaleOrderLineId,
