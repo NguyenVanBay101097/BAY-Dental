@@ -199,7 +199,7 @@ namespace Infrastructure.Services
 
             await UpdateAsync(selfs);
             //save requested quantity
-            var lineObj = GetService<ProductRequestLineService>();
+            var lineObj = GetService<IProductRequestLineService>();
             var lines = selfs.SelectMany(x => x.Lines).ToList();
             await lineObj.SaveUpdateRequestedQuantity(null,lines,true);
         }
@@ -220,7 +220,7 @@ namespace Infrastructure.Services
             await UpdateAsync(selfs);
 
             //save requested quantity
-            var lineObj = GetService<ProductRequestLineService>();
+            var lineObj = GetService<IProductRequestLineService>();
             var lines = selfs.SelectMany(x => x.Lines).ToList();
             await lineObj.SaveUpdateRequestedQuantity(null, lines, false);
         }
