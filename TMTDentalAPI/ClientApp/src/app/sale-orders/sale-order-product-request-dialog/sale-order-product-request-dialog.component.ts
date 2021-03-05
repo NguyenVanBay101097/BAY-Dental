@@ -13,6 +13,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductRequestLineService } from 'src/app/shared/product-request-line.service';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
+import { SaleOrderLineProductRequestedBasic, SaleOrderLineProductRequestedBasicCus, SaleOrderLineProductRequestedPaged, SaleOrderLineProductRequestedService } from 'src/app/shared/sale-order-line-product-requested.service';
 import { GetLinePar, ProductRequestDefaultGet, ProductRequestDisplay } from '../product-request';
 
 @Component({
@@ -28,6 +29,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   submitted = false;
   productRequestDisplay: ProductRequestDisplay = new ProductRequestDisplay();
   listProductBoms: SaleOrderLineForProductRequest[] = [];
+  listProductRequestedBoms: SaleOrderLineProductRequestedBasicCus[] = [];
   
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   filteredEmployees: EmployeeSimple[] = [];
@@ -54,6 +56,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private productRequestLineService: ProductRequestLineService,
     private intlService: IntlService,
+    private saleOrderLineProductRequestedService: SaleOrderLineProductRequestedService
   ) { }
 
   ngOnInit() {
@@ -67,11 +70,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     setTimeout(() => {
       this.loadEmployees();
       this.loadListProductBoms();
-      if (!this.id) {
-        this.loadDefault();
-      } else {
-        this.loadRecord();
-      }
     });
     this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -120,13 +118,17 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   
   loadLinesToFormArray(lines) {
     lines.forEach(line => {
+      var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
+      line.max = this.listProductRequestedBoms[index].max;
       this.lines.push(this.fb.group(line));
     });
   }
 
   loadLineToFormArray(line) {
-    var index = this.lines.value.findIndex(item => item.productBomId == line.productBomId);
+    var index = this.lines.value.findIndex(item => (item.saleOrderLineId == line.saleOrderLineId && item.productId == line.productId));
     if (index < 0) {
+      var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
+      line.max = this.listProductRequestedBoms[i].max;
       this.lines.push(this.fb.group(line));
     } else {
       this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
@@ -138,6 +140,42 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     this.saleOrderService.getLineForProductRequest(this.saleOrderId).subscribe((res: any) => {
       this.listProductBoms = res;
       console.log(res);
+      var listSaleOrderLineId = this.listProductBoms.map(({ id }) => id);
+      console.log(listSaleOrderLineId);
+      this.loadListProductRequestedBoms(listSaleOrderLineId);
+    });
+  }
+
+  loadListProductRequestedBoms(listSaleOrderLineId) {
+    var val = new SaleOrderLineProductRequestedPaged();
+    val.limit = 0;
+    val.saleOrderLineIds = listSaleOrderLineId;
+    this.saleOrderLineProductRequestedService.getPaged(val).subscribe((res: any) => {
+      this.listProductRequestedBoms = res.items;
+      this.listProductBoms.forEach(el => {
+        el.boms.forEach(el_item => {
+          var index = this.findPro_listProductRequestedBoms(el.id, el_item.id);
+          if (index < 0) {
+            var temp: SaleOrderLineProductRequestedBasicCus = {
+              id: null,
+              saleOrderLineId: el.id,
+              productId: el_item.materialProductId,
+              requestedQuantity: 0,
+              max: el_item.quantity
+            };
+            this.listProductRequestedBoms.push(temp);
+          } else {
+            this.listProductRequestedBoms[index].max = el_item.quantity - this.listProductRequestedBoms[index].requestedQuantity;
+          }
+        })
+      });
+      if (!this.id) {
+        this.loadDefault();
+      } else {
+        this.loadRecord();
+      }
+      console.log(res);
+      console.log(this.listProductRequestedBoms);
     });
   }
 
@@ -241,11 +279,16 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     this.productRequestLineService.getLine(val).subscribe((res: any) => {
       res.productQty = 1;
       this.loadLineToFormArray(res);
+      console.log(res);
     }, (err) => {
     });
   }
 
   deleteLine(index: number) {
     this.lines.removeAt(index);
+  }
+
+  findPro_listProductRequestedBoms(saleOrderLineId, productId) {
+    return this.listProductRequestedBoms.findIndex(item => (item.saleOrderLineId == saleOrderLineId && item.productId == productId));
   }
 }

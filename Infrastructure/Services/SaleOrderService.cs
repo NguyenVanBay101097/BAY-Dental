@@ -2384,6 +2384,7 @@ namespace Infrastructure.Services
                     Boms = x.Product.Boms.Select(z => new ProductBomForSaleOrderLine()
                     {
                         MaterialProductName = z.MaterialProduct.Name,
+                        MaterialProductId = z.MaterialProductId.Value,
                         Id = z.Id,
                         ProducUOMName = z.ProducUOM.Name,
                         Quantity = z.Quantity,
