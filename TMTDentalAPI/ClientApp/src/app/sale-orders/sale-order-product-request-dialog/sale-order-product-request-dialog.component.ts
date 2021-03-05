@@ -118,6 +118,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
   
   loadLinesToFormArray(lines) {
+    this.lines.clear();
     lines.forEach(line => {
       var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[index].max;
@@ -178,8 +179,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       } else {
         this.loadRecord();
       }
-      console.log(res);
-      console.log(this.listProductRequestedBoms);
     });
   }
 
@@ -309,6 +308,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
         this.productRequestDisplay.state = "draft";
         this.formGroup.get('state').setValue("draft");
         this.reload = true;
+        this.loadListProductBoms();
       }, (err) => {
       });
     }, (err) => {
@@ -324,13 +324,15 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   clickBom(bom, saleOrderLineId) {
+    var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
+    if (this.listProductRequestedBoms[index].max <= 0)
+      return;
     var val = new GetLinePar();
     val.saleOrderLineId = saleOrderLineId;
     val.productBomId = bom.id;
     this.productRequestLineService.getLine(val).subscribe((res: any) => {
       res.productQty = 1;
       this.loadLineToFormArray(res);
-      console.log(res);
     }, (err) => {
     });
   }
