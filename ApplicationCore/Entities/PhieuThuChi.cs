@@ -6,6 +6,12 @@ namespace ApplicationCore.Entities
 {
     public class PhieuThuChi: BaseEntity
     {
+        public PhieuThuChi()
+        {
+            State = "draft";
+            Date = DateTime.Today;
+        }
+
         /// <summary>
         /// Chi nhánh
         /// </summary>
@@ -76,5 +82,10 @@ namespace ApplicationCore.Entities
         /// Không sử dụng nữa
         /// </summary>
         public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
+
+        public string PartnerType { get; set; }
+
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
     }
 }

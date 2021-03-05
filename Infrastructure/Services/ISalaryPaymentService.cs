@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Infrastructure.Services
 {
     public interface ISalaryPaymentService : IBaseService<SalaryPayment>
     {
+        Task<PagedResult2<SalaryPaymentBasic>> GetPagedResultAsync(SalaryPaymentPaged val);
         Task<SalaryPayment> CreateSalaryPayment(SalaryPaymentSave val);
         Task UpdateSalaryPayment(Guid id, SalaryPaymentSave val);
         Task InsertModelsIfNotExists();

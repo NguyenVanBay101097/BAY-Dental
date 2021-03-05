@@ -58,8 +58,8 @@ export class CashBookTabPageRePaComponent implements OnInit {
       });
   }
 
-  getType(paymentType) {
-    if (paymentType == "inbound") {
+  getType(type) {
+    if (type == "thu") {
       return "Phiếu thu";
     } else {
       return "Phiếu chi";
@@ -116,7 +116,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   createItem() {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.paymentType = this.type;
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then((res: any) => {
       this.loadDataFromApi();
       if (res && res.print) {
@@ -133,8 +133,8 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(CashBookCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.paymentType = this.type;
-    modalRef.componentInstance.itemId = item.id;
+    modalRef.componentInstance.type = this.type;
+    modalRef.componentInstance.id = item.id;
     modalRef.result.then((res) => {
       this.loadDataFromApi();
       if (res && res.print) {
@@ -163,27 +163,33 @@ export class CashBookTabPageRePaComponent implements OnInit {
       });
   }
 
-  // exportExcelFile() {
-  //   this.phieuThuChiService.exportExcelFile(this.paged).subscribe((res) => {
-  //     let filename = "PhieuThu";
-  //     if (this.paymentType == "outbound") {
-  //       filename = "PhieuChi";
-  //     }
+  exportExcelFile() {
+    var paged = new PhieuThuChiPaged();
+    paged.companyId = this.authService.userInfo.companyId;
+    paged.limit = this.limit;
+    paged.offset = this.skip;
+    paged.type = this.type;
+    paged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    paged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    paged.search = this.search || '';
 
-  //     let newBlob = new Blob([res], {
-  //       type:
-  //         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  //     });
+    this.phieuThuChiService.exportExcelFile(paged).subscribe((res) => {
+      let filename = this.type == "thu" ? "PhieuThu" : "PhieuChi";
 
-  //     let data = window.URL.createObjectURL(newBlob);
-  //     let link = document.createElement("a");
-  //     link.href = data;
-  //     link.download = filename;
-  //     link.click();
-  //     setTimeout(() => {
-  //       // For Firefox it is necessary to delay revoking the ObjectURL
-  //       window.URL.revokeObjectURL(data);
-  //     }, 100);
-  //   });
-  // }
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 }

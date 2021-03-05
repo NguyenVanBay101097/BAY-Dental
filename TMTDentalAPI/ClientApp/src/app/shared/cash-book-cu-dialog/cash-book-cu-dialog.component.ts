@@ -5,6 +5,7 @@ import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import * as _ from "lodash";
+import { of } from "rxjs";
 import { debounceTime, switchMap, tap } from "rxjs/operators";
 import {
   AccountJournalFilter,
@@ -12,7 +13,7 @@ import {
 } from "src/app/account-journals/account-journal.service";
 import { AccountPaymentDisplay, AccountPaymentService } from "src/app/account-payments/account-payment.service";
 import { AuthService } from "src/app/auth/auth.service";
-import { LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
+import { loaiThuChiPaged, LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
 import { PartnerPaged, PartnerSimple } from "src/app/partners/partner-simple";
 import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
 import { PhieuThuChiDisplay, PhieuThuChiService } from "src/app/phieu-thu-chi/phieu-thu-chi.service";
@@ -35,10 +36,17 @@ export class CashBookCuDialogComponent implements OnInit {
   filteredJournals: any = [];
   phieuThuChiDisplay: PhieuThuChiDisplay = new PhieuThuChiDisplay();
   reload = false;
+  filteredPartners: any = [];
+  filteredPartnerTypes: any = [
+    { value: 'customer', text: 'Khách hàng' },
+    { value: 'supplier', text: 'Nhà cung cấp' },
+    { value: 'employee', text: 'Nhân viên' },
+  ];
 
   get f() { return this.formGroup.controls; }
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
+  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -57,14 +65,12 @@ export class CashBookCuDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       amount: 0,
-      communication: null,
-      paymentDateObj: [null, Validators.required],
+      dateObj: [null, Validators.required],
       journal: [null, Validators.required],
       loaiThuChi: [null, Validators.required],
-      name: null,
-      state: null,
-      partnerType: ['customer', Validators.required],
-      partner: [null],
+      reason: null,
+      partnerType: null,
+      partner: null
     });
 
     setTimeout(() => {
@@ -76,12 +82,19 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loadRecord();
       }
 
-      this.filterChangeCombobox();
+      this.partnerCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.partnerCbx.loading = true)),
+        switchMap(value => this.searchPartners(value))
+      ).subscribe(result => {
+        this.filteredPartners = result.items;
+        this.partnerCbx.loading = false;
+      });
     });
   }
 
   getType() {
-    if (this.type == "inbound") {
+    if (this.type == "thu") {
       return "Phiếu thu";
     } else {
       return "Phiếu chi";
@@ -96,9 +109,16 @@ export class CashBookCuDialogComponent implements OnInit {
     }
   }
 
-  get seeForm() {
-    var state = this.formGroup.get('state').value;
-    var val = state == 'posted' || state == 'cancel';
+  getLoaiThuChiTitle() {
+    if (this.type == "thu") {
+      return "Loại thu";
+    } else {
+      return "Loại chi";
+    }
+  }
+
+  get formReadonly() {
+    var val = this.phieuThuChiDisplay.state == 'posted' || this.phieuThuChiDisplay.state == 'cancel';
     return val;
   }
 
@@ -107,28 +127,48 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   loadDefault() {
-    this.phieuThuChiService.defaultGet({type: this.type}).subscribe((res: any) => {
+    this.phieuThuChiService.defaultGet({ type: this.type }).subscribe((res: any) => {
       this.phieuThuChiDisplay = res;
       this.formGroup.patchValue(res);
-      var paymentDate = new Date(res.paymentDate);
-      this.formGroup.get('paymentDateObj').setValue(paymentDate);
-      this.loadFilteredPartners(this.getValueForm("partnerType"));
+      var date = new Date(res.date);
+      this.formGroup.get('dateObj').setValue(date);
     });
+  }
+
+  showPartnerTypes(partnerType) {
+    switch (partnerType) {
+      case 'customer':
+        return 'Khách hàng';
+      case 'supplier':
+        return 'Nhà cung cấp';
+      case 'employee':
+        return 'Nhân viên';
+      default:
+        return '';
+    }
   }
 
   loadRecord() {
     this.phieuThuChiService.get(this.id).subscribe((result: any) => {
+      console.log(result);
       this.phieuThuChiDisplay = result;
       this.formGroup.patchValue(result);
-      var paymentDate = new Date(result.paymentDate);
-      this.formGroup.get("paymentDateObj").patchValue(paymentDate);
-      this.loadFilteredPartners(this.getValueForm("partnerType"));
+      var date = new Date(result.date);
+      this.formGroup.get("dateObj").patchValue(date);
+
+      if (result.partner) {
+        this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
+      }
+
+      if (result.partnerType) {
+        this.loadFilteredPartners();
+      }
     });
   }
 
   loadLoaiThuChiList() {
-    var val = new AccountJournalFilter();
-    val.type = this.getType();
+    var val = new loaiThuChiPaged();
+    val.type = this.type;
     this.loaiThuChiService.getPaged(val).subscribe(
       (res) => {
         this.loaiThuChiList = res.items;
@@ -154,83 +194,37 @@ export class CashBookCuDialogComponent implements OnInit {
     );
   }
 
-  loadPartnerTypes() {
-    this.partnerTypes = [
-      {
-        text: "Khách hàng",
-        value: "customer"
-      }, {
-        text: "Nhà cung cấp",
-        value: "supplier"
-      }, {
-        text: "Nhân viên",
-        value: "employee"
+  changePartnerType(partnerType: string) {
+    this.formGroup.get('partner').setValue(null);
+    this.loadFilteredPartners();
+  }
+
+  loadFilteredPartners() {
+    this.searchPartners().subscribe((result: any) => {
+      if (result) {
+        this.filteredPartners = result.items;
       }
-    ];
-    this.filteredPartnerTypes = this.partnerTypes.slice();
-  }
-
-  displayPartnerType(partnerType) {
-    switch (partnerType) {
-      case 'customer':
-        return 'Khách hàng';
-      case 'supplier':
-        return 'Nhà cung cấp';
-      case 'employee':
-        return 'Nhân viên';
-      default:
-        return '';
-    }
-  }
-
-  loadFilteredPartners(partnerType: string, search?: string) {
-    this.searchPartners(partnerType, search).subscribe(result => {
-      this.filteredPartners = result;
     });
   }
 
-  change_partnerType(item) {
-    this.formGroup.get('partner').patchValue(null);
-    this.loadFilteredPartners(item);
-  }
-
-  searchPartners(partnerType: string, search?: string) {
-    var paged = new PartnerFilter();
-    switch (partnerType) {
-      case "customer":
-        paged.customer = true;
-        break;
-      case "supplier":
-        paged.supplier = true;
-        break;
-      case "employee":
-        paged.employee = true;
-        break;
-      default:
-        break;
+  searchPartners(search?: string) {
+    var partnerType = this.formGroup.get('partnerType').value;
+    if (!partnerType) {
+      return of(null);
     }
 
+    var paged = new PartnerPaged();
     paged.active = true;
-    paged.search = search || "";
-    return this.partnerService.autocomplete2(paged);
-  }
+    paged.search = search || '';
+    if (partnerType == 'customer') {
+      paged.customer = true;
+    } else if (partnerType == 'supplier') {
+      paged.supplier = true;
+    } else if (partnerType == 'employee') {
+      paged.employee = true;
+    }
 
-  filterChangeCombobox() {
-    this.partnerCbx.filterChange
-        .asObservable()
-        .pipe(
-          debounceTime(300),
-          tap(() => (this.partnerCbx.loading = true)),
-          switchMap((val) => this.searchPartners(val.toString().toLowerCase()))
-        )
-        .subscribe((result) => {
-          this.filteredPartners = result;
-          this.partnerCbx.loading = false;
-        });
-  }
-
-  filter_partnerType(value) {
-    this.filteredPartnerTypes = this.partnerTypes.filter((s) => s.text.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    return this.partnerService.getPaged(paged);
   }
 
   quickCreateLoaiThuChi() {
@@ -241,8 +235,8 @@ export class CashBookCuDialogComponent implements OnInit {
       keyboard: false,
       backdrop: "static",
     });
-    modalRef.componentInstance.title = "Thêm loại " + this.getType();
-    modalRef.componentInstance.type = this.getType();
+    modalRef.componentInstance.title = "Thêm: " + this.getLoaiThuChiTitle();
+    modalRef.componentInstance.type = this.type;
     modalRef.result.then(
       (result: any) => {
         this.formGroup.get("loaiThuChi").patchValue(result);
@@ -262,9 +256,9 @@ export class CashBookCuDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.loaiThuChiId = val.loaiThuChi.id;
     val.journalId = val.journal.id;
-    val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
+    val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
-    val.paymentType = this.type;
+    val.type = this.type;
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
@@ -322,14 +316,14 @@ export class CashBookCuDialogComponent implements OnInit {
     var val = this.formGroup.value;
     val.loaiThuChiId = val.loaiThuChi.id;
     val.journalId = val.journal.id;
-    val.paymentDate = this.intlService.formatDate(val.paymentDateObj, "yyyy-MM-ddTHH:mm:ss");
     val.partnerId = val.partner ? val.partner.id : null;
-    val.paymentType = this.type;
+    val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
+    val.type = this.type;
 
     if (!this.id) {
       this.phieuThuChiService.create(val).subscribe(
         (result: any) => {
-          this.phieuThuChiService.post([result.id]).subscribe(
+          this.phieuThuChiService.actionConfirm([result.id]).subscribe(
             () => {
               this.notificationService.show({
                 content: "Xác nhận thành công",
@@ -338,7 +332,7 @@ export class CashBookCuDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
-              
+
               this.activeModal.close({
                 id: result.id,
                 print: print
@@ -356,7 +350,7 @@ export class CashBookCuDialogComponent implements OnInit {
         }
       );
     } else {
-      this.phieuThuChiService.post([this.id]).subscribe(
+      this.phieuThuChiService.actionConfirm([this.id]).subscribe(
         (result) => {
           this.notificationService.show({
             content: "Xác nhận thành công",
@@ -365,7 +359,7 @@ export class CashBookCuDialogComponent implements OnInit {
             animation: { type: "fade", duration: 400 },
             type: { style: "success", icon: true },
           });
-          
+
           this.activeModal.close({
             print: print
           });
@@ -398,8 +392,8 @@ export class CashBookCuDialogComponent implements OnInit {
 
   onCancel() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `Hủy phiếu ${this.getType().toLowerCase()}`;
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn hủy phiếu ${this.getType().toLowerCase()}?`;
+    modalRef.componentInstance.title = `Hủy ${this.getType().toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn hủy ${this.getType().toLowerCase()}?`;
     modalRef.result.then((result) => {
       this.phieuThuChiService.actionCancel([this.id]).subscribe((result) => {
         this.notificationService.show({

@@ -6,6 +6,12 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SalaryPaymentDisplay
     {
+        public SalaryPaymentDisplay()
+        {
+            Date = DateTime.Today;
+            State = "waiting";
+        }
+
         public Guid Id { get; set; }
 
         /// <summary>
@@ -13,10 +19,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public DateTime Date { get; set; }
 
-        /// <summary>
-        /// draft: Nháp
-        /// posted: Đã vào sổ
-        /// </summary>
         public string State { get; set; }
 
         /// <summary>
@@ -47,10 +49,5 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
-        /// <summary>
-        /// để hiện thị chứ ko có lưu vào db, 1 phiếu lương có 1 chi lương
-        /// </summary>
-        public Guid? HrPayslipId { get; set; }
-
     }
 }

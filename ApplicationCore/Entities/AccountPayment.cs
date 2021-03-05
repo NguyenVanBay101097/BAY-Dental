@@ -92,7 +92,6 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrderLinePaymentRel> SaleOrderLinePaymentRels { get; set; } = new List<SaleOrderLinePaymentRel>();
 
         [NotMapped]
-        public Guid? DestinationAccountId { get; set; }
         public AccountAccount DestinationAccount { get; set; }
     }
 }

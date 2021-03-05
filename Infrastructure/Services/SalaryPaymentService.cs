@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,21 @@ namespace Infrastructure.Services
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+        }
+
+        public async Task<PagedResult2<SalaryPaymentBasic>> GetPagedResultAsync(SalaryPaymentPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var totalItems = await query.CountAsync();
+            var items = await _mapper.ProjectTo<SalaryPaymentBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
+            return new PagedResult2<SalaryPaymentBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public override async Task<IEnumerable<SalaryPayment>> CreateAsync(IEnumerable<SalaryPayment> self)
@@ -58,7 +74,9 @@ namespace Infrastructure.Services
         public async Task<SalaryPayment> CreateSalaryPayment(SalaryPaymentSave val)
         {
             var salaryPayment = _mapper.Map<SalaryPayment>(val);
-            salaryPayment.CompanyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.GetByIdAsync(salaryPayment.JournalId);
+            salaryPayment.CompanyId = journal.CompanyId;
 
             return await CreateAsync(salaryPayment);
         }
@@ -417,7 +435,7 @@ namespace Infrastructure.Services
                     Journal = journal,
                     Reason = "Chi lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
                     Type = "advance",
-                    HrPayslipId = slip.Id
+                    //HrPayslipId = slip.Id
                 });
             }
             return payments;

@@ -971,12 +971,12 @@ namespace Infrastructure.Services
                 else if (payment.PartnerType == "customer")
                 {
                     var account = await accountObj.GetAccountReceivableCurrentCompany();
-                    payment.DestinationAccountId = account.Id;
+                    payment.DestinationAccount = account;
                 }
                 else if (payment.PartnerType == "supplier")
                 {
                     var account = await accountObj.GetAccountPayableCurrentCompany();
-                    payment.DestinationAccountId = account.Id;
+                    payment.DestinationAccount = account;
                 }
             }
         }

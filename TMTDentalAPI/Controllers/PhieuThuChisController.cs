@@ -161,7 +161,7 @@ namespace TMTDentalAPI.Controllers
             val.Limit = int.MaxValue;
             val.Offset = 0;
             var services = await _phieuThuChiService.GetExportExcel(val);
-            var sheetName = "Phiếu " + val.Type;
+            var sheetName = val.Type == "thu" ? "Phiếu thu" : "Phiếu chi";
 
             byte[] fileContent;
 
@@ -171,16 +171,10 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells[1, 1].Value = "Ngày";
                 worksheet.Cells[1, 2].Value = "Số phiếu";
-                worksheet.Cells[1, 3].Value = "Phương thức thanh toán";
-                worksheet.Cells[1, 4].Value = "Loại " + val.Type;
+                worksheet.Cells[1, 3].Value = "Phương thức";
+                worksheet.Cells[1, 4].Value = val.Type == "thu" ? "Loại thu": "Loại chi";
                 worksheet.Cells[1, 5].Value = "Số tiền";
-                if (val.Type == "thu")
-                {
-                    worksheet.Cells[1, 6].Value = "Người nộp tiền";
-                } else
-                {
-                    worksheet.Cells[1, 6].Value = "Người nhận tiền";
-                }
+                worksheet.Cells[1, 6].Value = val.Type == "thu" ? "Người nộp tiền": "Người nhận tiền";
                 worksheet.Cells[1, 7].Value = "Nội dung";
                 worksheet.Cells[1, 8].Value = "Trạng thái";
 
@@ -194,9 +188,9 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.JournalName;
                     worksheet.Cells[row, 4].Value = item.LoaiThuChiName;
                     worksheet.Cells[row, 5].Value = item.Amount;
-                    worksheet.Cells[row, 6].Value = item.PayerReceiver;
+                    worksheet.Cells[row, 6].Value = item.PartnerDisplayName;
                     worksheet.Cells[row, 7].Value = item.Reason;
-                    worksheet.Cells[row, 8].Value = item.State;
+                    worksheet.Cells[row, 8].Value = item.StateDisplay;
                 }
 
                 worksheet.Cells.AutoFitColumns();
