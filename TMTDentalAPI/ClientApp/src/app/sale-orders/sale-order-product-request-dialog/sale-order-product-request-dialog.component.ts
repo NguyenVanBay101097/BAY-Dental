@@ -122,6 +122,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[index].max;
       this.lines.push(this.fb.group(line));
+      this.lines.markAsDirty();
     });
   }
 
@@ -136,7 +137,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
         this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
       }
     }
-
+    this.lines.markAsDirty();
   }
 
   loadListProductBoms() {
