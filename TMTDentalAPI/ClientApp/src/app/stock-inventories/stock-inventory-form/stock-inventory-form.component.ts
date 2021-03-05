@@ -155,11 +155,11 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
-
+        
         let moveControl = this.formGroup.get('moves') as FormArray;
         moveControl.clear();
-        result.lines.forEach(line => {
-          var g = this.fb.group(line);
+        result.moves.forEach(move => {
+          var g = this.fb.group(move);
           moveControl.push(g);
         });
         console.log(moveControl);

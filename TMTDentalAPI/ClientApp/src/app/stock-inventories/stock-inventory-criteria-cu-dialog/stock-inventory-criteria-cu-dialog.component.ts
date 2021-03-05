@@ -19,40 +19,41 @@ export class StockInventoryCriteriaCuDialogComponent implements OnInit {
   ) { }
 
   title: string;
-  formgroup: FormGroup;
+  formGroup: FormGroup;
   id: string;
+  submitted = false;
 
   ngOnInit() {
-    this.formgroup = this.fb.group({
+    this.formGroup = this.fb.group({
       id: null,
       name: [null, Validators.required],
       note: [null]
     });
-    if(this.id) {
+    if (this.id) {
       this.loadDataFromApi();
     }
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     this.criteriaService.get(this.id).subscribe(res => {
-      this.formgroup.patchValue(res);
+      this.formGroup.patchValue(res);
     })
   }
-  
+
   onSave() {
-var val = this.formgroup.value;
-if(this.id) {
-this.criteriaService.update(this.id, val).subscribe(res=>
-{
-  this.notifyService.notify('success','Lưu thành công');
-  this.activeModal.close(res);
-})
-}else {
-  this.criteriaService.create(val).subscribe(res=>
-  {
-    this.notifyService.notify('success','Lưu thành công');
-    this.activeModal.close(res);
-  })
-}
+    var val = this.formGroup.value;
+    if (this.id) {
+      this.criteriaService.update(this.id, val).subscribe(res => {
+        this.notifyService.notify('success', 'Lưu thành công');
+        this.activeModal.close(res);
+      })
+    } else {
+      this.criteriaService.create(val).subscribe(res => {
+        this.notifyService.notify('success', 'Lưu thành công');
+        this.activeModal.close(res);
+      })
+    }
   }
+
+  get f() { return this.formGroup.controls; }
 }
