@@ -491,7 +491,10 @@ namespace Infrastructure.Services
 
             _SaveUoMRels(product, val);
 
-            return await CreateAsync(product);
+            product = await CreateAsync(product);
+            product.UOM = await _uoMService.GetByIdAsync(product.UOMId);
+
+            return product;
         }
 
         public async Task UpdateProduct(Guid id, ProductSave val)
@@ -629,7 +632,7 @@ namespace Infrastructure.Services
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO)
                 .Include(x => x.Boms).ThenInclude(x => x.MaterialProduct)
-                .Include(x => x.Boms).ThenInclude(x => x.ProducUOM)
+                .Include(x => x.Boms).ThenInclude(x => x.ProductUOM)
                 .FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
             //res.StandardPrice = _GetStandardPrice(product);
