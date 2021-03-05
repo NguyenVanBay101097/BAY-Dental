@@ -447,6 +447,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new StockInventoryLineProfile());
                 mc.AddProfile(new StockLocationProfile());
                 mc.AddProfile(new StockInventoryCriteriaProfile());
+                mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

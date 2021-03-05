@@ -499,7 +499,7 @@ namespace Infrastructure.Services
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
             var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
-                .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
+                .Include(x => x.ProductUoMRels).Include(x=> x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
@@ -510,7 +510,16 @@ namespace Infrastructure.Services
             //_SetStandardPrice(product, val.StandardPrice);
 
             await _SetListPrice(product, val.ListPrice);
-            await UpdateAsync(product);
+
+            UpdateProductCriteriaRel(product, val);
+
+             await UpdateAsync(product);
+        }
+
+        private void UpdateProductCriteriaRel(Product product, ProductSave val)
+        {
+            product.ProductStockInventoryCriteriaRels.Clear();
+            product.ProductStockInventoryCriteriaRels = _mapper.Map<List<ProductStockInventoryCriteriaRel>>(val.ProductStockInventoryCriteriaRels);
         }
 
         private void _SaveUoMRels(Product product, ProductSave val)
@@ -593,7 +602,9 @@ namespace Infrastructure.Services
             var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
-                .Include(x => x.UOMPO).FirstOrDefaultAsync();
+                .Include(x => x.UOMPO)
+                .Include(x=> x.ProductStockInventoryCriteriaRels)
+                .FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
             //res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
