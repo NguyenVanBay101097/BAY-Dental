@@ -17,10 +17,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   
   @Input() saleOrderId: string;
   gridData: GridDataResult;
-  limit = 20;
-  skip = 0;
   loading = false;
-  search: string;
   productRequests: any = [];
 
   states: any[] = [
@@ -46,12 +43,8 @@ export class SaleOrderProductRequestListComponent implements OnInit {
 
     const val = new ProductRequestPaged();
     val.saleOrderId = this.saleOrderId;
-    val.dateFrom = '';
-    val.dateTo = '';
-    val.limit = this.limit;
-    val.offset = this.skip;
-    val.state = this.states.map(x => x.value).join(',');
-    val.search = this.search || '';
+    val.offset = 0;
+    val.limit = 0;
     
     this.productRequestService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

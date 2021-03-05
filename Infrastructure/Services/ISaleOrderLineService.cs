@@ -45,5 +45,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderLineDisplay>> GetDisplayBySaleOrder(Guid Id);
         Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val);
         void ComputeResidual(IEnumerable<SaleOrderLine> self);
+
     }
 }

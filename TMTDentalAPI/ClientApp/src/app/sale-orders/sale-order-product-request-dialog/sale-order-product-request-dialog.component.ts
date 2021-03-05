@@ -42,8 +42,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
 
   get seeForm() {
     var state = this.formGroup.get('state').value;
-    var val = state == 'confirmed' || state == 'done';
-    return val;
+    if (state == null)
+      return true;
+    return state == 'confirmed' || state == 'done';
   }
 
   constructor(
@@ -90,6 +91,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
     val.search = filter || '';
+    val.isDoctor = true;
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -112,7 +114,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       var date = new Date(res.date);
       this.formGroup.get('dateObj').setValue(date);
       this.loadLinesToFormArray(res.lines);
-      console.log(res);
     });
   }
   
@@ -121,6 +122,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[index].max;
       this.lines.push(this.fb.group(line));
+      this.lines.markAsDirty();
     });
   }
 
@@ -131,9 +133,11 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       line.max = this.listProductRequestedBoms[i].max;
       this.lines.push(this.fb.group(line));
     } else {
-      this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
+        this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      }
     }
-
+    this.lines.markAsDirty();
   }
 
   loadListProductBoms() {
@@ -154,7 +158,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.listProductRequestedBoms = res.items;
       this.listProductBoms.forEach(el => {
         el.boms.forEach(el_item => {
-          var index = this.findPro_listProductRequestedBoms(el.id, el_item.id);
+          var index = this.findPro_listProductRequestedBoms(el.id, el_item.materialProductId);
           if (index < 0) {
             var temp: SaleOrderLineProductRequestedBasicCus = {
               id: null,
@@ -203,6 +207,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     val.employeeId = val.employee.id;
     val.saleOrderId = this.saleOrderId;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
+    console.log(val);
     if (!this.id) {
       this.productRequestService.create(val).subscribe((res: any) => {
         this.notificationService.show({
@@ -212,6 +217,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
+        this.submitted = false;
         this.activeModal.close();
       }, (err) => {
       });
@@ -224,6 +230,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
+        this.submitted = false;
         this.activeModal.close();
       }, (err) => {
       });
@@ -231,17 +238,59 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   onConfirmed() {
-    this.productRequestService.actionConfirm([this.id]).subscribe((res: any) => {
-      this.notificationService.show({
-        content: "Gửi yêu cầu thành công đến bộ phận Kho",
-        hideAfter: 3000,
-        position: { horizontal: "center", vertical: "top" },
-        animation: { type: "fade", duration: 400 },
-        type: { style: "success", icon: true },
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var i = 0;
+    while (i < this.lines.value.length) {
+      if (this.lines.value[i]["productQty"] <= 0) {
+        this.lines.removeAt(i);
+        i--;
+      }
+      i++;
+    }
+
+    var val = Object.assign({}, this.formGroup.value);
+    val.userId = val.user.id;
+    val.employeeId = val.employee.id;
+    val.saleOrderId = this.saleOrderId;
+    val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
+    console.log(val);
+    if (!this.id) {
+      this.productRequestService.create(val).subscribe((res: any) => {
+        this.productRequestService.actionConfirm([res.id]).subscribe((res: any) => {
+          this.notificationService.show({
+            content: "Gửi yêu cầu thành công đến bộ phận Kho",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+          this.submitted = false;
+          this.activeModal.close();
+        }, (err) => {
+        });
+      }, (err) => {
       });
-      this.activeModal.close();
-    }, (err) => {
-    });
+    } else {
+      this.productRequestService.update(this.id, val).subscribe((res: any) => {
+        this.productRequestService.actionConfirm([this.id]).subscribe((res: any) => {
+          this.notificationService.show({
+            content: "Gửi yêu cầu thành công đến bộ phận Kho",
+            hideAfter: 3000,
+            position: { horizontal: "center", vertical: "top" },
+            animation: { type: "fade", duration: 400 },
+            type: { style: "success", icon: true },
+          });
+          this.submitted = false;
+          this.activeModal.close();
+        }, (err) => {
+        });
+      }, (err) => {
+      });
+    }
   }
 
   onCancel() {
@@ -257,7 +306,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
           animation: { type: "fade", duration: 400 },
           type: { style: "success", icon: true },
         });
-        this.activeModal.close();
+        this.productRequestDisplay.state = "draft";
+        this.formGroup.get('state').setValue("draft");
+        this.reload = true;
       }, (err) => {
       });
     }, (err) => {

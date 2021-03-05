@@ -50,12 +50,16 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
-
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.Employee).Include(x => x.User).Include(x => x.Picking).OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            if (val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<ProductRequestBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -188,35 +192,23 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x=> x.Lines).ToListAsync();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
 
             foreach (var request in selfs)
                 request.State = "confirmed";
 
             await UpdateAsync(selfs);
-
-            //luu lai quantity da yeu cau
-            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
-            var toCreate = new List<SaleOrderLineProductRequested>();
-            foreach (var self in selfs)
-            {
-                foreach (var line in self.Lines)
-                {
-                    toCreate.Add(new SaleOrderLineProductRequested()
-                    { ProductId = line.ProductId.Value, SaleOrderLineId = line.SaleOrderLineId.Value, RequestedQuantity = line.ProductQty});
-                }
-            }
-            if (toCreate.Any())
-            {
-                await requestedObj.CreateAsync(toCreate);
-            }
+            //save requested quantity
+            var lineObj = GetService<IProductRequestLineService>();
+            var lines = selfs.SelectMany(x => x.Lines).ToList();
+            await lineObj.SaveUpdateRequestedQuantity(null,lines,true);
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x=> x.Lines).ToListAsync();
 
-            foreach (var request in self)
+            foreach (var request in selfs)
             {
                 if (request.State == "done")
                     throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
@@ -225,7 +217,12 @@ namespace Infrastructure.Services
             }
 
 
-            await UpdateAsync(self);
+            await UpdateAsync(selfs);
+
+            //save requested quantity
+            var lineObj = GetService<IProductRequestLineService>();
+            var lines = selfs.SelectMany(x => x.Lines).ToList();
+            await lineObj.SaveUpdateRequestedQuantity(null, lines, false);
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
