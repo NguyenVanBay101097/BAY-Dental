@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/print.service';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductService } from 'src/app/products/product.service';
+import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
 import { StockInventoryService } from '../stock-inventory.service';
 
 @Component({
@@ -24,19 +25,26 @@ export class StockInventoryFormComponent implements OnInit {
   id: string;
   state: string;
   valueSearch: string;
+  limit = 20;
+  skip = 0;
+  loading = false;
   // stockInventory: any;
   filterdCategories: ProductCategoryBasic[] = [];
+  filterdCriterias: StockInventoryCriteriaBasic[] = [];
+
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
   submitted = false;
 
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('criteriaCbx', { static: true }) criteriaCbx: ComboBoxComponent;
 
   filterInventories = [
     { name: 'Tất cả sản phẩm', value: 'none' },
     { name: 'Một nhóm sản phẩm', value: 'category' },
     { name: 'Chọn sản phẩm thủ công', value: 'partial' },
+    { name: 'Tiêu chí kiểm kho', value: 'criteria' },
   ];
 
   constructor(
@@ -50,6 +58,7 @@ export class StockInventoryFormComponent implements OnInit {
     private stockInventorySevice: StockInventoryService,
     private authService: AuthService,
     private intlService: IntlService,
+    private criteriaService: StockInventoryCriteriaService,
     private printService: PrintService
   ) { }
 
@@ -63,6 +72,8 @@ export class StockInventoryFormComponent implements OnInit {
       productId: null,
       categoryId: null,
       category: null,
+      criteriaId: null,
+      criteria: null,
       filter: null,
       note: null,
       exhausted: false,
@@ -89,7 +100,18 @@ export class StockInventoryFormComponent implements OnInit {
         this.categCbx.loading = false;
       });
 
+
+      this.criteriaCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.criteriaCbx.loading = true)),
+        switchMap(value => this.searchCriteria(value))
+      ).subscribe(result => {
+        this.filterdCriterias = result.items;
+        this.criteriaCbx.loading = false;
+      });
+
       this.loadCategories();
+      this.loadCriteria();
     });
 
 
@@ -170,17 +192,35 @@ export class StockInventoryFormComponent implements OnInit {
     });
   }
 
+  loadCriteria() {
+    this.searchCriteria().subscribe((result) => {
+      this.filterdCriterias = _.unionBy(this.filterdCriterias, result.items, "id");
+    });
+  }
+
   onChangeFilter() {
     var res = this.formGroup.value;
-    if (res.filter !== 'category') {
-      res.category = null;
-      this.formGroup.get('category').clearValidators();
-      this.formGroup.get('category').updateValueAndValidity();
-    }else{
+    if (res.filter === 'category') {
       this.formGroup.get("category").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("category").updateValueAndValidity();
+      this.formGroup.get('criteria').clearValidators();
+      this.formGroup.get('criteria').updateValueAndValidity();
+    } 
+    else if(res.filter === 'criteria'){
+      this.formGroup.get("criteria").setValidators([Validators.minLength(0), Validators.required]);
+      this.formGroup.get("criteria").updateValueAndValidity();
+      this.formGroup.get('category').clearValidators();
+      this.formGroup.get('category').updateValueAndValidity();
+    }   
+    else {
+      res.category = null;
+      res.criteria = null;
+      this.formGroup.get('category').clearValidators();
+      this.formGroup.get('category').updateValueAndValidity();
+      this.formGroup.get('criteria').clearValidators();
+      this.formGroup.get('criteria').updateValueAndValidity();
     }
-    
+
     this.formGroup.patchValue(res);
 
   }
@@ -192,11 +232,20 @@ export class StockInventoryFormComponent implements OnInit {
     return this.productCategoryService.autocomplete(val);
   }
 
+  searchCriteria(q?: string) {
+    var val = new StockInventoryCriteriaPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = q || '';
+    return this.criteriaService.getPaged(val);
+  }
+
   computeForm(val) {
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
     val.locationId = val.location ? val.location.id : null;
     val.productId = val.product ? val.product.id : null;
     val.categoryId = val.category ? val.category.id : null;
+    val.criteriaId = val.criteria ? val.criteria.id : null;
     val.companyId = this.authService.userInfo.companyId;
     return val;
   }
@@ -298,6 +347,8 @@ export class StockInventoryFormComponent implements OnInit {
         return 'Tất cả sản phẩm';
       case 'category':
         return 'Nhóm sản phẩm';
+      case 'criteria':
+        return 'Tiêu chí kiểm kho';
       case 'partial':
         return 'Chọn sản phẩm thủ công';
     }

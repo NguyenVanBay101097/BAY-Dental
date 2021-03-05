@@ -127,6 +127,22 @@
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.category?.name}}</span>
                                 </td>
                             </tr>
+                            <tr [class.d-none]="filterControl != 'criteria'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tiêu chí kiểm kho
+                                    </label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias" [textField]="'name'" [filterable]="true"
+                                        #criteriaCbx formControlName="criteria" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.criteria.errors.required">Vui lòng chọn tiêu chí kiểm kho</div>
+                                    </div>
+                                    <span *ngIf="stateControl != 'draft'">{{stockInventory.criteria?.name}}</span>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">

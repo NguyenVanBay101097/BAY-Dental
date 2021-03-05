@@ -73,6 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CategoryId { get; set; }
 
+        public Guid? CriteriaId { get; set; }
+
         /// <summary>
         /// none : tất cả sản phẩm
         /// category : nhóm sản phẩm
@@ -132,6 +134,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CategoryId { get; set; }
         public ProductCategoryBasic Category { get; set; }
+
+        public Guid? CriteriaId { get; set; }
+        public StockInventoryCriteriaBasic Criteria { get; set; }
 
         /// <summary>
         /// none : tất cả sản phẩm

@@ -76,6 +76,7 @@ namespace ApplicationCore.Entities
         /// none : tất cả sản phẩm
         /// category : nhóm sản phẩm
         /// partial : chọn sản phẩm thủ công
+        /// criteria : chọn sản phẩm theo tiêu chi
         /// </summary>
         public string Filter { get; set; }
 

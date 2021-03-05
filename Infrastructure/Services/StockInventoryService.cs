@@ -67,6 +67,7 @@ namespace Infrastructure.Services
                .Include(s => s.Lines).ThenInclude(s => s.Product)
                .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
                .Include(x => x.Moves)
+               .Include(x => x.Criteria)
                 .Include(x => x.Location)
                 .Include(x => x.Product)
                 .Include(x => x.Company)
@@ -128,6 +129,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Location)
                 .Include(x => x.Product)
                 .Include(x => x.Category)
+                .Include(x => x.Criteria)
                 .Include(x => x.Lines)
                 .ToListAsync();
 
@@ -168,11 +170,13 @@ namespace Infrastructure.Services
             var res = new List<StockInventoryLine>();
             var locationObj = GetService<IStockLocationService>();
             var productObj = GetService<IProductService>();
+            var criteriaObj = GetService<IStockInventoryCriteriaService>();
             var stockQuantObj = GetService<IStockQuantService>();
             var locationIds = await locationObj.SearchQuery(x => x.CompanyId == self.CompanyId).Select(x => x.Id).ToListAsync(); //lấy tất cả các location 
 
             //Xác định những sản phẩm sẽ filter, ví dụ lọc theo nhóm sản phẩm thì chỉ lấy những sản phẩm thuộc nhóm sản phẩm
             var products_to_filter = new List<Product>().AsEnumerable();
+            var productIds_to_Criteria = new List<Guid>().AsEnumerable();
             var quant_products = new List<Product>().AsEnumerable();
             if (self.Filter == "product" && self.Product != null)
             {
@@ -185,10 +189,18 @@ namespace Infrastructure.Services
                 products_to_filter = products_to_filter.Union(categ_products);
             }
 
+            if (self.Filter == "criteria" && self.Criteria != null)
+            {
+                var criteria_products = productObj.SearchQuery(x => x.ProductStockInventoryCriteriaRels.Any(s => s.StockInventoryCriteriaId == self.CriteriaId)).ToList();
+                productIds_to_Criteria = criteria_products.Select(x => x.Id).ToList();
+                products_to_filter = products_to_filter.Union(criteria_products);
+            }
+
             var group = await stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
                 x.CompanyId == self.CompanyId &&
                 (!self.ProductId.HasValue || x.ProductId == self.ProductId.Value) &&
-                 (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value))
+                (!self.CategoryId.HasValue || x.Product.CategId == self.CategoryId.Value) &&
+                (!self.CriteriaId.HasValue || productIds_to_Criteria.Contains(x.ProductId)))
                 .GroupBy(x => new { x.ProductId, x.LocationId })
                 .Select(x => new
                 {
@@ -228,7 +240,7 @@ namespace Infrastructure.Services
             //Trả về những chi tiết cho sản phẩm hết hàng
             var productObj = GetService<IProductService>();
             var types = new List<string>() { "service", "consu" };
-            var query = productObj.SearchQuery(x=> !types.Contains(x.Type));
+            var query = productObj.SearchQuery(x => !types.Contains(x.Type));
             if (products.Any())
             {
                 var exhausted_products = products.Except(quant_products);
