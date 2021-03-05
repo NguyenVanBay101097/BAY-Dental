@@ -188,12 +188,28 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x=> x.Lines).ToListAsync();
 
-            foreach (var request in self)
+            foreach (var request in selfs)
                 request.State = "confirmed";
 
-            await UpdateAsync(self);
+            await UpdateAsync(selfs);
+
+            //luu lai quantity da yeu cau
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+            var toCreate = new List<SaleOrderLineProductRequested>();
+            foreach (var self in selfs)
+            {
+                foreach (var line in self.Lines)
+                {
+                    toCreate.Add(new SaleOrderLineProductRequested()
+                    { ProductId = line.ProductId.Value, SaleOrderLineId = line.SaleOrderLineId.Value, RequestedQuantity = line.ProductQty});
+                }
+            }
+            if (toCreate.Any())
+            {
+                await requestedObj.CreateAsync(toCreate);
+            }
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)

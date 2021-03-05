@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    //có thể từ nhiều phiếu
     public class ProductRequestLine : BaseEntity
     {
         /// <summary>
