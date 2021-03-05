@@ -310,6 +310,8 @@ namespace TMTDentalAPI
             //services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddScoped<IPartnerOldNewReportService, PartnerOldNewReportService>();
             services.AddScoped<ICashBookService, CashBookService>();
+            services.AddScoped<ISaleOrderLineProductRequestedService, SaleOrderLineProductRequestedService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -445,6 +447,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductBomProfile());
                 mc.AddProfile(new ProductRequestProfile());
                 mc.AddProfile(new ProductRequestLineProfile());
+                mc.AddProfile(new SaleOrderLineProductRequestedProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

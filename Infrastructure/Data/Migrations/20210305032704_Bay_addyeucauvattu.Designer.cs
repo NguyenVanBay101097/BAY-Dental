@@ -4,14 +4,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CatalogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210305032704_Bay_addyeucauvattu")]
+    partial class Bay_addyeucauvattu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7188,46 +7190,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("SaleOrderLinePaymentRels");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineProductRequested", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("RequestedQuantity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("SaleOrderLineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WriteById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleOrderLineId");
-
-                    b.HasIndex("WriteById");
-
-                    b.ToTable("SaleOrderLineProductRequesteds");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineToothRel", b =>
                 {
                     b.Property<Guid>("SaleLineId")
@@ -12270,29 +12232,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany("SaleOrderLinePaymentRels")
-                        .HasForeignKey("SaleOrderLineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
-                        .WithMany()
-                        .HasForeignKey("WriteById");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.SaleOrderLineProductRequested", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("ApplicationCore.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany()
                         .HasForeignKey("SaleOrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

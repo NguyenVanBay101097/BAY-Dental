@@ -73,32 +73,30 @@
                 </div>
                 <div class="section">
                     <div class="section-left">
-                        <table class="table table-sm">
+                        <table class="table table-sm table-hover border-bottom">
                             <thead>
                                 <tr>
                                     <th>Dịch vụ/Vật tư</th>
                                     <th>Định mức</th>
-                                    <th>Còn lại</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <ng-container *ngFor="let item of listProductBoms; index as i">
                                     <tr>
-                                        <td colspan="3">
+                                        <td colspan="3" class="font-weight-bold bg-primary text-white">
                                             {{item.name}}
                                         </td>
                                     </tr>
-                                    <tr *ngFor="let item_child of item.boms">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                    <tr *ngFor="let item_child of item.boms" (click)="clickBom(item_child, item.id)">
+                                        <td>{{item_child.materialProductName}}</td>
+                                        <td>{{item_child.quantity}} {{item_child.producUOMName}}</td>
                                     </tr>
                                 </ng-container>
                             </tbody>
                         </table>
                     </div>
                     <div class="section-right">
-                        <table class="table table-sm">
+                        <table class="table table-sm table-hover table-tbody-ver-align-middle border-bottom">
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -113,13 +111,21 @@
                             <tbody formArrayName="lines">
                                 <ng-container *ngFor="let line of lines.controls; let i=index">
                                     <tr [formGroupName]="i">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{i + 1}}</td>
+                                        <td>{{line.get('product').value ? line.get('product').value.defaultCode : ''}}</td>
+                                        <td>{{line.get('product').value ? line.get('product').value.name : ''}}</td>
+                                        <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
+                                        <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>
+                                        <td>
+                                            <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
+                                                formControlName="productQty">
+                                            </kendo-numerictextbox>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-icon btn-sm btn-light" title="Xóa" (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </ng-container>
                             </tbody>
@@ -132,8 +138,8 @@
 </div>
 <div class="modal-footer">
     <!-- <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button> -->
-    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
-    <button type="button" class="btn btn-primary mr-2" (click)="onConfirmed()">Yêu cầu</button>
-    <button type="button" class="btn btn-danger mr-2" (click)="onCancel()">Hủy yêu cầu</button>
+    <button *ngIf="productRequestDisplay.state == 'draft'" type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
+    <button *ngIf="productRequestDisplay.state == 'draft'" type="button" class="btn btn-primary mr-2" (click)="onConfirmed()">Yêu cầu</button>
+    <button *ngIf="productRequestDisplay.state == 'confirmed'" type="button" class="btn btn-danger mr-2" (click)="onCancel()">Hủy yêu cầu</button>
     <button type="button" class="btn btn-light mr-2" (click)="onClose()">Đóng</button>
 </div>

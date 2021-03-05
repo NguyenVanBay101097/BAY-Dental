@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             var orderLineObj = GetService<ISaleOrderLineService>();
 
             //validate số lượng
-            var bom = await bomObj.SearchQuery(x => x.Id == val.ProductBomId).Include(x => x.ProducUOM).Include(x => x.MaterialProduct).FirstOrDefaultAsync();
+            var bom = await bomObj.SearchQuery(x => x.Id == val.ProductBomId).Include(x => x.ProductUOM).Include(x => x.MaterialProduct).FirstOrDefaultAsync();
             if (bom == null)
                 throw new Exception("Không tồn tại vật tư");
 
@@ -36,6 +36,9 @@ namespace Infrastructure.Services
 
             //return line.
             var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
+            if (orderLine == null)
+                throw new Exception("Không tìm thấy dịch vụ");
+
             return new ProductRequestLineDisplay()
             {
                 ProductId = bom.MaterialProductId,
@@ -43,9 +46,9 @@ namespace Infrastructure.Services
                 ProductQty = 0,
                 ProductQtyMax = bom.Quantity - sum,
                 ProductUOMId = bom.ProductUOMId,
-                ProducUOM = _mapper.Map<UoMSimple>(bom.ProducUOM),
+                ProducUOM = _mapper.Map<UoMSimple>(bom.ProductUOM),
                 SaleOrderLineId = val.SaleOrderLineId,
-                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine)
+                SaleOrderLine = _mapper.Map<SaleOrderLineSimple>(orderLine),
             };
         }
     }
