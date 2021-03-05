@@ -244,7 +244,7 @@ namespace Infrastructure.Services
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x=> x.Lines).ToListAsync();
 
             foreach (var request in self)
             {
