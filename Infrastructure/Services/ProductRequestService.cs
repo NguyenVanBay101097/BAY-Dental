@@ -198,59 +198,17 @@ namespace Infrastructure.Services
                 request.State = "confirmed";
 
             await UpdateAsync(selfs);
-            await SaveUpdateRequestedQuantity(ids, selfs);
-        }
-
-        private async Task SaveUpdateRequestedQuantity(IEnumerable<Guid> ids, List<ProductRequest> selfs = null, bool isCU = true)
-        {
-            selfs = selfs == null ? await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync() : selfs;
-
-            //luu lai quantity da yeu cau
-            //check đã tồn tại thì update quantity, else create, neu ko phai isCU thi giam quantity, neu quantity =0 thi xoa
-            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
-            var toCreates = new List<SaleOrderLineProductRequested>();
-            var toUpdates = new List<SaleOrderLineProductRequested>();
-            var toRemoves = new List<SaleOrderLineProductRequested>();
-
-            foreach (var self in selfs)
-            {
-                foreach (var line in self.Lines)
-                {
-                    var exist = await requestedObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId && x.ProductId == line.ProductId).FirstOrDefaultAsync();
-                    if (exist == null)
-                    {
-                        toCreates.Add(new SaleOrderLineProductRequested()
-                        { ProductId = line.ProductId.Value, SaleOrderLineId = line.SaleOrderLineId.Value, RequestedQuantity = line.ProductQty });
-                    }
-                    else
-                    {
-                        exist.RequestedQuantity = isCU == true ? (exist.RequestedQuantity + line.ProductQty) : (exist.RequestedQuantity - line.ProductQty);
-                        if (exist.RequestedQuantity <= 0)
-                            toRemoves.Add(exist);
-                        else
-                            toUpdates.Add(exist);
-                    }
-                }
-            }
-            if (toCreates.Any())
-            {
-                await requestedObj.CreateAsync(toCreates);
-            }
-            if (toUpdates.Any())
-            {
-                await requestedObj.CreateAsync(toUpdates);
-            }
-            if (toRemoves.Any())
-            {
-                await requestedObj.DeleteAsync(toRemoves);
-            }
+            //save requested quantity
+            var lineObj = GetService<ProductRequestLineService>();
+            var lines = selfs.SelectMany(x => x.Lines).ToList();
+            await lineObj.SaveUpdateRequestedQuantity(null,lines,true);
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
-            foreach (var request in self)
+            foreach (var request in selfs)
             {
                 if (request.State == "done")
                     throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
@@ -259,9 +217,12 @@ namespace Infrastructure.Services
             }
 
 
-            await UpdateAsync(self);
+            await UpdateAsync(selfs);
 
-            await SaveUpdateRequestedQuantity(ids, self, false);
+            //save requested quantity
+            var lineObj = GetService<ProductRequestLineService>();
+            var lines = selfs.SelectMany(x => x.Lines).ToList();
+            await lineObj.SaveUpdateRequestedQuantity(null, lines, false);
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
