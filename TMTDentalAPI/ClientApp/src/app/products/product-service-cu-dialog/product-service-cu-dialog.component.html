@@ -38,7 +38,7 @@
                                 aria-controls="profile" aria-selected="false">Công đoạn</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="bom-tab" data-toggle="tab" href="#bom" role="tab"
+                            <a class="nav-link" id="bom-tab" data-toggle="tab" href="#productBom" role="tab"
                                 aria-controls="profile" aria-selected="false">Định mức vật tư</a>
                         </li>
                     </ul>
@@ -181,7 +181,7 @@
                             </table>
                         </div>
 
-                        <div class="tab-pane" id="bom" role="tabpanel" aria-labelledby="bom-tab">
+                        <div class="tab-pane" id="productBom" role="tabpanel" aria-labelledby="bom-tab">
                             <div class="flex-1-1-100 h-100 overflow-hidden">
                                 <button type="button" style="margin-bottom: 10px;" (click)="createMaterialProduct()"
                                     class="btn btn-sm btn-primary">Thêm vật tư mới</button>
@@ -204,13 +204,13 @@
                                                         [filterable]="true"
                                                         (filterChange)="productCbxFilterChange2($event)"
                                                         [valueField]="'id'" [filterable]="true" style="width:70%;"
-                                                        #productCbx (valueChange)="onValueChange($event)"
+                                                        #productCbx (valueChange)="onValueChange($event,i)"
                                                         formControlName="materialProduct">
                                                     </kendo-combobox>
                                                 </td>
                                                 <td>
-                                                    <span>{{item.get('producUOM') && item.get('producUOM').value ?
-                                                        item.get('producUOM').value.name : ''}}</span>
+                                                    <span>{{item.get('productUOM') && item.get('productUOM').value ?
+                                                        item.get('productUOM').value.name : ''}}</span>
 
                                                 </td>
                                                 <td>
