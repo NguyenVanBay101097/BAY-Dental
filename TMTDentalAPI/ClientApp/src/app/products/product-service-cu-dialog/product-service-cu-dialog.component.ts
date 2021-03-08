@@ -105,7 +105,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
     this.searchProducts('').subscribe(result => {
       this.filteredProducts = result;
-      console.log(result);
       
     });
 
@@ -137,7 +136,13 @@ export class ProductServiceCuDialogComponent implements OnInit {
           if (index < 0) {
             this.filteredProducts.push(bom.materialProduct);
           }
-          array.push(this.fb.group(bom))
+          console.log();
+          
+          array.push(this.fb.group({
+            materialProduct: [bom.materialProduct,Validators.required],
+            productUOM: bom.productUOM,
+            quantity: 1
+          }))
         });
       }
       else{
@@ -235,20 +240,16 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
-  onSave() {
-    this.submitted = true;
-    if (!this.productForm.valid) {
-      return;
-    }
-
-    this.saveOrUpdate();
-  }
-
   get isLabo() {
     return this.productForm.get('isLabo').value;
   }
 
   saveOrUpdate() {
+    this.submitted = true;
+    if (!this.productForm.valid) {
+      return;
+    }
+
     var data = this.getBodyData();
     if (this.id) {
       this.productService.update(this.id, data).subscribe(
@@ -276,29 +277,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
     this.activeModal.close(result);
   }
 
-  removeNullItem(){
-    // xóa các phần tử null
-    for (let i=0; i<this.boms.length;) {
-      if(this.boms.at(i).get('materialProduct').value==null){
-        this.boms.removeAt(i);
-        this.boms.markAsDirty();
-      }
-      else{
-        i++;
-      }
-    }
-  }
   getBodyData() {
-    debugger;
-    this.removeNullItem();
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
     if (data.boms.length>0) {
       data.boms.forEach(bom => {
         if(bom.materialProduct){
-          bom.materialProductId = bom.materialProduct.id;
-          bom.productUOMId = bom.productUOM.id;
+          bom.materialProductId =  bom.materialProduct ? bom.materialProduct.id : null;
+          bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;
         }
         else{
           return;
@@ -471,7 +458,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
     modalRef.result.then(
       
       result => {
-        console.log(result);
         this.filteredProducts.push(result);
         var value = {
           materialProduct: result,
@@ -504,68 +490,40 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onCreate(bom?: any) {
-    var grs = this.boms.controls.filter(x => x.value.materialProduct == null);
-    if (grs && grs.length > 0 && bom == null) {
-      this.notificationService.show({
-        content: 'Vui lòng chọn vật tư',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return;
-    }
-    
     if (bom) {
-      if(grs.length == 0){
-        this.boms.push(
-          this.fb.group(bom)
-        )
-        
-      }
-      else{
-        for (let i=0; i<this.boms.length; i++) {;
-          if(this.boms.at(i).get('materialProduct').value==null){
-            this.boms.removeAt(i);
-            this.boms.markAsDirty();
-            this.boms.push(
-              this.fb.group(bom)
-            )
-          }
-        }
-      }
+      console.log(bom);
+      
+      this.boms.push(
+        this.fb.group({
+          materialProduct:[bom.materialProduct,Validators.required],
+          productUOM: bom.productUOM,
+          quantity:1
+        })
+      )
     }
     else {
       this.boms.push(
         this.fb.group({
-          quantity: 1,
-          materialProduct: null,
-          productUOM: null
+          materialProduct: [null,Validators.required],
+          productUOM: null,
+          quantity: 1
         })
       )
     }
   }
 
   deleteMaterialProduct(index) {
-    if(this.boms.length==1 && this.boms.at(index).get('materialProduct').value == null){
-      return;
-    }
-    else if(this.boms.length==1 && this.boms.at(index).get('materialProduct').value != null){
-      var gr = this.boms.at(index).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
-    }
-    else{
       this.boms.removeAt(index);
       this.boms.markAsDirty();
-    }
   }
 
-  onValueChange(item,i) {
+  onValueChange(item, i) {
     this.isExist = false;
-    // var prBoms = this.MaterialProductBoms;
     if (item) {
-      var grs = this.boms.controls.filter(x => x.value.materialProduct.id == item.id);
-      if (grs && grs.length > 1) {
-        grs[1].patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
+      var temp = this.boms.value.filter(x => x.materialProduct.id == item.id);
+      console.log(this.boms);
+      if (temp.length > 1) {
+        this.boms.at(i).patchValue({ materialProduct: [null, Validators.required], productUOM: null, quantity: 1 });
         this.notificationService.show({
           content: 'Vật tư đã tồn tại',
           hideAfter: 3000,
@@ -574,17 +532,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
           type: { style: 'error', icon: true }
         });
       }
-      this.boms.controls.forEach(group => {
-        if (group.value && group.value.materialProduct.id == item.id) {
-          group.patchValue({ materialProduct: item, productUOM: item.uom, quantity: 1 });
-        }
-      });
-    }
-    else {
-      var gr = this.boms.at(i);
-      if (gr) {
-        gr.patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
-      }
+      this.boms.at(i).get('productUOM').setValue(item.uom);
     }
   }
 

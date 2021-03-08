@@ -200,18 +200,21 @@
                                             <tr [formGroupName]="i">
                                                 <td class="b-sticky-left">{{i+1}}</td>
                                                 <td>
-                                                    <kendo-combobox [data]="filteredProducts" [textField]="'name'"
-                                                        [filterable]="true"
+                                                    <kendo-combobox [data]="filteredProducts" 
+                                                        [valueField]="'id'" [textField]="'name'"
                                                         (filterChange)="productCbxFilterChange2($event)"
-                                                        [valueField]="'id'" [filterable]="true" style="width:70%;"
-                                                        #productCbx (valueChange)="onValueChange($event,i)"
+                                                        [filterable]="true" style="width:70%;"
+                                                        #productCbx (valueChange)="onValueChange($event, i)"
                                                         formControlName="materialProduct">
                                                     </kendo-combobox>
+                                                    <div *ngIf="item.get('materialProduct').errors && (item.get('materialProduct').touched || item.get('materialProduct').dirty || submitted)" class="text-danger">
+                                                        <div *ngIf="item.get('materialProduct').errors.required">Vui lòng chọn vật tư chưa chọn</div>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <span>{{item.get('productUOM') && item.get('productUOM').value ?
                                                         item.get('productUOM').value.name : ''}}</span>
-
+                                                        
                                                 </td>
                                                 <td>
                                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
@@ -241,7 +244,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="saveOrUpdate()" accesskey="s">Lưu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
         accesskey="q">Đóng</button>
 </footer>
