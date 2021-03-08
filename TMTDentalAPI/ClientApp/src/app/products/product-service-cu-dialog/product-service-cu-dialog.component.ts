@@ -110,10 +110,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
     this.categCbxFilterChange();
     this.productCbxFilterChange();
-    if (this.id == null) {
-      this.onCreate();
-    }
-
     if (this.id) {
       this.loadDataFromApi();
     } else {
@@ -145,9 +141,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
           }))
         });
       }
-      else{
-        this.onCreate();
-      }
+      
     });
   }
 
