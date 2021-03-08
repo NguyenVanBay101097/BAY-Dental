@@ -137,7 +137,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
           array.push(this.fb.group({
             materialProduct: [bom.materialProduct,Validators.required],
             productUOM: bom.productUOM,
-            quantity: 1
+            quantity: bom.quantity
           }))
         });
       }
