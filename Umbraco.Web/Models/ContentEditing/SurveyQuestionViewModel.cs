@@ -14,6 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public string Search { get; set; }
         public string Type { get; set; }
+        public bool? Active { get; set; }
 
     }
     public class SurveyQuestionBasic
@@ -22,6 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public string Type { get; set; }
         public int? Sequence { get; set; }
+        public bool Active { get; set; }
     }
 
     public class SurveyQuestionDisplay
@@ -59,5 +61,11 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid IdFrom { get; set; }
         public Guid IdTo { get; set; }
+    }
+
+    public class ActionActivePar
+    {
+        public Guid Id { get; set; }
+        public bool Active { get; set; }
     }
 }

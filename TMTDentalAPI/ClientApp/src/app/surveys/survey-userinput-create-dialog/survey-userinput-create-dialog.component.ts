@@ -51,7 +51,9 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   }
 
   loadQuestions() {
-    this.questionService.getListForSurvey().subscribe((result: any) => {
+    console.log(this.id);
+    
+    this.questionService.getListForSurvey(this.id).subscribe((result: any) => {
       this.questions = result;
       this.createFormGroup(result);
 

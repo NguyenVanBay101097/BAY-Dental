@@ -9,6 +9,7 @@ namespace ApplicationCore.Entities
         public SurveyQuestion()
         {
             Sequence = 10;
+            Active = true;
         }
 
         /// <summary>
@@ -30,5 +31,7 @@ namespace ApplicationCore.Entities
         /// số thứ tự câu hỏi
         /// </summary>
         public int? Sequence { get; set; }
+
+        public bool Active { get; set; }
     }
 }

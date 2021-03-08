@@ -24,6 +24,12 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
   title: string = "Câu hỏi khảo sát"
   searchUpdate = new Subject<string>();
   search: string;
+  active: boolean = true;
+  listFilter: Array<any> = [
+    {name: 'Câu hỏi hiện', value: true},
+    {name: 'Câu hỏi ẩn', value: false},
+  ];
+  defaultFilter = this.listFilter[0];
 
   constructor(
     private surveyQuestionService: SurveyQuestionService,
@@ -46,6 +52,7 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.offset;
     val.search = this.search ? this.search : '';
+    val.active = (this.active || this.active == false) ? this.active : '';
     this.surveyQuestionService.getPaged(val).subscribe(res => {
       this.questions = res.items;
     })
@@ -124,6 +131,42 @@ export class SurveyConfigurationEvaluationComponent implements OnInit {
         });
       }
     )
+
+  }
+
+  actionActive(item: SurveyQuestionBasic) {
+    var val = {
+      id: item.id,
+      active: !item.active
+    }
+    console.log(val);
+    
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = item.active?'Ẩn câu hỏi':'Hiện câu hỏi';
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${item.active? 'ẩn câu hỏi':'hiện câu hỏi'}?`;
+
+    modalRef.result.then(() => {
+      this.surveyQuestionService.actionActive(val).subscribe(
+        (res:any) => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+  
+          this.loadDataFromApi();
+        }
+      );
+    })
+   
+  }
+
+  onFilterChange(e){
+    this.active = e ? e.value : null;
+    this.loadDataFromApi();
 
   }
 

@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     public interface ISurveyQuestionService: IBaseService<SurveyQuestion>
     {
         Task<PagedResult2<SurveyQuestionBasic>> GetPagedResultAsync(SurveyQuestionPaged val);
+        Task ActionActive(ActionActivePar val);
     }
 }
