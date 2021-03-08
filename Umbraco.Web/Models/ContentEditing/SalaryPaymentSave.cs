@@ -37,7 +37,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SalaryPaymentDefaultGetModel
     {
-        public Guid? PayslipRunId { get; set; }
         public IEnumerable<Guid> PayslipIds { get; set; }
     }
 }

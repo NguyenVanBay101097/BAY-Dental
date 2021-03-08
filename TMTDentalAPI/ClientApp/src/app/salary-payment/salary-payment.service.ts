@@ -29,6 +29,18 @@ export class SalaryPaymentDisplay {
     reason: string;
 }
 
+export class SalaryPaymentSaveDefault {
+    Date = null;
+    JournalId = null;
+    EmployeeId = null;
+    Employee = null;
+    State = null;
+    Type = null;
+    Amount = null;
+    Reason = null;
+    HrPayslipId = null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SalaryPaymentService {
     apiUrl = "api/SalaryPayments";
@@ -70,5 +82,13 @@ export class SalaryPaymentService {
 
     getPrint(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + "/GetPrint", ids);
+    }
+
+    public actionMultiSalaryPayment(val:any){
+        return this.http.post(this.baseApi + this.apiUrl + "/CreateMultiSalaryPayment", val);
+    }
+
+    public defaulCreateBy(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/DefaulCreateBy", val);
     }
 }

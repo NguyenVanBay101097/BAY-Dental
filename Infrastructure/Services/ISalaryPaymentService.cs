@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         Task InsertModelsIfNotExists();
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
-        Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals);
-        Task<IEnumerable<SalaryPaymentDisplay>> DefaulCreateBy(SalaryPaymentDefaultGetModel val);
+        Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<PayslipCreateSalaryPaymentSave> vals);
+        Task<IEnumerable<PayslipCreateSalaryPaymentDisplay>> DefaulCreateBy(IEnumerable<Guid> payslipIds);
     }
 }

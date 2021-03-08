@@ -111,7 +111,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Create")]
-        public async Task<IActionResult> CreateMultiSalaryPayment([FromBody] SalaryPaymentSalary val)
+        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<PayslipCreateSalaryPaymentSave> vals)
         {
             if (!ModelState.IsValid)
             {
@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
             }
 
             await _unitOfWork.BeginTransactionAsync();
-            var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
+            var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
             _unitOfWork.Commit();
 
             return Ok(ids);
@@ -172,9 +172,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        public async Task<IActionResult> DefaulCreateBy(IEnumerable<Guid> payslipIds)
         {
-            var res = await _salaryPaymentService.DefaulCreateBy(val);
+            var res = await _salaryPaymentService.DefaulCreateBy(payslipIds);
             return Ok(res);
         }
 

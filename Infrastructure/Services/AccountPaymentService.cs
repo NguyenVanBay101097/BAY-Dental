@@ -37,7 +37,6 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrderPaymentRels)
                 .Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.CardOrderPaymentRels)
-                .Include(x => x.DestinationAccount)
                 .Include(x => x.Journal).Include(x => x.Journal.DefaultCreditAccount)
                 .Include(x => x.Journal.DefaultDebitAccount).ToListAsync();
 
@@ -261,13 +260,13 @@ namespace Infrastructure.Services
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
                 }
 
-                if (payment.AccountMovePaymentRels.Any())
-                {
-                    var moveObj = GetService<IAccountMoveService>();
-                    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
-                    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
-                    rec_pay_line_name += $": {string.Join(", ", move_names)}";
-                }
+                //if (payment.AccountMovePaymentRels.Any())
+                //{
+                //    var moveObj = GetService<IAccountMoveService>();
+                //    var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId);
+                //    var move_names = await moveObj.SearchQuery(x => move_ids.Contains(x.Id)).Select(x => x.Name).ToListAsync();
+                //    rec_pay_line_name += $": {string.Join(", ", move_names)}";
+                //}
 
                 var liquidity_line_name = "";
                 if (payment.PaymentType == "transfer")
@@ -787,7 +786,7 @@ namespace Infrastructure.Services
                 var slip = await hrPaySlips.Where(x => x.Id == val.HrPayslipId).FirstOrDefaultAsync();
                 if (slip != null)
                 {
-                    slip.AccountPaymentId = payment.Id;
+                    //slip.AccountPaymentId = payment.Id;
                     slip.State = "posted";
                     listHrPaySlip.Add(slip);
                 }

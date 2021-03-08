@@ -50,4 +50,62 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Reason { get; set; }
     }
+
+    public class PayslipCreateSalaryPaymentDisplay
+    {
+        public PayslipCreateSalaryPaymentDisplay()
+        {
+            Date = DateTime.Today;
+        }
+
+        /// <summary>
+        /// Ngày lập phiếu
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public EmployeeSimple Employee { get; set; }
+
+        public AccountJournalSimple Journal { get; set; }
+
+        /// <summary>
+        /// Số tiền
+        /// </summary>
+        public decimal Amount { get; set; }
+
+        /// <summary>
+        /// Mô tả
+        /// </summary>
+        public string Reason { get; set; }
+
+        public Guid PayslipId { get; set; }
+    }
+
+    public class PayslipCreateSalaryPaymentSave
+    {
+        public PayslipCreateSalaryPaymentSave()
+        {
+            Date = DateTime.Today;
+        }
+
+        /// <summary>
+        /// Ngày lập phiếu
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        public Guid EmployeeId { get; set; }
+
+        public Guid JournalId { get; set; }
+
+        /// <summary>
+        /// Số tiền
+        /// </summary>
+        public decimal Amount { get; set; }
+
+        /// <summary>
+        /// Mô tả
+        /// </summary>
+        public string Reason { get; set; }
+
+        public Guid PayslipId { get; set; }
+    }
 }
