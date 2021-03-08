@@ -118,11 +118,14 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
   
   loadLinesToFormArray(lines) {
+    this.lines.clear();
     lines.forEach(line => {
       var index = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[index].max;
-      this.lines.push(this.fb.group(line));
-      this.lines.markAsDirty();
+      var fg= this.fb.group(line);
+      fg.get('productQty').setValidators([Validators.required]);
+      fg.get('productQty').markAsTouched();
+      this.lines.push(fg);
     });
   }
 
@@ -131,13 +134,15 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     if (index < 0) {
       var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
       line.max = this.listProductRequestedBoms[i].max;
-      this.lines.push(this.fb.group(line));
+      var fg= this.fb.group(line);
+      fg.get('productQty').setValidators([Validators.required]);
+      fg.get('productQty').markAsTouched();
+      this.lines.push(fg);
     } else {
       if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
         this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
       }
     }
-    this.lines.markAsDirty();
   }
 
   loadListProductBoms() {
@@ -178,8 +183,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       } else {
         this.loadRecord();
       }
-      console.log(res);
-      console.log(this.listProductRequestedBoms);
     });
   }
 
@@ -193,13 +196,15 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       return false;
     }
 
-    var i = 0;
-    while (i < this.lines.value.length) {
+    var error = false;
+    for (let i = 0; i < this.lines.value.length; i++) {
       if (this.lines.value[i]["productQty"] <= 0) {
-        this.lines.removeAt(i);
-        i--;
+        this.lines.at(i).get('productQty').setErrors({'incorrect': true});
+        error = true;
       }
-      i++;
+    }
+    if (error == true) {
+      return;
     }
 
     var val = Object.assign({}, this.formGroup.value);
@@ -210,26 +215,14 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     console.log(val);
     if (!this.id) {
       this.productRequestService.create(val).subscribe((res: any) => {
-        this.notificationService.show({
-          content: "Lưu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+        this.notify('success','Lưu thành công');
         this.submitted = false;
         this.activeModal.close();
       }, (err) => {
       });
     } else {
       this.productRequestService.update(this.id, val).subscribe((res: any) => {
-        this.notificationService.show({
-          content: "Lưu thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+        this.notify('success','Lưu thành công');
         this.submitted = false;
         this.activeModal.close();
       }, (err) => {
@@ -243,13 +236,20 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       return false;
     }
 
-    var i = 0;
-    while (i < this.lines.value.length) {
+    var error = false;
+    for (let i = 0; i < this.lines.value.length; i++) {
       if (this.lines.value[i]["productQty"] <= 0) {
-        this.lines.removeAt(i);
-        i--;
+        this.lines.at(i).get('productQty').setErrors({'incorrect': true});
+        error = true;
       }
-      i++;
+    }
+    if (error == true) {
+      return;
+    }
+
+    if (this.lines.value.length <= 0) {
+      this.notify('error','Bạn chưa chọn Vật tư để yêu cầu');
+      return;
     }
 
     var val = Object.assign({}, this.formGroup.value);
@@ -261,13 +261,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     if (!this.id) {
       this.productRequestService.create(val).subscribe((res: any) => {
         this.productRequestService.actionConfirm([res.id]).subscribe((res: any) => {
-          this.notificationService.show({
-            content: "Gửi yêu cầu thành công đến bộ phận Kho",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
+          this.notify('success','Gửi yêu cầu thành công đến bộ phận Kho');
           this.submitted = false;
           this.activeModal.close();
         }, (err) => {
@@ -277,13 +271,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     } else {
       this.productRequestService.update(this.id, val).subscribe((res: any) => {
         this.productRequestService.actionConfirm([this.id]).subscribe((res: any) => {
-          this.notificationService.show({
-            content: "Gửi yêu cầu thành công đến bộ phận Kho",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
+          this.notify('success','Gửi yêu cầu thành công đến bộ phận Kho');
           this.submitted = false;
           this.activeModal.close();
         }, (err) => {
@@ -299,16 +287,11 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     modalRef.componentInstance.body = "Bạn có chắc chắn hủy yêu cầu vật tư?";
     modalRef.result.then((res: any) => {
       this.productRequestService.actionCancel([this.id]).subscribe((res: any) => {
-        this.notificationService.show({
-          content: "Hủy thành công",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
+        this.notify('success','Hủy thành công');
         this.productRequestDisplay.state = "draft";
         this.formGroup.get('state').setValue("draft");
         this.reload = true;
+        this.loadListProductBoms();
       }, (err) => {
       });
     }, (err) => {
@@ -324,13 +307,15 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   clickBom(bom, saleOrderLineId) {
+    var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
+    if (this.listProductRequestedBoms[index].max <= 0)
+      return;
     var val = new GetLinePar();
     val.saleOrderLineId = saleOrderLineId;
     val.productBomId = bom.id;
     this.productRequestLineService.getLine(val).subscribe((res: any) => {
       res.productQty = 1;
       this.loadLineToFormArray(res);
-      console.log(res);
     }, (err) => {
     });
   }
@@ -341,5 +326,15 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
 
   findPro_listProductRequestedBoms(saleOrderLineId, productId) {
     return this.listProductRequestedBoms.findIndex(item => (item.saleOrderLineId == saleOrderLineId && item.productId == productId));
+  }
+
+  notify(type, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: type, icon: true }
+    });
   }
 }
