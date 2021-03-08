@@ -28,10 +28,9 @@ namespace Infrastructure.Services
                 {
                     var tenantExtendHistory = dictTenantExtendHistories[item.Id].Where(x => x.StartDate == today).OrderBy(x => x.DateCreated).LastOrDefault();
                     if (tenantExtendHistory != null)
-                    {
-                        var newTenant = new AppTenant();
-                        newTenant.DateExpired = tenantExtendHistory.ExpirationDate;
-                        newTenant.ActiveCompaniesNbr = tenantExtendHistory.ActiveCompaniesNbr;
+                    { 
+                        item.DateExpired = tenantExtendHistory.ExpirationDate;
+                        item.ActiveCompaniesNbr = tenantExtendHistory.ActiveCompaniesNbr;
                         await UpdateExpired(item, conn);
                     }
                 }

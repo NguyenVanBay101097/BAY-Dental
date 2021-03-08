@@ -33,8 +33,6 @@ namespace Infrastructure.Services
             var tenant = await _tenantService.GetByIdAsync(model.TenantId);
             if (model.StartDate == today)
             {
-                tenant.ActiveCompaniesNbr = model.ActiveCompaniesNbr;
-                tenant.DateExpired = model.ExpirationDate;
                 var tenants = new List<AppTenant>();
                 tenants.Add(tenant);
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
