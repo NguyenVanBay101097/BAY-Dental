@@ -70,9 +70,7 @@ namespace Infrastructure.Services
                .Include(x => x.Criteria)
                 .Include(x => x.Location)
                 .Include(x => x.Product)
-                .Include(x => x.Company)
                 .Include(x => x.Category)
-                .Include(x => x.Location)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<StockInventoryDisplay>(res);
