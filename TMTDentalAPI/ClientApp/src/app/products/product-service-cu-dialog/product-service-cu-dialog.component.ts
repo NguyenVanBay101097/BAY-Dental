@@ -137,7 +137,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
           array.push(this.fb.group({
             materialProduct: [bom.materialProduct,Validators.required],
             productUOM: bom.productUOM,
-            quantity: bom.quantity
+            quantity: [bom.quantity, Validators.required]
           }))
         });
       }
@@ -491,7 +491,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
         this.fb.group({
           materialProduct:[bom.materialProduct,Validators.required],
           productUOM: bom.productUOM,
-          quantity:1
+          quantity:[1, Validators.required]
         })
       )
     }
@@ -500,7 +500,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
         this.fb.group({
           materialProduct: [null,Validators.required],
           productUOM: null,
-          quantity: 1
+          quantity: [1, Validators.required]
         })
       )
     }
@@ -512,12 +512,12 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   onValueChange(item, i) {
-    this.isExist = false;
+    console.log(item);
+    
     if (item) {
       var temp = this.boms.value.filter(x => x.materialProduct.id == item.id);
       console.log(this.boms);
       if (temp.length > 1) {
-        this.boms.at(i).patchValue({ materialProduct: [null, Validators.required], productUOM: null, quantity: 1 });
         this.notificationService.show({
           content: 'Vật tư đã tồn tại',
           hideAfter: 3000,
@@ -525,8 +525,14 @@ export class ProductServiceCuDialogComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'error', icon: true }
         });
+        this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
       }
-      this.boms.at(i).get('productUOM').setValue(item.uom);
+      else{
+        this.boms.at(i).patchValue({ productUOM: item.uom });
+      }
+    }
+    else{
+      this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
   }
 
