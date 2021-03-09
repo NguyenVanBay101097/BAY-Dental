@@ -69,7 +69,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then((result) => {
-      this.notify('success','Lưu thành công');
+      // this.notify('success','Lưu thành công');
       this.loadData();
     }, () => {
     });

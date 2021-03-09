@@ -9,6 +9,6 @@ namespace Infrastructure.Services
 {
     public interface IProductRequestLineService : IBaseService<ProductRequestLine>
     {
-        Task<ProductRequestLineDisplay> GetlineAble(GetLinePar val);
+        Task<ProductRequestLineDisplay> GetlineAble(ProductRequestGetLinePar val);
     }
 }

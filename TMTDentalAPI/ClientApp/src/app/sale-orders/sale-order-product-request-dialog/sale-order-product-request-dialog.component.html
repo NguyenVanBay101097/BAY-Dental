@@ -69,7 +69,7 @@
                                 <tr>
                                     <th>Dịch vụ/Vật tư</th>
                                     <th>Định mức</th>
-                                    <!-- <th>Còn lại</th> -->
+                                    <th>Đã yêu cầu</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -81,8 +81,8 @@
                                     </tr>
                                     <tr *ngFor="let item_child of item.boms; index as j" (click)="clickBom(item_child, item.id)">
                                         <td>{{item_child.materialProductName}}</td>
-                                        <td>{{item_child.quantity}} {{item_child.producUOMName}}</td>
-                                        <!-- <td>{{listProductRequestedBoms[findPro_listProductRequestedBoms(item.id, item_child.materialProductId)]?.max}} {{item_child.producUOMName}}</td> -->
+                                        <td>{{item_child.quantity | number}} {{item_child.producUOMName}}</td>
+                                        <td>{{item_child.requestedQuantity | number}}</td>
                                     </tr>
                                 </ng-container>
                             </tbody>
@@ -93,8 +93,8 @@
                             <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Mã sản phẩm</th>
-                                    <th>Sản phẩm</th>
+                                    <!-- <th>Mã sản phẩm</th> -->
+                                    <th>Vật tư</th>
                                     <th>Dịch vụ</th>
                                     <th>ĐVT</th>
                                     <th>Số lượng</th>
@@ -105,7 +105,7 @@
                                 <ng-container *ngFor="let line of lines.controls; let i=index">
                                     <tr [formGroupName]="i">
                                         <td>{{i + 1}}</td>
-                                        <td>{{line.get('product').value ? line.get('product').value.defaultCode : ''}}</td>
+                                        <!-- <td>{{line.get('product').value ? line.get('product').value.defaultCode : ''}}</td> -->
                                         <td>{{line.get('product').value ? line.get('product').value.name : ''}}</td>
                                         <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
                                         <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>

@@ -120,7 +120,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ProductRequestLineSave> Lines { get; set; } = new List<ProductRequestLineSave>();
     }
 
-    public class GetLinePar
+    public class ProductRequestGetLinePar
     {
         public Guid SaleOrderLineId { get; set; }
         public Guid ProductBomId { get; set; }

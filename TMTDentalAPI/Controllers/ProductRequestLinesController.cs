@@ -27,7 +27,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetlineAble(GetLinePar val)
+        public async Task<IActionResult> GetlineAble(ProductRequestGetLinePar val)
         {
             var res = await _productRequestLineService.GetlineAble(val);
             return Ok(res);

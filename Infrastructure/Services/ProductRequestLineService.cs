@@ -20,7 +20,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<ProductRequestLineDisplay> GetlineAble(GetLinePar val)
+        public async Task<ProductRequestLineDisplay> GetlineAble(ProductRequestGetLinePar val)
         {
             var bomObj = GetService<IProductBomService>();
             var orderLineObj = GetService<ISaleOrderLineService>();
@@ -44,7 +44,7 @@ namespace Infrastructure.Services
             {
                 ProductId = bom.MaterialProductId,
                 Product = _mapper.Map<ProductSimple>(bom.MaterialProduct),
-                ProductQty = 0,
+                ProductQty = 1,
                 ProductUOMId = bom.ProductUOMId,
                 ProducUOM = _mapper.Map<UoMSimple>(bom.ProductUOM),
                 SaleOrderLineId = val.SaleOrderLineId,

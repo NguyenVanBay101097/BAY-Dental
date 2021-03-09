@@ -47,7 +47,7 @@ export class ProductRequestSave {
     lines: ProductRequestLineDisplay;
 }
 
-export class GetLinePar {
+export class ProductRequestGetLinePar {
     saleOrderLineId: string;
     productBomId: string;
 }
