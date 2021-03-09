@@ -97,15 +97,12 @@ export class ProductServiceCuDialogComponent implements OnInit {
       boms: this.fb.array([]),
     });
 
-
-
     this.searchCategories('').subscribe(result => {
       this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
     });
 
-    this.searchProducts('').subscribe(result => {
+    this.searchProducts().subscribe(result => {
       this.filteredProducts = result;
-      
     });
 
     this.categCbxFilterChange();
@@ -125,15 +122,10 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
       this.loadStepList();
       this.productForm.get('type').value == 'service' ? this.stepTab = true : this.stepTab = false;
-      if (result.boms.length>0) {
-        var array = this.productForm.get('boms') as FormArray
+      
+      if (result.boms.length > 0) {
+        var array = this.productForm.get('boms') as FormArray;
         result.boms.forEach(bom => {
-          var index = this.filteredProducts.findIndex(x => x.id == bom.materialProduct.id);
-          if (index < 0) {
-            this.filteredProducts.push(bom.materialProduct);
-          }
-          console.log();
-          
           array.push(this.fb.group({
             id: bom.id,
             materialProduct: [bom.materialProduct,Validators.required],
@@ -142,7 +134,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
           }))
         });
       }
-      
     });
   }
 
@@ -248,7 +239,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var data = this.getBodyData();
     if (this.id) {
       this.productService.update(this.id, data).subscribe(
-        result=>{
+        result => {
           this.notificationService.show({
             content: 'Cập nhật dịch vụ thành công',
             hideAfter: 3000,
@@ -256,10 +247,10 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-      });
+        });
     } else {
       this.productService.create(data).subscribe(
-        result=>{
+        result => {
           this.notificationService.show({
             content: 'Tạo dịch vụ thành công',
             hideAfter: 3000,
@@ -267,7 +258,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-      });;
+        });;
     }
     this.activeModal.close(result);
   }
@@ -276,18 +267,11 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
-    if (data.boms.length>0) {
-      data.boms.forEach(bom => {
-        if(bom.materialProduct){
-          bom.materialProductId =  bom.materialProduct ? bom.materialProduct.id : null;
-          bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;
-        }
-        else{
-          return;
-        }
-        
-      });
-    }
+    data.boms.forEach(bom => {
+      bom.materialProductId = bom.materialProduct ? bom.materialProduct.id : null;
+      bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;
+    });
+
     return data;
   }
 
@@ -349,7 +333,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     filter.search = q || '';
     filter.type = 'product';
     filter.type2 = 'product';
-    filter.limit = 20;
+    filter.limit = 1000;
     filter.offset = 0;
     return this.productService.autocomplete2(filter);
   }
@@ -451,21 +435,17 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
     modalRef.componentInstance.title = "Thêm: vật tư";
     modalRef.result.then(
-      
       result => {
-        // this.filteredProducts.push(result);
-        // var value = {
-        //   materialProduct: result,
-        //   productUOM: { id: result.uomId, name: result.uomName },
-        //   quantity: 1
-        // }
-        // this.onCreate(value)
-        this.searchProducts('').subscribe(res => {
-          this.filteredProducts = res;
-        });
+        this.loadFilteredProducts();
       },
       () => { }
     );
+  }
+
+  loadFilteredProducts() {
+    this.searchProducts().subscribe(res => {
+      this.filteredProducts = res;
+    });
   }
 
   get boms() {
@@ -481,43 +461,23 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   addMaterialProduct() {
-    this.onCreate();
-  }
+    var line = this.fb.group({
+      materialProduct: [null, Validators.required],
+      productUOM: null,
+      quantity: [1, Validators.required]
+    });
 
-  onCreate(bom?: any) {
-    if (bom) {
-      console.log(bom);
-      
-      this.boms.push(
-        this.fb.group({
-          materialProduct:[bom.materialProduct,Validators.required],
-          productUOM: bom.productUOM,
-          quantity:[1, Validators.required]
-        })
-      )
-    }
-    else {
-      this.boms.push(
-        this.fb.group({
-          materialProduct: [null,Validators.required],
-          productUOM: null,
-          quantity: [1, Validators.required]
-        })
-      )
-    }
+    this.boms.push(line);
   }
 
   deleteMaterialProduct(index) {
-      this.boms.removeAt(index);
-      this.boms.markAsDirty();
+    this.boms.removeAt(index);
+    this.boms.markAsDirty();
   }
 
   onValueChange(item, i) {
-    console.log(item);
-    
     if (item) {
       var temp = this.boms.value.filter(x => x.materialProduct.id == item.id);
-      console.log(this.boms);
       if (temp.length > 1) {
         this.notificationService.show({
           content: 'Vật tư đã tồn tại',
@@ -526,17 +486,17 @@ export class ProductServiceCuDialogComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'error', icon: true }
         });
+
         this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
       }
-      else{
+      else {
         this.boms.at(i).patchValue({ productUOM: item.uom });
       }
     }
-    else{
+    else {
       this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
   }
-
 }
 
 

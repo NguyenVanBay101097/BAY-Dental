@@ -182,28 +182,29 @@
                         </div>
 
                         <div class="tab-pane" id="productBom" role="tabpanel" aria-labelledby="bom-tab">
-                            <div class="flex-1-1-100 h-100 overflow-hidden">
-                                <button type="button" style="margin-bottom: 10px;" (click)="createMaterialProduct()"
+                            <div>
+                                <div class="mb-2">
+                                    <button type="button" (click)="createMaterialProduct()" 
                                     class="btn btn-sm btn-primary">Thêm vật tư mới</button>
-                                <table class="table b-table-border table-sm mb-0 table-tbody-ver-align-middle border-bottom">
+                                </div>
+                             
+                                <table class="table table-sm b-table-border table-tbody-ver-align-middle border-bottom">
                                     <thead>
                                         <tr>
-                                            <th class="b-sticky-left" style="min-width: 100px;">STT</th>
-                                            <th style="min-width: 200px;">Vật tư</th>
-                                            <th style="min-width: 100px;">ĐVT</th>
-                                            <th style="min-width: 200px;">Số lượng tối đa</th>
-                                            <th style="min-width: 120px;">#</th>
+                                            <th width="50">STT</th>
+                                            <th width="250">Vật tư</th>
+                                            <th width="100">ĐVT</th>
+                                            <th width="150">Số lượng tối đa</th>
+                                            <th width="50">#</th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="boms">
                                         <ng-container *ngFor="let item of boms.controls; let i=index">
                                             <tr [formGroupName]="i">
-                                                <td class="b-sticky-left">{{i+1}}</td>
+                                                <td>{{i+1}}</td>
                                                 <td>
                                                     <kendo-combobox [data]="filteredProducts" 
-                                                        [valueField]="'id'" [textField]="'name'"
-                                                        (filterChange)="productCbxFilterChange2($event)"
-                                                        [filterable]="true" style="width:70%;"
+                                                        [valueField]="'id'" [textField]="'name'" style="width:70%;"
                                                         #productCbx (valueChange)="onValueChange($event, i)"
                                                         formControlName="materialProduct">
                                                     </kendo-combobox>
@@ -214,11 +215,9 @@
                                                 <td>
                                                     <span>{{item.get('productUOM') && item.get('productUOM').value ?
                                                         item.get('productUOM').value.name : ''}}</span>
-                                                        
                                                 </td>
                                                 <td>
-                                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                        formControlName="quantity">
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="quantity">
                                                     </kendo-numerictextbox>
                                                     <div *ngIf="item.get('quantity').errors && (item.get('quantity').touched || item.get('quantity').dirty || submitted)" class="text-danger">
                                                         <div *ngIf="item.get('quantity').errors.required">Vui lòng chọn số lượng</div>
@@ -235,7 +234,7 @@
                                         </ng-container>
                                     </tbody>
                                 </table>
-                                <button type="button" style="margin-bottom: 10px; margin-top: 10px;" (click)="addMaterialProduct()"
+                                <button type="button" (click)="addMaterialProduct()"
                                     class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Thêm vật tư</button>
                             </div>
                         </div>
