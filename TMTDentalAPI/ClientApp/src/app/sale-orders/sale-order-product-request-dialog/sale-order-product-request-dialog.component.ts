@@ -22,7 +22,7 @@ import { GetLinePar, ProductRequestDefaultGet, ProductRequestDisplay } from '../
   styleUrls: ['./sale-order-product-request-dialog.component.css']
 })
 export class SaleOrderProductRequestDialogComponent implements OnInit {
-  title: string = null;
+  title: string;
   id: string;
   saleOrderId: string;
   formGroup: FormGroup;
@@ -41,9 +41,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   get lines() { return this.formGroup.get('lines') as FormArray; }
 
   get seeForm() {
-    var state = this.formGroup.get('state').value;
-    if (state == null)
-      return true;
+    var state = this.productRequestDisplay.state;
     return state == 'confirmed' || state == 'done';
   }
 
@@ -65,13 +63,14 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       dateObj: [null, Validators.required],
       user: [null, Validators.required],
       employee: [null, Validators.required],
-      state: null,
       lines: this.fb.array([])
     });
+
     setTimeout(() => {
       this.loadEmployees();
       this.loadListProductBoms();
     });
+    
     this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.employeeCbx.loading = true)),
@@ -290,7 +289,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.productRequestService.actionCancel([this.id]).subscribe((res: any) => {
         this.notify('success','Hủy thành công');
         this.productRequestDisplay.state = "draft";
-        this.formGroup.get('state').setValue("draft");
         this.reload = true;
         this.loadListProductBoms();
       }, (err) => {
