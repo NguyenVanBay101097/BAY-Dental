@@ -2374,6 +2374,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
 
             var res = await lineObj.SearchQuery(x => x.OrderId == id)
                 .Select(x => new SaleOrderLineForProductRequest()
@@ -2399,9 +2400,17 @@ namespace Infrastructure.Services
                     ProductId = z.ProductId
                 }).ToListAsync();
 
+            var saleOrderLineIds = res.Select(x => x.Id).ToList();
+            var requesteds = requestedObj.SearchQuery(x => saleOrderLineIds.Contains(x.SaleOrderLineId));
+
             foreach (var item in res)
             {
                 item.Boms = boms.Where(x => x.ProductId == item.ProductId).ToList();
+                foreach (var bom in item.Boms)
+                {
+                    var requested = requesteds.FirstOrDefault(x => x.SaleOrderLineId == item.Id && x.ProductId == bom.MaterialProductId);
+                    bom.RequestedQuantity = requested == null ? 0 : requested.RequestedQuantity;
+                }
             }
 
             return res;

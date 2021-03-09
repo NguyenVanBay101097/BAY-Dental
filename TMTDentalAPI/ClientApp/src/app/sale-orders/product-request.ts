@@ -27,10 +27,10 @@ export class ProductRequestDisplay {
     id: string;
     name: string;
     userId: string;
-    user: Object;
+    user: any;
     date: string;
     employeeId: string;
-    employee: Object;
+    employee: any;
     pickingId: string;
     picking: Object;
     state: string;

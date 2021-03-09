@@ -1,26 +1,19 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}</h5>
-    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close"
-        (click)="onClose()" tabindex="-1">×</button>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="productRequestDisplay.state == 'done'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestDisplay.state == 'done'"
-                        [class.btn-secondary]="productRequestDisplay.state == 'done'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'done'" [class.btn-secondary]="productRequestDisplay.state == 'done'" type="button">
                         Đã xuất
                     </button>
-                    <button [disabled]="productRequestDisplay.state == 'confirmed'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestDisplay.state == 'confirmed'"
-                        [class.btn-secondary]="productRequestDisplay.state == 'confirmed'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'confirmed'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'confirmed'" [class.btn-secondary]="productRequestDisplay.state == 'confirmed'" type="button">
                         Đang yêu cầu
                     </button>
-                    <button [disabled]="productRequestDisplay.state == 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="productRequestDisplay.state == 'draft'"
-                        [class.btn-secondary]="productRequestDisplay.state == 'draft'" type="button">
+                    <button [disabled]="productRequestDisplay.state == 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'draft'" [class.btn-secondary]="productRequestDisplay.state == 'draft'" type="button">
                         Nháp
                     </button>
                 </div>
@@ -59,11 +52,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="seeForm">{{productRequestDisplay.employee?.name}}</span>
-                                    <kendo-combobox  [class.d-none]="seeForm" [filterable]="true" [data]="filteredEmployees" [textField]="'name'" #employeeCbx
-                                        formControlName="employee" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="seeForm" [filterable]="true" [data]="filteredEmployees" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
-                                        class="text-danger">
+                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Vui lòng chọn bác sĩ chỉ định</div>
                                     </div>
                                 </td>
@@ -119,8 +110,7 @@
                                         <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
                                         <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>
                                         <td class="text-right">
-                                            <kendo-numerictextbox *ngIf="!seeForm" style="width: 100px" [min]="0" [max]="line.get('max').value" [format]="'n0'"
-                                                formControlName="productQty">
+                                            <kendo-numerictextbox *ngIf="!seeForm" style="width: 100px" [min]="0" [max]="getMax(line)" [format]="'n0'" formControlName="productQty">
                                             </kendo-numerictextbox>
                                             <span *ngIf="seeForm">{{line.get('productQty').value}}</span>
                                         </td>

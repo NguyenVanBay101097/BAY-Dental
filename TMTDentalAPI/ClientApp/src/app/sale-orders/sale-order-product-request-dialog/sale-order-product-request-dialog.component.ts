@@ -117,6 +117,21 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.loadLinesToFormArray(res.lines);
     });
   }
+
+  getMax(line: FormGroup) {
+    debugger;
+    var saleLineId = line.get('saleOrderLineId').value;
+    var productId = line.get('productId').value;
+    var item = this.listProductBoms.find(x => x.id == saleLineId);
+    if (item) {
+      var bom = item.boms.find(x => x.materialProductId == productId);
+      if (bom) {
+        return bom.quantity - bom.requestedQuantity;
+      }
+    }
+
+    return 0;
+  }
   
   loadLinesToFormArray(lines) {
     this.lines.clear();
