@@ -41,9 +41,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> DefaultGet(ProductRequestDefaultGet val)
+        public async Task<IActionResult> DefaultGet()
         {
-            var res = await _productRequestService.DefaultGet(val);
+            var res = await _productRequestService.DefaultGet();
             return Ok(res);
         }
 
@@ -109,15 +109,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var request = await _productRequestService.GetByIdAsync(id);
-            if (request.State != "draft")
-                throw new Exception("Không thể xóa phiếu yêu cầu vật tư đang yêu cầu hoặc đã xuất");
-
             if (request == null)
                 return NotFound();
 
             await _productRequestService.DeleteAsync(request);
             return NoContent();
         }
-
     }
 }

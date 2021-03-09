@@ -620,5 +620,39 @@ namespace Infrastructure.Services
                 await productStepObj.CreateAsync(stepsAdd);
             }
         }
+
+        public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids)
+        {
+            var reqLineObj = GetService<IProductRequestLineService>();
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+
+            var requestLines = await reqLineObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && x.Request.State != "draft")
+                .GroupBy(x => new { SaleOrderLineId = x.SaleOrderLineId.Value, ProductId = x.ProductId.Value })
+                .Select(x => new
+                {
+                    SaleOrderLineId = x.Key.SaleOrderLineId,
+                    ProductId = x.Key.ProductId,
+                    Total = x.Sum(s => s.ProductQty)
+                })
+                .ToListAsync();
+
+            var requesteds = await requestedObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId)).ToListAsync();
+            await requestedObj.DeleteAsync(requesteds);
+
+            var toCreateRequested = new List<SaleOrderLineProductRequested>();
+            foreach (var item in requestLines)
+            {
+                var requested = new SaleOrderLineProductRequested
+                {
+                    SaleOrderLineId = item.SaleOrderLineId,
+                    ProductId = item.ProductId,
+                    RequestedQuantity = item.Total
+                };
+                toCreateRequested.Add(requested);
+            }
+
+            //save changes
+            await requestedObj.CreateAsync(toCreateRequested);
+        }
     }
 }

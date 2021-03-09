@@ -37,7 +37,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => states.Contains(x.State));
             }
 
-
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.SaleOrderId == val.SaleOrderId);
 
@@ -52,31 +51,27 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.Employee).Include(x => x.User).Include(x => x.Picking).OrderByDescending(x => x.DateCreated);
-
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
-            {
                 query = query.Skip(val.Offset).Take(val.Limit);
-            }
 
-            var items = await query.ToListAsync();
+            var items = await _mapper.ProjectTo<ProductRequestBasic>(query).ToListAsync();
 
             var paged = new PagedResult2<ProductRequestBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<ProductRequestBasic>>(items)
+                Items = items
             };
 
             return paged;
         }
 
-        public async Task<ProductRequestDisplay> DefaultGet(ProductRequestDefaultGet val)
+        public async Task<ProductRequestDisplay> DefaultGet()
         {
             var userObj = GetService<IUserService>();
             var user = await userObj.GetByIdAsync(UserId);
             var request = new ProductRequestDisplay();
             request.UserId = UserId;
             request.User = _mapper.Map<ApplicationUserSimple>(user);
-            request.SaleOrderId = val.SaleOrderId;
             request.Date = DateTime.Now;
             request.State = "draft";
             return request;
@@ -90,10 +85,13 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x => x.Employee)
                 .Include(x => x.Picking)
-                .Include(x => x.SaleOrder)
                 .FirstOrDefaultAsync();
 
-            res.Lines = await requestLineObj.SearchQuery(x => x.RequestId == res.Id).Include(x => x.Product).Include(x => x.ProducUOM).Include(x => x.SaleOrderLine).ToListAsync();
+            res.Lines = await requestLineObj.SearchQuery(x => x.RequestId == res.Id)
+                .OrderBy(x => x.Sequence)
+                .Include(x => x.Product)
+                .Include(x => x.ProducUOM)
+                .Include(x => x.SaleOrderLine).ToListAsync();
 
             var display = _mapper.Map<ProductRequestDisplay>(res);
 
@@ -102,11 +100,11 @@ namespace Infrastructure.Services
 
         public async Task<ProductRequest> CreateRequest(ProductRequestSave val)
         {
-            var prequest = _mapper.Map<ProductRequest>(val);
-            SaveReuqestLines(val, prequest);
-            await CreateAsync(prequest);
+            var request = _mapper.Map<ProductRequest>(val);
+            SaveRequestLines(val, request);
+            await CreateAsync(request);
 
-            return prequest;
+            return request;
         }
 
         public async override Task<ProductRequest> CreateAsync(ProductRequest entity)
@@ -125,7 +123,6 @@ namespace Infrastructure.Services
             await base.CreateAsync(entity);
 
             return entity;
-
         }
 
         private async Task _InsertProductRequestSequence()
@@ -142,17 +139,16 @@ namespace Infrastructure.Services
 
         public async Task UpdateRequest(Guid id, ProductRequestSave val)
         {
-            var medicineOrder = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            var request = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
 
-            medicineOrder = _mapper.Map(val, medicineOrder);
+            request = _mapper.Map(val, request);
 
-            SaveReuqestLines(val, medicineOrder);
+            SaveRequestLines(val, request);
 
-            await UpdateAsync(medicineOrder);
-
+            await UpdateAsync(request);
         }
 
-        private void SaveReuqestLines(ProductRequestSave val, ProductRequest request)
+        private void SaveRequestLines(ProductRequestSave val, ProductRequest request)
         {
             var lineToRemoves = new List<ProductRequestLine>();
 
@@ -198,15 +194,14 @@ namespace Infrastructure.Services
                 request.State = "confirmed";
 
             await UpdateAsync(selfs);
-            //save requested quantity
-            var lineObj = GetService<IProductRequestLineService>();
-            var lines = selfs.SelectMany(x => x.Lines).ToList();
-            await lineObj.SaveUpdateRequestedQuantity(null,lines,true);
+
+            var lineObj = GetService<ISaleOrderLineService>();
+            await lineObj.ComputeProductRequestedQuantity(selfs.SelectMany(x => x.Lines).Select(x => x.SaleOrderLineId.Value).Distinct().ToList());
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x=> x.Lines).ToListAsync();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
 
             foreach (var request in selfs)
             {
@@ -220,102 +215,85 @@ namespace Infrastructure.Services
             await UpdateAsync(selfs);
 
             //save requested quantity
-            var lineObj = GetService<IProductRequestLineService>();
-            var lines = selfs.SelectMany(x => x.Lines).ToList();
-            await lineObj.SaveUpdateRequestedQuantity(null, lines, false);
+            var lineObj = GetService<ISaleOrderLineService>();
+            await lineObj.ComputeProductRequestedQuantity(selfs.SelectMany(x => x.Lines).Select(x => x.SaleOrderLineId.Value).Distinct().ToList());
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
+            var pickingObj = GetService<IStockPickingService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.User)
                 .Include(x => x.Employee)
-                .Include(x => x.Picking)
-                .Include(x => x.SaleOrder)
-                .Include(x => x.Lines)
-                .ThenInclude(s => s.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.Product)
                 .ToListAsync();
 
             //tạo phiếu xuất kho
-            await _CreatePicking(self);
+            foreach(var request in self)
+            {
+                if (request.State != "confirmed")
+                    continue;
+
+                var picking = await _CreatePicking(request);
+                await pickingObj.ActionDone(new List<Guid>() { picking.Id });
+
+                request.State = "done";
+                request.PickingId = picking.Id;
+            }
 
             await UpdateAsync(self);
         }
 
-        private async Task _CreatePicking(IEnumerable<ProductRequest> self)
+        private async Task<StockPicking> _CreatePicking(ProductRequest request)
         {
-            var productTypes = new string[] { "product", "consu" };
             var pickingTypeObj = GetService<IStockPickingTypeService>();
-            var stockMoveObj = GetService<IStockMoveService>();
             var pickingObj = GetService<IStockPickingService>();
-            var whObj = GetService<IStockWarehouseService>();
-            var locationObj = GetService<IStockLocationService>();
+            var stockMoveObj = GetService<IStockMoveService>();
 
-            foreach (var request in self)
+            var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == "outgoing" && x.Warehouse.CompanyId == request.CompanyId).FirstOrDefaultAsync();
+            if (pickingType == null)
+                throw new ArgumentNullException("pickingType");
+
+            if (!pickingType.DefaultLocationSrcId.HasValue || !pickingType.DefaultLocationDestId.HasValue)
+                throw new Exception("DefaultLocationSrcId DefaultLocationDestId required");
+
+            var locationId = pickingType.DefaultLocationSrcId.Value;
+            var locationDestId = pickingType.DefaultLocationDestId.Value;
+
+            var picking_vals = new StockPicking()
             {
-                if (request.State == "draft")
-                    throw new Exception("Phiếu nháp không thể xuất kho ");
+                Origin = request.Name,
+                PartnerId = request.Employee.PartnerId,
+                PickingTypeId = pickingType.Id,
+                CompanyId = request.CompanyId.Value,
+                LocationId = locationId,
+                LocationDestId = locationDestId,
+            };
 
-                if (!request.Lines.Any(x => productTypes.Contains(x.Product.Type)))
-                    continue;
+            await pickingObj.CreateAsync(picking_vals);
 
-                var pickingTypeCode = "outgoing";
-                var pickingType = await pickingTypeObj.SearchQuery(x => x.Code == pickingTypeCode && x.Warehouse.CompanyId == request.CompanyId).FirstOrDefaultAsync();
-                if (pickingType == null)
-                    throw new ArgumentNullException("pickingType");
-
-                if (!pickingType.DefaultLocationSrcId.HasValue || !pickingType.DefaultLocationDestId.HasValue)
-                    throw new Exception("DefaultLocationSrcId DefaultLocationDestId required");
-
-                var wh = await whObj.SearchQuery(x => x.CompanyId == request.CompanyId).FirstOrDefaultAsync();
-                if (wh == null)
-                    throw new ArgumentNullException("wh");
-
-                var locationDest = await locationObj.GetDefaultCustomerLocation();
-                if (locationDest == null)
-                    throw new ArgumentNullException("locationDest");
-
-                var locationId = wh.LocationId;
-                var locationDestId = locationDest.Id;
-
-                var picking_vals = new StockPicking()
+            var sequence = 1;
+            var moves = new List<StockMove>();
+            var productTypes = new string[] { "product", "consu" };
+            foreach (var line in request.Lines.Where(x => productTypes.Contains(x.Product.Type)))
+            {
+                var move = new StockMove
                 {
-                    Origin = request.Name,
-                    PartnerId = request.User.PartnerId,
-                    PickingTypeId = pickingType.Id,
-                    CompanyId = request.CompanyId.Value,
+                    Name = line.Product.Name,
+                    ProductUOMId = line.ProductUOMId.HasValue ? line.ProductUOMId.Value : line.Product.UOMId,
+                    PickingId = picking_vals.Id,
+                    ProductId = line.Product.Id,
+                    ProductUOMQty = line.ProductQty,
                     LocationId = locationId,
                     LocationDestId = locationDestId,
+                    Sequence = sequence++,
+                    CompanyId = picking_vals.CompanyId,
+                    Origin = request.Name,
                 };
-
-                await pickingObj.CreateAsync(picking_vals);
-
-                var sequence = 1;
-                var moves = new List<StockMove>();
-                foreach (var line in request.Lines.Where(x => productTypes.Contains(x.Product.Type)))
-                {
-                    var move = new StockMove
-                    {
-                        Name = line.Product.Name,
-                        ProductUOMId = line.ProductUOMId.HasValue ? line.ProductUOMId.Value : line.Product.UOMId,
-                        PickingId = picking_vals.Id,
-                        ProductId = line.Product.Id,
-                        ProductUOMQty = line.ProductQty,
-                        LocationId = locationId,
-                        LocationDestId = locationDestId,
-                        Sequence = sequence++,
-                        CompanyId = picking_vals.CompanyId
-                    };
-                    moves.Add(move);
-                }
-
-                await stockMoveObj.CreateAsync(moves);
-
-                request.PickingId = picking_vals.Id;
-                request.State = "done";
-
-                await pickingObj.ActionDone(new List<Guid>() { picking_vals.Id });
+                moves.Add(move);
             }
+
+            await stockMoveObj.CreateAsync(moves);
+            return picking_vals;
         }
 
         public override ISpecification<ProductRequest> RuleDomainGet(IRRule rule)
@@ -329,6 +307,13 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public override Task DeleteAsync(IEnumerable<ProductRequest> entities)
+        {
+            if (entities.Any(x => x.State != "draft"))
+                throw new Exception("Không thể xóa phiếu yêu cầu vật tư đang yêu cầu hoặc đã xuất");
+            return base.DeleteAsync(entities);
         }
     }
 }

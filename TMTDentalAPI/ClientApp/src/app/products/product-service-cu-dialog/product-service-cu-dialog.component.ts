@@ -452,13 +452,13 @@ export class ProductServiceCuDialogComponent implements OnInit {
     modalRef.result.then(
       
       result => {
-        this.filteredProducts.push(result);
-        var value = {
-          materialProduct: result,
-          productUOM: { id: result.uomId, name: result.uomName },
-          quantity: 1
-        }
-        this.onCreate(value)
+        // this.filteredProducts.push(result);
+        // var value = {
+        //   materialProduct: result,
+        //   productUOM: { id: result.uomId, name: result.uomName },
+        //   quantity: 1
+        // }
+        // this.onCreate(value)
         this.searchProducts('').subscribe(res => {
           this.filteredProducts = res;
         });

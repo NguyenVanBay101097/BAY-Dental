@@ -99,6 +99,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     var val = new ProductRequestDefaultGet();
     val.saleOrderId = this.saleOrderId;
     this.productRequestService.defaultGet(val).subscribe((res: any) => {
+      res.saleOrderId = this.saleOrderId;
       this.productRequestDisplay = res;
       this.formGroup.patchValue(res);
       var date = new Date(res.date);

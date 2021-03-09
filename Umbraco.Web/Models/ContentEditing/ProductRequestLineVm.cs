@@ -46,15 +46,12 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
 
-        public Guid? ProductId { get; set; }
+        public Guid ProductId { get; set; }
 
-        public Guid? ProductUOMId { get; set; }
+        public Guid ProductUOMId { get; set; }
 
-
-        public Guid? SaleOrderLineId { get; set; }
+        public Guid SaleOrderLineId { get; set; }
 
         public decimal ProductQty { get; set; }
-
-        public int Sequence { get; set; }
     }
 }

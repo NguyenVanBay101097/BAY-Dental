@@ -7,29 +7,19 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ProductRequestBasic
     {
         public Guid Id { get; set; }
+
         public string Name { get; set; }
-        /// <summary>
-        /// người yêu cầu
-        /// </summary>
-        public string UserId { get; set; }
-        public ApplicationUserSimple User { get; set; }
+
+        public string UserName { get; set; }
 
         /// <summary>
         /// ngày yêu cầu
         /// </summary>
         public DateTime Date { get; set; }
 
-        /// <summary>
-        /// bác sĩ chỉ định
-        /// </summary>
-        public Guid? EmployeeId { get; set; }
-        public EmployeeSimple Employee { get; set; }
+        public string EmployeeName { get; set; }
 
-        /// <summary>
-        /// phiếu xuất
-        /// </summary>
-        public Guid? PickingId { get; set; }
-        public StockPickingSimple Picking { get; set; }
+        public string PickingName { get; set; }
 
         /// <summary>
         /// draft : nháp
@@ -37,7 +27,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// done : đã xuất
         /// </summary>
         public string State { get; set; }
-
     }
 
     public class ProductRequestPaged
@@ -69,11 +58,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class ProductRequestDefaultGet
-    {
-        public Guid? SaleOrderId { get; set; }
-    }
-
 
     public class ProductRequestDisplay
     {
@@ -97,7 +81,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeSimple Employee { get; set; }
 
         public Guid? SaleOrderId { get; set; }
-        public SaleOrderDisplay SaleOrder { get; set; }
 
         /// <summary>
         /// phiếu xuất
@@ -117,7 +100,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ProductRequestSave
     {
- 
         /// <summary>
         /// người yêu cầu
         /// </summary>
@@ -131,23 +113,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// bác sĩ chỉ định
         /// </summary>
-        public Guid? EmployeeId { get; set; }
+        public Guid EmployeeId { get; set; }
 
-        public Guid? SaleOrderId { get; set; }
-
-        /// <summary>
-        /// phiếu xuất
-        /// </summary>
-        public Guid? PickingId { get; set; }
+        public Guid SaleOrderId { get; set; }
 
         public IEnumerable<ProductRequestLineSave> Lines { get; set; } = new List<ProductRequestLineSave>();
-
-        /// <summary>
-        /// draft : nháp
-        /// confirmed : đang yêu cầu
-        /// done : đã xuất
-        /// </summary>
-        public string State { get; set; }
     }
 
     public class GetLinePar

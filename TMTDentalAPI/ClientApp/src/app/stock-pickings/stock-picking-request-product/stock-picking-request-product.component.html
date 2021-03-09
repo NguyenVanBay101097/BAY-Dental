@@ -2,18 +2,15 @@
     <div class="o_control_panel">
         <div class="breadcrumb">
             <div class="d-flex">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Thời gian" [dateTo]="dateTo"
-                    class="mt-1" (searchChange)="onDateSearchChange($event)">
+                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Thời gian" [dateTo]="dateTo" class="mt-1" (searchChange)="onDateSearchChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <kendo-combobox (valueChange)="onSateChange($event)" class="btn-sm min-width" [data]="states"
-                    [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
+                <kendo-combobox (valueChange)="onSateChange($event)" class="btn-sm min-width" [data]="states" [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
                 </kendo-combobox>
             </div>
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview mt-1">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã yêu cầu..." type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã yêu cầu..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 <span>
                     <i class="fas fa-search"></i>
                 </span>
@@ -23,28 +20,27 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" class="cursor-pointer" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" class="cursor-pointer" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
         <kendo-grid-column field="date" title="Ngày yêu cầu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.date | date: 'short'}}
+                {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Phiếu xuất" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a href="">{{dataItem.picking ? dataItem.picking.name : ''}}</a>
+                <span>{{dataItem.pickingName}}</span>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Mã yêu cầu" width="120">
         </kendo-grid-column>
         <kendo-grid-column title="Người yêu cầu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.user ? dataItem.user.name : ''}}
+                {{dataItem.userName}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Bác sĩ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.employee ? dataItem.employee.name : ''}}
+                {{dataItem.employeeName}}
             </ng-template>1
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái" width="120">

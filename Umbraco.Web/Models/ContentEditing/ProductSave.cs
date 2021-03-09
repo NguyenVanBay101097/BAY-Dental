@@ -53,6 +53,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// danh sách định mức vật tư
         /// </summary>
-        public ICollection<ProductBomSave> Boms { get; set; } = new List<ProductBomSave>();
+        public IEnumerable<ProductBomSave> Boms { get; set; } = new List<ProductBomSave>();
     }
 }

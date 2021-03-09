@@ -10,6 +10,5 @@ namespace Infrastructure.Services
     public interface IProductRequestLineService : IBaseService<ProductRequestLine>
     {
         Task<ProductRequestLineDisplay> GetlineAble(GetLinePar val);
-        Task SaveUpdateRequestedQuantity(List<Guid> ids, List<ProductRequestLine> selfs = null, bool isCU = true);
     }
 }

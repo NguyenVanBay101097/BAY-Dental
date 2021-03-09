@@ -1650,7 +1650,7 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,            
+                } : null,
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
@@ -2374,24 +2374,36 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var query = lineObj.SearchQuery(x=> x.OrderId == id);
-           
-            var res = await query.Include(x => x.Product.Boms)
+
+            var res = await lineObj.SearchQuery(x => x.OrderId == id)
                 .Select(x => new SaleOrderLineForProductRequest()
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    Boms = x.Product.Boms.Select(z => new ProductBomForSaleOrderLine()
-                    {
-                        MaterialProductName = z.MaterialProduct.Name,
-                        MaterialProductId = z.MaterialProductId.Value,
-                        Id = z.Id,
-                        ProductUOMName = z.ProductUOM.Name,
-                        Quantity = z.Quantity,
-                        Sequence = z.Sequence
-                    }).OrderBy(x => x.Sequence).ToList()
+                    ProductId = x.ProductId.Value
                 })
                 .ToListAsync();
+
+            var bomObj = GetService<IProductBomService>();
+            var productIds = res.Select(x => x.ProductId).ToList();
+            var boms = await bomObj.SearchQuery(x => productIds.Contains(x.ProductId))
+                .OrderBy(x => x.Sequence)
+                .Select(z => new ProductBomForSaleOrderLine()
+                {
+                    MaterialProductName = z.MaterialProduct.Name,
+                    MaterialProductId = z.MaterialProductId.Value,
+                    Id = z.Id,
+                    ProductUOMName = z.ProductUOM.Name,
+                    Quantity = z.Quantity,
+                    Sequence = z.Sequence,
+                    ProductId = z.ProductId
+                }).ToListAsync();
+
+            foreach (var item in res)
+            {
+                item.Boms = boms.Where(x => x.ProductId == item.ProductId).ToList();
+            }
+
             return res;
         }
     }

@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ProductRequestBasic>> GetPagedResultAsync(ProductRequestPaged val);
         Task<ProductRequestDisplay> GetDisplay(Guid id);
-        Task<ProductRequestDisplay> DefaultGet(ProductRequestDefaultGet val);
+        Task<ProductRequestDisplay> DefaultGet();
 
         Task<ProductRequest> CreateRequest(ProductRequestSave val);
 

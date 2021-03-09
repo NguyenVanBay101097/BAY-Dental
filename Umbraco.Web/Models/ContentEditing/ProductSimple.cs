@@ -24,11 +24,4 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid UOMId { get; set; }
         public UoMBasic UOM { get; set; }
     }
-
-    public class ProductSimpleAutoComplete
-    {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
-    }
 }
