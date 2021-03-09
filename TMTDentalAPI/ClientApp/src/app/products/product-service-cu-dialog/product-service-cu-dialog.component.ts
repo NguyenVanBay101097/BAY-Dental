@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ProductFilter, ProductService } from '../product.service';
 import { Product } from '../product';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
@@ -232,7 +232,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   saveOrUpdate() {
     this.submitted = true;
-    if (!this.productForm.valid) {
+    if (!this.productForm.valid && this.isExist == true) {
       return;
     }
 
@@ -479,24 +479,32 @@ export class ProductServiceCuDialogComponent implements OnInit {
     if (item) {
       var temp = this.boms.value.filter(x => x.materialProduct.id == item.id);
       if (temp.length > 1) {
-        this.notificationService.show({
-          content: 'Vật tư đã tồn tại',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
+        // this.notificationService.show({
+        //   content: 'Vật tư đã tồn tại',
+        //   hideAfter: 3000,
+        //   position: { horizontal: 'center', vertical: 'top' },
+        //   animation: { type: 'fade', duration: 400 },
+        //   type: { style: 'error', icon: true }
+        // });
 
-        this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
+       // this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
+       // this.isExist = true;
+       this.boms.at(i).get('materialProduct').setErrors({'incorrect': true});
+       this.boms.at(i).patchValue({ productUOM: item.uom });
+       this.isExist = true;
       }
       else {
         this.boms.at(i).patchValue({ productUOM: item.uom });
+        this.isExist = false;
       }
     }
     else {
       this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
+    
   }
 }
+
+
 
 

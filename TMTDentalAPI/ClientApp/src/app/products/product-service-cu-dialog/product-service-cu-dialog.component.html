@@ -210,7 +210,10 @@
                                                     </kendo-combobox>
                                                     <div *ngIf="item.get('materialProduct').errors && (item.get('materialProduct').touched || item.get('materialProduct').dirty || submitted)" class="text-danger">
                                                         <div *ngIf="item.get('materialProduct').errors.required">Vui lòng chọn vật tư chưa chọn</div>
+                                                        <div *ngIf="item.get('materialProduct').errors.incorrect">Vật tư đã tồn tại</div>
                                                     </div>
+            
+                                                
                                                 </td>
                                                 <td>
                                                     <span>{{item.get('productUOM') && item.get('productUOM').value ?
