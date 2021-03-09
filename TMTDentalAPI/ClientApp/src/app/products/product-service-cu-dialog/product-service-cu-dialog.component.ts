@@ -135,6 +135,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
           console.log();
           
           array.push(this.fb.group({
+            id: bom.id,
             materialProduct: [bom.materialProduct,Validators.required],
             productUOM: bom.productUOM,
             quantity: [bom.quantity, Validators.required]
