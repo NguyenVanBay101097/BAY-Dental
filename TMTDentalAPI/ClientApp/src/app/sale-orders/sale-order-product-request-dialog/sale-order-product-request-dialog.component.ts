@@ -67,6 +67,12 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
 
     setTimeout(() => {
+      if (!this.id) {
+        this.loadDefault();
+      } else {
+        this.loadRecord();
+      }
+
       this.loadEmployees();
       this.loadListProductBoms();
     });
@@ -118,14 +124,14 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   getMax(line: FormGroup) {
-    debugger;
     var saleLineId = line.get('saleOrderLineId').value;
     var productId = line.get('productId').value;
     var item = this.listProductBoms.find(x => x.id == saleLineId);
     if (item) {
       var bom = item.boms.find(x => x.materialProductId == productId);
       if (bom) {
-        return bom.quantity - bom.requestedQuantity;
+        // return bom.quantity - bom.requestedQuantity;
+        return bom.quantity;
       }
     }
 
@@ -147,26 +153,23 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   loadLineToFormArray(line) {
     var index = this.lines.value.findIndex(item => (item.saleOrderLineId == line.saleOrderLineId && item.productId == line.productId));
     if (index < 0) {
-      var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
-      line.max = this.listProductRequestedBoms[i].max;
+      // var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
+      // line.max = this.listProductRequestedBoms[i].max;
       var fg= this.fb.group(line);
       fg.get('productQty').setValidators([Validators.required]);
       fg.get('productQty').markAsTouched();
       this.lines.push(fg);
     } else {
-      if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
-        this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
-      }
+      this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      // if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
+      //   this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      // }
     }
   }
 
   loadListProductBoms() {
     this.saleOrderService.getLineForProductRequest(this.saleOrderId).subscribe((res: any) => {
       this.listProductBoms = res;
-      console.log(res);
-      var listSaleOrderLineId = this.listProductBoms.map(({ id }) => id);
-      console.log(listSaleOrderLineId);
-      this.loadListProductRequestedBoms(listSaleOrderLineId);
     });
   }
 
@@ -321,9 +324,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   clickBom(bom, saleOrderLineId) {
-    var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
-    if (this.listProductRequestedBoms[index].max <= 0)
-      return;
+    // var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
+    // if (this.listProductRequestedBoms[index].max <= 0)
+    //   return;
     var val = new GetLinePar();
     val.saleOrderLineId = saleOrderLineId;
     val.productBomId = bom.id;
