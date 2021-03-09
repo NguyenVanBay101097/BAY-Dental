@@ -22,7 +22,7 @@ import { GetLinePar, ProductRequestDefaultGet, ProductRequestDisplay } from '../
   styleUrls: ['./sale-order-product-request-dialog.component.css']
 })
 export class SaleOrderProductRequestDialogComponent implements OnInit {
-  title: string = null;
+  title: string;
   id: string;
   saleOrderId: string;
   formGroup: FormGroup;
@@ -41,9 +41,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   get lines() { return this.formGroup.get('lines') as FormArray; }
 
   get seeForm() {
-    var state = this.formGroup.get('state').value;
-    if (state == null)
-      return true;
+    var state = this.productRequestDisplay.state;
     return state == 'confirmed' || state == 'done';
   }
 
@@ -65,13 +63,20 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       dateObj: [null, Validators.required],
       user: [null, Validators.required],
       employee: [null, Validators.required],
-      state: null,
       lines: this.fb.array([])
     });
+
     setTimeout(() => {
+      if (!this.id) {
+        this.loadDefault();
+      } else {
+        this.loadRecord();
+      }
+
       this.loadEmployees();
       this.loadListProductBoms();
     });
+    
     this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.employeeCbx.loading = true)),
@@ -117,6 +122,21 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.loadLinesToFormArray(res.lines);
     });
   }
+
+  getMax(line: FormGroup) {
+    var saleLineId = line.get('saleOrderLineId').value;
+    var productId = line.get('productId').value;
+    var item = this.listProductBoms.find(x => x.id == saleLineId);
+    if (item) {
+      var bom = item.boms.find(x => x.materialProductId == productId);
+      if (bom) {
+        // return bom.quantity - bom.requestedQuantity;
+        return bom.quantity;
+      }
+    }
+
+    return 0;
+  }
   
   loadLinesToFormArray(lines) {
     this.lines.clear();
@@ -133,26 +153,23 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   loadLineToFormArray(line) {
     var index = this.lines.value.findIndex(item => (item.saleOrderLineId == line.saleOrderLineId && item.productId == line.productId));
     if (index < 0) {
-      var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
-      line.max = this.listProductRequestedBoms[i].max;
+      // var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
+      // line.max = this.listProductRequestedBoms[i].max;
       var fg= this.fb.group(line);
       fg.get('productQty').setValidators([Validators.required]);
       fg.get('productQty').markAsTouched();
       this.lines.push(fg);
     } else {
-      if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
-        this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
-      }
+      this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      // if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
+      //   this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
+      // }
     }
   }
 
   loadListProductBoms() {
     this.saleOrderService.getLineForProductRequest(this.saleOrderId).subscribe((res: any) => {
       this.listProductBoms = res;
-      console.log(res);
-      var listSaleOrderLineId = this.listProductBoms.map(({ id }) => id);
-      console.log(listSaleOrderLineId);
-      this.loadListProductRequestedBoms(listSaleOrderLineId);
     });
   }
 
@@ -290,7 +307,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.productRequestService.actionCancel([this.id]).subscribe((res: any) => {
         this.notify('success','Hủy thành công');
         this.productRequestDisplay.state = "draft";
-        this.formGroup.get('state').setValue("draft");
         this.reload = true;
         this.loadListProductBoms();
       }, (err) => {
@@ -308,9 +324,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   clickBom(bom, saleOrderLineId) {
-    var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
-    if (this.listProductRequestedBoms[index].max <= 0)
-      return;
+    // var index = this.findPro_listProductRequestedBoms(saleOrderLineId, bom.materialProductId);
+    // if (this.listProductRequestedBoms[index].max <= 0)
+    //   return;
     var val = new GetLinePar();
     val.saleOrderLineId = saleOrderLineId;
     val.productBomId = bom.id;

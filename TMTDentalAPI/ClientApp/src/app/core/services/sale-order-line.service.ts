@@ -40,6 +40,7 @@ export class ProductBomForSaleOrderLine {
     producUOMName: string;
     quantity: number;
     sequence: number;
+    requestedQuantity: number;
 }
 
 export class SaleOrderLineForProductRequest {

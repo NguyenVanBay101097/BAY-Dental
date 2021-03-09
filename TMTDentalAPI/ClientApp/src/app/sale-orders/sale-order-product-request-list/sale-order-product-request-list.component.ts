@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { map } from 'rxjs/operators';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
@@ -16,7 +15,6 @@ import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-re
 export class SaleOrderProductRequestListComponent implements OnInit {
   
   @Input() saleOrderId: string;
-  gridData: GridDataResult;
   loading = false;
   productRequests: any = [];
 
@@ -46,14 +44,9 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     val.offset = 0;
     val.limit = 0;
     
-    this.productRequestService.getPaged(val).pipe(
-      map(response => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
+    this.productRequestService.getPaged(val).subscribe(res => {
       console.log(res);
-      this.productRequests = res.data;
+      this.productRequests = res.items;
       console.log(this.productRequests);
     }, err => {
       console.log(err);
