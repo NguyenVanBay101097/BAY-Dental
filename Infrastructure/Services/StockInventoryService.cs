@@ -324,6 +324,8 @@ namespace Infrastructure.Services
                .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
                .ToListAsync();
 
+
+
             /// create stockmove to stockinventoryline
             foreach (var inventory in inventories)
             {
@@ -333,6 +335,8 @@ namespace Infrastructure.Services
                 inventory.State = "done";
 
             }
+
+            //await ActionCheck(inventories);
 
             await UpdateAsync(inventories);
 
@@ -487,17 +491,17 @@ namespace Infrastructure.Services
             await moveObj.ActionDone(self.SelectMany(x => x.Moves).Where(x => x.State != "done"));
         }
 
-        //private void ActionCheck(IEnumerable<StockInventory> self)
+        //public async Task ActionCheck(IEnumerable<StockInventory> self)
         //{
         //    //Checks the inventory and computes the stock move to do
-        //    var inventoryLineObj = GetService<StockInventoryLineService>();
-        //    var moveObj = GetService<StockMoveService>();
+        //    var inventoryLineObj = GetService<IStockInventoryLineService>();
+        //    var moveObj = GetService<IStockMoveService>();
         //    foreach (var inventory in self.Where(x => x.State != "done" && x.State != "cancel"))
         //    {
         //        moveObj.Unlink(inventory.Moves);
-        //        //var lines = inventoryLineObj.SearchQuery(x => x.InventoryId == inventory.Id).Include(x => x.Product)
-        //        //    .Include(x => x.Inventory).Include(x => x.Location).Include(x => x.ProductUOM).Include(x => x.ProdLot).ToList();
-        //        inventoryLineObj._GenerateMoves(inventory.Lines);
+        //        var lines = await inventoryLineObj.SearchQuery(x => x.InventoryId == inventory.Id).Include(x => x.Product)
+        //            .Include(x => x.Inventory).Include(x => x.Location).Include(x => x.ProductUOM).ToListAsync();
+        //        await inventoryLineObj._GenerateMoves(inventory.Lines);
         //        //inventoryLineObj._GenerateMoves(lines);
         //    }
         //}

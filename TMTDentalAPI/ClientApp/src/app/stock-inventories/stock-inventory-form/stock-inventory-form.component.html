@@ -240,16 +240,16 @@
                                                         *ngIf="stateControl != 'draft'">{{line.get('productUOM').value.name}}</span>
                                                 </td>
                                                 <td class="text-right align-middle">
-                                                    <span *ngIf="stateControl != 'draft'">{{line.get('productQty').value
+                                                    <span *ngIf="stateControl != 'draft'">{{line.get('theoreticalQty').value
                                                         | number}}</span>
                                                 </td>
-                                                <td class="text-right" w>
+                                                <td class="text-right">
                                                     <kendo-numerictextbox [format]="'n0'"
                                                         *ngIf="stateControl == 'confirmed'"
-                                                        formControlName="theoreticalQty" style="width: 120px;">
+                                                        formControlName="productQty" style="width: 120px;">
                                                     </kendo-numerictextbox>
                                                     <span
-                                                        *ngIf="stateControl != 'confirmed'">{{line.get('theoreticalQty').value
+                                                        *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                         | number}}</span>
                                                 </td>
 

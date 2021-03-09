@@ -22,12 +22,26 @@ namespace Infrastructure.Services
 
         public async Task<IList<QuantOrder>> QuantsGetReservation(decimal qty, StockMove move)
         {
+            var inventoryLineObj = GetService<IStockInventoryLineService>();
             var reservations = new List<QuantOrder>() { new QuantOrder { Quant = null, Qty = qty } };
+            var res = new List<QuantOrder>();
             var location = move.Location;
 
-            var states = new string[] { "inventory", "production", "supplier" };
+            var states = new string[] {"production", "supplier" };
             if (states.Contains(location.Usage))
                 return reservations;
+
+            if(location.Usage == "inventory")
+            {
+                var line = await inventoryLineObj.SearchQuery(x => x.InventoryId == move.InventoryId.Value && x.LocationId == move.Inventory.LocationId && x.ProductId == move.ProductId).FirstOrDefaultAsync();
+
+                if(line.TheoreticalQty < line.ProductQty)
+                    return reservations;
+                else
+                    return await _QuantsGetReservation(qty, move);
+
+            }
+
 
             return await _QuantsGetReservation(qty, move);
         }
@@ -41,10 +55,9 @@ namespace Infrastructure.Services
             var offset = 0;
 
             var remaining_quantity = quantity;
-            var quants = await SearchQuery(domain, orderBy: order, limit: 10, offSet: offset)
-                .ToListAsync();
-            while (remaining_quantity > 0 &&
-                quants.Any())
+            var quants = await SearchQuery(domain, orderBy: order, limit: 10, offSet: offset).ToListAsync();
+
+            while (remaining_quantity > 0 && quants.Any())
             {
                 foreach (var quant in quants)
                 {
@@ -64,8 +77,7 @@ namespace Infrastructure.Services
                 if (remaining_quantity == 0)
                     break;
                 offset += 10;
-                quants = await SearchQuery(domain, orderBy: order, limit: 10, offSet: offset)
-                    .ToListAsync();
+                quants = await SearchQuery(domain, orderBy: order, limit: 10, offSet: offset).ToListAsync();
             }
 
             if (remaining_quantity > 0)
@@ -74,12 +86,11 @@ namespace Infrastructure.Services
         }
 
         //Moves all given stock.quant in the given destination location.  Unreserve from current move.
-        public async Task QuantsMove(IList<QuantOrder> quants, StockMove move, StockLocation locationDest,
-            StockLocation locationFrom = null)
+        public async Task QuantsMove(IList<QuantOrder> quants, StockMove move, StockLocation locationDest, StockLocation locationFrom = null)
         {
             if (locationDest.Usage == "view")
                 throw new Exception("Bạn không thể chuyển đến địa điểm kiểu khung nhìn.");
-          
+
             var quantsReconcile = new List<StockQuant>().AsEnumerable();
             var toMoveQuants = new List<StockQuant>().AsEnumerable();
 
@@ -198,7 +209,7 @@ namespace Infrastructure.Services
             foreach (var quant in solvedQuants)
             {
                 await EnsureLoadHistory(quant);
-                foreach(var rel in solvingQuant.StockQuantMoveRels)
+                foreach (var rel in solvingQuant.StockQuantMoveRels)
                 {
                     if (!quant.StockQuantMoveRels.Any(x => x.MoveId == rel.MoveId))
                     {
@@ -278,7 +289,7 @@ namespace Infrastructure.Services
                     MoveId = rel.MoveId
                 });
             }
-            
+
             await CreateAsync(newQuant);
 
             quant.Qty = qtyRound;
@@ -292,7 +303,6 @@ namespace Infrastructure.Services
         {
             var priceUnit = move.PriceUnit;
             var location = forceLocationTo != null ? forceLocationTo : move.LocationDest;
-
             var quant = new StockQuant()
             {
                 ProductId = move.ProductId,

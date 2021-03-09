@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -129,7 +130,7 @@ namespace Infrastructure.Services
                 move.LocationDest = line.Location;
                 move.ProductUOMQty = -diff;
 
-                await stockMoveObj.CreateAsync(move);
+                 await stockMoveObj.CreateAsync(move);
                 res.Add(move);
             }
             else
@@ -145,33 +146,32 @@ namespace Infrastructure.Services
 
             //if (movesToAssign.Any())
             //{
-            //    Expression<Func<StockQuant, bool>> domain = x => x.Qty > 0 && x.LocationId == line.LocationId && x.LotId == line.ProdLotId;
-            //    var preferedDomainList = new List<Expression<Func<StockQuant, bool>>>()
-            //    {
-            //        x => !x.ReservationId.HasValue,
-            //        x => x.Reservation.InventoryId == line.InventoryId
-            //    };
+            //    //Expression<Func<StockQuant, bool>> domain = x => x.Qty > 0 && x.LocationId == line.LocationId && x.LotId == line.ProdLotId;
+            //    //var preferedDomainList = new List<Expression<Func<StockQuant, bool>>>()
+            //    //{
+            //    //    x => !x.ReservationId.HasValue,
+            //    //    x => x.Reservation.InventoryId == line.InventoryId
+            //    //};
 
             //    foreach (var moveToAssign in movesToAssign)
             //    {
-            //        var quants = quantObj.QuantsGetPreferedDomain(moveToAssign.ProductQty ?? 0, moveToAssign,
-            //       domain: domain, preferedDomain: preferedDomainList);
-            //        quantObj.QuantsReserve(quants, moveToAssign);
+            //        var quants = await quantObj.QuantsGetReservation(moveToAssign.ProductQty ?? 0, moveToAssign);
+            //        await quantObj.QuantsMove(quants, moveToAssign,moveToAssign.LocationDest);
             //    }
             //}
 
             return res;
         }
 
-        //public void _GenerateMoves(IEnumerable<StockInventoryLine> self)
+        //public async Task _GenerateMoves(IEnumerable<StockInventoryLine> self)
         //{
-        //    var moveObj = GetService<StockMoveService>();
-        //    var quantObj = GetService<StockQuantService>();
-        //    var locObj = GetService<StockLocationService>();
-        //    var propertyObj = GetService<IRPropertyService>();
+        //    var moveObj = GetService<IStockMoveService>();
+        //    var quantObj = GetService<IStockQuantService>();
+        //    var locObj = GetService<IStockLocationService>();
+        //    var propertyObj = GetService<IIRPropertyService>();
 
         //    //var inventory_loc_dict = propertyObj.get_multi("property_stock_inventory", "product.template", self.Select(x => x.Product.ProductTmplId));
-        //    var inventory_loc = locObj.Table.FirstOrDefault(x => x.Usage == "inventory" && x.ScrapLocation == false);
+        //    var inventory_loc = locObj.SearchQuery(x => x.Usage == "inventory" && x.ScrapLocation == false).FirstOrDefault();
         //    if (inventory_loc == null)
         //        throw new Exception("Không tìm thấy địa điểm điều chỉnh tồn kho nào.");
 
@@ -179,7 +179,7 @@ namespace Infrastructure.Services
         //    foreach (var line in self)
         //    {
         //        if (FloatUtils.FloatCompare((double)(line.TheoreticalQty ?? 0), (double)(line.ProductQty ?? 0),
-        //            precisionRounding: (double?)line.Product.ProductTmpl.UOM.Rounding) == 0)
+        //            precisionRounding: (double?)line.Product.UOM.Rounding) == 0)
         //            continue;
         //        var diff = (line.TheoreticalQty - line.ProductQty) ?? 0;
         //        StockMove move = null;
@@ -189,7 +189,7 @@ namespace Infrastructure.Services
         //        else
         //            move = _get_move_values(line, Math.Abs(diff), line.Location, inventory_loc);
 
-        //        moveObj._Compute(move);
+        //        moveObj._Compute(new List<StockMove> { move });
         //        to_create.Add(move);
         //        //moveObj.Create(move);
 
@@ -207,10 +207,12 @@ namespace Infrastructure.Services
         //        //}
         //    }
 
-        //    //moveObj.Create(to_create);
-        //    //moveObj._Compute(to_create);
-        //    moveObj.Insert2(to_create);
-        //    moveObj.SaveChanges();
+        //    await moveObj.CreateAsync(to_create);
+        //    moveObj._Compute(to_create);
+
+        //    await moveObj.UpdateAsync(to_create);
+        //    //moveObj.Insert2(to_create);
+        //    //moveObj.SaveChanges();
         //}
 
         //private StockMove _get_move_values(StockInventoryLine self, decimal qty, StockLocation location, StockLocation locationDest)
@@ -225,11 +227,9 @@ namespace Infrastructure.Services
         //        Date = self.Inventory.Date,
         //        InventoryId = self.InventoryId,
         //        ProductUOMQty = qty,
-        //        State = "confirmed",
-        //        RestrictLotId = self.ProdLotId,
+        //        State = "confirmed",              
         //        CompanyId = self.Inventory.CompanyId,
         //        Company = self.Inventory.Company,
-        //        Sequence = self.Sequence,
         //        Location = location,
         //        LocationId = location.Id,
         //        LocationDestId = locationDest.Id,
