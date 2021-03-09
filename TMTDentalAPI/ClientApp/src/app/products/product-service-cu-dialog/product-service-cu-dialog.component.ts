@@ -127,7 +127,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
         var array = this.productForm.get('boms') as FormArray;
         result.boms.forEach(bom => {
           array.push(this.fb.group({
-            materialProduct: [bom.materialProduct, Validators.required],
+            id: bom.id,
+            materialProduct: [bom.materialProduct,Validators.required],
             productUOM: bom.productUOM,
             quantity: [bom.quantity, Validators.required]
           }))
