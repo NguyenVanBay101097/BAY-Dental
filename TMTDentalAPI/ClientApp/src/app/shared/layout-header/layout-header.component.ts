@@ -209,7 +209,7 @@ export class LayoutHeaderComponent implements OnInit {
     }
   }
 
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+ onKeydownHandler(event: KeyboardEvent) {
     switch (event.keyCode) {
       case 38: // this is the ascii of arrow up
         if (this.isSearch && this.arrowkeyLocation > 0) {

@@ -35,7 +35,8 @@
                             <option value="sale-order">Phiếu điều trị</option>
                         </select>
                     </div>
-                    <input type="search" (ngModelChange)="this.searchUpdate.next($event)" formControlName="searchValue" [(ngModel)]="searchInput" (click)="onSearchClick()" class="input-search" placeholder="Tìm kiếm nhanh..." aria-label="Tìm kiếm nhanh..." aria-describedby="basic-addon2">
+                    <input (keydown)="onKeydownHandler($event)" type="search" (ngModelChange)="this.searchUpdate.next($event)" formControlName="searchValue" [(ngModel)]="searchInput" (click)="onSearchClick()" class="input-search" placeholder="Tìm kiếm nhanh..." aria-label="Tìm kiếm nhanh..."
+                        aria-describedby="basic-addon2">
                     <i class="fab fa-searchengin text-secondary"></i>
                     <div class="search-result" *ngIf="isSearch">
                         <div class="search-content">
