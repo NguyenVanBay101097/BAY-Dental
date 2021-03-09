@@ -220,6 +220,9 @@
                                                     <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                         formControlName="quantity">
                                                     </kendo-numerictextbox>
+                                                    <div *ngIf="item.get('quantity').errors && (item.get('quantity').touched || item.get('quantity').dirty || submitted)" class="text-danger">
+                                                        <div *ngIf="item.get('quantity').errors.required">Vui lòng chọn số lượng</div>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <button type="button" (click)="deleteMaterialProduct(i)"
