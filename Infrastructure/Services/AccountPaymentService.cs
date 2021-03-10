@@ -1102,11 +1102,14 @@ namespace Infrastructure.Services
             }
 
             if (val.PaymentDateFrom.HasValue)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= val.PaymentDateFrom));
-
+            {
+                var paymentDateFrom = val.PaymentDateFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= paymentDateFrom));
+            }
+               
             if (val.PaymentDateTo.HasValue)
             {
-                var paymentDateTo = val.PaymentDateTo.Value.AddDays(1);
+                var paymentDateTo = val.PaymentDateTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
             }
 
