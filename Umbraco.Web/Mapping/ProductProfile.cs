@@ -23,7 +23,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Categ, x => x.Ignore())
                 .ForMember(x => x.UOM, x => x.Ignore())
                 .ForMember(x => x.UOMPO, x => x.Ignore());
-            
+
 
             CreateMap<Product, ProductSimple>();
 
@@ -33,8 +33,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ProductLaboSave, Product>();
 
             //Thắng
-            CreateMap<ProductSave, Product>();
-  
+            CreateMap<ProductSave, Product>()
+                .ForMember(x => x.Boms, x => x.Ignore());
         }
     }
 }

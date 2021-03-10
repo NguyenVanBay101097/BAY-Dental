@@ -383,8 +383,8 @@ namespace Infrastructure.Services
                 sale.State = "sale";
                 sale.DateDone = null;
             }
-                
-            
+
+
 
             await UpdateAsync(self);
         }
@@ -1655,7 +1655,7 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,            
+                } : null,
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
@@ -2371,6 +2371,51 @@ namespace Infrastructure.Services
             //lines = lines.Where(x => x.Steps.Any()).ToList();
 
             return lines;
+        }
+
+        public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+
+            var res = await lineObj.SearchQuery(x => x.OrderId == id)
+                .Select(x => new SaleOrderLineForProductRequest()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ProductId = x.ProductId.Value
+                })
+                .ToListAsync();
+
+            var bomObj = GetService<IProductBomService>();
+            var productIds = res.Select(x => x.ProductId).ToList();
+            var boms = await bomObj.SearchQuery(x => productIds.Contains(x.ProductId))
+                .OrderBy(x => x.Sequence)
+                .Select(z => new ProductBomForSaleOrderLine()
+                {
+                    MaterialProductName = z.MaterialProduct.Name,
+                    MaterialProductId = z.MaterialProductId.Value,
+                    Id = z.Id,
+                    ProductUOMName = z.ProductUOM.Name,
+                    Quantity = z.Quantity,
+                    Sequence = z.Sequence,
+                    ProductId = z.ProductId
+                }).ToListAsync();
+
+            var saleOrderLineIds = res.Select(x => x.Id).ToList();
+            var requesteds = requestedObj.SearchQuery(x => saleOrderLineIds.Contains(x.SaleOrderLineId));
+
+            foreach (var item in res)
+            {
+                item.Boms = boms.Where(x => x.ProductId == item.ProductId).ToList();
+                foreach (var bom in item.Boms)
+                {
+                    var requested = requesteds.FirstOrDefault(x => x.SaleOrderLineId == item.Id && x.ProductId == bom.MaterialProductId);
+                    bom.RequestedQuantity = requested == null ? 0 : requested.RequestedQuantity;
+                }
+            }
+
+            return res;
         }
 
         public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)

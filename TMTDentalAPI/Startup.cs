@@ -299,6 +299,9 @@ namespace TMTDentalAPI
             services.AddScoped<ILaboFinishLineService, LaboFinishLineService>();
             services.AddScoped<IMedicineOrderService, MedicineOrderService>();
             services.AddScoped<IMedicineOrderLineService, MedicineOrderLineService>();
+            services.AddScoped<IProductRequestService, ProductRequestService>();
+            services.AddScoped<IProductRequestLineService, ProductRequestLineService>();
+            services.AddScoped<IProductBomService, ProductBomService>();
 
             services.AddScoped<ITCareMessageTemplateService, TCareMessageTemplateService>();
             services.AddScoped<ITCareConfigService, TCareConfigService>();
@@ -312,6 +315,8 @@ namespace TMTDentalAPI
             services.AddScoped<ISurveyCallContentService, SurveyCallContentService>();
             services.AddScoped<ISurveyUserInputService, SurveyUserInputService>();
             services.AddScoped<ISurveyTagService, SurveyTagService>();
+            services.AddScoped<ISaleOrderLineProductRequestedService, SaleOrderLineProductRequestedService>();
+
             services.AddScoped<ISurveyUserInputLineService, SurveyUserInputLineService>();
             services.AddMemoryCache();
 
@@ -452,6 +457,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SurveyUserInputProfile());
                 mc.AddProfile(new SurveyUserInputLineProfile());
                 mc.AddProfile(new SurveyTagProfile());
+                mc.AddProfile(new ProductBomProfile());
+                mc.AddProfile(new ProductRequestProfile());
+                mc.AddProfile(new ProductRequestLineProfile());
+                mc.AddProfile(new SaleOrderLineProductRequestedProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);

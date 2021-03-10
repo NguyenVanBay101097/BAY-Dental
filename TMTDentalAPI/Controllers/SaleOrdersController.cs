@@ -431,5 +431,12 @@ namespace TMTDentalAPI.Controllers
             var paged = await _saleOrderService.GetToSurveyPagedAsync(val);
             return Ok(paged);
         }
+        
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> GetLineForProductRequest(Guid id)
+        {
+            var res = await _saleOrderService.GetLineForProductRequest(id);
+            return Ok(res);
+        }
     }
 }

@@ -11,6 +11,7 @@ export class Product {
     type: string;
     saleOK: boolean;
     purchaseOK: boolean;
+    boms: any[];
     keToaOK: boolean;
     isLabo: boolean;
 }
@@ -28,4 +29,5 @@ export class ProductSave {
     purchaseOK: boolean;
     keToaOK: boolean;
     isLabo: boolean;
+
 }
