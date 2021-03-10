@@ -109,6 +109,8 @@ export class SurveyAssignmentListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(res);
+
       this.loading = false;
     }, err => {
       this.loading = false;
@@ -154,7 +156,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     var val = new SurveyAssignmentGetSummaryFilter();
     val.userId = this.authService.userInfo.id;
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
-    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd'): null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
       result.forEach(item => {
         this.statusCount[item.status] = item.count;
