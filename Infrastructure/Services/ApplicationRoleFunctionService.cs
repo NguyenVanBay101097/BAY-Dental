@@ -51,7 +51,7 @@ namespace Infrastructure.Services
 
             //get list permission from DB
             var permissionList = (await GetPermission()).Permission;
-            // tách functions to dict, example: dict["a"] = ["abc","abc.cde","abc.cde.efg"]
+            // tách functions to dict, example: dict["abc.cde.efg"] = ["abc","abc.cde","abc.cde.efg"]
             var functionDics = new Dictionary<string, List<string>>();
             foreach (var func in functions)
             {
@@ -92,6 +92,7 @@ namespace Infrastructure.Services
                         errors.Add(msg);
                     }
                 }
+                if (errors.Count == 0) errors.Add("Bạn không có quyền thao tác!");
             }
 
             return new ApplicationRoleFunctionHasAccessResult() { Access = access, Error = string.Join(", ", errors) };

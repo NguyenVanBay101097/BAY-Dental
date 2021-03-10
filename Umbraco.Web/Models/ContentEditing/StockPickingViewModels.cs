@@ -109,4 +109,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? LocationDestId { get; set; }
     }
+
+    public class StockPickingSimple
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+    }
 }

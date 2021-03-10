@@ -224,6 +224,19 @@ namespace Infrastructure.Data
 
         public DbSet<MedicineOrder> MedicineOrders { get; set; }
         public DbSet<MedicineOrderLine> MedicineOrderLines { get; set; }
+        public DbSet<SurveyAssignment> SurveyAssignments { get; set; }
+        public DbSet<SurveyUserInput> SurveyUserInputs { get; set; }
+        public DbSet<SurveyUserInputLine> surveyUserInputLines { get; set; }
+        public DbSet<SurveyQuestion> SurveyQuestions { get; set; }
+        public DbSet<SurveyAnswer> SurveyAnswers { get; set; }
+        public DbSet<SurveyCallContent> SurveyCallContents { get; set; }
+        public DbSet<SurveyTag> SurveyTags { get; set; }
+        public DbSet<SurveyUserInputSurveyTagRel> SurveyUserInputSurveyTagRels { get; set; }
+
+        public DbSet<ProductBom> ProductBoms { get; set; }
+        public DbSet<ProductRequest> ProductRequests { get; set; }
+        public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
+        public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
 
@@ -410,6 +423,18 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new StockInventoryLineConfiguration());
             builder.ApplyConfiguration(new StockInventoryCriteriaConfiguration());
             builder.ApplyConfiguration(new ProductStockInventoryCriteriaRelConfiguration());
+            builder.ApplyConfiguration(new SurveyAssignmentConfiguration());
+            builder.ApplyConfiguration(new SurveyQuestionConfiguration());
+            builder.ApplyConfiguration(new SurveyAnswerConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputLineConfiguration());
+            builder.ApplyConfiguration(new SurveyCallContentConfiguration());
+            builder.ApplyConfiguration(new SurveyTagConfiguration());
+            builder.ApplyConfiguration(new SurveyUserInputSurveyTagRelConfiguration());
+            builder.ApplyConfiguration(new ProductBomConfiguration());
+            builder.ApplyConfiguration(new ProductRequestConfiguration());
+            builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

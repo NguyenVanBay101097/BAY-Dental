@@ -116,7 +116,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? ActualLeavePerMonth { get; set; }
         public decimal? LeavePerMonthUnpaid { get; set; }
         public SalaryPaymentBasic SalaryPayment { get; set; }
-
+        public AccountPaymentBasic AccountPayment { get; set; }
     }
 
     public class HrPayslipOnChangeEmployee

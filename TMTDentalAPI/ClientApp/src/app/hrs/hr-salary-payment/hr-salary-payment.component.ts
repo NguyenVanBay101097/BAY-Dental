@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
+import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountJournalService } from 'src/app/shared/services/account-journal.service';
@@ -27,11 +29,13 @@ export class HrSalaryPaymentComponent implements OnInit {
     private authService: AuthService,
     public activeModal: NgbActiveModal,
     private paymentService: SalaryPaymentService,
+    private accountPaymentService: AccountPaymentService,
     private fb: FormBuilder,
     private journalService: AccountJournalService,
     private notificationService: NotificationService,
     private printService: PrintService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private intlService: IntlService
   ) { }
 
   ngOnInit() {
@@ -112,8 +116,8 @@ export class HrSalaryPaymentComponent implements OnInit {
     modalRef.componentInstance.title = 'Chi lương';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
     modalRef.result.then(() => {
-      const val = this.paymentFA.value;
-      this.paymentService.actionMultiSalaryPayment(val).subscribe(() => {
+      var vals = this.changeDataToAccountPayment(this.paymentFA.value);
+      this.accountPaymentService.createMultipleAndConfirmUI(vals).subscribe(() => {
         this.notify('success', 'Xác nhận thành công');
         this.activeModal.close();
       });
@@ -125,8 +129,8 @@ export class HrSalaryPaymentComponent implements OnInit {
     modalRef.componentInstance.title = 'Chi lương';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
     modalRef.result.then(() => {
-      const val = this.paymentFA.value;
-      this.paymentService.actionMultiSalaryPayment(val).subscribe((res: any) => {
+      var vals = this.changeDataToAccountPayment(this.paymentFA.value);
+      this.paymentService.actionMultiSalaryPayment(vals).subscribe((res: any) => {
         this.notify('success', 'Xác nhận thành công');
         this.activeModal.close();
         if (!res.value) {
@@ -140,6 +144,23 @@ export class HrSalaryPaymentComponent implements OnInit {
 
       });
     });
+  }
+
+  changeDataToAccountPayment(values) {
+    var vals = [];
+    values.forEach(val => {
+      var payment = new AccountPaymentSave();
+      payment.paymentDate = this.intlService.formatDate(val.Date, "yyyy-MM-ddTHH:mm");
+      payment.amount = val.Amount;
+      payment.communication = val.Reason;
+      payment.hrPayslipId = val.HrPayslipId;
+      payment.journalId = val.JournalId;
+      payment.partnerId = val.Employee ? val.Employee.PartnerId : null;
+      payment.partnerType = "employee";
+      payment.paymentType = "outbound";
+      vals.push(payment);
+    });
+    return vals;
   }
 
   notify(Style, Content) {

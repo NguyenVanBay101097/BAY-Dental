@@ -1,0 +1,38 @@
+<div class="">
+    <div class="row d-flex m-3">
+        <button (click)="onAutoAssign()" class="btn btn-sm btn-primary mr-1"> Phân việc ngẫu nhiên</button>
+        <button (click)="onSave()" class="btn btn-sm btn-primary mr-1"> Lưu</button>
+        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+        </app-tai-date-range-filter-dropdown>
+        <input class="form-control form-control-sm ml-auto w-50" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+
+    <div class="content">
+        <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [resizable]="true" [navigable]="true">
+            <kendo-grid-column field="employee" title="Nhân viên" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <kendo-combobox style="width: 100%" (filterChange)="filterChangeEmployee($event)" (selectionChange)="onEmployeeChange($event, rowIndex)" [value]="dataItem.employee" [data]="filteredEmployees" [textField]="'name'" [filterable]="true" #empCbx [valueField]="'id'">
+                    </kendo-combobox>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerRef" title="Mã khách hàng" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column field="partnerPhone" title="Điện thoại" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="name" title="Phiếu điều trị" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="dateOrder" title="Ngày lập phiếu" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.dateOrder | date:'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="dateDone" title="Ngày hoàn thành" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.dateDone | date:'shortDate'}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

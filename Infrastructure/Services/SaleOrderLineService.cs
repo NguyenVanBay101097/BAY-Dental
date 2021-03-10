@@ -73,7 +73,7 @@ namespace Infrastructure.Services
                 }
 
                 decimal amountPaid = 0;
-                foreach(var rel in line.SaleOrderLinePaymentRels)
+                foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
                     if (payment != null && payment.State != "draft")
@@ -340,11 +340,11 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.LaboState))
             {
-                query = query.Where(x => x.Labos.Any( s=>s.State == val.LaboState));
+                query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
-      
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x=>x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
             {
@@ -358,7 +358,7 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
-    
+
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -546,6 +546,7 @@ namespace Infrastructure.Services
         {
             var lines = await SearchQuery(x => x.OrderId == Id)
                 .Include(x => x.Employee)
+                .Include(x => x.Product)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -619,6 +620,40 @@ namespace Infrastructure.Services
                 await productStepObj.DeleteAsync(service.Steps.ToList());
                 await productStepObj.CreateAsync(stepsAdd);
             }
+        }
+
+        public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids)
+        {
+            var reqLineObj = GetService<IProductRequestLineService>();
+            var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
+
+            var requestLines = await reqLineObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && x.Request.State != "draft")
+                .GroupBy(x => new { SaleOrderLineId = x.SaleOrderLineId.Value, ProductId = x.ProductId.Value })
+                .Select(x => new
+                {
+                    SaleOrderLineId = x.Key.SaleOrderLineId,
+                    ProductId = x.Key.ProductId,
+                    Total = x.Sum(s => s.ProductQty)
+                })
+                .ToListAsync();
+
+            var requesteds = await requestedObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId)).ToListAsync();
+            await requestedObj.DeleteAsync(requesteds);
+
+            var toCreateRequested = new List<SaleOrderLineProductRequested>();
+            foreach (var item in requestLines)
+            {
+                var requested = new SaleOrderLineProductRequested
+                {
+                    SaleOrderLineId = item.SaleOrderLineId,
+                    ProductId = item.ProductId,
+                    RequestedQuantity = item.Total
+                };
+                toCreateRequested.Add(requested);
+            }
+
+            //save changes
+            await requestedObj.CreateAsync(toCreateRequested);
         }
     }
 }

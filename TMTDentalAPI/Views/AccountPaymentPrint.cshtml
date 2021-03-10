@@ -64,7 +64,18 @@
                 <tr>
                     <td colspan="1" class="o_td_label">
                         <label class="o_form_label o_form_label_help">
-                            Khách hàng
+                            @if (Model.PartnerType == "customer")
+                            {
+                                <span>Khách hàng</span>
+                            }
+                            @if (Model.PartnerType == "supplier")
+                            {
+                                <span>Nhà cung cấp</span>
+                            }
+                            @if (Model.PartnerType == "employee")
+                            {
+                                <span>Nhân viên</span>
+                            }
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">@(Model.PartnerDisplayName)</td>

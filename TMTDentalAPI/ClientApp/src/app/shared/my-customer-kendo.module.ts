@@ -5,7 +5,7 @@ import { NumericTextBoxModule } from '@progress/kendo-angular-inputs';
 import { DatePickerModule } from '@progress/kendo-angular-dateinputs';
 import { DateTimePickerModule } from '@progress/kendo-angular-dateinputs';
 import { TimePickerModule } from '@progress/kendo-angular-dateinputs';
-import { ComboBoxModule } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxModule, DropDownListModule } from '@progress/kendo-angular-dropdowns';
 import { MultiSelectModule } from '@progress/kendo-angular-dropdowns';
 import { ChartModule } from '@progress/kendo-angular-charts';
 import { TreeViewModule } from '@progress/kendo-angular-treeview';
@@ -23,7 +23,8 @@ const kendo = [
     ChartModule,
     TreeViewModule,
     ExcelModule,
-    PDFModule
+    PDFModule,
+    DropDownListModule
 ];
 
 @NgModule({

@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <div class="text-center">
                         <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
-                        <h4 class="text-warning">{{reportCashData.totalAmount | number}}</h4>
+                        <h4 class="text-warning">{{totalCash | number}}</h4>
                     </div>
                 </div>
             </div>
@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="text-center">
                         <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
-                        <h4 class="text-primary">{{reportBankData.totalAmount | number}}</h4>
+                        <h4 class="text-primary">{{totalBank | number}}</h4>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <div class="text-center">
                         <span class="font-weight-bold">Tổng sổ quỹ</span>
-                        <h4 class="text-success">{{(reportCashData.totalAmount + reportBankData.totalAmount) | number}}</h4>
+                        <h4 class="text-success">{{(totalCash + totalBank) | number}}</h4>
                     </div>
                 </div>
             </div>
@@ -33,16 +33,19 @@
     </div>
     <div class="my-3 d-flex justify-content-between">
         <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="paged.dateFrom"
-                [dateTo]="paged.dateTo" [quickOption]="quickOptionDate" (searchChange)="searchChangeDate($event)">
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" 
+                (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
+            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
+            <!-- <button type="button" class="btn btn-primary btn-sm mr-2" (click)="changeData()">
+                <i class="fas fa-download mr-2"></i>Change Data
+            </button> -->
         </div>
         <div class="t-search t-search-left">
             <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu"
-                [(ngModel)]="paged.search" (ngModelChange)="this.searchUpdate.next($event)">
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             <span class="fas fa-search form-control-icon form-control-sm"></span>
         </div>
     </div>
@@ -56,8 +59,66 @@
         </nav>
         <div class="tab-content">
             <div class="tab-pane active">
-                <app-cash-book-tab-cash-bank [paged]="paged" [changeToLoadData]="changeToLoadData">
-                </app-cash-book-tab-cash-bank>
+                <div class="d-flex justify-content-end mt-2">
+                    <div class="summary-item">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Quỹ đầu kỳ</span>
+                            <h4 class="text-primary">{{(summarySearchResult ? summarySearchResult.begin : 0) | number}}</h4>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Tổng thu</span>
+                            <h4 class="text-primary">{{(summarySearchResult ? summarySearchResult.totalThu : 0) | number}}</h4>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="text-center">
+                            <span class="font-weight-bold">Tổng chi</span>
+                            <h4 class="text-danger">{{(summarySearchResult ? -summarySearchResult.totalChi : 0) | number}}</h4>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="text-center">
+                            <span *ngIf="resultSelection == 'cash'" class="font-weight-bold">Tồn quỹ tiền
+                                mặt</span>
+                            <span *ngIf="resultSelection == 'bank'" class="font-weight-bold">Tồn quỹ ngân
+                                hàng</span>
+                            <span *ngIf="resultSelection == 'cash_bank'" class="font-weight-bold">Tồn sổ
+                                quỹ</span>
+                            <h4 class="text-success">{{(summarySearchResult ? summarySearchResult.totalAmount : 0) | number}}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                        (pageChange)="pageChange($event)">
+                        <kendo-grid-column field="date" title="Ngày" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.paymentDate | date: 'shortDate'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="name" title="Số phiếu" width="100"></kendo-grid-column>
+                        <kendo-grid-column *ngIf="resultSelection == 'cash_bank'" field="name" title="Phương thức thanh toán" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.journalName}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="destinationAccountName" title="Loại thu chi" width="100"></kendo-grid-column>
+                        <kendo-grid-column field="amount" title="Số tiền" width="100" class="text-right">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.amountSigned | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="partnerType" title="Nhóm người nhận/nộp" width="100">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{getPartnerType(dataItem.partnerType)}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="partnerName" title="Người nhận/nộp tiền" width="100">
+                        </kendo-grid-column>
+                    </kendo-grid>
+                </div>
             </div>
         </div>
     </div>

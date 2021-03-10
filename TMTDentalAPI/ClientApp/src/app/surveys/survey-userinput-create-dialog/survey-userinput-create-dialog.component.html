@@ -1,0 +1,76 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <h5>
+                        <span>CÂU HỎI KHẢO SÁT ĐÁNH GIÁ</span>
+                    </h5>
+                </div>
+                <div class="o_group" formArrayName="questions">
+                    <div *ngFor="let question of questions;index as i" [formGroupName]="i">
+                        <div>
+                            <h6>
+                                <span>{{i + 1}}/ {{question.name}}</span>
+                                <span *ngIf="question.type == 'radio'"> *</span>
+                            </h6>
+                        </div>
+                        <div *ngIf="question.type == 'text'">
+                            <textarea formControlName="answerValue" [attr.disabled]="disable ? true : null" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div *ngIf="question.type == 'radio'" >                           
+                            <div *ngFor="let answer of question.answers">
+                                <label>
+                                    <input type="radio" formControlName="answerValue" [value]="answer.id" [attr.disabled]="disable ? true : null" />
+                                    <span class="ml-1">{{answer.score}} điểm: {{answer.name}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_title">
+                    <h5>
+                        <span>GÁN TAG KHẢO SÁT</span>
+                    </h5>
+                </div>
+                <div class="o_group">
+                    <div [class.d-none]="disable">
+                        <div class="d-flex">
+                            <kendo-multiselect [filterable]="true" #tagMultiSelect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'" formControlName="surveyTags">
+                            </kendo-multiselect>
+                            <button title="Thêm nhãn khảo sát" class="btn btn-secondary" (click)="quickCreateSurveyTagModal()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex" *ngIf="disable">
+                        <h6 *ngFor="let tag of getSurveyTagsValue">
+                            <span class="badge badge-secondary p-2 mr-1" [ngClass]="'o_tag_color_' + tag.color">
+                                {{tag.name}}
+                            </span>
+                        </h6>
+                    </div>
+                </div>
+
+                <div class="oe_title">
+                    <h5>
+                        <span>NỘI DUNG KHẢO SÁT</span>
+                    </h5>
+                </div>
+                <div class="o_group">
+                    <textarea class="form-control pl-2" [attr.disabled]="disable ? true : null" rows="4" formControlName="note"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" *ngIf="!disable" (click)="onSave()" accesskey="s">Hoàn thành</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
+</footer>

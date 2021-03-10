@@ -9,6 +9,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'surveys',
+    loadChildren: () => import('./surveys/surveys.module').then(m => m.SurveysModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'medicine-orders',
     loadChildren: () => import('./medicine-order/medicine-order.module').then(m => m.MedicineOrderModule),
     canActivate: [AuthGuard]

@@ -63,6 +63,7 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.User).ThenInclude(x => x.Partner)
                 .Include(x => x.User).ThenInclude(x => x.Company)
                 .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
+                .Include(x => x.Group)
                 .FirstOrDefaultAsync();
             if (employee == null)
                 return NotFound();
@@ -99,6 +100,8 @@ namespace TMTDentalAPI.Controllers
 
             await UpdateSalary(val, employee);
 
+            await _employeeService.UpdateResgroupForSurvey(employee);
+
             await _employeeService.CreateAsync(employee);
             _unitOfWork.Commit();
 
@@ -134,6 +137,7 @@ namespace TMTDentalAPI.Controllers
                     user.Active = true;
                     user.Email = employee.Email;
                     user.PhoneNumber = employee.Phone;
+                    user.CompanyId = val.UserCompanyId.HasValue? val.UserCompanyId.Value : user.CompanyId;
                     var updateResult = await _userManager.UpdateAsync(user);
                     if (!updateResult.Succeeded)
                         throw new Exception($"Cập nhật người dùng không thành công");
@@ -197,6 +201,7 @@ namespace TMTDentalAPI.Controllers
                         }
 
                         employee.UserId = user.Id;
+                        employee.User = user;
                     }
                 }
 
@@ -316,6 +321,9 @@ namespace TMTDentalAPI.Controllers
             await UpdateSalary(val, employee);
 
             UpdatePartnerToEmployee(employee);
+
+            await _employeeService.UpdateResgroupForSurvey(employee);
+
             await _employeeService.UpdateAsync(employee);
 
             await SaveUser(employee, val);
@@ -352,6 +360,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        //Lấy danh sách nhân viên có thể thực hiện khảo sát
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
+        public async Task<IActionResult> AllowSurveyList()
+        {
+            var result = await _employeeService.GetAllowSurveyList();
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Catalog.Employee.Read")]
         public async Task<IActionResult> SearchRead(EmployeePaged val)
@@ -365,6 +382,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ActionActive(Guid id, [FromBody] EmployeeActive val)
         {
             var result = await _employeeService.ActionActive(id, val);
+            return Ok(result);
+        }
+
+
+        [HttpGet("GetEmployeeSurveyCount")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
+        public async Task<IActionResult> GetEmployeeSurveyCount([FromQuery] EmployeePaged val)
+        {
+            var result = await _employeeService.GetEmployeeSurveyCount(val);
             return Ok(result);
         }
     }

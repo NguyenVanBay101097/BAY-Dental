@@ -10,4 +10,5 @@ export class SaleOrderBasic {
     number: string;
     user: object;
     dateOrder: string;
+    dateDone: Date;
 }

@@ -9,6 +9,7 @@ import { SalaryPaymentBindingDirective } from 'src/app/shared/directives/salary-
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -19,10 +20,10 @@ export class SalaryPaymentListComponent implements OnInit {
   type: string;
   search: string;
   searchUpdate = new Subject<string>();
-  loading = false;
+  gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  gridData: GridDataResult;
+  loading = false;
 
   @ViewChild(SalaryPaymentBindingDirective, { static: true }) dataBinding: SalaryPaymentBindingDirective;
 
@@ -41,6 +42,7 @@ export class SalaryPaymentListComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
+    private accountPaymentService: AccountPaymentService,
     private router: Router
   ) { }
 
@@ -49,7 +51,7 @@ export class SalaryPaymentListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.dataBinding.filter = this.generateFilter();       
+        this.dataBinding.filter = this.generateFilter();
         this.refreshData();
       });
   }
@@ -58,7 +60,18 @@ export class SalaryPaymentListComponent implements OnInit {
     this.gridFilter = this.generateFilter();
   }
 
+  loadData() {
+    var val = new AccountPaymentPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.partnerType = "employee";
+    val.search = this.search ? this.search : '';
+    this.accountPaymentService.getPaged(val).subscribe(
+      result => {
 
+      }
+    )
+  }
 
   refreshData() {
     this.dataBinding.rebind();
@@ -76,7 +89,7 @@ export class SalaryPaymentListComponent implements OnInit {
         filters: [
           { field: "Name", operator: "contains", value: this.search }
         ]
-       
+
       });
     }
     return filter;

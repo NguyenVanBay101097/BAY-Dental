@@ -10,6 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 
     public class EmployeeSimpleContact
@@ -66,6 +67,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool Active { get; set; }
 
         public string UserName { get; set; }
+
+        public Guid CompanyId { get; set; }
+        public CompanyBasic Company { get; set; }
     }
 
     public class EmployeeDisplay
@@ -134,6 +138,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? UserId { get; set; }
         public string Avatar { set; get; }
+        public string UserAvatar { get; set; }
+        public bool IsAllowSurvey { get; set; }
+        public Guid? GroupId { get; set; }
+        public ResGroupBasic Group { get; set; }
     }
 
     public class EmployeePaged
@@ -155,6 +163,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<Guid> Ids { get; set; }
 
         public bool? Active { get; set; }
+        public bool? IsAllowSurvey { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
     }
 
     public class EmployeeSave
@@ -223,10 +234,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool CreateChangePassword { get; set; }
 
         public string Avatar { get; set; }
+        public string UserAvatar { get; set; }
+        public bool IsAllowSurvey { get; set; }
+        public Guid? GroupId { get; set; }
     }
 
     public class EmployeeActive
     {
         public bool Active { get; set; }
+    }
+
+
+    public class EmployeeSurveyDisplay
+    {
+        public Guid Id { get; set; }
+        public string Ref { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string CompanyName { get; set; }
+        public string Email { get; set; }
+        public int TotalAssignment { get; set; }
+        public int DoneAssignment { get; set; }
+        public int FollowAssignment { get { return this.TotalAssignment - this.DoneAssignment; } set { } }
     }
 }

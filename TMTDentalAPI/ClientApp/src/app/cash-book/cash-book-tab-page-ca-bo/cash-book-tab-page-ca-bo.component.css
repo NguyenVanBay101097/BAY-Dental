@@ -6,3 +6,8 @@
 .t-search {
     min-width: 300px;
 }
+
+.summary-item {
+    flex: 0 0 150px;
+    margin-right: 5px;
+}

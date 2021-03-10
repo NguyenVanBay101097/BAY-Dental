@@ -14,8 +14,8 @@ export class LayoutSidebarComponent implements OnInit {
     {
       name: 'Tổng quan', icon: 'fas fa-home', children: [], link: '/dashboard',
     },
-    { 
-      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers' 
+    {
+      name: 'Khách hàng', icon: 'fas fa-users', children: [], link: '/partners/customers'
     },
     {
       name: 'Lịch hẹn', icon: 'fas fa-calendar-alt', children: [], link: '/appointments/kanban',
@@ -37,6 +37,26 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Đơn hàng Labo', link: '/labo-orders/order' },
         { name: 'Xuất Labo cho khách', link: '/labo-orders/export' },
       ],
+    },
+    // {
+    //   name: 'Khảo sát đánh giá',
+    //   icon: 'fas fa-poll',
+    //   children: [
+    //     { name: 'Danh sách khảo sát', link: '/surveys', groups:'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //     { name: 'Cấu hình đánh giá', link: '/surveys/config', groups: 'survey_Quanly.survey_assignment_Quanly' },
+    //   ],
+    //   groups: 'survey_Nhanvien.survey_assignment_Nhanvien,survey_Quanly.survey_assignment_Quanly'
+    // },
+    {
+      name: 'Khảo sát đánh giá',
+      icon: 'fas fa-poll',
+      children: [
+        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.survey_assignment_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.survey_assignment_manager'  },
+      ],
+      groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' 
     },
     {
       name: 'Mua hàng',
@@ -125,7 +145,7 @@ export class LayoutSidebarComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management' },
-        // { name: 'Nhãn khách hàng', link: '/partner-categories' },
+        { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey'},
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers' },
         { name: 'Dịch vụ - Vật tư - Thuốc', link: '/products' },

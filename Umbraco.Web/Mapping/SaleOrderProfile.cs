@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         public SaleOrderProfile()
         {
             CreateMap<SaleOrder, SaleOrderBasic>().ReverseMap();
+            CreateMap<SaleOrder, SaleOrderDisplayVm>();
 
             CreateMap<SaleOrder, SaleOrderViewModel>();
 
@@ -39,6 +40,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OrderLines, x => x.Ignore());
 
             CreateMap<SaleOrder, SaleOrderPrintVM>();
+            CreateMap<SaleOrder, SaleOrderSurveyBasic>();
         }
     }
 }

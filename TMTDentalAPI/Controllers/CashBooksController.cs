@@ -24,15 +24,6 @@ namespace TMTDentalAPI.Controllers
             _fundBookService = fundBookService;
         }
 
-
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> GetMoney(CashBookSearch val)
-        {
-            var res = await _fundBookService.GetMoney(val);
-            return Ok(res);
-        }
-
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(CashBookSearch val)
@@ -42,66 +33,66 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetTotalReport(CashBookSearch val)
+        public async Task<IActionResult> ChangeData()
         {
-            var res = await _fundBookService.GetTotalReport(val);
-            return Ok(res);
+            await _fundBookService.ChangeData();
+            return Ok();
         }
 
-        [HttpGet("[action]")]
-        [CheckAccess(Actions = "Account.Read")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)
-        {
-            var stream = new MemoryStream();
-            val.Limit = int.MaxValue;
-            val.Offset = 0;
-            var services = await _fundBookService.GetExportExcel(val);
-            var sheetName = "Tổng sổ quỹ";
-            if (val.ResultSelection == "cash")
-            {
-                sheetName = "Sổ quỹ tiền mặt";
-            }
-            else if (val.ResultSelection == "bank")
-            {
-                sheetName = "Sổ quỹ ngân hàng";
-            }
+        //[HttpGet("[action]")]
+        //[CheckAccess(Actions = "Account.Read")]
+        //public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)
+        //{
+        //    var stream = new MemoryStream();
+        //    val.Limit = int.MaxValue;
+        //    val.Offset = 0;
+        //    var services = await _fundBookService.GetExportExcel(val);
+        //    var sheetName = "Tổng sổ quỹ";
+        //    if (val.ResultSelection == "cash")
+        //    {
+        //        sheetName = "Sổ quỹ tiền mặt";
+        //    }
+        //    else if (val.ResultSelection == "bank")
+        //    {
+        //        sheetName = "Sổ quỹ ngân hàng";
+        //    }
 
-            byte[] fileContent;
+        //    byte[] fileContent;
 
-            using (var package = new ExcelPackage(stream))
-            {
-                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+        //    using (var package = new ExcelPackage(stream))
+        //    {
+        //        var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Ngày";
-                worksheet.Cells[1, 2].Value = "Số phiếu";
-                worksheet.Cells[1, 3].Value = "Loại thu chi";
-                worksheet.Cells[1, 4].Value = "Tiền chi";
-                worksheet.Cells[1, 5].Value = "Tiền thu";
-                worksheet.Cells[1, 6].Value = "Người nhận/ nộp";
-                for (int row = 2; row < services.Count() + 2; row++)
-                {
-                    var item = services.ToList()[row - 2];
+        //        worksheet.Cells[1, 1].Value = "Ngày";
+        //        worksheet.Cells[1, 2].Value = "Số phiếu";
+        //        worksheet.Cells[1, 3].Value = "Loại thu chi";
+        //        worksheet.Cells[1, 4].Value = "Tiền chi";
+        //        worksheet.Cells[1, 5].Value = "Tiền thu";
+        //        worksheet.Cells[1, 6].Value = "Người nhận/ nộp";
+        //        for (int row = 2; row < services.Count() + 2; row++)
+        //        {
+        //            var item = services.ToList()[row - 2];
 
-                    worksheet.Cells[row, 1].Value = item.Date;
-                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 2].Value = item.Name;
-                    worksheet.Cells[row, 3].Value = item.Ref;
-                    worksheet.Cells[row, 4].Value = item.Credit;
-                    worksheet.Cells[row, 5].Value = item.Debit;
-                    worksheet.Cells[row, 6].Value = item.PartnerName;
-                }
+        //            worksheet.Cells[row, 1].Value = item.Date;
+        //            worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+        //            worksheet.Cells[row, 2].Value = item.Name;
+        //            worksheet.Cells[row, 3].Value = item.Ref;
+        //            worksheet.Cells[row, 4].Value = item.Credit;
+        //            worksheet.Cells[row, 5].Value = item.Debit;
+        //            worksheet.Cells[row, 6].Value = item.PartnerName;
+        //        }
 
-                worksheet.Cells.AutoFitColumns();
+        //        worksheet.Cells.AutoFitColumns();
 
-                package.Save();
+        //        package.Save();
 
-                fileContent = stream.ToArray();
-            }
+        //        fileContent = stream.ToArray();
+        //    }
 
-            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            stream.Position = 0;
+        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    stream.Position = 0;
 
-            return new FileContentResult(fileContent, mimeType);
-        }
+        //    return new FileContentResult(fileContent, mimeType);
+        //}
     }
 }

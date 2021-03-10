@@ -172,7 +172,7 @@
                                         <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                             {{line.get('price').value | number}}
                                         </span>
-                                        <kendo-numerictextbox *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="price">
+                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="price">
                                         </kendo-numerictextbox>
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>

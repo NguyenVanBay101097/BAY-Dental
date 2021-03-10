@@ -20,9 +20,23 @@ import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap
 import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-detail/stock-picking-incoming-detail.component';
 import { StockInventoriesModule } from '../stock-inventories/stock-inventories.module';
 import { StockInventoryFormComponent } from '../stock-inventories/stock-inventory-form/stock-inventory-form.component';
+import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
+import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 
 @NgModule({
-  declarations: [StockPickingListComponent, StockPickingCreateUpdateComponent, StockPickingMlDialogComponent, StockPickingOutgoingListComponent, StockPickingOutgoingCreateUpdateComponent, StockPickingIncomingListComponent, StockPickingIncomingCreateUpdateComponent, StockPickingManagementComponent, StockXuatNhapTonComponent, StockPickingIncomingDetailComponent],
+  declarations: [
+    StockPickingListComponent,
+    StockPickingCreateUpdateComponent,
+    StockPickingMlDialogComponent,
+    StockPickingOutgoingListComponent,
+    StockPickingOutgoingCreateUpdateComponent,
+    StockPickingIncomingListComponent,
+    StockPickingIncomingCreateUpdateComponent,
+    StockPickingManagementComponent,
+    StockXuatNhapTonComponent,
+    StockPickingIncomingDetailComponent,
+    StockPickingRequestProductComponent,
+    StockPickingRequestProductDialogComponent],
   imports: [
     CommonModule,
     StockPickingsRoutingModule,
@@ -33,10 +47,11 @@ import { StockInventoryFormComponent } from '../stock-inventories/stock-inventor
     SharedModule
   ],
   providers: [
-    StockPickingService,StockReportService
+    StockPickingService, StockReportService
   ],
   entryComponents: [
-    StockPickingMlDialogComponent
+    StockPickingMlDialogComponent,
+    StockPickingRequestProductDialogComponent
   ]
 })
 export class StockPickingsModule { }

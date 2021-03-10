@@ -4,69 +4,92 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
+    <ul class="nav nav-pills m-2" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                aria-controls="pills-home" aria-selected="true">Thông tin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-user" role="tab"
+                aria-controls="pills-profile" aria-selected="false">Thông tin người dùng</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-salary" role="tab"
+                aria-controls="pills-contact" aria-selected="false"
+                *appPermission="['Catalog.Employee.Salary.Update']">Thông tin tính lương</a>
+        </li>
+    </ul>
     <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="float-right">
-                    <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="avatar" [width]="200"
-                        [height]="200"></app-image-file-upload>
-                </div>
-                <div class="oe_title">
-                    <label class="o_form_label oe_edit_only">Tên nhân viên</label>
-                    <h1>
-                        <input type="text" class="form-control" formControlName="name" id="name" />
-                    </h1>
-                    <label for="" class="text-danger" *ngIf="nameFC.errors?.required">Vui lòng điền tên nhân viên
-                    </label>
-                    <div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isDoctor" id="isDoctor">
-                            <label class="form-check-label" for="isDoctor">
-                                Là bác sĩ/phụ tá
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" formControlName="isUser" id="isUser"
-                                (change)="onChangeIsUser($event)">
-                            <label class="form-check-label" for="isUser">
-                                Là người dùng hệ thống
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="o_notebook">
-                    <div class="o_group mb-0">
-                        <table class="o_group o_inner_group o_group_col_6 mb-0">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Mã nhân viên</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="ref"
-                                            placeholder="Để trống tự động phát sinh" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Số điện thoại</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" (input)="onlyGetNumbers('phone')" maxlength="11"
-                                            formControlName="phone" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Ngày sinh</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker formControlName="birthDay">
-                                        </kendo-datepicker>
-                                    </td>
-                                </tr>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
-                                <!-- <tr>
+                <div class="o_form_sheet_bg">
+                    <div class="o_form_sheet">
+                        <div class="float-right">
+                            <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="avatar"
+                                [width]="200" [height]="200"></app-image-file-upload>
+                        </div>
+                        <div class="oe_title">
+                            <label class="o_form_label oe_edit_only">Tên nhân viên</label>
+                            <h1>
+                                <input type="text" class="form-control" formControlName="name" id="name" />
+                            </h1>
+                            <label for="" class="text-danger" *ngIf="nameFC.errors?.required">Vui lòng điền tên nhân
+                                viên
+                            </label>
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" formControlName="isDoctor"
+                                        id="isDoctor">
+                                    <label class="form-check-label" for="isDoctor">
+                                        Là bác sĩ/phụ tá
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_notebook">
+                            <div class="o_group mb-0">
+                                <table class="o_group o_inner_group o_group_col_6 mb-0">
+                                    <tbody>
+                                        <!-- <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Mã nhân viên</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="ref" placeholder="Để trống tự động phát sinh" />
+                                            </td>
+                                        </tr> -->
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Số điện thoại</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" (input)="onlyGetNumbers('phone')"
+                                                    maxlength="11" formControlName="phone" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Ngày sinh</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="birthDay">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày bắt đầu làm việc
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="startWorkDate">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+
+                                        <!-- <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">
                                             Người dùng
@@ -77,7 +100,7 @@
                                         </kendo-combobox>
                                     </td>
                                 </tr> -->
-                                <!-- <tr>
+                                        <!-- <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">
                                             Mã vân tay
@@ -87,258 +110,295 @@
                                         <input class="form-control" formControlName="enrollNumber" />
                                     </td>
                                 </tr> -->
-                            </tbody>
-                        </table>
-                        <table class="o_group o_inner_group o_group_col_6 mb-0">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">CMND</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="identityCard" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Địa chỉ</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="address" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Email</label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <input class="form-control" formControlName="email" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Ngày bắt đầu làm việc
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker formControlName="startWorkDate">
-                                        </kendo-datepicker>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="o_group mb-0" [class.d-none]="!isUser">
-                        <h6>THÔNG TIN TÀI KHOẢN NGƯỜI DÙNG </h6>
-                        <table class="o_group o_inner_group">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Tài khoản</label>
-                                    </td>
-                                    <td colspan="1" style="width: 50%;">
-                                        <input type="text" class="form-control" formControlName="userName" />
-                                    </td>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Mật khẩu</label>
-                                    </td>
-                                    <td colspan="1" style="width: 50%;">
-                                        <input type="password" class="form-control"
-                                            [disableControl]="!createChangePassword" formControlName="userPassword" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">&nbsp;</label>
-                                    </td>
-                                    <td colspan="1" style="width: 50%;">
-                                        &nbsp;
-                                    </td>
-                                    <td colspan="1" class="o_td_label">
-                                        &nbsp;
-                                    </td>
-                                    <td colspan="1" style="width: 50%;">
-                                        <div *ngIf="userIdFC.value" class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                formControlName="createChangePassword" id="createChangePassword"
-                                                (change)="onChangeCreateChangePassword($event)">
-                                            <label class="form-check-label" for="createChangePassword">
-                                                Đổi mật khẩu
-                                            </label>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Chi nhánh cho phép
-                                        </label>
-                                    </td>
-                                    <td colspan="3" style="width: 100%;">
-                                        <kendo-multiselect [data]="listCompanies" [textField]="'name'"
-                                            [valueField]="'id'" formControlName="userCompanies">
-                                        </kendo-multiselect>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Chi nhánh hiện tại
-                                        </label>
-                                    </td>
-                                    <td colspan="3" style="width: 100%;">
-                                        <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
-                                            formControlName="userCompany" [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div *appPermission="['Catalog.Employee.Salary.Update']" class="o_group mt-0">
-                        <h6>THÔNG TIN TÍNH LƯƠNG</h6>
-                        <table class="o_group o_inner_group o_group_col_6 mt-0">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Lương/Tháng
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Lương cơ bản khi ký hợp động, dùng để làm căn cứ tính lương cơ bản theo ngày công"
-                                                triggers="mouseenter:mouseleave" popoverTitle="Lương/Tháng"></i>
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="wage"
-                                                [spinners]="false" placeholder="Nhập lương của nhân viên"
-                                                class="form-control" aria-describedby="wage" [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <!-- <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="wage">VNĐ</span>
-                                            </div> -->
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Phụ cấp xác định
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Bao gồm chi phí phụ cấp cố định (như xăng xe, tiền điện thoại, tiền ăn)"
-                                                triggers="mouseenter:mouseleave" popoverTitle="Phụ cấp xác định"></i>
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="allowance"
-                                                [spinners]="false" class="form-control" aria-describedby="allowance"
-                                                [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <!-- <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="allowance">VNĐ</span>
-                                            </div> -->
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Tỉ lệ lương ngày làm thêm
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Tỉ lệ phần trăm lương được tăng thêm khi nhân viên làm thêm"
-                                                triggers="mouseenter:mouseleave"
-                                                popoverTitle="Tỉ lệ lương làm thêm"></i>
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false"
-                                                class="form-control" formControlName="restDayRate"
-                                                aria-describedby="restDayRate" [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="restDayRate">%</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">
-                                            Bảng hoa hồng
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <kendo-combobox [filterable]="true" [data]="listCommissions"
-                                            [textField]="'name'" #commissionCbx formControlName="commission"
-                                            [valueField]="'id'">
-                                        </kendo-combobox>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="o_group o_inner_group o_group_col_6 mt-0">
-                            <tbody>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Số ngày nghỉ/Tháng
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Số ngày phép được phép nghỉ có lương"
-                                                triggers="mouseenter:mouseleave" popoverTitle="Số ngày nghỉ/Tháng"></i>
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" [spinners]="false"
-                                                class="form-control" aria-describedby="leavePerMonth"
-                                                formControlName="leavePerMonth" [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="leavePerMonth">Ngày</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Số giờ làm/Ngày
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Số giờ làm tiêu chuẩn của 1 ngày công"
-                                                triggers="mouseenter:mouseleave" popoverTitle="Số giờ làm/Ngày"></i>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6 mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">CMND</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="identityCard" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Email</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="email" />
+                                            </td>
+                                        </tr>
 
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="regularHour"
-                                                class="form-control" [spinners]="false" [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="leavePerMonth">Giờ</span>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Địa chỉ</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="address" />
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-user" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <div class="o_form_sheet_bg">
+                    <div class="o_form_sheet" style="min-height: auto;">
+                        <div class="custom-control custom-switch pl-0">
+                            <input class="custom-control-input switch" type="checkbox" formControlName="isUser"
+                                id="isUser" (change)="onChangeIsUser($event)">
+                            <label class="custom-control-label" for="isUser"> Người dùng hệ thống? </label>
+                        </div>
+
+                        <div class="o_group mb-0" [class.d-none]="!isUser">
+                            <table class="o_group o_inner_group">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Tài khoản</label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <input type="text" class="form-control" formControlName="userName" />
+                                        </td>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Mật khẩu</label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <input type="password" class="form-control"
+                                                [disableControl]="!createChangePassword"
+                                                formControlName="userPassword" />
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="userIdFC.value">
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">&nbsp;</label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            &nbsp;
+                                        </td>
+                                        <td colspan="1" class="o_td_label">
+                                            &nbsp;
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <div *ngIf="userIdFC.value" class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                    formControlName="createChangePassword" id="createChangePassword"
+                                                    (change)="onChangeCreateChangePassword($event)">
+                                                <label class="form-check-label" for="createChangePassword">
+                                                    Đổi mật khẩu
+                                                </label>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label">
-                                        <label class="o_form_label">Tỉ lệ lương tăng ca
-                                            <i class="fa fa-question-circle" placement="right"
-                                                ngbPopover="Tỉ lệ phần trăm lương được tăng thêm khi nhân viên tăng ca"
-                                                triggers="mouseenter:mouseleave" popoverTitle="Tỉ lệ lương tăng ca"></i>
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <div class="input-group mb-3 position-relative">
-                                            <kendo-numerictextbox [format]="'n0'" formControlName="overtimeRate"
-                                                class="form-control" [spinners]="false" [autoCorrect]="true">
-                                            </kendo-numerictextbox>
-                                            <div class="input-group-append position-absolute" style="right: 0;">
-                                                <span class="input-group-text" id="leavePerMonth">%</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Chi nhánh cho phép
+                                            </label>
+                                        </td>
+                                        <td colspan="3" style="width: 100%;">
+                                            <kendo-multiselect [data]="listCompanies" [textField]="'name'"
+                                                [valueField]="'id'" formControlName="userCompanies">
+                                            </kendo-multiselect>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Chi nhánh hiện tại
+                                            </label>
+                                        </td>
+                                        <td colspan="3" style="width: 100%;">
+                                            <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
+                                                formControlName="userCompany" [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                    <tr hasGroups [groups]="'survey.group_survey'">
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                <div class="form-check d-flex align-items-center">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        formControlName="isAllowSurvey" id="isAllowSurvey">
+                                                    <label class="form-check-label" for="isAllowSurvey"> Là nhân viên
+                                                        khảo sát</label>
+                                                </div>
+                                            </label>
+                                        </td>
+                                        <td colspan="3" style="width: 100%;">
+                                            <kendo-combobox [placeholder]="'Nhóm khảo sát'" [data]="groupSurvey"
+                                                *ngIf="isAllowSurveyFC.value" [valuePrimitive]="true"
+                                                [textField]="'name'" [filterable]="true" formControlName="groupId"
+                                                [valueField]="'id'"></kendo-combobox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-salary" role="tabpanel" aria-labelledby="pills-contact-tab">
+                <div class="o_form_sheet_bg">
+                    <div class="o_form_sheet">
+
+                        <div *appPermission="['Catalog.Employee.Salary.Update']" class="o_group mt-0">
+                            <table class="o_group o_inner_group o_group_col_6 mt-0">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Lương/Tháng
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Lương cơ bản khi ký hợp động, dùng để làm căn cứ tính lương cơ bản theo ngày công"
+                                                    triggers="mouseenter:mouseleave" popoverTitle="Lương/Tháng"></i>
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" formControlName="wage"
+                                                    [spinners]="false" placeholder="Nhập lương của nhân viên"
+                                                    class="form-control" aria-describedby="wage" [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <!-- <div class="input-group-append position-absolute" style="right: 0;">
+                                    <span class="input-group-text" id="wage">VNĐ</span>
+                                </div> -->
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Phụ cấp xác định
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Bao gồm chi phí phụ cấp cố định (như xăng xe, tiền điện thoại, tiền ăn)"
+                                                    triggers="mouseenter:mouseleave"
+                                                    popoverTitle="Phụ cấp xác định"></i>
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" formControlName="allowance"
+                                                    [spinners]="false" class="form-control" aria-describedby="allowance"
+                                                    [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <!-- <div class="input-group-append position-absolute" style="right: 0;">
+                                    <span class="input-group-text" id="allowance">VNĐ</span>
+                                </div> -->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Tỉ lệ lương ngày làm thêm
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Tỉ lệ phần trăm lương được tăng thêm khi nhân viên làm thêm"
+                                                    triggers="mouseenter:mouseleave"
+                                                    popoverTitle="Tỉ lệ lương làm thêm"></i>
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" [spinners]="false"
+                                                    class="form-control" formControlName="restDayRate"
+                                                    aria-describedby="restDayRate" [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <div class="input-group-append position-absolute" style="right: 0;">
+                                                    <span class="input-group-text" id="restDayRate">%</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">
+                                                Bảng hoa hồng
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <kendo-combobox [filterable]="true" [data]="listCommissions"
+                                                [textField]="'name'" #commissionCbx formControlName="commission"
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="o_group o_inner_group o_group_col_6 mt-0">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Số ngày nghỉ/Tháng
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Số ngày phép được phép nghỉ có lương"
+                                                    triggers="mouseenter:mouseleave"
+                                                    popoverTitle="Số ngày nghỉ/Tháng"></i>
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" [spinners]="false"
+                                                    class="form-control" aria-describedby="leavePerMonth"
+                                                    formControlName="leavePerMonth" [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <div class="input-group-append position-absolute" style="right: 0;">
+                                                    <span class="input-group-text" id="leavePerMonth">Ngày</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Số giờ làm/Ngày
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Số giờ làm tiêu chuẩn của 1 ngày công"
+                                                    triggers="mouseenter:mouseleave" popoverTitle="Số giờ làm/Ngày"></i>
+
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" formControlName="regularHour"
+                                                    class="form-control" [spinners]="false" [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <div class="input-group-append position-absolute" style="right: 0;">
+                                                    <span class="input-group-text" id="leavePerMonth">Giờ</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label">Tỉ lệ lương tăng ca
+                                                <i class="fa fa-question-circle" placement="right"
+                                                    ngbPopover="Tỉ lệ phần trăm lương được tăng thêm khi nhân viên tăng ca"
+                                                    triggers="mouseenter:mouseleave"
+                                                    popoverTitle="Tỉ lệ lương tăng ca"></i>
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            <div class="input-group mb-3 position-relative">
+                                                <kendo-numerictextbox [format]="'n0'" formControlName="overtimeRate"
+                                                    class="form-control" [spinners]="false" [autoCorrect]="true">
+                                                </kendo-numerictextbox>
+                                                <div class="input-group-append position-absolute" style="right: 0;">
+                                                    <span class="input-group-text" id="leavePerMonth">%</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </div>

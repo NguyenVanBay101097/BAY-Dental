@@ -94,6 +94,20 @@ namespace Umbraco.Web.Models.ContentEditing
             set { }
         }
 
+        public string Tags
+        {
+            get
+            {
+                var list = new List<string>();
+                foreach (var item in this.Categories)
+                {
+                    list.Add(item.Name);
+                }
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
         public int? BirthYear { get; set; }
 
         /// <summary>

@@ -22,8 +22,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public double StandardPrice { get; set; }
 
-        public decimal? LaboPrice { get; set; }
-
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
 
         public IEnumerable<Guid> UoMIds { get; set; } = new List<Guid>();
@@ -36,6 +34,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Firm { get; set; }
         public IEnumerable<ProductStockInventoryCriteriaRelSimple> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRelSimple>();
+        /// <summary>
+        /// list định mức vật tư
+        /// </summary>
+        public IEnumerable<ProductBomBasic> Boms { get; set; } = new List<ProductBomBasic>();
 
     }
 

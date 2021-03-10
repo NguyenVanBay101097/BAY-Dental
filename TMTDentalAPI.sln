@@ -29,6 +29,7 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TMTTimeKeeperSetup", "TMTTi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2A5C23AB-6425-4479-B3B2-96EE2D769CCE}"
 	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
 		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject

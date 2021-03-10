@@ -63,7 +63,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.accountPaymentOdataService.getPrint(payment.accountPaymentId).subscribe(result => {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
       if (result) {
         var html = result['html']
         this.printService.printHtml(html);

@@ -26,8 +26,8 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid salaryPaymentBinding [resizable]="true" [sort]="gridSort" [advanceFilter]="advanceFilter" [skip]="skip"
-        [filter]="gridFilter" #grid [pageable]="true" [pageSize]="limit">
+    <kendo-grid salaryPaymentBinding [resizable]="true" [sort]="gridSort" [skip]="skip" [filter]="gridFilter" #grid
+        [pageable]="true" [pageSize]="limit">
         <kendo-grid-column field="Name" title="Mã phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
@@ -75,6 +75,6 @@
                 </button>
             </ng-template>
         </kendo-grid-column>
-      
+
     </kendo-grid>
 </div>
