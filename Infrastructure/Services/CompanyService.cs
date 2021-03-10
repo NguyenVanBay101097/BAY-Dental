@@ -146,6 +146,13 @@ namespace Infrastructure.Services
 
             //insert rules new
             await InsertIRulesIfNotExists();
+            await AddIrDataForSurvey();
+        }
+
+        public async Task AddIrDataForSurvey()
+        {
+            var surAssObj = GetService<ISurveyAssignmentService>();
+            await surAssObj.AddIrDataForSurvey();
         }
 
         public async Task InsertIrModelFieldData()

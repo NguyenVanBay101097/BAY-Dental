@@ -73,7 +73,7 @@ namespace Infrastructure.Services
                 }
 
                 decimal amountPaid = 0;
-                foreach(var rel in line.SaleOrderLinePaymentRels)
+                foreach (var rel in line.SaleOrderLinePaymentRels)
                 {
                     var payment = rel.Payment;
                     if (payment != null && payment.State != "draft")
@@ -340,11 +340,11 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.LaboState))
             {
-                query = query.Where(x => x.Labos.Any( s=>s.State == val.LaboState));
+                query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
-      
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x=>x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
 
             if (val.Limit > 0)
             {
@@ -358,7 +358,7 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
-    
+
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -546,6 +546,7 @@ namespace Infrastructure.Services
         {
             var lines = await SearchQuery(x => x.OrderId == Id)
                 .Include(x => x.Employee)
+                .Include(x => x.Product)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);

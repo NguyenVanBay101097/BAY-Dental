@@ -33,8 +33,7 @@
     </div>
     <div class="my-3 d-flex justify-content-between">
         <div class="d-flex">
-            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom"
-                [dateTo]="dateTo" [quickOption]="quickOptionDate"
+            <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" 
                 (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
             <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">

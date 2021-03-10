@@ -67,5 +67,12 @@ namespace ApplicationCore.Entities
         [DbColumn("implied_group", "medicineOrder.group_medicine")]
         [DbColumn("field_type", "boolean")]
         public bool? GroupMedicine { get; set; }
+
+        /// <summary>
+        /// cấu hình cho Survey
+        /// </summary>
+        [DbColumn("implied_group", "survey.group_survey")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupSurvey { get; set; }
     }
 }

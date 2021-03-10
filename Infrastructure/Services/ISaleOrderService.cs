@@ -62,6 +62,8 @@ namespace Infrastructure.Services
 
         Task<SaleOrderBasic> CreateFastSaleOrder(FastSaleOrderSave val);
         Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key);
+        Task<IEnumerable<DotKhamDisplayVm>> _GetListDotkhamInfo(Guid id);
+        Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val);
 
         Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id);
 

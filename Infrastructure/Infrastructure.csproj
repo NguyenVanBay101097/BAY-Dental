@@ -64,6 +64,14 @@
     <Compile Remove="Data\Migrations\20210305031155_Bay_update_nameofmaterialUOM.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />
+    <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210127080217_bay_add_surveyModun.cs" />
+    <Compile Remove="Data\Migrations\20210127080217_bay_add_surveyModun.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210127102711_add_modun_survey.cs" />
+    <Compile Remove="Data\Migrations\20210127102711_add_modun_survey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210128013515_bayds.cs" />
+    <Compile Remove="Data\Migrations\20210128013515_bayds.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

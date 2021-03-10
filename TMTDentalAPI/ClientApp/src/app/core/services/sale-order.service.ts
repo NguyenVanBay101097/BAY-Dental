@@ -43,7 +43,13 @@ export class DiscountDefault {
 
 }
 
-
+export class SaleOrderToSurveyFilter {
+    limit: number;
+    offset: number;
+    search: string;
+    dateFrom: string;
+    dateTo: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
@@ -184,6 +190,10 @@ export class SaleOrderService {
 
     getLaboBySaleOrderId(id): Observable<LaboOrderDisplay[]> {
         return this.http.get<LaboOrderDisplay[]>(this.baseApi + this.apiUrl + '/' + id + '/GetLaboBySaleOrderId');
+    }
+
+    getToSurveyPaged(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl  + '/ToSurvey', val);
     }
 
     getLineForProductRequest(id): Observable<SaleOrderLineForProductRequest[]> {

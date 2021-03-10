@@ -116,9 +116,7 @@ export class HrPaysliprunService {
   }
 
   ExportExcelFile(payslipIds: string[]) {
-    return this.http.post(
-      this.base_api + this.apiUrl + '/ExportExcelFile', payslipIds,
-      { responseType: 'blob' }
+    return this.http.post(this.base_api + this.apiUrl + '/ExportExcelFile', payslipIds, { responseType: 'blob' }
     );
   }
 

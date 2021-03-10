@@ -6,6 +6,10 @@
     min-width: 30px;
 }
 
-.o_form_sheet {
-    min-height: 657px !important;
+.custom-switch .custom-control-label::before {
+    left: 10.25rem;
+}
+
+.custom-switch .custom-control-label::after {
+    left: calc(10.25rem + 2px);
 }

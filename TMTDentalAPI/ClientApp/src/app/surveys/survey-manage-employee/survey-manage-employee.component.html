@@ -1,0 +1,28 @@
+<div>
+    <div class="row d-flex m-3">
+        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+        </app-tai-date-range-filter-dropdown>
+        <input class="form-control form-control-sm ml-auto w-50" placeholder="Tìm kiếm theo tên nhân viên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchSB.next($event)">
+    </div>
+
+</div>
+<div class="o_content">
+    <kendo-grid [resizable]="true" [data]="gridData" [pageable]="true" (pageChange)="pageChange($event)" [pageSize]="limit" [skip]="skip" [loading]="loading">
+        <kendo-grid-column field="ref" title="Mã nhân viên" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Tên nhân viên" width="200">
+        </kendo-grid-column>
+        <kendo-grid-column field="phone" title="Số điện thoại" width="170">
+        </kendo-grid-column>
+        <kendo-grid-column field="companyName" title="Chi nhánh" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="email" title="Email" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalAssignment" title="Tổng khảo sát">
+        </kendo-grid-column>
+        <kendo-grid-column field="doneAssignment" title="Khảo sát hoàn thành">
+        </kendo-grid-column>
+        <kendo-grid-column field="followAssignment" title="Khảo sát đang theo dõi">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

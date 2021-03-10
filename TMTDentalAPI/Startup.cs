@@ -310,6 +310,11 @@ namespace TMTDentalAPI
             //services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddScoped<IPartnerOldNewReportService, PartnerOldNewReportService>();
             services.AddScoped<ICashBookService, CashBookService>();
+            services.AddScoped<ISurveyQuestionService, SurveyQuestionService>();
+            services.AddScoped<ISurveyAssignmentService, SurveyAssignmentService>();
+            services.AddScoped<ISurveyCallContentService, SurveyCallContentService>();
+            services.AddScoped<ISurveyUserInputService, SurveyUserInputService>();
+            services.AddScoped<ISurveyTagService, SurveyTagService>();
             services.AddScoped<ISaleOrderLineProductRequestedService, SaleOrderLineProductRequestedService>();
 
             services.AddMemoryCache();
@@ -444,6 +449,13 @@ namespace TMTDentalAPI
                 mc.AddProfile(new MedicineOrderLineProfile());
                 mc.AddProfile(new VFundBookProfile());
                 mc.AddProfile(new PartnerOldNewReportProfile());
+                mc.AddProfile(new SurveyQuestionProfile());
+                mc.AddProfile(new SurveyAnswerProfile());
+                mc.AddProfile(new SurveyAssignmentProfile());
+                mc.AddProfile(new SurveyCallContentProfile());
+                mc.AddProfile(new SurveyUserInputProfile());
+                mc.AddProfile(new SurveyUserInputLineProfile());
+                mc.AddProfile(new SurveyTagProfile());
                 mc.AddProfile(new ProductBomProfile());
                 mc.AddProfile(new ProductRequestProfile());
                 mc.AddProfile(new ProductRequestLineProfile());
