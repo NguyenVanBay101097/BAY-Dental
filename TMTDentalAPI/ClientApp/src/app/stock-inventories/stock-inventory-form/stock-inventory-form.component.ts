@@ -11,8 +11,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/print.service';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductService } from 'src/app/products/product.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
-import { StockInventoryService } from '../stock-inventory.service';
+import { StockInventoryLineByProductId, StockInventoryService } from '../stock-inventory.service';
 
 @Component({
   selector: 'app-stock-inventory-form',
@@ -68,7 +69,6 @@ export class StockInventoryFormComponent implements OnInit {
       dateObj: [null, Validators.required],
       date: null,
       locationId: null,
-      location: null,
       productId: null,
       categoryId: null,
       category: null,
@@ -167,7 +167,7 @@ export class StockInventoryFormComponent implements OnInit {
       });
     } else {
       var companyId = this.authService.userInfo.companyId;
-      this.stockInventorySevice.getDefault(companyId).subscribe(result => {
+      this.stockInventorySevice.getDefault().subscribe((result:any) => {
         this.formGroup.patchValue(result);
         let date = new Date(result.date);
         this.formGroup.get('dateObj').patchValue(date);
@@ -242,11 +242,9 @@ export class StockInventoryFormComponent implements OnInit {
 
   computeForm(val) {
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm");
-    val.locationId = val.location ? val.location.id : null;
     val.productId = val.product ? val.product.id : null;
     val.categoryId = val.category ? val.category.id : null;
     val.criteriaId = val.criteria ? val.criteria.id : null;
-    val.companyId = this.authService.userInfo.companyId;
     return val;
   }
 
@@ -290,18 +288,28 @@ export class StockInventoryFormComponent implements OnInit {
   }
 
   addLine(val) {
-    var res = this.fb.group(val);
+    var res = new StockInventoryLineByProductId();
+    res.productId = val.id;
+    res.inventoryId = this.id;
+    this.stockInventorySevice.inventorylineByProductId(res).subscribe((result: any) => {
 
-    // line.teeth = this.fb.array(line.teeth);
-    if (!this.lines.controls.some(x => x.value.productId === res.value.productId)) {
-      this.lines.push(res);
-    } else {
-      var line = this.lines.controls.find(x => x.value.productId === res.value.productId);
-      if (line) {
-        line.value.productQty += 1;
-        line.patchValue(line.value);
+      var invLine = this.fb.group(result);
+
+      if (!this.lines.controls.some(x => x.value.productId === invLine.value.productId)) {
+        this.lines.push(invLine);
+      } else {
+        var line = this.lines.controls.find(x => x.value.productId === invLine.value.productId);
+        if (line) {
+          line.value.productQty += 1;
+          line.patchValue(line.value);
+        }
       }
-    }
+    });
+
+  }
+
+  deleteLine(index: number) {
+    this.lines.removeAt(index);      
   }
 
   onChangeSearch(value) {
@@ -338,6 +346,31 @@ export class StockInventoryFormComponent implements OnInit {
           this.loadDataFromApi();
         })
       })
+    }
+  }
+
+  actionCancel(){
+    if (this.id) {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Hủy phiếu kiểm kho';
+      modalRef.componentInstance.body = "Bạn có chắc chắn hủy phiếu kiểm kho ?"
+      modalRef.result.then(() => {
+        var ids = [];
+        ids.push(this.id);
+        this.stockInventorySevice.actionCancel(ids).subscribe(
+          () => {
+            this.notificationService.show({
+              content: 'Hủythành công',
+              hideAfter: 3000,
+              position: { horizontal: 'center', vertical: 'top' },
+              animation: { type: 'fade', duration: 400 },
+              type: { style: 'success', icon: true }
+            });
+            this.loadDataFromApi();
+          }
+        )
+      }, () => {
+      });
     }
   }
 

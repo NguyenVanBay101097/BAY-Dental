@@ -23,6 +23,10 @@
                     <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
+                        <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()" accesskey="1">
+                      Hủy phiếu
+                    </button>
                 </div>
             </div>
         </div>
@@ -79,7 +83,7 @@
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Địa điểm kiểm kho
@@ -89,7 +93,7 @@
                                     <span>{{stockInventory.location ?
                                         stockInventory.location.nameGet : ''}}</span>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -227,6 +231,7 @@
                                                 [groups]="'product.group_uom'">ĐVT</th>
                                             <th scope="col" style="width: 10%;">Tồn kho</th>
                                             <th scope="col" style="width: 10%;">Thực tế</th>
+                                            <th *ngIf="stateControl != 'done'" scope="col" style="width: 10%;">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="lines">
@@ -244,7 +249,7 @@
                                                         | number}}</span>
                                                 </td>
                                                 <td class="text-right">
-                                                    <kendo-numerictextbox [format]="'n0'"
+                                                    <kendo-numerictextbox [min]="0" [format]="'n0'" [autoCorrect]="true"
                                                         *ngIf="stateControl == 'confirmed'"
                                                         formControlName="productQty" style="width: 120px;">
                                                     </kendo-numerictextbox>
@@ -252,7 +257,12 @@
                                                         *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                         | number}}</span>
                                                 </td>
-
+                                                <td *ngIf="stateControl != 'done' " class="text-center align-middle" >
+                                                    <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                                        (click)="deleteLine(i)">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         </ng-container>
                                     </tbody>
@@ -296,12 +306,12 @@
                         <table class="table table-sm table-bordered" id="table_details">
                             <thead>
                                 <tr>
-                                    <th scope="col" style="width: 100px;">STT</th>
+                                    <th scope="col" style="width: 15%;">STT</th>
                                     <!-- <th scope="col" style="width: 120px;">Mã sản phẩm</th> -->
-                                    <th scope="col" style="width: 200px;">Sản phẩm</th>
-                                    <th scope="col" style="width: 120px;" hasGroups
+                                    <th scope="col" style="width: 40%;">Sản phẩm</th>
+                                    <th scope="col" style="width: 5%;" hasGroups
                                         [groups]="'product.group_uom'">ĐVT</th>
-                                    <th scope="col" style="width: 10%;">Số lượng</th>
+                                    <th scope="col" style="width: 10%;">Số lượng chênh lệch</th>
                                     <!-- <th scope="col" style="width: 10%;">Thực tế</th> -->
                                 </tr>
                             </thead>

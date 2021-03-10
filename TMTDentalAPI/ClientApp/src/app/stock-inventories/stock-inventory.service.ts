@@ -92,6 +92,12 @@ export class StockInventoryLineDisplay {
   theoreticalQty: number;
 }
 
+export class StockInventoryLineByProductId
+{
+    productId: string;
+    inventoryId: string;
+}
+
 export class StockInventoryDefaultGet {
   companyId: string;
 }
@@ -113,8 +119,8 @@ export class StockInventoryService {
     return this.http.get<StockInventoryDisplay>(this.base_api + this.apiUrl + "/" + id);
   }
 
-  getDefault(id): Observable<StockInventoryDisplay> {
-    return this.http.post<StockInventoryDisplay>(this.base_api + this.apiUrl + '/DefaultGet', { companyId: id })
+  getDefault(){
+    return this.http.get(this.base_api + this.apiUrl + '/DefaultGet');
   }
 
   create(val): Observable<StockInventoryDisplay> {
@@ -125,8 +131,12 @@ export class StockInventoryService {
     return this.http.put(this.base_api + this.apiUrl + '/' + id, val);
   }
 
-  getlistProductInventory(id) {
-    return this.http.get(this.base_api + this.apiUrl  + '/' + id + '/GetlistProductInventory');
+  // getlistProductInventory(id) {
+  //   return this.http.get(this.base_api + this.apiUrl  + '/' + id + '/GetlistProductInventory');
+  // }
+
+  inventorylineByProductId(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/GetInventoryLineByProductId', val)
   }
 
   prepareInventory(ids) {
@@ -135,6 +145,10 @@ export class StockInventoryService {
 
   actionDone(ids) {
     return this.http.post(this.base_api + this.apiUrl + '/ActionDone', ids)
+  }
+
+  actionCancel(ids) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionCancel', ids)
   }
 
   delete(id: string) {

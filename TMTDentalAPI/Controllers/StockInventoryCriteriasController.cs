@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> Get([FromQuery] StockInventoryCriteriaPaged val)
         {
             var result = await _SI_criteriaService.GetPagedResultAsync(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var employee = await _SI_criteriaService.GetByIdAsync(id);
@@ -43,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Stock.Inventory.Create")]
         public async Task<IActionResult> Create(StockInventoryCriteriaSave val)
         {
             var entity = _mapper.Map<StockInventoryCriteria>(val);
@@ -51,6 +55,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Update")]
         public async Task<IActionResult> Update(Guid id,StockInventoryCriteriaSave val)
         {
             var entity = await _SI_criteriaService.GetByIdAsync(id);
@@ -63,7 +68,8 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<StockInventoryCriteriaDisplay>(entity));
         }
 
-        [HttpDelete("{id}")] 
+        [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var entity = await _SI_criteriaService.GetByIdAsync(id);

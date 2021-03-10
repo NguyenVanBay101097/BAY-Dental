@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
@@ -9,14 +11,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
     public class StockInventoryLineService : BaseService<StockInventoryLine>, IStockInventoryLineService
     {
-        public StockInventoryLineService(IAsyncRepository<StockInventoryLine> repository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public StockInventoryLineService(IAsyncRepository<StockInventoryLine> repository, IHttpContextAccessor httpContextAccessor , IMapper mapper)
             : base(repository, httpContextAccessor)
         {
+            _mapper = mapper;
         }
 
         public override async Task<StockInventoryLine> CreateAsync(StockInventoryLine entity)
@@ -44,6 +49,9 @@ namespace Infrastructure.Services
                 throw new Exception(string.Format("Bạn không thể có 2 điều chỉnh tồn kho ở trạng thái đang xử lý với cùng sản phẩm {0}, địa điểm {1}", product.Name, location.NameGet));
             }
         }
+
+
+
 
         public IDictionary<Guid, decimal> GetTheoreticalQty(IEnumerable<Guid> ids)
         {
@@ -130,10 +138,10 @@ namespace Infrastructure.Services
                 move.LocationDest = line.Location;
                 move.ProductUOMQty = -diff;
 
-                 await stockMoveObj.CreateAsync(move);
+                await stockMoveObj.CreateAsync(move);
                 res.Add(move);
             }
-            else
+            else if(diff > 0)
             {
                 move.Location = line.Location;
                 move.LocationId = line.LocationId;
@@ -163,91 +171,72 @@ namespace Infrastructure.Services
             return res;
         }
 
-        //public async Task _GenerateMoves(IEnumerable<StockInventoryLine> self)
-        //{
-        //    var moveObj = GetService<IStockMoveService>();
-        //    var quantObj = GetService<IStockQuantService>();
-        //    var locObj = GetService<IStockLocationService>();
-        //    var propertyObj = GetService<IIRPropertyService>();
 
-        //    //var inventory_loc_dict = propertyObj.get_multi("property_stock_inventory", "product.template", self.Select(x => x.Product.ProductTmplId));
-        //    var inventory_loc = locObj.SearchQuery(x => x.Usage == "inventory" && x.ScrapLocation == false).FirstOrDefault();
-        //    if (inventory_loc == null)
-        //        throw new Exception("Không tìm thấy địa điểm điều chỉnh tồn kho nào.");
+        public async Task _GenerateMoves(IEnumerable<StockInventoryLine> self)
+        {
+            var moveObj = GetService<IStockMoveService>();
+            var quantObj = GetService<IStockQuantService>();
+            var locObj = GetService<IStockLocationService>();
+            var propertyObj = GetService<IIRPropertyService>();
 
-        //    var to_create = new List<StockMove>();
-        //    foreach (var line in self)
-        //    {
-        //        if (FloatUtils.FloatCompare((double)(line.TheoreticalQty ?? 0), (double)(line.ProductQty ?? 0),
-        //            precisionRounding: (double?)line.Product.UOM.Rounding) == 0)
-        //            continue;
-        //        var diff = (line.TheoreticalQty - line.ProductQty) ?? 0;
-        //        StockMove move = null;
-        //        //var inventory_loc = locObj.GetById(((StockLocation)inventory_loc_dict[line.Product.ProductTmplId]).Id);
-        //        if (diff < 0)
-        //            move = _get_move_values(line, Math.Abs(diff), inventory_loc, line.Location);
-        //        else
-        //            move = _get_move_values(line, Math.Abs(diff), line.Location, inventory_loc);
+            var inventory_loc = locObj.SearchQuery(x => x.Usage == "inventory" && x.ScrapLocation == false).FirstOrDefault();
+            if (inventory_loc == null)
+                throw new Exception("Không tìm thấy địa điểm điều chỉnh tồn kho nào.");
 
-        //        moveObj._Compute(new List<StockMove> { move });
-        //        to_create.Add(move);
-        //        //moveObj.Create(move);
+            var to_create = new List<StockMove>();
+            foreach (var line in self)
+            {
+                if (line.TheoreticalQty == line.ProductQty)
+                    continue;
 
-        //        //if (diff > 0)
-        //        //{
-        //        //    Expression<Func<StockQuant, bool>> domain = x => x.Qty > 0 && x.LocationId == line.LocationId && x.LotId == line.ProdLotId;
-        //        //    var preferedDomainList = new List<Expression<Func<StockQuant, bool>>>()
-        //        //    {
-        //        //        x => !x.ReservationId.HasValue,
-        //        //        x => x.Reservation.InventoryId != line.InventoryId
-        //        //    };
-        //        //    var quants = quantObj.QuantsGetPreferedDomain(move.ProductQty ?? 0, move,
-        //        //         domain: domain, preferedDomain: preferedDomainList);
-        //        //    quantObj.QuantsReserve(quants, move);
-        //        //}
-        //    }
+                var diff = (line.TheoreticalQty - line.ProductQty) ?? 0;
+                StockMove move = null;
+                if (diff < 0)
+                    move = _get_move_values(line, Math.Abs(diff), inventory_loc, line.Location);
+                else
+                    move = _get_move_values(line, Math.Abs(diff), line.Location, inventory_loc);
 
-        //    await moveObj.CreateAsync(to_create);
-        //    moveObj._Compute(to_create);
+                moveObj._Compute(new List<StockMove> { move });
+                to_create.Add(move);
+            }
 
-        //    await moveObj.UpdateAsync(to_create);
-        //    //moveObj.Insert2(to_create);
-        //    //moveObj.SaveChanges();
-        //}
+            moveObj._Compute(to_create);
+            await moveObj.CreateAsync(to_create);
+        }
 
-        //private StockMove _get_move_values(StockInventoryLine self, decimal qty, StockLocation location, StockLocation locationDest)
-        //{
-        //    return new StockMove
-        //    {
-        //        Name = "INV:" + self.Inventory.Name,
-        //        Product = self.Product,
-        //        ProductId = self.ProductId,
-        //        ProductUOM = self.ProductUOM,
-        //        ProductUOMId = self.ProductUOMId,
-        //        Date = self.Inventory.Date,
-        //        InventoryId = self.InventoryId,
-        //        ProductUOMQty = qty,
-        //        State = "confirmed",              
-        //        CompanyId = self.Inventory.CompanyId,
-        //        Company = self.Inventory.Company,
-        //        Location = location,
-        //        LocationId = location.Id,
-        //        LocationDestId = locationDest.Id,
-        //        LocationDest = locationDest,
-        //    };
-        //}
+        private StockMove _get_move_values(StockInventoryLine self, decimal qty, StockLocation location, StockLocation locationDest)
+        {
+            return new StockMove
+            {
+                Name = "INV:" + self.Inventory.Name,
+                Product = self.Product,
+                ProductId = self.ProductId,
+                ProductUOM = self.ProductUOM,
+                ProductUOMId = self.ProductUOMId,
+                Date = self.Inventory.Date,
+                InventoryId = self.InventoryId,
+                ProductUOMQty = qty,
+                //State = "confirmed",
+                CompanyId = self.Inventory.CompanyId,
+                Company = self.Inventory.Company,
+                Location = location,
+                LocationId = location.Id,
+                LocationDestId = locationDest.Id,
+                LocationDest = locationDest,
+            };
+        }
 
-        //public override Expression<Func<StockInventoryLine, bool>> RuleDomainGet(IRRule rule)
-        //{
-        //    var companyObj = GetService<ICompanyService>();
-        //    var companyIds = companyObj.GetAllCompanyChildren(CompanyId);
-        //    switch (rule.Code)
-        //    {
-        //        case "stock.stock_inventory_line_comp_rule":
-        //            return x => companyIds.Contains(x.CompanyId.Value);
-        //        default:
-        //            return null;
-        //    }
-        //}
+        public override ISpecification<StockInventoryLine> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "stock.stock_inventory_line_comp_rule":
+                    return new InitialSpecification<StockInventoryLine>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
+        }
     }
 }

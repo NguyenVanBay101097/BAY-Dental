@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> Get([FromQuery] StockInventoryPaged val)
         {
             var result = await _stockInventoryService.GetPagedResultAsync(val);
@@ -34,20 +36,23 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _stockInventoryService.GetDisplay(id);
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> DefaultGet(StockInventoryDefaultGet val)
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
+        public async Task<IActionResult> DefaultGet()
         {
-            var res = await _stockInventoryService.DefaultGet(val);
+            var res = await _stockInventoryService.DefaultGet();
             return Ok(res);
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Stock.Inventory.Create")]
         public async Task<IActionResult> Create(StockInventorySave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -61,6 +66,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Update")]
         public async Task<IActionResult> Update(Guid id, StockInventorySave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -73,6 +79,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Update")]
         public async Task<IActionResult> PrepareInventory(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -84,12 +91,13 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetlistProductInventory(Guid id)
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
+        public async Task<IActionResult> GetInventoryLineByProductId(StockInventoryLineByProductId val)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var res = await _stockInventoryService.GetListProductInventory(id);
+            var res = await _stockInventoryService.InventoryLineByProductId(val);
 
             _unitOfWork.Commit();
 
@@ -97,6 +105,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Update")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -108,7 +117,22 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Update")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _stockInventoryService.ActionCancel(ids);
+
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Stock.Inventory.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var inventory = await _stockInventoryService.GetByIdAsync(id);

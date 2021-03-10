@@ -1,3 +1,4 @@
+import { ProductPaged, ProductService } from './../../products/product.service';
 import { StockInventoryService } from './../stock-inventory.service';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -15,10 +16,12 @@ export class StockInventoryProductListComponent implements OnInit {
   @Output() newEventEmiter = new EventEmitter<any>()
   search: string;
   @Input() inventoryId: string;
+  limit = 20;
+  skip = 0;
   listFilter: any[] = [];
   listProduct: any[] = [];
   searchUpdate = new Subject<string>();
-  constructor(private stockInventoryService: StockInventoryService,
+  constructor(private stockInventoryService: StockInventoryService, private productService: ProductService,
     private fb: FormBuilder,) { }
 
   ngOnInit() {
@@ -37,11 +40,17 @@ export class StockInventoryProductListComponent implements OnInit {
 
   loadDataFromApi() {
     if (this.inventoryId) {
-      this.stockInventoryService
-        .getlistProductInventory(this.inventoryId).subscribe(
-          (res: any) => {
-            this.listFilter = res;
-            this.listProduct = res;
+      var val = new ProductPaged();
+      val.limit = 1000;
+      val.offset = this.skip;
+      val.search = this.search || "";
+      val.type = "product";
+  
+      this.productService
+        .getPaged(val).subscribe(
+          (res) => {
+            this.listFilter = res.items;
+            this.listProduct = res.items;
           },
           (err) => {
             console.log(err);

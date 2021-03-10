@@ -27,20 +27,9 @@ namespace Infrastructure.Services
             var res = new List<QuantOrder>();
             var location = move.Location;
 
-            var states = new string[] {"production", "supplier" };
+            var states = new string[] {"inventory","production", "supplier" };
             if (states.Contains(location.Usage))
                 return reservations;
-
-            if(location.Usage == "inventory")
-            {
-                var line = await inventoryLineObj.SearchQuery(x => x.InventoryId == move.InventoryId.Value && x.LocationId == move.Inventory.LocationId && x.ProductId == move.ProductId).FirstOrDefaultAsync();
-
-                if(line.TheoreticalQty < line.ProductQty)
-                    return reservations;
-                else
-                    return await _QuantsGetReservation(qty, move);
-
-            }
 
 
             return await _QuantsGetReservation(qty, move);

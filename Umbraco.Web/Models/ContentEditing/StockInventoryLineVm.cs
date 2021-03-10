@@ -40,6 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class StockInventoryLineSave
     {
         public Guid Id { get; set; }
+
         public Guid LocationId { get; set; }
 
         public Guid ProductId { get; set; }
@@ -55,12 +56,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Số lượng chính lý thuyết
         /// </summary>
         public decimal? TheoreticalQty { get; set; }
-
-        public Guid? InventoryId { get; set; }
-
-        public Guid? CompanyId { get; set; }
-
-        public int? Sequence { get; set; }
     }
 
     public class StockInventoryLineDisplay
@@ -72,7 +67,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid ProductId { get; set; }
 
-        public ProductDisplay Product { get; set; }
+        public ProductSimple Product { get; set; }
 
         public Guid ProductUOMId { get; set; }
         public UoMBasic ProductUOM { get; set; }
@@ -94,5 +89,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanySimple Company { get; set; }
 
         public int? Sequence { get; set; }
+    }
+
+    public class StockInventoryLineByProductId
+    {
+        public Guid ProductId { get; set; }
+        public Guid InventoryId { get; set; }
     }
 }

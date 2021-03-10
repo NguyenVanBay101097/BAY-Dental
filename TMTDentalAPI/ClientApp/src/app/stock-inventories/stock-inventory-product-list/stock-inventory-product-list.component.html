@@ -11,7 +11,7 @@
             </thead>
             <tbody>
                 <tr (click)="addProductInventory(item)" *ngFor="let item of listFilter;let i = index">
-                    <td [title]="item.product.name" class="sticky-td">{{item.product?.name}}</td>
+                    <td [title]="item.name" class="sticky-td">{{item.name}}</td>
                     <!-- <td class="sticky-td text-right">{{item.listPrice | number}}</td> -->
                 </tr>
             </tbody>

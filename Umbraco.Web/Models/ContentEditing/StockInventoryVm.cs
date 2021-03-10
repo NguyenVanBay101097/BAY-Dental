@@ -7,6 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class StockInventoryBasic
     {
         public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         public DateTime Date { get; set; }
@@ -51,18 +52,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Dòng điều chỉnh
         /// </summary>
         public IEnumerable<StockInventoryLineSave> Lines { get; set; } = new List<StockInventoryLineSave>();
-
-        /// <summary>
-        /// Dịch chuyển kho được tạo ra
-        /// </summary>
-        //public IEnumerable<StockMoveSave> Moves { get; set; }
-
-        /// <summary>
-        /// draft : nháp
-        /// confirmed : đang xử lý
-        /// done : hoàn thành
-        /// </summary>
-        public string State { get; set; }
 
         /// <summary>
         /// Địa điểm kiểm kho
@@ -155,7 +144,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class StockInventoryDefaultGet
     {
-        public Guid? CompanyId { get; set; }
     }
 
     public class ProductStockInventory

@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -62,31 +63,33 @@ namespace Infrastructure.Services
 
         public async Task<StockInventoryDisplay> GetDisplay(Guid id)
         {
+            var lineObj = GetService<IStockInventoryLineService>();
+            var stockMoveObj = GetService<IStockMoveService>();
             var res = await SearchQuery(x => x.Id == id)
-               .Include(x => x.Lines).ThenInclude(s => s.Location)
-               .Include(s => s.Lines).ThenInclude(s => s.Product)
-               .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
-               .Include(x => x.Moves)
                .Include(x => x.Criteria)
                 .Include(x => x.Location)
                 .Include(x => x.Product)
                 .Include(x => x.Category)
                 .FirstOrDefaultAsync();
 
+            //get inventorylines
+            res.Lines = await lineObj.SearchQuery(x => x.InventoryId == res.Id).Include(x => x.Location).Include(x => x.Product).Include(x => x.ProductUOM).ToListAsync();
+
+            //get stockmoves
+            res.Moves = await stockMoveObj.SearchQuery(x => x.InventoryId == res.Id && x.State == "done").Include(x => x.Product).Include(x => x.ProductUOM).ToListAsync();
+
             var display = _mapper.Map<StockInventoryDisplay>(res);
 
             return display;
         }
 
-        public async Task<StockInventoryDisplay> DefaultGet(StockInventoryDefaultGet val)
+        public async Task<StockInventoryDisplay> DefaultGet()
         {
             ///lấy vị trí kho
-            var location = await DefaultStockLocation(val.CompanyId.Value);
-
+            var location = await DefaultStockLocation();
             var display = new StockInventoryDisplay();
-            display.CompanyId = val.CompanyId.Value;
+            display.CompanyId = CompanyId;
             display.LocationId = location.Id;
-            display.Location = _mapper.Map<StockLocationSimple>(location);
             display.Filter = "none";
             display.Date = DateTime.Now;
             display.Exhausted = false;
@@ -99,26 +102,18 @@ namespace Infrastructure.Services
         {
             var inventory = _mapper.Map<StockInventory>(val);
             await CreateAsync(inventory);
-
             return inventory;
         }
-
-
 
         public async Task UpdateStockInventory(Guid id, StockInventorySave val)
         {
             var inventory = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Product)
-                .Include(x => x.Category)
-                .Include(x => x.Criteria)
                 .Include(x => x.Lines)
-                .Include(x => x.Moves)
                 .FirstOrDefaultAsync();
 
             inventory = _mapper.Map(val, inventory);
             SaveInventoryLines(val, inventory);
             await UpdateAsync(inventory);
-
         }
 
         public async Task PrepareInventory(IEnumerable<Guid> ids)
@@ -171,7 +166,7 @@ namespace Infrastructure.Services
             var productObj = GetService<IProductService>();
             var criteriaObj = GetService<IStockInventoryCriteriaService>();
             var stockQuantObj = GetService<IStockQuantService>();
-            var locationIds = await locationObj.SearchQuery(x => x.CompanyId == self.CompanyId).Select(x => x.Id).ToListAsync(); //lấy tất cả các location 
+            var locationIds = new List<Guid>() { self.LocationId }; //lấy tất cả các location 
 
             //Xác định những sản phẩm sẽ filter, ví dụ lọc theo nhóm sản phẩm thì chỉ lấy những sản phẩm thuộc nhóm sản phẩm
             var products_to_filter = new List<Product>().AsEnumerable();
@@ -208,9 +203,11 @@ namespace Infrastructure.Services
                     ProductQty = x.Count() > 0 ? x.Sum(s => s.Qty) : 0,
                 }).ToListAsync();
 
+            //dictionary product
+
             foreach (var item in group)
             {
-                var product = productObj.GetById(item.ProductId);
+                var product = productObj.GetById(item.ProductId); //nên tối ưu
                 quant_products = quant_products.Union(new List<Product>() { product });
                 var line = new StockInventoryLine
                 {
@@ -239,7 +236,7 @@ namespace Infrastructure.Services
             //Trả về những chi tiết cho sản phẩm hết hàng
             var productObj = GetService<IProductService>();
             var types = new List<string>() { "service", "consu" };
-            var query = productObj.SearchQuery(x => !types.Contains(x.Type));
+            var query = productObj.SearchQuery(x => !types.Contains(x.Type)); //có cần search active true
             if (products.Any())
             {
                 var exhausted_products = products.Except(quant_products);
@@ -261,7 +258,6 @@ namespace Infrastructure.Services
             var vals = new List<StockInventoryLine>();
             foreach (var product in exhausted_products2)
             {
-
                 vals.Add(new StockInventoryLine
                 {
                     CompanyId = self.CompanyId,
@@ -276,10 +272,10 @@ namespace Infrastructure.Services
             return vals;
         }
 
-        public async Task<StockLocation> DefaultStockLocation(Guid companyId)
+        public async Task<StockLocation> DefaultStockLocation()
         {
             var whObj = GetService<IStockWarehouseService>();
-            var wh = await whObj.SearchQuery(x => x.CompanyId == companyId).Include(x => x.Location).FirstOrDefaultAsync();
+            var wh = await whObj.SearchQuery(x => x.CompanyId == CompanyId).Include(x => x.Location).FirstOrDefaultAsync();
             if (wh != null)
                 return wh.Location;
             return null;
@@ -314,8 +310,7 @@ namespace Infrastructure.Services
 
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
-            var inventorylineObj = GetService<IStockInventoryLineService>();
-            var inventories = await SearchQuery(x => ids.Contains(x.Id))
+            var self = await SearchQuery(x => ids.Contains(x.Id))
                .Include(x => x.Product)
                .Include(x => x.Category)
                .Include(x => x.Moves)
@@ -324,25 +319,24 @@ namespace Infrastructure.Services
                .Include(s => s.Lines).ThenInclude(s => s.ProductUOM)
                .ToListAsync();
 
-
-
-            /// create stockmove to stockinventoryline
-            foreach (var inventory in inventories)
+            foreach (var inventory in self)
             {
                 foreach (var line in inventory.Lines)
-                    await inventorylineObj.ResolveInventoryLine(line);
-
-                inventory.State = "done";
-
+                {
+                    if (line.ProductQty < 0 && line.ProductQty != line.TheoreticalQty)
+                    {
+                        throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.NameGet, line.ProductQty));
+                    }
+                }
             }
 
-            //await ActionCheck(inventories);
+            await ActionCheck(self);
 
-            await UpdateAsync(inventories);
+            foreach (var inventory in self)
+                inventory.State = "done";
+            await UpdateAsync(self);
 
-
-            await PostInventory(inventories);
-
+            await PostInventory(self);
         }
 
         private void SaveInventoryLines(StockInventorySave val, StockInventory inventory)
@@ -360,22 +354,59 @@ namespace Infrastructure.Services
                 inventory.Lines.Remove(line);
             }
 
+            var sequence = 0;
             foreach (var line in val.Lines)
             {
                 if (line.Id == Guid.Empty)
                 {
                     var item = _mapper.Map<StockInventoryLine>(line);
+                    item.CompanyId = inventory.CompanyId;
+                    item.Sequence = sequence++;
                     inventory.Lines.Add(item);
                 }
                 else
                 {
                     var l = inventory.Lines.SingleOrDefault(c => c.Id == line.Id);
                     _mapper.Map(line, l);
+                    l.Sequence = sequence++;
                 }
-
             }
         }
 
+        public async Task<StockInventoryLineDisplay> InventoryLineByProductId(StockInventoryLineByProductId val)
+        {
+            var locationObj = GetService<IStockLocationService>();
+            var productObj = GetService<IProductService>();
+            var stockQuantObj = GetService<IStockQuantService>();
+            var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.UOM).FirstOrDefaultAsync();
+            var locationIds = await locationObj.SearchQuery(x => x.CompanyId == product.CompanyId).Select(x => x.Id).ToListAsync();
+
+            var stockQuant = await stockQuantObj.SearchQuery(x => locationIds.Contains(x.LocationId) &&
+                 x.CompanyId == product.CompanyId && (x.ProductId == val.ProductId))
+                 .GroupBy(x => new { x.ProductId, x.LocationId })
+                 .Select(x => new
+                 {
+                     ProductId = x.Key.ProductId,
+                     LocationId = x.Key.LocationId,
+                     ProductQty = x.Count() > 0 ? x.Sum(s => s.Qty) : 0,
+                 }).FirstOrDefaultAsync();
+
+
+            var line = new StockInventoryLineDisplay
+            {
+                CompanyId = product.CompanyId,
+                InventoryId = val.InventoryId,
+                LocationId = stockQuant.LocationId,
+                ProductId = product.Id,
+                Product = _mapper.Map<ProductSimple>(product),
+                ProductUOMId = product.UOMId,
+                ProductUOM = _mapper.Map<UoMBasic>(product.UOM),
+                TheoreticalQty = stockQuant.ProductQty,
+                ProductQty = stockQuant.ProductQty,
+            };
+
+            return line;
+        }
 
         public async Task<IEnumerable<ProductStockInventory>> GetListProductInventory(Guid id)
         {
@@ -452,97 +483,51 @@ namespace Infrastructure.Services
             return res;
         }
 
-        //public void ActionDone(IEnumerable<long> ids)
-        //{
-        //    var self = SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).Include(x => x.Moves).ToList();
-        //    ActionDone(self);
-        //}
-
-        //public void ActionDone(IEnumerable<StockInventory> self)
-        //{
-        //    var lineObj = GetService<StockInventoryLineService>();
-        //    //foreach (var inventory in self)
-        //    //{
-        //    //    foreach (var line in inventory.Lines)
-        //    //    {
-        //    //        //if (line.ProductQty < 0 && line.ProductQty != line.TheoreticalQty)
-        //    //        //{
-        //    //        //    throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.NameGet(), line.ProductQty));
-        //    //        //}
-        //    //    }
-        //    //}
-
-        //    ActionCheck(self);
-        //    foreach (var inventory in self)
-        //        inventory.State = "done";
-        //    //Update(self);
-
-        //    PostInventory(self);
-        //}
-
-        //public void ActionCancel(string uid, IList<long> ids)
-        //{
-        //    ActionCancelDraft(uid, ids);
-        //}
-
         public async Task PostInventory(IEnumerable<StockInventory> self)
         {
             var moveObj = GetService<IStockMoveService>();
-            await moveObj.ActionDone(self.SelectMany(x => x.Moves).Where(x => x.State != "done"));
+            await moveObj.ActionDone(self.SelectMany(x => x.Moves).Where(x => x.State != "done").ToList());
         }
 
-        //public async Task ActionCheck(IEnumerable<StockInventory> self)
-        //{
-        //    //Checks the inventory and computes the stock move to do
-        //    var inventoryLineObj = GetService<IStockInventoryLineService>();
-        //    var moveObj = GetService<IStockMoveService>();
-        //    foreach (var inventory in self.Where(x => x.State != "done" && x.State != "cancel"))
-        //    {
-        //        moveObj.Unlink(inventory.Moves);
-        //        var lines = await inventoryLineObj.SearchQuery(x => x.InventoryId == inventory.Id).Include(x => x.Product)
-        //            .Include(x => x.Inventory).Include(x => x.Location).Include(x => x.ProductUOM).ToListAsync();
-        //        await inventoryLineObj._GenerateMoves(inventory.Lines);
-        //        //inventoryLineObj._GenerateMoves(lines);
-        //    }
-        //}
+        public async Task ActionCheck(IEnumerable<StockInventory> self)
+        {
+            var inventoryLineObj = GetService<IStockInventoryLineService>();
+            foreach (var inventory in self.Where(x => x.State != "done" && x.State != "cancel"))
+            {
+                await inventoryLineObj._GenerateMoves(inventory.Lines);
+            }
+        }
 
-        //private void ActionCheck(string uid, IList<StockInventory> inventories)
-        //{
-        //    //Checks the inventory and computes the stock move to do
-        //    var inventoryLineObj = DependencyResolver.Current.GetService<StockInventoryLineService>();
-        //    var moveObj = DependencyResolver.Current.GetService<StockMoveService>();
-        //    foreach (var inventory in inventories)
-        //    {
-        //        moveObj.Delete(inventory.Moves.ToList());
-        //        foreach (var line in inventory.Lines)
-        //        {
-        //            inventoryLineObj.ResolveInventoryLine(line);
-        //        }
-        //    }
-        //}
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var stockMoveObj = GetService<IStockMoveService>();
+            var lineObj = GetService<IStockInventoryLineService>();
+            var inventories = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines)
+                .Include(x => x.Moves)
+                .ToListAsync();
 
-        //public void ActionCancelDraft(string uid, IList<long> ids)
-        //{
-        //    foreach (var inv in Search(x => ids.Contains(x.Id)))
-        //    {
-        //        inv.Lines.Clear();
-        //        DependencyResolver.Current.GetService<StockMoveService>().ActionCancel(uid, inv.Moves.Select(x => x.Id));
-        //        inv.State = "draft";
-        //        Update(inv);
-        //    }
-        //}
+            foreach (var inv in inventories)
+            {
+                await lineObj.DeleteAsync(inv.Lines);
+                await stockMoveObj.DeleteAsync(inv.Moves);
+                inv.State = "draft";
+            }
 
-        //public override Expression<Func<StockInventory, bool>> RuleDomainGet(IRRule rule)
-        //{
-        //    var companyObj = DependencyResolver.Current.GetService<CompanyService>();
-        //    var companyIds = companyObj.GetAllCompanyChildren(CompanyId);
-        //    switch (rule.Code)
-        //    {
-        //        case "stock.stock_inventory_comp_rule":
-        //            return x => companyIds.Contains(x.CompanyId);
-        //        default:
-        //            return null;
-        //    }
-        //}
+            await UpdateAsync(inventories);
+        }
+
+        public override ISpecification<StockInventory> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "stock.stock_inventory_comp_rule":
+                    return new InitialSpecification<StockInventory>(x => companyIds.Contains(x.CompanyId));
+                default:
+                    return null;
+            }
+        }
     }
 }

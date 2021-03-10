@@ -50,6 +50,7 @@ using ApplicationCore.Utilities;
 using TMTDentalAPI.ActionFilters;
 using TMTDentalAPI.OdataControllers;
 using Serilog;
+using MediatR;
 
 namespace TMTDentalAPI
 {
@@ -560,6 +561,8 @@ namespace TMTDentalAPI
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
             });
+
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -609,6 +612,7 @@ namespace TMTDentalAPI
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseMiddleware<MigrateDbMiddleware>();
+            app.UseMiddleware(typeof(ProcessUpdateMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseAuthentication();
