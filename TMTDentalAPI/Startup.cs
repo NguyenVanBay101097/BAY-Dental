@@ -317,6 +317,7 @@ namespace TMTDentalAPI
             services.AddScoped<ISurveyTagService, SurveyTagService>();
             services.AddScoped<ISaleOrderLineProductRequestedService, SaleOrderLineProductRequestedService>();
 
+            services.AddScoped<ISurveyUserInputLineService, SurveyUserInputLineService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
