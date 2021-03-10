@@ -383,8 +383,8 @@ namespace Infrastructure.Services
                 sale.State = "sale";
                 sale.DateDone = null;
             }
-                
-            
+
+
 
             await UpdateAsync(self);
         }
@@ -2373,23 +2373,6 @@ namespace Infrastructure.Services
             return lines;
         }
 
-        public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)
-        {
-            Sudo = true;
-            var query = SearchQuery(x => x.State == "done" && !x.Assignments.Any());
-
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search));
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateDone >= val.DateFrom);
-
-            if (val.DateTo.HasValue)
-            {
-                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateDone <= dateTo);
-            }
-
         public async Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
@@ -2434,7 +2417,23 @@ namespace Infrastructure.Services
 
             return res;
         }
-    }
+
+        public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)
+        {
+            Sudo = true;
+            var query = SearchQuery(x => x.State == "done" && !x.Assignments.Any());
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateDone >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+            {
+                var dateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateDone <= dateTo);
+            }
 
             var totalItem = await query.CountAsync();
             var items = await query.OrderBy(x => x.DateDone).Skip(val.Offset).Take(val.Limit).Select(x => new SaleOrderToSurvey()
