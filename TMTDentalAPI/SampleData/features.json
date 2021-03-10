@@ -116,6 +116,32 @@
             "Permission": "Basic.AccountPayment.Delete"
           }
         ]
+      },
+      {
+        "Name": "Yêu cầu vật tư",
+        "Permission": "Basic.ProductRequest",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.ProductRequest.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.ProductRequest.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.ProductRequest.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.ProductRequest.Delete"
+          },
+          {
+            "Name": "Xuất kho",
+            "Permission": "Basic.ProductRequest.Done"
+          }
+        ]
       }
     ]
   },
