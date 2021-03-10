@@ -233,6 +233,11 @@ namespace Infrastructure.Data
         public DbSet<SurveyTag> SurveyTags { get; set; }
         public DbSet<SurveyUserInputSurveyTagRel> SurveyUserInputSurveyTagRels { get; set; }
 
+        public DbSet<ProductBom> ProductBoms { get; set; }
+        public DbSet<ProductRequest> ProductRequests { get; set; }
+        public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
+        public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -420,6 +425,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SurveyCallContentConfiguration());
             builder.ApplyConfiguration(new SurveyTagConfiguration());
             builder.ApplyConfiguration(new SurveyUserInputSurveyTagRelConfiguration());
+            builder.ApplyConfiguration(new ProductBomConfiguration());
+            builder.ApplyConfiguration(new ProductRequestConfiguration());
+            builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
             //builder

@@ -20,6 +20,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<StockPicking, StockPickingBasic>();
             CreateMap<StockPicking, StockPickingDisplay>();
+
+            CreateMap<StockPickingSimple, StockPicking>();
+            CreateMap<StockPicking, StockPickingSimple>();
         }
     }
 }

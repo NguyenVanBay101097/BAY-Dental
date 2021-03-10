@@ -33,6 +33,22 @@ export class SaleOrderLinesLaboPaged {
     laboState: string;
 }
 
+export class ProductBomForSaleOrderLine {
+    id: string;
+    materialProductName: string;
+    materialProductId: string;
+    producUOMName: string;
+    quantity: number;
+    sequence: number;
+    requestedQuantity: number;
+}
+
+export class SaleOrderLineForProductRequest {
+    id: string;
+    name: string;
+    boms: ProductBomForSaleOrderLine[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
     apiUrl = 'api/SaleOrderLines';

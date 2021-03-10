@@ -94,8 +94,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     var gridPaged = new AccountPaymentPaged();
     gridPaged.companyId = this.authService.userInfo.companyId;
     gridPaged.journalType = this.resultSelection == "cash_bank" ? '' : this.resultSelection;
-    gridPaged.paymentDateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    gridPaged.paymentDateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    gridPaged.paymentDateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    gridPaged.paymentDateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';

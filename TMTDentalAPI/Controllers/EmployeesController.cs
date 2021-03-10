@@ -137,6 +137,7 @@ namespace TMTDentalAPI.Controllers
                     user.Active = true;
                     user.Email = employee.Email;
                     user.PhoneNumber = employee.Phone;
+                    user.CompanyId = val.UserCompanyId.HasValue? val.UserCompanyId.Value : user.CompanyId;
                     var updateResult = await _userManager.UpdateAsync(user);
                     if (!updateResult.Succeeded)
                         throw new Exception($"Cập nhật người dùng không thành công");

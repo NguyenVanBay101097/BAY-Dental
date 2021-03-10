@@ -423,12 +423,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type2))
                 query = query.Where(x => x.Type2 == val.Type2);
 
-            return await query.OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).Select(x => new ProductSimple
-            {
-                Id = x.Id,
-                Name = x.Name,
-                PriceUnit = x.ListPrice
-            }).ToListAsync();
+            var res = await query.Include(x => x.UOM).OrderBy(x => x.Name).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            return _mapper.Map<IEnumerable<ProductSimple>>(res);
         }
 
         public async Task<Product> CreateProduct(ProductDisplay val)
@@ -491,20 +487,27 @@ namespace Infrastructure.Services
 
             _SaveProductSteps(product, val.StepList);
 
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
-            return await CreateAsync(product);
+            product = await CreateAsync(product);
+
+            return product;
         }
 
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps)
+            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x => x.Boms)
                 .Include(x => x.ProductUoMRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
+
+            _SaveProductBoms(product, val.Boms);
+
             _SaveUoMRels(product, val);
 
             //_SetStandardPrice(product, val.StandardPrice);
@@ -579,6 +582,39 @@ namespace Infrastructure.Services
             }
         }
 
+        private void _SaveProductBoms(Product product, IEnumerable<ProductBomSave> val)
+        {
+            var existBoms = product.Boms.ToList();
+            var ToRemoves = new List<ProductBom>();
+
+            var valIds = val.Select(x => x.Id).ToList();
+            ToRemoves = existBoms.Where(x => !valIds.Contains(x.Id)).ToList();
+
+            foreach (var bom in ToRemoves)
+                product.Boms.Remove(bom);
+
+            int sequence = 0;
+            foreach (var line in val)
+            {
+                if (line.Id == Guid.Empty)
+                {
+                    var item = _mapper.Map<ProductBom>(line);
+                    item.Sequence = sequence++;
+                    product.Boms.Add(item);
+                }
+                else
+                {
+                    var item = product.Boms.SingleOrDefault(c => c.Id == line.Id);
+                    if (item != null)
+                    {
+                        _mapper.Map(line, item);
+                        item.Sequence = sequence++;
+                    }
+                }
+
+            }
+        }
+
         public async Task UpdateProduct(Guid id, ProductLaboSave val)
         {
             var product = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
@@ -590,13 +626,25 @@ namespace Infrastructure.Services
 
         public async Task<ProductDisplay> GetProductDisplay(Guid id)
         {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.ProductCompanyRels)
+            //tách ra nhiều câu query nhỏ hơn và map view model trả về
+            var product = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO).FirstOrDefaultAsync();
+
             var res = _mapper.Map<ProductDisplay>(product);
+
+            var bomObj = GetService<IProductBomService>();
+            var boms = await bomObj.SearchQuery(x => x.ProductId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.MaterialProduct)
+                .Include(x => x.ProductUOM)
+                .ToListAsync();
+
+            res.Boms = _mapper.Map<IEnumerable<ProductBomBasic>>(boms);
+
             //res.StandardPrice = _GetStandardPrice(product);
             res.ListPrice = await _GetListPrice(product);
+
             return res;
         }
 

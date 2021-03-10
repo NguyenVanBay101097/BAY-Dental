@@ -1,0 +1,137 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="productRequestDisplay.state == 'done'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'done'" [class.btn-secondary]="productRequestDisplay.state == 'done'" type="button">
+                        Đã xuất
+                    </button>
+                    <button [disabled]="productRequestDisplay.state == 'confirmed'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'confirmed'" [class.btn-secondary]="productRequestDisplay.state == 'confirmed'" type="button">
+                        Đang yêu cầu
+                    </button>
+                    <button [disabled]="productRequestDisplay.state == 'draft'" class="btn o_arrow_button disabled" [class.btn-primary]="productRequestDisplay.state == 'draft'" [class.btn-secondary]="productRequestDisplay.state == 'draft'" type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="seeForm">
+                                        {{productRequestDisplay.date | date: 'shortDate'}}
+                                    </span>
+                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{productRequestDisplay.user?.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Bác sĩ chỉ định</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="seeForm">{{productRequestDisplay.employee?.name}}</span>
+                                    <kendo-combobox [class.d-none]="seeForm" [filterable]="true" [data]="filteredEmployees" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.employee.errors.required">Vui lòng chọn bác sĩ chỉ định</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section">
+                    <div class="section-left" *ngIf="!seeForm">
+                        <table class="table table-sm table-hover border-bottom">
+                            <thead>
+                                <tr>
+                                    <th>Dịch vụ/Vật tư</th>
+                                    <th>Định mức</th>
+                                    <th>Đã yêu cầu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let item of listProductBoms; index as i">
+                                    <tr>
+                                        <td colspan="3" class="font-weight-bold bg-primary text-white">
+                                            {{item.name}}
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let item_child of item.boms; index as j" (click)="clickBom(item_child, item.id)">
+                                        <td>{{item_child.materialProductName}}</td>
+                                        <td>{{item_child.quantity | number}} {{item_child.producUOMName}}</td>
+                                        <td>{{item_child.requestedQuantity | number}}</td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="section-full" [class.section-right]="!seeForm">
+                        <table class="table table-sm table-hover table-tbody-ver-align-middle border-bottom">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <!-- <th>Mã sản phẩm</th> -->
+                                    <th>Vật tư</th>
+                                    <th>Dịch vụ</th>
+                                    <th>ĐVT</th>
+                                    <th>Số lượng</th>
+                                    <th *ngIf="!seeForm">#</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of lines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td>{{i + 1}}</td>
+                                        <!-- <td>{{line.get('product').value ? line.get('product').value.defaultCode : ''}}</td> -->
+                                        <td>{{line.get('product').value ? line.get('product').value.name : ''}}</td>
+                                        <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
+                                        <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>
+                                        <td class="text-right">
+                                            <kendo-numerictextbox *ngIf="!seeForm" style="width: 100px" [min]="0" [max]="getMax(line)" [format]="'n0'" [autoCorrect]="true" formControlName="productQty">
+                                            </kendo-numerictextbox>
+                                            <span *ngIf="seeForm">{{line.get('productQty').value}}</span>
+                                        </td>
+                                        <td *ngIf="!seeForm">
+                                            <button class="btn btn-icon btn-sm btn-light" title="Xóa" (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button *ngIf="productRequestDisplay.state == 'draft'" type="button" class="btn btn-primary mr-2" (click)="onSave()">Lưu</button>
+    <button *ngIf="productRequestDisplay.state == 'draft'" type="button" class="btn btn-primary mr-2" (click)="onConfirmed()">Yêu cầu</button>
+    <button *ngIf="productRequestDisplay.state == 'confirmed'" type="button" class="btn btn-danger mr-2" (click)="onCancel()">Hủy yêu cầu</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onClose()">Đóng</button>
+</div>
