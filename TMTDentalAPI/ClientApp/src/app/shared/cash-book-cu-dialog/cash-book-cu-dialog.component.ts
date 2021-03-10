@@ -400,10 +400,17 @@ export class CashBookCuDialogComponent implements OnInit {
     }
   }
 
-  printPhieu(id: string) {
-    this.accountPaymentService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
-    });
+  printPhieu(id?: string) {
+    if(id){
+      this.accountPaymentService.getPrint(id).subscribe((data: any) => {
+        this.printService.printHtml(data.html);
+      });
+    }
+    else{
+      this.accountPaymentService.getPrint(this.itemId).subscribe((data: any) => {
+        this.printService.printHtml(data.html);
+      });
+    }
   }
 
   onCancel() {
@@ -413,7 +420,7 @@ export class CashBookCuDialogComponent implements OnInit {
     modalRef.result.then((result) => {
       this.accountPaymentService.actionCancel([this.itemId]).subscribe((result) => {
         this.notificationService.show({
-          content: "Hủy phiếu thành công",
+          content: "Hủy thành công",
           hideAfter: 3000,
           position: { horizontal: "center", vertical: "top" },
           animation: { type: "fade", duration: 400 },

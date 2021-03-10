@@ -331,7 +331,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
   searchProducts(q?: string) {
     var filter = new ProductFilter();
     filter.search = q || '';
-    filter.type = 'product';
     filter.type2 = 'product';
     filter.limit = 1000;
     filter.offset = 0;

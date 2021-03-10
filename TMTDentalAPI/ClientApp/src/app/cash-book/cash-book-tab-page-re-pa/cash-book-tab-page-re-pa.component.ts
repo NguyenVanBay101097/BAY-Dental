@@ -154,7 +154,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
       modalRef.result.then((res) => {
         this.accountPaymentService.unlink([item.id]).subscribe(() => {
           this.notificationService.show({
-            content: "Xóa phiếu thành công",
+            content: "Xóa thành công",
             hideAfter: 3000,
             position: { horizontal: "center", vertical: "top" },
             animation: { type: "fade", duration: 400 },
