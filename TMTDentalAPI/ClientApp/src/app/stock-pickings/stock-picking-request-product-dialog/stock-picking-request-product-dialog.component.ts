@@ -11,10 +11,11 @@ import { ProductRequestService } from 'src/app/shared/product-request.service';
 })
 export class StockPickingRequestProductDialogComponent implements OnInit {
   id: string;
+  title: string;
   productRequest: ProductRequestDisplay;
 
   constructor(
-    private activateModal: NgbActiveModal,
+    public activateModal: NgbActiveModal,
     private modalService: NgbModal,
     private productRequestService: ProductRequestService
   ) { }
