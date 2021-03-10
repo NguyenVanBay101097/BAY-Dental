@@ -298,7 +298,7 @@ export class StockInventoryFormComponent implements OnInit {
     } else {
       var line = this.lines.controls.find(x => x.value.productId === res.value.productId);
       if (line) {
-        line.value.theoreticalQty += 1;
+        line.value.productQty += 1;
         line.patchValue(line.value);
       }
     }
