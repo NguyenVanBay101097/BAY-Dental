@@ -26,5 +26,6 @@ namespace Infrastructure.Services
         Task<AccountRegisterPaymentDisplay> PartnerDefaultGetV2(PartnerDefaultSearch val);
         Task<AccountPaymentDisplay> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val);
         Task<AccountPaymentDisplay> SalaryPaymentDefaultGet();
+        Task<AccountRegisterPaymentDisplay> DefaultGet(IEnumerable<Guid> invoice_ids);
     }
 }

@@ -10,7 +10,6 @@ import {
 } from "src/app/account-journals/account-journal.service";
 import { AuthService } from "src/app/auth/auth.service";
 import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
-import { SalaryPaymentService } from "src/app/shared/services/salary-payment.service";
 import * as _ from "lodash";
 import { EmployeeService } from "src/app/employees/employee.service";
 import { debounceTime, switchMap, tap } from "rxjs/operators";
@@ -21,6 +20,7 @@ import { Observable } from 'rxjs';
 import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { SalaryPaymentDisplay, SalaryPaymentService } from '../salary-payment.service';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -29,16 +29,17 @@ import { PartnerSimple } from 'src/app/partners/partner-simple';
 })
 export class SalaryPaymentFormComponent implements OnInit {
   formGroup: FormGroup;
+  type: string;
   title: string;
   id: string;
-  salaryPayment: any;
+  salaryPayment: SalaryPaymentDisplay = new SalaryPaymentDisplay();
   filteredJournals: any = [];
-  filteredPartners: PartnerSimple[] = [];
+  filteredEmployees: EmployeeSimple[] = [];
   public minDateTime: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   public maxDateTime: Date = new Date(new Date(this.monthEnd.setHours(23, 59, 59)).toString());
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
-  @ViewChild("partnerCbx", { static: true }) partnerCbx: ComboBoxComponent;
+  @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
   submitted = false;
 
   constructor(
@@ -48,8 +49,6 @@ export class SalaryPaymentFormComponent implements OnInit {
     private notificationService: NotificationService,
     private salaryPaymentService: SalaryPaymentService,
     private authService: AuthService,
-    private partnerService: PartnerService,
-    private accountPaymentService: AccountPaymentService,
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
@@ -58,12 +57,12 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      Name: null,
-      DateObj: [null, Validators.required],
-      Journal: [null, Validators.required],
-      Partner: [null, Validators.required],
-      Amount: [0, Validators.required],
-      Reason: null,
+      name: null,
+      dateObj: [null, Validators.required],
+      journal: [null, Validators.required],
+      employee: [null, Validators.required],
+      amount: [0, Validators.required],
+      reason: null,
     });
 
 
@@ -71,35 +70,29 @@ export class SalaryPaymentFormComponent implements OnInit {
       this.loadFilteredJournals();
       this.loadEmployees();
       this.filterChangeCombobox();
-    });
 
-    if (this.id) {
-      this.loadData();
-    } else {
-      this.defaultGet();
-    }
+      if (this.id) {
+        this.loadData();
+      } else {
+        this.defaultGet();
+      }
+    });
   }
 
   loadData() {
-    this.salaryPaymentService.getIdSP(this.id).subscribe(
-      (result) => {
+    this.salaryPaymentService.get(this.id).subscribe(
+      (result: any) => {
+        console.log(result);
         this.salaryPayment = result;
-        let date = new Date(result.Date);
-        this.formGroup.get('DateObj').patchValue(date);
+        let date = new Date(result.date);
+        this.formGroup.get('dateObj').patchValue(date);
         this.formGroup.patchValue(result);
-        // this.formGroup.get('name').patchValue(result.Name);
-        if (result.Employee) {
-          result.Employee.id = result.Employee.Id;
-          result.Employee.name = result.Employee.Name;
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Employee], "id");
+        if (result.employee) {
+          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.employee], "id");
         }
-
-        if (result.Journal) {
-          result.Journal.id = result.Journal.Id;
-          result.Journal.name = result.Journal.Name;
-          this.filteredJournals = _.unionBy(this.filteredJournals, [result.Journal], "id");
+        if (result.journal) {
+          this.filteredJournals = _.unionBy(this.filteredJournals, [result.journal], "id");
         }
-
       },
       (error) => {
         console.log(error);
@@ -108,18 +101,14 @@ export class SalaryPaymentFormComponent implements OnInit {
   }
 
   defaultGet() {
-    this.formGroup.get('DateObj').patchValue(new Date());
-  }
-
-  loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = "bank,cash";
-    val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe(
-      (result) => {
-        this.filteredJournals = result;
-        if (this.filteredJournals.length) {
-          this.formGroup.get('Journal').patchValue(this.filteredJournals[0]);
+    this.salaryPaymentService.defaultGet(this.type).subscribe(
+      (result: any) => {
+        this.salaryPayment = result;
+        let date = new Date(result.date);
+        this.formGroup.get('dateObj').patchValue(date);
+        this.formGroup.patchValue(result);
+        if (result.journal) {
+          this.filteredJournals = _.unionBy(this.filteredJournals, [result.journal], "id");
         }
       },
       (error) => {
@@ -128,51 +117,53 @@ export class SalaryPaymentFormComponent implements OnInit {
     );
   }
 
-  onChangeDate(date) {
-    console.log(date);
+  loadFilteredJournals() {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.companyId = this.authService.userInfo.companyId;
+    this.accountJournalService.autocomplete(val).subscribe(
+      (result) => {
+        this.filteredJournals = _.unionBy(this.filteredJournals, result, "id");
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   loadEmployees() {
     this.searchEmployees().subscribe((result) => {
-      this.filteredPartners = _.unionBy(this.filteredPartners, result, "id");
+      this.filteredEmployees = _.unionBy(this.filteredEmployees, result.items, "id");
     });
   }
 
   searchEmployees(filter?: string) {
-    var val = new PartnerFilter();
-    val.employee = true;
+    var val = new EmployeePaged();
     val.active = true;
     val.search = filter || "";
-    return this.partnerService.autocomplete2(val);
+    return this.employeeService.getEmployeePaged(val);
   }
 
   filterChangeCombobox() {
-    this.partnerCbx.filterChange
+    this.employeeCbx.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
-        tap(() => (this.partnerCbx.loading = true)),
+        tap(() => (this.employeeCbx.loading = true)),
         switchMap((val) => this.searchEmployees(val.toString().toLowerCase()))
       )
       .subscribe((result) => {
-        this.filteredPartners = result;
-        this.partnerCbx.loading = false;
+        this.filteredEmployees = result.items;
+        this.employeeCbx.loading = false;
       });
   }
 
-  onSave$() {
-    this.submitted = true;
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
-
+  onSave$(): Observable<Object> {
     const salaryPayment = Object.assign({}, this.formGroup.value);
-    salaryPayment.JournalId = salaryPayment.Journal.id;
-    salaryPayment.EmployeeId = salaryPayment.Employee ? salaryPayment.Employee.id : null;
-    salaryPayment.Date = this.intlService.formatDate(salaryPayment.DateObj, 'yyyy-MM-ddTHH:mm:ss');
-    salaryPayment.Type = salaryPayment.Type;
-    salaryPayment.CompanyId = this.authService.userInfo.companyId;
+    salaryPayment.journalId = salaryPayment.journal.id;
+    salaryPayment.employeeId = salaryPayment.employee.id;
+    salaryPayment.date = this.intlService.formatDate(salaryPayment.dateObj, 'yyyy-MM-ddTHH:mm:ss');
+    salaryPayment.type = this.type;
 
     if (this.id) {
       return this.salaryPaymentService.update(this.id, salaryPayment);
@@ -181,61 +172,18 @@ export class SalaryPaymentFormComponent implements OnInit {
     }
   }
 
-  onSave() {
-    const save$ = this.onSave$() as Observable<any>;
-    save$.subscribe((res: any) => {
-      if (this.id) {
-        this.id = this.id;
-      } else {
-        this.id = res.Id;
-      }
-      this.loadData();
-      this.activeModal.close()
-      this.printSalaryPayment(this.id);
-    });
-  }
-
-  onSaveV2() {
-    var value = this.formGroup.value;
-    var val = new AccountPaymentSave();
-    val.amount = value.Amount;
-    val.communication = value.Reason;
-    val.journalId = value.Journal.id;
-    val.partnerId = value.Partner.id;
-    val.partnerType = "employee.advance";
-    val.paymentDate = this.intlService.formatDate(value.DateObj, "yyyy-MM-ddTHH:mm");
-    val.paymentType = "outbound";
-    if (this.id) {
-      this.accountPaymentService.update(this.id, val).subscribe(
-        result => {
-          this.loadData();
-          this.activeModal.close()
-          this.printSalaryPayment(this.id);
-        }
-      )
-    } else {
-      this.accountPaymentService.create(val).subscribe(
-        result => {
-          this.loadData();
-          this.activeModal.close()
-          this.printSalaryPayment(this.id);
-        }
-      )
+  onSavePrint() {
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
     }
-  }
 
-  actionConfirmV2() {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xác nhận tạm ứng lương";
-    modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
-    modalRef.result.then(
-      () => {
-        this.accountPaymentService.post(['e7b74910-12b4-43cc-c74e-08d8c1d8ca78']).subscribe(
-          result=>{
-            this.notify('success','Xác nhận tạm ứng lương thành công')
-          }
-        )
-      })
+    this.onSave$().subscribe((res: any) => {
+      this.activeModal.close({
+        id: res ? res.id : this.id,
+        print: true
+      });
+    });
   }
 
   actionConfirm() {
@@ -244,10 +192,10 @@ export class SalaryPaymentFormComponent implements OnInit {
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
     modalRef.result.then(
       () => {
-        if (!this.salaryPayment) {
+        if (!this.id) {
           const save$ = this.onSave$() as Observable<any>;
           save$.subscribe((res: any) => {
-            this.salaryPaymentService.actionConfirm([res.Id]).subscribe(
+            this.salaryPaymentService.actionConfirm([res.id]).subscribe(
               () => {
                 this.notify('success', 'Tạm ứng lương thành công');
                 this.activeModal.close();
@@ -283,16 +231,12 @@ export class SalaryPaymentFormComponent implements OnInit {
     });
   }
 
-  checkIsDisable(id) {
-    if (id && this.salaryPayment && this.salaryPayment.State !== 'waiting') {
-      return true;
-    } else {
-      return false;
-    }
+  get editable() {
+    return this.salaryPayment.state == 'waiting';
   }
 
-  printSalaryPayment(ids) {
-    this.salaryPaymentService.onPrint([ids]).subscribe(
+  printItem(id) {
+    this.salaryPaymentService.getPrint([id]).subscribe(
       result => {
         if (result && result['html']) {
           this.printService.printHtml(result['html']);

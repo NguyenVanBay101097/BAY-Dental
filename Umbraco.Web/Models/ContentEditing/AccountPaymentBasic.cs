@@ -26,10 +26,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Communication { get; set; }
 
-        public string LoaiThuChiName { get; set; }
-
-        public string DestinationAccountName { get; set; }
-
         public string DisplayPaymentType
         {
             get

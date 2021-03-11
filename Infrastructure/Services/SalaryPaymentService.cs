@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,21 @@ namespace Infrastructure.Services
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+        }
+
+        public async Task<PagedResult2<SalaryPaymentBasic>> GetPagedResultAsync(SalaryPaymentPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var totalItems = await query.CountAsync();
+            var items = await _mapper.ProjectTo<SalaryPaymentBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
+
+            return new PagedResult2<SalaryPaymentBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
         }
 
         public override async Task<IEnumerable<SalaryPayment>> CreateAsync(IEnumerable<SalaryPayment> self)
@@ -58,37 +74,41 @@ namespace Infrastructure.Services
         public async Task<SalaryPayment> CreateSalaryPayment(SalaryPaymentSave val)
         {
             var salaryPayment = _mapper.Map<SalaryPayment>(val);
-            salaryPayment.CompanyId = CompanyId;
+            var journalObj = GetService<IAccountJournalService>();
+            var journal = await journalObj.GetByIdAsync(salaryPayment.JournalId);
+            salaryPayment.CompanyId = journal.CompanyId;
 
             return await CreateAsync(salaryPayment);
         }
 
 
-        public async Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<MultiSalaryPaymentVm> vals)
+        public async Task<IEnumerable<Guid>> CreateAndConfirmMultiSalaryPayment(IEnumerable<PayslipCreateSalaryPaymentSave> vals)
         {
             var listSalaryPayment = new List<SalaryPayment>();
             var salaryPaymentDict = new Dictionary<Guid, SalaryPayment>();
+            var journalObj = GetService<IAccountJournalService>();
             foreach (var item in vals)
             {
                 var salaryPayment = new SalaryPayment();
-                salaryPayment.JournalId = item.JournalId.Value;
+                salaryPayment.JournalId = item.JournalId;
                 salaryPayment.Date = item.Date;
                 salaryPayment.EmployeeId = item.EmployeeId;
                 salaryPayment.Reason = item.Reason;
-                salaryPayment.Amount = item.Amount.Value;
-                salaryPayment.State = "waiting";
+                salaryPayment.Amount = item.Amount;
                 salaryPayment.Type = "salary";
-                salaryPayment.CompanyId = CompanyId;
+
+                var journal = await journalObj.GetByIdAsync(item.JournalId);
+                salaryPayment.CompanyId = journal.CompanyId;
 
                 listSalaryPayment.Add(salaryPayment);
-                salaryPaymentDict.Add(item.HrPayslipId.Value, salaryPayment);
+                salaryPaymentDict.Add(item.PayslipId, salaryPayment);
             }
 
             await CreateAsync(listSalaryPayment);
             await ActionConfirm(listSalaryPayment.Select(x => x.Id).ToList());
 
             var hrPayslipObj = GetService<IHrPayslipService>();
-            var hrpayslipIds = vals.Select(x => x.HrPayslipId).ToList();
+            var hrpayslipIds = vals.Select(x => x.PayslipId).ToList();
             var hrPayslips = await hrPayslipObj.SearchQuery(x => hrpayslipIds.Contains(x.Id)).ToListAsync();
             var hrPayslipDict = hrPayslips.ToDictionary(x => x.Id, x => x);
 
@@ -240,9 +260,9 @@ namespace Infrastructure.Services
 
             var rec_pay_line_name = "/";
             if (payment.Type == "advance")
-                rec_pay_line_name = payment.Name + " " + "Tạm ứng";
+                rec_pay_line_name = "Tạm ứng";
             else if (payment.Type == "salary")
-                rec_pay_line_name = payment.Name + " " + "Chi lương";
+                rec_pay_line_name = "Chi lương";
 
             var liquidity_line_name = payment.Name;
             var balance = payment.Amount;
@@ -250,7 +270,7 @@ namespace Infrastructure.Services
             {
                 new AccountMoveLine
                 {
-                    Name =  rec_pay_line_name,
+                    Name = !string.IsNullOrEmpty(payment.Reason) ? payment.Reason : rec_pay_line_name,
                     Debit = balance > 0 ? balance : 0,
                     Credit = balance < 0 ? -balance : 0,
                     AccountId = accDebit334.Id,
@@ -386,38 +406,29 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<SalaryPaymentDisplay>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        public async Task<IEnumerable<PayslipCreateSalaryPaymentDisplay>> DefaulCreateBy(IEnumerable<Guid> payslipIds)
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
-            var JournalObj = GetService<IAccountJournalService>();
-            var slipRun = await slipRunObj.SearchQuery(x => x.Id == val.PayslipRunId)
-                .Include(x => x.Slips).ThenInclude(x => x.Employee).Select(x => new
-                {
-                    Date = x.Date,
-                    Slips = x.Slips.Where(y => val.PayslipIds.Contains(y.Id))
-                }).FirstOrDefaultAsync();
-            var journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery(x => x.Name.ToLower().Contains("tiền mặt"))).FirstOrDefaultAsync();
-            if (journal == null)
-            {
-                journal = await _mapper.ProjectTo<AccountJournalSimple>(JournalObj.SearchQuery()).FirstOrDefaultAsync();
-            }
+            var payslipObj = GetService<IHrPayslipService>();
+            var journalObj = GetService<IAccountJournalService>();
 
-            if (slipRun == null) throw new Exception("không tồn tại đợt lương!");
-            var payments = new List<SalaryPaymentDisplay>();
-            foreach (var slip in slipRun.Slips)
+            var payslips = await payslipObj.SearchQuery(x => payslipIds.Contains(x.Id) && !x.SalaryPaymentId.HasValue)
+                .Include(x => x.PayslipRun)
+                .Include(x => x.Employee)
+                .ToListAsync();
+
+            var journal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var payments = new List<PayslipCreateSalaryPaymentDisplay>();
+            foreach (var slip in payslips)
             {
-                if (slip.AccountPaymentId.HasValue) continue;
-                payments.Add(new SalaryPaymentDisplay()
+                payments.Add(new PayslipCreateSalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),
-                    Date = DateTime.Now,
-                    EmployeeId = slip.EmployeeId,
+                    Date = DateTime.Today,
                     Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
-                    JournalId = journal.Id,
-                    Journal = journal,
-                    Reason = "Chi lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
-                    Type = "advance",
-                    HrPayslipId = slip.Id
+                    Journal = _mapper.Map<AccountJournalSimple>(journal),
+                    Reason = "Chi lương tháng " + slip.PayslipRun.Date.Value.ToString("MM/yyyy"),
+                    PayslipId = slip.Id
                 });
             }
             return payments;

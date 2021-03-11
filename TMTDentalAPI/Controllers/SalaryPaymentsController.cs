@@ -2,38 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
-using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
-using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
-namespace TMTDentalAPI.OdataControllers
+namespace TMTDentalAPI.Controllers
 {
-    [Route("odata/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class SalaryPaymentsController : BaseController
+    public class SalaryPaymentsController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly ISalaryPaymentService _salaryPaymentService;
         private readonly IViewRenderService _view;
         private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IAccountJournalService _journalService;
 
         public SalaryPaymentsController(
             IMapper mapper,
             ISalaryPaymentService salaryPaymentService,
             IViewRenderService view,
             IUserService userService,
-            IUnitOfWorkAsync unitOfWork
+            IUnitOfWorkAsync unitOfWork,
+            IAccountJournalService journalService
           )
         {
             _mapper = mapper;
@@ -41,28 +39,28 @@ namespace TMTDentalAPI.OdataControllers
             _view = view;
             _userService = userService;
             _unitOfWork = unitOfWork;
+            _journalService = journalService;
         }
 
-        [EnableQuery]
         [HttpGet]
         [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get([FromQuery] SalaryPaymentPaged val)
         {
-            var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery());
+            var results = await _salaryPaymentService.GetPagedResultAsync(val);
             return Ok(results);
         }
 
 
-        [EnableQuery]
+        [HttpGet("{id}")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
-        public SingleResult<SalaryPaymentVm> Get([FromODataUri] Guid key)
+        public async Task<IActionResult> Get(Guid id)
         {
+            var res = await _mapper.ProjectTo<SalaryPaymentDisplay>(_salaryPaymentService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (res == null)
+                return NotFound();
 
-            var results = _mapper.ProjectTo<SalaryPaymentVm>(_salaryPaymentService.SearchQuery(x => x.Id == key));
-
-            return SingleResult.Create(results);
+            return Ok(res);
         }
-
 
         [HttpPost]
         [CheckAccess(Actions = "Salary.SalaryPayment.Create")]
@@ -77,27 +75,27 @@ namespace TMTDentalAPI.OdataControllers
             var salaryPayment = await _salaryPaymentService.CreateSalaryPayment(model);
             _unitOfWork.Commit();
 
-            var basic = _mapper.Map<SalaryPaymentVm>(salaryPayment);
-            return Created(basic);
+            var basic = _mapper.Map<SalaryPaymentBasic>(salaryPayment);
+            return Ok(basic);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Update")]
-        public async Task<IActionResult> PUT([FromODataUri] Guid key, SalaryPaymentSave val)
+        public async Task<IActionResult> PUT(Guid id, SalaryPaymentSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.UpdateSalaryPayment(key, val);
+            await _salaryPaymentService.UpdateSalaryPayment(id, val);
             _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Update")]
-        public async Task<IActionResult> ActionConfirm([FromBody] SalaryPaymentIds val)
+        public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             if (!ModelState.IsValid)
             {
@@ -105,29 +103,29 @@ namespace TMTDentalAPI.OdataControllers
             }
 
             await _unitOfWork.BeginTransactionAsync();
-            await _salaryPaymentService.ActionConfirm(val.Ids);
+            await _salaryPaymentService.ActionConfirm(ids);
             _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        //[HttpPost]
-        //[CheckAccess(Actions = "Salary.SalaryPayment.Create")]
-        //public async Task<IActionResult> CreateMultiSalaryPayment([FromBody] SalaryPaymentSalary val)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Salary.SalaryPayment.Create")]
+        public async Task<IActionResult> CreateMultiSalaryPayment(IEnumerable<PayslipCreateSalaryPaymentSave> vals)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    await _unitOfWork.BeginTransactionAsync();
-        //    var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
-        //    _unitOfWork.Commit();
+            await _unitOfWork.BeginTransactionAsync();
+            var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(vals);
+            _unitOfWork.Commit();
 
-        //    return Ok(ids);
-        //}
+            return Ok(ids);
+        }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
@@ -143,34 +141,26 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
-        public async Task<IActionResult> PrintSalaryPayment([FromBody] SalaryPaymentIds val)
+        public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
         {
-            var salaries = await _salaryPaymentService.SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
-            var salaryPayments = _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => val.Ids.Contains(x.Id))).ToList();
-            foreach (var print in salaryPayments)
-            {
-                print.UserName = _userService.GetByIdAsync(print.CreatedById).Result.Name;
-                print.AmountString = AmountToText.amount_to_text(print.Amount);
-            }
+            if (ids == null || !ids.Any())
+                return BadRequest();
 
-            if (val.Ids != null && val.Ids.Any())
-            {
-                var html = _view.Render("SalaryPayment/Print", salaryPayments);
-                return Ok(new PrintData() { html = html });
-            }
-            else
-            {
-                return Ok(new PrintData() { html = null });
-            }
+            var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
+            foreach (var print in salaryPayments)
+                print.AmountString = AmountToText.amount_to_text(print.Amount);
+
+            var html = _view.Render("SalaryPayment/Print", salaryPayments);
+            return Ok(new PrintData() { html = html });
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Delete")]
-        public async Task<IActionResult> Delete([FromODataUri] Guid key)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var salaryPayment = await _salaryPaymentService.GetByIdAsync(key);
+            var salaryPayment = await _salaryPaymentService.GetByIdAsync(id);
             if (salaryPayment.State == "done")
                 throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
 
@@ -181,11 +171,21 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
-        //{
-        //    var res = await _salaryPaymentService.DefaulCreateBy(val);
-        //    return Ok(res);
-        //}
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaulCreateBy(IEnumerable<Guid> payslipIds)
+        {
+            var res = await _salaryPaymentService.DefaulCreateBy(payslipIds);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultGet([FromQuery]string type)
+        {
+            var res = new SalaryPaymentDisplay();
+            res.Type = type;
+            var journal = await _journalService.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
+            res.Journal = _mapper.Map<AccountJournalSimple>(journal);
+            return Ok(res);
+        }
     }
 }
