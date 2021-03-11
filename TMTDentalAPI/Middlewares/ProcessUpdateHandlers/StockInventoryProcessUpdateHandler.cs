@@ -13,7 +13,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class StockInventoryProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
-        private const string _version = "1.0.0.3";
+        private const string _version = "1.0.1.6";
         private IServiceScopeFactory _serviceScopeFactory;
         public StockInventoryProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory)
         {
