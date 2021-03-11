@@ -171,7 +171,7 @@ export class LayoutHeaderComponent implements OnInit {
   }
 
   onChange(item) {
-    this.selectedResult = {};
+    this.selectedResult = null;
     switch (item.type) {
       case "customer":
         window.open(`/partners/customer/${item.id}/overview`, '_blank');
@@ -204,7 +204,6 @@ export class LayoutHeaderComponent implements OnInit {
     )
   }
 
-  onClose() {
-    this.searchResults = [];
+  onClear() {
   }
 }

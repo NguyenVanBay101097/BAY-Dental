@@ -38,7 +38,7 @@
               "src/quan-styles.css",
               "src/thien-styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
-              "node_modules/@ng-select/ng-select/themes/ant.design.theme.css"
+              "node_modules/@ng-select/ng-select/themes/default.theme.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
