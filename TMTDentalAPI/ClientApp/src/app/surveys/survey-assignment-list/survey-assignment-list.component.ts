@@ -6,7 +6,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { count, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -27,7 +27,7 @@ export class SurveyAssignmentListComponent implements OnInit {
   filteredEmployees: EmployeeSimple[];
   employees: EmployeeSimple[] = [];
   search: string;
-  limit = 20;
+  limit = 2;
   offset = 0;
   edit = false;
   dateFrom: Date;
@@ -74,6 +74,7 @@ export class SurveyAssignmentListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.search = value || '';
+        this.offset = 0;
         this.loadDataFromApi();
       });
 
@@ -158,22 +159,31 @@ export class SurveyAssignmentListComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      result.forEach(item => {
-        this.statusCount[item.status] = item.count;
-        this.statusCount['total'] = (this.statusCount['total'] || 0) + item.count;
-      });
+      if (result && result.length > 0) {
+        result.forEach(item => {
+          this.statusCount[item.status] = item.count;
+          var total = 0;
+          total = total + item.count;
+          this.statusCount['total'] = total;
+        });
+      } else {
+        this.statusCount = {};
+      }
+
     });
   }
 
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.offset = 0;
     this.loadDataFromApi();
     this.loadSummary();
   }
 
   statusChange(item) {
     this.status = item ? item.value : '';
+    this.offset = 0;
     this.loadDataFromApi();
   }
 
