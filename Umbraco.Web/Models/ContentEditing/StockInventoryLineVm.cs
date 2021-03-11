@@ -91,6 +91,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? Sequence { get; set; }
     }
 
+    public class StockInventoryLinePrint
+    {
+        public Guid Id { get; set; }
+        //public Guid LocationId { get; set; }
+
+        //public StockLocationSimple Location { get; set; }
+        public string ProductDefaultCode { get; set; }
+        public string ProductName { get; set; }
+
+        public string ProductUOMName { get; set; }
+
+        /// <summary>
+        /// Số lượng chính thực tế
+        /// </summary>
+        public decimal? ProductQty { get; set; }
+
+        /// <summary>
+        /// Số lượng chính lý thuyết
+        /// </summary>
+        public decimal? TheoreticalQty { get; set; }
+
+        public int? Sequence { get; set; }
+    }
+
     public class StockInventoryLineByProductId
     {
         public Guid ProductId { get; set; }

@@ -154,4 +154,8 @@ export class StockInventoryService {
   delete(id: string) {
     return this.http.delete(this.base_api + this.apiUrl + "/" + id);
   }
+
+  getPrint(id: string) {
+    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
+  }
 }

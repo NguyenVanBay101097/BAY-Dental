@@ -23,10 +23,7 @@
                     <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
-                        <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-danger btn-sm"
-                        (click)="actionCancel()" accesskey="1">
-                      Hủy phiếu
-                    </button>
+
                 </div>
             </div>
         </div>
@@ -57,7 +54,12 @@
                         (click)="actionDone()" accesskey="1">
                         Xác nhận kiểm kho
                     </button>
-
+                    <button type="button" *ngIf="id && stateControl == 'confirmed'" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()" accesskey="1">
+                        Hủy phiếu
+                    </button>
+                    <button type="button" *ngIf="id && stateControl != 'draft'" class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
+                        In phiếu</button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
                     <button [disabled]="stateControl !== 'done'" class="btn o_arrow_button disabled"
@@ -122,10 +124,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1">
-                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories" [textField]="'name'" [filterable]="true"
-                                        #categCbx formControlName="category" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories"
+                                        [textField]="'name'" [filterable]="true" #categCbx formControlName="category"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.category.errors.required">Vui lòng chọn nhóm sản phẩm</div>
                                     </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.category?.name}}</span>
@@ -138,10 +142,12 @@
                                     </label>
                                 </td>
                                 <td colspan="1">
-                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias" [textField]="'name'" [filterable]="true"
-                                        #criteriaCbx formControlName="criteria" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias"
+                                        [textField]="'name'" [filterable]="true" #criteriaCbx formControlName="criteria"
+                                        [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.criteria.errors.required">Vui lòng chọn tiêu chí kiểm kho</div>
                                     </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.criteria?.name}}</span>
@@ -205,7 +211,7 @@
 
                 <div class="tab-content flex-1-1-100 mt-2 overflow-hidden" *ngIf=" id && stateControl != 'draft'">
                     <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="o_form_section" >
+                        <div class="o_form_section">
                             <div class="o_form_section_left"
                                 *ngIf="stateControl == 'confirmed' && filterControl == 'partial'">
                                 <div class="t_search_wrapper">
@@ -231,7 +237,8 @@
                                                 [groups]="'product.group_uom'">ĐVT</th>
                                             <th scope="col" style="width: 10%;">Tồn kho</th>
                                             <th scope="col" style="width: 10%;">Thực tế</th>
-                                            <th *ngIf="stateControl != 'done'" scope="col" style="width: 10%;">Thao tác</th>
+                                            <th *ngIf="stateControl != 'done'" scope="col" style="width: 10%;">Thao tác
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="lines">
@@ -245,19 +252,20 @@
                                                         *ngIf="stateControl != 'draft'">{{line.get('productUOM').value.name}}</span>
                                                 </td>
                                                 <td class="text-right align-middle">
-                                                    <span *ngIf="stateControl != 'draft'">{{line.get('theoreticalQty').value
+                                                    <span
+                                                        *ngIf="stateControl != 'draft'">{{line.get('theoreticalQty').value
                                                         | number}}</span>
                                                 </td>
                                                 <td class="text-right">
                                                     <kendo-numerictextbox [min]="0" [format]="'n0'" [autoCorrect]="true"
-                                                        *ngIf="stateControl == 'confirmed'"
-                                                        formControlName="productQty" style="width: 120px;">
+                                                        *ngIf="stateControl == 'confirmed'" formControlName="productQty"
+                                                        style="width: 120px;">
                                                     </kendo-numerictextbox>
                                                     <span
                                                         *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                         | number}}</span>
                                                 </td>
-                                                <td *ngIf="stateControl != 'done' " class="text-center align-middle" >
+                                                <td *ngIf="stateControl != 'done' " class="text-center align-middle">
                                                     <button type="button" title="Hủy" class="btn btn-danger btn-sm"
                                                         (click)="deleteLine(i)">
                                                         <i class="fas fa-trash-alt"></i>
@@ -309,8 +317,7 @@
                                     <th scope="col" style="width: 15%;">STT</th>
                                     <!-- <th scope="col" style="width: 120px;">Mã sản phẩm</th> -->
                                     <th scope="col" style="width: 40%;">Sản phẩm</th>
-                                    <th scope="col" style="width: 5%;" hasGroups
-                                        [groups]="'product.group_uom'">ĐVT</th>
+                                    <th scope="col" style="width: 5%;" hasGroups [groups]="'product.group_uom'">ĐVT</th>
                                     <th scope="col" style="width: 10%;">Số lượng chênh lệch</th>
                                     <!-- <th scope="col" style="width: 10%;">Thực tế</th> -->
                                 </tr>

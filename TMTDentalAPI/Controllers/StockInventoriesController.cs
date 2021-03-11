@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -18,12 +19,14 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IStockInventoryService _stockInventoryService;
+        private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IUnitOfWorkAsync unitOfWork)
+        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IViewRenderService view, IUnitOfWorkAsync unitOfWork)
         {
             _mapper = mapper;
             _stockInventoryService = stockInventoryService;
+            _view = view;
             _unitOfWork = unitOfWork;
         }
 
@@ -129,6 +132,17 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Stock.Inventory.Read")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _stockInventoryService.GetStockInventoryPrint(id);
+
+            var html = _view.Render("StockInventory/Print", res);
+
+            return Ok(new PrintData() { html = html });
         }
 
         [HttpDelete("{id}")]

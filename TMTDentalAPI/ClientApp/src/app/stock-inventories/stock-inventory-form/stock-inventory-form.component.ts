@@ -8,7 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { PrintService } from 'src/app/print.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductService } from 'src/app/products/product.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -372,6 +372,16 @@ export class StockInventoryFormComponent implements OnInit {
       }, () => {
       });
     }
+  }
+
+  onPrintStockInventory() {
+    if (!this.id) {
+      return;
+    }
+    this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
+      console.log(result.html);
+      this.printService.printHtml(result.html);
+    });
   }
 
   getFilter(filter) {

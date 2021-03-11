@@ -17,13 +17,13 @@ namespace Infrastructure.Services
         Task<StockInventory> CreateStockInventory(StockInventorySave val);
         Task UpdateStockInventory(Guid id, StockInventorySave val);
 
-
+        Task<StockInventoryPrint> GetStockInventoryPrint(Guid id);
 
         Task<StockInventoryLineDisplay> InventoryLineByProductId(StockInventoryLineByProductId val);
 
         Task PrepareInventory(IEnumerable<Guid> ids);
         Task ActionDone(IEnumerable<Guid> ids);
 
-        Task ActionCancel(IEnumerable<Guid> ids);
+        Task ActionCancel(IEnumerable<Guid> ids);       
     }
 }

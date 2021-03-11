@@ -296,6 +296,46 @@ namespace Infrastructure.Services
             return entity;
         }
 
+        public async Task<StockInventoryPrint> GetStockInventoryPrint(Guid id)
+        {
+            var lineObj = GetService<IStockInventoryLineService>();
+            var userObj = GetService<IUserService>();
+          
+            var inventory = await SearchQuery(x => x.Id == id).Select(x => new StockInventoryPrint
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Date = x.Date,
+                Company = x.Company != null ? new CompanyPrintVM
+                {
+                    Name = x.Company.Name,
+                    Email = x.Company.Email,
+                    Phone = x.Company.Phone,
+                    Logo = x.Company.Logo,
+                    PartnerCityName = x.Company.Partner.CityName,
+                    PartnerDistrictName = x.Company.Partner.DistrictName,
+                    PartnerWardName = x.Company.Partner.WardName,
+                    PartnerStreet = x.Company.Partner.Street,
+                } : null,
+                Note = x.Note,
+                CreatedById = x.CreatedById
+            }).FirstOrDefaultAsync();
+            var user = await userObj.GetByIdAsync(inventory.CreatedById);
+            inventory.UserName = user.Name;
+            inventory.Lines = await lineObj.SearchQuery(x=> x.InventoryId == inventory.Id).Select(x => new StockInventoryLinePrint { 
+                Id = x.Id,
+                ProductDefaultCode = x.Product.DefaultCode,
+                ProductName = x.Product.Name,
+                ProductUOMName = x.ProductUOM.Name,
+                ProductQty = x.ProductQty,
+                TheoreticalQty = x.TheoreticalQty,
+                Sequence = x.Sequence
+            }).OrderBy(x=>x.Sequence).ToListAsync();
+
+
+            return inventory;
+        }
+
         private async Task _InsertStockInventorySequence()
         {
             var seqObj = GetService<IIRSequenceService>();
