@@ -11,7 +11,7 @@
         <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [resizable]="true" [navigable]="true">
             <kendo-grid-column field="employee" title="Nhân viên" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <kendo-combobox style="width: 100%" (filterChange)="filterChangeEmployee($event)" (selectionChange)="onEmployeeChange($event, rowIndex)" [value]="dataItem.employee" [data]="filteredEmployees" [textField]="'name'" [filterable]="true" #empCbx [valueField]="'id'">
+                    <kendo-combobox style="width: 100%" (filterChange)="filterChangeEmployee($event)" (valueChange)="onEmployeeChange($event, rowIndex)" [value]="dataItem.employee" [data]="filteredEmployees" [textField]="'name'" [filterable]="true" #empCbx [valueField]="'id'">
                     </kendo-combobox>
                 </ng-template>
             </kendo-grid-column>

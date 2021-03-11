@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { aggregateBy } from '@progress/kendo-data-query';
+import { validator } from 'fast-json-patch';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
@@ -41,7 +42,7 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      amount: 0,
+      amount: [0, Validators.max(this.defaultVal.amount)],
       paymentDateObj: [new Date(), Validators.required],
       paymentDate: null,
       communication: null,

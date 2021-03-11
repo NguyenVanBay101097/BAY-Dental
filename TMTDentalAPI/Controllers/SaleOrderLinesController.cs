@@ -86,7 +86,7 @@ namespace TMTDentalAPI.Controllers
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) ||
-                x.OrderPartner.NameNoSign.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search));
+                x.OrderPartner.NameNoSign.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search) || x.Order.Name.Contains(val.Search));
             }
 
             if (val.HasAnyLabo.HasValue)

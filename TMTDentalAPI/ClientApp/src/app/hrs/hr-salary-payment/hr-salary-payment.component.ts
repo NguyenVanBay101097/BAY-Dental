@@ -23,6 +23,7 @@ export class HrSalaryPaymentComponent implements OnInit {
   filteredJournals: any;
   // paymentFA: FormArray;
   paymentForm: FormGroup;
+  payments = [];
   title: string;
 
   constructor(
@@ -55,19 +56,13 @@ export class HrSalaryPaymentComponent implements OnInit {
     if (!this.defaultPara.PayslipIds || !this.defaultPara.PayslipIds.length) {
       this.isDisable = true;
     }
-    if (this.defaultPara) {
-      this.paymentService.defaulCreateBy(this.defaultPara).subscribe((res: any) => {
-        this.paymentFA.clear();
-        res.value.forEach(e => {
+    if (this.payments.length > 0) {
+      this.paymentFA.clear();
+        this.payments.forEach(e => {
           const fg = this.fb.group(new SalaryPaymentSaveDefault());
           fg.patchValue(e);
           this.paymentFA.push(fg);
         });
-      },
-        (error: any) => {
-          this.isDisable = true;
-        }
-      );
     }
   }
 

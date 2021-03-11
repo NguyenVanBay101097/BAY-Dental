@@ -247,6 +247,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+    this.activeModal.close(result);
         });
     } else {
       this.productService.create(data).subscribe(
@@ -258,9 +259,9 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-        });;
+          this.activeModal.close(result);
+        });
     }
-    this.activeModal.close(result);
   }
 
   getBodyData() {

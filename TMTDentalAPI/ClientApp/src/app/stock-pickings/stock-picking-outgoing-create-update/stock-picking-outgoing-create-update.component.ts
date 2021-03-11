@@ -38,6 +38,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[] = [];
   productSearch: string;
   productList: ProductBasic2[] = [];
+  sourceProductList = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
 
@@ -95,12 +96,13 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 0;
     val.offset = 0;
     val.type = 'product,consu';
     val.search = this.productSearch || '';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
+      this.sourceProductList = res.items;
       this.productListSelectable.resetIndex();
     }, err => {
     });
@@ -118,7 +120,18 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   onProductInputSearchChange(text) {
     this.productSearch = text;
-    this.loadProductList();
+
+    if(!this.productSearch || this.productSearch.trim() == '')
+     this.productList = this.sourceProductList;
+     else {
+       this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+      this.productList = this.sourceProductList.filter(x=> x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+      || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0 
+      || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >=0
+      );
+     }
+
+     this.productListSelectable.resetIndex();
   }
 
   loadFilteredPartners() {
@@ -130,6 +143,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
+    val.employee = false;
     // val.customer = true;
     return this.partnerService.getAutocompleteSimple(val);
   }

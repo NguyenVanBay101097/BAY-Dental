@@ -37,7 +37,11 @@ export class SurveyManageEmployeeComponent implements OnInit {
     this.searchSB.pipe(
       debounceTime(400),
       distinctUntilChanged()
-    ).subscribe((val) => { this.search = val || ''; this.loadDataFromApi(); });
+    ).subscribe((val) => { 
+      this.search = val || '';
+      this.skip = 0;
+       this.loadDataFromApi();
+     });
 
     this.loadDataFromApi()
   }

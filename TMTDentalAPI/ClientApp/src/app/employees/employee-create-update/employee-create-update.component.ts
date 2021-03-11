@@ -23,6 +23,7 @@ import { validator } from 'fast-json-patch';
 import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
+import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -41,7 +42,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private companyService: CompanyService,
     private resGroupService: ResGroupService,
     private authService: AuthService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private roleService: RoleService
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -62,6 +64,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   listCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
   groupSurvey: any[] = [];
+  roles: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -99,7 +102,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       avatar: null,
       userAvatar: null,
       groupId: null,
-      isAllowSurvey: false
+      isAllowSurvey: false, 
+      roles: null
     });
 
     setTimeout(() => {
@@ -118,6 +122,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       //   this.userCbx.loading = false;
       // });
       this.loadGroupSurvey();
+
+      this.loadRoles();
     });
     document.getElementById('name').focus();
   }
@@ -134,10 +140,13 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   }
 
   get nameFC() { return this.formCreate.get('name'); }
+  get userNameFC() { return this.formCreate.get('userName'); }
+  get passWordFC() { return this.formCreate.get('userPassword'); }
   get userIdFC() { return this.formCreate.get('userId'); }
 
   get groupIdFC() { return this.formCreate.get('groupId'); }
   get isAllowSurveyFC() { return this.formCreate.get('isAllowSurvey'); }
+  get FC() { return this.formCreate.controls; }
 
   get isUser() {
     return this.formCreate.get('isUser').value;
@@ -286,6 +295,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (value.isUser) {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
+      value.roleIds = value.roles && value.roles.length > 0 ? value.roles.map(x=> x.id) : [];
     }
 
     value.commissionId = value.commission ? value.commission.id : null;
@@ -449,5 +459,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         this.groupIdFC.setValue(this.groupSurvey[0].id);
       }
     }
+  }
+
+  loadRoles() {
+    var page = new ApplicationRolePaged();
+    page.limit = 100;
+    page.offset = 0;
+    this.roleService.getPaged(page).subscribe((res: any) => {
+      this.roles = res.items;
+    });
   }
 }

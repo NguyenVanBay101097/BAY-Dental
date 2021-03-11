@@ -119,4 +119,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
     }
+
+    public class SalaryPaymentDefaulCreateByVM
+    {
+        public IEnumerable<SalaryPaymentDisplay> Data { get; set; } = new List<SalaryPaymentDisplay>();
+        public IEnumerable<string> Errors { get; set; } = new List<string>();
+    }
 }

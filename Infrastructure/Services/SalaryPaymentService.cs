@@ -386,7 +386,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<SalaryPaymentDisplay>> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        public async Task<SalaryPaymentDefaulCreateByVM> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
         {
             var slipRunObj = GetService<IHrPayslipRunService>();
             var JournalObj = GetService<IAccountJournalService>();
@@ -404,9 +404,13 @@ namespace Infrastructure.Services
 
             if (slipRun == null) throw new Exception("không tồn tại đợt lương!");
             var payments = new List<SalaryPaymentDisplay>();
+            var errors = new List<string>();
             foreach (var slip in slipRun.Slips)
             {
-                if (slip.AccountPaymentId.HasValue) continue;
+                if (slip.AccountPaymentId.HasValue) {
+                    errors.Add(@$"{slip.Employee.Name} đã chi lương");
+                    continue;
+                };
                 payments.Add(new SalaryPaymentDisplay()
                 {
                     Amount = slip.NetSalary.GetValueOrDefault(),
@@ -420,7 +424,7 @@ namespace Infrastructure.Services
                     HrPayslipId = slip.Id
                 });
             }
-            return payments;
+            return new SalaryPaymentDefaulCreateByVM() {Data = payments, Errors = errors };
         }
     }
 }

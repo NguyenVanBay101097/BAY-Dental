@@ -81,6 +81,7 @@ export class SurveyManageListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.search = value || '';
+        this.offset = 0;
         this.loadDataFromApi();
       });
 

@@ -37,6 +37,7 @@ export class SurveyTagListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -69,7 +70,7 @@ export class SurveyTagListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(SurveyTagDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Nhãn khảo sát ';
+    modalRef.componentInstance.title = 'Thêm nhãn khảo sát ';
     modalRef.result.then(result => {
       this.notificationService.show({
         content: 'Thêm thành công',
@@ -85,7 +86,7 @@ export class SurveyTagListComponent implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(SurveyTagDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: Nhãn khảo sát';
+    modalRef.componentInstance.title = 'Sửa nhãn khảo sát';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.notificationService.show({
@@ -102,7 +103,8 @@ export class SurveyTagListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: Nhãn khảo sát ';
+    modalRef.componentInstance.title = 'Xóa nhãn khảo sát ';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa nhãn khảo sát';
     modalRef.result.then(() => {
       this.surveyTagService.delete(item.id).subscribe(() => {
         this.notificationService.show({
