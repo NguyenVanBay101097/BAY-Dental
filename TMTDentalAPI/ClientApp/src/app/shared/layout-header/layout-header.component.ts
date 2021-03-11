@@ -12,8 +12,8 @@ import { WebService } from 'src/app/core/services/web.service';
 import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { catchError, concat, count, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { SearchAllService } from '../search-all.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -24,13 +24,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class LayoutHeaderComponent implements OnInit {
   searchResults: any[] = [];
-  isSearch = false;
-  searchInput: string;
+  selectedResult: any;
   arrowkeyLocation = 0;
-  formSelect: FormGroup;
-  resultSelection: string;
-  searchUpdate = new Subject<string>();
+  resultSelection: string = 'all';
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
+  searchLoading: boolean = false;
+  searchString: string = '';
+  searchUpdate = new Subject<string>();
   expire = '';
   constructor(
     private sidebarService: NavSidebarService,
@@ -45,10 +45,6 @@ export class LayoutHeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.formSelect = this.fb.group({
-      type: 'all',
-      searchValue: ''
-    })
     if (localStorage.getItem('user_change_company_vm')) {
       this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
     }
@@ -60,11 +56,14 @@ export class LayoutHeaderComponent implements OnInit {
     });
 
     this.searchUpdate.pipe(
-      debounceTime(400),
+      debounceTime(300),
       distinctUntilChanged())
-      .subscribe(() => {
-        this.fetchAll();
+      .subscribe((res) => {
+        this.searchString = res;
+        this.searchLoading = true;
+        this.onSearch();
       });
+
   }
 
   loadExpire() {
@@ -162,38 +161,17 @@ export class LayoutHeaderComponent implements OnInit {
     });
   }
 
-  fetchAll() {
-    this.resultSelection = this.formSelect.get('type').value;
-    this.isSearch = true;
-    var value = {
-      limit: 20,
-      search: this.searchInput ? this.searchInput : '',
-      resultSelection: this.resultSelection ? this.resultSelection : ''
-    }
-
-    if (!value || !value.search || value.search === '') {
-      this.searchResults = [];
-      this.isSearch = false;
-    } else {
-      this.searchAllService.getAll(value).subscribe(
-        result => {
-          console.log(result);
-
-          this.searchResults = result ? result : [];
-        }
-      )
-    }
-
+  trackByFn(item: any) {
+    return item.id;
   }
 
-  clickOut() {
-    this.isSearch = false;
-    this.arrowkeyLocation = 0;
+  onChangeResultSelection(result) {
+    this.resultSelection = result;
+    this.onSearch();
   }
 
-  clickItem(item) {
-    this.arrowkeyLocation = 0;
-    this.isSearch = false;
+  onChange(item) {
+    this.selectedResult = {};
     switch (item.type) {
       case "customer":
         window.open(`/partners/customer/${item.id}/overview`, '_blank');
@@ -209,35 +187,24 @@ export class LayoutHeaderComponent implements OnInit {
     }
   }
 
- onKeydownHandler(event: KeyboardEvent) {
-    switch (event.keyCode) {
-      case 38: // this is the ascii of arrow up
-        if (this.isSearch && this.arrowkeyLocation > 0) {
-          this.arrowkeyLocation--;
-        } else if (this.isSearch && this.searchResults) {
-          this.arrowkeyLocation = this.searchResults.length - 1;
-        }
-        break;
-      case 40: // this is the ascii of arrow down
-        if (this.isSearch && this.searchResults && ((this.searchResults.length - 1) > this.arrowkeyLocation)) {
-          this.arrowkeyLocation++;
-        } else if (this.isSearch && this.searchResults) {
-          this.arrowkeyLocation = 0;
-        }
-        break;
-      case 13: // this is the ascii of enter
-        if (this.isSearch && this.searchResults && this.searchResults.length > 0) {
-          var item = this.searchResults[this.arrowkeyLocation];
-          if (item) {
-            this.clickItem(item);
-          }
-        }
-        break;
+  onSearch() {
+    var value = {
+      limit: 20,
+      search: this.searchString || '',
+      resultSelection: this.resultSelection ? this.resultSelection : ''
     }
+    this.searchAllService.getAll(value).subscribe(
+      result => {
+        this.searchResults = result ? result : [];
+        this.searchLoading = false;
+      }, error => {
+        console.log(error);
+        this.searchLoading = false;
+      }
+    )
   }
 
-
-  onSearchClick() {
-    this.isSearch = this.searchResults.length > 0 ? true : false;
+  onClose() {
+    this.searchResults = [];
   }
 }

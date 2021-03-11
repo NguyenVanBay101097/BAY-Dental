@@ -78,6 +78,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
 import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { ProductsModule } from '../products/products.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -219,6 +220,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     RouterModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
+    NgSelectModule,
     FormsModule,
     MyCustomNgbModule,
     CalendarModule,
