@@ -158,14 +158,14 @@
                                             <label class="o_form_label">Tài khoản</label>
                                         </td>
                                         <td colspan="1" style="width: 50%;">
-                                            <input type="text" class="form-control" formControlName="userName" />
+                                            <input #name type="text" class="form-control" formControlName="userName" />
                                             <label class="text-danger" *ngIf="(this.userNameFC.dirty || this.userNameFC.touched) && this.userNameFC.errors?.required">Nhập tên tài khoản</label>
                                         </td>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Mật khẩu</label>
                                         </td>
                                         <td colspan="1" style="width: 50%;">
-                                            <input type="password" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
+                                            <input type="password" placeholder="******" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
                                             <label class="text-danger" *ngIf="(this.passWordFC.dirty || this.passWordFC.touched) && this.passWordFC.errors?.required">Nhập mật khẩu</label>
                                         </td>
                                     </tr>
@@ -255,7 +255,7 @@
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label">Lương/Tháng
                                                 <i class="fa fa-question-circle" placement="right"
-                                                    ngbPopover="Lương cơ bản khi ký hợp động, dùng để làm căn cứ tính lương cơ bản theo ngày công"
+                                                    ngbPopover="Lương cơ bản khi ký hợp đồng, dùng để làm căn cứ tính lương cơ bản theo ngày công"
                                                     triggers="mouseenter:mouseleave" popoverTitle="Lương/Tháng"></i>
                                             </label>
                                     </td>
@@ -263,9 +263,9 @@
                                         <div class="input-group mb-3 position-relative">
                                             <kendo-numerictextbox [format]="'n0'" formControlName="wage" [spinners]="false" placeholder="Nhập lương của nhân viên" class="form-control" aria-describedby="wage" [autoCorrect]="true">
                                             </kendo-numerictextbox>
-                                            <!-- <div class="input-group-append position-absolute" style="right: 0;">
-                                    <span class="input-group-text" id="wage">VNĐ</span>
-                                </div> -->
+                                            <div class="input-group-append position-absolute" style="right: 0;">
+                                                <span class="input-group-text" id="wage">VNĐ</span>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -282,9 +282,9 @@
                                         <div class="input-group mb-3 position-relative">
                                             <kendo-numerictextbox [format]="'n0'" formControlName="allowance" [spinners]="false" class="form-control" aria-describedby="allowance" [autoCorrect]="true">
                                             </kendo-numerictextbox>
-                                            <!-- <div class="input-group-append position-absolute" style="right: 0;">
-                                    <span class="input-group-text" id="allowance">VNĐ</span>
-                                </div> -->
+                                            <div class="input-group-append position-absolute" style="right: 0;">
+                                                <span class="input-group-text" id="allowance">VNĐ</span>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

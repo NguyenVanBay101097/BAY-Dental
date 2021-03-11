@@ -71,9 +71,12 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             var res = _mapper.Map<EmployeeDisplay>(employee);
             //get role
-            var roleNames= await _userManager.GetRolesAsync(employee.User);
-            res.Roles = await _roleManager.Roles.Where(x => roleNames.Contains(x.Name))
-                .Select(x=> new ApplicationRoleBasic() { Id = x.Id, Name = x.Name }).ToListAsync();
+            if (employee.User != null)
+            {
+                var roleNames = await _userManager.GetRolesAsync(employee.User);
+                res.Roles = await _roleManager.Roles.Where(x => roleNames.Contains(x.Name))
+                    .Select(x => new ApplicationRoleBasic() { Id = x.Id, Name = x.Name }).ToListAsync();
+            }
             return Ok(res);
         }
 
@@ -138,6 +141,10 @@ namespace TMTDentalAPI.Controllers
                     {
                         if (string.IsNullOrEmpty(val.UserName))
                             throw new Exception("Tên đăng nhập không được trống");
+                        var exist = await _userManager.FindByNameAsync(val.UserName);
+                        if (exist != null)
+                            throw new Exception("Tài khoản đã tồn tại");
+
                         user.UserName = val.UserName;
                     }
 
