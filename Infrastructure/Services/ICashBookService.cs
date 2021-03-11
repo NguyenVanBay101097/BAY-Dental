@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<CashBookReport> GetSumary(CashBookSearch val);
 
         Task<PagedResult2<CashBookReportDetail>> GetDetails(CashBookDetailFilter val);
+        Task<decimal> GetTotal(CashBookSearch val);
     }
 }

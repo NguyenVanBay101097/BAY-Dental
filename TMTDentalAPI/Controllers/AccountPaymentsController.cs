@@ -138,6 +138,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var res = await _paymentService.DefaultGet(invoice_ids);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val)
         {
             var res = await _paymentService.ThuChiDefaultGet(val);
@@ -240,7 +247,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.JournalName;
-                    worksheet.Cells[row, 3].Value = item.DestinationAccountName;
+                    //worksheet.Cells[row, 3].Value = item.DestinationAccountName;
                     worksheet.Cells[row, 4].Value = (item.PaymentType == "inbound") ? item.Amount : -item.Amount;
                     worksheet.Cells[row, 5].Value = item.DisplayPaymentType;
                     worksheet.Cells[row, 6].Value = item.PartnerName;

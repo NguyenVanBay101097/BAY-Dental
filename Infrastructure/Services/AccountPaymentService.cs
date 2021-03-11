@@ -628,10 +628,10 @@ namespace Infrastructure.Services
                 if (inv.Type != dtype)
                 {
                     if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" && inv.Type == "in_refund"))
-                        throw new Exception("You cannot register payments for vendor bills and supplier refunds at the same time.");
+                        throw new Exception("Bạn không thể tạo thanh toán cho mua hàng và trả hàng cùng một lúc.");
 
                     if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" && inv.Type == "out_refund"))
-                        throw new Exception("You cannot register payments for customer invoices and credit notes at the same time.");
+                        throw new Exception("Bạn không thể tạo thanh toán cho bán hàng và trả hàng cùng một lúc.");
                 }
             }
 
@@ -1065,8 +1065,10 @@ namespace Infrastructure.Services
 
         public async Task CancelAsync(IEnumerable<Guid> ids)
         {
-            await CancelAsync(SearchQuery(x => ids.Contains(x.Id)).Include(x => x.MoveLines)
-                .Include("MoveLines.Move").Include("MoveLines.Move.Lines").Include(x => x.AccountMovePaymentRels).ToList());
+            await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.MoveLines).ThenInclude(x => x.Move)
+                .Include(x => x.MoveLines).ThenInclude(x => x.Move).ThenInclude(x => x.Lines)
+                .Include(x => x.AccountMovePaymentRels).ToList());
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
@@ -1077,7 +1079,7 @@ namespace Infrastructure.Services
             {
                 foreach (var move in rec.MoveLines.Select(x => x.Move).Distinct().ToList())
                 {
-                    if (rec.AccountInvoicePaymentRels.Any())
+                    if (rec.AccountMovePaymentRels.Any())
                         await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
 
                     await moveObj.ButtonCancel(new List<Guid>() { move.Id });

@@ -40,6 +40,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
+        public async Task<IActionResult> GetTotal(CashBookSearch val)
+        {
+            var res = await _cashBookService.GetTotal(val);
+            return Ok(res);
+        }
+
         //[HttpGet("[action]")]
         //[CheckAccess(Actions = "Account.Read")]
         //public async Task<IActionResult> ExportExcelFile([FromQuery] CashBookSearch val)

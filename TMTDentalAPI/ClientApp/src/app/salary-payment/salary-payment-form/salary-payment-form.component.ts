@@ -192,10 +192,10 @@ export class SalaryPaymentFormComponent implements OnInit {
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn tạm ứng lương?";
     modalRef.result.then(
       () => {
-        if (!this.salaryPayment) {
+        if (!this.id) {
           const save$ = this.onSave$() as Observable<any>;
           save$.subscribe((res: any) => {
-            this.salaryPaymentService.actionConfirm([res.Id]).subscribe(
+            this.salaryPaymentService.actionConfirm([res.id]).subscribe(
               () => {
                 this.notify('success', 'Tạm ứng lương thành công');
                 this.activeModal.close();

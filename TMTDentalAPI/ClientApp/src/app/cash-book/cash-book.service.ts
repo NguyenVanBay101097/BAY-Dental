@@ -92,9 +92,9 @@ export class CashBookService {
     );
   }
 
-  getTotalReport(val: any): Observable<ReportDataResult> {
-    return this.http.post<ReportDataResult>(
-      this.baseApi + this.apiUrl + "/GetTotalReport",
+  getTotal(val: any): Observable<number> {
+    return this.http.post<number>(
+      this.baseApi + this.apiUrl + "/GetTotal",
       val
     );
   }

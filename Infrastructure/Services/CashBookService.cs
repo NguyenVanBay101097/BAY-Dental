@@ -46,6 +46,31 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<decimal> GetTotal(CashBookSearch val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var cashBookReport = new CashBookReport();
+
+            var types = new string[] { "cash", "bank" };
+            if (val.ResultSelection == "cash")
+                types = new string[] { "cash" };
+            else if (val.ResultSelection == "bank")
+                types = new string[] { "bank" };
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType == "liquidity");
+            var total = await query.SumAsync(x => x.Debit - x.Credit);
+            return total;
+        }
+
         public async Task<CashBookReport> GetSumary(CashBookSearch val)
         {
             var amlObj = GetService<IAccountMoveLineService>();
