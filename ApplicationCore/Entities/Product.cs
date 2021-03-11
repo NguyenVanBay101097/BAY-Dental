@@ -130,5 +130,7 @@ namespace ApplicationCore.Entities
         /// hãng:  nếu là labo thì hãng nào ?
         /// </summary>
         public string Firm { get; set; }
+
+        public ICollection<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRel>();
     }
 }
