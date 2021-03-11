@@ -9,6 +9,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
+using Infrastructure.TenantData;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -36,13 +38,16 @@ namespace TMTDentalAPI.Controllers
         private readonly AppTenant _tenant;
         private readonly IPartnerService _partnerService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TenantDbContext _tenantDbContext;
+        private readonly AppSettings _appSettings;
 
         public CompaniesController(ICompanyService companyService, IUploadService uploadService,
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
             IMapper mapper, IIRModelAccessService modelAccessService,
             IMemoryCache cache, ITenant<AppTenant> tenant,
-            UserManager<ApplicationUser> userManager, IPartnerService partnerService)
+            UserManager<ApplicationUser> userManager, IPartnerService partnerService,
+            TenantDbContext tenantDbContext, IOptions<AppSettings> appSettings)
         {
             _unitOfWork = unitOfWork;
             _companyService = companyService;
@@ -54,6 +59,8 @@ namespace TMTDentalAPI.Controllers
             _tenant = tenant?.Value;
             _userManager = userManager;
             _partnerService = partnerService;
+            _tenantDbContext = tenantDbContext;
+            _appSettings = appSettings?.Value;
         }
 
         [HttpGet]
@@ -207,19 +214,40 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("SetupTenant")]
         public async Task<IActionResult> SetupTenant(CompanySetupTenant val)
         {
+            //nếu tenant = null thì báo lỗi
+            if (_tenant == null)
+                return Ok(new { Success = false, message = "Tên miền chưa đăng ký" });
+            //nếu database đã có dữ liệu thì return false
+            if (_context.Companies.ToList().Count > 0)
+                return Ok(new { Success = false, message = "Database đã có dữ liệu" });
+
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                await _companyService.SetupTenant(val);
+                await _companyService.SetupTenant(new CompanySetupTenant { 
+                    CompanyName = _tenant.CompanyName,
+                    Email = _tenant.Email,
+                    Name = _tenant.Name,
+                    Password = _tenant.Phone,
+                    Phone = _tenant.Phone,
+                    Username = "admin"
+                });
+
                 _unitOfWork.Commit();
+
+                var tenant = await _tenantDbContext.Tenants.Where(x => x.Hostname == _tenant.Hostname).FirstOrDefaultAsync();
+                tenant.Version = _appSettings.Version;
+                _tenantDbContext.SaveChanges();
+
+                _cache.Remove(_tenant.Hostname.ToLower());
             }
             catch(Exception e)
             {
                 _unitOfWork.Rollback();
-                throw e;
+                return Ok(new { Success = false, message = e.Message });
             }
 
-            return Ok(true);
+            return Ok(new { Success = true, message = "" });
         }
 
         [AllowAnonymous]

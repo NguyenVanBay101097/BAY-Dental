@@ -69,6 +69,7 @@ namespace TMTDentalAdmin.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Register(TenantRegisterViewModel val)
         {
+            //Khi đăng ký gọi api sang app -> app check xem bên tenant có đăng ký hay chưa? Nếu có thì tạo database và setup tenant
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
 
@@ -108,7 +109,6 @@ namespace TMTDentalAdmin.Controllers
                         Email = val.Email
                     });
                 }
-
 
                 if (!response.IsSuccessStatusCode)
                     throw new Exception("Đăng ký thất bại, vui lòng thử lại sau");
