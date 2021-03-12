@@ -107,7 +107,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
-    val.employee = false;
     // val.supplier = true;
     return this.partnerService.getAutocompleteSimple(val);
   }

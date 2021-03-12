@@ -14,7 +14,7 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input [accept]="'.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'" (valueChange)="onFileChange($event)">
+                        <app-binary-file-input [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'" (valueChange)="onFileChange($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>
@@ -59,7 +59,7 @@
     <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
-    <button *ngIf="type == 'customer' && isUpdate == true"  (click)="loadExcelUpdateFile()" class="btn btn-info btn-sm">
+    <button *ngIf="type == 'customer' && isUpdate == true" (click)="loadExcelUpdateFile()" class="btn btn-info btn-sm">
         Tải file mẫu
     </button>
     <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info btn-sm">
