@@ -173,11 +173,11 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadDataMoney() {
     var companyId = this.companyId ? this.companyId : null;
-    let cash = this.cashBookService.getTotalReport({ resultSelection: "cash", companyId: companyId });
-    let bank = this.cashBookService.getTotalReport({ resultSelection: "bank", companyId: companyId });
+    let cash = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getTotal({ resultSelection: "bank", companyId: companyId });
     forkJoin([cash, bank]).subscribe(results => {
-      this.moneyCash = results[0] ? results[0].totalAmount : 0;
-      this.moneyBank = results[1] ? results[1].totalAmount : 0;
+      this.moneyCash = results[0];
+      this.moneyBank = results[1];
     });
   }
 

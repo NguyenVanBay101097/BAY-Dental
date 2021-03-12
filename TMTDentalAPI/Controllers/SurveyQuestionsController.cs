@@ -21,16 +21,19 @@ namespace TMTDentalAPI.Controllers
         private readonly ISurveyQuestionService _surveyQuestionService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly ISurveyUserInputLineService _UILineService;
 
         public SurveyQuestionsController(
             ISurveyQuestionService surveyQuestionService,
             IMapper mapper,
-            IUnitOfWorkAsync unitOfWork
+            IUnitOfWorkAsync unitOfWork,
+            ISurveyUserInputLineService UILIneService
             )
         {
             _surveyQuestionService = surveyQuestionService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _UILineService = UILIneService;
         }
 
         [HttpGet]
@@ -216,9 +219,18 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Survey.Question.Read")]
-        public async Task<IActionResult> GetListForSurvey(Guid id)
+        public async Task<IActionResult> GetListForSurvey( Guid? userInputId)
         {
-            var questions = await _surveyQuestionService.SearchQuery()
+            var query = _surveyQuestionService.SearchQuery();
+            if (!userInputId.HasValue || userInputId == null)
+            {
+                query = query.Where(x => x.Active == true);
+            }else
+            {
+                var questionIds = await _UILineService.SearchQuery(x => x.UserInputId == userInputId).Select(x => x.QuestionId).ToListAsync();
+                query = query.Where(x=> questionIds.Contains(x.Id));
+            }
+            var questions = await query
                 .OrderBy(x => x.Sequence).ThenByDescending(x => x.DateCreated)
                 .Include(x => x.Answers).ToListAsync();
 
@@ -226,6 +238,14 @@ namespace TMTDentalAPI.Controllers
                 question.Answers.OrderBy(x => x.Sequence);
 
             return Ok(_mapper.Map<IEnumerable<SurveyQuestionDisplay>>(questions));
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Question.Update")]
+        public async Task<IActionResult> ActionActive([FromBody] ActionActivePar val)
+        {
+            await _surveyQuestionService.ActionActive(val);
+            return Ok();
         }
     }
 }

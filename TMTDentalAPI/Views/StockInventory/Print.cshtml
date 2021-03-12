@@ -1,0 +1,116 @@
+﻿@model Umbraco.Web.Models.ContentEditing.StockInventoryPrint
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<div>
+    <div class="d-flex mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        }
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+    <div class="text-center mb-3">
+        <div class="text-3xl font-semibold">PHIẾU KIỂM KHO</div>
+        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div class="font-semibold">Số: @Model.Name</div>
+    </div>
+    <div class="o_form_view mb-4">
+        <div class="d-flex">
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày Kiểm
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</td>
+                    </tr>
+                  
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group col-6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ghi Chú
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.Note</td>
+                    </tr>          
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mb-1">
+        <h6>
+            DANH SÁCH SẢN PHẨM KIỂM KHO
+        </h6>
+    </div>
+    <table class="table table-sm table-bordered mb-4">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã sản phẩm</th>
+                <th>Sản phẩm</th>
+                <th>Đơn vị tính</th>
+                <th class="text-right">Tồn kho</th>
+                <th class="text-right">Thực tế</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var i = 1;}
+            @foreach (var item in Model.Lines)
+            {
+            <tr>
+                <td>@(i++)</td>
+                <td>@(item.ProductDefaultCode)</td>
+                <td>@(item.ProductName)</td>
+                <td>@(item.ProductUOMName)</td>
+                <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(info, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
+                <td class="text-right">@(item.ProductQty.HasValue ? string.Format(info, "{0:0}", item.ProductQty.Value) : "0")</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex">
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold">Nhân viên kiểm kho</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@Model.UserName.ToUpper()</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Quản lý</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold"></span>
+            </div>
+        </div>
+    </div>
+</div>

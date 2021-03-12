@@ -44,7 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "Survey.UserInput.Read")]
+        [CheckAccess(Actions = "Survey.UserInput.Create")]
         public async Task<IActionResult> Create(SurveyUserInputCreate val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -59,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Survey.UserInput.Update")]
         public async Task<IActionResult> Update(Guid id, SurveyUserInputSave val)
         {
             await _unitOfWork.BeginTransactionAsync();

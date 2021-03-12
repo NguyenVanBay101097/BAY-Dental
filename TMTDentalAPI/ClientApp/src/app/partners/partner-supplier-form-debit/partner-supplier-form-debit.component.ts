@@ -1,10 +1,13 @@
+import { AccountInvoiceRegisterPaymentDialogV2Component } from './../../shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { offset } from '@progress/kendo-date-math';
+import { PartnerGetDebtPagedFilter } from './../partner.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountCommonPartnerReportItemDetail, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService, AccountMoveBasic } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -30,6 +33,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   rowsSelected: any[] = [];
   search: string;
   searchUpdate = new Subject<string>();
+  selectedIds: string[] = [];
   constructor(
     private reportService: AccountCommonPartnerReportService,
     private activeRoute: ActivatedRoute,
@@ -76,17 +80,33 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    var val = new AccountCommonPartnerReportSearch();
-    val.partnerId = this.id;
+    var val = new PartnerGetDebtPagedFilter();
     val.search = this.search ? this.search : '';
     val.companyId = this.authService.userInfo.companyId;
-    this.partnerService.getUnreconcileInvoices(this.id, this.search).subscribe(
+    val.limit = this.limit;
+    val.offset = this.skip;
+
+    this.loading = true;
+    this.partnerService.getDebtPaged(this.id, val)
+    .pipe(
+      map(
+        (response: any) =>
+          <GridDataResult>{
+            data: response.items,
+            total: response.totalItems,
+          }
+      )
+    ).subscribe(
       (res: any) => {
-        this.details = res;
-        this.loadItems();
+        console.log(res);
+        this.gridData = res;
+        this.loading = false;
+      },
+      (err) => {
+        console.log(err);
         this.loading = false;
       }
-    )
+    );
   }
 
   showType(type: string) {
@@ -113,32 +133,55 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   }
 
   onPayment() {
-    if (this.details && this.details.length <= 0) {
-      this.notificationService.show({
-        content: 'Bạn không còn hóa đơn để thanh toán',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'error', icon: true }
-      });
-      return;
+    if (this.selectedIds.length) {
+      this.accountPaymentService.defaultGet(this.selectedIds).subscribe(rs2 => {
+        let modalRef = this.modalService.open(AccountInvoiceRegisterPaymentDialogV2Component, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thanh toán';
+        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.result.then(() => {
+          this.notificationService.show({
+            content: 'Thanh toán thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+
+          this.selectedIds = [];
+          this.loadDataFromApi();
+        }, () => {
+        });
+      })
     }
-    var val = {
-      partnerId: this.id,
-      companyId: this.authService.userInfo.companyId,
-      invoiceIds: this.rowsSelected.map(x => x.id)
-    }
-    this.accountPaymentService.supplierDefaultGet(val).subscribe(result => {
-      let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.rowsSelected = this.rowsSelected;
-      modalRef.componentInstance.defaultVal = result;
-      modalRef.result.then(() => {
-        this.loadDataFromApi();
-        this.rowsSelected = [];
-        this.countPayment = 0;
-      }, () => {
-      });
-    })
+   
+
+
+    // if (this.details && this.details.length <= 0) {
+    //   this.notificationService.show({
+    //     content: 'Bạn không còn hóa đơn để thanh toán',
+    //     hideAfter: 3000,
+    //     position: { horizontal: 'center', vertical: 'top' },
+    //     animation: { type: 'fade', duration: 400 },
+    //     type: { style: 'error', icon: true }
+    //   });
+    //   return;
+    // }
+    // var val = {
+    //   partnerId: this.id,
+    //   companyId: this.authService.userInfo.companyId,
+    //   invoiceIds: this.rowsSelected.map(x => x.id)
+    // }
+    // this.accountPaymentService.supplierDefaultGet(val).subscribe(result => {
+    //   let modalRef = this.modalService.open(PartnerSupplierFormDebitPaymentDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    //   modalRef.componentInstance.rowsSelected = this.rowsSelected;
+    //   modalRef.componentInstance.defaultVal = result;
+    //   modalRef.result.then(() => {
+    //     this.loadDataFromApi();
+    //     this.rowsSelected = [];
+    //     this.countPayment = 0;
+    //   }, () => {
+    //   });
+    // })
 
   }
 

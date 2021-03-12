@@ -111,7 +111,7 @@ namespace Infrastructure.Services
             }
             if (val.DateFrom.HasValue)
             {
-                query = query.Where(x => x.SaleOrder.LastUpdated >= val.DateFrom.Value);
+                query = query.Where(x => x.AssignDate >= val.DateFrom.Value);
             }
             if (val.DateTo.HasValue)
             {

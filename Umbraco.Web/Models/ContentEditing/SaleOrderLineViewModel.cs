@@ -18,6 +18,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<DotKhamStepBasic> Steps { get; set; } = new List<DotKhamStepBasic>();
     }
 
+    public class SaleOrderLineSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
     public class SaleOrderLineSaleTodayVM
     {
         public Guid Id { get; set; }
@@ -43,5 +48,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? AmountResidual { get; set; }
 
         public string State { get; set; }
+    }
+
+    public class SaleOrderLineForProductRequest
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public Guid ProductId { get; set; }
+        public List<ProductBomForSaleOrderLine> Boms { get; set; } = new List<ProductBomForSaleOrderLine>();
     }
 }

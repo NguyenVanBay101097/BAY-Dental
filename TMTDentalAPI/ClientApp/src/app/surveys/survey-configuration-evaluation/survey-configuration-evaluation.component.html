@@ -4,8 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo câu hỏi" [(ngModel)]="search"
-                (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo câu hỏi" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
     </div>
     <div class="o_cp_left">
@@ -13,9 +12,12 @@
             <button class="btn btn-primary btn-sm" (click)="createQuestion()">Thêm</button>
         </div>
         <div class="o_cp_sidebar">
+
         </div>
     </div>
     <div class="o_cp_right">
+        <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onFilterChange($event)" [class]="'kendo-combobox-sm'" [placeholder]="'Tất cả'" [data]="listFilter" [valueField]="'value'" [textField]="'name'">
+        </kendo-combobox>
     </div>
 </div>
 <div class="o_content">
@@ -44,6 +46,12 @@
                             <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi" (click)="doubleQuestion(item)">
                                 <i class="far fa-copy"></i>
                             </button>
+                            <button [ngClass]="item.active? 'btn-danger': 'btn-info'" class="btn btn-info mr-2 btn-sm" (click)="actionActive(item)">
+                                <i *ngIf="item.active" title="Ẩn câu hỏi"
+                                class="fas fa-eye-slash"></i>
+                                <i *ngIf="!item.active" title="Hiện câu hỏi"
+                                class="fas fa-eye"></i>
+                            </button>
                             <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)">
                                 <i class="far fa-trash-alt"></i>
                             </button>
@@ -57,8 +65,7 @@
 
 
 <ng-template #dragHandleTmpl>
-    <svg class="bi bi-list handle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg">
+    <svg class="bi bi-list handle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd"
             d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"
             clip-rule="evenodd" />

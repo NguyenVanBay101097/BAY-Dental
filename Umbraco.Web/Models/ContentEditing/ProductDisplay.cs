@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,8 +22,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public double StandardPrice { get; set; }
 
-        public decimal? LaboPrice { get; set; }
-
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
 
         public IEnumerable<Guid> UoMIds { get; set; } = new List<Guid>();
@@ -34,5 +33,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductCategoryBasic Categ { get; set; }
 
         public string Firm { get; set; }
+        public IEnumerable<ProductStockInventoryCriteriaRelSimple> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRelSimple>();
+        /// <summary>
+        /// list định mức vật tư
+        /// </summary>
+        public IEnumerable<ProductBomBasic> Boms { get; set; } = new List<ProductBomBasic>();
+
+    }
+
+    public class ProductStockInventoryCriteriaRelSimple
+    {
+        public Guid ProductId { get; set; }
+        public Guid StockInventoryCriteriaId { get; set; }
     }
 }

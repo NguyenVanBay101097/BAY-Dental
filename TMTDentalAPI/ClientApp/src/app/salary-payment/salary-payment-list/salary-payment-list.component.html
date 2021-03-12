@@ -26,45 +26,44 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid salaryPaymentBinding [resizable]="true" [sort]="gridSort" [skip]="skip" [filter]="gridFilter" #grid
-        [pageable]="true" [pageSize]="limit">
-        <kendo-grid-column field="Name" title="Mã phiếu" width="120">
+    <kendo-grid [data]="gridData" [skip]="skip" [pageable]="true" [pageSize]="limit" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Mã phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
                     <a class="text-primary" title="Xem phiếu" (click)="editItem(dataItem)">
-                        {{dataItem.Name}}
+                        {{dataItem.name}}
                     </a>
                 </div>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Date" title="Ngày" width="80">
+        <kendo-grid-column field="date" title="Ngày" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Date | date: 'shortDate'}}
+                {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Người nhận" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Employee.Name}}
+                {{dataItem.employeeName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Type" title="Loại phiếu" width="120">
+        <kendo-grid-column field="type" title="Loại phiếu" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{getType(dataItem.Type)}}
+                {{getType(dataItem.type)}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Phương thức" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Journal.Name}}
+                {{dataItem.journalName}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="Amount" title="Số tiền" class="text-right" width="120">
+        <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.Amount | number}}
+                {{dataItem.amount | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="State" title="Trạng thái" width="120">
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{stateGet(dataItem.State)}}
+                {{stateGet(dataItem.state)}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#"

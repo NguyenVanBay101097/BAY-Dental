@@ -99,8 +99,13 @@ namespace ApplicationCore.Entities
 
         public ICollection<ProductStep> Steps { get; set; } = new List<ProductStep>();
 
-        public bool IsLabo { get; set; }
+        /// <summary>
+        /// danh sách định mức vật tư
+        /// </summary>
+        public ICollection<ProductBom> Boms { get; set; } = new List<ProductBom>();
 
+        public bool IsLabo { get; set; }
+ 
         /// <summary>
         /// service: Dich vu
         /// product: Vat tu
@@ -125,5 +130,7 @@ namespace ApplicationCore.Entities
         /// hãng:  nếu là labo thì hãng nào ?
         /// </summary>
         public string Firm { get; set; }
+
+        public ICollection<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRel>();
     }
 }
