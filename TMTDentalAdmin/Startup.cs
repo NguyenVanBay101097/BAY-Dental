@@ -98,13 +98,13 @@ namespace TMTDentalAdmin
             services.AddSingleton<IMailSender, SendGridSender>();
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
             services.AddSingleton<UpdateExpiredDateTenantService>();
-            services.AddCronJob<ScheduleJobService>(c =>
-            {
-                c.TimeZoneInfo = TimeZoneInfo.Local;
-                c.CronExpression = @"55 14 * * *"; //chay moi ngay voi so gio dc set san
-                c.ConnectionStrings = Configuration.GetConnectionString("TenantConnection");
-                c.appSettings = appSettings;
-            });
+            //services.AddCronJob<ScheduleJobService>(c =>
+            //{
+            //    c.TimeZoneInfo = TimeZoneInfo.Local;
+            //    c.CronExpression = @"55 14 * * *"; //chay moi ngay voi so gio dc set san
+            //    c.ConnectionStrings = Configuration.GetConnectionString("TenantConnection");
+            //    c.appSettings = appSettings;
+            //});
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
