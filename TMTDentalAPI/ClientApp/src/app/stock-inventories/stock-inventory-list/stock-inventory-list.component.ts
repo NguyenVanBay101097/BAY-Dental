@@ -19,7 +19,7 @@ export class StockInventoryListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   loading = false;
-  limit = 20;
+  limit = 5;
   dateFrom: Date;
   dateTo: Date;
   offset = 0;
@@ -49,6 +49,7 @@ export class StockInventoryListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.search = value || '';
+        this.offset = 0;
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
@@ -87,12 +88,14 @@ export class StockInventoryListComponent implements OnInit {
   }
 
   onSearchDateChange(data) {
+    this.offset = 0;
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();
   }
 
   onStateChange(e) {
+    this.offset = 0;
     var value = e ? e.value : null;
     if (value) {
       this.state = value;
