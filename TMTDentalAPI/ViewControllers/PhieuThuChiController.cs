@@ -14,12 +14,14 @@ namespace TMTDentalAPI.ViewControllers
     public class PhieuThuChiController : Controller
     {
         private readonly IPhieuThuChiService _phieuThuChiService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public PhieuThuChiController(IPhieuThuChiService phieuThuChiService, IMapper mapper)
+        public PhieuThuChiController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUserService userService)
         {
             _phieuThuChiService = phieuThuChiService;
             _mapper = mapper;
+            _userService = userService;
         }
 
         public async  Task<IActionResult> Print(Guid id)
@@ -29,6 +31,9 @@ namespace TMTDentalAPI.ViewControllers
                 return NotFound();
 
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
+
+            var user = await _userService.GetCurrentUser();
+            phieu.UserName = _phieuThuChiService == null ? null : user.Name;
 
             return View(phieu);
         }
