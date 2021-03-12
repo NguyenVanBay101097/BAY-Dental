@@ -26,63 +26,27 @@
             </li>
         </ul> -->
         <ul class="navbar-nav">
-            <li class="nav-item" style="min-width: 437px;">
-                <ng-select class="margin-top" bindLabel="name" [loading]="peopleLoading" [typeahead]="searchUpdate"
-                    [loadding]="searchLoading" placeholder="Tìm kiếm nhanh" (clear)="onClear()"
-                    (change)="onChange($event)" [items]="searchResults"
-                    typeToSearchText="Nhập tên khách hàng, sđt, mã pđt để tìm kiếm" [(ngModel)]="selectedResult"
-                    (close)="onClose()">
+            <li class="nav-item">
+                <ng-select class="_search_wrapper" bindLabel="name" [typeahead]="searchInput$" (change)="onSearchChange($event)"
+                    [minTermLength]="2" [loading]="searchLoading" placeholder="Tìm kiếm nhanh" [items]="search$ | async"
+                    [(ngModel)]="selectedResult" typeToSearchText="Vui lòng nhập 2 kí tự trở lên">
                     <ng-template ng-header-tmp>
-                        <div class="mb-1">
-                            <div class="form-check form-check-inline">
-                                <input (click)="onChangeResultSelection('all')" checked class="form-check-input"
-                                    type="radio" name="type" id="all" value="all">
-                                <label class="form-check-label-radio" for="all">Tất cả</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" (click)="onChangeResultSelection('customer')"
-                                    type="radio" name="type" id="customer" value="customer">
-                                <label class="form-check-label-radio" for="customer">Khách hàng</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" (click)="onChangeResultSelection('supplier')"
-                                    type="radio" name="type" id="supplier" value="supplier">
-                                <label class="form-check-label-radio" for="supplier">Nhà cung cấp</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" (click)="onChangeResultSelection('sale-order')"
-                                    type="radio" name="type" id="sale-order" value="sale-order">
-                                <label class="form-check-label-radio" for="sale-order">Phiếu điều trị</label>
-                            </div>
+                        <div class="_search_all_header">
+                            <input (click)="onChangeResultSelection('all')" checked class="btn-check" type="radio" name="type" id="all" value="all">
+                            <label class="btn btn-light btn-sm" for="all">Tất cả</label>
+                            <input class="btn-check" (click)="onChangeResultSelection('customer')" type="radio" name="type" id="customer" value="customer">
+                            <label class="btn btn-light btn-sm" for="customer">Khách hàng</label>
+                            <input class="btn-check" (click)="onChangeResultSelection('supplier')"
+                                type="radio" name="type" id="supplier" value="supplier">
+                            <label class="btn btn-light btn-sm" for="supplier">Nhà cung cấp</label>
+                            <input class="btn-check" (click)="onChangeResultSelection('sale-order')"
+                                type="radio" name="type" id="sale-order" value="sale-order">
+                            <label class="fbtn btn-light btn-sm" for="sale-order">Phiếu điều trị</label>
                         </div>
-                        <!-- <button (click)="onChangeResultSelection('all')" class="btn btn-sm btn-primary mr-2">Tất
-                            cả</button>
-                        <button (click)="onChangeResultSelection('customer')" class="btn btn-sm btn-primary mr-2">Khách
-                            hàng</button>
-                        <button (click)="onChangeResultSelection('supplier')"
-                            class="btn btn-sm btn-primary mr-2">NCC</button>
-                        <button (click)="onChangeResultSelection('sale-order')"
-                            class="btn btn-sm btn-primary mr-2">PĐT</button> -->
                     </ng-template>
                     <ng-template ng-option-tmp let-item="item">
-                        <div *ngIf="item.type=='sale-order'">
-
-                            <b>PĐT: </b>{{item.saleOrderName}}
-                        </div>
-                        <div>
-                            <span *ngIf="item.type=='customer' || item.type=='sale-order'"><b>KH: </b></span>
-                            <span *ngIf="item.type=='supplier'"><b>NCC: </b></span> {{item.name}}
-                        </div>
-                        <div *ngIf="item.address"><b>Địa chỉ:</b> {{item.address}}</div>
-                        <div><b>SĐT:</b> {{item.phone}}</div>
-                        <div *ngIf="item.state"><b>Trạng thái: </b>
-                            <span *ngIf="item.state == 'sale'">Đang điều trị</span>
-                            <span *ngIf="item.state == 'done'">Hoàn thành</span>
-                            <span *ngIf="item.state == 'draft'">Nháp</span>
-                        </div>
-                        <div style="padding-top: 5px;" *ngIf="item.tags && item.tags.length > 0">
-                            <span class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color"
-                                *ngFor="let tag of item.tags">{{tag.name}}</span>
+                        <div class="font-weight-600">{{item.name}}</div>
+                        <div [innerHtml]="item.note">
                         </div>
                     </ng-template>
                     <ng-template ng-notfound-tmp>
@@ -96,6 +60,8 @@
                     </ng-template>
                 </ng-select>
             </li>
+        </ul>
+        <ul class="navbar-nav">
             <li class="nav-item dropdown">
                 <a class="nav-link text-success">{{expire}}</a>
             </li>

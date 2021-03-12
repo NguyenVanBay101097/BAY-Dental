@@ -2375,14 +2375,14 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search));
 
-            var res = await query.Skip(val.Offset)
+            var res = await query.OrderByDescending(x => x.DateCreated)
                        .Take(val.Limit)
                        .Select(x => new SearchAllViewModel
                        {
                            Id = x.Id,
-                           Name = "[" + x.Partner.Ref + "]" + " " + x.Partner.Name,
+                           Name = "Phiếu điều trị: " + x.Name,
                            SaleOrderName = x.Name,
                            Address = x.Partner.GetAddress(),
                            Phone = x.Partner.Phone,

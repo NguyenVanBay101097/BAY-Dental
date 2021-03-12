@@ -13,6 +13,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Phone { get; set; }
         public string Type { get; set; }
         public string State { get; set; }
+        public string Note { get; set; }
         public List<PartnerCategoryBasic> Tags { get; set; } = new List<PartnerCategoryBasic>();
     }
 }

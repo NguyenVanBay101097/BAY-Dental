@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NavSidebarService } from '../nav-sidebar.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
@@ -12,10 +12,11 @@ import { WebService } from 'src/app/core/services/web.service';
 import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError, concat, count, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { SearchAllService } from '../search-all.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-layout-header',
@@ -28,10 +29,14 @@ export class LayoutHeaderComponent implements OnInit {
   arrowkeyLocation = 0;
   resultSelection: string = 'all';
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
-  searchLoading: boolean = false;
   searchString: string = '';
   searchUpdate = new Subject<string>();
   expire = '';
+
+  search$: Observable<any[]>;
+  searchLoading = false;
+  searchInput$ = new Subject<string>();
+  @ViewChild('searchAllSelect', {static: true}) searchAllSelect: NgSelectComponent;
   constructor(
     private sidebarService: NavSidebarService,
     private modalService: NgbModal,
@@ -55,15 +60,15 @@ export class LayoutHeaderComponent implements OnInit {
       }
     });
 
-    this.searchUpdate.pipe(
+    this.search$ = this.searchInput$.pipe(
       debounceTime(300),
-      distinctUntilChanged())
-      .subscribe((res) => {
-        this.searchString = res;
-        this.searchLoading = true;
-        this.onSearch();
-      });
-
+      distinctUntilChanged(),
+      tap(() => this.searchLoading = true),
+      switchMap(term => this.onSearch(term).pipe(
+          catchError(() => of([])), // empty list on error
+          tap(() => this.searchLoading = false)
+      ))
+  );
   }
 
   loadExpire() {
@@ -161,17 +166,11 @@ export class LayoutHeaderComponent implements OnInit {
     });
   }
 
-  trackByFn(item: any) {
-    return item.id;
-  }
+  onSearchChange(item) {
+    setTimeout(() => {
+      this.selectedResult = null;
+    });
 
-  onChangeResultSelection(result) {
-    this.resultSelection = result;
-    this.onSearch();
-  }
-
-  onChange(item) {
-    this.selectedResult = null;
     switch (item.type) {
       case "customer":
         window.open(`/partners/customer/${item.id}/overview`, '_blank');
@@ -187,23 +186,12 @@ export class LayoutHeaderComponent implements OnInit {
     }
   }
 
-  onSearch() {
+  onSearch(q?: string) {
     var value = {
       limit: 20,
-      search: this.searchString || '',
+      search: q || '',
       resultSelection: this.resultSelection ? this.resultSelection : ''
     }
-    this.searchAllService.getAll(value).subscribe(
-      result => {
-        this.searchResults = result ? result : [];
-        this.searchLoading = false;
-      }, error => {
-        console.log(error);
-        this.searchLoading = false;
-      }
-    )
-  }
-
-  onClear() {
+    return this.searchAllService.getAll(value);
   }
 }

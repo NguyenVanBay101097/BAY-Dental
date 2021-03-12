@@ -6,12 +6,12 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class GetAllFilterVM
     {
-        public int Limit { get; set; }
         public string Search { get; set; }
         /// <summary>
         /// all tat ca
         /// customer : khach hang
         /// supplier: NCC
+        /// sale-order: Phiếu điều trị
         /// </summary>
         public string ResultSelection { get; set; }
     }
