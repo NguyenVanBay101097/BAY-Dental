@@ -33,7 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public ProductCategoryBasic Categ { get; set; }
 
         public string Firm { get; set; }
-        public IEnumerable<ProductStockInventoryCriteriaRelSimple> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRelSimple>();
+        public IEnumerable<StockInventoryCriteriaSimple> StockInventoryCriterias { get; set; } = new List<StockInventoryCriteriaSimple>();
         /// <summary>
         /// list định mức vật tư
         /// </summary>
