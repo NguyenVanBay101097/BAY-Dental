@@ -159,7 +159,9 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa nhân viên';
     modalRef.result.then(() => {
       this.service.deleteEmployee(id).subscribe(
-        () => { this.getEmployeesList(); }
+        () => {
+          this.notify('success', 'Xóa thành công');
+          this.getEmployeesList(); }
       );
     }, () => {
     });

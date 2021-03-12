@@ -221,7 +221,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
 
 
-        public string DisplayName { get; set; }
+        public string DisplayName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(DisplayName)) return this.DisplayName;
+                else return this.Name;
+            }
+            set { }
+        }
 
         public string Age
         {
