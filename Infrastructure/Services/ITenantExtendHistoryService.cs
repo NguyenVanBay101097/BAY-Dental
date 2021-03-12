@@ -9,6 +9,6 @@ namespace Infrastructure.Services
 {
     public interface ITenantExtendHistoryService : IAdminBaseService<TenantExtendHistory>
     {
-        Task<TenantExtendHistory> CreateAsync(TenantExtendHistorySave val);
+        //Task<TenantExtendHistory> CreateAsync(TenantExtendHistorySave val);
     }
 }

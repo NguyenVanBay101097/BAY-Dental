@@ -54,6 +54,10 @@ export class TenantService {
         return this.http.post(this.baseApi + this.apiUrl + "/UpdateDateExpired", val);
     }
 
+    extendExpired(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ExtendExpired", val);
+    }
+
     updateInfo(id: string, val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/' + id + '/UpdateInfo', val);
     }

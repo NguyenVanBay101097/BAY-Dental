@@ -1,17 +1,17 @@
 <kendo-grid [data]="gridData" [loading]="loading">
-    <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+    <!-- <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.dateCreated | date : 'shortDate'}}
+            {{dataItem.dateCreated | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column> -->
+    <kendo-grid-column field="startDate" title="Ngày" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.startDate | date : 'short'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="startDate" title="Ngày bắt đầu" width="120">
+    <kendo-grid-column field="expirationDate" title="Ngày hết hạn" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.startDate | date : 'shortDate'}}
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="expirationDate" title="Ngày kết thúc " width="120">
-        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.expirationDate | date : 'shortDate'}}
+            {{dataItem.expirationDate | date : 'short'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="activeCompaniesNbr" class="text-right" title="Số chi nhánh" width="120">

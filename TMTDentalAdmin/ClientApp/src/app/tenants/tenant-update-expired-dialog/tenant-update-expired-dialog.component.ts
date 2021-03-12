@@ -36,7 +36,7 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
       this.startDate = this.today;
     }
     this.formGroup = this.fb.group({
-      limit: [6],
+      limit: [1],
       checkOption: "time",
       limitOption: ['month'],
       activeCompaniesNbr: [this.tenant.activeCompaniesNbr]
@@ -117,7 +117,7 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   onSave() {
     var val = this.getFormGroup();
     val.tenantId = this.id;
-    this.tenantExtendHistoryService.create(val).subscribe(() => {
+    this.tenantService.extendExpired(val).subscribe(() => {
       this.activeModal.close(true);
     }, (err) => {
       if (err.message) {

@@ -26,16 +26,16 @@ namespace TMTDentalAdmin.Controllers
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync(TenantExtendHistorySave val)
-        {
-            if (val == null || !ModelState.IsValid)
-                return BadRequest();
+        //[HttpPost]
+        //public async Task<IActionResult> CreateAsync(TenantExtendHistorySave val)
+        //{
+        //    if (val == null || !ModelState.IsValid)
+        //        return BadRequest();
 
-           var res = await _tenantExtendHistoryService.CreateAsync(val);
+        //   var res = await _tenantExtendHistoryService.CreateAsync(val);
 
-            return Ok(_mapper.Map<TenantExtendHistoryDisplay>(res));
-        }
+        //    return Ok(_mapper.Map<TenantExtendHistoryDisplay>(res));
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)

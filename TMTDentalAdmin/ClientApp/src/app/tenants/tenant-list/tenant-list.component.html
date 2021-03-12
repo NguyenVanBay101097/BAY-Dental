@@ -42,7 +42,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="dateExpired" title="Ngày hết hạn" width="120">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        {{dataItem.dateExpired | date : 'shortDate'}}
+        {{dataItem.dateExpired | date : 'short'}}
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">

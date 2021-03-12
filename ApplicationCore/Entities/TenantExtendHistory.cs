@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class TenantExtendHistory : AdminBaseEntity
     {
+        public TenantExtendHistory()
+        {
+            StartDate = DateTime.Now;
+        }
+
         public DateTime StartDate { get; set; }
         public DateTime ExpirationDate { get; set; }
         public int ActiveCompaniesNbr { get; set; }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -27,39 +28,48 @@ namespace Infrastructure.Services
             _updateExpiredDateTenantService = new UpdateExpiredDateTenantService(_appSettings);
         }
 
-        public override async Task<TenantExtendHistory> CreateAsync(TenantExtendHistory entity)
+        public override async Task<IEnumerable<TenantExtendHistory>> CreateAsync(IEnumerable<TenantExtendHistory> entities)
         {
-            var today = DateTime.Today;
-            var model = await base.CreateAsync(entity);
-            var tenant = await _tenantService.GetByIdAsync(model.TenantId);
-            if (model.StartDate == today)
-            {
-                var tenants = new List<AppTenant>();
-                tenants.Add(tenant);
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
-                using (var conn = new SqlConnection(builder.ConnectionString))
-                {
-                    try
-                    {
-                        conn.Open();
-                        await _updateExpiredDateTenantService.ComputeTenant(tenants, conn);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-
-            }
-            return model;
+            if (entities.Any(x => x.ActiveCompaniesNbr == 0))
+                throw new Exception("Số chi nhánh phải khác 0");
+            if (entities.Any(x => x.StartDate >= x.ExpirationDate))
+                throw new Exception("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+            return await base.CreateAsync(entities);
         }
 
-        public async Task<TenantExtendHistory> CreateAsync(TenantExtendHistorySave val)
-        {
-            var tenantExtendHistory = await ComputeTenantExtendHistory(val);
-            tenantExtendHistory = await CreateAsync(tenantExtendHistory);
-            return tenantExtendHistory;
-        }
+        //public override async Task<TenantExtendHistory> CreateAsync(TenantExtendHistory entity)
+        //{
+        //    var today = DateTime.Today;
+        //    var model = await base.CreateAsync(entity);
+        //    var tenant = await _tenantService.GetByIdAsync(model.TenantId);
+        //    if (model.StartDate == today)
+        //    {
+        //        var tenants = new List<AppTenant>();
+        //        tenants.Add(tenant);
+        //        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
+        //        using (var conn = new SqlConnection(builder.ConnectionString))
+        //        {
+        //            try
+        //            {
+        //                conn.Open();
+        //                await _updateExpiredDateTenantService.ComputeTenant(tenants, conn);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                Console.WriteLine(e);
+        //            }
+        //        }
+
+        //    }
+        //    return model;
+        //}
+
+        //public async Task<TenantExtendHistory> CreateAsync(TenantExtendHistorySave val)
+        //{
+        //    var tenantExtendHistory = await ComputeTenantExtendHistory(val);
+        //    tenantExtendHistory = await CreateAsync(tenantExtendHistory);
+        //    return tenantExtendHistory;
+        //}
 
         public async Task<TenantExtendHistory> ComputeTenantExtendHistory(TenantExtendHistorySave val)
         {
