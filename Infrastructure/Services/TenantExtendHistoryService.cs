@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -33,8 +34,6 @@ namespace Infrastructure.Services
             var tenant = await _tenantService.GetByIdAsync(model.TenantId);
             if (model.StartDate == today)
             {
-                tenant.ActiveCompaniesNbr = model.ActiveCompaniesNbr;
-                tenant.DateExpired = model.ExpirationDate;
                 var tenants = new List<AppTenant>();
                 tenants.Add(tenant);
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_connectionStrings.TenantConnection);
@@ -53,6 +52,52 @@ namespace Infrastructure.Services
 
             }
             return model;
+        }
+
+        public async Task<TenantExtendHistory> CreateAsync(TenantExtendHistorySave val)
+        {
+            var tenantExtendHistory = await ComputeTenantExtendHistory(val);
+            tenantExtendHistory = await CreateAsync(tenantExtendHistory);
+            return tenantExtendHistory;
+        }
+
+        public async Task<TenantExtendHistory> ComputeTenantExtendHistory(TenantExtendHistorySave val)
+        {
+            var tenant = await _tenantService.GetByIdAsync(val.TenantId);
+            var today = DateTime.Today;
+            var tenantExtendHistory = new TenantExtendHistory();
+            switch (val.CheckOption)
+            {
+                case "time":
+                    tenantExtendHistory.StartDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value.AddDays(1) : throw new Exception($"Ngày hết tạn của tên miền{tenant.Hostname} bị null");
+                    tenantExtendHistory.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
+                    tenantExtendHistory.TenantId = tenant.Id;
+                    tenantExtendHistory.ExpirationDate = tenantExtendHistory.StartDate.AbsoluteEndOfDate();
+                    switch (val.LimitOption)
+                    {
+                        case "day":
+                            tenantExtendHistory.ExpirationDate =  tenantExtendHistory.ExpirationDate.AddDays(val.Limit);
+                            break;
+                        case "month":
+                            tenantExtendHistory.ExpirationDate =  tenantExtendHistory.ExpirationDate.AddMonths(val.Limit);
+                            break;
+                        case "year":
+                            tenantExtendHistory.ExpirationDate =  tenantExtendHistory.ExpirationDate.AddYears(val.Limit);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case "company":
+                    tenantExtendHistory.TenantId = tenant.Id;
+                    tenantExtendHistory.StartDate = today;
+                    tenantExtendHistory.ExpirationDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value.AddDays(1) : throw new Exception($"Ngày hết tạn của tên miền{tenant.Hostname} bị null");
+                    tenantExtendHistory.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
+                    break;
+                default:
+                    break;
+            }
+            return tenantExtendHistory;
         }
 
     }

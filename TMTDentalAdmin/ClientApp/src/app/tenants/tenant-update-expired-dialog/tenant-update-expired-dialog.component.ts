@@ -108,7 +108,6 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
         case "year":
           this.endDate = new Date(this.startDate.getFullYear() + this.limit, this.expirationDate.getMonth(), this.startDate.getDate());
           break;
-
         default:
           break;
       }
@@ -117,8 +116,6 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
 
   onSave() {
     var val = this.getFormGroup();
-    val.startDate = this.intlService.formatDate(this.startDate, "yyyy-MM-dd");
-    val.expirationDate = this.intlService.formatDate(this.endDate, "yyyy-MM-ddT23:59");
     val.tenantId = this.id;
     this.tenantExtendHistoryService.create(val).subscribe(() => {
       this.activeModal.close(true);

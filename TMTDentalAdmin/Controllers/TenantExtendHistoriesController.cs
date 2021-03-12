@@ -32,11 +32,7 @@ namespace TMTDentalAdmin.Controllers
             if (val == null || !ModelState.IsValid)
                 return BadRequest();
 
-            if (val.StartDate > val.ExpirationDate)
-                throw new Exception("Ngày bắt đầu không thể lớn hơn ngày hết hạn!");
-
-            var res = _mapper.Map<TenantExtendHistory>(val);
-            res = await _tenantExtendHistoryService.CreateAsync(res);
+           var res = await _tenantExtendHistoryService.CreateAsync(val);
 
             return Ok(_mapper.Map<TenantExtendHistoryDisplay>(res));
         }
@@ -59,6 +55,5 @@ namespace TMTDentalAdmin.Controllers
             var res = _mapper.Map<IEnumerable<TenantExtendHistoryDisplay>>(models);
             return Ok(res);
         }
-
     }
 }
