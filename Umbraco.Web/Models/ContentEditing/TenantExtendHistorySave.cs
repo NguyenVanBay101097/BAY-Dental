@@ -7,10 +7,11 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class TenantExtendHistorySave
     {
-        public DateTime? StartDate { get; set; }
-        public DateTime? ExpirationDate { get; set; }
         public int ActiveCompaniesNbr { get; set; }
-        public Guid? TenantId { get; set; }
+        public Guid TenantId { get; set; }
+        public int Limit { get; set; }
+        public string CheckOption { get; set; }
+        public string LimitOption { get; set; }
     }
 
     public class TenantExtendHistoryDisplay
