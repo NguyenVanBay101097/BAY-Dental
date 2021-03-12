@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NavSidebarService } from '../nav-sidebar.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
@@ -12,6 +12,11 @@ import { WebService } from 'src/app/core/services/web.service';
 import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, concat, count, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { SearchAllService } from '../search-all.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgSelectComponent } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-layout-header',
@@ -19,9 +24,19 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrls: ['./layout-header.component.css']
 })
 export class LayoutHeaderComponent implements OnInit {
-
+  searchResults: any[] = [];
+  selectedResult: any;
+  arrowkeyLocation = 0;
+  resultSelection: string = 'all';
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
+  searchString: string = '';
+  searchUpdate = new Subject<string>();
   expire = '';
+
+  search$: Observable<any[]>;
+  searchLoading = false;
+  searchInput$ = new Subject<string>();
+  @ViewChild('searchAllSelect', {static: true}) searchAllSelect: NgSelectComponent;
   constructor(
     private sidebarService: NavSidebarService,
     private modalService: NgbModal,
@@ -29,6 +44,8 @@ export class LayoutHeaderComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private webService: WebService,
+    private fb: FormBuilder,
+    private searchAllService: SearchAllService,
     private notificationService: NotificationService
   ) { }
 
@@ -42,6 +59,16 @@ export class LayoutHeaderComponent implements OnInit {
         this.loadExpire();
       }
     });
+
+    this.search$ = this.searchInput$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.searchLoading = true),
+      switchMap(term => this.onSearch(term).pipe(
+          catchError(() => of([])), // empty list on error
+          tap(() => this.searchLoading = false)
+      ))
+  );
   }
 
   loadExpire() {
@@ -67,7 +94,7 @@ export class LayoutHeaderComponent implements OnInit {
           var userInfo = JSON.parse(localStorage.getItem("user_info"));
           localStorage.removeItem('user_info');
           userInfo.companyId = result.currentCompany.id;
-          localStorage.setItem('user_info',JSON.stringify(userInfo));
+          localStorage.setItem('user_info', JSON.stringify(userInfo));
           window.location.reload();
         });
       });
@@ -137,5 +164,34 @@ export class LayoutHeaderComponent implements OnInit {
       )
     }, () => {
     });
+  }
+
+  onSearchChange(item) {
+    setTimeout(() => {
+      this.selectedResult = null;
+    });
+
+    switch (item.type) {
+      case "customer":
+        window.open(`/partners/customer/${item.id}/overview`, '_blank');
+        break;
+      case "supplier":
+        window.open(`/partners/supplier/${item.id}/info`, '_blank');
+        break;
+      case "sale-order":
+        window.open(`/sale-orders/form?id=${item.id}`, '_blank');
+        break;
+      default:
+        break;
+    }
+  }
+
+  onSearch(q?: string) {
+    var value = {
+      limit: 20,
+      search: q || '',
+      resultSelection: this.resultSelection ? this.resultSelection : ''
+    }
+    return this.searchAllService.getAll(value);
   }
 }

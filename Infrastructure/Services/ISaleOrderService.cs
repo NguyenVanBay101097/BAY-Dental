@@ -67,5 +67,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<SaleOrderLineForProductRequest>> GetLineForProductRequest(Guid id);
 
+
+        Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val);
     }
 }

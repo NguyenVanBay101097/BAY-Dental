@@ -1,0 +1,50 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+      <ol class="breadcrumb">
+        <li>
+          <a routerLink="/employee-admins">Danh sách nhân viên</a>
+        </li>
+        <li class="active">
+          Cập nhật nhân viên
+        </li>
+      </ol>
+    </div>
+  </div>
+  
+  <div class="o_content">
+    <form class="o_form_view" [formGroup]="updateForm">
+      <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+          <div class="o_group">
+            <table class="o_group o_inner_group">
+              <tbody>
+                <tr>
+                  <td class="o_td_label">
+                    <label class="o_form_label">
+                      Họ tên
+                    </label>
+                  </td>
+                  <td style="width: 100%;">
+                    <input type="text" class="form-control" formControlName="name" required />
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger">
+                      Vui lòng điền họ tên 
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="o_td_label">
+                      <label class="o_form_label">&nbsp;</label>
+                  </td>
+                  <td style="width: 100%">
+                      <button type="button" class="btn btn-success" accesskey="s" (click)="onSubmit()">
+                          Cập nhật
+                      </button>
+                  </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>

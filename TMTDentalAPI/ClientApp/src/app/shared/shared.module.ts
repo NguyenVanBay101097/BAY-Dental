@@ -78,6 +78,7 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
 import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { ProductsModule } from '../products/products.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -128,7 +129,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     PartnerSupplierCuDialogComponent,
     ProductCategoryDialogComponent,
     PartnerCustomerCuDialogComponent,
-    LoaiThuChiFormComponent,    
+    LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnersBindingDirective,
     ReceptionDashboardComponent,
@@ -149,7 +150,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
-    CashBookCuDialogComponent
+    CashBookCuDialogComponent,
   ],
   exports: [
     ConfirmDialogComponent,
@@ -207,11 +208,11 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     SalaryPaymentBindingDirective,
     SaleOrderListServiceComponent,
     SaleOrderTeethPopoverComponent,
-    SaleOrderLineDiscountOdataPopoverComponent, 
+    SaleOrderLineDiscountOdataPopoverComponent,
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
-    CashBookCuDialogComponent
+    CashBookCuDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -219,6 +220,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     RouterModule,
     ReactiveFormsModule,
     MyCustomKendoModule,
+    NgSelectModule,
     FormsModule,
     MyCustomNgbModule,
     CalendarModule,
@@ -249,7 +251,7 @@ import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-di
     LoaiThuChiFormComponent,
     PartnerTitleCuDialogComponent,
     PartnerPhonePopoverComponent,
-    ProductServiceCuDialogComponent, 
+    ProductServiceCuDialogComponent,
     LaboOrderCuDialogComponent,
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,

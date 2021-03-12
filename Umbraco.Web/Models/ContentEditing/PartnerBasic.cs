@@ -116,6 +116,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool ComputeCreditDebit { get; set; }
 
         public bool? Active { get; set; }
+        public bool? isBoth { get; set; } // get both customer and supplier
     }
 
     public class PartnerGetDebtPagedFilter
