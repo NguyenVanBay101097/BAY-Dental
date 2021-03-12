@@ -14,8 +14,9 @@ import { validate, validator } from 'fast-json-patch';
 import { error } from 'protractor';
 import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
 import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
-import { SalaryPaymentSave, SalaryPaymentService } from 'src/app/shared/services/salary-payment.service';
+import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -310,23 +311,22 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onPayment() {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
-    if(slipIds.length) this.notify('error','Chưa chọn phiếu lương để chi lương');
+    if(slipIds.length == 0) this.notify('error','Chưa chọn phiếu lương để chi lương');
+   
+      this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
 
-    var defaultPara = { PayslipRunId: this.id, PayslipIds: slipIds }
-    this.paymentService.defaulCreateBy(defaultPara).subscribe((res: any) => {
-
-      if(res.Data.length > 0) {
+      if(res.data.length > 0) {
 
         const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
-        modalRef.componentInstance.defaultPara = { PayslipRunId: this.id, PayslipIds: slipIds };
-        modalRef.componentInstance.payments = res.Data;
+        modalRef.componentInstance.payslipIds = slipIds;
+        modalRef.componentInstance.payments = res.data;
         modalRef.result.then((res: any) => {
           this.loadRecord();
         });
       } 
 
-      res.Errors.forEach(e => {
+      res.errors.forEach(e => {
         this.notify('error', e);
       });
     }

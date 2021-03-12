@@ -2096,6 +2096,31 @@ namespace Infrastructure.Services
             var moves = await query.OrderBy(x => x.DateCreated).ToListAsync();
             return moves;
         }
+
+        public async Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var query = amlObj._QueryGet(companyId: val.CompanyId, state: "posted");
+            var types = new[] { "receivable", "payable" };
+            query = query.Where(x => x.PartnerId == id && types.Contains(x.Account.InternalType) && x.Reconciled == false);
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search));
+
+            var total = await query.CountAsync();
+            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new PartnerGetDebtPagedItem
+            {
+                Date = x.Date,
+                AmountResidual = x.AccountInternalType == "payable" ? -x.AmountResidual : x.AmountResidual,
+                Balance = x.AccountInternalType == "payable" ? -x.Balance : x.Balance,
+                Origin = x.Move.InvoiceOrigin,
+                MoveId = x.MoveId
+            }).ToListAsync();
+
+            return new PagedResult2<PartnerGetDebtPagedItem>(total, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+        }
     }
 
     public class PartnerCreditDebitItem

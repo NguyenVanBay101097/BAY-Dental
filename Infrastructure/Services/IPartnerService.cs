@@ -64,5 +64,6 @@ namespace Infrastructure.Services
         Task<PartnerCustomerReportOutput> GetPartnerCustomerReportV2(PartnerCustomerReportInput val);
         Task<CustomerStatisticsOutput> GetCustomerStatistics(CustomerStatisticsInput val);
         Task<IEnumerable<AccountMove>> GetUnreconcileInvoices(Guid id, string search = "");
+        Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val);
     }
 }

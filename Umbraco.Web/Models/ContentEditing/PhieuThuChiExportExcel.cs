@@ -11,8 +11,23 @@ namespace Umbraco.Web.Models.ContentEditing
         public string JournalName { get; set; }
         public string LoaiThuChiName { get; set; }
         public decimal Amount { get; set; }
-        public string PayerReceiver { get; set; }
+        public string PartnerDisplayName { get; set; }
         public string Reason { get; set; }
         public string State { get; set; }
+        public string StateDisplay
+        {
+            get
+            {
+                switch(State)
+                {
+                    case "posted":
+                        return "Đã xác nhận";
+                    case "cancel":
+                        return "Đã hủy";
+                    default:
+                        return "Nháp";
+                }
+            }
+        }
     }
 }

@@ -55,7 +55,6 @@ namespace TMTDentalAPI.Controllers
             var payment = await _paymentService.SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Journal)
-                .Include(x => x.LoaiThuChi)
                 .FirstOrDefaultAsync();
             if (payment == null)
             {
@@ -135,6 +134,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> SaleDefaultGet(IEnumerable<Guid> ids)
         {
             var res = await _paymentService.SaleDefaultGet(ids);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var res = await _paymentService.DefaultGet(invoice_ids);
             return Ok(res);
         }
 
@@ -241,7 +247,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.JournalName;
-                    worksheet.Cells[row, 3].Value = item.DestinationAccountName;
+                    //worksheet.Cells[row, 3].Value = item.DestinationAccountName;
                     worksheet.Cells[row, 4].Value = (item.PaymentType == "inbound") ? item.Amount : -item.Amount;
                     worksheet.Cells[row, 5].Value = item.DisplayPaymentType;
                     worksheet.Cells[row, 6].Value = item.PartnerName;

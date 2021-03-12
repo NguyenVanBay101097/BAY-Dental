@@ -6,7 +6,6 @@ import { PhieuThuChiListComponent } from './phieu-thu-chi-list/phieu-thu-chi-lis
 import { PhieuThuChiFormComponent } from './phieu-thu-chi-form/phieu-thu-chi-form.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PhieuThuChiService } from './phieu-thu-chi.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({

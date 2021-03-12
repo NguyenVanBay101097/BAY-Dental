@@ -6,7 +6,7 @@ import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CashBookPaged, CashBookService, CashBookSummarySearch, ReportDataResult } from '../cash-book.service';
+import { CashBookDetailFilter, CashBookPaged, CashBookService, CashBookSummarySearch, ReportDataResult } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-ca-bo',
@@ -91,17 +91,16 @@ export class CashBookTabPageCaBoComponent implements OnInit {
 
   loadGridData() {
     this.loading = true;
-    var gridPaged = new AccountPaymentPaged();
+    var gridPaged = new CashBookDetailFilter();
     gridPaged.companyId = this.authService.userInfo.companyId;
-    gridPaged.journalType = this.resultSelection == "cash_bank" ? '' : this.resultSelection;
-    gridPaged.paymentDateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
-    gridPaged.paymentDateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    gridPaged.resultSelection = this.resultSelection;
+    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
-    gridPaged.state = "posted";
 
-    this.accountPaymentService.getPaged(gridPaged)
+    this.cashBookService.getDetails(gridPaged)
       .pipe(
         map((response: any) =>
           <GridDataResult>{

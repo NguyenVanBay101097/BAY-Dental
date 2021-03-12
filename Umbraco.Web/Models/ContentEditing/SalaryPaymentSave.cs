@@ -6,36 +6,17 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class SalaryPaymentSave
     {
-        public SalaryPaymentSave(){
-            State = "waiting";
-        }
-
-        /// <summary>
-        /// Chi nhánh
-        /// </summary>
-        public Guid CompanyId { get; set; }
-
-        public string Name { get; set; }
-
         public DateTime Date { get; set; }
 
         /// <summary>
         /// Sổ nhật ký: tiền mặt, ngân hàng
         /// </summary>
-        public Guid? JournalId { get; set; }
-       // public AccountJournalSimple Journal { get; set; }
+        public Guid JournalId { get; set; }
 
         /// <summary>
         /// nhân viên
         /// </summary>
-        public Guid? EmployeeId { get; set; }
-        // public EmployeeSimple Employee { get; set; }
-
-        /// <summary>
-        /// waiting: chờ xác nhận
-        /// done: xác nhận
-        /// </summary>
-        public string State { get; set; }
+        public Guid EmployeeId { get; set; }
 
         /// <summary>
         /// advance : tạm ứng
@@ -48,7 +29,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? Amount { get; set; }
 
-
         /// <summary>
         /// Mô tả
         /// </summary>
@@ -57,7 +37,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SalaryPaymentDefaultGetModel
     {
-        public Guid? PayslipRunId { get; set; }
         public IEnumerable<Guid> PayslipIds { get; set; }
     }
 }

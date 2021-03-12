@@ -118,6 +118,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Active { get; set; }
     }
 
+    public class PartnerGetDebtPagedFilter
+    {
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class PartnerGetDebtPagedItem
+    {
+        public DateTime? Date { get; set; }
+
+        public decimal AmountResidual { get; set; }
+
+        public decimal Balance { get; set; }
+
+        public string Origin { get; set; }
+
+        public Guid MoveId { get; set; }
+    }
+
     public class PartnerPatch
     {
         public string Avatar { get; set; }

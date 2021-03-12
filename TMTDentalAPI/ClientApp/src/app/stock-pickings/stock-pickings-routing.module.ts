@@ -9,6 +9,8 @@ import { StockPickingIncomingCreateUpdateComponent } from './stock-picking-incom
 import { StockPickingManagementComponent } from './stock-picking-management/stock-picking-management.component';
 import { StockReportXuatNhapTonComponent } from '../stock-reports/stock-report-xuat-nhap-ton/stock-report-xuat-nhap-ton.component';
 import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
+import { StockInventoryListComponent } from '../stock-inventories/stock-inventory-list/stock-inventory-list.component';
+import { StockInventoryFormComponent } from '../stock-inventories/stock-inventory-form/stock-inventory-form.component';
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
 
 const routes: Routes = [
@@ -44,9 +46,14 @@ const routes: Routes = [
       { path: 'stock-report-xuat-nhap-ton', component: StockXuatNhapTonComponent },
       { path: 'incoming-pickings', component: StockPickingIncomingListComponent },
       { path: 'outgoing-pickings', component: StockPickingOutgoingListComponent },
+      { path: 'stock-inventories', component: StockInventoryListComponent },
       { path: 'request-products', component: StockPickingRequestProductComponent }
     ]
-  }
+  },
+  {
+    path: 'stock-inventories/from',
+    component: StockInventoryFormComponent
+  },
 ];
 
 @NgModule({
