@@ -183,13 +183,14 @@ export class SurveyManageListComponent implements OnInit {
   }
 
   public saveHandler({ sender, rowIndex, formGroup, isNew }): void {
+    var indexData = rowIndex % 10;
     const formValue = formGroup.value;
     if (!formValue.employee) {
       this.closeEditor(sender, rowIndex);
       return;
     }
 
-    var dataItem = this.gridData.data[rowIndex];
+    var dataItem = this.gridData.data[indexData];
 
     var val = new SurveyAssignmentUpdateEmployee();
     val.id = dataItem.id;

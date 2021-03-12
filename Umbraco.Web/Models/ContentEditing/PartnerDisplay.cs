@@ -223,12 +223,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string DisplayName
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(DisplayName)) return this.DisplayName;
-                else return this.Name;
-            }
-            set { }
+            get;set;
         }
 
         public string Age
