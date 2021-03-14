@@ -49,3 +49,7 @@
 }
 
 /*  */
+
+.error-message {
+    min-height: 23px;
+}

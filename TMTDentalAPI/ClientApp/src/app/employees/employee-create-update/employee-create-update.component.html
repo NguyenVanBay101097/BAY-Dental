@@ -34,7 +34,7 @@
                             <h1>
                                 <input type="text" class="form-control" formControlName="name" id="name" />
                             </h1>
-                            <label for="" class="text-danger" *ngIf="nameFC.errors?.required">Vui lòng điền tên nhân
+                            <label for="" class="text-danger" *ngIf="nameFC.errors?.required && nameFC.touched">Vui lòng điền tên nhân
                                 viên
                             </label>
                             <div>

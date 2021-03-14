@@ -44,6 +44,7 @@ export class StockPickingRequestProductComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -67,6 +68,8 @@ export class StockPickingRequestProductComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(res);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -75,6 +78,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   }
 
   onSateChange(item) {
+    this.skip = 0;
     if (item) {
       this.state = item.value;
       this.loadDataFromApi();
@@ -85,6 +89,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   }
 
   onDateSearchChange(data) {
+    this.skip = 0;
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();

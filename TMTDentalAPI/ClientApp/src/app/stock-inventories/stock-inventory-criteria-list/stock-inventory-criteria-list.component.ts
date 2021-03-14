@@ -25,7 +25,7 @@ export class StockInventoryCriteriaListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   gridData: GridDataResult;
-  limit= 20;
+  limit = 20;
   skip = 0;
   loading = false;
 
@@ -36,16 +36,16 @@ export class StockInventoryCriteriaListComponent implements OnInit {
     ).subscribe((val) => {
       this.loadDataFromApi();
     });
-    
+
     this.loadDataFromApi();
   }
 
   createItem() {
-   var dg = this.ngbModal.open(StockInventoryCriteriaCuDialogComponent,{size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-   dg.componentInstance.title= 'Thêm Tiêu chí kiểm kho';
-   dg.result.then((val)=>{
-    this.loadDataFromApi();
-   });
+    var dg = this.ngbModal.open(StockInventoryCriteriaCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    dg.componentInstance.title = 'Thêm tiêu chí kiểm kho';
+    dg.result.then((val) => {
+      this.loadDataFromApi();
+    });
   }
 
   loadDataFromApi() {
@@ -71,25 +71,27 @@ export class StockInventoryCriteriaListComponent implements OnInit {
   }
 
   editItem(item: StockInventoryCriteriaBasic) {
-    var dg = this.ngbModal.open(StockInventoryCriteriaCuDialogComponent,{size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    dg.componentInstance.title= 'Sửa Tiêu chí kiểm kho: '+ item.name;
+    var dg = this.ngbModal.open(StockInventoryCriteriaCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    dg.componentInstance.title = 'Sửa tiêu chí kiểm kho: ' + item.name;
     dg.componentInstance.id = item.id;
-    dg.result.then((val)=>{
-     this.criteriaService.update(item.id, val).subscribe(
-       ()=> {this.loadDataFromApi();
-      }
-     );
+    dg.result.then((val) => {
+      this.criteriaService.update(item.id, val).subscribe(
+        () => {
+          this.loadDataFromApi();
+        }
+      );
     });
   }
 
   deleteItem(item: StockInventoryCriteriaBasic) {
-    var dg = this.ngbModal.open(ConfirmDialogComponent,{size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    dg.componentInstance.title= 'Bạn có chắc chắn muốn xóa tiêu chí: ' + item.name;
-    dg.result.then(()=>{
-     this.criteriaService.delete(item.id).subscribe(() => {
-       this.notifyService.notify('success', 'Xóa thành công');
-       this.loadDataFromApi();
-     });
+    var dg = this.ngbModal.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    dg.componentInstance.title = 'Xóa tiêu chí kiểm kho';
+    dg.componentInstance.body = 'Bạn có chắc chắn muốn xóa tiêu chí kiểm kho?'
+    dg.result.then(() => {
+      this.criteriaService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success', 'Xóa thành công');
+        this.loadDataFromApi();
+      });
     });
   }
 

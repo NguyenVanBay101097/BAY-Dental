@@ -11,5 +11,6 @@ namespace Infrastructure.Services
     {
         Task<IEnumerable<StockMove>> ResolveInventoryLine(StockInventoryLine line);
         Task _GenerateMoves(IEnumerable<StockInventoryLine> self);
+        Task<StockInventoryLineDisplay> OnChangeCreateLine(StockInventoryLineOnChangeCreateLine val);
     }
 }

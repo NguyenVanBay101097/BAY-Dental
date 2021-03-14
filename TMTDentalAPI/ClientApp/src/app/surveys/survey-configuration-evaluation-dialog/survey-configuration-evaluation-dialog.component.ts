@@ -34,6 +34,7 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
 
     if (this.id) {
       this.loadDataFromApi();
+      this.radioDisable();
     } else {
       this.loadDefaultAnswer();
     }
@@ -84,7 +85,7 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-    
+
     var val = this.getValueFromFormGroup();
     if (this.id) {
       this.surveyQuestionService.update(this.id, val).subscribe(
@@ -129,6 +130,11 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  radioDisable() {
+    document.getElementById('radioType').setAttribute('disabled', '')
+    document.getElementById('radioType1').setAttribute('disabled', '')
   }
 
   onChangeQuestionType() {

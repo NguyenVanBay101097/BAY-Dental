@@ -7,7 +7,7 @@
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup" #form="ngForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet" style="min-height: auto;">
+            <div class="o_form_sheet">
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_12">
                         <tr>
@@ -19,19 +19,18 @@
                             <td colspan="1" style="width: 100%;">
                                 <input type="text" class="form-control" formControlName="name" />
                                 <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
-                                    <div *ngIf="f.name.errors.required">Vui lòng điền tên tiêu chí kiểm kho</div>
+                                    <div *ngIf="f.name.errors.required">Vui lòng nhập tên tiêu chí kiểm kho</div>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">
-                                    ghi chú
+                                    Ghi chú
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <textarea class="form-control" formControlName='note'>
-
                             </textarea>
                             </td>
                         </tr>

@@ -41,6 +41,7 @@ export class StockInventoryCriteriaCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
     if (this.id) {
       this.criteriaService.update(this.id, val).subscribe(res => {
