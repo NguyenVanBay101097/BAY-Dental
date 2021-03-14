@@ -56,6 +56,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public IEnumerable<ProductBomSave> Boms { get; set; } = new List<ProductBomSave>();
 
-        public IEnumerable<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new LinkedList<ProductStockInventoryCriteriaRel>();
+        public IEnumerable<Guid> ProductCriteriaIds { get; set; } = new List<Guid>();
     }
 }

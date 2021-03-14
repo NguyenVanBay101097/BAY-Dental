@@ -140,6 +140,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> DefaultProducMedicine()
+        {
+            var res = await _productService.GetDefaultProductMedicine();
+            return Ok(res);
+        }
+
         [HttpGet("Autocomplete")]
         [CheckAccess(Actions = "Catalog.Products.Read")]
         public async Task<IActionResult> Autocomplete(string filter = "")
