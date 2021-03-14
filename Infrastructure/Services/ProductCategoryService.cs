@@ -100,7 +100,11 @@ namespace Infrastructure.Services
             if (val.MedicineCateg.HasValue)
                 query = query.Where(x => x.MedicineCateg == true);
             if (!string.IsNullOrEmpty(val.Type))
-                query = query.Where(x => x.Type == val.Type);
+            {
+                var listType = val.Type.Split(",");
+                query = query.Where(x => listType.Contains(x.Type));
+            }
+               
 
             var items = await query.Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();

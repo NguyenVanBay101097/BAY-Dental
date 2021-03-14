@@ -26,11 +26,16 @@
                 {{dataItem.date | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Phiếu xuất" width="120">
+        <kendo-grid-column  title="Ngày xuất" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.picking?.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column title="Phiếu xuất" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span>{{dataItem.pickingName}}</span>
             </ng-template>
-        </kendo-grid-column>
+        </kendo-grid-column> -->
         <kendo-grid-column field="name" title="Mã yêu cầu" width="120">
         </kendo-grid-column>
         <kendo-grid-column title="Người yêu cầu" width="120">

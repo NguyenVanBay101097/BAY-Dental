@@ -5,7 +5,7 @@ import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } fr
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
@@ -14,6 +14,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UoMBasic, UomService, UoMPaged } from 'src/app/uoms/uom.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { StockInventoryCriteriaService } from 'src/app/stock-inventories/stock-inventory-criteria.service';
+import { StockInventoryCriteriaPaged } from 'src/app/stock-inventories/stock-inventory-criteria.service';
 
 @Component({
   selector: 'app-product-product-cu-dialog',
@@ -28,6 +30,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   filterdCategories: ProductCategoryBasic[] = [];
   filterdUoMs: UoMBasic[] = [];
   filterdUoMPOs: UoMBasic[] = [];
+  listProductCriteria = [];
   categoryIdSave: string;
   opened = true;
   submitted = false;
@@ -35,6 +38,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('uoMCbx', { static: true }) uoMCbx: ComboBoxComponent;
   @ViewChild('uoMPOCbx', { static: true }) uoMPOCbx: ComboBoxComponent;
+  @ViewChild('criteriaMultiSelect', { static: true }) criteriaMultiSelect: MultiSelectComponent;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +46,8 @@ export class ProductProductCuDialogComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private uoMService: UomService
+    private uoMService: UomService,
+    private productCriteriaService : StockInventoryCriteriaService
   ) {
   }
 
@@ -64,6 +69,7 @@ export class ProductProductCuDialogComponent implements OnInit {
       keToaOK: true,
       isLabo: false,
       purchasePrice: 0,
+      productCriterias: null,
     });
 
     setTimeout(() => {
@@ -77,6 +83,16 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
       });
 
+      this.criteriaMultiSelect.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.criteriaMultiSelect.loading = true)),
+        switchMap(value => this.searchProductCriterias(value))
+      ).subscribe(result => {
+        this.listProductCriteria = result.items;
+        this.criteriaMultiSelect.loading = false;
+      });
+
+      this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
@@ -100,6 +116,11 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ], 'id');
 
         this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom], 'id');
+
+        if(result.stockInventoryCriterias.length > 0){      
+          this.productForm.get('productCriterias').setValue(result.stockInventoryCriterias);
+          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, result.stockInventoryCriterias, 'id');
+        }
 
         if (result.uompo) {
           this.uoMService.getPaged({ categoryId: result.uompo.categoryId }).subscribe((result2: any) => {
@@ -146,6 +167,20 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.filterdCategories = result;
       this.categCbx.loading = false;
     });
+  }
+
+  loadProductCriteriaList() {
+    this.searchProductCriterias().subscribe((result) => {
+      this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');;
+    });
+  }
+
+  searchProductCriterias(q?: string) {
+    var val = new StockInventoryCriteriaPaged();
+    val.limit = 0;
+    val.offset = 0;
+    val.search = q || '';
+    return this.productCriteriaService.getPaged(val);
   }
 
 
@@ -253,6 +288,7 @@ export class ProductProductCuDialogComponent implements OnInit {
     data.categId = data.categ.id;
     data.uomId = data.uom.id;
     data.uompoId = data.uompo.id;
+    data.productCriteriaIds = data.productCriterias ? data.productCriterias.map(x => x.id) : [];
     return data;
   }
 
@@ -263,6 +299,18 @@ export class ProductProductCuDialogComponent implements OnInit {
 
   get f() {
     return this.productForm.controls;
+  }
+
+  loadListProductCriteria() {
+    var page = {
+      limit: 0,
+      offset: 0
+    }
+    this.productCriteriaService.getPaged(page).subscribe(
+      (res:any) => {
+        this.listProductCriteria = res.items;
+      }
+    );
   }
 }
 

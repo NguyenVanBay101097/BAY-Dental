@@ -16,6 +16,7 @@ import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ProductBasic2 } from '../products/product.service';
 import { Product } from '../products/product';
+import { StringFilterComponent } from '@progress/kendo-angular-grid';
 
 export class PartnerFilter {
     search: string;
@@ -151,6 +152,13 @@ export class CustomerStatisticsOutput {
 
 export class PartnerActivePatch {
     active: boolean;
+}
+
+export class PartnerGetDebtPagedFilter {
+    limit: number;
+    offset: number;
+    search: string;
+    companyId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -508,6 +516,9 @@ export class PartnerService {
         return this.http.patch(this.baseApi + "api/Partners/" + id + '/PatchActive', val);
     }
 
+    getDebtPaged(id: string, val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
+    }
 }
 
 

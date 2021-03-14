@@ -2452,5 +2452,26 @@ namespace Infrastructure.Services
                 Items = items
             };
         }
+
+        public async Task<List<SearchAllViewModel>> SearchAll(SaleOrderPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var res = await query.OrderByDescending(x => x.DateCreated)
+                       .Take(val.Limit)
+                       .Select(x => new SearchAllViewModel
+                       {
+                           Id = x.Id,
+                           Name = "Phiếu điều trị: " + x.Name,
+                           SaleOrderName = x.Name,
+                           Address = x.Partner.GetAddress(),
+                           Phone = x.Partner.Phone,
+                           Type = "sale-order",
+                           State = x.State
+                       }).ToListAsync();
+            return res;
+        }
     }
 }

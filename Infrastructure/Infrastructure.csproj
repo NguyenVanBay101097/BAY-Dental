@@ -56,6 +56,8 @@
     <Compile Remove="Data\Migrations\20210111043704_Add_AccountMove_StockPicking_MedicineOrder.Designer.cs" />
     <Compile Remove="Data\Migrations\20210201025033_F4.cs" />
     <Compile Remove="Data\Migrations\20210201025033_F4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210305094955_AddPartnerToPhieuThuChiTable.cs" />
+    <Compile Remove="Data\Migrations\20210305094955_AddPartnerToPhieuThuChiTable.Designer.cs" />
     <Compile Remove="Data\Migrations\20210302023554_AddDinhMucVatTu.cs" />
     <Compile Remove="Data\Migrations\20210302023554_AddDinhMucVatTu.Designer.cs" />
     <Compile Remove="Data\Migrations\20210304095159_bay-add-yeucauvattu.cs" />
@@ -75,6 +77,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.4" />

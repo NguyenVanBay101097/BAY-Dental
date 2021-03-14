@@ -47,6 +47,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
+        this.offset = 0;
         this.search = value || '';
         this.loadDataFromApi();
       });
@@ -163,12 +164,12 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   onSave() {
     var data = this.gridData.data.filter(x => x.employee != null)
-      .map(x => { 
+      .map(x => {
         return { employeeId: x.employee.id, saleOrderId: x.id };
-       });
+      });
 
     if (data.length == 0) {
-      this.notify('error', 'Không có phân việc đã được phân cho nhân viên để lưu!');
+      this.notify('error', 'Bạn chưa chọn nhân viên để phân việc');
       return;
     }
 

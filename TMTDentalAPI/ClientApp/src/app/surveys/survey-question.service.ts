@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -6,6 +6,7 @@ export class SurveyQuestionBasic {
   id: string;
   name: string;
   sequence: number;
+  active;
 }
 
 export class SurveyQuestionDisplay {
@@ -34,6 +35,12 @@ export class SurveyQuestionPaged {
   limit: number;
   offset: number;
   search: string;
+  active: any;
+}
+
+export interface ActionActivePar{
+  id: string;
+  active: boolean;
 }
 
 @Injectable({
@@ -72,7 +79,13 @@ export class SurveyQuestionService {
     return this.http.delete(this.base_api + this.apiUrl + '/' + id);
   }
 
-  getListForSurvey() {
-    return this.http.get(this.base_api + this.apiUrl + '/GetListForSurvey');
+  getListForSurvey(userInputId?: string) {
+    var p = new HttpParams();
+    if(userInputId) p = p.append("userInputId",userInputId);
+    return this.http.get(this.base_api + this.apiUrl + '/GetListForSurvey', {params: p});
+  }
+
+  actionActive(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/ActionActive', val);
   }
 }

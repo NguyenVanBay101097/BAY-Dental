@@ -19,7 +19,7 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   id: string;
   gridLoading = false;
   gridView: GridDataResult;
-  limit = 5;
+  limit = 10;
   skip = 0;
   constructor(
     private service: PartnerService,
@@ -37,7 +37,6 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   }
 
   loadPayments() {
-
     this.gridLoading = true;
     var apPaged = new AccountPaymentPaged;
     apPaged.partnerId = this.id ? this.id : '';
@@ -73,13 +72,13 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
 
   draftUnlinkPayment(payment) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa thanh toán';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán này?';
+    modalRef.componentInstance.title = 'Hủy thanh toán';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy thanh toán này?';
     modalRef.result.then(() => {
-      this.paymentService.unlink([payment.id]).subscribe(() => {
+      this.paymentService.actionCancel([payment.id]).subscribe(() => {
         this.loadPayments();
         this.notificationService.show({
-          content: 'Xóa thành công',
+          content: 'Hủy thành công',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },

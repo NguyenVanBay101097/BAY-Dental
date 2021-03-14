@@ -52,11 +52,11 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_survey' },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_survey' },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_survey'  },
+        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.survey_assignment_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.survey_assignment_manager'  },
       ],
-      groups: 'survey.group_survey' 
+      groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' 
     },
     {
       name: 'Mua hàng',
@@ -157,7 +157,8 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Bảng hoa hồng', link: '/commissions' },
         { name: 'Nhân viên', link: '/employees' },
         { name: 'Thông số Labo', link: '/labo-orders/labo-managerment' },
-        { name: 'Loại thu chi', link: '/loai-thu-chi' },
+        { name: 'Loại thu chi', link: '/loai-thu-chi'},
+        { name: 'Tiêu chí kiểm kho', link: '/stock/criterias'},
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },

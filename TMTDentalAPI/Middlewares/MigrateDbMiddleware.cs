@@ -56,19 +56,6 @@ namespace TMTDentalAPI.Middlewares
                     var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
                     if (pendingMigrations.Any())
                         await dbContext.Database.MigrateAsync();
-
-                    //add data nếu cần
-                    //await AddMissingData(context);
-                    //update version
-                    var tenantDbContext = (TenantDbContext)context.RequestServices.GetService(typeof(TenantDbContext));
-                    var tnt = await tenantDbContext.Tenants.Where(x => x.Hostname == tenant.Hostname).FirstOrDefaultAsync();
-                    tnt.Version = _appSettings.Version;
-                    tenantDbContext.SaveChanges();
-
-                    _cache.Remove(tenant.Hostname); //clear cache
-                    tenant.Version = _appSettings.Version;
-
-                    context.SetTenantContext(tenantContext);
                 }
 
                 await _next.Invoke(context);

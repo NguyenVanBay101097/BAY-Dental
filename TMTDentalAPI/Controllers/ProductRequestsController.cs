@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -27,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Basic.ProductRequest.Read")]
         public async Task<IActionResult> Get([FromQuery] ProductRequestPaged val)
         {
             var result = await _productRequestService.GetPagedResultAsync(val);
@@ -34,6 +36,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _productRequestService.GetDisplay(id);
@@ -41,6 +44,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Read")]
         public async Task<IActionResult> DefaultGet()
         {
             var res = await _productRequestService.DefaultGet();
@@ -48,6 +52,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.ProductRequest.Create")]
         public async Task<IActionResult> Create(ProductRequestSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -61,6 +66,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Update")]
         public async Task<IActionResult> Update(Guid id, ProductRequestSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -73,6 +79,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Update")]
         public async Task<IActionResult> ActionConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -84,6 +91,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Update")]
         public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -95,6 +103,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Done")]
         public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
         {
             if (ids == null || ids.Count() == 0)
@@ -106,6 +115,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.ProductRequest.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var request = await _productRequestService.GetByIdAsync(id);

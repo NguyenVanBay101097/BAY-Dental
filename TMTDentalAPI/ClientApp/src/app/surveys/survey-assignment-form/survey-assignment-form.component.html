@@ -3,7 +3,7 @@
         <ol class="breadcrumb">
             <li>
                 <a [routerLink]="['/surveys']">
-                    <span>Danh sách khảo sát</span>
+                    <span>Danh sách công việc</span>
                 </a>
             </li>
             <li class="active">
@@ -18,27 +18,37 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary btn-sm" (click)="actionContact()">
+                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary btn-sm"
+                        (click)="actionContact()">
                         Liên hệ
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary btn-sm" (click)="actionDone()">
+                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary btn-sm"
+                        (click)="actionDone()">
                         Khảo sát
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger btn-sm" (click)="actionCancel()">
-                       Hủy khảo sát
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger btn-sm"
+                        (click)="actionCancel()">
+                        Hủy khảo sát
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary btn-sm" (click)="actionDone()">
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary btn-sm"
+                        (click)="actionDone()">
                         Xem đánh giá
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}" type="button">
+                    <button [disabled]="surveyAssignment.status !== 'done'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'done', 'btn-secondary': surveyAssignment.status !== 'done'}"
+                        type="button">
                         Hoàn thành
                     </button>
-                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}" type="button">
+                    <button [disabled]="surveyAssignment.status !== 'contact'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'contact', 'btn-secondary': surveyAssignment.status !== 'contact'}"
+                        type="button">
                         Đang liên hệ
                     </button>
-                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}" type="button">
+                    <button [disabled]="surveyAssignment.status !== 'draft'" class="btn o_arrow_button disabled"
+                        [ngClass]="{'btn-primary': surveyAssignment.status === 'draft', 'btn-secondary': surveyAssignment.status !== 'draft'}"
+                        type="button">
                         Chưa gọi
                     </button>
                 </div>
@@ -51,13 +61,14 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="media">
-                        <img class="img-fluid mr-3" *ngIf="surveyAssignment.partner?.avatar" [src]="surveyAssignment.partner?.avatar + '?width=100&height=100'"/>
+                        <img class="img-fluid mr-3" *ngIf="surveyAssignment.partner?.avatar"
+                            [src]="surveyAssignment.partner?.avatar + '?width=100&height=100'" />
                         <div class="media-body">
                             <h4>{{surveyAssignment.partner?.name}}</h4>
-                            <div class="t_sub_title">
+                            <!-- <div class="t_sub_title">
                                 Mã khách hàng: {{surveyAssignment.partner?.ref}} <br />
                                 Ngày tạo: {{surveyAssignment.partner?.date | date : 'shortDate' }}
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div *ngIf="surveyAssignment.status === 'done'" class="report-prescription-payment">
@@ -77,24 +88,35 @@
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Giới tính
+                                        Mã khách hàng
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.partner?.genderDisplay}}
+                                    {{surveyAssignment.partner?.ref}}
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Ngày sinh
+                                        Tuổi
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.partner?.dateOfBirth}}
+                                    {{surveyAssignment.partner?.age}}
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{surveyAssignment.partner?.address}}
+                                </td>
+                            </tr>
+
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Nghề nghiệp
@@ -103,8 +125,8 @@
                                 <td colspan="1" style="width: 100%;">
                                     {{surveyAssignment.partner?.jobTitle}}
                                 </td>
-                            </tr>
-                            <tr>
+                            </tr> -->
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Tiểu sử bệnh
@@ -113,7 +135,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     {{surveyAssignment.partner?.histories.join(', ')}}
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -138,16 +160,7 @@
                                     {{surveyAssignment.partner?.email}}
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Địa chỉ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    {{surveyAssignment.partner?.address}}
-                                </td>
-                            </tr>
+
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -179,6 +192,12 @@
                                     {{surveyAssignment.saleOrder?.name}}
                                 </td>
                             </tr>
+
+
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -189,12 +208,7 @@
                                     {{surveyAssignment.saleOrder?.dateOrder | date:'shortDate'}}
                                 </td>
                             </tr>
-
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_6">
-                        <tbody>
-                            <tr>
+                            <!-- <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Trạng thái
@@ -213,7 +227,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <strong>{{surveyAssignment.saleOrder?.amountTotal | number}}</strong>
                                 </td>
-                            </tr>
+                            </tr> -->
 
                         </tbody>
                     </table>
@@ -289,7 +303,7 @@
                                             <td *ngIf="x==0" [attr.rowspan]="dotkham.lines.length">
                                                 <span>{{dotkham.doctorName}}</span>
                                             </td>
-                                            <td >
+                                            <td>
                                                 {{dkline.productName}}
                                             </td>
                                             <td>
@@ -316,8 +330,11 @@
                         </h5>
                     </div>
                     <div class="o_group">
-                        <app-survey-call-content-list (addBtnEvent)="onAddCallContent()" (cancelBtnEvent)="onCancelCallContent($event)"
-                            (removeBtnEvent)="onRemoveCallContent($event)" (saveBtnEvent)="onSaveCallContent($event)" [data]="surveyAssignment.callContents" [id]="surveyAssignment.id" [view]="false" [surveyStatus]="surveyAssignment.status">
+                        <app-survey-call-content-list (addBtnEvent)="onAddCallContent()"
+                            (cancelBtnEvent)="onCancelCallContent($event)"
+                            (removeBtnEvent)="onRemoveCallContent($event)" (saveBtnEvent)="onSaveCallContent($event)"
+                            [data]="surveyAssignment.callContents" [id]="surveyAssignment.id" [view]="false"
+                            [surveyStatus]="surveyAssignment.status">
                         </app-survey-call-content-list>
                     </div>
                 </div>

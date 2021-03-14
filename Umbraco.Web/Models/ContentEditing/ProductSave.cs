@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -54,5 +55,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// danh sách định mức vật tư
         /// </summary>
         public IEnumerable<ProductBomSave> Boms { get; set; } = new List<ProductBomSave>();
+
+        public IEnumerable<Guid> ProductCriteriaIds { get; set; } = new List<Guid>();
     }
 }

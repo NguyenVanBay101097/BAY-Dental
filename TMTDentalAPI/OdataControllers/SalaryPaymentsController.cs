@@ -111,21 +111,21 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
-        [CheckAccess(Actions = "Salary.SalaryPayment.Create")]
-        public async Task<IActionResult> CreateMultiSalaryPayment([FromBody] SalaryPaymentSalary val)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost]
+        //[CheckAccess(Actions = "Salary.SalaryPayment.Create")]
+        //public async Task<IActionResult> CreateMultiSalaryPayment([FromBody] SalaryPaymentSalary val)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            await _unitOfWork.BeginTransactionAsync();
-            var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
-            _unitOfWork.Commit();
+        //    await _unitOfWork.BeginTransactionAsync();
+        //    var ids = await _salaryPaymentService.CreateAndConfirmMultiSalaryPayment(val.MultiSalaryPayments);
+        //    _unitOfWork.Commit();
 
-            return Ok(ids);
-        }
+        //    return Ok(ids);
+        //}
 
         [HttpPost]
         [CheckAccess(Actions = "Salary.SalaryPayment.Update")]
@@ -181,14 +181,11 @@ namespace TMTDentalAPI.OdataControllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
-        {
-            var res = await _salaryPaymentService.DefaulCreateBy(val);
-            return Ok(res);
-        }
-
-
-
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> DefaulCreateBy(SalaryPaymentDefaultGetModel val)
+        //{
+        //    var res = await _salaryPaymentService.DefaulCreateBy(val);
+        //    return Ok(res);
+        //}
     }
 }
