@@ -26,8 +26,8 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
   constructor(private fb: FormBuilder, private intlService: IntlService,
     private tenantExtendHistoryService: TenantExtendHistoryService,
     private tenantService: TenantService,
-    private modalService: NgbModal,
-    private activeModal: NgbActiveModal) { }
+    public modalService: NgbModal,
+    public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     if (this.today <= this.expirationDate)

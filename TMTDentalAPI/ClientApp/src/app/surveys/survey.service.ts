@@ -89,6 +89,7 @@ export class SurveyAssignmentDisplayPartner {
   email: string;
   address: string;
   categories: string[];
+  age: string;
 }
 
 export class SurveyAssignmentDisplaySaleOrder {
