@@ -54,6 +54,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isShowSalary = false;
+  submitted = false;
 
   filteredstructureTypes: HrPayrollStructureTypeSimple[] = [];
   categoriesList: EmployeeCategoryBasic[] = [];
@@ -133,12 +134,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
-  get nameFC() { return this.formCreate.get('name'); }
-  get userIdFC() { return this.formCreate.get('userId'); }
-
-  get groupIdFC() { return this.formCreate.get('groupId'); }
-  get isAllowSurveyFC() { return this.formCreate.get('isAllowSurvey'); }
-
   get isUser() {
     return this.formCreate.get('isUser').value;
   }
@@ -151,8 +146,16 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.formCreate.get('avatar').value;
   }
 
+  get f() {
+    return this.formCreate.controls;
+  }
+
   getValueForm(key) {
     return this.formCreate.get(key).value;
+  }
+
+  getControlForm(key) {
+    return this.formCreate.get(key);
   }
 
   loadUsers() {
@@ -260,7 +263,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
           this.formCreate.patchValue(rs);
 
           this.updateValidation();
-          console.log(rs.groupId);
         },
         er => {
           console.log(er);
@@ -276,6 +278,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   //Tạo hoặc cập nhật NV
   createUpdateEmployee() {
+    this.submitted = true;
+
     if (!this.formCreate.valid) {
       return false;
     }
@@ -345,6 +349,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   // }
 
   closeModal() {
+    this.submitted = false;
     if (this.isChange) {
       this.activeModal.close(true);
     }
@@ -443,10 +448,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   onChangeIsAllowSurvey(e) {
     var value = e.target.checked;
     if (value == false) {
-      this.groupIdFC.setValue(null);
+      this.getControlForm('groupId').setValue(null);
     } else {
       if (this.groupSurvey.length) {
-        this.groupIdFC.setValue(this.groupSurvey[0].id);
+        this.getControlForm('groupId').setValue(this.groupSurvey[0].id);
       }
     }
   }

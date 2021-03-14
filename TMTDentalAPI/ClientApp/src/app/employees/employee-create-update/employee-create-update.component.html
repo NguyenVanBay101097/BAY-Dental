@@ -34,9 +34,9 @@
                             <h1>
                                 <input type="text" class="form-control" formControlName="name" id="name" />
                             </h1>
-                            <label for="" class="text-danger" *ngIf="nameFC.errors?.required && nameFC.touched">Vui lòng điền tên nhân
-                                viên
-                            </label>
+                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                <div *ngIf="f.name.errors.required">Nhập tên nhân viên</div>
+                            </div>
                             <div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" formControlName="isDoctor"
@@ -168,6 +168,9 @@
                                         </td>
                                         <td colspan="1" style="width: 50%;">
                                             <input type="text" class="form-control" formControlName="userName" />
+                                            <div *ngIf="f.userName.errors && (f.userName.touched || f.userName.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.userName.errors.required">Nhập tên tài khoản</div>
+                                            </div>
                                         </td>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">Mật khẩu</label>
@@ -178,7 +181,7 @@
                                                 formControlName="userPassword" />
                                         </td>
                                     </tr>
-                                    <tr *ngIf="userIdFC.value">
+                                    <tr *ngIf="getValueForm('userId')">
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">&nbsp;</label>
                                         </td>
@@ -189,7 +192,7 @@
                                             &nbsp;
                                         </td>
                                         <td colspan="1" style="width: 50%;">
-                                            <div *ngIf="userIdFC.value" class="form-check">
+                                            <div *ngIf="getValueForm('userId')" class="form-check">
                                                 <input class="form-check-input" type="checkbox"
                                                     formControlName="createChangePassword" id="createChangePassword"
                                                     (change)="onChangeCreateChangePassword($event)">
@@ -229,16 +232,18 @@
                                                 <div class="form-check d-flex align-items-center">
                                                     <input class="form-check-input" type="checkbox"
                                                         formControlName="isAllowSurvey" id="isAllowSurvey">
-                                                    <label class="form-check-label" for="isAllowSurvey"> Là nhân viên
-                                                        khảo sát</label>
+                                                    <label class="form-check-label" for="isAllowSurvey">
+                                                        Là nhân viên khảo sát
+                                                    </label>
                                                 </div>
                                             </label>
                                         </td>
                                         <td colspan="3" style="width: 100%;">
                                             <kendo-combobox [placeholder]="'Nhóm khảo sát'" [data]="groupSurvey"
-                                                *ngIf="isAllowSurveyFC.value" [valuePrimitive]="true"
+                                                *ngIf="getValueForm('isAllowSurvey')" [valuePrimitive]="true"
                                                 [textField]="'name'" [filterable]="true" formControlName="groupId"
-                                                [valueField]="'id'"></kendo-combobox>
+                                                [valueField]="'id'">
+                                            </kendo-combobox>
                                         </td>
                                     </tr>
                                 </tbody>

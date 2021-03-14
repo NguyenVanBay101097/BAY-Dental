@@ -15,6 +15,8 @@ import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-re
 export class SaleOrderProductRequestListComponent implements OnInit {
   
   @Input() saleOrderId: string;
+  @Input() saleOrderState: string;
+  
   loading = false;
   productRequests: any = [];
 

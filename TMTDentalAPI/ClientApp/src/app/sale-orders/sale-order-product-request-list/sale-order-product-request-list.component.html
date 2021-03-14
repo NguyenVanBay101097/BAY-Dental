@@ -1,5 +1,7 @@
 <div>
-    <button class="btn btn-primary btn-sm mb-2" title="Yêu cầu vật tư" (click)="createItem()">
+    <button class="btn btn-primary btn-sm mb-2" title="Yêu cầu vật tư" 
+        [disabled]="saleOrderState == 'done' ? 'disabled': null"
+        (click)="createItem()">
         Yêu cầu vật tư
     </button>
     <table class="table table-sm">
@@ -10,7 +12,7 @@
                 <th>Người yêu cầu</th>
                 <th>Bác sĩ</th>
                 <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th *ngIf="saleOrderState != 'done'">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -20,7 +22,7 @@
                 <td>{{item.userName}}</td>
                 <td>{{item.employeeName}}</td>
                 <td>{{getStateDisplay(item.state)}}</td>
-                <td>
+                <td *ngIf="saleOrderState != 'done'">
                     <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(item)">
                         <span class="far fa-edit"></span>
                     </button>
