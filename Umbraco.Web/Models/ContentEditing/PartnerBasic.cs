@@ -116,6 +116,31 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool ComputeCreditDebit { get; set; }
 
         public bool? Active { get; set; }
+        public bool? isBoth { get; set; } // get both customer and supplier
+    }
+
+    public class PartnerGetDebtPagedFilter
+    {
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class PartnerGetDebtPagedItem
+    {
+        public DateTime? Date { get; set; }
+
+        public decimal AmountResidual { get; set; }
+
+        public decimal Balance { get; set; }
+
+        public string Origin { get; set; }
+
+        public Guid MoveId { get; set; }
     }
 
     public class PartnerPatch

@@ -8,35 +8,38 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button *ngIf="paymentDisplay.state == 'cancel'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paymentDisplay.state == 'cancel'"
-                        [class.btn-secondary]="paymentDisplay.state == 'cancel'" type="button">
+                    <button *ngIf="phieuThuChiDisplay.state == 'cancel'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="phieuThuChiDisplay.state == 'cancel'"
+                        [class.btn-secondary]="phieuThuChiDisplay.state == 'cancel'" type="button">
                         Đã hủy
                     </button>
-                    <button [disabled]="paymentDisplay.state == 'posted'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paymentDisplay.state == 'posted'"
-                        [class.btn-secondary]="paymentDisplay.state == 'posted'" type="button">
+                    <button [disabled]="phieuThuChiDisplay.state == 'posted'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="phieuThuChiDisplay.state == 'posted'"
+                        [class.btn-secondary]="phieuThuChiDisplay.state == 'posted'" type="button">
                         Đã xác nhận
                     </button>
-                    <button [disabled]="paymentDisplay.state == 'draft'" class="btn o_arrow_button disabled"
-                        [class.btn-primary]="paymentDisplay.state == 'draft'"
-                        [class.btn-secondary]="paymentDisplay.state == 'draft'" type="button">
+                    <button [disabled]="phieuThuChiDisplay.state == 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="phieuThuChiDisplay.state == 'draft'"
+                        [class.btn-secondary]="phieuThuChiDisplay.state == 'draft'" type="button">
                         Nháp
                     </button>
                 </div>
             </div>
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <h3 *ngIf="paymentDisplay.name" class="font-weight-bold">{{paymentDisplay.name}}</h3>
+                    <h3 *ngIf="phieuThuChiDisplay.name" class="font-weight-bold">{{phieuThuChiDisplay.name}}</h3>
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Loại {{getType()}}</label>
+                                    <label class="o_form_label">
+                                        <span *ngIf="type == 'thu'">Loại thu</span>
+                                        <span *ngIf="type == 'chi'">Loại chi</span>
+                                    </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.loaiThuChi?.name}}</span>
-                                    <div [class.d-none]="seeForm">
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.loaiThuChi?.name}}</span>
+                                    <div [class.d-none]="formReadonly">
                                         <div class="d-flex">
                                             <kendo-combobox [data]="loaiThuChiList" [textField]="'name'"
                                                 [filterable]="true" #loaiThuChiCbx formControlName="loaiThuChi"
@@ -58,8 +61,8 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.journal.name}}</span>
-                                    <div *ngIf="!seeForm">
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.journal.name}}</span>
+                                    <div *ngIf="!formReadonly">
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                             [filterable]="true" #journalCbx formControlName="journal"
                                             [valueField]="'id'">
@@ -77,8 +80,8 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.amount | number}}</span>
-                                    <kendo-numerictextbox *ngIf="!seeForm" [min]="0" [format]="'n0'"
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.amount | number}}</span>
+                                    <kendo-numerictextbox *ngIf="!formReadonly" [min]="0" [format]="'n0'"
                                         formControlName="amount">
                                     </kendo-numerictextbox>
                                 </td>
@@ -88,9 +91,9 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">{{paymentDisplay.communication}}</span>
-                                    <textarea *ngIf="!seeForm" type="text" class="form-control"
-                                        formControlName="communication"></textarea>
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.reason}}</span>
+                                    <textarea *ngIf="!formReadonly" type="text" class="form-control"
+                                        formControlName="reason"></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -102,48 +105,41 @@
                                     <label class="o_form_label">Ngày</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">
-                                        {{paymentDisplay.paymentDate | date: 'shortDate'}}
+                                    <span *ngIf="formReadonly">
+                                        {{phieuThuChiDisplay.date | date: 'shortDate'}}
                                     </span>
-                                    <kendo-datepicker *ngIf="!seeForm" formControlName="paymentDateObj">
+                                    <kendo-datepicker *ngIf="!formReadonly" formControlName="dateObj">
                                     </kendo-datepicker>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Nhóm người {{ getType() == 'thu' ? 'nộp' : 'nhận' }}</label>
+                                    <label class="o_form_label">
+                                        <span *ngIf="type == 'thu'">Nhóm người nộp</span>
+                                        <span *ngIf="type == 'chi'">Nhóm người nhận</span>
+                                    </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="seeForm">
-                                        {{displayPartnerType(paymentDisplay.partnerType)}}
+                                    <span *ngIf="!formReadonly">
+                                        <kendo-combobox [data]="filteredPartnerTypes" [valuePrimitive]="true" (valueChange)="changePartnerType($event)" [textField]="'text'" formControlName="partnerType"
+                                            [valueField]="'value'">
+                                        </kendo-combobox>
                                     </span>
-                                    <div *ngIf="!seeForm">
-                                        <kendo-dropdownlist
-                                            [data]="filteredPartnerTypes"
-                                            textField="text"
-                                            valueField="value"
-                                            [valuePrimitive]="true"
-                                            formControlName="partnerType"
-                                            (valueChange)="change_partnerType($event)">
-                                        </kendo-dropdownlist>
-                                    </div>
+                                    <span *ngIf="formReadonly">{{showPartnerTypes(phieuThuChiDisplay.partnerType)}}</span>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
-                                    <label *ngIf="getType() == 'thu'" class="o_form_label">Người nộp tiền</label>
-                                    <label *ngIf="getType() == 'chi'" class="o_form_label">Người nhận tiền</label>
+                                    <label class="o_form_label">
+                                        <span *ngIf="type == 'thu'">Người nộp tiền</span>
+                                        <span *ngIf="type == 'chi'">Người nhận tiền</span>
+                                    </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [class.d-none]="seeForm" [data]="filteredPartners" 
-                                        [textField]="'displayName'" [valueField]="'id'" [filterable]="true"
-                                        #partnerCbx formControlName="partner">
+                                    <kendo-combobox [class.d-none]="formReadonly" [data]="filteredPartners" [filterable]="true" #partnerCbx [textField]="'displayName'" formControlName="partner"
+                                    [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                        class="text-danger">
-                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người {{ getType() == 'thu' ? 'nộp' : 'nhận' }} tiền</div>
-                                    </div>
-                                    <span *ngIf="seeForm">{{paymentDisplay.partner?.displayName}}</span>
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.partner?.displayName}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -154,10 +150,9 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
-    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
-    <button type="button" *ngIf="paymentDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" *ngIf="paymentDisplay.state == 'posted'" class="btn btn-primary mr-2" (click)="printPhieu()">In phiếu</button>
-    <button type="button" *ngIf="paymentDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
+    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
+    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>

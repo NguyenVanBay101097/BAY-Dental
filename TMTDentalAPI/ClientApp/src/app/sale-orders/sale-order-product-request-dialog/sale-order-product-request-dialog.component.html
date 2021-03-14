@@ -74,7 +74,7 @@
                             </thead>
                             <tbody>
                                 <ng-container *ngFor="let item of listProductBoms; index as i">
-                                    <tr>
+                                    <tr *ngIf="item.boms.length > 0">
                                         <td colspan="3" class="font-weight-bold bg-primary text-white">
                                             {{item.name}}
                                         </td>

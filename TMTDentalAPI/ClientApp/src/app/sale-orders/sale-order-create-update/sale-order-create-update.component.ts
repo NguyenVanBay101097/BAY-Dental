@@ -87,15 +87,27 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   searchCardBarcode: string;
   type: string;
 
-  constructor(private fb: FormBuilder, private partnerService: PartnerService,
-    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
-    private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
-    private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
+  constructor(
+    private fb: FormBuilder,
+    private partnerService: PartnerService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private saleOrderService: SaleOrderService,
+    private saleOrderLineService: SaleOrderLineService,
+    private intlService: IntlService,
+    private modalService: NgbModal,
+    private router: Router,
+    private notificationService: NotificationService,
+    private cardCardService: CardCardService,
+    private pricelistService: PriceListService,
+    private errorService: AppSharedShowErrorService,
     private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService,
+    private laboOrderService: LaboOrderService,
+    private dotKhamService: DotKhamService,
+    private employeeService: EmployeeService,
     private saleOrderOdataService: SaleOrdersOdataService,
-    private employeeOdataService: EmployeesOdataService, private toothCategoryOdataService: ToothCategoryOdataService,
+    private employeeOdataService: EmployeesOdataService,
+    private toothCategoryOdataService: ToothCategoryOdataService,
     private teethOdataService: TeethOdataService,
     private toaThuocService: ToaThuocService,
     private printService: PrintService,
@@ -148,50 +160,54 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   routeActive() {
-    this.route.queryParamMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.saleOrderId = params.get("id");
-        this.partnerId = params.get("partner_id");
-        if (this.saleOrderId) {
-          return this.saleOrderOdataService.getDisplay(this.saleOrderId);
-        } else {
-          return this.saleOrderOdataService.defaultGet({ partnerId: this.partnerId || '' });
-        }
-      })).subscribe((result: any) => {
-        this.saleOrder = result;
-        this.formGroup.patchValue(result);
-        let dateOrder = new Date(result.DateOrder);
-        this.formGroup.get('dateOrderObj').patchValue(dateOrder);
+    this.route.params.subscribe(
+      () => {
+        this.route.queryParamMap.pipe(
+          switchMap((params: ParamMap) => {
+            this.saleOrderId = params.get("id");
+            this.partnerId = params.get("partner_id");
+            if (this.saleOrderId) {
+              return this.saleOrderOdataService.getDisplay(this.saleOrderId);
+            } else {
+              return this.saleOrderOdataService.defaultGet({ partnerId: this.partnerId || '' });
+            }
+          })).subscribe((result: any) => {
+            this.saleOrder = result;
+            this.formGroup.patchValue(result);
+            let dateOrder = new Date(result.DateOrder);
+            this.formGroup.get('dateOrderObj').patchValue(dateOrder);
 
-        if (result.User) {
-          this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
-        }
+            if (result.User) {
+              this.filteredUsers = _.unionBy(this.filteredUsers, [result.User], 'Id');
+            }
 
-        if (result.Employee) {
-          this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
-        }
+            if (result.Employee) {
+              this.filteredEmployees = _.unionBy(this.filteredEmployees, [result.Employee], 'Id');
+            }
 
-        if (result.Partner) {
-          this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
-          if (!this.saleOrderId) {
-            this.onChangePartner(result.Partner);
-          }
-        }
+            if (result.Partner) {
+              this.filteredPartners = _.unionBy(this.filteredPartners, [result.Partner], 'Id');
+              if (!this.saleOrderId) {
+                this.onChangePartner(result.Partner);
+              }
+            }
 
-        // if (result.pricelist) {
-        //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
-        // }
+            // if (result.pricelist) {
+            //   this.filteredPricelists = _.unionBy(this.filteredPricelists, [result.pricelist], 'id');
+            // }
 
-        const control = this.formGroup.get('OrderLines') as FormArray;
-        control.clear();
-        result.OrderLines.forEach(line => {
-          var g = this.fb.group(line);
-          g.setControl('Teeth', this.fb.array(line.Teeth));
-          control.push(g);
-        });
+            const control = this.formGroup.get('OrderLines') as FormArray;
+            control.clear();
+            result.OrderLines.forEach(line => {
+              var g = this.fb.group(line);
+              g.setControl('Teeth', this.fb.array(line.Teeth));
+              control.push(g);
+            });
 
-        this.formGroup.markAsPristine();
-      });
+            this.formGroup.markAsPristine();
+          });
+      }
+    )
   }
 
   get stateControl() {

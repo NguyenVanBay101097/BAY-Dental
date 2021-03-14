@@ -130,11 +130,11 @@ export class ReceptionDashboardComponent implements OnInit {
 
   loadDataMoney() {
     var companyId = this.authService.userInfo.companyId;
-    let cash = this.cashBookService.getTotalReport({ resultSelection: "cash", companyId: companyId });
-    let bank = this.cashBookService.getTotalReport({ resultSelection: "bank", companyId: companyId });
+    let cash = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
+    let bank = this.cashBookService.getTotal({ resultSelection: "bank", companyId: companyId });
     forkJoin([cash, bank]).subscribe(results => {
-      this.reportValueCash = results[0] ? results[0].totalAmount : 0;
-      this.reportValueBank = results[1] ? results[1].totalAmount : 0;
+      this.reportValueCash = results[0];
+      this.reportValueBank = results[1];
     });
   }
 
@@ -143,12 +143,12 @@ export class ReceptionDashboardComponent implements OnInit {
     var dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     var companyId = this.authService.userInfo.companyId;
 
-    let cash = this.cashBookService.getSumary({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
-    let bank = this.cashBookService.getSumary({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, begin: false });
+    let cash = this.cashBookService.getTotal({ resultSelection: "cash", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
+    let bank = this.cashBookService.getTotal({ resultSelection: "bank", dateFrom: dateFrom, dateTo: dateTo, companyId: companyId });
 
     forkJoin([cash, bank]).subscribe(results => {
-      this.reportValueCashByDate = results[0] ? results[0].totalAmount : 0;
-      this.reportValueBankByDate = results[1] ? results[1].totalAmount : 0;
+      this.reportValueCashByDate = results[0];
+      this.reportValueBankByDate = results[1];
     });
   }
 

@@ -49,10 +49,11 @@ namespace Infrastructure.Services
                 await quantObj.QuantsMove(quants, move, move.LocationDest);
                 move.State = "done";
             }
+
             await UpdateAsync(self);
         }
 
-        private async Task ProductPriceUpdateBeforeDone(IEnumerable<StockMove> self)
+        public async Task ProductPriceUpdateBeforeDone(IEnumerable<StockMove> self)
         {
             var productObj = GetService<IProductService>();
             var tmpl_dict = new Dictionary<Guid, decimal>();

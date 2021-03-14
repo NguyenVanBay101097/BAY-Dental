@@ -17,7 +17,8 @@ namespace Infrastructure.Services
         Task UpdateAsync(T entity);
 
         Task DeleteAsync(T entity);
-     
+        Task DeleteAsync(IEnumerable<T> entities);
+
         IQueryable<T> SearchQuery(Expression<Func<T, bool>> domain = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             int offSet = 0,

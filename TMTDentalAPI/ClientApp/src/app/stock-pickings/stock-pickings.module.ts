@@ -18,6 +18,8 @@ import { StockPickingManagementComponent } from './stock-picking-management/stoc
 import { StockReportService } from '../stock-reports/stock-report.service';
 import { StockXuatNhapTonComponent } from './stock-xuat-nhap-ton/stock-xuat-nhap-ton.component';
 import { StockPickingIncomingDetailComponent } from './stock-picking-incoming-detail/stock-picking-incoming-detail.component';
+import { StockInventoriesModule } from '../stock-inventories/stock-inventories.module';
+import { StockInventoryFormComponent } from '../stock-inventories/stock-inventory-form/stock-inventory-form.component';
 import { StockPickingRequestProductComponent } from './stock-picking-request-product/stock-picking-request-product.component';
 import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 
@@ -40,6 +42,7 @@ import { StockPickingRequestProductDialogComponent } from './stock-picking-reque
     StockPickingsRoutingModule,
     MyCustomKendoModule,
     ReactiveFormsModule,
+    StockInventoriesModule,
     FormsModule,
     SharedModule
   ],

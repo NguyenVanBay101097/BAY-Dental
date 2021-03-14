@@ -65,20 +65,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Reason { get; set; }
 
         /// <summary>
-        /// Người nộp tiền/Người nhận tiền
-        /// </summary>
-        public string PayerReceiver { get; set; }
-
-        /// <summary>
-        /// Địa chỉ
-        /// </summary>
-        public string Address { get; set; }
-
-        /// <summary>
         /// Loại thu/Loại chi
         /// </summary>
         public Guid LoaiThuChiId { get; set; }
         public LoaiThuChiSimple LoaiThuChi { get; set; }
+
+        public string PartnerType { get; set; }
+
+        public PartnerSimple Partner { get; set; }
     }
 
     public class PhieuThuChiDefaultGet

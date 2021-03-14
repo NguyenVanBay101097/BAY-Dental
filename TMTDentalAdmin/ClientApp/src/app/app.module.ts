@@ -24,6 +24,7 @@ import { ContentLayoutComponent } from './layout/content-layout/content-layout.c
 import { HttpErrorInterceptor } from '@app/interceptors/http-error.interceptor';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from './layout/header/header.component';
+import { EmployeeAdminModule } from './employee-admins/employee-admins.module';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -50,6 +51,7 @@ registerLocaleData(localeVi, 'vi');
     AuthModule,
     CoreModule,
     SharedModule,
+    EmployeeAdminModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

@@ -50,6 +50,7 @@ using ApplicationCore.Utilities;
 using TMTDentalAPI.ActionFilters;
 using TMTDentalAPI.OdataControllers;
 using Serilog;
+using MediatR;
 
 namespace TMTDentalAPI
 {
@@ -307,6 +308,8 @@ namespace TMTDentalAPI
             services.AddScoped<ITCareConfigService, TCareConfigService>();
             services.AddScoped<ITCareMessageService, TCareMessageService>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
+            services.AddScoped<IStockInventoryService, StockInventoryService>();
+            services.AddScoped<IStockInventoryLineService, StockInventoryLineService>();
             //services.AddScoped<IVFundBookService, VFundBookService>();
             services.AddScoped<IPartnerOldNewReportService, PartnerOldNewReportService>();
             services.AddScoped<ICashBookService, CashBookService>();
@@ -316,6 +319,9 @@ namespace TMTDentalAPI
             services.AddScoped<ISurveyUserInputService, SurveyUserInputService>();
             services.AddScoped<ISurveyTagService, SurveyTagService>();
             services.AddScoped<ISaleOrderLineProductRequestedService, SaleOrderLineProductRequestedService>();
+
+            services.AddScoped<ISurveyUserInputLineService, SurveyUserInputLineService>();
+            services.AddScoped<IStockInventoryCriteriaService, StockInventoryCriteriaService>();
 
             services.AddMemoryCache();
 
@@ -460,6 +466,11 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ProductRequestProfile());
                 mc.AddProfile(new ProductRequestLineProfile());
                 mc.AddProfile(new SaleOrderLineProductRequestedProfile());
+                mc.AddProfile(new StockInventoryProfile());
+                mc.AddProfile(new StockInventoryLineProfile());
+                mc.AddProfile(new StockLocationProfile());
+                mc.AddProfile(new StockInventoryCriteriaProfile());
+                mc.AddProfile(new ProductStockInventoryCriteriaRelProfile());
             };
 
             var mappingConfig = new MapperConfiguration(mapperConfigExp);
@@ -572,6 +583,8 @@ namespace TMTDentalAPI
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
             });
+
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -621,6 +634,7 @@ namespace TMTDentalAPI
 
             app.UseMiddleware<GetTokenFromQueryStringMiddleware>();
             app.UseMiddleware<MigrateDbMiddleware>();
+            app.UseMiddleware(typeof(ProcessUpdateMiddleware));
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseAuthentication();

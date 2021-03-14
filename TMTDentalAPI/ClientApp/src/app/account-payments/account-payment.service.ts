@@ -94,6 +94,10 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
     }
 
+    defaultGet(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', ids);
+    }
+
     saleDefaultGet(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
     }

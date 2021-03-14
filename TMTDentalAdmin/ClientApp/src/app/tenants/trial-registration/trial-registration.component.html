@@ -10,7 +10,7 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-              
+
             </div>
             <div class="o_cp_sidebar">
             </div>
@@ -32,20 +32,21 @@
                     <div class="form-group">
                         <label>Địa chỉ truy cập phần mềm của bạn là:</label>
                         <h5>
-                            <a [href]="getHostName(registerResult.hostname)">{{getHostName(registerResult.hostname)}}</a>
+                            <a
+                                [href]="getHostName(registerResult.hostname)">{{getHostName(registerResult.hostname)}}</a>
                         </h5>
                     </div>
                     <div class="form-group">
                         <label>Tên đăng nhập</label>
-                        <h5>{{registerResult.username}}</h5>
+                        <h5>admin</h5>
                     </div>
                     <div class="form-group">
                         <label>Mật khẩu</label>
-                        <h5>{{registerResult.password}}</h5>
+                        <h5>{{registerResult.phone}}</h5>
                     </div>
                     <button type="button" class="btn btn-primary" (click)="createNew()">Đăng ký mới</button>
                 </div>
-                <div *ngIf="!registerSuccess">
+                <div [ngClass]="{'d-none': registerSuccess}">
                     <table class="o_group o_inner_group">
                         <tbody>
                             <tr>
@@ -63,7 +64,8 @@
                                 <td style="width: 100%">
                                     <input type="email" class="form-control" placeholder="Dùng để reset mật khẩu"
                                         formControlName="email" required />
-                                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+                                    <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                                        class="alert alert-danger">
                                         <div *ngIf="email.errors.required">
                                             Email is required.
                                         </div>
@@ -79,7 +81,8 @@
                                 </td>
                                 <td style="width: 100%">
                                     <input type="tel" class="form-control" formControlName="phone" required />
-                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" class="alert alert-danger">
+                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)"
+                                        class="alert alert-danger">
                                         <div *ngIf="phone.errors.required">
                                             Phone is required.
                                         </div>
@@ -118,7 +121,9 @@
                                     <label class="o_form_label">Người triển khai</label>
                                 </td>
                                 <td style="width: 100%">
-                                    <input type="text" class="form-control" formControlName="supporterName" />
+                                    <kendo-combobox class="form-control" [data]="filterdEmployees" [textField]="'name'"
+                                        [filterable]="true" #empCbx formControlName="employeeAdmin" [valueField]="'id'">
+                                    </kendo-combobox>
                                 </td>
                             </tr>
                             <tr>
@@ -134,7 +139,8 @@
                                             Tên miền sử dụng is required.
                                         </div>
                                         <div *ngIf="hostName.errors.minlength">
-                                            Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí tự
+                                            Tên miền sử dụng tối thiểu {{hostName.errors.minlength.requiredLength}} kí
+                                            tự
                                         </div>
                                         <div *ngIf="hostName.errors.pattern">
                                             Tên miền sử dụng chỉ được chứa kí tự từ a -> z, 0 -> 9.
@@ -142,7 +148,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">Tên đăng nhập</label>
                                 </td>
@@ -181,7 +187,7 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label">&nbsp;</label>

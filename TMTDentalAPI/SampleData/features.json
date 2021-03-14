@@ -116,6 +116,32 @@
             "Permission": "Basic.AccountPayment.Delete"
           }
         ]
+      },
+      {
+        "Name": "Yêu cầu vật tư",
+        "Permission": "Basic.ProductRequest",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.ProductRequest.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.ProductRequest.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.ProductRequest.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.ProductRequest.Delete"
+          },
+          {
+            "Name": "Xuất kho",
+            "Permission": "Basic.ProductRequest.Done"
+          }
+        ]
       }
     ]
   },
@@ -216,6 +242,50 @@
           {
             "Name": "Xóa",
             "Permission": "Stock.Picking.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiêu chí kiểm kho",
+        "Permission": "Stock.Criteria",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Criteria.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Criteria.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Criteria.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Criteria.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểm kho",
+        "Permission": "Stock.Inventory",
+        "Children": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Inventory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Inventory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Inventory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Inventory.Delete"
           }
         ]
       }

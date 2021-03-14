@@ -22,7 +22,7 @@ namespace ApplicationCore.Middlewares
             try
             {
                 await next(context);
-            }
+            }   
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex);

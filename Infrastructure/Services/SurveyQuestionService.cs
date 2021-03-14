@@ -23,6 +23,18 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
+        public async Task ActionActive(ActionActivePar val)
+        {
+            var question = await GetByIdAsync(val.Id);
+            if (question == null)
+            {
+                throw new Exception("Không tìm thấy câu hỏi");
+            }
+
+            question.Active = val.Active;
+            await UpdateAsync(question);
+        }
+
         public async Task<PagedResult2<SurveyQuestionBasic>> GetPagedResultAsync(SurveyQuestionPaged val)
         {
             var query = SearchQuery();
@@ -33,6 +45,10 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Type))
             {
                 query = query.Where(x => x.Type == val.Type);
+            }
+            if (val.Active.HasValue)
+            {
+                query = query.Where(x => x.Active == val.Active);
             }
 
             var count = await query.CountAsync();

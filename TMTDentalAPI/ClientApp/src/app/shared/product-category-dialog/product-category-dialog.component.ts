@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angula
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable } from 'rxjs';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductCategoryBasic, ProductCategoryDisplay, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
@@ -44,7 +44,8 @@ export class ProductCategoryDialogComponent implements OnInit {
 
     setTimeout(() => {
       if (this.id) {
-        this.productCategoryService.get(this.id).subscribe((result) => {
+        this.productCategoryService.get(this.id)
+        .subscribe((result) => {
           this.myform.patchValue(result);
           if (result.parent) {
             this.filterdCategories = _.unionBy(this.filterdCategories, [result.parent], 'id');

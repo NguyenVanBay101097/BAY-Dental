@@ -238,6 +238,11 @@ namespace Infrastructure.Data
         public DbSet<ProductRequestLine> ProductRequestLines { get; set; }
         public DbSet<SaleOrderLineProductRequested> SaleOrderLineProductRequesteds { get; set; }
 
+        //public DbSet<StockInventory> StockInventories { get; set; }
+        //public DbSet<StockInventoryLine> StockInventoryLines { get; set; }
+        public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
+        public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -417,6 +422,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboOrderProductRelConfiguration());
             builder.ApplyConfiguration(new MedicineOrderConfiguration());
             builder.ApplyConfiguration(new MedicineOrderLineConfiguration());
+            builder.ApplyConfiguration(new StockInventoryConfiguration());
+            builder.ApplyConfiguration(new StockInventoryLineConfiguration());
+            builder.ApplyConfiguration(new StockInventoryCriteriaConfiguration());
+            builder.ApplyConfiguration(new ProductStockInventoryCriteriaRelConfiguration());
             builder.ApplyConfiguration(new SurveyAssignmentConfiguration());
             builder.ApplyConfiguration(new SurveyQuestionConfiguration());
             builder.ApplyConfiguration(new SurveyAnswerConfiguration());

@@ -323,14 +323,30 @@ namespace Infrastructure.Services
             if (empl.IsAllowSurvey == true && empl.GroupId == null)
                 throw new Exception("Phải chọn nhóm nhân viên khảo sát");
 
-            if (empl.UserId == null || !empl.GroupId.HasValue) 
+            if (empl.UserId == null) 
                 return;
 
             var user = await _userManager.Users.Where(x => x.Id == empl.UserId)
                 .Include(x => x.ResGroupsUsersRels)
                 .FirstOrDefaultAsync();
 
-            if (!user.ResGroupsUsersRels.Any(x => x.GroupId == empl.GroupId))
+            //lấy danh sách groups: nv và quản lý, lấy dựa vào ir module category
+            var modelDataService = GetService<IIRModelDataService>();
+            var category = await modelDataService.GetRef<IrModuleCategory>("survey.module_category_survey");
+            if (category == null)
+                return;
+
+            var resGroupService = GetService<IResGroupService>();
+            resGroupService.Sudo = true;
+            var groupIds = await resGroupService.SearchQuery(x => x.CategoryId == category.Id).OrderBy(x => x.Name).Select(x => x.Id).ToListAsync();
+            //remove nv và quản lý
+            var rels = user.ResGroupsUsersRels.Where(x => groupIds.Contains(x.GroupId)).ToList();
+            foreach (var rel in rels)
+            {
+                user.ResGroupsUsersRels.Remove(rel);
+            }
+            //add lại cái nó chọn
+            if (empl.GroupId.HasValue && !user.ResGroupsUsersRels.Any(x => x.GroupId == empl.GroupId))
                 user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = empl.GroupId.Value });
         
             await _userManager.UpdateAsync(user);

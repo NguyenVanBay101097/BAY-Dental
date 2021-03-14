@@ -17,8 +17,12 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name" />
-                                    <span class="text-danger" *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)">Vui lòng điền tên câu
-                                        hỏi</span>
+                                    <div class="error-message">
+                                        <span class="text-danger "
+                                            *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)">Vui
+                                            lòng
+                                            điền tên câu</span>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -29,11 +33,14 @@
                             <tr>
                                 <td colspan="2">
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" (change)="onChangeQuestionType()" type="radio" formControlName="type" id="radioType" value="radio">
-                                        <label class="form-check-label" for="radioType">Đánh giá theo điểm hài lòng</label>
+                                        <input class="form-check-input" (change)="onChangeQuestionType()" type="radio"
+                                            formControlName="type" id="radioType" value="radio">
+                                        <label class="form-check-label" for="radioType">Đánh giá theo điểm hài
+                                            lòng</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" (change)="onChangeQuestionType()" type="radio" formControlName="type" id="radioType1" value="text">
+                                        <input class="form-check-input" (change)="onChangeQuestionType()" type="radio"
+                                            formControlName="type" id="radioType1" value="text">
                                         <label class="form-check-label" for="radioType1">Đánh giá theo nội dung</label>
                                     </div>
                                 </td>
@@ -41,7 +48,8 @@
                         </tbody>
                     </table>
                     <div class="table-responsive user-list">
-                        <table class="table table-sm" *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
+                        <table class="table table-sm"
+                            *ngIf="formGroup.get('type') ? formGroup.get('type').value == 'radio' : false">
                             <thead>
                                 <th class="text-center" scope="col">STT</th>
                                 <th scope="col">Câu trả lời</th>
@@ -58,8 +66,7 @@
                                             </div>
                                         </td>
                                         <td class="col-md" style="vertical-align: middle;">
-                                            <input type="text" class="form-control"
-                                                formControlName="name">
+                                            <input type="text" class="form-control" formControlName="name" required>
                                         </td>
                                         <td class="col-xs" style="vertical-align: middle;">
                                             <span>

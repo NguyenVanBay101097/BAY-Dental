@@ -115,7 +115,8 @@ namespace Infrastructure.Services
             }
             if (val.DateTo.HasValue)
             {
-                query = query.Where(x => x.AssignDate <= val.DateTo.Value);
+                val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.SaleOrder.LastUpdated <= val.DateTo.Value);
             }
             if (val.EmployeeId.HasValue)
             {
@@ -148,7 +149,7 @@ namespace Infrastructure.Services
             var userInputObj = GetService<ISurveyUserInputService>();
 
             var assign = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (assign == null) 
+            if (assign == null)
                 throw new Exception("Không tìm thấy khảo sát!");
 
             var assignDisplay = _mapper.Map<SurveyAssignmentDisplay>(assign);
@@ -176,12 +177,13 @@ namespace Infrastructure.Services
                 }).FirstOrDefaultAsync();
 
             assignDisplay.SaleOrder = await saleOrderObj.SearchQuery(x => x.Id == assign.SaleOrderId)
-                .Select(x => new SurveyAssignmentDisplaySaleOrder { 
-                DateOrder = x.DateOrder,
-                Name = x.Name,
-                State = x.State,
-                AmountTotal = x.AmountTotal
-            }).FirstOrDefaultAsync();
+                .Select(x => new SurveyAssignmentDisplaySaleOrder
+                {
+                    DateOrder = x.DateOrder,
+                    Name = x.Name,
+                    State = x.State,
+                    AmountTotal = x.AmountTotal
+                }).FirstOrDefaultAsync();
 
             assignDisplay.SaleLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == assign.SaleOrderId)
                 .OrderBy(x => x.Sequence)
@@ -196,7 +198,8 @@ namespace Infrastructure.Services
 
             assignDisplay.DotKhams = await dotkhamObj.SearchQuery(x => x.SaleOrderId == assign.SaleOrderId)
                 .OrderBy(x => x.DateCreated)
-                .Select(x => new SurveyAssignmentDisplayDotKham { 
+                .Select(x => new SurveyAssignmentDisplayDotKham
+                {
                     Id = x.Id,
                     Date = x.Date,
                     DoctorName = x.Doctor.Name,
@@ -204,7 +207,7 @@ namespace Infrastructure.Services
                 })
               .ToListAsync();
 
-            foreach(var dotKham in assignDisplay.DotKhams)
+            foreach (var dotKham in assignDisplay.DotKhams)
             {
                 dotKham.Lines = await dotKhamLineObj.SearchQuery(x => x.DotKhamId == dotKham.Id)
                     .OrderBy(x => x.Sequence).Select(x => new SurveyAssignmentDisplayDotKhamLine
@@ -213,7 +216,7 @@ namespace Infrastructure.Services
                         NameStep = x.NameStep,
                         Note = x.Note,
                         ProductName = x.Product.Name
-                }).ToListAsync();
+                    }).ToListAsync();
             }
 
             assignDisplay.CallContents = await callContentObj.SearchQuery(x => x.AssignmentId == assign.Id)
@@ -438,6 +441,6 @@ namespace Infrastructure.Services
             await ruleObj.CreateAsync(rule);
         }
 
-        
+
     }
 }
