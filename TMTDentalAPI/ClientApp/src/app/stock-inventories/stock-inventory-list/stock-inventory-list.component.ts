@@ -19,7 +19,7 @@ export class StockInventoryListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   loading = false;
-  limit = 5;
+  limit = 20;
   dateFrom: Date;
   dateTo: Date;
   offset = 0;

@@ -50,9 +50,6 @@ namespace Infrastructure.Services
             }
         }
 
-
-
-
         public IDictionary<Guid, decimal> GetTheoreticalQty(IEnumerable<Guid> ids)
         {
             var quantObj = GetService<IStockQuantService>();
@@ -78,25 +75,23 @@ namespace Infrastructure.Services
             return quantObj.SearchQuery(domain: x => x.LocationId == line.LocationId && x.ProductId == line.ProductId);
         }
 
-        public StockInventoryLine OnChangeCreateLine(Product product = null, Guid? productId = null, Guid? locationId = null, Guid? uomId = null)
+        public async Task<StockInventoryLineDisplay> OnChangeCreateLine(StockInventoryLineOnChangeCreateLine val)
         {
-            var productObj = GetService<ProductService>();
-            var quantObj = GetService<StockQuantService>();
+            var productObj = GetService<IProductService>();
+            var quantObj = GetService<IStockQuantService>();
             var uomObj = GetService<IUoMService>();
-            var res = new StockInventoryLine();
-            if (product == null && productId.HasValue)
-                product = productObj.GetById(productId.Value);
-            if (product != null && locationId.HasValue)
-            {
-                res.ProductUOM = product.UOM;
-                res.ProductUOMId = product.UOMId;
-                var quants = quantObj.SearchQuery(x => x.ProductId == productId.Value && x.LocationId == locationId.Value);
-                var thtQty = quants.Sum(x => x.Qty);
-                if (productId.HasValue && uomId.HasValue && product.UOMId != uomId.Value)
-                    thtQty = uomObj.ComputeQty(product.UOMId, thtQty, uomId.Value);
-                res.TheoreticalQty = thtQty;
-                res.ProductQty = thtQty;
-            }
+            var res = new StockInventoryLineDisplay();
+            var product = await productObj.SearchQuery(x => x.Id == val.ProductId).Include(x => x.UOM).FirstOrDefaultAsync();
+            res.Product = _mapper.Map<ProductSimple>(product);
+            res.ProductId = product.Id;
+            res.LocationId = val.LocationId;
+            res.ProductUOM = _mapper.Map<UoMBasic>(product.UOM);
+            res.ProductUOMId = product.UOMId;
+            var quants = quantObj.SearchQuery(x => x.ProductId == val.ProductId && x.LocationId == val.LocationId);
+            var thtQty = quants.Sum(x => x.Qty);
+            res.TheoreticalQty = thtQty;
+            res.ProductQty = thtQty;
+
             return res;
         }
 
