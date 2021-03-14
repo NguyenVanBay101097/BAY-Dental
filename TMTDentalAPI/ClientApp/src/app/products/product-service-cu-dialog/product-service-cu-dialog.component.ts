@@ -232,7 +232,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   saveOrUpdate() {
     this.submitted = true;
-    if (!this.productForm.valid && this.isExist == true) {
+    if (!this.productForm.valid || this.isExist == true) {
       return;
     }
 
@@ -241,7 +241,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.productService.update(this.id, data).subscribe(
         result => {
           this.notificationService.show({
-            content: 'Cập nhật dịch vụ thành công',
+            content: 'Lưu thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -252,7 +252,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.productService.create(data).subscribe(
         result => {
           this.notificationService.show({
-            content: 'Tạo dịch vụ thành công',
+            content: 'Lưu thành công',
             hideAfter: 3000,
             position: { horizontal: 'center', vertical: 'top' },
             animation: { type: 'fade', duration: 400 },
@@ -331,7 +331,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
   searchProducts(q?: string) {
     var filter = new ProductFilter();
     filter.search = q || '';
-    filter.type = 'product';
     filter.type2 = 'product';
     filter.limit = 1000;
     filter.offset = 0;
@@ -468,6 +467,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
 
     this.boms.push(line);
+    console.log(this.productForm);
+    
   }
 
   deleteMaterialProduct(index) {
@@ -477,7 +478,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   onValueChange(item, i) {
     if (item) {
-      var temp = this.boms.value.filter(x => x.materialProduct.id == item.id);
+      var temp = this.boms.value.filter(x => x.materialProduct ? x.materialProduct.id == item.id : false);
       if (temp.length > 1) {
         // this.notificationService.show({
         //   content: 'Vật tư đã tồn tại',
@@ -501,7 +502,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
     else {
       this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
-    
   }
 }
 

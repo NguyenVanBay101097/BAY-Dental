@@ -1015,11 +1015,14 @@ namespace Infrastructure.Services
             }
 
             if (val.PaymentDateFrom.HasValue)
-                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= val.PaymentDateFrom));
-
+            {
+                var paymentDateFrom = val.PaymentDateFrom.Value.AbsoluteBeginOfDate();
+                spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate >= paymentDateFrom));
+            }
+               
             if (val.PaymentDateTo.HasValue)
             {
-                var paymentDateTo = val.PaymentDateTo.Value.AddDays(1);
+                var paymentDateTo = val.PaymentDateTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<AccountPayment>(x => x.PaymentDate < paymentDateTo));
             }
 
@@ -1100,8 +1103,10 @@ namespace Infrastructure.Services
 
             foreach (var rec in self)
             {
-                if (rec.State != "draft")
-                    throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp");
+                if (rec.State == "posted")
+                    throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
+                if (rec.State == "cancel")
+                    throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
                 if (rec.MoveLines.Any())
                 {
                     throw new Exception("Bạn không thể xóa thanh toán đã được vào sổ.");
