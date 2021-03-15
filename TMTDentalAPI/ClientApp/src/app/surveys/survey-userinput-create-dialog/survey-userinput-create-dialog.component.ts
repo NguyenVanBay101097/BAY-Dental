@@ -23,7 +23,8 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   surveyAssignmentId: string;
   surveyTags: SurveyTagBasic[];
   disable = false;
-  @ViewChild('tagMultiSelect', {static: true}) tagMultiSelect: MultiSelectComponent;
+  submitted: boolean = false;
+  @ViewChild('tagMultiSelect', { static: true }) tagMultiSelect: MultiSelectComponent;
 
   constructor(public activeModal: NgbActiveModal, private surveyUserinputService: SurveyUserinputService, private modalService: NgbModal,
     private questionService: SurveyQuestionService, private surveyTagService: SurveyTagService, private fb: FormBuilder) { }
@@ -31,10 +32,10 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       questions: this.fb.array([]),
-      surveyTags: null,
+      surveyTags: [null, Validators.required],
       note: null,
     });
- 
+
     setTimeout(() => {
       this.loadSurveyTagList();
       this.loadQuestions();
@@ -95,6 +96,10 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
     });
   }
 
+  get form() {
+    return this.formGroup.controls;
+  }
+
   searchSurveyTags(q?: string) {
     var val = new SurveyTagPaged();
     val.search = q || '';
@@ -103,7 +108,7 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
 
   quickCreateSurveyTagModal() {
     const modalRef = this.modalService.open(SurveyTagDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Nhãn khảo sát';
+    modalRef.componentInstance.title = 'Thêm nhãn khảo sát';
 
     modalRef.result.then(result => {
       if (result && result.id) {
@@ -113,6 +118,7 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true
     if (this.formGroup.invalid) {
       return false;
     }

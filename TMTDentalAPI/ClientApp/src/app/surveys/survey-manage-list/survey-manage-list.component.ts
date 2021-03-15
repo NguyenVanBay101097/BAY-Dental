@@ -32,7 +32,7 @@ export class SurveyManageListComponent implements OnInit {
   filteredEmployees: EmployeeSimple[];
   employees: EmployeeSimple[] = [];
   search: string;
-  limit = 10;
+  limit = 2;
   offset = 0;
   edit = false;
   dateFrom: Date;
@@ -107,7 +107,6 @@ export class SurveyManageListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(this.gridData);
       this.loading = false;
     }, err => {
       this.loading = false;
@@ -125,12 +124,16 @@ export class SurveyManageListComponent implements OnInit {
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      result.forEach(item => {
-        this.statusCount[item.status] = item.count;
-        var total = 0;
-        total = total + item.count;
-        this.statusCount['total'] = total;
-      });
+      if (result && result.length) {
+        result.forEach(res => {
+          this.statusCount[res.status] = res.count;
+          var total = 0;
+          total = total + res.count;
+          this.statusCount['total'] = total;
+        });
+      } else {
+        this.statusCount = {};
+      }
     });
   }
 
@@ -144,8 +147,8 @@ export class SurveyManageListComponent implements OnInit {
   onSearchDateChange(event) {
     this.dateTo = event.dateTo;
     this.dateFrom = event.dateFrom;
-    this.loadDataFromApi();
     this.loadSummary();
+    this.loadDataFromApi();
   }
 
   createEmpAssign() {
@@ -161,6 +164,7 @@ export class SurveyManageListComponent implements OnInit {
     this.status = state ? state.value : '';
     this.offset = 0;
     this.loadDataFromApi();
+    this.loadSummary();
   }
 
   // click in cell to edit

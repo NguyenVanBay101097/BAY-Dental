@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -17,16 +18,18 @@
                         <div>
                             <h6>
                                 <span>{{i + 1}}/ {{question.name}}</span>
-                                <span *ngIf="question.type == 'radio'"> *</span>
+                                <span *ngIf="question.type == 'radio'" class="text-danger"> *</span>
                             </h6>
                         </div>
                         <div *ngIf="question.type == 'text'">
-                            <textarea formControlName="answerValue" [attr.disabled]="disable ? true : null" class="form-control" rows="2"></textarea>
+                            <textarea formControlName="answerValue" [attr.disabled]="disable ? true : null"
+                                class="form-control" rows="2"></textarea>
                         </div>
-                        <div *ngIf="question.type == 'radio'" >                           
+                        <div *ngIf="question.type == 'radio'">
                             <div *ngFor="let answer of question.answers">
                                 <label>
-                                    <input type="radio" formControlName="answerValue" [value]="answer.id" [attr.disabled]="disable ? true : null" />
+                                    <input type="radio" formControlName="answerValue" [value]="answer.id"
+                                        [attr.disabled]="disable ? true : null" />
                                     <span class="ml-1">{{answer.score}} điểm: {{answer.name}}</span>
                                 </label>
                             </div>
@@ -41,12 +44,22 @@
                 <div class="o_group">
                     <div [class.d-none]="disable">
                         <div class="d-flex">
-                            <kendo-multiselect [filterable]="true" #tagMultiSelect class="mr-3" [data]="surveyTags" [textField]="'name'" [valueField]="'id'" formControlName="surveyTags">
+                            <kendo-multiselect required [filterable]="true" #tagMultiSelect class="mr-3"
+                                [data]="surveyTags" [textField]="'name'" [class.border-error]="form.surveyTags.errors"
+                                [valueField]="'id'" formControlName="surveyTags">
                             </kendo-multiselect>
-                            <button title="Thêm nhãn khảo sát" class="btn btn-secondary" (click)="quickCreateSurveyTagModal()">
+                            <button title="Thêm nhãn khảo sát" class="btn btn-secondary"
+                                (click)="quickCreateSurveyTagModal()">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
+                        <div>
+                            <span class="text-danger"
+                                *ngIf="form.surveyTags.errors && (form.surveyTags.touched || form.surveyTags.dirty || submitted)">
+                                Gán tag khảo sát
+                            </span>
+                        </div>
+
                     </div>
                     <div class="d-flex" *ngIf="disable">
                         <h6 *ngFor="let tag of getSurveyTagsValue">
@@ -63,7 +76,8 @@
                     </h5>
                 </div>
                 <div class="o_group">
-                    <textarea class="form-control pl-2" [attr.disabled]="disable ? true : null" rows="4" formControlName="note"></textarea>
+                    <textarea class="form-control pl-2" [attr.disabled]="disable ? true : null" rows="4"
+                        formControlName="note"></textarea>
                 </div>
             </div>
         </div>
@@ -72,5 +86,6 @@
 
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" *ngIf="!disable" (click)="onSave()" accesskey="s">Hoàn thành</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
 </footer>
