@@ -496,6 +496,8 @@ namespace Infrastructure.Services
 
             _SaveUoMRels(product, val);
 
+            UpdateProductCriteriaRel(product, val);
+
             product = await CreateAsync(product);
 
             return product;
@@ -504,7 +506,7 @@ namespace Infrastructure.Services
         public async Task UpdateProduct(Guid id, ProductSave val)
         {
             var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).Include(x => x.Boms)
-                .Include(x => x.ProductUoMRels).Include(x=> x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
+                .Include(x => x.ProductUoMRels).Include(x => x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
@@ -521,13 +523,30 @@ namespace Infrastructure.Services
 
             UpdateProductCriteriaRel(product, val);
 
-             await UpdateAsync(product);
+            await UpdateAsync(product);
         }
 
         private void UpdateProductCriteriaRel(Product product, ProductSave val)
         {
-            product.ProductStockInventoryCriteriaRels.Clear();
-            product.ProductStockInventoryCriteriaRels = _mapper.Map<List<ProductStockInventoryCriteriaRel>>(val.ProductStockInventoryCriteriaRels);
+            var toRemove = product.ProductStockInventoryCriteriaRels.Where(x => !val.ProductCriteriaIds.Contains(x.StockInventoryCriteriaId)).ToList();
+            foreach (var hist in toRemove)
+            {
+                product.ProductStockInventoryCriteriaRels.Remove(hist);
+            }
+            if (val.ProductCriteriaIds != null)
+            {
+                foreach (var hist in val.ProductCriteriaIds)
+                {
+                    if (product.ProductStockInventoryCriteriaRels.Any(x => x.StockInventoryCriteriaId == hist))
+                        continue;
+
+                    product.ProductStockInventoryCriteriaRels.Add(new ProductStockInventoryCriteriaRel
+                    {
+                        StockInventoryCriteriaId = hist
+                    });
+
+                }
+            }
         }
 
         private void _SaveUoMRels(Product product, ProductSave val)
@@ -640,12 +659,14 @@ namespace Infrastructure.Services
 
         public async Task<ProductDisplay> GetProductDisplay(Guid id)
         {
+            var criteriaObj = GetService<IStockInventoryCriteriaService>();
             //tách ra nhiều câu query nhỏ hơn và map view model trả về
             var product = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Categ)
                 .Include(x => x.UOM)
                 .Include(x => x.UOMPO)
-                .Include(x=> x.ProductStockInventoryCriteriaRels)
+                .Include(x => x.ProductStockInventoryCriteriaRels)
+                .ThenInclude(x => x.StockInventoryCriteria)
                 .FirstOrDefaultAsync();
             var res = _mapper.Map<ProductDisplay>(product);
 
@@ -726,6 +747,32 @@ namespace Infrastructure.Services
                 res.UOMPOId = uom.Id;
                 res.UOMPO = _mapper.Map<UoMBasic>(uom);
             }
+
+            res.CompanyId = CompanyId;
+
+            return res;
+        }
+
+        public async Task<ProductDisplay> GetDefaultProductMedicine()
+        {
+            var uomObj = GetService<IUoMService>();
+            var userObj = GetService<IUserService>();
+            var uom = await uomObj.DefaultUOM();
+            var isGroupMedicine = await userObj.HasGroup("medicineOrder.group_medicine");
+            var res = new ProductDisplay();
+            if (uom != null)
+            {
+                res.UOMId = uom.Id;
+                res.UOM = _mapper.Map<UoMBasic>(uom);
+
+                res.UOMPOId = uom.Id;
+                res.UOMPO = _mapper.Map<UoMBasic>(uom);
+            }
+
+            if (isGroupMedicine)
+                res.Type = "product";
+            else
+                res.Type = "consu";
 
             res.CompanyId = CompanyId;
 

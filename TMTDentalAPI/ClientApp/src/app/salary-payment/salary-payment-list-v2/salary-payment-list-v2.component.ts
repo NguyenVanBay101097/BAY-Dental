@@ -76,7 +76,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(SalaryPaymentDialogV2Component, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: Phiếu tạm ứng/chi lương';
+    modalRef.componentInstance.title = 'Phiếu tạm ứng';
     modalRef.result.then((result) => {
       this.loadDataFromApi();
       if (result && result.print) {

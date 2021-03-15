@@ -41,4 +41,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
 
     }
+
+    public class StockInventoryCriteriaSimple
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+    }
+
+
 }

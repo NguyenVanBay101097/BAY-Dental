@@ -131,6 +131,10 @@ export class ProductService {
     );
   }
 
+  getDefaultProducMedicine() {
+    return this.http.get(this.baseApi + this.apiUrl + "/" + "DefaultProducMedicine");
+  }
+
   defaultProductStepGet(): Observable<Product> {
     return this.http.post<Product>(
       this.baseApi + this.apiUrl + "/DefaultProductStepGet",

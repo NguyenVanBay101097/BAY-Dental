@@ -127,7 +127,9 @@ export class SurveyManageListComponent implements OnInit {
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
       result.forEach(item => {
         this.statusCount[item.status] = item.count;
-        this.statusCount['total'] = (this.statusCount['total'] || 0) + item.count;
+        var total = 0;
+        total = total + item.count;
+        this.statusCount['total'] = total;
       });
     });
   }
@@ -157,6 +159,7 @@ export class SurveyManageListComponent implements OnInit {
 
   public onStatusChange(state) {
     this.status = state ? state.value : '';
+    this.offset = 0;
     this.loadDataFromApi();
   }
 
@@ -195,7 +198,7 @@ export class SurveyManageListComponent implements OnInit {
     var val = new SurveyAssignmentUpdateEmployee();
     val.id = dataItem.id;
     val.employeeId = formValue.employee.id;
-    
+
     this.surveyAssignmentService.updateAssignment(val).subscribe(
       () => {
         this.notificationService.show({
@@ -218,9 +221,10 @@ export class SurveyManageListComponent implements OnInit {
     var id = item.dataItem.id;
     this.router.navigate(['/surveys/form'], { queryParams: { id: id } });
   }
-  
+
   onChaneEmp(emp) {
     this.employeeId = emp ? emp.id : null;
+    this.offset = 0;
     this.loadDataFromApi();
     this.loadSummary();
 

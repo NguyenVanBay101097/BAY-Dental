@@ -26,7 +26,6 @@ export class TenantPaged {
     offset: number;
 }
 
-
 export class TenantPaging {
     offset: number;
     limit: number;
@@ -53,6 +52,10 @@ export class TenantService {
 
     updateDateExpired(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/UpdateDateExpired", val);
+    }
+
+    extendExpired(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ExtendExpired", val);
     }
 
     updateInfo(id: string, val: any) {

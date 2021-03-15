@@ -32,6 +32,7 @@ namespace Infrastructure.Services
         private readonly ConnectionStrings _connectionStrings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFacebookMessageSender _fbMessageSender;
+
         public TCareJobService(IOptions<ConnectionStrings> connectionStrings, IFacebookMessageSender fbMessageSender, IHttpContextAccessor httpContextAccessor)
         {
             _connectionStrings = connectionStrings?.Value;

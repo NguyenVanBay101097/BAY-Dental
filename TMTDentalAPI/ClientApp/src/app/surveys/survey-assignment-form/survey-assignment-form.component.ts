@@ -53,6 +53,8 @@ export class SurveyAssignmentFormComponent implements OnInit {
     if (this.id) {
       this.surveyAssignmentService.get(this.id).subscribe(result => {
         this.surveyAssignment = result;
+        console.log(result);
+        
         this.formGroup.patchValue(this.surveyAssignment);
         // // let dateOrder = new Date(result.dateOrder);
         // // this.formGroup.get('dateOrderObj').patchValue(dateOrder);

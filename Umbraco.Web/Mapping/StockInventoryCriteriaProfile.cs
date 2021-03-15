@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<StockInventoryCriteria, StockInventoryCriteriaDisplay>();
             CreateMap<StockInventoryCriteriaSave, StockInventoryCriteria>();
             CreateMap<StockInventoryCriteria, StockInventoryCriteriaBasic>();
+            CreateMap<StockInventoryCriteria, StockInventoryCriteriaSimple>();
         }
     }
 }

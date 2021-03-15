@@ -311,8 +311,8 @@ namespace Infrastructure.Services
 
         public override Task DeleteAsync(IEnumerable<ProductRequest> entities)
         {
-            if (entities.Any(x => x.State != "draft"))
-                throw new Exception("Không thể xóa phiếu yêu cầu vật tư đang yêu cầu hoặc đã xuất");
+            if (entities.Any(x => x.State == "done"))
+                throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
             return base.DeleteAsync(entities);
         }
     }

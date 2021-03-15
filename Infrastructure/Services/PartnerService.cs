@@ -2097,6 +2097,47 @@ namespace Infrastructure.Services
             return moves;
         }
 
+        public async Task<List<SearchAllViewModel>> SearchAll(PartnerPaged val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => (x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.Phone.Contains(val.Search)));
+            }
+
+            if (val.isBoth.HasValue && val.isBoth == true)
+            {
+                query = query.Where(x => x.Customer == true || x.Supplier == true);
+            }
+            else
+            {
+                if (val.Customer.HasValue)
+                {
+                    query = query.Where(x => x.Customer == true);
+                }
+                if (val.Supplier.HasValue)
+                {
+                    query = query.Where(x => x.Supplier == true);
+                }
+            }
+        
+            var res = await query
+                         .Include("PartnerPartnerCategoryRels.Category")
+                         .Skip(val.Offset)
+                         .Take(val.Limit)
+                          .Select(x => new SearchAllViewModel
+                          {
+                              Id = x.Id,
+                              Name = "[" + x.Ref + "]" + " " + x.Name,
+                              Address = x.GetAddress(),
+                              Phone = x.Phone,
+                              Type = "customer",
+                              Tags = x.PartnerPartnerCategoryRels != null && x.PartnerPartnerCategoryRels.Count > 0 ? _mapper.Map<List<PartnerCategoryBasic>>(x.PartnerPartnerCategoryRels) : new List<PartnerCategoryBasic>()
+                          }).ToListAsync();
+
+            return res;
+        }
+
         public async Task<PagedResult2<PartnerGetDebtPagedItem>> GetDebtPaged(Guid id, PartnerGetDebtPagedFilter val)
         {
             var amlObj = GetService<IAccountMoveLineService>();

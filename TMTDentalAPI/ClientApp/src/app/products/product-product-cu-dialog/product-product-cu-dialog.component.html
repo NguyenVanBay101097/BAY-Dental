@@ -68,7 +68,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-multiselect [data]="listProductCriteria" [valueField]="'id'" [textField]="'name'" formControlName='productStockInventoryCriteriaRels'></kendo-multiselect>
+                                                <kendo-multiselect [filterable]="true" #criteriaMultiSelect class="mr-3" [data]="listProductCriteria" [textField]="'name'" [valueField]="'id'" formControlName="productCriterias">
+                                                </kendo-multiselect>
                                             </td>
                                         </tr>
                                         <!-- <tr>

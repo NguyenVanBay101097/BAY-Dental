@@ -88,6 +88,18 @@
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
+                                        <tr hasGroups [groups]="'medicineOrder.group_medicine'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Tiêu chí kiểm kho
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-multiselect [filterable]="true" #criteriaMultiSelect class="mr-3" [data]="listProductCriteria" [textField]="'name'" [valueField]="'id'" formControlName="productCriterias">
+                                                </kendo-multiselect>
+                                                
+                                            </td>
+                                        </tr>
                                         <!-- <tr hasGroups [groups]="'product.group_uom'">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">

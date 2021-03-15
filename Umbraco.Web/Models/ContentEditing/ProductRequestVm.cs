@@ -20,6 +20,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string EmployeeName { get; set; }
 
         public string PickingName { get; set; }
+        public StockPickingBasic Picking { get; set; }
 
         /// <summary>
         /// draft : nháp

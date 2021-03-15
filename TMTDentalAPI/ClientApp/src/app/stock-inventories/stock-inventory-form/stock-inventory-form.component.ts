@@ -14,6 +14,7 @@ import { ProductService } from 'src/app/products/product.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
 import { StockInventoryLineByProductId, StockInventoryService } from '../stock-inventory.service';
+import { StockInventoryLineService, StockInventoryLineOnChangeCreateLine } from '../stock-inventory-line.service';
 
 @Component({
   selector: 'app-stock-inventory-form',
@@ -60,7 +61,8 @@ export class StockInventoryFormComponent implements OnInit {
     private authService: AuthService,
     private intlService: IntlService,
     private criteriaService: StockInventoryCriteriaService,
-    private printService: PrintService
+    private printService: PrintService,
+    private stockInventoryLineService: StockInventoryLineService
   ) { }
 
   ngOnInit() {
@@ -288,10 +290,10 @@ export class StockInventoryFormComponent implements OnInit {
   }
 
   addLine(val) {
-    var res = new StockInventoryLineByProductId();
+    var res = new StockInventoryLineOnChangeCreateLine();
     res.productId = val.id;
-    res.inventoryId = this.id;
-    this.stockInventorySevice.inventorylineByProductId(res).subscribe((result: any) => {
+    res.locationId = this.formGroup.get('locationId').value;
+    this.stockInventoryLineService.onChangeCreateLine(res).subscribe((result: any) => {
 
       var invLine = this.fb.group(result);
 

@@ -19,10 +19,17 @@ export class PartnerCustomerDetailComponent implements OnInit {
   constructor(private partnerService: PartnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.loadPartner(this.id);
-    }
+    // this.id = this.route.snapshot.paramMap.get('id');
+    // if (this.id) {
+    //   this.loadPartner(this.id);
+    // }
+
+    this.route.params.subscribe(params => {
+      this.id = params.id
+      if (this.id) {
+        this.loadPartner(this.id);
+      }
+    });
   }
 
   loadPartner(id: string) {
