@@ -183,7 +183,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (this.createChangePassword) {
       this.formCreate.get('userPassword').setValidators([Validators.required]);
       this.formCreate.get('userPassword').updateValueAndValidity();
-      this.FC.userPassword.markAsDirty();
+      this.f.userPassword.markAsDirty();
     } else {
       this.formCreate.get('userPassword').setValidators([]);
       this.formCreate.get('userPassword').updateValueAndValidity();
