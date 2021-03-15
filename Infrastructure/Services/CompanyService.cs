@@ -394,7 +394,9 @@ namespace Infrastructure.Services
             var rule_dict = new Dictionary<string, IRRuleNew>()
             {
                 {"medicineOrder.medicine_order_comp_rule", new  IRRuleNew{ NameRule = "medicine_order_comp_rule", ModelIRModel = "MedicineOrder" ,NameIRModel = "Hóa đơn thuốc"}},           
-                {"productrequest.product_request_comp_rule", new  IRRuleNew{ NameRule = "product_request_comp_rule", ModelIRModel = "ProductRequest" ,NameIRModel = "yêu cầu vật tư"}},           
+                {"productrequest.product_request_comp_rule", new  IRRuleNew{ NameRule = "product_request_comp_rule", ModelIRModel = "ProductRequest" ,NameIRModel = "Yêu cầu vật tư"}},
+                {"stock.stock_inventory_comp_rule", new  IRRuleNew{ NameRule = "stock_inventory_comp_rule", ModelIRModel = "StockInventory" ,NameIRModel = "Kiểm kho"}},
+                {"stock.stock_inventory_line_comp_rule", new  IRRuleNew{ NameRule = "stock_inventory_line_comp_rule", ModelIRModel = "StockInventoryLine" ,NameIRModel = "Chi tiết kiểm kho"}},
             };
 
             foreach (var rule in rule_dict)
@@ -438,6 +440,8 @@ namespace Infrastructure.Services
             }
          
         }
+
+
 
         public async Task InsertModuleAccountData(Company main_company)
         {

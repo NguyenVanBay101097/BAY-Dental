@@ -68,7 +68,6 @@ hr.model_payroll_structure_type,HrPayrollStructureType,Loại mẫu lương,0
 hr.model_payroll_structure,HrPayrollStructure,Mẫu lương,0
 hr.model_work_entry_type,WorkEntryType,Loại chấm công,0
 base.model_resource_calendar,ResourceCalendar,Lịch làm việc,0
-base.model_medicine_order,MedicineOrder,Hóa đơn thuốc,0
 
 
 

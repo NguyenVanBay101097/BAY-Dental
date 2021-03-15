@@ -360,85 +360,78 @@ namespace Infrastructure.Services
         {
             //tao cate
             var cateObj = GetService<IIrModuleCategoryService>();
+            var _iRModelDataService = GetService<IIRModelDataService>();
+            var _iRModuleCategoryService = GetService<IIrModuleCategoryService>();
+            var _iRModelService = GetService<IIRModelService>();
+            var _iRuleService = GetService<IIRRuleService>();
+            var _iResGroupService = GetService<IResGroupService>();
             var cateSequenceMax = await cateObj.SearchQuery().MaxAsync(x => x.Sequence);
-            var cate = await cateObj.CreateAsync(new IrModuleCategory()
+            //nếu chưa có ir module category thi tạo và insert các groups add ir model data
+            var categ = await _iRModelDataService.GetRef<IrModuleCategory>("survey.module_category_survey");
+            if (categ == null)
             {
-                Name = "Survey",
-                Sequence = cateSequenceMax == null ? 1 : cateSequenceMax + 1,
-                Visible = false
-            });
-            //tao resgroup include
-            var groupObj = GetService<IResGroupService>();
-            var empGroup = new ResGroup()
-            {
-                CategoryId = cate.Id,
-                Name = "Nhân viên khảo sát",
-            };
-            var manageGroup = new ResGroup()
-            {
+                ///create irmodulecategory
+                categ = await _iRModuleCategoryService.CreateAsync(new IrModuleCategory()
+                {
+                    Name = "Survey",
+                    Visible = false
+                });
 
-                CategoryId = cate.Id,
-                Name = "Quản lý khảo sát",
-            };
-            var groups = await groupObj.CreateAsync(new List<ResGroup>() {
-            manageGroup,
-            empGroup
-             });
-            //tao model data quản lý 2 group
-            var modelDataObj = GetService<IIRModelDataService>();
-            var modelData = await modelDataObj.CreateAsync(new List<IRModelData>() {
-            new IRModelData() // for show combobox
-            {
-                Name = "survey_assignment",
-                Module = "survey",
-                ResId = cate.Id.ToString(),
-                Model = "ir.module.category"
-            },
-            //for ẩn hiện menu
-             new IRModelData()
-            {
-                Name = "survey_assignment_Quanly",
-                Module = "survey_Quanly",
-                ResId = manageGroup.Id.ToString(),
-                Model = "res.groups"
-            },
-              new IRModelData()
-            {
-                Name = "survey_assignment_Nhanvien",
-                Module = "survey_Nhanvien",
-                ResId = empGroup.Id.ToString(),
-                Model = "res.groups"
+                var surveyAssignmentModel = await _iRModelService.CreateAsync(new IRModel()
+                {
+                    Name = "Survey Assignment",
+                    Model = "SurveyAssignment",
+                    Transient = true,
+                });
+
+                var surveyAssignmentRule = await _iRuleService.CreateAsync(new IRRule()
+                {
+                    Name = "survey assignment by employee",
+                    ModelId = surveyAssignmentModel.Id,
+                    Code = "survey.assignment_employee",
+                });
+
+                /// create resgroups
+                var empGroup = new ResGroup()
+                {
+                    CategoryId = categ.Id,
+                    Name = "Nhân viên",
+                };
+                empGroup.RuleGroupRels.Add(new RuleGroupRel { RuleId = surveyAssignmentRule.Id });
+
+                var manageGroup = new ResGroup()
+                {
+                    CategoryId = categ.Id,
+                    Name = "Quản lý",
+                };
+
+                var groups = await _iResGroupService.CreateAsync(new List<ResGroup>() { manageGroup, empGroup });
+
+                //tao model data quản lý 2 group
+                var modelData = await _iRModelDataService.CreateAsync(new List<IRModelData>() {
+                        new IRModelData() // for show combobox
+                        {
+                             Name = "module_category_survey",
+                             Module = "survey",
+                             ResId = categ.Id.ToString(),
+                             Model = "ir.module.category"
+                        },
+                        new IRModelData()
+                        {
+                            Name = "survey_assignment_manager",
+                            Module = "survey",
+                            ResId = manageGroup.Id.ToString(),
+                            Model = "res.groups"
+                        },
+                        new IRModelData()
+                        {
+                            Name = "survey_assignment_user",
+                            Module = "survey",
+                            ResId = empGroup.Id.ToString(),
+                            Model = "res.groups"
+                        }
+                    });
             }
-            });
-
-            // tao rule cho việc get assignment by employee
-            var ruleObj = GetService<IIRRuleService>();
-            var modelObj = GetService<IIRModelService>();
-            var model = await modelObj.CreateAsync(new IRModel()
-            {
-                Name = "Survey Assignment",
-                Model = "SurveyAssignment",
-                Transient = true,
-            });
-            var rule = new IRRule()
-            {
-                Name = "survey assignment by employee",
-                Global = true,
-                Active = true,
-                PermUnlink = true,
-                PermWrite = true,
-                PermRead = true,
-                PermCreate = true,
-                ModelId = model.Id,
-                Code = "survey.assignment_employee",
-            };
-
-            foreach (var group in groups)
-            {
-                if (group.Id == empGroup.Id)
-                    rule.RuleGroupRels.Add(new RuleGroupRel() { GroupId = group.Id });
-            }
-            await ruleObj.CreateAsync(rule);
         }
 
 
