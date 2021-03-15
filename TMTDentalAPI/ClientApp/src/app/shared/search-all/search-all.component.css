@@ -1,0 +1,19 @@
+._search_all_header {
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.btn-check {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+
+._search_all_header .btn {
+    margin: .25rem .125rem;
+}
+
+._search_wrapper {
+    width: 293px;
+}

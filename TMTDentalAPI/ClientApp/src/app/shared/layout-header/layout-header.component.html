@@ -27,38 +27,7 @@
         </ul> -->
         <ul class="navbar-nav">
             <li class="nav-item">
-                <ng-select class="_search_wrapper" bindLabel="name" [typeahead]="searchInput$" (change)="onSearchChange($event)"
-                    [minTermLength]="2" [loading]="searchLoading" placeholder="Tìm kiếm nhanh" [items]="search$ | async"
-                    [(ngModel)]="selectedResult" typeToSearchText="Vui lòng nhập 2 kí tự trở lên">
-                    <ng-template ng-header-tmp>
-                        <div class="_search_all_header">
-                            <input (click)="onChangeResultSelection('all')" checked class="btn-check" type="radio" name="type" id="all" value="all">
-                            <label class="btn btn-light btn-sm" for="all">Tất cả</label>
-                            <input class="btn-check" (click)="onChangeResultSelection('customer')" type="radio" name="type" id="customer" value="customer">
-                            <label class="btn btn-light btn-sm" for="customer">Khách hàng</label>
-                            <input class="btn-check" (click)="onChangeResultSelection('supplier')"
-                                type="radio" name="type" id="supplier" value="supplier">
-                            <label class="btn btn-light btn-sm" for="supplier">Nhà cung cấp</label>
-                            <input class="btn-check" (click)="onChangeResultSelection('sale-order')"
-                                type="radio" name="type" id="sale-order" value="sale-order">
-                            <label class="fbtn btn-light btn-sm" for="sale-order">Phiếu điều trị</label>
-                        </div>
-                    </ng-template>
-                    <ng-template ng-option-tmp let-item="item">
-                        <div class="font-weight-600">{{item.name}}</div>
-                        <div [innerHtml]="item.note">
-                        </div>
-                    </ng-template>
-                    <ng-template ng-notfound-tmp>
-                        <div class="ng-option disabled">
-                            <div class="d-flex flex-column">
-                                <img class="ml-auto mr-auto" width="50%" height="50%"
-                                    src="../../../assets/images/background/not-found.svg">
-                                <h6 class="ml-auto mr-auto">Không có kết quả tìm kiếm</h6>
-                            </div>
-                        </div>
-                    </ng-template>
-                </ng-select>
+                <app-search-all></app-search-all>
             </li>
         </ul>
         <ul class="navbar-nav">
