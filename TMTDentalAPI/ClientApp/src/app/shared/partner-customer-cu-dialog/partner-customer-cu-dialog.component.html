@@ -1,13 +1,15 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
-        tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
+                <div class="float-right">
+                    <app-image-file-upload [supportWebcam]="true" (uploaded)="onAvatarUploaded($event)" [imageId]="f.avatar?.value" [width]="200" [height]="200"></app-image-file-upload>
+                </div>
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
@@ -22,7 +24,7 @@
                         <li class="nav-item">
                             <a class="nav-link" id="medical_history-tab" data-toggle="tab" href="#medical_history" role="tab" aria-controls="medical_history" aria-selected="false">Tiểu sử bệnh</a>
                         </li>
-                       
+
                         <!-- <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#partner_info"
                                 role="tab" aria-controls="home" aria-selected="true">Thông tin cơ bản</a>
@@ -50,8 +52,7 @@
                                                 <label class="o_form_label">Mã khách hàng</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <input class="form-control" formControlName="ref"
-                                                    placeholder="Để trống sẽ tự động phát sinh" />
+                                                <input class="form-control" formControlName="ref" placeholder="Để trống sẽ tự động phát sinh" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -60,18 +61,15 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)"
-                                                        id="male_radio" value="male">
+                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)" id="male_radio" value="male">
                                                     <label class="form-check-label" for="male_radio">Nam</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)"
-                                                        id="female_radio" value="female">
+                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)" id="female_radio" value="female">
                                                     <label class="form-check-label" for="female_radio">Nữ</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)"
-                                                        id="other_radio" value="other">
+                                                    <input class="form-check-input" type="radio" formControlName="gender" (change)="onChangeGender($event.target.value)" id="other_radio" value="other">
                                                     <label class="form-check-label" for="other_radio">Khác</label>
                                                 </div>
                                             </td>
@@ -106,8 +104,7 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
-                                                    <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'"
-                                                        [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
+                                                    <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'" [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
                                                     </kendo-combobox>
                                                     <a class="btn btn-sm btn-light" (click)="quickCreateTitle()">
                                                         <span class="k-icon k-i-plus"></span>
@@ -152,8 +149,7 @@
                                                 <label class="o_form_label">Người tư vấn</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-combobox formControlName="consultant" [filterable]="true"
-                                                    [data]="filteredConsultants" [valueField]="'id'" #consultantCbx [textField]="'name'">
+                                                <kendo-combobox formControlName="consultant" [filterable]="true" [data]="filteredConsultants" [valueField]="'id'" #consultantCbx [textField]="'name'">
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
@@ -181,34 +177,23 @@
                                                         </app-check-address-button>
                                                     </div>
                                                 </div>
-            
+
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="o_address_format mb-2">
                                                     <div class="mb-2">
-                                                        <input class="form-control" placeholder="Số nhà, đường..." type="text"
-                                                            formControlName="street" />
+                                                        <input class="form-control" placeholder="Số nhà, đường..." type="text" formControlName="street" />
                                                     </div>
                                                     <div class="mb-2">
-                                                        <kendo-combobox [data]="dataResultCities" [textField]="'name'"
-                                                            [filterable]="true" [placeholder]="'Tỉnh/Thành'" [filterable]="true"
-                                                            (filterChange)="handleCityFilter($event)" #cityCbx
-                                                            (valueChange)="handleCityChange($event)" formControlName="city"
-                                                            [valueField]="'code'">
+                                                        <kendo-combobox [data]="dataResultCities" [textField]="'name'" [filterable]="true" [placeholder]="'Tỉnh/Thành'" [filterable]="true" (filterChange)="handleCityFilter($event)" #cityCbx (valueChange)="handleCityChange($event)" formControlName="city" [valueField]="'code'">
                                                         </kendo-combobox>
                                                     </div>
                                                     <div class="mb-2">
-                                                        <kendo-combobox [data]="dataResultDistricts" [textField]="'name'"
-                                                            [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'"
-                                                            (filterChange)="handleDistrictFilter($event)" [filterable]="true"
-                                                            #districtCbx (valueChange)="handleDistrictChange($event)"
+                                                        <kendo-combobox [data]="dataResultDistricts" [textField]="'name'" [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'" (filterChange)="handleDistrictFilter($event)" [filterable]="true" #districtCbx (valueChange)="handleDistrictChange($event)"
                                                             formControlName="district" [valueField]="'code'">
                                                         </kendo-combobox>
                                                     </div>
-                                                    <kendo-combobox [data]="dataResultWards" [textField]="'name'"
-                                                        [disableControl]="isDisabledWards" [placeholder]="'Phường/Xã'"
-                                                        [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx
-                                                        (valueChange)="handleWardChange($event)" formControlName="ward"
+                                                    <kendo-combobox [data]="dataResultWards" [textField]="'name'" [disableControl]="isDisabledWards" [placeholder]="'Phường/Xã'" [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx (valueChange)="handleWardChange($event)" formControlName="ward"
                                                         [valueField]="'code'">
                                                     </kendo-combobox>
                                                 </div>
@@ -219,13 +204,12 @@
                                                 <label class="o_form_label">Nguồn</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                              <div>
-                                                <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources"
-                                                   [valueField]="'id'" #sourceCbx [textField]="'name'">
-                                                </kendo-combobox>                                 
-                                              </div>
-                                            </td>             
-                                          </tr>  
+                                                <div>
+                                                    <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources" [valueField]="'id'" #sourceCbx [textField]="'name'">
+                                                    </kendo-combobox>
+                                                </div>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td colspan="1" class="o_td_label"><label class="o_form_label">Ghi
                                                     chú</label></td>
@@ -263,8 +247,7 @@
                                                 <label class="o_form_label">Tiểu sử khác</label>
                                             </td>
                                             <td colspan="1" style="width:100%">
-                                                <textarea class="form-control"
-                                                    formControlName="medicalHistory"></textarea>
+                                                <textarea class="form-control" formControlName="medicalHistory"></textarea>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -273,8 +256,8 @@
                         </div>
                     </div>
                 </div>
-             
-               
+
+
             </div>
         </div>
     </form>
