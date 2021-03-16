@@ -43,6 +43,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   biteJoints: LaboBiteJointBasic[] = [];
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
+  isRead = false;
 
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,

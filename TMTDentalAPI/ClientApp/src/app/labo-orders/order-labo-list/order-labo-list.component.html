@@ -50,7 +50,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [class]="'pointer'" (cellClick)="cellClick($event.dataItem)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partner" title="NCC Labo" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partner.displayName}}
@@ -72,7 +72,7 @@
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{GetTeeth(dataItem)}}
             </ng-template>
-        </kendo-grid-column> -->    
+        </kendo-grid-column> -->
         <kendo-grid-column field="quantity" title="Số lượng" width="120" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.quantity | number}}

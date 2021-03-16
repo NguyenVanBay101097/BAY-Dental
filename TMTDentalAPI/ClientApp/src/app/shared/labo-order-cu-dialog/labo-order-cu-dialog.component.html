@@ -406,8 +406,8 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button *ngIf="isRead == false" type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Đặt hàng</button>
-    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
+    <button *ngIf="state == 'confirmed' && isRead == false" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>
