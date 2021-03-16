@@ -68,6 +68,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
     }
 
     this.saveOrUpdate().subscribe(result => {
+      this.submitted = false;
       if (result) {
         this.activeModal.close(result);
       } else {
@@ -75,6 +76,7 @@ export class PartnerCategoryCuDialogComponent implements OnInit {
       }
     }, err => {
       console.log(err);
+      this.submitted = false;
     });
   }
 

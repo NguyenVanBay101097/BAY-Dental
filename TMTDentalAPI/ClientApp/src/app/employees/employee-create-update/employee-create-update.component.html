@@ -34,7 +34,7 @@
                             <h1>
                                 <input type="text" class="form-control" formControlName="name" id="name" />
                             </h1>
-                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
                                 <div *ngIf="f.name.errors.required">Nhập tên nhân viên</div>
                             </div>
                             <div>
@@ -179,6 +179,9 @@
                                             <input type="password" class="form-control"
                                                 [disableControl]="!createChangePassword"
                                                 formControlName="userPassword" />
+                                            <div *ngIf="createChangePassword && f.userPassword.errors && (f.userPassword.touched || f.userPassword.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.userPassword.errors.required">Nhập mật khẩu</div>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr *ngIf="getValueForm('userId')">
@@ -224,6 +227,9 @@
                                             <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx
                                                 formControlName="userCompany" [valueField]="'id'">
                                             </kendo-combobox>
+                                            <div *ngIf="f.userCompany.errors && (f.userCompany.touched || f.userCompany.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.userCompany.errors.required">Chọn chi nhánh hiện tại</div>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr hasGroups [groups]="'survey.group_survey'">
@@ -411,7 +417,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s" [disabled]="!formCreate.valid"
+    <button type="button" class="btn btn-primary" accesskey="s"
         (click)="createUpdateEmployee()">Lưu</button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

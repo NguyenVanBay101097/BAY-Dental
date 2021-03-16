@@ -53,13 +53,13 @@ export class HistoriesCreateUpdateComponent implements OnInit {
 
   //Tạo hoặc cập nhật nhóm NV
   createUpdate() {
-    var value = this.formCreate.value;
     this.submitted = true;
 
     if (!this.formCreate.valid) {
       return;
     }
-    // console.log(this.formCreate.get('typeObj').value.type);
+
+    var value = this.formCreate.value;
     this.service.createUpdate(this.id, value).subscribe(
       rs => {
         this.isChange = true;
@@ -68,6 +68,7 @@ export class HistoriesCreateUpdateComponent implements OnInit {
       },
       er => {
         console.log(er);
+        this.submitted = false;
       }
     );
   }

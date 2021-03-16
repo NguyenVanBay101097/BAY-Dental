@@ -59,9 +59,9 @@
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                <div *ngIf="saleOrder.state == 'draft' && f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
-                                  </div>
+                                </div>
                                 <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
                                     {{getPartner?.name}}
                                 </div>
@@ -111,8 +111,12 @@
                                 <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
                                     formControlName="dateOrderObj">
                                 </kendo-datetimepicker>
-                                <span
-                                    [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.dateOrder | date: 'short'}}</span>
+                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày lập phiếu</div>
+                                </div>
+                                <span [class.d-none]="saleOrder.state == 'draft'">
+                                    {{saleOrder.dateOrder | date: 'short'}}
+                                </span>
                             </td>
                         </tr>
                         <tr>
@@ -122,14 +126,16 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <span
-                                [class.d-none]="saleOrder.state == 'draft'">{{saleOrder.journal?.name }}</span>
-                                <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" [class.d-none]="saleOrder.state != 'draft'"
+                                <kendo-combobox [class.d-none]="saleOrder.state != 'draft'"
+                                    [data]="filteredJournals" [textField]="'name'" [filterable]="true" 
                                     #journalCbx formControlName="journal" [valueField]="'id'">
                                 </kendo-combobox>
-                                <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                <div *ngIf="saleOrder.state == 'draft' && f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                 </div>
+                                <span [class.d-none]="saleOrder.state == 'draft'">
+                                    {{saleOrder.journal?.name }}
+                                </span>
                             </td>
                         </tr>
                     </tbody>
