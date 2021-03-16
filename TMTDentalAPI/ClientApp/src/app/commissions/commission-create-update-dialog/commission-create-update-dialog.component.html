@@ -25,13 +25,13 @@
                                         </label>
                                       </div>
                                       <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="product_category" value="2_product_category" formControlName="appliedOn">
+                                        <input class="form-check-input" type="radio" id="product_category" value="2_product_category" formControlName="appliedOn" (change)="changeAppliedOn($event)">
                                         <label class="form-check-label" for="product_category">
                                             Nhóm dịch vụ
                                         </label>
                                       </div>
                                       <div class="form-check disabled">
-                                        <input class="form-check-input" type="radio" id="product_variant" value="0_product_variant" formControlName="appliedOn">
+                                        <input class="form-check-input" type="radio" id="product_variant" value="0_product_variant" formControlName="appliedOn" (change)="changeAppliedOn($event)">
                                         <label class="form-check-label" for="product_variant">
                                             Dịch vụ
                                         </label>
@@ -55,8 +55,8 @@
                                         [loading]="categCbxLoading">
                                     </kendo-combobox>
                                     <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)" class="text-danger">
-                                    <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
-                                </div>
+                                        <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr [class.d-none]="getValueForm('appliedOn') != '0_product_variant'">

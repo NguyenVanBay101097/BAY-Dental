@@ -43,7 +43,7 @@
                                         </div>
                                     </div>
                                     <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
-                                    <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Vui lòng chọn nhà cung cấp Labo</label>
+                                    <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Chọn nhà cung cấp Labo</label>
                                 </td>
                             </tr>
                         </tbody>
@@ -62,6 +62,7 @@
                                     <ng-container *ngIf="state == 'draft'; else dateOrder">
                                         <kendo-datepicker formControlName="dateOrderObj">
                                         </kendo-datepicker>
+                                        <label *ngIf="dateOrderObjFC.errors?.required" class="text-danger" for="">Chọn ngày gửi</label>
                                     </ng-container>
                                     <ng-template #dateOrder>
                                         {{dateOrderObjFC.value | date:'dd/MM/yyyy'}}
