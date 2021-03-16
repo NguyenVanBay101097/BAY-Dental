@@ -44,8 +44,8 @@
                 <div class="o_group">
                     <div [class.d-none]="disable">
                         <div class="d-flex">
-                            <kendo-multiselect required [filterable]="true" #tagMultiSelect class="mr-3"
-                                [data]="surveyTags" [textField]="'name'" [class.border-error]="form.surveyTags.errors"
+                            <kendo-multiselect [filterable]="true" #tagMultiSelect class="mr-3"
+                                [data]="surveyTags" [textField]="'name'"
                                 [valueField]="'id'" formControlName="surveyTags">
                             </kendo-multiselect>
                             <button title="Thêm nhãn khảo sát" class="btn btn-secondary"
@@ -53,13 +53,6 @@
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        <div>
-                            <span class="text-danger"
-                                *ngIf="form.surveyTags.errors && (form.surveyTags.touched || form.surveyTags.dirty || submitted)">
-                                Gán tag khảo sát
-                            </span>
-                        </div>
-
                     </div>
                     <div class="d-flex" *ngIf="disable">
                         <h6 *ngFor="let tag of getSurveyTagsValue">

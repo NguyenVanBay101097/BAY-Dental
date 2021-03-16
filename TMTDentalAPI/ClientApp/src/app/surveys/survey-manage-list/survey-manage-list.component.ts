@@ -32,7 +32,7 @@ export class SurveyManageListComponent implements OnInit {
   filteredEmployees: EmployeeSimple[];
   employees: EmployeeSimple[] = [];
   search: string;
-  limit = 2;
+  limit = 20;
   offset = 0;
   edit = false;
   dateFrom: Date;

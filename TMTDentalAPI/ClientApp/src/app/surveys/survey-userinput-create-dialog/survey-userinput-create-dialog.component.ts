@@ -32,7 +32,7 @@ export class SurveyUserinputCreateDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       questions: this.fb.array([]),
-      surveyTags: [null, Validators.required],
+      surveyTags: [null],
       note: null,
     });
 
