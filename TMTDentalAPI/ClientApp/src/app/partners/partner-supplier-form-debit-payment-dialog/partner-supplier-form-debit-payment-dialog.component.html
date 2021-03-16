@@ -21,8 +21,9 @@
                                     <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
                                         #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <span class="text-danger" *ngIf="formGroup.get('journal').invalid">Vui lòng chọn
-                                        phương thức thanh toán</span>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -50,6 +51,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
+                                    <div *ngIf="f.paymentDateObj.errors && (f.paymentDateObj.touched || f.paymentDateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày thanh toán</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -105,8 +109,10 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onPayment()" [disabled]="loading" accesskey="s">Thanh
-        toán</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-primary" (click)="onPayment()" [disabled]="loading" accesskey="s">
+        Thanh toán
+    </button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">
+        Đóng
+    </button>
 </footer>

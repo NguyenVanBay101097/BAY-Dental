@@ -98,6 +98,8 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   partnerSend: any;
   type: string;
 
+  get f() { return this.formGroup.controls; }
+
   constructor(private fb: FormBuilder, private partnerService: PartnerService, private toaThuocService: ToaThuocService,
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService, private accountJournalService: AccountJournalService,
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
@@ -281,10 +283,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     return this.accountJournalService.autocomplete(val);
   }
-
-  get f() { return this.formGroup.controls; }
-
-
 
   actionPayment() {
     // if (!this.getPartner) {

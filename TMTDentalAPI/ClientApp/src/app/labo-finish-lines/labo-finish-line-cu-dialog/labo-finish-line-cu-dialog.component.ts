@@ -14,9 +14,14 @@ export class LaboFinishLineCuDialogComponent implements OnInit {
   id: string;
   title: string;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(private laboFinishLineservice: LaboFinishLineService, public activeModal: NgbActiveModal, public notificationService: NotificationService,
     private fb: FormBuilder) {
   }
+
   ngOnInit() {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
@@ -24,9 +29,6 @@ export class LaboFinishLineCuDialogComponent implements OnInit {
 
     this.default();
   }
-
-  get form() {return this.formGroup;}
-  get nameC() {return this.formGroup.get('name');}
 
   default() {
     if (this.id) {
@@ -48,9 +50,12 @@ export class LaboFinishLineCuDialogComponent implements OnInit {
 
 
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
+    
     var val = this.formGroup.value;
     if (this.id) {
       this.laboFinishLineservice.update(this.id, val).subscribe(() => {

@@ -22,6 +22,10 @@ export class ProductLaboCuDialogComponent implements OnInit {
   filterdUoMs = [];
   filterdUoMPOs = [];
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(private productService: ProductService, public activeModal: NgbActiveModal,private notificationService: NotificationService,
     private fb: FormBuilder) {
   }
@@ -50,9 +54,6 @@ export class ProductLaboCuDialogComponent implements OnInit {
     this.default();
   }
 
-  get form() {return this.formGroup;}
-  get nameC() {return this.formGroup.get('name');}
-
   default() {
     if (this.id) {
       this.productService.get(this.id).subscribe((result: any) => {
@@ -80,6 +81,8 @@ export class ProductLaboCuDialogComponent implements OnInit {
     }
 
   onSave() {
+    this.submitted = true;
+    
     if (!this.formGroup.valid) {
       return;
     }
