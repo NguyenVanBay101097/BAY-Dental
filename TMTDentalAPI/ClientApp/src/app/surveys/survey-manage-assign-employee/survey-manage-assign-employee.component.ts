@@ -47,7 +47,6 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
-        this.offset = 0;
         this.search = value || '';
         this.offset = 0;
         this.loadDataFromApi();
