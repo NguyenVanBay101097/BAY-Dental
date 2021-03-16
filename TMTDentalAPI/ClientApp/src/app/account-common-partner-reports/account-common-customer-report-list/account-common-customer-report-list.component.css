@@ -1,0 +1,7 @@
+.mw-200 {
+    min-width: 200px;
+}
+
+.summary * {
+    margin: 0 !important;
+}

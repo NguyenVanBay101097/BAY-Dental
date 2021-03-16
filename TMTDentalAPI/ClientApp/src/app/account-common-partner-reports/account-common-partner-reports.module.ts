@@ -7,14 +7,17 @@ import { AccountCommonPartnerReportService } from './account-common-partner-repo
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { AccountCommonPartnerReportDetailComponent } from './account-common-partner-report-detail/account-common-partner-report-detail.component';
 import { FormsModule } from '@angular/forms';
+import { AccountCommonCustomerReportListComponent } from './account-common-customer-report-list/account-common-customer-report-list.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [AccountCommonPartnerReportListComponent, AccountCommonPartnerReportDetailComponent],
+  declarations: [AccountCommonPartnerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonCustomerReportListComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,
     MyCustomKendoModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ],
   providers: [
     AccountCommonPartnerReportService
