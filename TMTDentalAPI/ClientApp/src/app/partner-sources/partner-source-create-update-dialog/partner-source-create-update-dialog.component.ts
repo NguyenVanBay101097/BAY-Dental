@@ -22,6 +22,7 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
   title: string;
   submitted = false;
 
+  get f() { return this.myform.controls; }
 
   constructor(
     private fb: FormBuilder,
@@ -55,13 +56,16 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(
       (result) => {
+        this.submitted = false;
         if (result) {
           this.activeModal.close(result);
         } else {
           this.activeModal.close(true);
         }
-      },
-    );
+      }, err => {
+        console.log(err);
+        this.submitted = false;
+      });
   }
 
   saveOrUpdate() {
@@ -71,9 +75,5 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
     } else {
       return this.partnerSourceService.update(this.id, val);
     }
-  }
-
-  get f() {
-    return this.myform.controls;
   }
 }

@@ -45,16 +45,20 @@ export class PartnerTitleCuDialogComponent implements OnInit {
     var value = this.myForm.value;
     if (!this.itemId) {
       this.partnerTitleService.create(value).subscribe(result => {
+        this.submitted = false;
         this.activeModal.close(result);
       }, err => {
         console.log(err);
-      })
+        this.submitted = false;
+      });
     } else {
       this.partnerTitleService.update(this.itemId, value).subscribe(result => {
+        this.submitted = false;
         this.activeModal.close(result);
       }, err => {
         console.log(err);
-      })
+        this.submitted = false;
+      });
     }
   }
 
