@@ -47,7 +47,6 @@ namespace Infrastructure.Services
         {
             /// check irrules
             var companyObj = GetService<ICompanyService>();
-            await companyObj.InsertIRulesIfNotExists();
             
             var value = await SearchQuery(x => x.Key == key).Select(x => x.Value).FirstOrDefaultAsync();
             return value;

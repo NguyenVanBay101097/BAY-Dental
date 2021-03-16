@@ -30,6 +30,16 @@
       <field name="name">Loyalty Card</field>
       <field name="category_id" ref="base.module_category_hidden" />
     </record>
+
+    <record model="res.groups" id="survey.group_manager">
+      <field name="name">Survey Manager</field>
+      <field name="category_id" ref="survey.module_category_survey" />
+    </record>
+
+    <record model="res.groups" id="survey.group_user">
+      <field name="name">Survey User</field>
+      <field name="category_id" ref="survey.module_category_survey" />
+    </record>
   </data>
   <data noupdate="1">
     <record id="account.account_move_comp_rule" model="ir.rule">
@@ -292,12 +302,36 @@
       <field name="global" eval="True"/>
     </record>
 
-    <!--<record model="ir.rule" id="medicineOrder.medicine_order_comp_rule">
+    <record model="ir.rule" id="medicineOrder.medicine_order_comp_rule">
       <field name="name">MedicineOrder multi-company</field>
       <field name="model_id" ref="base.model_medicine_order"/>
       <field name="global" eval="True"/>
-    </record>-->
-    
+    </record>
+
+    <record model="ir.rule" id="productrequest.product_request_comp_rule">
+      <field name="name">Product Request multi-company</field>
+      <field name="model_id" ref="stock.model_product_request"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="stock.stock_inventory_comp_rule">
+      <field name="name">Stock Inventory multi-company</field>
+      <field name="model_id" ref="stock.model_stock_inventory"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="stock.stock_inventory_line_comp_rule">
+      <field name="name">Stock Inventory line multi-company</field>
+      <field name="model_id" ref="stock.model_stock_inventory_line"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="survey.survey_assignment_employee_rule">
+      <field name="name">Survey Assignment Employee Rule</field>
+      <field name="model_id" ref="survey.model_survey_assignment"/>
+      <field name="global" eval="False"/>
+      <field name="group_ids" ref="survey.group_user"/>
+    </record>
   </data>
 </odoo>
 

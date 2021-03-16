@@ -143,10 +143,6 @@ namespace Infrastructure.Services
 
             //insert những irmodelfield
             await InsertIrModelFieldData();
-
-            //insert rules new
-            await InsertIRulesIfNotExists();
-            await AddIrDataForSurvey();
         }
 
         public async Task AddIrDataForSurvey()
@@ -384,64 +380,6 @@ namespace Infrastructure.Services
 
             #endregion
         }
-
-        public async Task InsertIRulesIfNotExists()
-        {
-            var modelObj = GetService<IIRModelService>();
-            var modelDataObj = GetService<IIRModelDataService>();
-            var iruleObj = GetService<IIRRuleService>();
-
-            var rule_dict = new Dictionary<string, IRRuleNew>()
-            {
-                {"medicineOrder.medicine_order_comp_rule", new  IRRuleNew{ NameRule = "medicine_order_comp_rule", ModelIRModel = "MedicineOrder" ,NameIRModel = "Hóa đơn thuốc"}},           
-                {"productrequest.product_request_comp_rule", new  IRRuleNew{ NameRule = "product_request_comp_rule", ModelIRModel = "ProductRequest" ,NameIRModel = "Yêu cầu vật tư"}},
-                {"stock.stock_inventory_comp_rule", new  IRRuleNew{ NameRule = "stock_inventory_comp_rule", ModelIRModel = "StockInventory" ,NameIRModel = "Kiểm kho"}},
-                {"stock.stock_inventory_line_comp_rule", new  IRRuleNew{ NameRule = "stock_inventory_line_comp_rule", ModelIRModel = "StockInventoryLine" ,NameIRModel = "Chi tiết kiểm kho"}},
-            };
-
-            foreach (var rule in rule_dict)
-            {
-                var model = await modelDataObj.GetRef<IRRule>(rule.Key);
-                if (model == null)
-                {
-                    var irModel = await modelObj.SearchQuery(x => x.Model == rule.Value.ModelIRModel).FirstOrDefaultAsync();
-                    if (irModel == null)
-                    {
-                        irModel = new IRModel
-                        {
-                            Name = rule.Value.NameIRModel,
-                            Model = rule.Value.ModelIRModel,
-                        };
-
-                        modelObj.Sudo = true;
-                        await modelObj.CreateAsync(irModel);
-                    }
-
-                    var irule = new IRRule
-                    {
-                        Name = rule.Value.ModelIRModel + " multi-company",
-                        ModelId = irModel.Id,
-                        Code = rule.Key
-                    };
-
-                    iruleObj.Sudo = true;
-                    await iruleObj.CreateAsync(irule);
-
-                    var reference = rule.Key.Split('.');
-
-                    await modelDataObj.CreateAsync(new IRModelData
-                    {
-                        Module = reference[0],
-                        Name = reference[1],
-                        Model = "ir.rule",
-                        ResId = irule.Id.ToString()
-                    });
-                }
-            }
-         
-        }
-
-
 
         public async Task InsertModuleAccountData(Company main_company)
         {
@@ -1086,6 +1024,12 @@ namespace Infrastructure.Services
                             {
                                 var vals = field.GetAttribute("eval");
                                 rule.Global = Boolean.Parse(vals);
+                            }
+                            else if (field_name == "group_ids")
+                            {
+                                var vals = field.GetAttribute("ref").Split(",");
+                                foreach (var val in vals)
+                                    rule.RuleGroupRels.Add(new RuleGroupRel { Group = groupDict[val] });
                             }
                         }
                         ruleDict.Add(id, rule);

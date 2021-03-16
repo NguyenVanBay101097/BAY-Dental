@@ -349,7 +349,7 @@ namespace Infrastructure.Services
             var userId = UserId;
             switch (rule.Code)
             {
-                case "survey.assignment_employee": // group cho việc : nếu là nhân viên thuộc group nhân viên viên thì get theo nhân viên
+                case "survey.survey_assignment_employee_rule": // group cho việc : nếu là nhân viên thuộc group nhân viên viên thì get theo nhân viên
                     return new InitialSpecification<SurveyAssignment>(x => x.UserId == userId);
                 default:
                     return null;

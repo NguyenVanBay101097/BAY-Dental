@@ -303,7 +303,7 @@ namespace Infrastructure.Services
             switch (rule.Code)
             {
                 case "productrequest.product_request_comp_rule":
-                    return new InitialSpecification<ProductRequest>(x => companyIds.Contains(x.CompanyId.Value));
+                    return new InitialSpecification<ProductRequest>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }
