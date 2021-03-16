@@ -56,6 +56,8 @@ export class CompanyCuDialogComponent implements OnInit {
       logo: null
     });
 
+  
+
     if (this.id) {
       setTimeout(() => {
         this.companyService.get(this.id).subscribe(result => {
@@ -77,6 +79,10 @@ export class CompanyCuDialogComponent implements OnInit {
       this.loadSourceCities();
     });
 
+  }
+
+  get f(){
+    return this.companyForm.controls;
   }
 
   onAvatarUploaded(data: any) {

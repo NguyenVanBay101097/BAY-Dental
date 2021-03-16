@@ -26,7 +26,7 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   program: SaleCouponProgramDisplay = new SaleCouponProgramDisplay();
-
+  submitted = false;
   filteredProducts: ProductSimple[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
@@ -106,6 +106,10 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
       this.listProducts = result;
       this.productMultiSelect.loading = false;
     });
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 
   loadFilteredProducts() {
@@ -196,6 +200,7 @@ export class SaleCouponProgramCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }

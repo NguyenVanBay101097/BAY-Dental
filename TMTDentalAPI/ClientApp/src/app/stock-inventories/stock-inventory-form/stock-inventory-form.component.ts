@@ -202,6 +202,7 @@ export class StockInventoryFormComponent implements OnInit {
 
   onChangeFilter() {
     var res = this.formGroup.value;
+    this.submitted = false;
     if (res.filter === 'category') {
       this.formGroup.get("category").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("category").updateValueAndValidity();
@@ -252,6 +253,7 @@ export class StockInventoryFormComponent implements OnInit {
 
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) {
       return false;
     }

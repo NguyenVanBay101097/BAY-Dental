@@ -25,6 +25,9 @@
                             <td colspan="1" class="b-td-value" style="width: 100%;">
                                 <kendo-datepicker *ngIf="editModeActive" formControlName="Date"></kendo-datepicker>
                                 <span *ngIf="!editModeActive">{{dotkhamDate | date: 'shortDate'}}</span>
+                                <div *ngIf="f.Date.errors && (f.Date.touched || f.Date.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.Date.errors.required">Chọn ngày</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -41,6 +44,9 @@
                                 <kendo-combobox [hidden]="!editModeActive" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="Chọn bác sĩ...">
                                 </kendo-combobox>
                                 <span *ngIf="!editModeActive">{{employee?.Name}}</span>
+                                <div *ngIf="f.Doctor.errors && (f.Doctor.touched || f.Doctor.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.Doctor.errors.required">Chọn bác sĩ</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

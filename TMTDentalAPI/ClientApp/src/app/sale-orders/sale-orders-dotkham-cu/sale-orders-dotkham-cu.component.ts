@@ -45,7 +45,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   differ: IterableDiffer<any>;
   webImageApi: string;
   webContentApi: string;
-
+  submitted = false;
   editModeActive = false;
 
   constructor(
@@ -138,7 +138,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   setEditModeActive(val: boolean) {
     this.editModeActive = val;
   }
-
+  get f() { return this.dotkhamForm.controls;}
   get Id() { return this.dotkhamForm.get('Id').value; }
   get Sequence() { return this.dotkhamForm.get('Sequence').value; }
   get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
@@ -272,6 +272,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.dotkhamForm.invalid) {
       return;
     }
@@ -327,6 +328,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   onCancel() {
     // this.onEmitDotkham(this.dotkham, true, null);
     this.btnCancelEvent.emit(null);
+    this.submitted = false;
   }
 
   onClose() {
