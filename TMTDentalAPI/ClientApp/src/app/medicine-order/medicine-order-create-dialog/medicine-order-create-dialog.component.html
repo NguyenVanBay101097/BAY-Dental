@@ -22,12 +22,16 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{precscriptPayment && precscriptPayment.journal ?
-                                        precscriptPayment.journal.name : ''}}
-                                    </span>
-                                    <kendo-combobox [ngClass]="{'d-none': precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'}" [data]="filteredJournals" [textField]="'name'" [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'"
+                                        [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
+                                        [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
+                                    </div>
+                                    <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
+                                        {{ precscriptPayment && precscriptPayment.journal ? precscriptPayment.journal.name : '' }}
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -54,11 +58,15 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'" 
+                                        [format]="'dd/MM/yyyy'" formControlName="orderDate">
+                                    </kendo-datepicker>
+                                    <div *ngIf="f.orderDate.errors && (f.orderDate.touched || f.orderDate.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.orderDate.errors.required">Chọn ngày thanh toán</div>
+                                    </div>
                                     <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                         {{precscriptPayment ? precscriptPayment.orderDate : 'dd/MM/yyyy'}}
                                     </span>
-                                    <kendo-datepicker *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [format]="'dd/MM/yyyy'" formControlName="orderDate">
-                                    </kendo-datepicker>
                                 </td>
                             </tr>
 
