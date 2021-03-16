@@ -30,7 +30,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" formControlName="amount" [format]="'n0'">
+                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [autoCorrect]="true" formControlName="amount" [format]="'n0'">
                                     </kendo-numerictextbox>
                                 </td>
                             </tr>
