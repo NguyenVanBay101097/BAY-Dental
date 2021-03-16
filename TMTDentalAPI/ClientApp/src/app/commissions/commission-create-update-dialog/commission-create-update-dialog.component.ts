@@ -26,6 +26,10 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   
+  get f() {
+    return this.formGroup.controls;
+  }
+  submitted: boolean = false;
   constructor(private fb: FormBuilder, 
     private productCategoryService: ProductCategoryService, 
     private productService: ProductService, 
@@ -35,9 +39,9 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       appliedOn: "3_global",
       productId: null,
-      product: null,
+      product: [null],
       categId: null,
-      categ: null,
+      categ: [null],
       percentFixed: [0, Validators.required]
     });
 
@@ -79,15 +83,20 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
         break;
       case "2_product_category":
         this.categCbx.focus();
-        this.formGroup.get('product').setValue(null);
+        this.formGroup.get('product').setValidators([Validators.required]);
+        this.formGroup.get('product').updateValueAndValidity();
+        console.log(this.formGroup);
         break;
       case "0_product_variant":
-        this.productCbx.focus();
-        this.formGroup.get('categ').setValue(null);
+        this.productCbx.focus();this.formGroup.get('categ').setValidators([Validators.required]);
+        this.formGroup.get('categ').updateValueAndValidity();
+        console.log(this.formGroup);
         break;
       default:
         break;
     }
+    
+    
   }
 
   loadProductCategories() {
@@ -117,6 +126,7 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return;
     }
@@ -125,5 +135,6 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     val.categId = val.categ ? val.categ.id : null;
     val.productId = val.product ? val.product.id : null;
     this.activeModal.close(val);
+    this.submitted = false;
   }
 }
