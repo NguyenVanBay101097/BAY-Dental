@@ -94,16 +94,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
-                CultureInfo cul = CultureInfo.CurrentCulture;
                 foreach (var item in res)
                 {
                     worksheet.Cells[row, 1].Value = item.PartnerName;
                     worksheet.Cells[row, 2].Value = item.PartnerRef;
                     worksheet.Cells[row, 3].Value = item.PartnerPhone;
-                    worksheet.Cells[row, 4].Value = item.Begin.ToString("N1", CultureInfo.CurrentCulture);
-                    worksheet.Cells[row, 5].Value = item.Debit.ToString("N1", CultureInfo.CurrentUICulture); ;
-                    worksheet.Cells[row, 6].Value = item.Credit.ToString("N1", CultureInfo.InstalledUICulture);
-                    worksheet.Cells[row, 7].Value = item.End.ToString("N1", CultureInfo.InvariantCulture); ;
+                    worksheet.Cells[row, 4].Value = item.Begin;
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = item.Begin >0? "#,###" : "";
+                    worksheet.Cells[row, 5].Value = item.Debit;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = item.Debit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 6].Value = item.Credit;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = item.Credit > 0 ? "#,###" : "";
+                    worksheet.Cells[row, 7].Value = item.End;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = item.End > 0 ? "#,###" : "";
                     row++;
                 }
 

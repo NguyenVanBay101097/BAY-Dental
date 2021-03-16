@@ -25,8 +25,11 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val)
         {
             var today = DateTime.Today;
-            var date_from = val.FromDate.HasValue ? val.FromDate.Value : new DateTime(today.Year, today.Month, 1);
-            var date_to = val.ToDate.HasValue ? val.ToDate.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
+            var date_from = val.FromDate;
+            var date_to = val.ToDate;
+            if (date_to.HasValue)
+                date_to = date_to.Value.AbsoluteEndOfDate();
+
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
             string[] accountTypes = null;
             if (val.ResultSelection == "customer")
@@ -35,56 +38,58 @@ namespace Infrastructure.Services
                 accountTypes = new string[] { "payable" };
 
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
-
-            var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
-            query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
-            (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
-
-            if (!string.IsNullOrWhiteSpace(val.Search))
+            if (date_from.HasValue)
             {
-                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
-            }
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
+                query = query.Where(x => accountTypes.Contains(x.Account.InternalType) && x.PartnerId.HasValue &&
+                (!val.PartnerId.HasValue || x.PartnerId == val.PartnerId));
 
-            var list = await query
-               .GroupBy(x => new
-               {
-                   PartnerId = x.Partner.Id,
-                   PartnerName = x.Partner.Name,
-                   PartnerRef = x.Partner.Ref,
-                   PartnerPhone = x.Partner.Phone,
-                   Type = x.Account.InternalType
-               })
-               .Select(x => new
-               {
-                   PartnerId = x.Key.PartnerId,
-                   PartnerName = x.Key.PartnerName,
-                   PartnerRef = x.Key.PartnerRef,
-                   PartnerPhone = x.Key.PartnerPhone,
-                   x.Key.Type,
-                   InitialBalance = x.Sum(s => s.Debit - s.Credit),
-               }).ToListAsync();
-
-            foreach (var item in list)
-            {
-                if (!dict.ContainsKey(item.PartnerId))
+                if (!string.IsNullOrWhiteSpace(val.Search))
                 {
-                    dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
-                    {
-                        PartnerId = item.PartnerId,
-                        PartnerName = item.PartnerName,
-                        PartnerRef = item.PartnerRef,
-                        PartnerPhone = item.PartnerPhone,
-                        ResultSelection = val.ResultSelection,
-                        DateFrom = date_from,
-                        DateTo = date_to
-                    });
+                    query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
                 }
 
-                if (item.Type == "receivable")
-                    dict[item.PartnerId].Begin = item.InitialBalance;
-                else if (item.Type == "payable")
-                    dict[item.PartnerId].Begin = -item.InitialBalance;
+                var list = await query
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.Partner.Id,
+                       PartnerName = x.Partner.Name,
+                       PartnerRef = x.Partner.Ref,
+                       PartnerPhone = x.Partner.Phone,
+                       Type = x.Account.InternalType
+                   })
+                   .Select(x => new
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerRef = x.Key.PartnerRef,
+                       PartnerPhone = x.Key.PartnerPhone,
+                       x.Key.Type,
+                       InitialBalance = x.Sum(s => s.Debit - s.Credit),
+                   }).ToListAsync();
+
+                foreach (var item in list)
+                {
+                    if (!dict.ContainsKey(item.PartnerId))
+                    {
+                        dict.Add(item.PartnerId, new AccountCommonPartnerReportItem()
+                        {
+                            PartnerId = item.PartnerId,
+                            PartnerName = item.PartnerName,
+                            PartnerRef = item.PartnerRef,
+                            PartnerPhone = item.PartnerPhone,
+                            ResultSelection = val.ResultSelection,
+                            DateFrom = date_from,
+                            DateTo = date_to
+                        });
+                    }
+
+                    if (item.Type == "receivable")
+                        dict[item.PartnerId].Begin = item.InitialBalance;
+                    else if (item.Type == "payable")
+                        dict[item.PartnerId].Begin = -item.InitialBalance;
+                }
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);

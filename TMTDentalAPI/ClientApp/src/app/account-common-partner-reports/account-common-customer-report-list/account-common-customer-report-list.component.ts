@@ -21,7 +21,7 @@ import { ActivatedRoute } from '@angular/router';
 export class AccountCommonCustomerReportListComponent implements OnInit {
 
   loading = false;
-  items: AccountCommonPartnerReportItem[];
+  items: AccountCommonPartnerReportItem[] = [];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
@@ -124,6 +124,15 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   }
 
   Sum(field){
-    return aggregateBy(this.items, [ { aggregate: "sum", field: field }]);
+    if(this.items.length == 0 ) 
+    {
+      return {
+        field: {
+          sum: 0
+        }
+      }
+    } else {
+      return aggregateBy(this.items, [ { aggregate: "sum", field: field }]);
+    }
   }
 }
