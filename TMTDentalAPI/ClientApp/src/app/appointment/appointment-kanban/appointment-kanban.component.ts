@@ -166,9 +166,10 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   editAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
+      this.loadData();
       this.appointmentService.getBasic(appointment.id).subscribe(item => {
         var date = new Date(item.date);
         var key = date.toDateString();

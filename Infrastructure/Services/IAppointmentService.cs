@@ -18,7 +18,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<AppointmentBasic>> SearchReadByDate(AppointmentSearchByDate val);
         Task<AppointmentBasic> GetBasic(Guid id);
         Task<long> GetCount(AppointmentGetCountVM val);
-
+        Task<Appointment> CreateAsync(AppointmentDisplay val);
+        Task UpdateAsync(Guid id,AppointmentDisplay val);
         Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val);
     }
 }

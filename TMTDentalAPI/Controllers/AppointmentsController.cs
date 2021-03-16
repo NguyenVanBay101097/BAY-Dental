@@ -51,7 +51,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet]
         [CheckAccess(Actions = "Basic.Appointment.Read")]
-        public async Task<IActionResult> Get([FromQuery]AppointmentPaged appointmentPaged)
+        public async Task<IActionResult> Get([FromQuery] AppointmentPaged appointmentPaged)
         {
             var result = await _appointmentService.GetPagedResultAsync(appointmentPaged);
             return Ok(result);
@@ -73,13 +73,10 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-
-            var appointment = _mapper.Map<Appointment>(val);
-            await _appointmentService.CreateAsync(appointment);
-
+            var res = await _appointmentService.CreateAsync(val);
             _unitOfWork.Commit();
 
-            return CreatedAtAction(nameof(Get), new { id = appointment.Id }, appointment);
+            return Ok(_mapper.Map<AppointmentDisplay>(res));
         }
 
         [HttpPut("{id}")]
@@ -88,12 +85,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var category = await _appointmentService.GetByIdAsync(id);
-            if (category == null)
-                return NotFound();
-            val.CompanyId = category.CompanyId;
-            category = _mapper.Map(val, category);
-            await _appointmentService.UpdateAsync(category);
+            await _appointmentService.UpdateAsync(id,val);
 
             return NoContent();
         }
@@ -252,7 +244,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPatch("{id}/[action]")]
-        public async Task<IActionResult> PatchState(Guid id ,AppointmentStatePatch result)
+        public async Task<IActionResult> PatchState(Guid id, AppointmentStatePatch result)
         {
             var entity = await _appointmentService.GetByIdAsync(id);
             if (entity == null)
@@ -260,7 +252,7 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
             }
 
-            var patch = new JsonPatchDocument<AppointmentStatePatch>();        
+            var patch = new JsonPatchDocument<AppointmentStatePatch>();
             patch.Replace(x => x.State, result.State);
             patch.Replace(x => x.Reason, result.Reason);
             var entityMap = _mapper.Map<AppointmentStatePatch>(entity);
@@ -289,7 +281,7 @@ namespace TMTDentalAPI.Controllers
 
             using (var package = new ExcelPackage(stream))
             {
-                foreach(var group in data.GroupBy(x => x.Date).OrderBy(x => x.Key))
+                foreach (var group in data.GroupBy(x => x.Date).OrderBy(x => x.Key))
                 {
                     var sheetName = group.Key.Value.ToString("dddd, dd-MM-yyyy", new CultureInfo("vi-VN"));
                     var worksheet = package.Workbook.Worksheets.Add(sheetName);
@@ -321,7 +313,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Column(4).Style.Numberformat.Format = "@";
                     worksheet.Cells.AutoFitColumns();
                 }
-             
+
                 package.Save();
                 fileContent = stream.ToArray();
             }

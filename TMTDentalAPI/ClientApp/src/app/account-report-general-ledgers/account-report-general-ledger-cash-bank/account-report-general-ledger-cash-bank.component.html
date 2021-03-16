@@ -43,7 +43,9 @@
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <kendo-combobox [data]="filteredCompanies" [placeholder]="'Tất cả chi nhánh'" [textField]="'name'" [filterable]="true" #companyCbx formControlName="company" [valueField]="'id'">
+                            <kendo-combobox [data]="filteredCompanies" [placeholder]="'Tất cả chi nhánh'"
+                                [textField]="'name'" [filterable]="true" #companyCbx formControlName="company"
+                                [valueField]="'id'">
                             </kendo-combobox>
                         </td>
                     </tr>
@@ -65,7 +67,8 @@
                         {{dataItem.name}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column [hidden]="!permissionService.hasOneDefined(['base.group_multi_company'])" field="companyName" title="Chi nhánh">
+                <kendo-grid-column [hidden]="!permissionService.hasOneDefined(['base.group_multi_company'])"
+                    field="companyName" title="Chi nhánh">
                 </kendo-grid-column>
                 <kendo-grid-column field="initialBalance" title="Đầu kỳ" class="text-right">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Quản lý cuộc hẹn
     /// </summary>
-    public class Appointment: BaseEntity
+    public class Appointment : BaseEntity
     {
         /// <summary>
         /// Mã phiếu hẹn
@@ -23,6 +23,16 @@ namespace ApplicationCore.Entities
         /// thời gian hẹn
         /// </summary>
         public string Time { get; set; }
+
+        /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public string TimeExpected { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ
+        /// </summary>
+        public ICollection<ProductAppointmentRel> AppointmentServices { get; set; } = new List<ProductAppointmentRel>();
 
         /// <summary>
         /// Ghi chú, nội dung

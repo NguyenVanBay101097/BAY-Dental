@@ -20,11 +20,13 @@ namespace Infrastructure.Services
     public class AppointmentService : BaseService<Appointment>, IAppointmentService
     {
         private readonly IMapper _mapper;
-        public AppointmentService(IAsyncRepository<Appointment> repository, IHttpContextAccessor httpContextAccessor,
+        private readonly IProductAppointmentRelService _productAppointmentRelService;
+        public AppointmentService(IProductAppointmentRelService productAppointmentRelService, IAsyncRepository<Appointment> repository, IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+            _productAppointmentRelService = productAppointmentRelService;
         }
 
         public override async Task<Appointment> CreateAsync(Appointment entity)
@@ -63,6 +65,7 @@ namespace Infrastructure.Services
                 .Include("Partner")
                 .Include("Partner.PartnerPartnerCategoryRels")
                 .Include("Partner.PartnerPartnerCategoryRels.Category")
+                .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .Include("Doctor")
                 .FirstOrDefaultAsync();
             //Xác định cuộc hẹn đã có đợt khám tham chiếu hay chưa
@@ -410,6 +413,67 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<AppointmentBasic>>(items);
+        }
+
+        public async Task<Appointment> CreateAsync(AppointmentDisplay val)
+        {
+            var appointment = _mapper.Map<Appointment>(val);
+            if (val.Services.Any())
+            {
+                foreach (var item in val.Services)
+                {
+                    appointment.AppointmentServices.Add(new ProductAppointmentRel()
+                    {
+                        ProductId = item.Id
+                    });
+                }
+            }
+
+            appointment = await CreateAsync(appointment);
+            return appointment;
+        }
+
+
+        public async Task UpdateAsync(Guid id, AppointmentDisplay val)
+        {
+            var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            await ComputeAppointmentService(appointment, val);
+            appointment = _mapper.Map(val,appointment);
+            await UpdateAsync(appointment);
+        }
+
+        public async Task ComputeAppointmentService(Appointment app, AppointmentDisplay appD)
+        {
+            var listAdd = new List<ProductAppointmentRel>();
+            var listRemove = new List<ProductAppointmentRel>();
+            if (app.AppointmentServices.Any())
+            {
+                foreach (var item in app.AppointmentServices)
+                {
+                    if (!appD.Services.Any(x => x.Id == item.ProductId))
+                    {
+                        listRemove.Add(item);
+                    }
+                }
+            }
+
+            if (appD.Services.Any())
+            {
+                foreach (var item in appD.Services)
+                {
+                    if (!app.AppointmentServices.Any(x => x.ProductId == item.Id))
+                    {
+                        var prodApp = new ProductAppointmentRel()
+                        {
+                            AppoinmentId = app.Id,
+                            ProductId = item.Id
+                        };
+                        listAdd.Add(prodApp);
+                    }
+                }
+            }
+            await _productAppointmentRelService.CreateAsync(listAdd);
+            await _productAppointmentRelService.DeleteAsync(listRemove);
         }
     }
 }

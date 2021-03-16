@@ -43,6 +43,7 @@ kendo-window-titlebar.k-window-titlebar.k-dialog-titlebar.k-header {
   margin: 0 0;
 }
 
-
-
+.text-time {
+  white-space: pre;
+}
 

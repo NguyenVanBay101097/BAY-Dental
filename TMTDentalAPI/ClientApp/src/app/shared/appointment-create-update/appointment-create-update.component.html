@@ -15,7 +15,24 @@
                 </div> -->
                 <div class="d-flex">
                     <div class="mr-3">
-                        <table class="o_group o_inner_group">
+                        <div class="d-flex mb-1">
+                            <div class="mr-2 d-flex">
+                                <span class="mr-1 text-time p-1">Thời gian</span>
+                                <select class="form-control btn-sm" formControlName="appTime">
+                                    <option [value]="i" *ngFor="let i of timeList">
+                                        {{i}}</option>
+                                </select>
+                            </div>
+                            <div class="d-flex">
+                                <span class="mr-1 text-time p-1">Dự kiến</span>
+                                <select class="form-control btn-sm" style="max-width: 88px;"
+                                    formControlName="timeExpected">
+                                    <option [value]="item.value" *ngFor="let item of timeExpecteds">
+                                        {{item.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- <table class="o_group o_inner_group">
                             <tbody>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -29,7 +46,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
                         <div>
                             <kendo-calendar [navigation]="false" formControlName="apptDate">
                             </kendo-calendar>
@@ -101,6 +118,18 @@
                                             [data]="filteredEmployees" #doctorCbx [valueField]="'id'"
                                             [textField]="'name'">
                                         </kendo-combobox>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Dịch vụ</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
+                                            [allowCustom]="true" [textField]="'name'" 
+                                            [placeholder]="'Chọn dịch vụ'" formControlName="services"
+                                            [filterable]="true" #serviceMultiSelect>
+                                        </kendo-multiselect>
                                     </td>
                                 </tr>
                                 <tr *ngIf="appointId">

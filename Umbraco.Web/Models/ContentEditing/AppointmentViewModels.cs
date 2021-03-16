@@ -79,6 +79,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string Time { get; set; }
 
+        /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public string TimeExpected { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ
+        /// </summary>
+        public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
 
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
@@ -109,6 +118,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HasDotKhamRef { get; set; }
         public Guid? SaleOrderId { get; set; }
     }
+    
     public class AppointmentPaged
     {
         public AppointmentPaged()
@@ -174,7 +184,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? DotKhamId { get; set; }
 
         public Guid? PartnerId { get; set; }
-        public Guid? SaleOrderId{ get; set; }
+        public Guid? SaleOrderId { get; set; }
     }
 
     public class AppointmentStateCount
@@ -212,4 +222,5 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateTo { get; set; }
     }
+
 }
