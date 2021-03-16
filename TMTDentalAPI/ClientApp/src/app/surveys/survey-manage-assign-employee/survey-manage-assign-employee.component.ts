@@ -47,8 +47,8 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
-        this.offset = 0;
         this.search = value || '';
+        this.offset = 0;
         this.loadDataFromApi();
       });
 
@@ -163,6 +163,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
 
   onSave() {
+    debugger;
     var data = this.gridData.data.filter(x => x.employee != null)
       .map(x => {
         return { employeeId: x.employee.id, saleOrderId: x.id };

@@ -47,5 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string LoaiThuChiName { get; set; }
 
         public string AmountText { get; set; }
+
+        public string UserName { get; set; }
     }
 }

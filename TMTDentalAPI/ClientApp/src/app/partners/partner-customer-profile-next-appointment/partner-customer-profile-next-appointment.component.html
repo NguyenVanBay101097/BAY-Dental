@@ -50,15 +50,15 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="confirmed" id="gwt-uid-202">
                             <label class="form-check-label" for="gwt-uid-202">Đang hẹn</label>
-                          </div>
-                          <div class="form-check form-check-inline">
+                        </div>
+                        <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" (change)="changeStateAppointment()" [(ngModel)]="customerAppointment.state" type="radio" value="done" id="gwt-uid-203">
                             <label class="form-check-label" for="gwt-uid-203">Đã tới</label>
-                          </div>
-                          <div class="form-check form-check-inline">
+                        </div>
+                        <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" [(ngModel)]="customerAppointment.state" (change)="changeStateAppointment()" type="radio" value="cancel" id="gwt-uid-205">
-                            <label class="form-check-label" for="gwt-uid-205">Đã hủy</label>
-                          </div>
+                            <label class="form-check-label" for="gwt-uid-205">Hủy hẹn</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,5 +68,3 @@
         </div>
     </div>
 </div>
-
- 

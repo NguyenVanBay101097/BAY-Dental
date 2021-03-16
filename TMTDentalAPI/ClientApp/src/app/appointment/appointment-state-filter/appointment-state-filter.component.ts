@@ -43,7 +43,7 @@ export class AppointmentStateFilterComponent implements OnInit {
       case "done":
         return 'Hoàn thành';
       case "cancel":
-        return 'Đã hủy';
+        return 'Hủy hẹn';
       default:
         return 'Tất cả trạng thái';
     }

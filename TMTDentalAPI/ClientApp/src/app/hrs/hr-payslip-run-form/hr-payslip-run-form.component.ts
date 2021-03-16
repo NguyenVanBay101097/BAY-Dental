@@ -16,6 +16,7 @@ import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.modul
 import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
 import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -36,6 +37,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     private notificationService: NotificationService,
     private hrPayslipService: HrPayslipService,
     private printService: PrintService,
+    private paymentService: SalaryPaymentService,
     private router: Router, private intlService: IntlService) { }
 
   ngOnInit() {
@@ -309,13 +311,26 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onPayment() {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
+    if(slipIds.length == 0) this.notify('error','Chưa chọn phiếu lương để chi lương');
+   
+      this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
 
-    const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
-    modalRef.componentInstance.payslipIds = slipIds;
-    modalRef.result.then((res: any) => {
-      this.loadRecord();
-    });
+      if(res.data.length > 0) {
+
+        const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
+        modalRef.componentInstance.payslipIds = slipIds;
+        modalRef.componentInstance.payments = res.data;
+        modalRef.result.then((res: any) => {
+          this.loadRecord();
+        });
+      } 
+
+      res.errors.forEach(e => {
+        this.notify('error', e);
+      });
+    }
+    );
   }
 
   onCheckItem(i, val) {

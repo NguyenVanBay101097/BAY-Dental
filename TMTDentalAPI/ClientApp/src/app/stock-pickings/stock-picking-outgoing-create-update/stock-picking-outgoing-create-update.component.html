@@ -19,8 +19,8 @@
 </div>
 
 <div class="o_content">
-    <div class="o_form_view" [formGroup]="pickingForm">
-        <div class="o_form_sheet_bg">
+    <div class="o_form_view h-100" [formGroup]="pickingForm">
+        <div class="o_form_sheet_bg h-100 d-flex flex-column">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
                     <button type="button" *ngIf="pickingState != 'done'" class="btn btn-primary btn-sm" accesskey="s" (click)="onSaveOrUpdate()">Lưu</button>
@@ -43,7 +43,7 @@
                     </button>
                 </div>
             </div>
-            <div class="o_form_sheet">
+            <div class="o_form_sheet h-100 d-flex flex-column">
                 <h1 class="hidden-xs" *ngIf="pickingName != '/'"><span class="o_form_field">{{pickingName}}</span>
                 </h1>
                 <div class="o_group">
@@ -100,8 +100,8 @@
                     </table>
                 </div>
 
-                <div class="o_form_section" *ngIf="picking.state == 'draft'">
-                    <div class="o_form_section_left">
+                <div class="o_form_section overflow-hidden" *ngIf="picking.state == 'draft'">
+                    <div class="o_form_section_left overflow-auto">
                         <div class="mb-2">
                             <app-tai-search-input (searchChange)="onProductInputSearchChange($event)" (upDownEnterChange)="upDownEnterChange($event)">
                             </app-tai-search-input>

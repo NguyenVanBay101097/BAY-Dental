@@ -99,7 +99,7 @@ export class PartnerOverviewAppointmentComponent implements OnInit {
       case 'done':
         return 'Hoàn thành';
       case 'cancel':
-        return 'Đã hủy';
+        return 'Hủy hẹn';
       default:
         return 'Đang hẹn';
     }

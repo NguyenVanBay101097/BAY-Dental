@@ -37,6 +37,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   productSearch: string;
   productList: ProductBasic2[] = [];
+  sourceProductList = [];
 
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
@@ -112,12 +113,13 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   loadProductList() {
     var val = new ProductPaged();
-    val.limit = 10;
+    val.limit = 0;
     val.offset = 0;
     val.type = 'product,consu';
     val.search = this.productSearch || '';
     this.productService.getPaged(val).subscribe(res => {
       this.productList = res.items;
+      this.sourceProductList = res.items;
       this.productListSelectable.resetIndex();
     }, err => {
     });
@@ -135,7 +137,18 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   onProductInputSearchChange(text) {
     this.productSearch = text;
-    this.loadProductList();
+
+    if(!this.productSearch || this.productSearch.trim() == '')
+     this.productList = this.sourceProductList;
+     else {
+       this.productSearch = this.productSearch.trim().toLocaleLowerCase();
+      this.productList = this.sourceProductList.filter(x=> x.name.toLocaleLowerCase().indexOf(this.productSearch) >= 0
+      || x.nameNoSign.toLocaleLowerCase().indexOf(this.productSearch) >= 0 
+      || x.defaultCode.toLocaleLowerCase().indexOf(this.productSearch) >=0
+      );
+     }
+
+     this.productListSelectable.resetIndex();
   }
 
   loadDefault() {

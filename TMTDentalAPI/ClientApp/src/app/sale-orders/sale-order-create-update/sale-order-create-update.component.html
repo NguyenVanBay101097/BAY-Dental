@@ -183,7 +183,7 @@
                                                     </td>
                                                     <td class="text-right">
                                                         <span *ngIf="stateControl.value !== 'draft'">{{line.get('ProductUOMQty').value | number }}</span>
-                                                        <input type="number" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
+                                                        <input type="number" min="1" *ngIf="stateControl.value === 'draft'" style="width:100%;" class="form-control" formControlName="ProductUOMQty" (change)="onChangeQuantity(line)" (keyup)="onChangeQuantity(line)">
                                                     </td>
                                                     <td class="text-right">
                                                         <span *ngIf="stateControl.value !== 'draft'">{{ line.get('PriceUnit').value | number }}</span>

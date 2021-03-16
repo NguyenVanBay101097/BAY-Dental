@@ -103,7 +103,7 @@ namespace Infrastructure.Services
         {
             var assignObj = GetService<ISurveyAssignmentService>();
 
-            var query = SearchQuery(x => x.IsAllowSurvey == true && x.Active == true);
+            var query = SearchQuery(x => x.IsAllowSurvey == true && x.Active == true && x.User.Active == true);
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Name.Contains(val.Search));

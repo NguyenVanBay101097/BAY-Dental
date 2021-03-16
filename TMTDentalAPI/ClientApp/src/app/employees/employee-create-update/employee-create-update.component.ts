@@ -1,5 +1,5 @@
 import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -23,6 +23,7 @@ import { validator } from 'fast-json-patch';
 import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
+import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -41,11 +42,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private companyService: CompanyService,
     private resGroupService: ResGroupService,
     private authService: AuthService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private roleService: RoleService
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
+  @ViewChild("name", { static: true }) private nameEL: ElementRef;
+
 
   isChange: boolean = false;
   formCreate: FormGroup;
@@ -63,6 +67,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   listCommissions: Commission[] = [];
   listCompanies: CompanyBasic[] = [];
   groupSurvey: any[] = [];
+  roles: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -100,7 +105,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       avatar: null,
       userAvatar: null,
       groupId: null,
-      isAllowSurvey: false
+      isAllowSurvey: false,
+      roles: null
     });
 
     setTimeout(() => {
@@ -119,6 +125,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       //   this.userCbx.loading = false;
       // });
       this.loadGroupSurvey();
+
+      this.loadRoles();
     });
     document.getElementById('name').focus();
   }
@@ -175,6 +183,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (this.createChangePassword) {
       this.formCreate.get('userPassword').setValidators([Validators.required]);
       this.formCreate.get('userPassword').updateValueAndValidity();
+      this.f.userPassword.markAsDirty();
     } else {
       this.formCreate.get('userPassword').setValidators([]);
       this.formCreate.get('userPassword').updateValueAndValidity();
@@ -199,6 +208,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onChangeIsUser(e) {
     if (this.isUser) {
+      setTimeout(() => {
+        this.nameEL.nativeElement.focus();
+      }, 300);
+
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
 
@@ -290,6 +303,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     if (value.isUser) {
       value.userCompanyId = value.userCompany.id;
       value.userCompanyIds = value.userCompanies.map(x => x.id);
+      value.roleIds = value.roles && value.roles.length > 0 ? value.roles.map(x => x.id) : [];
     }
 
     value.commissionId = value.commission ? value.commission.id : null;
@@ -454,5 +468,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
         this.getControlForm('groupId').setValue(this.groupSurvey[0].id);
       }
     }
+  }
+
+  loadRoles() {
+    var page = new ApplicationRolePaged();
+    page.limit = 100;
+    page.offset = 0;
+    this.roleService.getPaged(page).subscribe((res: any) => {
+      this.roles = res.items;
+    });
   }
 }
