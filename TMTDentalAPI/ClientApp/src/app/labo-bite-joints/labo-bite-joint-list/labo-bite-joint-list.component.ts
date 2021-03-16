@@ -72,7 +72,7 @@ export class LaboBiteJointListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(LaboBiteJointCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm kiểu nhịp Labo';
+    modalRef.componentInstance.title = 'Thêm khớp cắn Labo';
     modalRef.result.then(() => {
       this.loadDataFromApi();
     }, () => {
@@ -81,7 +81,7 @@ export class LaboBiteJointListComponent implements OnInit {
 
   editItem(item: LaboBiteJointBasic) {
     let modalRef = this.modalService.open(LaboBiteJointCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa kiểu nhịp Labo';
+    modalRef.componentInstance.title = 'Sửa khớp cắn Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
       this.loadDataFromApi();

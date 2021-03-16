@@ -22,8 +22,10 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
-
   showPrint = false;
+  submitted = false;
+
+  get f() { return this.paymentForm.controls; }
 
   constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
     public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
@@ -80,37 +82,47 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
   }
 
   save() {
+    this.submitted = true;
+    
     if (!this.paymentForm.valid) {
       return;
     }
 
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
+        this.submitted = false;
         this.activeModal.close(true);
       }, (err) => {
         this.errorService.show(err);
+        this.submitted = false;
       });
     }, (err) => {
       this.errorService.show(err);
+      this.submitted = false;
     });
   }
 
   saveAndPrint() {
+    this.submitted = true;
+
     if (!this.paymentForm.valid) {
       return;
     }
 
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
+        this.submitted = false;
         this.activeModal.close({
           print: true,
           paymentId: result.id
         });
       }, (err) => {
         this.errorService.show(err);
+        this.submitted = false;
       });
     }, (err) => {
       this.errorService.show(err);
+      this.submitted = false;
     });
   }
 

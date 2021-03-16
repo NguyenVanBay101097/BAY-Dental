@@ -78,7 +78,7 @@ export class ProductLaboAttachListComponent implements OnInit {
   }
 
   editItem(item: ProductLaboBasic) {
-    let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductLaboAttachCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa gửi kèm Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {

@@ -13,6 +13,10 @@ export class LaboBridgeCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   title: string;
+  
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
 
   constructor(private laboBridgeService: LaboBridgeService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private fb: FormBuilder) {
@@ -46,9 +50,12 @@ export class LaboBridgeCuDialogComponent implements OnInit {
       });
     }
   onSave() {
+    this.submitted = true;
+
     if (!this.formGroup.valid) {
       return;
     }
+    
     var val = this.formGroup.value;
     if (this.id) {
       this.laboBridgeService.update(this.id, val).subscribe(() => {

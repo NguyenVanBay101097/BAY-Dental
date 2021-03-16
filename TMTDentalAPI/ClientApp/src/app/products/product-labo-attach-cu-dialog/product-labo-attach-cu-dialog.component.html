@@ -18,7 +18,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="name">
-                                    <label *ngIf="nameC.errors && (nameC.touched || nameC.dirty)" class="text-danger">Vui lòng điền tên gửi kèm Labo</label>
+                                    <div *ngIf="f.name.errors && ( f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên gửi kèm Labo</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

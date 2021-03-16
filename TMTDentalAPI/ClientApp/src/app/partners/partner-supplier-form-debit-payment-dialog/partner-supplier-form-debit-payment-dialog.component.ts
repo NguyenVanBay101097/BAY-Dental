@@ -29,6 +29,10 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
     { field: 'amountResidual', aggregate: 'sum' }
   ];
   filteredJournals: any;
+  submitted = false;
+  
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -88,6 +92,12 @@ export class PartnerSupplierFormDebitPaymentDialogComponent implements OnInit {
   }
 
   onPayment() {
+    this.submitted = true;
+    
+    if (!this.formGroup.valid) {
+      return;
+    }
+
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
         this.notificationService.show({
