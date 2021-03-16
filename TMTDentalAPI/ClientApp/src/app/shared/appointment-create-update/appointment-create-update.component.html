@@ -58,6 +58,9 @@
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>
+                                        <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr *ngIf="partner && partnerAge">

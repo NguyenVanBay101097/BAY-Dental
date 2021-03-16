@@ -19,8 +19,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="name" />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                        class="text-danger">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên</div>
                                     </div>
                                 </td>
@@ -48,7 +47,7 @@
                         <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2"
                             (click)="onCreate()">Thêm thuốc</button>
                     </div>
-                    <table class="table table-sm mt-2">
+                    <table class="table table-sm table-tbody-ver-align-middle mt-2">
                         <thead>
                             <tr>
                                 <th>Tên thuốc</th>

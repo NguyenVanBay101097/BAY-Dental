@@ -12,7 +12,7 @@
                     <h1>
                         <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên vật tư</div>
                     </div>
                 </div>

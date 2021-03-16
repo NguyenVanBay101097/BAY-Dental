@@ -104,7 +104,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   createItem() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm: ' + this.getTypeTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
@@ -114,7 +114,7 @@ export class ProductCategoryListComponent implements OnInit {
   }
 
   editItem(item: ProductCategory) {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa: ' + this.getTypeTitle();
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
