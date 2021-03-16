@@ -352,7 +352,7 @@ namespace Infrastructure.Services
             await _userManager.UpdateAsync(user);
 
             //clear cache
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{empl.UserId}");
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{empl.UserId}");
         }
 
 

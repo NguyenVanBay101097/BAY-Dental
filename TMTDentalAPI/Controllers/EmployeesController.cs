@@ -284,7 +284,7 @@ namespace TMTDentalAPI.Controllers
             }
 
             //clear cache
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{employee.UserId}");
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{employee.UserId}");
         }
 
         private async Task SaveUserResGroup( ApplicationUser user)
