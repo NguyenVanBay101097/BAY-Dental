@@ -594,16 +594,14 @@ namespace Infrastructure.Services
             }
         }
 
-
-
-
         public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "medicineOrder.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId == companyId );
+                    return new InitialSpecification<MedicineOrder>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }
