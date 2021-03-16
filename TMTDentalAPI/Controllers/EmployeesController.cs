@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SaasKit.Multitenancy;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -29,11 +31,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelDataService _iRModelDataService;
         private readonly IResGroupService _resGroupService;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IMyCache _cache;
+        private readonly AppTenant _tenant;
 
         public EmployeesController(IEmployeeService employeeService, IHrPayrollStructureTypeService structureTypeService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IPartnerService partnerService,
             UserManager<ApplicationUser> userManager, IApplicationRoleFunctionService roleFunctionService,
-            IIRModelDataService iRModelDataService, IResGroupService resGroupService, RoleManager<ApplicationRole> roleManager
+            IIRModelDataService iRModelDataService, IResGroupService resGroupService, RoleManager<ApplicationRole> roleManager,
+            IMyCache cache, ITenant<AppTenant> tenant
             )
         {
             _employeeService = employeeService;
@@ -46,6 +51,8 @@ namespace TMTDentalAPI.Controllers
             _iRModelDataService = iRModelDataService;
             _resGroupService = resGroupService;
             _roleManager = roleManager;
+            _cache = cache;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -268,7 +275,7 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x=> x.Description))) ;
             }
             //add role
-            var idsAdd = val.roleIds.Select(x => x.ToString()).ToList();
+            var idsAdd = val.RoleIds.Select(x => x.ToString()).ToList();
             var roleNamesAdd = await this._roleManager.Roles.Where(x => idsAdd.Contains(x.Id)).Include(x => x.Functions).Select(x => x.Name).ToListAsync();
             var resultAdd = await _userManager.AddToRolesAsync(employee.User, roleNamesAdd);
             if (!result.Succeeded)
@@ -276,6 +283,8 @@ namespace TMTDentalAPI.Controllers
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
 
+            //clear cache
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{employee.UserId}");
         }
 
         private async Task SaveUserResGroup( ApplicationUser user)

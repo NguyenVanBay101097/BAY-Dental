@@ -240,7 +240,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsAllowSurvey { get; set; }
         public Guid? GroupId { get; set; }
 
-        public IEnumerable<Guid> roleIds { get; set; } = new List<Guid>();
+        public IEnumerable<Guid> RoleIds { get; set; } = new List<Guid>();
     }
 
     public class EmployeeActive
