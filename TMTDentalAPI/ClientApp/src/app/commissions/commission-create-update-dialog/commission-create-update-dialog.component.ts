@@ -23,9 +23,15 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   productCbxLoading = false;
   public min: number = 0;
   public max: number = 100;
+  isProduct:boolean = false;
+  isCateg:boolean = false;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   
+  get f() {
+    return this.formGroup.controls;
+  }
+  submitted: boolean = false;
   constructor(private fb: FormBuilder, 
     private productCategoryService: ProductCategoryService, 
     private productService: ProductService, 
@@ -35,32 +41,32 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       appliedOn: "3_global",
       productId: null,
-      product: null,
+      product: [null],
       categId: null,
-      categ: null,
+      categ: [null],
       percentFixed: [0, Validators.required]
     });
 
     if (this.line)
       this.formGroup.patchValue(this.line);
 
-    this.categCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
-      switchMap(value => this.searchProductCategories(value))
-    ).subscribe(result => {
-      this.filteredProductCategories = result;
-      this.categCbx.loading = false;
-    });
+    // this.categCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.categCbx.loading = true)),
+    //   switchMap(value => this.searchProductCategories(value))
+    // ).subscribe(result => {
+    //   this.filteredProductCategories = result;
+    //   this.categCbx.loading = false;
+    // });
 
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+    // this.productCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => (this.productCbx.loading = true)),
+    //   switchMap(value => this.searchProducts(value))
+    // ).subscribe(result => {
+    //   this.filteredProducts = result;
+    //   this.productCbx.loading = false;
+    // });
 
     setTimeout(() => {
       this.loadProductCategories();
@@ -72,22 +78,33 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     return this.formGroup.get(key).value;
   }
 
-  changeAppliedOn(value) {
-    switch (value) {
+  changeAppliedOn(e) {
+    switch (e.target.value) {
       case "3_global":
 
         break;
       case "2_product_category":
         this.categCbx.focus();
-        this.formGroup.get('product').setValue(null);
+        this.formGroup.get('product').clearValidators();
+        this.formGroup.get('product').updateValueAndValidity();
+        this.formGroup.get('categ').setValidators([Validators.required]);
+        this.formGroup.get('categ').updateValueAndValidity();
+        this.formGroup.get('percentFixed').setValue(0);
+        
         break;
       case "0_product_variant":
         this.productCbx.focus();
-        this.formGroup.get('categ').setValue(null);
+        this.formGroup.get('categ').clearValidators();
+        this.formGroup.get('categ').updateValueAndValidity();
+        this.formGroup.get('product').setValidators([Validators.required]);
+        this.formGroup.get('product').updateValueAndValidity();
+        this.formGroup.get('percentFixed').setValue(0);
         break;
       default:
         break;
     }
+    
+    
   }
 
   loadProductCategories() {
@@ -117,6 +134,7 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return;
     }
@@ -125,5 +143,6 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
     val.categId = val.categ ? val.categ.id : null;
     val.productId = val.product ? val.product.id : null;
     this.activeModal.close(val);
+    this.submitted = false;
   }
 }
