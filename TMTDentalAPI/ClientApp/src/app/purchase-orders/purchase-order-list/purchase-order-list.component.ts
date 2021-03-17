@@ -45,6 +45,7 @@ export class PurchaseOrderListComponent implements OnInit {
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
       this.type = params.get('type');
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
