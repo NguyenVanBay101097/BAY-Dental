@@ -101,8 +101,7 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
             {
-                query = query.Where(x => x.SaleOrder.Partner.Name.Contains(val.Search) || x.Employee.Name.Contains(val.Search)
-                || x.SaleOrder.Name.Contains(val.Search)
+                query = query.Where(x => x.SaleOrder.Partner.Name.Contains(val.Search) || x.SaleOrder.Name.Contains(val.Search)
                 );
             }
             if (!string.IsNullOrEmpty(val.Status))
