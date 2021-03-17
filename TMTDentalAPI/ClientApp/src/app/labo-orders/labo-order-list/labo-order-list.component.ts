@@ -96,7 +96,7 @@ export class LaboOrderListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  reloaChange(val) {
+  reloadChange(val) {
     if (val) {
       this.loadDataFromApi();
     }
