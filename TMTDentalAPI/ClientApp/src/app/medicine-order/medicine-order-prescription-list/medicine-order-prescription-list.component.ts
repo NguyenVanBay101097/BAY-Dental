@@ -18,7 +18,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   loading = false;
-  limit = 10;
+  limit = 20;
   dateFrom: Date;
   dateTo: Date;
   skip = 0;
