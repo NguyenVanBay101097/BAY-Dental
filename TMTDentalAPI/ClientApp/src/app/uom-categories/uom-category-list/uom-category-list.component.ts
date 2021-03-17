@@ -32,6 +32,7 @@ export class UomCategoryListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 

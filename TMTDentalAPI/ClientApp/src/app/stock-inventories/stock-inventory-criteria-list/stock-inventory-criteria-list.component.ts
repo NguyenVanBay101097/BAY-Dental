@@ -34,6 +34,7 @@ export class StockInventoryCriteriaListComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
     ).subscribe((val) => {
+      this.skip = 0;
       this.loadDataFromApi();
     });
 

@@ -30,6 +30,7 @@ export class LoaiThuChiListComponent implements OnInit {
   ngOnInit() {
     this.route.data.subscribe(data => {
       this.type = data.type;
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
@@ -37,6 +38,7 @@ export class LoaiThuChiListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }

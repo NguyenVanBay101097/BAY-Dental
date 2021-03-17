@@ -65,7 +65,9 @@ export class PartnerCustomerListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe(() => {
         this.dataBinding.filter = this.generateFilter();
+        this.dataBinding.skip = 0;
         this.refreshData();
+        this.skip = 0;
       });
 
     this.categMst.filterChange

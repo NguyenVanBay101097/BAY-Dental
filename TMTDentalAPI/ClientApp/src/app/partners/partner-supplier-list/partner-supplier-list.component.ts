@@ -139,6 +139,7 @@ export class PartnerSupplierListComponent implements OnInit {
 
   onChangeFilterActive(e) {
     this.active = e ? e.value : null;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
