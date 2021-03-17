@@ -50,7 +50,7 @@
                                         [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.journal.errors.required">Vui lòng chọn phương thức</div>
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
                                     </div>
                                 </td>
                             </tr>
@@ -67,7 +67,7 @@
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.partner.errors.required">Vui lòng chọn người nhận</div>
+                                        <div *ngIf="f.partner.errors.required">Chọn người nhận</div>
                                     </div>
                                 </td>
                             </tr>
@@ -83,7 +83,7 @@
                                     </kendo-numerictextbox>
                                     <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.amount.errors.required">Vui lòng nhập số tiền ứng</div>
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
                                     </div>
                                 </td>
                             </tr>

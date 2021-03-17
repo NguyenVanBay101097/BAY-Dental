@@ -29,7 +29,7 @@
             <li class="nav-item">
                 <ng-select class="_search_wrapper" bindLabel="name" [typeahead]="searchInput$" (change)="onSearchChange($event)"
                     [minTermLength]="2" [loading]="searchLoading" placeholder="Tìm kiếm nhanh" [items]="search$ | async"
-                    [(ngModel)]="selectedResult" typeToSearchText="Vui lòng nhập 2 kí tự trở lên">
+                    [(ngModel)]="selectedResult" typeToSearchText="Nhập 2 kí tự trở lên">
                     <ng-template ng-header-tmp>
                         <div class="_search_all_header">
                             <input (click)="onChangeResultSelection('all')" checked class="btn-check" type="radio" name="type" id="all" value="all">
