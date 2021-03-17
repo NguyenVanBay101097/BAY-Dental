@@ -176,9 +176,15 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
+            var totalItems = await query.CountAsync();
+
+            if(val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+
             var items = await _mapper.ProjectTo<LaboOrderBasic>(query).ToListAsync();
 
-            var totalItems = await query.CountAsync();
             return new PagedResult2<LaboOrderBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items

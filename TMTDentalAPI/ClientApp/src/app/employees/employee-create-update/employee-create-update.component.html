@@ -167,7 +167,7 @@
                                             <label class="o_form_label">Mật khẩu</label>
                                         </td>
                                         <td colspan="1" style="width: 50%;">
-                                            <input type="password" placeholder="******" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
+                                            <input type="password" [placeholder]="!createChangePassword ? '******' : ''" class="form-control" [disableControl]="!createChangePassword" formControlName="userPassword" />
                                             <label class="text-danger" *ngIf="(this.f.userPassword.dirty || this.f.userPassword.touched) && this.f.userPassword.errors?.required">Nhập mật khẩu</label>
                                         </td>
                                     </tr>
