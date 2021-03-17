@@ -195,6 +195,7 @@ export class EmployeeListComponent implements OnInit {
 
   onStateSelectChange(e) {
     this.active = e ? e.value : null;
+    this.skip = 0;
     this.getEmployeesList();
   }
 

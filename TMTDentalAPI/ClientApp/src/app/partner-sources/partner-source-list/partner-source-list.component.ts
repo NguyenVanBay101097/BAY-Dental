@@ -34,6 +34,7 @@ export class PartnerSourceListComponent implements OnInit {
     this.searchUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
