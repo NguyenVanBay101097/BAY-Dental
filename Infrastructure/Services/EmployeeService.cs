@@ -218,6 +218,21 @@ namespace Infrastructure.Services
                 }
             }
 
+            var partnerObj = GetService<IPartnerService>();
+            var partner = new Partner()
+            {
+                Name = entity.Name,
+                Employee = true,
+                Ref = entity.Ref,
+                Phone = entity.Phone,
+                Email = entity.Email,
+                CompanyId = entity.CompanyId,
+                Customer = false
+            };
+
+            await partnerObj.CreateAsync(partner);
+            entity.PartnerId = partner.Id;
+
             var emp = await base.CreateAsync(entity);
             //CheckConstraints(entity);
             return emp;

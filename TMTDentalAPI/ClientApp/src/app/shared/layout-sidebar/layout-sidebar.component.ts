@@ -52,11 +52,11 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.survey_assignment_manager' },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.survey_assignment_manager'  },
+        { name: 'Danh sách khảo sát', link: '/surveys', groups: 'survey.group_user,survey.group_manager' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', groups: 'survey.group_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', groups: 'survey.group_manager'  },
       ],
-      groups: 'survey.survey_assignment_manager,survey.survey_assignment_user' 
+      groups: 'survey.group_user,survey.group_manager' 
     },
     {
       name: 'Mua hàng',

@@ -35,7 +35,7 @@ namespace TMTDentalAPI.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             var tenantContext = context.GetTenantContext<AppTenant>();
-            var tenant = tenantContext.Tenant;
+            var tenant = tenantContext?.Tenant;
             if (tenant != null)
             {
                 if (tenant.Version != _appSettings.Version)
