@@ -24,7 +24,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   loading = false;
   precscriptionPaymentReport: PrecscriptionPaymentReport = new PrecscriptionPaymentReport();
   state: string = '';
-  limit = 5;
+  limit = 20;
   skip = 0;
   states = [
     // { value: "draft", name: "Chưa thanh toán" },

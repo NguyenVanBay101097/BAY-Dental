@@ -52,6 +52,7 @@ export class PurchaseOrderListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -59,11 +60,13 @@ export class PurchaseOrderListComponent implements OnInit {
   onDateSearchChange(data) {
     this.dateOrderFrom = data.dateFrom;
     this.dateOrderTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
   onStateSelectChange(data: TmtOptionSelect) {
     this.stateFilter = data.value;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
