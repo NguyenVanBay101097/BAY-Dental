@@ -39,6 +39,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   ];
 
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
+    private route: ActivatedRoute,
     private partnerService: PartnerService) { }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -57,7 +58,11 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
-    this.loadDataFromApi();
+      this.route.queryParamMap.subscribe(params => {
+        this.resultSelection = params.get('result_selection');
+        this.loadDataFromApi();
+      });
+  
   }
 
   searchChangeDate(value: any) {
@@ -73,7 +78,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.partnerId = this.searchPartner ? this.searchPartner.id : null;
     val.search = this.search ? this.search : '';
-    val.resultSelection = 'customer';
+    val.resultSelection = this.resultSelection;
 
     this.reportService.getSummary(val).subscribe(res => {
       this.items = res;
@@ -103,10 +108,10 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.partnerId = this.searchPartner ? this.searchPartner.id : null;
     val.search = this.search ? this.search : '';
-    val.resultSelection = 'customer';
+    val.resultSelection = this.resultSelection;
 
     this.reportService.ExportExcelFile(val).subscribe((res: any) => {
-      const filename = `BaoCaoCongNoKhachHang`;
+      const filename = this.resultSelection == 'customer'? `BaoCaoCongNoKhachHang` : 'BaoCaoCongNoNCC';
       const newBlob = new Blob([res], {
         type:
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
