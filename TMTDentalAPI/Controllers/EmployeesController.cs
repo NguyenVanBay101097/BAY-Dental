@@ -137,7 +137,7 @@ namespace TMTDentalAPI.Controllers
                             throw new Exception("Tên đăng nhập không được trống");
                         var exist = await _userManager.FindByNameAsync(val.UserName);
                         if (exist != null)
-                            throw new Exception("Tài khoản đã tồn tại");
+                            throw new Exception("Tài khoản đã tồn tại!");
 
                         user.UserName = val.UserName;
                     }

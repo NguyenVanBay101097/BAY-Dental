@@ -320,6 +320,11 @@ export class StockInventoryFormComponent implements OnInit {
 
   prepareInventory() {
     if (this.id) {
+
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(
@@ -334,6 +339,11 @@ export class StockInventoryFormComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
+
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(() => {
@@ -362,7 +372,7 @@ export class StockInventoryFormComponent implements OnInit {
         this.stockInventorySevice.actionCancel(ids).subscribe(
           () => {
             this.notificationService.show({
-              content: 'Hủythành công',
+              content: 'Hủy thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
