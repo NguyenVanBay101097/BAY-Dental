@@ -159,7 +159,7 @@ export class SurveyAssignmentListComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      this.statusCount = this.setDefaultValue();
+      this.resetStatusCount();
       result.forEach(res => {
         this.statusCount[res.status] = res.count;
         this.statusCount['total'] += res.count;
@@ -169,8 +169,8 @@ export class SurveyAssignmentListComponent implements OnInit {
     });
   }
 
-  setDefaultValue() {
-    return this.statusCount = {
+  resetStatusCount() {
+    this.statusCount = {
       total: 0,
       contact: 0,
       done: 0,
