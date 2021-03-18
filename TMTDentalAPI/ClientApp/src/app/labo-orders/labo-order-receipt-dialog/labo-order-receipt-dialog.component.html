@@ -16,7 +16,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="dateReceipt"></kendo-datepicker>
                                     <div *ngIf="f.dateReceipt.errors && (f.dateReceipt.touched || f.dateReceipt.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.dateReceipt.errors.required">Vui lòng chọn ngày nhận thực tế</div>
+                                        <div *ngIf="f.dateReceipt.errors.required">Chọn ngày nhận thực tế</div>
                                     </div>
                                 </td>
                             </tr>
@@ -27,7 +27,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="warrantyCode">
                                     <div *ngIf="f.warrantyCode.errors && (f.warrantyCode.touched || f.warrantyCode.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.warrantyCode.errors.required">Vui lòng nhập mã bảo hành</div>
+                                        <div *ngIf="f.warrantyCode.errors.required">Nhập mã bảo hành</div>
                                         <div *ngIf="f.warrantyCode.errors?.exist">Mã bảo hành đã tồn tại</div>
                                     </div>
                                 </td>

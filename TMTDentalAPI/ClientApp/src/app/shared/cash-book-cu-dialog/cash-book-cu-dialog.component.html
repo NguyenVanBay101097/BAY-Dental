@@ -51,7 +51,7 @@
                                         </div>
                                         <div *ngIf="f.loaiThuChi.errors && (f.loaiThuChi.touched || f.loaiThuChi.dirty || submitted)"
                                             class="text-danger">
-                                            <div *ngIf="f.loaiThuChi.errors.required">Vui lòng chọn loại thu</div>
+                                            <div *ngIf="f.loaiThuChi.errors.required">Chọn loại {{type}}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -69,8 +69,7 @@
                                         </kendo-combobox>
                                         <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
                                             class="text-danger">
-                                            <div *ngIf="f.journal.errors.required">Vui lòng chọn phương thức thanh toán
-                                            </div>
+                                            <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                         </div>
                                     </div>
                                 </td>
@@ -110,6 +109,9 @@
                                     </span>
                                     <kendo-datepicker *ngIf="!formReadonly" formControlName="dateObj">
                                     </kendo-datepicker>
+                                    <div *ngIf="!formReadonly && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required">Chọn ngày</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>

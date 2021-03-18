@@ -43,6 +43,7 @@ export class ProductManagementProductsComponent implements OnInit {
     this.searchProductUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
+        this.skip = 0;
         this.loadProducts();
       });
     this.loadProducts();

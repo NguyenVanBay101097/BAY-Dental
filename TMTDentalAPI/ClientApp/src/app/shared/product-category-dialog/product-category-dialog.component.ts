@@ -27,6 +27,8 @@ export class ProductCategoryDialogComponent implements OnInit {
   type: string;
   submitted = false;
 
+  get f() { return this.myform.controls; }
+
   constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService,
     public activeModal: NgbActiveModal) {
   }
@@ -95,6 +97,7 @@ export class ProductCategoryDialogComponent implements OnInit {
     }
 
     this.saveOrUpdate().subscribe(result => {
+      this.submitted = false;
       if (result) {
         this.activeModal.close(result);
       } else {
@@ -102,6 +105,7 @@ export class ProductCategoryDialogComponent implements OnInit {
       }
     }, err => {
       console.log(err);
+      this.submitted = false;
     });
   }
 
@@ -119,10 +123,6 @@ export class ProductCategoryDialogComponent implements OnInit {
   onCancel() {
     this.submitted = false;
     this.activeModal.dismiss();
-  }
-
-  get f() {
-    return this.myform.controls;
   }
 }
 

@@ -46,6 +46,7 @@ export class OrderLaboListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -105,6 +106,7 @@ export class OrderLaboListComponent implements OnInit {
 
   onChangeLaboState(e) {
     this.stateFilter = e? e.value : null;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

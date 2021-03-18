@@ -326,6 +326,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       },
       er => {
         console.log(er);
+        this.submitted = false;
       }
     );
   }

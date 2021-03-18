@@ -64,6 +64,7 @@ export class LaboOrderListComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((value) => {
         this.filterPaged.search = value || '';
+        this.skip = 0;
         this.loadDataFromApi();
       });
   }
@@ -91,11 +92,11 @@ export class LaboOrderListComponent implements OnInit {
       // delete this.filterPaged['laboState'];
       this.stateLabo = null;
     }
-
+    this.skip = 0;
     this.loadDataFromApi();
   }
 
-  reloaChange(val) {
+  reloadChange(val) {
     if (val) {
       this.loadDataFromApi();
     }
@@ -161,7 +162,7 @@ export class LaboOrderListComponent implements OnInit {
       // delete this.filterPaged['hasAnyLabo'];
       this.islabo = null;
     }
-
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

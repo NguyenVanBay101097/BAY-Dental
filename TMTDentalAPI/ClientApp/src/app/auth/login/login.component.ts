@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  submitted: boolean = false;
   constructor(public authService: AuthService, public router: Router, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -21,6 +22,8 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.submitted = true;
+
     if (!this.loginForm.valid) {
       return;
     }
@@ -39,5 +42,9 @@ export class LoginComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  get f() {
+    return this.loginForm.controls;
   }
 }

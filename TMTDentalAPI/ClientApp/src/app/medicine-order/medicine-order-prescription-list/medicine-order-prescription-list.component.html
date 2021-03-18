@@ -18,7 +18,7 @@
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="date" title="Ngày tạo" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

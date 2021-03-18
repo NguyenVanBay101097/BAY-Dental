@@ -51,6 +51,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
 
     this.route.queryParamMap.subscribe(params => {
       this.resultSelection = params.get('result_selection');
+      this.skip = 0;
       this.loadDataFromApi();
     });
 
@@ -58,6 +59,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 

@@ -130,7 +130,7 @@
                                     </kendo-combobox>
                                     <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.category.errors.required">Vui lòng chọn nhóm sản phẩm</div>
+                                        <div *ngIf="f.category.errors.required">Chọn nhóm sản phẩm</div>
                                     </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.category?.name}}</span>
                                 </td>
@@ -148,7 +148,7 @@
                                     </kendo-combobox>
                                     <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)"
                                         class="text-danger">
-                                        <div *ngIf="f.criteria.errors.required">Vui lòng chọn tiêu chí kiểm kho</div>
+                                        <div *ngIf="f.criteria.errors.required">Chọn tiêu chí kiểm kho</div>
                                     </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.criteria?.name}}</span>
                                 </td>
@@ -178,6 +178,9 @@
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
                                         formControlName="dateObj">
                                     </kendo-datepicker>
+                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required">Chọn ngày kiểm</div>
+                                    </div>
                                     <span *ngIf="stateControl != 'draft'">{{stockInventory.date |
                                         date:'shortDate'}}</span>
                                 </td>

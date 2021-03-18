@@ -18,7 +18,7 @@ export class RoleFormComponent implements OnInit {
   roleForm: FormGroup;
   role: any;
   id: string;
-
+  submitted = false;
   selectedUsers: any[] = [];
   userList: any[] = [];
   featureGroups: any;
@@ -47,6 +47,10 @@ export class RoleFormComponent implements OnInit {
     this.loadRole();
     this.loadFeatures();
     this.loadUserList();
+  }
+
+  get f() {
+    return this.roleForm.controls;
   }
 
   public get checkableSettings(): CheckableSettings {
@@ -173,6 +177,7 @@ export class RoleFormComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.roleForm.invalid) {
       return;
     }

@@ -34,6 +34,7 @@ export class SalaryPaymentListV2Component implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
     this.loadDataFromApi();

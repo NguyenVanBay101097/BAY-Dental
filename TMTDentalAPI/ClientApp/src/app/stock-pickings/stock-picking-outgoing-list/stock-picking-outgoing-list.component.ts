@@ -39,6 +39,7 @@ export class StockPickingOutgoingListComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(value => {
+        this.skip = 0;
         this.loadDataFromApi();
       });
 
@@ -85,6 +86,7 @@ export class StockPickingOutgoingListComponent implements OnInit {
   onDateSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.skip = 0;
     this.loadDataFromApi();
   }
 

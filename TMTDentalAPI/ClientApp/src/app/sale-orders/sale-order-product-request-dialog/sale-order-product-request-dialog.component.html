@@ -32,6 +32,9 @@
                                     </span>
                                     <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
                                     </kendo-datepicker>
+                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required">Chọn ngày yêu cầu</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -55,7 +58,7 @@
                                     <kendo-combobox [class.d-none]="seeForm" [filterable]="true" [data]="filteredEmployees" [textField]="'name'" #employeeCbx formControlName="employee" [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)" class="text-danger">
-                                        <div *ngIf="f.employee.errors.required">Vui lòng chọn bác sĩ chỉ định</div>
+                                        <div *ngIf="f.employee.errors.required">Chọn bác sĩ chỉ định</div>
                                     </div>
                                 </td>
                             </tr>

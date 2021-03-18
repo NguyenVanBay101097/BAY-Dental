@@ -72,7 +72,7 @@ namespace Infrastructure.Services
                 PartnerName = x.Partner.Name,
                 Type = x.Type,
                 State = x.State,
-            }).ToListAsync();
+            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var residual_dict = await _ComputeAmountResidualDict(items.Select(x => x.Id));
             foreach (var item in items)

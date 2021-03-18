@@ -134,6 +134,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     this.loadTeethList();
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
+
   loadEmployees() {
     const state = {
       filter: {

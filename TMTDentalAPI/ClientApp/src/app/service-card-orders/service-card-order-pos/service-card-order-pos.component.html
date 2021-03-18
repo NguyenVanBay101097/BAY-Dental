@@ -56,8 +56,12 @@
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>
-                                        <span
-                                            [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.partner ? cardOrder.partner.name : ''}}</span>
+                                        <div *ngIf="cardOrder.state == 'draft' && f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
+                                        </div>
+                                        <span [class.d-none]="cardOrder.state == 'draft'">
+                                            {{cardOrder.partner ? cardOrder.partner.name : ''}}
+                                        </span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -74,8 +78,12 @@
                                         <kendo-datetimepicker [class.d-none]="cardOrder.state != 'draft'"
                                             formControlName="dateOrderObj">
                                         </kendo-datetimepicker>
-                                        <span
-                                            [class.d-none]="cardOrder.state == 'draft'">{{cardOrder.dateOrder | date: 'short'}}</span>
+                                        <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày bán</div>
+                                        </div>
+                                        <span [class.d-none]="cardOrder.state == 'draft'">
+                                            {{cardOrder.dateOrder | date: 'short'}}
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>

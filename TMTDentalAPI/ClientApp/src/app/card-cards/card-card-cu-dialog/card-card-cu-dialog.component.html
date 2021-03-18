@@ -93,6 +93,9 @@
                                         [disableControl]="['draft'].indexOf(card.state) == -1" ngbAutofocus #partnerCbx
                                         formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -106,6 +109,9 @@
                                         [disableControl]="['draft'].indexOf(card.state) == -1" #typeCbx
                                         formControlName="type" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <div *ngIf="f.type.errors && (f.type.touched || f.type.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.type.errors.required">Chọn loại thẻ</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

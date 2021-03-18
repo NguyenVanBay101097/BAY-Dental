@@ -26,7 +26,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   formGroup: FormGroup;
   id: string;
   program: SaleCouponProgramDisplay = new SaleCouponProgramDisplay();
-
+  submitted = false;
   filteredProducts: ProductSimple[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
@@ -62,6 +62,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       promoCode: null
     });
 
+
     this.route.queryParamMap.subscribe(params => {
       this.id = params.get("id");
       if (this.id) {
@@ -95,6 +96,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       }
     });
 
+    
     this.productCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => (this.productCbx.loading = true)),
@@ -116,6 +118,10 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       this.listProducts = result;
       this.productMultiSelect.loading = false;
     });
+  }
+
+  get f() {
+    return this.formGroup.controls;
   }
 
   loadFilteredProducts() {
@@ -221,6 +227,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
     }

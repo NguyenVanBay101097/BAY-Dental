@@ -12,6 +12,9 @@
                     <h1>
                         <input class="form-control" formControlName="name" name="name">
                     </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
+                    </div>
                 </div>
                 <div class="o_notebook">
                     <ul class="nav nav-tabs" role="tablist">

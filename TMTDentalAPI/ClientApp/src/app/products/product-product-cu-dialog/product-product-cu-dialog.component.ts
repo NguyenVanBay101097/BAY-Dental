@@ -252,7 +252,7 @@ export class ProductProductCuDialogComponent implements OnInit {
   }
 
   quickCreateCateg() {
-    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(ProductCategoryDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm nhóm vật tư';
     modalRef.componentInstance.type = 'product';
     modalRef.result.then(result => {

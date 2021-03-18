@@ -33,6 +33,9 @@
                         <h1>
                             <input type="text" class="form-control" formControlName="name">
                         </h1>
+                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                            <div *ngIf="f.name.errors.required">Nhập tên nhóm quyền</div>
+                        </div>
                     </div>
                     <div>
                         <h4 class="o_horizontal_separator text-dark">Người dùng</h4>

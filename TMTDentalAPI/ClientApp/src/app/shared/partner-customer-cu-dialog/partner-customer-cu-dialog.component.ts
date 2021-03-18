@@ -95,6 +95,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   addtionalData: any;
 
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -514,6 +518,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (!this.formGroup.valid) {
       return false;
     }

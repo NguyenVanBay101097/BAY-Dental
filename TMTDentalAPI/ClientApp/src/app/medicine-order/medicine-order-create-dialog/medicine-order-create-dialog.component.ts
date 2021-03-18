@@ -27,6 +27,11 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   id: string;
+
+  submitted = false;
+
+  get f() { return this.formGroup.controls; }
+
   constructor(
     private accountJournalService: AccountJournalService,
     private fb: FormBuilder,
@@ -43,7 +48,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   ngOnInit() {
     this.formGroup = this.fb.group({
       journal: [null, Validators.required],
-      orderDate: new Date(),
+      orderDate: [new Date(), Validators.required],
       note: '',
       amount: 0,
       medicineOrderLines: this.fb.array([])
@@ -211,7 +216,9 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePayment() {
-    if (this.formGroup.invalid) {
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
       return false;
     }
      
@@ -232,8 +239,12 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
   }
 
   onSavePaymentPrint() {
-    if (this.formGroup.invalid)
-      return
+    this.submitted = true;
+
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
     var val = this.formGroup.value;
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(
