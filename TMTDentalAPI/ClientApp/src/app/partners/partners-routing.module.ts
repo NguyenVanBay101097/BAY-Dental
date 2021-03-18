@@ -25,6 +25,7 @@ import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-su
 import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
 import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
+import { PartnerAdvanceListComponent } from '../partner-advances/partner-advance-list/partner-advance-list.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,7 @@ const routes: Routes = [
       { path: 'appointment', component: PartnerCustomerAppointmentComponent },
       { path: 'prescription', component: PartnerCustomerProductToaThuocListComponent },
       { path: 'categories', component: PartnerCustomerCategoriesComponent },
+      { path: 'advances', component: PartnerAdvanceListComponent },
       { path: 'partner-images', component: PartnerCustomerUploadImageComponent },
       { path: 'quotations', component: PartnerCustomerQuotationsComponent },
       { path: 'treatment-histories', component: PartnerCustomerTreatmentHistoryComponent },

@@ -243,6 +243,8 @@ namespace Infrastructure.Data
         public DbSet<StockInventoryCriteria> StockInventoryCriterias { get; set; }
         public DbSet<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; }
 
+        public DbSet<PartnerAdvance> PartnerAdvances { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -437,6 +439,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ProductBomConfiguration());
             builder.ApplyConfiguration(new ProductRequestConfiguration());
             builder.ApplyConfiguration(new ProductRequestLineConfiguration());
+            builder.ApplyConfiguration(new PartnerAdvanceConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

@@ -1,0 +1,115 @@
+
+
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close"
+        (click)="onClose()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">                    
+                    <button [disabled]="partnerAdvance?.state == 'confirmed'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="partnerAdvance?.state == 'confirmed'"
+                        [class.btn-secondary]="partnerAdvance?.state == 'confirmed'" type="button">
+                        Đã xác nhận
+                    </button>
+                    <button [disabled]="partnerAdvance?.state == 'draft'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="partnerAdvance?.state == 'draft'"
+                        [class.btn-secondary]="partnerAdvance?.state == 'draft'" type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <h3 *ngIf="partnerAdvance?.name" class="font-weight-bold">{{partnerAdvance?.name}}</h3>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>                        
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Phương thức</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="partnerAdvance?.state == 'confirmed'">{{partnerAdvance?.journal.name}}</span>
+                                    <div *ngIf="partnerAdvance?.state != 'confirmed'">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                            [filterable]="true" #journalCbx formControlName="journal"
+                                            [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.journal.errors.required">Vui lòng chọn phương thức thanh toán
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số tiền</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="partnerAdvance?.state == 'confirmed'">{{partnerAdvance?.amount | number}}</span>
+                                    <kendo-numerictextbox *ngIf="partnerAdvance?.state != 'confirmed' && type == 'advance'" [min]="0" [format]="'n0'"
+                                        formControlName="amount">
+                                    </kendo-numerictextbox>
+                                    <kendo-numerictextbox *ngIf="partnerAdvance?.state != 'confirmed' && type == 'refund'" [min]="0" [max]="partnerAdvance?.amounAdvanceTotal" [format]="'n0'"
+                                      [autoCorrect]="true"  formControlName="amount">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nội dung</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="partnerAdvance?.state == 'confirmed'">{{partnerAdvance?.reason}}</span>
+                                    <textarea *ngIf="partnerAdvance?.state != 'confirmed'" type="text" class="form-control"
+                                        formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span *ngIf="partnerAdvance?.state == 'confirmed'">
+                                        {{partnerAdvance?.date | date: 'shortDate'}}
+                                    </span>
+                                    <kendo-datepicker *ngIf="partnerAdvance?.state != 'confirmed'" formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        <span *ngIf="type == 'advance'">Người nộp tiền</span>
+                                        <span *ngIf="type == 'refund'">Người nhận tiền</span>
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                   
+                                    <span>{{partnerAdvance?.partnerName}}</span>
+                                </td>
+                            </tr>                           
+                        </tbody>
+                    </table>
+                    <h6 *ngIf="partnerAdvance?.type == 'refund' && partnerAdvance?.state != 'confirmed'" class="font-weight-bold text-danger mb-2">Tối đa tiền tạm ứng được trả : {{partnerAdvance?.amounAdvanceTotal | number}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onSave()">Lưu và In</button>
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" *ngIf="partnerAdvance?.state != 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" class="btn btn-sm btn-secondary" (click)="onClose()">Đóng</button>
+</div>

@@ -74,6 +74,7 @@ import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor
 import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
 import { PartnerSupplierFormPaymentComponent } from './partner-supplier-form-payment/partner-supplier-form-payment.component';
 import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
+import { PartnerAdvancesModule } from '../partner-advances/partner-advances.module';
 
 
 @NgModule({
@@ -151,6 +152,7 @@ import { PartnerSupplierFormDebitPaymentDialogComponent } from './partner-suppli
     PartnerTitlesModule,
     PartnerSourcesModule,
     PartnerCategoriesModule,
+    PartnerAdvancesModule,
     HistoryModule
   ],
   entryComponents: [
