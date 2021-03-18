@@ -6,7 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
@@ -17,9 +17,9 @@
                     (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown> -->
                     <div class="d-flex">
-                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu labo" class="kendo-combobox-sm mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu Labo" class="kendo-combobox-sm mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
-                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu labo" class="kendo-combobox-sm" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu Labo" class="kendo-combobox-sm" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
                     </div>
 
