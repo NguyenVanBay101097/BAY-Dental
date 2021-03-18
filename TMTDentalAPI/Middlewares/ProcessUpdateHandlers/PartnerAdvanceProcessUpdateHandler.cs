@@ -42,7 +42,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     var model = context.IRModels.Where(x => x.Model == "PartnerAdvance").FirstOrDefault();
                     if (model == null)
                     {
-                        model = new IRModel { Name = "Khách hàng tạm ứng", Model = "PartnerAdvance" };
+                        model = new IRModel { Name = "Partner Advance", Model = "PartnerAdvance" };
                         context.IRModels.Add(model);
                         context.SaveChanges();
                     }
