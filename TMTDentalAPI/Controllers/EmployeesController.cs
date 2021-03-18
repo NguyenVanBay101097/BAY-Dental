@@ -96,20 +96,7 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
 
-            var employeePartner = new Partner()
-            {
-                Name = val.Name,
-                Employee = true,
-                Ref = val.Ref,
-                Phone = val.Phone,
-                Email = val.Email,
-                Customer = false
-            };
-
-            await _partnerService.CreateAsync(employeePartner);
-
             var employee = _mapper.Map<Employee>(val);
-            employee.PartnerId = employeePartner.Id;
             if (!employee.CompanyId.HasValue)
                 employee.CompanyId = CompanyId;
 
@@ -150,7 +137,7 @@ namespace TMTDentalAPI.Controllers
                             throw new Exception("Tên đăng nhập không được trống");
                         var exist = await _userManager.FindByNameAsync(val.UserName);
                         if (exist != null)
-                            throw new Exception("Tài khoản đã tồn tại");
+                            throw new Exception("Tài khoản đã tồn tại!");
 
                         user.UserName = val.UserName;
                     }
@@ -314,21 +301,14 @@ namespace TMTDentalAPI.Controllers
             await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
         }
 
-        private void UpdatePartnerToEmployee(Employee employee)
+        private async Task UpdatePartnerToEmployee(Employee employee)
         {
-            if (employee.Partner == null) return;
+            if (employee.Partner == null) 
+                return;
             var pn = employee.Partner;
             pn.Name = employee.Name;
-            pn.Employee = true;
-            pn.Ref = employee.Ref;
             pn.Phone = employee.Phone;
-            pn.Email = employee.Email;
-            //pn.BirthDay = employee.BirthDay.HasValue ? employee.BirthDay.Value.Day : 1;
-            //pn.BirthMonth = employee.BirthDay.HasValue ? employee.BirthDay.Value.Month : 1;
-            //pn.BirthYear = employee.BirthDay.HasValue ? employee.BirthDay.Value.Year : DateTime.Now.Year;
-            //pn.Barcode = employee.EnrollNumber;
-            pn.Supplier = false;
-            pn.Customer = false;
+            await _partnerService.UpdateAsync(pn);
         }
 
         private async Task UpdateSalary(EmployeeSave val, Employee emp)
@@ -358,6 +338,7 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.User.Partner)
                 .Include(x => x.User.Company)
                 .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
+                .Include(x => x.Partner)
                 .FirstOrDefaultAsync();
 
             if (employee == null)
@@ -368,7 +349,7 @@ namespace TMTDentalAPI.Controllers
             employee = _mapper.Map(val, employee);
             await UpdateSalary(val, employee);
 
-            UpdatePartnerToEmployee(employee);
+            await UpdatePartnerToEmployee(employee);
 
             await _employeeService.UpdateResgroupForSurvey(employee);
 

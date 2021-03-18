@@ -156,7 +156,7 @@ export class EmployeeListComponent implements OnInit {
   deleteEmployee(id) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa nhân viên';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa nhân viên';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa nhân viên?';
     modalRef.result.then(() => {
       this.service.deleteEmployee(id).subscribe(
         () => {
@@ -191,7 +191,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((active ? 'hiện nhân viên ' : 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
       this.service.actionActive(emp.id, active).subscribe(() => {
-        if(this.active) {
+        if(active) {
           this.notify('success','Hiện thành công');
         }
         else {

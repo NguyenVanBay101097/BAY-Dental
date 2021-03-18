@@ -32,12 +32,12 @@
     </record>
 
     <record model="res.groups" id="survey.group_manager">
-      <field name="name">Survey Manager</field>
+      <field name="name">Quản lý</field>
       <field name="category_id" ref="survey.module_category_survey" />
     </record>
 
     <record model="res.groups" id="survey.group_user">
-      <field name="name">Survey User</field>
+      <field name="name">Nhân viên</field>
       <field name="category_id" ref="survey.module_category_survey" />
     </record>
   </data>
