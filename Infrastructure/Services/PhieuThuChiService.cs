@@ -300,8 +300,11 @@ namespace Infrastructure.Services
             if (phieuthuchi == null)
                 throw new Exception("Phiếu không tồn tại");
 
-            if (phieuthuchi.State != "draft")
-                throw new Exception("Bạn chỉ có thể xóa phiếu ở trạng thái nháp");
+            if (phieuthuchi.State == "posted")
+                throw new Exception("Bạn không thể xóa phiếu khi đã xác nhận");
+
+            if (phieuthuchi.State == "cancel")
+                throw new Exception("Bạn không thể xóa phiếu khi đã hủy");
 
             await DeleteAsync(phieuthuchi);
         }

@@ -170,9 +170,9 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   productCbxFilterChange() {
-    this.categCbx.filterChange.asObservable().pipe(
+    this.productCbx.filterChange.asObservable().pipe(
       debounceTime(300),
-      tap(() => (this.categCbx.loading = true)),
+      tap(() => (this.productCbx.loading = true)),
       switchMap(value => this.searchProducts(value))
     ).subscribe(result => {
       this.filteredProducts = result;
