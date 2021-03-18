@@ -325,7 +325,6 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
       });
 
       this.routeActive();
-      this.submitted = false;
     }, err => {
       console.log(err);
       this.submitted = false;

@@ -313,7 +313,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(
       rs => {
         this.notify('success', 'Lưu thành công');
-        this.submitted = false;
         if (this.empId) {
           this.activeModal.close(true);
         } else {

@@ -35,10 +35,8 @@ export class LoginComponent implements OnInit {
         // alert("Tài khoản hoặc mật khẩu không đúng");
         alert(data.message);
       }
-      this.submitted = false;
     }, error => {
       console.log('error login', error);
-      this.submitted = false;
     });
   }
 

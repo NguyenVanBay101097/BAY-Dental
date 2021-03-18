@@ -56,7 +56,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
 
     this.saveOrUpdate().subscribe(
       (result) => {
-        this.submitted = false;
         if (result) {
           this.activeModal.close(result);
         } else {

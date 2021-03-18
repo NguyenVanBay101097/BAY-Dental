@@ -81,7 +81,11 @@ export class CommissionCreateUpdateDialogComponent implements OnInit {
   changeAppliedOn(e) {
     switch (e.target.value) {
       case "3_global":
-
+        this.formGroup.get('product').clearValidators();
+        this.formGroup.get('product').updateValueAndValidity();
+        this.formGroup.get('categ').clearValidators();
+        this.formGroup.get('categ').updateValueAndValidity();
+        this.formGroup.get('percentFixed').setValue(0);
         break;
       case "2_product_category":
         this.categCbx.focus();

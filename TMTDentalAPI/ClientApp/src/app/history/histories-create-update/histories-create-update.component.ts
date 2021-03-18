@@ -64,7 +64,6 @@ export class HistoriesCreateUpdateComponent implements OnInit {
       rs => {
         this.isChange = true;
         this.closeModal(rs);
-        this.submitted = false;
       },
       er => {
         console.log(er);

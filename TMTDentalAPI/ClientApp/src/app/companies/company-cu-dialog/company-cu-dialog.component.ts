@@ -26,7 +26,7 @@ export class CompanyCuDialogComponent implements OnInit {
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
   title: string;
-
+  submitted = false;
   dataSourceCities: Array<{ code: string, name: string }>;
   dataSourceDistricts: Array<{ code: string, name: string, cityCode: string, cityName: string }>;
   dataSourceWards: Array<{ code: string, name: string, districtCode: string, districtName: string, cityCode: string, cityName: string }>;
@@ -172,6 +172,7 @@ export class CompanyCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (!this.companyForm.valid) {
       return;
     }
