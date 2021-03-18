@@ -42,7 +42,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                x.Partner.NameNoSign.Contains(val.Search) || 
+                x.Partner.Ref.Contains(val.Search));
 
             if (val.SaleOrderLineId.HasValue)
             {
@@ -108,7 +109,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                x.Partner.NameNoSign.Contains(val.Search) || 
+                x.Partner.Ref.Contains(val.Search) || 
+                x.SaleOrderLine.Order.Name.Contains(val.Search));
 
             var now = DateTime.Now;
 
@@ -151,7 +154,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) || x.Partner.DisplayName.Contains(val.Search) ||
-                x.Partner.Ref.Contains(val.Search)));
+                x.Partner.Ref.Contains(val.Search) || x.SaleOrderLine.Order.Name.Contains(val.Search)));
 
             if (!string.IsNullOrEmpty(val.State))
             {
