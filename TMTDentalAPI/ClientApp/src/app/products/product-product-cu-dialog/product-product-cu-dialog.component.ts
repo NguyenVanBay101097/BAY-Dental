@@ -73,6 +73,8 @@ export class ProductProductCuDialogComponent implements OnInit {
     });
 
     setTimeout(() => {
+
+      this.loadProductCriteriaList();
       this.default();
 
       this.searchCategories().subscribe(result => {
@@ -81,6 +83,10 @@ export class ProductProductCuDialogComponent implements OnInit {
 
       this.searchUoMs().subscribe((result: any) => {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
+      });
+
+      this.searchProductCriterias().subscribe((result: any) => {
+        this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');
       });
 
       this.criteriaMultiSelect.filterChange.asObservable().pipe(
@@ -92,7 +98,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.criteriaMultiSelect.loading = false;
       });
 
-      this.loadProductCriteriaList();
+    
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
@@ -171,7 +177,7 @@ export class ProductProductCuDialogComponent implements OnInit {
 
   loadProductCriteriaList() {
     this.searchProductCriterias().subscribe((result) => {
-      this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');;
+      this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');
     });
   }
 
@@ -201,7 +207,6 @@ export class ProductProductCuDialogComponent implements OnInit {
       tap(() => (this.uoMPOCbx.loading = true)),
       switchMap(value => this.searchUoMPOs(value))
     ).subscribe((result: any) => {
-      console.log(result);
       this.filterdUoMPOs = result.items;
       this.uoMPOCbx.loading = false;
     });

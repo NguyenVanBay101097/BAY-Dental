@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
@@ -36,7 +37,7 @@ export class OrderLaboListComponent implements OnInit {
     {name:'Tới hạn',value:'toihan'},
   ];
   
-  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService) { }
+  constructor(private laboOrderService: LaboOrderService,private modalService: NgbModal,private intlService: IntlService,private notificationService: NotificationService,) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -118,6 +119,13 @@ export class OrderLaboListComponent implements OnInit {
     const modalRef = this.modalService.open(LaboOrderReceiptDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
+      this.notificationService.show({
+        content: 'Cập nhật thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });
       this.loadDataFromApi();
     }, er => { });
   }

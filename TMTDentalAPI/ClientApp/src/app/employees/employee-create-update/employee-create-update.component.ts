@@ -174,6 +174,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   loadListCompanies() {
     var val = new CompanyPaged();
+    val.active = true;
     this.companyService.getPaged(val).subscribe(result => {
       this.listCompanies = _.unionBy(this.listCompanies, result.items, 'id');
     });

@@ -164,7 +164,6 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(move);
           moveControl.push(g);
         });
-        console.log(moveControl);
 
       });
     } else {
@@ -271,6 +270,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
           this.loadDataFromApi();
         }
       );
@@ -285,6 +285,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
         }
       );
     }
@@ -322,12 +323,18 @@ export class StockInventoryFormComponent implements OnInit {
 
   prepareInventory() {
     if (this.id) {
+      this.submitted = true;
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(
         () => {
           this.stockInventorySevice.prepareInventory([this.id]).subscribe(rs => {
             this.loadDataFromApi();
+            this.submitted = false;
           })
         }
       );
@@ -336,6 +343,11 @@ export class StockInventoryFormComponent implements OnInit {
 
   actionDone() {
     if (this.id) {
+      this.submitted = true;
+      if (this.formGroup.invalid) {
+        return false;
+      }
+
       var val = this.formGroup.value;
       val = this.computeForm(val);
       this.stockInventorySevice.update(this.id, val).subscribe(() => {
@@ -347,6 +359,7 @@ export class StockInventoryFormComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          this.submitted = false;
           this.loadDataFromApi();
         })
       })
@@ -364,7 +377,7 @@ export class StockInventoryFormComponent implements OnInit {
         this.stockInventorySevice.actionCancel(ids).subscribe(
           () => {
             this.notificationService.show({
-              content: 'Hủythành công',
+              content: 'Hủy thành công',
               hideAfter: 3000,
               position: { horizontal: 'center', vertical: 'top' },
               animation: { type: 'fade', duration: 400 },
@@ -383,7 +396,6 @@ export class StockInventoryFormComponent implements OnInit {
       return;
     }
     this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
-      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }

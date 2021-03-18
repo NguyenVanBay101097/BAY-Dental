@@ -83,6 +83,10 @@ export class ProductMedicineCuDialogComponent implements OnInit {
         this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
       });
 
+      this.searchProductCriterias().subscribe((result: any) => {
+        this.listProductCriteria = _.unionBy(this.listProductCriteria, result.items, 'id');
+      });
+
       this.criteriaMultiSelect.filterChange.asObservable().pipe(
         debounceTime(300),
         tap(() => (this.criteriaMultiSelect.loading = true)),
