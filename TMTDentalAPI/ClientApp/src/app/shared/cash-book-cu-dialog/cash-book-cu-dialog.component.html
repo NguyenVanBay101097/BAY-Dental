@@ -153,7 +153,7 @@
     <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onSavePrint(true)">Lưu và In</button>
     <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
     <button type="button" *ngIf="phieuThuChiDisplay.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-primary mr-2" (click)="onCancel()">In phiếu</button>
+    <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
     <button type="button" *ngIf="phieuThuChiDisplay.state == 'posted'" class="btn btn-danger mr-2" (click)="onCancel()">Hủy phiếu</button>
     <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
 </div>
