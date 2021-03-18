@@ -40,7 +40,8 @@
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (cellClick)="clickItem($event)" (pageChange)="pageChange($event)" (edit)="editHandler($event);$event.stopPropagation();" [resizable]="true" [navigable]="true" (save)="saveHandler($event);$event.stopPropagation();" (cancel)="cancelHandler($event);$event.stopPropagation();">
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (cellClick)="clickItem($event)" (pageChange)="pageChange($event)" (edit)="editHandler($event);" [resizable]="true" [navigable]="true"
+        (save)="saveHandler($event);" (cancel)="cancelHandler($event);">
         <kendo-grid-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-isNew="isNew">
                 <button kendoGridEditCommand [primary]="true" title="Sửa" class="btn btn-success btn-sm mr-2">

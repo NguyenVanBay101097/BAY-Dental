@@ -79,6 +79,7 @@ import { ProductMedicineCuDialogComponent } from '../products/product-medicine-c
 import { ProductsModule } from '../products/products.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SearchAllComponent } from './search-all/search-all.component';
 
 @NgModule({
   declarations: [
@@ -151,6 +152,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
     CashBookCuDialogComponent,
+    SearchAllComponent
   ],
   exports: [
     ConfirmDialogComponent,
@@ -213,6 +215,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     PartnerWebcamComponent,
     LaboFinnishLineImportComponent,
     CashBookCuDialogComponent,
+    SearchAllComponent
   ],
   imports: [
     CommonModule,

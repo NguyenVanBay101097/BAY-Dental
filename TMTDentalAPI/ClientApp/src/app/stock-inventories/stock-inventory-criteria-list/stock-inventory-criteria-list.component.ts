@@ -73,7 +73,7 @@ export class StockInventoryCriteriaListComponent implements OnInit {
 
   editItem(item: StockInventoryCriteriaBasic) {
     var dg = this.ngbModal.open(StockInventoryCriteriaCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    dg.componentInstance.title = 'Sửa tiêu chí kiểm kho: ' + item.name;
+    dg.componentInstance.title = 'Sửa tiêu chí kiểm kho';
     dg.componentInstance.id = item.id;
     dg.result.then((val) => {
       this.criteriaService.update(item.id, val).subscribe(
