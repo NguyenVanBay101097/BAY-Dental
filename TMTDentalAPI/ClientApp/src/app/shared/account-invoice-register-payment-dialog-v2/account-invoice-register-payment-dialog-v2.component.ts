@@ -90,15 +90,12 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
-        this.submitted = false;
         this.activeModal.close(true);
       }, (err) => {
         this.errorService.show(err);
-        this.submitted = false;
       });
     }, (err) => {
       this.errorService.show(err);
-      this.submitted = false;
     });
   }
 
@@ -111,18 +108,15 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
     this.create().subscribe((result: any) => {
       this.paymentService.post([result.id]).subscribe(() => {
-        this.submitted = false;
         this.activeModal.close({
           print: true,
           paymentId: result.id
         });
       }, (err) => {
         this.errorService.show(err);
-        this.submitted = false;
       });
     }, (err) => {
       this.errorService.show(err);
-      this.submitted = false;
     });
   }
 
