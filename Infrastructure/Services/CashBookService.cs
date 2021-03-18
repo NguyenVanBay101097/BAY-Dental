@@ -129,7 +129,7 @@ namespace Infrastructure.Services
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
             
             var totalItems = await query.CountAsync();
-            var items = await query.OrderBy(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new CashBookReportDetail
+            var items = await query.OrderByDescending(x => x.Date).Skip(val.Offset).Take(val.Limit).Select(x => new CashBookReportDetail
             {
                 AccountName = x.Account.Name,
                 Amount = x.Credit - x.Debit,
