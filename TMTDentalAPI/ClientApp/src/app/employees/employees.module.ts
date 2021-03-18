@@ -14,6 +14,7 @@ import { EmployeeAdvanceSearchComponent } from './employee-advance-search/employ
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
 import { EmpCategoryService } from '../employee-categories/emp-category.service';
+import { RoleService } from '../roles/role.service';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { EmpCategoryService } from '../employee-categories/emp-category.service'
   ],
    providers: [
     EmployeeService,
-    EmpCategoryService
+    EmpCategoryService,
+    RoleService
   ],
   schemas: [NO_ERRORS_SCHEMA],
   entryComponents: [EmployeeCreateUpdateComponent],

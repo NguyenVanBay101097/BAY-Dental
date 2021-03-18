@@ -25,8 +25,8 @@ export class StockPickingIncomingListComponent implements OnInit {
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);;
+  dateTo: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
     private pickingTypeService: StockPickingTypeService, private router: Router,
@@ -51,7 +51,7 @@ export class StockPickingIncomingListComponent implements OnInit {
       case 'done':
         return 'Hoàn thành';
       default:
-        return 'Mới';
+        return 'Nháp';
     }
   }
 

@@ -9,6 +9,7 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { PartnerService } from 'src/app/partners/partner.service';
 import { NotificationService } from "@progress/kendo-angular-notification";
+import { IntlService } from "@progress/kendo-angular-intl";
 
 @Component({
   selector: "app-partner-supplier-cu-dialog",
@@ -62,7 +63,8 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private notificationService: NotificationService,
-    private showErrorService: AppSharedShowErrorService
+    private showErrorService: AppSharedShowErrorService,
+    private intlService: IntlService,
   ) { }
 
   ngOnInit() {
@@ -70,6 +72,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       name: ["", Validators.required],
       street: null,
       fax: '',
+      dateObj: null,
       city: null,
       district: null,
       ward: null,
@@ -95,7 +98,14 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
           if (result.ward && result.ward.code) {
             this.handleWardChange(result.ward);
           }
+          if (result.date) {
+            var date = new Date(result.date);
+            this.formGroup.get("dateObj").setValue(date);
+          }
         });
+      }
+      else{
+        this.formGroup.get("dateObj").setValue(new Date());
       }
 
       this.loadSourceCities();
@@ -206,6 +216,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
 
     if (this.id) {
       var val = this.formGroup.value;
+      val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
       this.partnerService.update(this.id, val).subscribe(
         () => {
           this.notificationService.show({
@@ -220,6 +231,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
       );
     } else {
       var val = this.formGroup.value;
+      val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
       this.partnerService.create(val).subscribe(
         (result) => {
           this.notificationService.show({

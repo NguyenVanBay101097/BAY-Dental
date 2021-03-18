@@ -103,7 +103,7 @@ namespace Infrastructure.Services
         {
             var assignObj = GetService<ISurveyAssignmentService>();
 
-            var query = SearchQuery(x => x.IsAllowSurvey == true && x.Active == true);
+            var query = SearchQuery(x => x.IsAllowSurvey == true && x.Active == true && x.User.Active == true);
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Name.Contains(val.Search));
@@ -217,6 +217,21 @@ namespace Infrastructure.Services
                     entity.Ref = await sequenceService.NextByCode("employee");
                 }
             }
+
+            var partnerObj = GetService<IPartnerService>();
+            var partner = new Partner()
+            {
+                Name = entity.Name,
+                Employee = true,
+                Ref = entity.Ref,
+                Phone = entity.Phone,
+                Email = entity.Email,
+                CompanyId = entity.CompanyId,
+                Customer = false
+            };
+
+            await partnerObj.CreateAsync(partner);
+            entity.PartnerId = partner.Id;
 
             var emp = await base.CreateAsync(entity);
             //CheckConstraints(entity);

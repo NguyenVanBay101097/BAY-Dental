@@ -365,7 +365,7 @@ namespace Infrastructure.Services
                 {
                     if (line.ProductQty < 0 && line.ProductQty != line.TheoreticalQty)
                     {
-                        throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.NameGet, line.ProductQty));
+                        throw new Exception(string.Format("Bạn không được gán số lượng âm cho chi tiết điều chỉnh: {0} - số lượng: {1}", line.Product.Name, line.ProductQty));
                     }
                 }
             }

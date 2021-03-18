@@ -87,7 +87,7 @@ export class AppointmentListComponent implements OnInit {
     name: 'State',
     data: [
       { text: 'Đang hẹn', value: 'confirmed', color: '#04c835' },
-      { text: 'Đã hủy', value: 'cancel', color: '#cc0000' },
+      { text: 'Hủy hẹn', value: 'cancel', color: '#cc0000' },
       { text: 'Hoàn tất', value: 'done', color: '#666666' },
       { text: 'Đang chờ', value: 'waiting', color: '#0080ff' },
       { text: 'Quá hạn', value: 'expired', color: '#ffbf00' }
@@ -225,7 +225,7 @@ export class AppointmentListComponent implements OnInit {
       case 'done':
         return 'Đã tới';
       case 'cancel':
-        return 'Đã hủy';
+        return 'Hủy hẹn';
       default:
         return 'Đang hẹn';
     }

@@ -543,7 +543,7 @@ namespace Infrastructure.Services
             {
                 XmlElement record = (XmlElement)records[i];
                 var model = record.GetAttribute("model");
-                var id = module + "." + record.GetAttribute("id");
+                var id = record.GetAttribute("id").IndexOf(".") != -1 ? record.GetAttribute("id") : module + "." + record.GetAttribute("id");
                 if (model == "ir.module.category")
                 {
                     var categ = new IrModuleCategory();

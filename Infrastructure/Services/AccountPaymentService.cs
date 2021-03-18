@@ -1084,6 +1084,8 @@ namespace Infrastructure.Services
                 {
                     if (rec.AccountMovePaymentRels.Any())
                         await moveLineObj.RemoveMoveReconcile(move.Lines.Select(x => x.Id).ToList());
+                    else
+                        await moveLineObj.RemoveMoveReconcile(rec.MoveLines.Select(x => x.Id).ToList());
 
                     await moveObj.ButtonCancel(new List<Guid>() { move.Id });
                     await moveObj.Unlink(new List<Guid>() { move.Id });

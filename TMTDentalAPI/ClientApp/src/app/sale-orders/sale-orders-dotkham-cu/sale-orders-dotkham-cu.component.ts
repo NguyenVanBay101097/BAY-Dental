@@ -265,6 +265,13 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     modalRef.result.then(() => {
       this.dotKhamService.delete(this.dotkham.Id).subscribe(() => {
         this.btnDeleteEvent.emit(this.dotkham);
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       }, (err) => {
         console.log(err);
       });
