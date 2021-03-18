@@ -639,6 +639,9 @@ namespace Infrastructure.Services
             var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
                 (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
 
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
             var rec = new AccountRegisterPaymentDisplay
             {
                 Amount = Math.Abs(total_amount ?? 0),
@@ -646,8 +649,21 @@ namespace Infrastructure.Services
                 PartnerId = invoices[0].PartnerId,
                 PartnerType = MAP_INVOICE_TYPE_PARTNER_TYPE[invoices[0].Type],
                 //Communication = communication,
-                InvoiceIds = invoice_ids
+                InvoiceIds = invoice_ids,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
             };
+
+            //get debit items
+            rec.DebitItems = invoices.Select(x => new PartnerGetDebtPagedItem
+            {
+                Date = x.Date,
+                AmountResidual = x.AmountResidual.GetValueOrDefault(),
+                Balance = x.AmountTotal.GetValueOrDefault(),
+                Origin = x.InvoiceOrigin,
+                MoveId = x.Id,
+                MoveType = x.Type
+            });
 
             return rec;
         }
@@ -682,6 +698,7 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> PartnerDefaultGet(Guid partnerId)
         {
             //Tính số tiền còn nợ của partner
+            var journalObj = GetService<IAccountJournalService>();
             var partnerObj = GetService<IPartnerService>();
             var creditDebitGet = partnerObj.CreditDebitGet(new List<Guid>() { partnerId });
 
@@ -703,7 +720,7 @@ namespace Infrastructure.Services
             }
 
             if (total_amount == 0)
-                throw new Exception("Không có gì để thanh toán");
+                throw new Exception("Bạn không còn hóa đơn để thanh toán");
 
             string payment_type = "";
             if (partner.Customer)
@@ -711,12 +728,16 @@ namespace Infrastructure.Services
             else if (partner.Supplier)
                 payment_type = total_amount > 0 ? "outbound" : "inbound";
 
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
             var rec = new AccountRegisterPaymentDisplay
             {
                 Amount = Math.Abs(total_amount),
                 PaymentType = payment_type,
                 PartnerId = partnerId,
                 PartnerType = partner_type,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
             };
 
             return rec;

@@ -2154,7 +2154,8 @@ namespace Infrastructure.Services
                 AmountResidual = x.AccountInternalType == "payable" ? -x.AmountResidual : x.AmountResidual,
                 Balance = x.AccountInternalType == "payable" ? -x.Balance : x.Balance,
                 Origin = x.Move.InvoiceOrigin,
-                MoveId = x.MoveId
+                MoveId = x.MoveId,
+                MoveType = x.Move.Type
             }).ToListAsync();
 
             return new PagedResult2<PartnerGetDebtPagedItem>(total, val.Offset, val.Limit)

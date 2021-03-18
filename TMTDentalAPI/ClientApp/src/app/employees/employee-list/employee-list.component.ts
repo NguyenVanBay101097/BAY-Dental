@@ -192,10 +192,10 @@ export class EmployeeListComponent implements OnInit {
     modalRef.result.then(() => {
       this.service.actionActive(emp.id, active).subscribe(() => {
         if(this.active) {
-          this.notify('success','Hiện thành công');
+          this.notify('success','Hiện nhân viên thành công');
         }
         else {
-          this.notify('success', 'Ẩn thành công');
+          this.notify('success', 'Ẩn nhân viên thành công');
         }
         this.getEmployeesList();
       });

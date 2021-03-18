@@ -48,6 +48,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string AmountText { get; set; }
 
-        public string UserName { get; set; }
+        public string CreatedByName { get; set; }
     }
 }
