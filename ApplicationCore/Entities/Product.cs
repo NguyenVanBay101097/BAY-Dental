@@ -89,6 +89,9 @@ namespace ApplicationCore.Entities
 
         public string DefaultCode { get; set; }
 
+        /// <summary>
+        /// Cột này không có sử dụng, sẽ bị xóa trong tương lai
+        /// </summary>
         public string NameGet { get; set; }
 
         public ICollection<ProductCompanyRel> ProductCompanyRels { get; set; }

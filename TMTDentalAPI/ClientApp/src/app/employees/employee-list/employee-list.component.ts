@@ -9,6 +9,7 @@ import { EmployeeCreateUpdateComponent } from '../employee-create-update/employe
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-employee-list',
@@ -25,6 +26,7 @@ export class EmployeeListComponent implements OnInit {
   ];
   defaultFilter: any = this.filterLaboStatus[0];
   constructor(private fb: FormBuilder, private service: EmployeeService,
+    private notificationService: NotificationService,
     private activeroute: ActivatedRoute, private modalService: NgbModal) { }
 
   loading = false;
@@ -154,9 +156,12 @@ export class EmployeeListComponent implements OnInit {
   deleteEmployee(id) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa nhân viên';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa nhân viên?';
     modalRef.result.then(() => {
       this.service.deleteEmployee(id).subscribe(
-        () => { this.getEmployeesList(); }
+        () => {
+          this.notify('success', 'Xóa thành công');
+          this.getEmployeesList(); }
       );
     }, () => {
     });
@@ -186,6 +191,12 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((active ? 'hiện nhân viên ' : 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
       this.service.actionActive(emp.id, active).subscribe(() => {
+        if(active) {
+          this.notify('success','Hiện thành công');
+        }
+        else {
+          this.notify('success', 'Ẩn thành công');
+        }
         this.getEmployeesList();
       });
     }, () => {
@@ -196,6 +207,16 @@ export class EmployeeListComponent implements OnInit {
   onStateSelectChange(e) {
     this.active = e ? e.value : null;
     this.getEmployeesList();
+  }
+
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
   }
 
 }

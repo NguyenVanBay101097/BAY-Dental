@@ -127,7 +127,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@Model.PartnerName.ToUpper()</span>
+                <span class="font-semibold">@(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")</span>
             </div>
         </div>
         <div class="col">

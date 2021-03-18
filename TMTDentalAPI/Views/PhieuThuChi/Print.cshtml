@@ -139,7 +139,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold"></span>
+                <span class="font-semibold">@(Model.UserName == null ? "" : Model.UserName.ToUpper())</span>
             </div>
         </div>
         <div class="col">
@@ -156,7 +156,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.PayerReceiver == null ? "" : Model.PayerReceiver)</span>
+                <span class="font-semibold">@(Model.PayerReceiver == null ? "" : Model.PayerReceiver.ToUpper())</span>
             </div>
         </div>
     </div>

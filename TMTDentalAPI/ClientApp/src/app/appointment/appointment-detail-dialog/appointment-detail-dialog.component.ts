@@ -19,7 +19,7 @@ export class AppointmentDetailDialogComponent implements OnInit {
       case 'done':
         return 'Đã tới';
       case 'cancel':
-        return 'Đã hủy';
+        return 'Hủy hẹn';
       default:
         return 'Đang hẹn';
     }

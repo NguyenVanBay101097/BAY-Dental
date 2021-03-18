@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{getTitle()}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close"
-        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window">
@@ -18,8 +17,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
-                                        #journalCbx formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true" #journalCbx formControlName="journal" [valueField]="'id'">
                                     </kendo-combobox>
                                     <span class="text-danger" *ngIf="formGroup.get('journal').invalid">Vui lòng chọn
                                         phương thức thanh toán</span>
@@ -32,10 +30,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [disabled]="rowsSelected && rowsSelected.length > 0"
-                                        [max]="defaultVal.amount" (blur)="onChangeMoney()" [step]="1000" [format]="'n0'"
-                                        [autoCorrect]="true" formControlName="amount">
+                                    <kendo-numerictextbox [min]="0" [disabled]="rowsSelected && rowsSelected.length > 0" [max]="defaultVal.amount" (blur)="onChangeMoney()" [step]="1000" [format]="'n0'" formControlName="amount">
                                     </kendo-numerictextbox>
+                                    <span class="text-danger" *ngIf="formGroup.get('amount').invalid">Số tiền vượt quá tổng công nợ của nhà cung cấp</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -107,6 +104,5 @@
 <footer class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="onPayment()" [disabled]="loading" accesskey="s">Thanh
         toán</button>
-    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
-        accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>
