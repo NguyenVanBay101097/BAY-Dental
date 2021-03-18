@@ -43,6 +43,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService) { }
 
   ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.route.queryParamMap.subscribe(params => {
       this.type = params.get('type');
       this.loadDataFromApi();

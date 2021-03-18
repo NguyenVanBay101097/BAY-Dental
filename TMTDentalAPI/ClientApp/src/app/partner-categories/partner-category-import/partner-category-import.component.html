@@ -14,7 +14,7 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input (valueChange)="onFileChange($event)">
+                        <app-binary-file-input [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'" (valueChange)="onFileChange($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>
