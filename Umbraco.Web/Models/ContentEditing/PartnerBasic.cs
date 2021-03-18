@@ -141,6 +141,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Origin { get; set; }
 
         public Guid MoveId { get; set; }
+        public string MoveType { get; set; }
     }
 
     public class PartnerPatch

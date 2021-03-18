@@ -9,8 +9,7 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
     </div>
@@ -26,16 +25,22 @@
         </kendo-grid-column>
         <kendo-grid-column field="origin" title="Nguồn">
         </kendo-grid-column>
+        <kendo-grid-column field="moveType" title="Loại">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.moveType == 'in_invoice' ? 'Mua hàng': 'Trả hàng'}}
+            </ng-template>
+
+        </kendo-grid-column>
         <kendo-grid-column field="balance" class="text-right" title="Tổng tiền">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.balance| number}}
             </ng-template>
         </kendo-grid-column>
-        <!-- <kendo-grid-column class="text-right" title="Thanh toán">
+        <kendo-grid-column class="text-right" title="Thanh toán">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{(dataItem.amountTotal - dataItem.amountResidual) | number}}
+                {{(dataItem.balance - dataItem.amountResidual) | number}}
             </ng-template>
-        </kendo-grid-column> -->
+        </kendo-grid-column>
         <kendo-grid-column field="amountResidual" class="text-right" title="Còn nợ" footerClass="text-right font-weight-bold">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amountResidual | number}}

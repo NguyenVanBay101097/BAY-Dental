@@ -26,14 +26,11 @@ namespace TMTDentalAPI.ViewControllers
 
         public async  Task<IActionResult> Print(Guid id)
         {
-            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id).Include(x=> x.CreatedBy)).FirstOrDefaultAsync();
             if (phieu == null)
                 return NotFound();
 
             phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
-
-            var user = await _userService.GetCurrentUser();
-            phieu.UserName = _phieuThuChiService == null ? null : user.Name;
 
             return View(phieu);
         }

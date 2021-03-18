@@ -152,7 +152,7 @@ export class PartnerSupplierListComponent implements OnInit {
       res.active = item.active ? false : true;
       this.partnerService.patchActive(item.id, res).subscribe(() => {
         this.notificationService.show({
-          content: 'Lưu thành công',
+          content:  !item.active ? 'Hiện nhà cung cấp thành công ' : 'Ẩn nhà cung cấp thành công',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },

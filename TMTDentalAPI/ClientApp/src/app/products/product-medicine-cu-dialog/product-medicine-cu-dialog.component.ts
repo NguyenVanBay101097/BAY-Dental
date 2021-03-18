@@ -138,7 +138,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
 
         if(result.stockInventoryCriterias.length > 0){      
           this.productForm.get('productCriterias').setValue(result.stockInventoryCriterias);
-          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, result.stockInventoryCriterias, 'id');
+          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, this.listProductCriteria, 'id');
         }
   
         if (result.uompo) {
