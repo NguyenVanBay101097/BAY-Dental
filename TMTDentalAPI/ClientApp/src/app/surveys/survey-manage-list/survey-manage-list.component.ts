@@ -124,17 +124,21 @@ export class SurveyManageListComponent implements OnInit {
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.surveyAssignmentService.getSumary(val).subscribe((result: any) => {
-      if (result && result.length) {
-        result.forEach(res => {
-          this.statusCount[res.status] = res.count;
-          var total = 0;
-          total = total + res.count;
-          this.statusCount['total'] = total;
-        });
-      } else {
-        this.statusCount = {};
-      }
+      this.resetStatusCount();
+      result.forEach(res => {
+        this.statusCount[res.status] = res.count;
+        this.statusCount['total'] += res.count;
+      });
     });
+  }
+
+  resetStatusCount() {
+    this.statusCount = {
+      total: 0,
+      contact: 0,
+      done: 0,
+      draft: 0
+    }
   }
 
   loadEmployees() {
