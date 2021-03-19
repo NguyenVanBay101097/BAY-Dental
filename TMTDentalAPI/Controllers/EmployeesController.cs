@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -176,8 +177,9 @@ namespace TMTDentalAPI.Controllers
                             CompanyId = employee.CompanyId,
                             Phone = employee.Phone,
                             Customer = false,
-                            Avatar = employee.Avatar
-                        };
+                            Avatar = employee.Avatar,
+                            NameNoSign = StringUtils.RemoveSignVietnameseV2(employee.Name)
+                    };
 
                         await _partnerService.CreateAsync(userPartner);
 
@@ -367,16 +369,25 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             //var employee = await _employeeService.GetByIdAsync(id);
+            var listPartnerDelete = new List<Partner>();
             await _unitOfWork.BeginTransactionAsync();
-            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
+            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.User).ThenInclude(x=> x.Partner).FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
             if(employee.User != null )
             {
+                if (employee.User.Partner != null) listPartnerDelete.Add(employee.User.Partner);
                 await _userManager.DeleteAsync(employee.User);
             }
             await _employeeService.DeleteAsync(employee);
+
+            if (employee.Partner != null)
+                listPartnerDelete.Add(employee.Partner);
+            
+            if(listPartnerDelete.Any())
+            await _partnerService.DeleteAsync(listPartnerDelete);
+
             _unitOfWork.Commit();
             return NoContent();
         }

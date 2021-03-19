@@ -115,7 +115,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
             {
                 val.DateTo = val.DateTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.SaleOrder.LastUpdated <= val.DateTo.Value);
+                query = query.Where(x => x.AssignDate <= val.DateTo.Value);
             }
             if (val.EmployeeId.HasValue)
             {

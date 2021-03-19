@@ -18,6 +18,9 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { forkJoin } from 'rxjs';
+import { unionBy } from 'lodash';
+import { observe } from 'fast-json-patch';
 
 declare var jquery: any;
 declare var $: any;
@@ -83,10 +86,10 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
       debounceTime(300),
       tap(() => (this.partnerCbx.loading = true)),
       switchMap(value => this.searchPartners(value))
-    ).subscribe(result => {
-      this.filteredPartners = result;
-      this.partnerCbx.loading = false;
-    });
+      ).subscribe(results => {
+        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+        this.partnerCbx.loading = false;
+      });
 
     this.loadFilteredPartners();
   }
@@ -135,16 +138,32 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   }
 
   loadFilteredPartners() {
-    this.searchPartners().subscribe(result => {
-      this.filteredPartners = result;
-    });
+    this.searchPartners().subscribe(
+      results => {
+        this.filteredPartners =_.unionBy(results[0], results[1],results[2], 'id');
+      }
+    );
   }
 
   searchPartners(search?: string) {
     var val = new PartnerPaged();
     val.search = search;
-    // val.customer = true;
-    return this.partnerService.getAutocompleteSimple(val);
+    val.customer = true;
+    val.limit = 10;
+    val.active = true;
+    var partner$ = this.partnerService.getAutocompleteSimple(val);
+
+    var val2 = Object.assign({},val);
+    delete val2.customer;
+    val2.supplier = true;
+    var supplier$ = this.partnerService.getAutocompleteSimple(val2);
+
+    var val3 = Object.assign({},val);
+    delete val3.customer;
+    val3.employee = true;
+    var employee$ = this.partnerService.getAutocompleteSimple(val3);
+
+    return forkJoin([partner$, supplier$, employee$]);
   }
 
   loadDefault() {

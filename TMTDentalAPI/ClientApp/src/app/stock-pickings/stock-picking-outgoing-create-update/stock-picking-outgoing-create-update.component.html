@@ -100,8 +100,8 @@
                     </table>
                 </div>
 
-                <div class="o_form_section overflow-hidden" *ngIf="picking.state == 'draft'">
-                    <div class="o_form_section_left overflow-auto">
+                <div class="o_form_section" *ngIf="picking.state == 'draft'">
+                    <div class="o_form_section_lef">
                         <div class="mb-2">
                             <app-tai-search-input (searchChange)="onProductInputSearchChange($event)" (upDownEnterChange)="upDownEnterChange($event)">
                             </app-tai-search-input>
@@ -111,8 +111,8 @@
                     </div>
                 </div>
 
-                <div class="o_form_section">
-                    <div class="o_form_section_left" [class.d-none]="picking.state == 'done'">
+                <div class="o_form_section overflow-hidden">
+                    <div class="o_form_section_left overflow-auto" [class.d-none]="picking.state == 'done'">
                         <app-tai-product-list-selectable #productListSelectable [productList]="productList" (changeProduct)="onChangeProduct($event)"></app-tai-product-list-selectable>
                     </div>
                     <div class="o_form_section_right">

@@ -151,6 +151,7 @@ export class SurveyManageListComponent implements OnInit {
   onSearchDateChange(event) {
     this.dateTo = event.dateTo;
     this.dateFrom = event.dateFrom;
+    this.offset = 0;
     this.loadSummary();
     this.loadDataFromApi();
   }

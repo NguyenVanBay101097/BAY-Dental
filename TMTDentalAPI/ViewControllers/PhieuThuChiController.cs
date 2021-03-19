@@ -26,7 +26,7 @@ namespace TMTDentalAPI.ViewControllers
 
         public async  Task<IActionResult> Print(Guid id)
         {
-            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id).Include(x=> x.CreatedBy)).FirstOrDefaultAsync();
+            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id).Include(x=> x.CreatedBy).Include(x=> x.Partner)).FirstOrDefaultAsync();
             if (phieu == null)
                 return NotFound();
 

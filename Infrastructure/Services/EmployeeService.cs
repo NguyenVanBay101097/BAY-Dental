@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -227,7 +228,8 @@ namespace Infrastructure.Services
                 Phone = entity.Phone,
                 Email = entity.Email,
                 CompanyId = entity.CompanyId,
-                Customer = false
+                Customer = false,
+                NameNoSign = StringUtils.RemoveSignVietnameseV2(entity.Name)
             };
 
             await partnerObj.CreateAsync(partner);
@@ -319,14 +321,33 @@ namespace Infrastructure.Services
 
         public async Task<bool> ActionActive(Guid id, EmployeeActive val)
         {
-            var entity = SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefault();
+            var partnerObj = GetService<IPartnerService>();
+            var listPartnerUpdate = new List<Partner>();
+
+            var entity = SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.User).ThenInclude(x=> x.Partner).FirstOrDefault();
             if (entity == null) throw new Exception("Không tìm thấy nhân viên!");
             entity.Active = val.Active;
 
             if(entity.User != null)
-            entity.User.Active = val.Active;
+            {
+                entity.User.Active = val.Active;
+                if (entity.User.Partner != null)
+                    listPartnerUpdate.Add(entity.User.Partner);
+            }
 
             await UpdateAsync(entity);
+
+            if(entity.Partner != null)
+                listPartnerUpdate.Add(entity.Partner);
+
+            if (listPartnerUpdate.Any())
+            {
+                foreach (var item in listPartnerUpdate)
+                    item.Active = val.Active;
+
+                await partnerObj.UpdateAsync(listPartnerUpdate);
+            }
+
             return true;
         }
 

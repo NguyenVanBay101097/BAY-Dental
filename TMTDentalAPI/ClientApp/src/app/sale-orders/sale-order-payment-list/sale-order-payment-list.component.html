@@ -2,6 +2,7 @@
     <table class="table table-sm">
         <thead>
             <tr>
+                <th>Số phiếu</th>
                 <th>Ngày thanh toán</th>
                 <th>Phương thức</th>
                 <th>Số tiền</th>
@@ -11,6 +12,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let payment of paymentsInfo">
+                <td>{{ payment.accountPaymentName}}</td>
                 <td>{{ payment.date | date : 'shortDate'}}</td>
                 <td>{{ payment.journalName }}</td>
                 <td>{{ payment.amount | number}}</td>
