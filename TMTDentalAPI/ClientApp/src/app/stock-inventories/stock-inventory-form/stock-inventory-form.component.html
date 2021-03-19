@@ -225,8 +225,11 @@
                                             (keyup)="onChangeSearch($event.target.value);">
                                     </div>
                                 </div>
-                                <app-stock-inventory-product-list [searchText]="valueSearch" [inventoryId]="id"
+                                <div class="t_scroll">
+                                    <app-stock-inventory-product-list [searchText]="valueSearch" [inventoryId]="id"
                                     (newEventEmiter)="addLine($event)"></app-stock-inventory-product-list>
+                                </div>
+                               
                             </div>
 
                             <div class="o_form_section_right">

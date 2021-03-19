@@ -74,7 +74,7 @@ export class ProductProductCuDialogComponent implements OnInit {
 
     setTimeout(() => {
 
-      this.loadProductCriteriaList();
+
       this.default();
 
       this.searchCategories().subscribe(result => {
@@ -98,7 +98,7 @@ export class ProductProductCuDialogComponent implements OnInit {
         this.criteriaMultiSelect.loading = false;
       });
 
-    
+      this.loadProductCriteriaList();
       this.categCbxFilterChange();
       this.uoMCbxFilterChange();
       this.uoMPOCbxFilterChange();
@@ -125,7 +125,7 @@ export class ProductProductCuDialogComponent implements OnInit {
 
         if(result.stockInventoryCriterias.length > 0){      
           this.productForm.get('productCriterias').setValue(result.stockInventoryCriterias);
-          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, result.stockInventoryCriterias, 'id');
+          this.listProductCriteria = _.unionBy(result.stockInventoryCriterias, this.listProductCriteria, 'id');
         }
 
         if (result.uompo) {

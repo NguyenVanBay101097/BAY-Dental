@@ -44,7 +44,7 @@ export class StockInventoryFormComponent implements OnInit {
 
   filterInventories = [
     { name: 'Tất cả sản phẩm', value: 'none' },
-    { name: 'Một nhóm sản phẩm', value: 'category' },
+    { name: 'Nhóm sản phẩm', value: 'category' },
     { name: 'Chọn sản phẩm thủ công', value: 'partial' },
     { name: 'Tiêu chí kiểm kho', value: 'criteria' },
   ];
@@ -164,7 +164,7 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(move);
           moveControl.push(g);
         });
-
+        this.onChangeFilter();
       });
     } else {
       var companyId = this.authService.userInfo.companyId;

@@ -96,6 +96,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       // Định mức vật tư
       boms: this.fb.array([]),
     });
+   
 
     this.searchCategories('').subscribe(result => {
       this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
@@ -105,14 +106,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.filteredProducts = result;
     });
 
-    this.categCbxFilterChange();
-    this.productCbxFilterChange();
     if (this.id) {
       this.loadDataFromApi();
     } else {
       this.loadDefault();
     }
 
+    this.categCbxFilterChange();
+    this.productCbxFilterChange();
+   
   }
 
   loadDataFromApi() {
@@ -265,6 +267,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   getBodyData() {
+    debugger
     var data = this.productForm.value;
     data.categId = data.categ.id;
     data.stepList = this.stepList;

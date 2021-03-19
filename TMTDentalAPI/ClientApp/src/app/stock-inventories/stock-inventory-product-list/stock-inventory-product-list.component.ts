@@ -67,7 +67,7 @@ export class StockInventoryProductListComponent implements OnInit {
     if (value == '' || !value) {
       this.listFilter = this.listProduct;
     } else {
-      this.listFilter = this.listProduct.filter(x => this.RemoveVietnamese(x.product.name).includes(this.RemoveVietnamese(value)));
+      this.listFilter = this.listProduct.filter(x => this.RemoveVietnamese(x.name).includes(this.RemoveVietnamese(value)));
     }
     return this.listFilter;
   }
