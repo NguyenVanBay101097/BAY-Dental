@@ -128,6 +128,18 @@ export class PartnerCustomerListComponent implements OnInit {
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'customer';
+    modalRef.componentInstance.title = 'Import Excel'
+    modalRef.result.then(() => {
+      this.refreshData();
+    }, () => {
+    });
+  }
+
+  updateFromExcel() {
+    const modalRef = this.modalService.open(PartnerImportComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
+    modalRef.componentInstance.type = 'customer';
+    modalRef.componentInstance.title = 'Cập nhật Excel';
+    modalRef.componentInstance.isUpdate = true;
     modalRef.result.then(() => {
       this.refreshData();
     }, () => {

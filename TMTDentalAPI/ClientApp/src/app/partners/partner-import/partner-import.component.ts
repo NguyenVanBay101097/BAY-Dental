@@ -19,7 +19,7 @@ export class PartnerImportComponent implements OnInit {
     private notificationService: NotificationService) { }
 
   formGroup: FormGroup;
-  title = 'Import excel';
+  title = "";
   type: string;
   update:string;
   isUpdate:boolean;

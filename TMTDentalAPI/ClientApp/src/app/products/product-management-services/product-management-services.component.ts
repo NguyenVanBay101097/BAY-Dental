@@ -181,7 +181,7 @@ export class ProductManagementServicesComponent implements OnInit {
       backdrop: "static",
       scrollable: true
     });
-    modalRef.componentInstance.title = "Import excel";
+    modalRef.componentInstance.title = "Import Excel";
     modalRef.componentInstance.type = "service";
     modalRef.result.then(
       () => {
@@ -223,7 +223,7 @@ export class ProductManagementServicesComponent implements OnInit {
       keyboard: false,
       backdrop: "static",
     });
-    modalRef.componentInstance.title = "Cập nhật excel";
+    modalRef.componentInstance.title = "Cập nhật Excel";
     modalRef.componentInstance.type = "service";
     modalRef.componentInstance.isUpdate = true;
     modalRef.result.then(

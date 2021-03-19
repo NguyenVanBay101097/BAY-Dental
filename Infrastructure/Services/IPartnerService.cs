@@ -46,6 +46,9 @@ namespace Infrastructure.Services
         //Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val);
 
         Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val);
+
+        Task<PartnerImportResponse> ActionUpdateFromExcel(PartnerImportExcelViewModel val);
+
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
 
         Task<PartnerPrintProfileVM> GetPrint(Guid id);

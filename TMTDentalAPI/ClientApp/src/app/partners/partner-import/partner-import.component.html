@@ -45,7 +45,7 @@
 </div>
 
 <footer class="modal-footer">
-    <div *ngIf="update!=null; then thenBlock else elseBlock"></div>
+    <div *ngIf="isUpdate; then thenBlock else elseBlock"></div>
     <ng-template #thenBlock>
         <button type="button" class="btn btn-success btn-sm" (click)="updateFileExcel()">
         Cập nhật
