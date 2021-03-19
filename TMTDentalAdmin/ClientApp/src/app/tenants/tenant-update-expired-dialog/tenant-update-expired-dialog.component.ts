@@ -39,7 +39,8 @@ export class TenantUpdateExpiredDialogComponent implements OnInit {
       limit: [1],
       checkOption: "time",
       limitOption: ['month'],
-      activeCompaniesNbr: [this.tenant.activeCompaniesNbr]
+      activeCompaniesNbr: [this.tenant.activeCompaniesNbr],
+      startDate: new Date()
     });
     this.limit = this.formGroup.get('limit') ? this.formGroup.get('limit').value : 0;
     this.limitOption = this.formGroup.get('limitOption') ? this.formGroup.get('limitOption').value : null;

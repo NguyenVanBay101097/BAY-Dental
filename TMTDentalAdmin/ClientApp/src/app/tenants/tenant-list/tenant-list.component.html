@@ -29,7 +29,11 @@
 <div class="o_content">
   <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
     (pageChange)="pageChange($event)">
-
+    <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.dateCreated | date : 'short'}}
+      </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="name" title="Khách hàng" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="phone" title="Điện thoại" width="120">
@@ -43,11 +47,6 @@
     <kendo-grid-column field="dateExpired" title="Ngày hết hạn" width="120">
       <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
         {{dataItem.dateExpired | date : 'short'}}
-      </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="dateCreated" title="Ngày tạo" width="120">
-      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-        {{dataItem.dateCreated | date : 'short'}}
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="customerSource" class="text-right" title="Nguồn KH" width="120">

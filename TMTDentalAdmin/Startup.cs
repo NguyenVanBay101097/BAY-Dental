@@ -22,6 +22,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TMTDentalAdmin.BackgroundTasks.Services;
 using Umbraco.Web.Mapping;
 
 namespace TMTDentalAdmin
@@ -98,6 +99,7 @@ namespace TMTDentalAdmin
             services.AddSingleton<IMailSender, SendGridSender>();
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
             services.AddSingleton<UpdateExpiredDateTenantService>();
+            services.AddHostedService<UpdateExpiredBackgroundService>();
             //services.AddCronJob<ScheduleJobService>(c =>
             //{
             //    c.TimeZoneInfo = TimeZoneInfo.Local;

@@ -51,7 +51,7 @@ namespace TMTDentalAdmin.Controllers
         [HttpGet("{tenantId}/[action]")]
         public async Task<IActionResult> GetAllByTenantId(Guid tenantId)
         {
-            var models = await _tenantExtendHistoryService.SearchQuery(x => x.TenantId == tenantId).OrderBy(x => x.DateCreated).ToListAsync();
+            var models = await _tenantExtendHistoryService.SearchQuery(x => x.TenantId == tenantId).OrderByDescending(x => x.StartDate).ToListAsync();
             var res = _mapper.Map<IEnumerable<TenantExtendHistoryDisplay>>(models);
             return Ok(res);
         }
