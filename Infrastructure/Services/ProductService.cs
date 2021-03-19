@@ -194,6 +194,7 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             query = query.OrderBy(x=> x.Name);
 
+            var totalItems = await query.CountAsync();
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
@@ -204,8 +205,6 @@ namespace Infrastructure.Services
 
             //Tính tồn kho
             _CalcQtyAvailable(items);
-
-            var totalItems = await query.CountAsync();
 
             return new PagedResult2<ProductBasic>(totalItems, val.Offset, val.Limit)
             {

@@ -19,14 +19,6 @@
     flex: 1 1 100%;
 }
 
-th {
-    /* position: sticky;
-    top: -1px;
-    border: 1px solid #dee2e6;
-    background-color: #f9f9f9;
-    z-index: 2; */
-}
-
 .mh-165 {
     min-height: 165px;
 }
