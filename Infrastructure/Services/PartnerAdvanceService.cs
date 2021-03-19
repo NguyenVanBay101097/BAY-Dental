@@ -66,7 +66,7 @@ namespace Infrastructure.Services
         {
             var partner = await _partnerService.GetByIdAsync(val.PartnerId);
             var journal = await _journalService.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
-            var amount = await ComputeAmountTotal();
+            var amount = await ComputeAmountBalance();
 
             if (val.Type == "refund" && amount <= 0)
                 throw new Exception("Lỗi");
@@ -77,7 +77,7 @@ namespace Infrastructure.Services
             res.PartnerName = partner.Name;
             res.JournalId = journal.Id;
             res.Journal = _mapper.Map<AccountJournalSimple>(journal);
-            res.AmounAdvanceTotal = amount;
+            res.AmountBalance = amount;
             res.Date = DateTime.Now;
             res.State = "draft";
 
@@ -106,7 +106,7 @@ namespace Infrastructure.Services
             }
             else
             {
-                var amountBalance = await ComputeAmountTotal();
+                var amountBalance = await ComputeAmountBalance();
                 return amountBalance;
             }
 
@@ -115,7 +115,7 @@ namespace Infrastructure.Services
             return await query.SumAsync(x => x.Amount);
         }
 
-        public async Task<decimal> ComputeAmountTotal()
+        public async Task<decimal> ComputeAmountBalance()
         {
             var advanceAmount = await SearchQuery(x => x.Type == "advance").SumAsync(x => x.Amount);
             var refundAmount = await SearchQuery(x => x.Type == "refund").SumAsync(x => x.Amount);

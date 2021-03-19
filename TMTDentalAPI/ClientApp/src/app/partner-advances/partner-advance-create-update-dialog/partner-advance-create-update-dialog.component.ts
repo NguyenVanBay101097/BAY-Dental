@@ -229,7 +229,6 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
       return;
     }
     this.partnerAdvanceService.getPrint(this.id).subscribe((result: any) => {
-      console.log(result.html);
       this.printService.printHtml(result.html);
     });
   }

@@ -86,7 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Amount { get; set; }
 
-        public decimal AmounAdvanceTotal { get; set; }
+        public decimal AmountBalance { get; set; }
 
         public string State { get; set; }
 
