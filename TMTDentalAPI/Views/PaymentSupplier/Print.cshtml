@@ -63,7 +63,16 @@
                                 Loại:
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(Model.PaymentType )</td>
+                        <td colspan="1" style="width: 100%;">
+                            @if (Model.PaymentType == "inbound")
+                            {
+                                <span>Hoàn tiền</span>
+                            }
+                            else
+                            {
+                                <span>Trả tiền</span>
+                            }
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">

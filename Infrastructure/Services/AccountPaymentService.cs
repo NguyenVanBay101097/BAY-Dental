@@ -1245,7 +1245,7 @@ namespace Infrastructure.Services
                 PartnerWard = x.Partner.WardName,
                 PaymentDate = x.PaymentDate,
                 PaymentName = x.Name,
-                PaymentType = x.PaymentType == "outbound" && x.PartnerType == "supplier" ? "Trả tiền" : (x.PaymentType == "inboud" ? "Hoàn tiền" : ""),
+                PaymentType = x.PaymentType,
                 UserName = user == null ? null : user.Name,
                 SaleOrders = x.SaleOrderPaymentRels.Select(s => new AccountPaymentSaleOrderPrintVM
                 {

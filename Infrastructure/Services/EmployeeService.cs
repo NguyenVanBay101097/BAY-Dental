@@ -228,8 +228,7 @@ namespace Infrastructure.Services
                 Phone = entity.Phone,
                 Email = entity.Email,
                 CompanyId = entity.CompanyId,
-                Customer = false,
-                NameNoSign = StringUtils.RemoveSignVietnameseV2(entity.Name)
+                Customer = false
             };
 
             await partnerObj.CreateAsync(partner);

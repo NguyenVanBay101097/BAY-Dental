@@ -172,9 +172,9 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 1].Value = "Ngày";
                 worksheet.Cells[1, 2].Value = "Số phiếu";
                 worksheet.Cells[1, 3].Value = "Phương thức";
-                worksheet.Cells[1, 4].Value = val.Type == "thu" ? "Loại thu": "Loại chi";
+                worksheet.Cells[1, 4].Value = val.Type == "thu" ? "Loại thu" : "Loại chi";
                 worksheet.Cells[1, 5].Value = "Số tiền";
-                worksheet.Cells[1, 6].Value = val.Type == "thu" ? "Người nộp tiền": "Người nhận tiền";
+                worksheet.Cells[1, 6].Value = val.Type == "thu" ? "Người nộp tiền" : "Người nhận tiền";
                 worksheet.Cells[1, 7].Value = "Nội dung";
                 worksheet.Cells[1, 8].Value = "Trạng thái";
 

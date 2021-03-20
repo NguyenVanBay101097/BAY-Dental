@@ -326,7 +326,10 @@ namespace Infrastructure.Services
         private void _ComputeDisplayName(IEnumerable<Partner> self)
         {
             foreach (var partner in self)
+            {
                 partner.DisplayName = _NameGet(partner);
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+            }
         }
 
         private async Task InsertCustomerSequence()
