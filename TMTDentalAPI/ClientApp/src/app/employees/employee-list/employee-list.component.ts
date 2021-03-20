@@ -191,7 +191,7 @@ export class EmployeeListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((active ? 'hiện nhân viên ' : 'ẩn nhân viên ') + emp.name);
     modalRef.result.then(() => {
       this.service.actionActive(emp.id, active).subscribe(() => {
-        if(this.active) {
+        if(active) {
           this.notify('success','Hiện nhân viên thành công');
         }
         else {

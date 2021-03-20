@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
@@ -145,7 +146,7 @@ namespace TMTDentalAPI.Controllers
                     user.Active = true;
                     user.Email = employee.Email;
                     user.PhoneNumber = employee.Phone;
-                    user.CompanyId = val.UserCompanyId.HasValue? val.UserCompanyId.Value : user.CompanyId;
+                    user.CompanyId = val.UserCompanyId.HasValue ? val.UserCompanyId.Value : user.CompanyId;
                     var updateResult = await _userManager.UpdateAsync(user);
                     if (!updateResult.Succeeded)
                         throw new Exception($"Cập nhật người dùng không thành công");
@@ -235,7 +236,7 @@ namespace TMTDentalAPI.Controllers
                     }
                 }
 
-                
+
 
                 await _userManager.UpdateAsync(user);
 
@@ -259,7 +260,7 @@ namespace TMTDentalAPI.Controllers
             var result = await _userManager.RemoveFromRolesAsync(employee.User, currentRoleNames);
             if (!result.Succeeded)
             {
-                throw new Exception(string.Join(";", result.Errors.Select(x=> x.Description))) ;
+                throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
             }
             //add role
             var idsAdd = val.RoleIds.Select(x => x.ToString()).ToList();
@@ -274,7 +275,7 @@ namespace TMTDentalAPI.Controllers
             _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{employee.UserId}");
         }
 
-        private async Task SaveUserResGroup( ApplicationUser user)
+        private async Task SaveUserResGroup(ApplicationUser user)
         {
             //get group internal user to add to user then call function add all group to user
             var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
@@ -303,7 +304,7 @@ namespace TMTDentalAPI.Controllers
 
         private async Task UpdatePartnerToEmployee(Employee employee)
         {
-            if (employee.Partner == null) 
+            if (employee.Partner == null)
                 return;
             var pn = employee.Partner;
             pn.Name = employee.Name;
@@ -367,16 +368,31 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Remove(Guid id)
         {
             //var employee = await _employeeService.GetByIdAsync(id);
+            var listPartnerDelete = new List<Partner>();
             await _unitOfWork.BeginTransactionAsync();
-            var employee = await _employeeService.SearchQuery(x => x.Id == id).Include(x => x.User).FirstOrDefaultAsync();
+            var employee = await _employeeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.User).ThenInclude(x => x.Partner)
+                .FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
-            if(employee.User != null )
+
+            if (employee.Partner != null)
+                listPartnerDelete.Add(employee.Partner);
+
+            if (employee.User != null)
             {
+                if (employee.User.Partner != null)
+                    listPartnerDelete.Add(employee.User.Partner);
                 await _userManager.DeleteAsync(employee.User);
             }
+
             await _employeeService.DeleteAsync(employee);
+
+            if (listPartnerDelete.Any())
+                await _partnerService.DeleteAsync(listPartnerDelete);
+
             _unitOfWork.Commit();
             return NoContent();
         }
