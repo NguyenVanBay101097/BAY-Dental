@@ -958,7 +958,7 @@ namespace Infrastructure.Services
 
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             if (string.IsNullOrWhiteSpace(name))
-                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");                    
+                                errs.Add($"Tên {title_dict[val.Type]} là bắt buộc");
 
                             if (val.Type == "customer")
                             {
@@ -1243,7 +1243,7 @@ namespace Infrastructure.Services
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                         var rowCount = worksheet.Dimension.Rows;
-
+                        var partnerRefs = await SearchQuery(x => true).Select(x => x.Ref).ToListAsync();
                         for (int row = 2; row <= rowCount; row++)
                         {
                             var errs = new List<string>();
@@ -1255,8 +1255,8 @@ namespace Infrastructure.Services
                             var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
                             if (!string.IsNullOrWhiteSpace(reference))
                             {
-                                var exist = await SearchQuery(x => x.Ref == reference).FirstOrDefaultAsync();
-                                if (exist != null)
+                                //var exist = await SearchQuery(x => x.Ref == reference).FirstOrDefaultAsync();
+                                if (partnerRefs.Any(x => x.Equals(reference)))
                                     partner_code_list.Add(reference);
                             }
 
@@ -2353,7 +2353,7 @@ namespace Infrastructure.Services
                     query = query.Where(x => x.Supplier == true);
                 }
             }
-        
+
             var res = await query
                          .Include("PartnerPartnerCategoryRels.Category")
                          .Skip(val.Offset)

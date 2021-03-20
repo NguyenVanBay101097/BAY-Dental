@@ -45,17 +45,13 @@
 </div>
 
 <footer class="modal-footer">
-    <div *ngIf="isUpdate; then thenBlock else elseBlock"></div>
-    <ng-template #thenBlock>
-        <button type="button" class="btn btn-success btn-sm" (click)="updateFileExcel()">
+    <button *ngIf="isUpdate" type="button" class="btn btn-success btn-sm" (click)="updateFileExcel()">
         Cập nhật
         </button>
-    </ng-template>
-    <ng-template #elseBlock>
-        <button type="button" class="btn btn-primary btn-sm" (click)="import()">
+    <button *ngIf="!isUpdate" type="button" class="btn btn-primary btn-sm" (click)="import()">
         Import
         </button>
-    </ng-template>
+
     <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
