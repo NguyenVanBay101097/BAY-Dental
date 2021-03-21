@@ -79,6 +79,7 @@ namespace TMTDentalAdmin.Controllers
 
             tenant = _mapper.Map<AppTenant>(val);
             tenant.DateExpired = DateTime.Now.AddDays(15);
+            tenant.Version = _appSettings.Version;
             await _tenantService.CreateAsync(tenant);
 
             var tenantExtendHistory = new TenantExtendHistory();
