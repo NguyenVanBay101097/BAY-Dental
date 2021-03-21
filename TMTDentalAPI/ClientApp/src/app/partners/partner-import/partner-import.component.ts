@@ -84,7 +84,7 @@ export class PartnerImportComponent implements OnInit {
 
     var val = this.formGroup.value;
     val.type = this.type;
-    this.partnerService.actionUpdateFromExcel(val).subscribe((result: any) => {
+    this.partnerService.actionImportUpdate(val).subscribe((result: any) => {
       if (result.success) {
         this.activeModal.close(true);
         this.notify('success', 'Cập nhật dữ liệu thành công');

@@ -45,7 +45,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button *ngIf="isUpdate" type="button" class="btn btn-success btn-sm" (click)="updateFileExcel()">
+    <button *ngIf="isUpdate" type="button" class="btn btn-primary btn-sm" (click)="updateFileExcel()">
         Cập nhật
         </button>
     <button *ngIf="!isUpdate" type="button" class="btn btn-primary btn-sm" (click)="import()">
@@ -55,9 +55,6 @@
     <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>
-    <button *ngIf="type == 'customer' && isUpdate == true" (click)="loadExcelUpdateFile()" class="btn btn-info btn-sm">
-        Tải file mẫu
-    </button>
     <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info btn-sm">
         Tải file mẫu
     </a>

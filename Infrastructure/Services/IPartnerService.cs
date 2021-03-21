@@ -27,7 +27,6 @@ namespace Infrastructure.Services
         Task<string> UploadImage(IFormFile file);
         Task<PartnerInfoViewModel> GetInfo(Guid id);
         Task<PagedResult2<AccountInvoiceDisplay>> GetCustomerInvoices(AccountInvoicePaged val);
-        Task ImportExcel(IFormFile file);
         Task ImportExcel2(IFormFile file, Ex_ImportExcelDirect dir);
         Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
        DateTime? fromDate = null,
@@ -47,7 +46,7 @@ namespace Infrastructure.Services
 
         Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val);
 
-        Task<PartnerImportResponse> ActionUpdateFromExcel(PartnerImportExcelViewModel val);
+        Task<PartnerImportResponse> ActionImportUpdate(PartnerImportExcelViewModel val);
 
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
 

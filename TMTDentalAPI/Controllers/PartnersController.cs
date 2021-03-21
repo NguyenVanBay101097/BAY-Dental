@@ -384,11 +384,11 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Create")]
-        public async Task<IActionResult> ActionUpdateFromExcel(PartnerImportExcelViewModel val)
+        public async Task<IActionResult> ActionImportUpdate(PartnerImportExcelViewModel val)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var result = await _partnerService.ActionUpdateFromExcel(val);
+            var result = await _partnerService.ActionImportUpdate(val);
 
             if (result.Success)
                 _unitOfWork.Commit();

@@ -282,7 +282,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
               animation: { type: 'fade', duration: 400 },
               type: { style: 'success', icon: true }
             });
-            this.loadRecord();
+            this.activeModal.close();
           }
         )
       }, () => {
