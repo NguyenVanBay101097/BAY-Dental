@@ -382,6 +382,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Create")]
+        public async Task<IActionResult> ActionImportUpdate(PartnerImportExcelViewModel val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            var result = await _partnerService.ActionImportUpdate(val);
+
+            if (result.Success)
+                _unitOfWork.Commit();
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
